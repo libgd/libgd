@@ -489,7 +489,7 @@ gdImageSharpen (gdImagePtr im, int pct)
       /* Second pass, 1-D convolution row-wise */
       for (y = 0; y < sy; y++)
 	{
-	  int pc, c, nc;
+	  int pc, c;
 	  pc = gdImageGetPixel (im, 0, y);
 	  for (x = 0; x < sx - 1; x++)
 	    {
