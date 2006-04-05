@@ -1,3 +1,7 @@
+990923 Thomas Boutell (TBB)
+	- I forgot to include -lz in the suggested library list
+	  for those with truetype and xpm support. Thanks to
+	  Masahito Yamaga.
 990922 Thomas Boutell (TBB)
 	- autoconf/automake removed in favor of an improved Makefile.
 	  I was getting unbelievable amounts of confused email.

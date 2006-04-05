@@ -26,7 +26,7 @@ LIBS=-lgd -lm -lz -lpng
 #If you do have FreeType and/or Xpm fully installed, uncomment a 
 #variation of this and comment out the line above. Note that
 #Xpm requires X11. See also CFLAGS above.
-#LIBS=-lgd -lm -lttf -lpng -lXpm -lX11
+#LIBS=-lgd -lm -lttf -lpng -lz -lXpm -lX11
 
 #Typical install locations for freetype, zlib, xpm and libpng header files.
 #If yours are somewhere else, change this. 
@@ -121,13 +121,13 @@ gdtestttf: gdtestttf.o libgd.a
 
 libgd.a: gd.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o gd_io_file.o gd_ss.o \
 	gd_io_ss.o gd_png.o gdxpm.o gdfontt.o gdfonts.o gdfontmb.o gdfontl.o \
-	gdtables.o gdfontg.o gdkanji.o \
+	gdfontg.o gdtables.o gdttf.o gdcache.o gdkanji.o \
 	gd.h gdfontt.h gdfonts.h gdfontmb.h gdfontl.h gdfontg.h
 	rm -f libgd.a
-	$(AR) rc libgd.a gd.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o gdxpm.o \
-		gd_io_file.o gd_ss.o gd_io_ss.o gd_png.o gdfontt.o gdfonts.o \
-		gdfontmb.o gdfontl.o gdfontg.o gd.o gdfontt.o gdfonts.o \
-		gdfontmb.o gdfontl.o gdfontg.o gdtables.o gdkanji.o
+	$(AR) rc libgd.a gd.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o \
+		gd_io_file.o gd_ss.o gd_io_ss.o gd_png.o gdxpm.o \
+		gdfontt.o gdfonts.o gdfontmb.o gdfontl.o gdfontg.o \
+		gdtables.o gdttf.o gdcache.o gdkanji.o
 	-ranlib libgd.a
 
 clean:

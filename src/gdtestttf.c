@@ -19,8 +19,8 @@
 
 int main(int argc, char *argv[])
 {
-#ifndef HAVE_TTF
-	fprintf(stderr, "gd was not compiled with HAVE_TTF defined.\n");
+#ifndef HAVE_LIBTTF
+	fprintf(stderr, "gd was not compiled with HAVE_LIBTTF defined.\n");
 	fprintf(stderr, "Install the FreeType library, including the\n");
 	fprintf(stderr, "header files. Then edit the gd Makefile, type\n");
 	fprintf(stderr, "make clean, and type make again.\n");
