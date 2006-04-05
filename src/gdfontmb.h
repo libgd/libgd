@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 #ifndef _GDFONTMB_H_
 #define _GDFONTMB_H_ 1
@@ -26,4 +30,8 @@ extern "C"
 }
 #endif
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
