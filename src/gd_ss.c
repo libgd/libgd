@@ -46,12 +46,13 @@ gdImageCreateFromPngSource (gdSourcePtr inSource)
 void
 gdImagePngToSink (gdImagePtr im, gdSinkPtr outSink)
 {
-  fprintf(stderr,"PNG support is not available\n");
+  fprintf (stderr, "PNG support is not available\n");
 }
+
 gdImagePtr
 gdImageCreateFromPngSource (gdSourcePtr inSource)
 {
-  fprintf(stderr,"PNG support is not available\n");
+  fprintf (stderr, "PNG support is not available\n");
   return NULL;
 }
 #endif /* HAVE_LIBPNG */

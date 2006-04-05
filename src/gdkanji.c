@@ -12,17 +12,45 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
-#include <stdarg.h>
-#if defined(HAVE_ICONV_H) || defined(HAVE_ICONV)
-#include <iconv.h>
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
+
+#include <stdarg.h>
+#if defined(HAVE_ICONV_H)
+#include <iconv.h>
 #endif
 
-#if defined(HAVE_ICONV_H) && !defined(HAVE_ICONV)
-#define HAVE_ICONV 1
+#ifndef HAVE_ICONV_T_DEF
+typedef void *iconv_t;
 #endif
+
+#ifndef HAVE_ICONV
+#define ICONV_CONST /**/
+  iconv_t iconv_open (const char *, const char *);
+size_t iconv (iconv_t, ICONV_CONST char **, size_t *, char **, size_t *);
+int iconv_close (iconv_t);
+
+iconv_t
+iconv_open (const char *tocode, const char *fromcode)
+{
+  return (iconv_t) (-1);
+}
+
+size_t
+iconv (iconv_t cd, ICONV_CONST char **inbuf, size_t * inbytesleft,
+       char **outbuf, size_t * outbytesleft)
+{
+  return 0;
+}
+
+int
+iconv_close (iconv_t cd)
+{
+  return 0;
+}
+
+#endif /* !HAVE_ICONV */
 
 #define LIBNAME "any2eucjp()"
 
@@ -60,7 +88,7 @@
 #define SS2 142
 
 static void
-debug (const char *format,...)
+debug (const char *format, ...)
 {
 #ifdef DEBUG
   va_list args;
@@ -74,7 +102,7 @@ debug (const char *format,...)
 }
 
 static void
-error (const char *format,...)
+error (const char *format, ...)
 {
   va_list args;
 
@@ -133,7 +161,8 @@ DetectKanjiCode (unsigned char *str)
 	  else if (c == SS2)
 	    {
 	      c = str[i++];
-	      if ((c >= 64 && c <= 126) || (c >= 128 && c <= 160) || (c >= 224 && c <= 252))
+	      if ((c >= 64 && c <= 126) || (c >= 128 && c <= 160)
+		  || (c >= 224 && c <= 252))
 		whatcode = SJIS;
 	      else if (c >= 161 && c <= 223)
 		whatcode = EUCORSJIS;
@@ -253,8 +282,7 @@ han2zen (int *p1, int *p2)
   int c = *p1;
   int daku = FALSE;
   int handaku = FALSE;
-  int mtable[][2] =
-  {
+  int mtable[][2] = {
     {129, 66},
     {129, 117},
     {129, 118},
@@ -354,8 +382,7 @@ do_convert (unsigned char *to, unsigned char *from, const char *code)
       error ("iconv_open() error");
 #ifdef HAVE_ERRNO_H
       if (errno == EINVAL)
-	error ("invalid code specification: \"%s\" or \"%s\"",
-	       EUCSTR, code);
+	error ("invalid code specification: \"%s\" or \"%s\"", EUCSTR, code);
 #endif
       strcpy ((char *) to, (const char *) from);
       return;
@@ -364,8 +391,7 @@ do_convert (unsigned char *to, unsigned char *from, const char *code)
   from_len = strlen ((const char *) from) + 1;
   to_len = BUFSIZ;
 
-  if (iconv (cd, (char **) &from, &from_len,
-	     (char **) &to, &to_len) == -1)
+  if (iconv (cd, (char **) &from, &from_len, (char **) &to, &to_len) == -1)
     {
 #ifdef HAVE_ERRNO_H
       if (errno == EINVAL)
@@ -483,7 +509,8 @@ do_check_and_conv (unsigned char *to, unsigned char *from)
       do_convert (tmp, from, OLDJISSTR);
       break;
     case ESCI:
-      debug ("This string includes Hankaku-Kana (jisx0201) escape sequence [ESC] + ( + I.");
+      debug
+	("This string includes Hankaku-Kana (jisx0201) escape sequence [ESC] + ( + I.");
       do_convert (tmp, from, NEWJISSTR);
       break;
     case NEC:
@@ -572,7 +599,9 @@ any2eucjp (unsigned char *dest, unsigned char *src, unsigned int dest_max)
     }
   if (dest_max > BUFSIZ)
     {
-      error ("invalid maximum size of destination\nit should be less than %d.", BUFSIZ);
+      error
+	("invalid maximum size of destination\nit should be less than %d.",
+	 BUFSIZ);
       return -1;
     }
   ret = do_check_and_conv (tmp_dest, src);

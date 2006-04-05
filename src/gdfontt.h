@@ -3,7 +3,8 @@
 #define _GDFONTT_H_ 1
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /*
@@ -19,11 +20,10 @@ extern "C" {
 
 #include "gd.h"
 
-extern gdFontPtr gdFontTiny;
+  extern gdFontPtr gdFontTiny;
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-

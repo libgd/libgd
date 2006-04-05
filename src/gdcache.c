@@ -63,11 +63,10 @@
 
 /* create a new cache */
 gdCache_head_t *
-gdCacheCreate (
-		int size,
-		gdCacheTestFn_t gdCacheTest,
-		gdCacheFetchFn_t gdCacheFetch,
-		gdCacheReleaseFn_t gdCacheRelease)
+gdCacheCreate (int size,
+	       gdCacheTestFn_t gdCacheTest,
+	       gdCacheFetchFn_t gdCacheFetch,
+	       gdCacheReleaseFn_t gdCacheRelease)
 {
   gdCache_head_t *head;
 

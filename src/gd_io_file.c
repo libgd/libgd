@@ -33,10 +33,10 @@
 /* this is used for creating images in main memory */
 
 typedef struct fileIOCtx
-  {
-    gdIOCtx ctx;
-    FILE *f;
-  }
+{
+  gdIOCtx ctx;
+  FILE *f;
+}
 fileIOCtx;
 
 struct fileIOCtx *fileIOCtxPtr;
@@ -80,8 +80,7 @@ gdNewFileCtx (FILE * f)
   return (gdIOCtx *) ctx;
 }
 
-static
-void
+static void
 gdFreeFileCtx (gdIOCtx * ctx)
 {
   gdFree (ctx);

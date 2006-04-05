@@ -41,9 +41,9 @@
 static const char *const GD_JPEG_VERSION = "1.0";
 
 typedef struct _jmpbuf_wrapper
-  {
-    jmp_buf jmpbuf;
-  }
+{
+  jmp_buf jmpbuf;
+}
 jmpbuf_wrapper;
 
 /* Called by the IJG JPEG library upon encountering a fatal error */
@@ -186,8 +186,7 @@ gdImageJpegCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
   sprintf (comment, "CREATOR: gd-jpeg v%s (using IJG JPEG v%d),",
 	   GD_JPEG_VERSION, JPEG_LIB_VERSION);
   if (quality >= 0)
-    sprintf (comment + strlen (comment), " quality = %d\n",
-	     quality);
+    sprintf (comment + strlen (comment), " quality = %d\n", quality);
   else
     strcat (comment + strlen (comment), " default quality\n");
   jpeg_write_marker (&cinfo, JPEG_COM, (unsigned char *) comment,
@@ -195,11 +194,12 @@ gdImageJpegCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
   if (im->trueColor)
     {
 #if BITS_IN_JSAMPLE == 12
-      fprintf (stderr, "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
-	 "precision. This is mostly useless, because JPEGs on the web are\n"
-	 "8-bit and such versions of the jpeg library won't read or write\n"
+      fprintf (stderr,
+	       "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
+	       "precision. This is mostly useless, because JPEGs on the web are\n"
+	       "8-bit and such versions of the jpeg library won't read or write\n"
 	       "them. GD doesn't support these unusual images. Edit your\n"
-	 "jmorecfg.h file to specify the correct precision and completely\n"
+	       "jmorecfg.h file to specify the correct precision and completely\n"
 	       "'make clean' and 'make install' libjpeg again. Sorry.\n");
       goto error;
 #endif /* BITS_IN_JSAMPLE == 12 */
@@ -266,9 +266,7 @@ gdImageCreateFromJpeg (FILE * inFile)
   return im;
 }
 
-void
-  jpeg_gdIOCtx_src (j_decompress_ptr cinfo,
-		    gdIOCtx * infile);
+void jpeg_gdIOCtx_src (j_decompress_ptr cinfo, gdIOCtx * infile);
 
 /* 
  * Create a gd-format image from the JPEG-format INFILE.  Returns the
@@ -322,8 +320,7 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
   if (cinfo.image_height > INT_MAX)
     fprintf (stderr, "gd-jpeg: warning: JPEG image height (%u) is"
 	     " greater than INT_MAX (%d) (and thus greater than"
-	     " gd can handle)", cinfo.image_height,
-	     INT_MAX);
+	     " gd can handle)", cinfo.image_height, INT_MAX);
 
   if (cinfo.image_width > INT_MAX)
     fprintf (stderr, "gd-jpeg: warning: JPEG image width (%u) is"
@@ -334,8 +331,7 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
 			       (int) cinfo.image_height);
   if (im == 0)
     {
-      fprintf (stderr, "gd-jpeg error: cannot allocate gdImage"
-	       " struct\n");
+      fprintf (stderr, "gd-jpeg error: cannot allocate gdImage" " struct\n");
       goto error;
     }
 
@@ -353,8 +349,7 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
   printf ("gd-jpeg: JPEG image information:");
   if (cinfo.saw_JFIF_marker)
     printf (" JFIF version %d.%.2d",
-	    (int) cinfo.JFIF_major_version,
-	    (int) cinfo.JFIF_minor_version);
+	    (int) cinfo.JFIF_major_version, (int) cinfo.JFIF_minor_version);
   else if (cinfo.saw_Adobe_marker)
     printf (" Adobe format");
   else
@@ -363,10 +358,8 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
   printf (" %ux%u (raw) / %ux%u (scaled) %d-bit", cinfo.image_width,
 	  cinfo.image_height, cinfo.output_width,
 	  cinfo.output_height, cinfo.data_precision);
-  printf (" %s", (cinfo.progressive_mode ? "progressive" :
-		  "baseline"));
-  printf (" image, %d quantized colors, ",
-	  cinfo.actual_number_of_colors);
+  printf (" %s", (cinfo.progressive_mode ? "progressive" : "baseline"));
+  printf (" image, %d quantized colors, ", cinfo.actual_number_of_colors);
 
   switch (cinfo.jpeg_color_space)
     {
@@ -419,10 +412,10 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
 
 #if BITS_IN_JSAMPLE == 12
   fprintf (stderr, "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
-	 "precision. This is mostly useless, because JPEGs on the web are\n"
-	 "8-bit and such versions of the jpeg library won't read or write\n"
+	   "precision. This is mostly useless, because JPEGs on the web are\n"
+	   "8-bit and such versions of the jpeg library won't read or write\n"
 	   "them. GD doesn't support these unusual images. Edit your\n"
-	 "jmorecfg.h file to specify the correct precision and completely\n"
+	   "jmorecfg.h file to specify the correct precision and completely\n"
 	   "'make clean' and 'make install' libjpeg again. Sorry.\n");
   goto error;
 #endif /* BITS_IN_JSAMPLE == 12 */
@@ -492,14 +485,13 @@ typedef int safeboolean;
 /* Expanded data source object for gdIOCtx input */
 
 typedef struct
-  {
-    struct jpeg_source_mgr pub;	/* public fields */
+{
+  struct jpeg_source_mgr pub;	/* public fields */
 
-    gdIOCtx *infile;		/* source stream */
-    unsigned char *buffer;	/* start of buffer */
-    safeboolean start_of_file;	/* have we gotten any data yet? */
-     
-  }
+  gdIOCtx *infile;		/* source stream */
+  unsigned char *buffer;	/* start of buffer */
+  safeboolean start_of_file;	/* have we gotten any data yet? */
+ }
 my_source_mgr;
 
 typedef my_source_mgr *my_src_ptr;
@@ -558,45 +550,33 @@ init_source (j_decompress_ptr cinfo)
  */
 
 #define END_JPEG_SEQUENCE "\r\n[*]--:END JPEG:--[*]\r\n"
-
-safeboolean
+  safeboolean
 fill_input_buffer (j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
   size_t nbytes = 0;
   
-  /* size_t got; */
-  /* char *s; */
+    /* size_t got; */
+    /* char *s; */
     memset (src->buffer, 0, INPUT_BUF_SIZE);
-  
-    while (nbytes < INPUT_BUF_SIZE)
+  while (nbytes < INPUT_BUF_SIZE)
     {
-      
-	int got = gdGetBuf (src->buffer + nbytes, 
-			    INPUT_BUF_SIZE - nbytes,
-			    src->infile);
-      
-	if ((got == EOF) || (got == 0))
+      int got = gdGetBuf (src->buffer + nbytes, INPUT_BUF_SIZE - nbytes,
+			   src->infile);
+      if ((got == EOF) || (got == 0))
 	{
 	  
-	  /* EOF or error. If we got any data, don't worry about it.
-	     If we didn't, then this is unexpected. */ 
+	    /* EOF or error. If we got any data, don't worry about it.
+	       If we didn't, then this is unexpected. */ 
 	    if (!nbytes)
 	    {
-	      
-		nbytes = -1;
-	      
-	    }
-	  
-	    break;
-	  
-	}
-      
-	nbytes += got;
-      
-    }
-  
-    if (nbytes <= 0)
+	      nbytes = -1;
+	    }
+	  break;
+	}
+      nbytes += got;
+    }
+  if (nbytes <= 0)
     {
       if (src->start_of_file)	/* Treat empty input file as fatal error */
 	ERREXIT (cinfo, JERR_INPUT_EMPTY);
@@ -688,8 +668,7 @@ term_source (j_decompress_ptr cinfo)
  */
 
 void
-jpeg_gdIOCtx_src (j_decompress_ptr cinfo,
-		  gdIOCtx * infile)
+jpeg_gdIOCtx_src (j_decompress_ptr cinfo, gdIOCtx * infile)
 {
   my_src_ptr src;
 
@@ -709,8 +688,7 @@ jpeg_gdIOCtx_src (j_decompress_ptr cinfo,
       src->buffer = (unsigned char *)
 	(*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
 				    INPUT_BUF_SIZE * sizeof (unsigned char));
-      
-    }
+    }
 
   src = (my_src_ptr) cinfo->src;
   src->pub.init_source = init_source;

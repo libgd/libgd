@@ -45,7 +45,7 @@ main (int argc, char **argv)
 #ifdef HAVE_LIBPNG
   gdImagePng (im, out);
 #else
-  fprintf(stderr, "No PNG library support available.\n");
+  fprintf (stderr, "No PNG library support available.\n");
 #endif
   fclose (out);
   gdImageDestroy (im);

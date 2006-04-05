@@ -149,7 +149,7 @@ typedef unsigned short histcell;	/* histogram cell; prefer an unsigned type */
 
 typedef histcell *histptr;	/* for pointers to histogram cells */
 
-typedef histcell hist1d[HIST_C3_ELEMS];		/* typedefs for the array */
+typedef histcell hist1d[HIST_C3_ELEMS];	/* typedefs for the array */
 typedef hist1d *hist2d;		/* type for the 2nd-level pointers */
 typedef hist2d *hist3d;		/* type for third-level pointer */
 typedef hist3d *hist4d;		/* type for top-level pointer */
@@ -185,18 +185,18 @@ typedef FSERROR *FSERRPTR;	/* pointer to error array */
 /* Private object */
 
 typedef struct
-  {
-    hist4d histogram;		/* pointer to the histogram */
-    int needs_zeroed;		/* TRUE if next pass must zero histogram */
+{
+  hist4d histogram;		/* pointer to the histogram */
+  int needs_zeroed;		/* TRUE if next pass must zero histogram */
 
-    /* Variables for Floyd-Steinberg dithering */
-    FSERRPTR fserrors;		/* accumulated errors */
-    int on_odd_row;		/* flag to remember which row we are on */
-    int *error_limiter;		/* table for clamping the applied error */
-    int *error_limiter_storage;	/* gdMalloc'd storage for the above */
-    int transparentIsPresent;	/* TBB: for rescaling to ensure that */
-    int opaqueIsPresent;	/* 100% opacity & transparency are preserved */
-  }
+  /* Variables for Floyd-Steinberg dithering */
+  FSERRPTR fserrors;		/* accumulated errors */
+  int on_odd_row;		/* flag to remember which row we are on */
+  int *error_limiter;		/* table for clamping the applied error */
+  int *error_limiter_storage;	/* gdMalloc'd storage for the above */
+  int transparentIsPresent;	/* TBB: for rescaling to ensure that */
+  int opaqueIsPresent;		/* 100% opacity & transparency are preserved */
+}
 my_cquantizer;
 
 typedef my_cquantizer *my_cquantize_ptr;
@@ -484,7 +484,8 @@ have_c3max:
   dist1 = ((c1max - c1min) << C1_SHIFT) * C1_SCALE;
   dist2 = ((c2max - c2min) << C2_SHIFT) * C2_SCALE;
   dist3 = ((c3max - c3min) << C3_SHIFT) * C3_SCALE;
-  boxp->volume = dist0 * dist0 + dist1 * dist1 + dist2 * dist2 + dist3 * dist3;
+  boxp->volume =
+    dist0 * dist0 + dist1 * dist1 + dist2 * dist2 + dist3 * dist3;
 
   /* Now scan remaining volume of box and compute population */
   ccount = 0;
@@ -505,8 +506,7 @@ have_c3max:
 
 static int
 median_cut (gdImagePtr im, my_cquantize_ptr cquantize,
-	    boxptr boxlist, int numboxes,
-	    int desired_colors)
+	    boxptr boxlist, int numboxes, int desired_colors)
 /* Repeatedly select and split the largest box until we have enough boxes */
 {
   int n, lb;
@@ -643,10 +643,14 @@ compute_color (gdImagePtr im, my_cquantize_ptr cquantize,
 		  if ((count = *histp++) != 0)
 		    {
 		      total += count;
-		      c0total += ((c0 << C0_SHIFT) + ((1 << C0_SHIFT) >> 1)) * count;
-		      c1total += ((c1 << C1_SHIFT) + ((1 << C1_SHIFT) >> 1)) * count;
-		      c2total += ((c2 << C2_SHIFT) + ((1 << C2_SHIFT) >> 1)) * count;
-		      c3total += ((c3 << C3_SHIFT) + ((1 << C3_SHIFT) >> 1)) * count;
+		      c0total +=
+			((c0 << C0_SHIFT) + ((1 << C0_SHIFT) >> 1)) * count;
+		      c1total +=
+			((c1 << C1_SHIFT) + ((1 << C1_SHIFT) >> 1)) * count;
+		      c2total +=
+			((c2 << C2_SHIFT) + ((1 << C2_SHIFT) >> 1)) * count;
+		      c3total +=
+			((c3 << C3_SHIFT) + ((1 << C3_SHIFT) >> 1)) * count;
 		    }
 		}
 	    }
@@ -783,7 +787,8 @@ select_colors (gdImagePtr im, my_cquantize_ptr cquantize, int desired_colors)
 
 static int
 find_nearby_colors (gdImagePtr im, my_cquantize_ptr cquantize,
-		int minc0, int minc1, int minc2, int minc3, int colorlist[])
+		    int minc0, int minc1, int minc2, int minc3,
+		    int colorlist[])
 /* Locate the colormap entries close enough to an update box to be candidates
  * for the nearest entry to some cell(s) in the update box.  The update box
  * is specified by the center coordinates of its first cell.  The number of
@@ -993,7 +998,8 @@ find_best_colors (gdImagePtr im, my_cquantize_ptr cquantize,
 
   /* Initialize best-distance for each cell of the update box */
   bptr = bestdist;
-  for (i = BOX_C0_ELEMS * BOX_C1_ELEMS * BOX_C2_ELEMS * BOX_C3_ELEMS - 1; i >= 0; i--)
+  for (i = BOX_C0_ELEMS * BOX_C1_ELEMS * BOX_C2_ELEMS * BOX_C3_ELEMS - 1;
+       i >= 0; i--)
     *bptr++ = 0x7FFFFFFFL;
 
   /* For each color selected by find_nearby_colors,
@@ -1098,11 +1104,12 @@ fill_inverse_cmap (gdImagePtr im, my_cquantize_ptr cquantize,
   /* Determine which colormap entries are close enough to be candidates
    * for the nearest entry to some cell in the update box.
    */
-  numcolors = find_nearby_colors (im, cquantize, minc0, minc1, minc2, minc3, colorlist);
+  numcolors =
+    find_nearby_colors (im, cquantize, minc0, minc1, minc2, minc3, colorlist);
 
   /* Determine the actually nearest colors. */
-  find_best_colors (im, cquantize, minc0, minc1, minc2, minc3, numcolors, colorlist,
-		    bestcolor);
+  find_best_colors (im, cquantize, minc0, minc1, minc2, minc3, numcolors,
+		    colorlist, bestcolor);
 
   /* Save the best color numbers (plus 1) in the main cache array */
   c0 <<= BOX_C0_LOG;		/* convert ID back to base cell indexes */
@@ -1178,9 +1185,8 @@ pass2_no_dither (gdImagePtr im, my_cquantize_ptr cquantize)
 		  int bdist = (im->blue[i] >> C2_SHIFT) - c2;
 		  int adist = (im->alpha[i] >> C3_SHIFT) - c3;
 		  int dist = (rdist * rdist) * R_SCALE +
-		  (gdist * gdist) * G_SCALE +
-		  (bdist * bdist) * B_SCALE +
-		  (adist * adist) * A_SCALE;
+		    (gdist * gdist) * G_SCALE +
+		    (bdist * bdist) * B_SCALE + (adist * adist) * A_SCALE;
 		  if (dist < mindist)
 		    {
 		      best = i;
@@ -1221,7 +1227,6 @@ pass2_no_dither (gdImagePtr im, my_cquantize_ptr cquantize)
 
 void
 pass2_fs_dither (gdImagePtr im, my_cquantize_ptr cquantize)
-
 /* This version performs Floyd-Steinberg dithering */
 {
   hist4d histogram = cquantize->histogram;
@@ -1243,9 +1248,7 @@ pass2_fs_dither (gdImagePtr im, my_cquantize_ptr cquantize)
   int *colormap1 = im->green;
   int *colormap2 = im->blue;
   int *colormap3 = im->alpha;
-  SHIFT_TEMPS
-
-    for (row = 0; row < num_rows; row++)
+  SHIFT_TEMPS for (row = 0; row < num_rows; row++)
     {
       inptr = im->tpixels[row];
       outptr = im->pixels[row];
@@ -1265,7 +1268,7 @@ pass2_fs_dither (gdImagePtr im, my_cquantize_ptr cquantize)
 	  dir = 1;
 	  dir4 = 4;
 	  errorptr = cquantize->fserrors;	/* => entry before first real column */
-	  cquantize->on_odd_row = TRUE;		/* flip for next time */
+	  cquantize->on_odd_row = TRUE;	/* flip for next time */
 	}
       /* Preset error values: no error propagated to first pixel from left */
       cur0 = cur1 = cur2 = cur3 = 0;
@@ -1340,15 +1343,13 @@ pass2_fs_dither (gdImagePtr im, my_cquantize_ptr cquantize)
 	  /* Index into the cache with adjusted pixel value */
 	  cachep = &histogram
 	    [cur0 >> C0_SHIFT]
-	    [cur1 >> C1_SHIFT]
-	    [cur2 >> C2_SHIFT]
-	    [cur3 >> (C3_SHIFT + 1)];
+	    [cur1 >> C1_SHIFT][cur2 >> C2_SHIFT][cur3 >> (C3_SHIFT + 1)];
 	  /* If we have not seen this color before, find nearest colormap */
 	  /* entry and update the cache */
 	  if (*cachep == 0)
 	    fill_inverse_cmap (im, cquantize,
-		       cur0 >> C0_SHIFT, cur1 >> C1_SHIFT, cur2 >> C2_SHIFT,
-			       cur3 >> (C3_SHIFT + 1));
+			       cur0 >> C0_SHIFT, cur1 >> C1_SHIFT,
+			       cur2 >> C2_SHIFT, cur3 >> (C3_SHIFT + 1));
 	  /* Now emit the colormap index for this cell */
 	  {
 	    register int pixcode = *cachep - 1;
@@ -1443,7 +1444,8 @@ init_error_limit (gdImagePtr im, my_cquantize_ptr cquantize)
   int *table;
   int in, out;
 
-  cquantize->error_limiter_storage = (int *) gdMalloc ((255 * 2 + 1) * sizeof (int));
+  cquantize->error_limiter_storage =
+    (int *) gdMalloc ((255 * 2 + 1) * sizeof (int));
   if (!cquantize->error_limiter_storage)
     {
       return 0;
@@ -1486,8 +1488,7 @@ zeroHistogram (hist4d histogram)
       for (j = 0; j < HIST_C1_ELEMS; j++)
 	{
 	  memset (histogram[i][j],
-		  0,
-		  HIST_C2_ELEMS * HIST_C3_ELEMS * sizeof (histcell));
+		  0, HIST_C2_ELEMS * HIST_C3_ELEMS * sizeof (histcell));
 	}
     }
 }
@@ -1541,8 +1542,9 @@ gdImageTrueColorToPalette (gdImagePtr im, int dither, int colorsWanted)
 	}
       for (j = 0; (j < HIST_C1_ELEMS); j++)
 	{
-	  cquantize->histogram[i][j] = (hist2d) gdCalloc (HIST_C2_ELEMS * HIST_C3_ELEMS,
-							  sizeof (histcell));
+	  cquantize->histogram[i][j] =
+	    (hist2d) gdCalloc (HIST_C2_ELEMS * HIST_C3_ELEMS,
+			       sizeof (histcell));
 	  if (!cquantize->histogram[i][j])
 	    {
 	      goto outOfMemory;
@@ -1551,8 +1553,7 @@ gdImageTrueColorToPalette (gdImagePtr im, int dither, int colorsWanted)
     }
   cquantize->fserrors = (FSERRPTR) gdMalloc (4 * sizeof (FSERROR));
   init_error_limit (im, cquantize);
-  arraysize = (size_t) ((im->sx + 2) *
-			(4 * sizeof (FSERROR)));
+  arraysize = (size_t) ((im->sx + 2) * (4 * sizeof (FSERROR)));
   /* Allocate Floyd-Steinberg workspace. */
   cquantize->fserrors = gdCalloc (arraysize, 1);
   if (!cquantize->fserrors)

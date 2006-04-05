@@ -29,16 +29,16 @@ char *
 gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
 		  double ptsize, double angle, int x, int y, char *string)
 {
-  /* 2.0.6: valid return */ 
+  /* 2.0.6: valid return */
   return gdImageStringFT (im, brect, fg, fontlist, ptsize,
-		   angle, x, y, string);
+			  angle, x, y, string);
 }
 
 #ifndef HAVE_LIBFREETYPE
 char *
 gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
-		 double ptsize, double angle, int x, int y, char *string,
-		 gdFTStringExtraPtr strex)
+		   double ptsize, double angle, int x, int y, char *string,
+		   gdFTStringExtraPtr strex)
 {
   return "libgd was not built with FreeType font support\n";
 }
@@ -107,29 +107,29 @@ typedef struct
 font_t;
 
 typedef struct
-  {
-    char *fontlist;		/* key */
-    FT_Library *library;
-  }
+{
+  char *fontlist;		/* key */
+  FT_Library *library;
+}
 fontkey_t;
 
 typedef struct
-  {
-    int pixel;			/* key */
-    int bgcolor;		/* key */
-    int fgcolor;		/* key *//* -ve means no antialias */
-    gdImagePtr im;		/* key */
-    int tweencolor;
-  }
+{
+  int pixel;			/* key */
+  int bgcolor;			/* key */
+  int fgcolor;			/* key *//* -ve means no antialias */
+  gdImagePtr im;		/* key */
+  int tweencolor;
+}
 tweencolor_t;
 
 typedef struct
-  {
-    int pixel;			/* key */
-    int bgcolor;		/* key */
-    int fgcolor;		/* key *//* -ve means no antialias */
-    gdImagePtr im;		/* key */
-  }
+{
+  int pixel;			/* key */
+  int bgcolor;			/* key */
+  int fgcolor;			/* key *//* -ve means no antialias */
+  gdImagePtr im;		/* key */
+}
 tweencolorkey_t;
 
 /********************************************************************
@@ -258,8 +258,7 @@ gdTcl_UtfToUniChar (char *str, Tcl_UniChar * chPtr)
 	   * by a trail-byte.
 	   */
 
-	  *chPtr = (Tcl_UniChar) (((byte & 0x1F) << 6)
-				  | (str[1] & 0x3F));
+	  *chPtr = (Tcl_UniChar) (((byte & 0x1F) << 6) | (str[1] & 0x3F));
 	  return 2;
 	}
       /*
@@ -280,7 +279,7 @@ gdTcl_UtfToUniChar (char *str, Tcl_UniChar * chPtr)
 	   */
 
 	  *chPtr = (Tcl_UniChar) (((byte & 0x0F) << 12)
-				| ((str[1] & 0x3F) << 6) | (str[2] & 0x3F));
+				  | ((str[1] & 0x3F) << 6) | (str[2] & 0x3F));
 	  return 3;
 	}
       /*
@@ -380,7 +379,9 @@ fontFetch (char **error, void *key)
       fullname = gdRealloc (fullname,
 			    strlen (fontsearchpath) + strlen (name) + 6);
       /* if name is an absolute filename then test directly */
-      if (*name == '/' || (name[0] != 0 && name[1] == ':' && (name[2] == '/' || name[2] == '\\')))
+      if (*name == '/'
+	  || (name[0] != 0 && name[1] == ':'
+	      && (name[2] == '/' || name[2] == '\\')))
 	{
 	  sprintf (fullname, "%s", name);
 	  if (access (fullname, R_OK) == 0)
@@ -398,23 +399,23 @@ fontFetch (char **error, void *key)
 	      font_found++;
 	      break;
 	    }
-          sprintf (fullname, "%s/%s.pfa", dir, name);
-          if (access (fullname, R_OK) == 0)
-            {
+	  sprintf (fullname, "%s/%s.pfa", dir, name);
+	  if (access (fullname, R_OK) == 0)
+	    {
 	      font_found++;
 	      break;
-	}
+	    }
 	  sprintf (fullname, "%s/%s.pfb", dir, name);
 	  if (access (fullname, R_OK) == 0)
 	    {
 	      font_found++;
-	break;
-    }
+	      break;
+	    }
 	}
-  gdFree (path);
+      gdFree (path);
       if (font_found)
 	break;
-  }
+    }
   gdFree (fontlist);
   if (!font_found)
     {
@@ -459,7 +460,7 @@ fontFetch (char **error, void *key)
 	  a->have_char_map_sjis = 1;
 	  found = charmap;
 	}
-      else if ((platform == 1 && encoding == 0)		/* Apple Roman */
+      else if ((platform == 1 && encoding == 0)	/* Apple Roman */
 	       || (platform == 2 && encoding == 0))
 	{			/* ISO ASCII */
 	  a->have_char_map_apple_roman = 1;
@@ -497,8 +498,7 @@ tweenColorTest (void *element, void *key)
 
   return (a->pixel == b->pixel
 	  && a->bgcolor == b->bgcolor
-	  && a->fgcolor == b->fgcolor
-	  && a->im == b->im);
+	  && a->fgcolor == b->fgcolor && a->im == b->im);
 }
 
 /*
@@ -528,33 +528,40 @@ tweenColorFetch (char **error, void *key)
   if (fg < 0)
     {
       if ((pixel + pixel) >= NUMCOLORS)
-      a->tweencolor = -fg;
+	a->tweencolor = -fg;
       else
-	  a->tweencolor = bg;
+	a->tweencolor = bg;
     }
   else
     {
       npixel = NUMCOLORS - pixel;
       if (im->trueColor)
-       {
-         /* 2.0.1: use gdImageSetPixel to do the alpha blending work,
-            or to just store the alpha level. All we have to do here
-            is incorporate our knowledge of the percentage of this
-            pixel that is really "lit" by pushing the alpha value
-            up toward transparency in edge regions. */
-         a->tweencolor = gdTrueColorAlpha (
-                                            gdTrueColorGetRed (fg),
-                                            gdTrueColorGetGreen (fg),
-                                            gdTrueColorGetBlue (fg),
-              gdAlphaMax - (gdTrueColorGetAlpha (fg) * pixel / NUMCOLORS));
-       }
+	{
+	  /* 2.0.1: use gdImageSetPixel to do the alpha blending work,
+	     or to just store the alpha level. All we have to do here
+	     is incorporate our knowledge of the percentage of this
+	     pixel that is really "lit" by pushing the alpha value
+	     up toward transparency in edge regions. */
+	  a->tweencolor = gdTrueColorAlpha (gdTrueColorGetRed (fg),
+					    gdTrueColorGetGreen (fg),
+					    gdTrueColorGetBlue (fg),
+					    gdAlphaMax -
+					    (gdTrueColorGetAlpha (fg) *
+					     pixel / NUMCOLORS));
+	}
       else
-       {
+	{
 	  a->tweencolor = gdImageColorResolve (im,
-		   (pixel * im->red[fg] + npixel * im->red[bg]) / NUMCOLORS,
-	       (pixel * im->green[fg] + npixel * im->green[bg]) / NUMCOLORS,
-		(pixel * im->blue[fg] + npixel * im->blue[bg]) / NUMCOLORS);
-    }
+					       (pixel * im->red[fg] +
+						npixel * im->red[bg]) /
+					       NUMCOLORS,
+					       (pixel * im->green[fg] +
+						npixel * im->green[bg]) /
+					       NUMCOLORS,
+					       (pixel * im->blue[fg] +
+						npixel * im->blue[bg]) /
+					       NUMCOLORS);
+	}
     }
   return (void *) a;
 }
@@ -567,7 +574,8 @@ tweenColorRelease (void *element)
 
 /* draw_bitmap - transfers glyph bitmap to GD image */
 static char *
-gdft_draw_bitmap (gdCache_head_t *tc_cache, gdImage * im, int fg, FT_Bitmap bitmap, int pen_x, int pen_y)
+gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
+		  FT_Bitmap bitmap, int pen_x, int pen_y)
 {
   unsigned char *pixel = NULL;
   int *tpixel = NULL;
@@ -580,76 +588,90 @@ gdft_draw_bitmap (gdCache_head_t *tc_cache, gdImage * im, int fg, FT_Bitmap bitm
   tc_key.fgcolor = fg;
   tc_key.im = im;
   /* Truecolor version; does not require the cache */
-  if (im->trueColor) 
+  if (im->trueColor)
     {
-    for (row = 0; row < bitmap.rows; row++)
-      {
-        pc = row * bitmap.pitch;
-        pcr = pc;
-        y = pen_y + row;
-        /* clip if out of bounds */
-        if (y >= im->sy || y < 0)
-	  continue;
-      for (col = 0; col < bitmap.width; col++, pc++)
+      for (row = 0; row < bitmap.rows; row++)
 	{
-          int level;  
-	  if (bitmap.pixel_mode == ft_pixel_mode_grays)
+	  pc = row * bitmap.pitch;
+	  pcr = pc;
+	  y = pen_y + row;
+	  /* clip if out of bounds */
+	  if (y >= im->sy || y < 0)
+	    continue;
+	  for (col = 0; col < bitmap.width; col++, pc++)
 	    {
-	      /*
-	       * Scale to 128 levels of alpha for gd use.
-               * alpha 0 is opacity, so be sure to invert at the end
-	       */
-	      level = (bitmap.buffer[pc] * gdAlphaMax /
-                (bitmap.num_grays - 1)); 
-            }
-          else if (bitmap.pixel_mode == ft_pixel_mode_mono)
-            {
-              /* 2.0.5: mode_mono fix from Giuliano Pochini */
-              level = ((bitmap.buffer[(col>>3)+pcr]) & (1<<(~col&0x07)))
-		? gdAlphaTransparent :
-                gdAlphaOpaque;
-            }  
-          else 
-	    {
-	      return "Unsupported ft_pixel_mode";
-	    }
-          if ((fg >= 0) && (im->trueColor)) {
-            /* Consider alpha in the foreground color itself to be an
-              upper bound on how opaque things get, when truecolor is
-              available. Without truecolor this results in far too many
-              color indexes. */ 
-            level = level * (gdAlphaMax - gdTrueColorGetAlpha(fg)) / gdAlphaMax;
-          }
-          level = gdAlphaMax - level;  
-          x = pen_x + col;
+	      int level;
+	      if (bitmap.pixel_mode == ft_pixel_mode_grays)
+		{
+		  /*
+		   * Scale to 128 levels of alpha for gd use.
+		   * alpha 0 is opacity, so be sure to invert at the end
+		   */
+		  level = (bitmap.buffer[pc] * gdAlphaMax /
+			   (bitmap.num_grays - 1));
+		}
+	      else if (bitmap.pixel_mode == ft_pixel_mode_mono)
+		{
+		  /* 2.0.5: mode_mono fix from Giuliano Pochini */
+		  level =
+		    ((bitmap.
+		      buffer[(col >> 3) +
+			     pcr]) & (1 << (~col & 0x07))) ?
+		    gdAlphaTransparent : gdAlphaOpaque;
+		}
+	      else
+		{
+		  return "Unsupported ft_pixel_mode";
+		}
+	      if ((fg >= 0) && (im->trueColor))
+		{
+		  /* Consider alpha in the foreground color itself to be an
+		     upper bound on how opaque things get, when truecolor is
+		     available. Without truecolor this results in far too many
+		     color indexes. */
+		  level =
+		    level * (gdAlphaMax -
+			     gdTrueColorGetAlpha (fg)) / gdAlphaMax;
+		}
+	      level = gdAlphaMax - level;
+	      x = pen_x + col;
 	      /* clip if out of bounds */
 	      if (x >= im->sx || x < 0)
 		continue;
 	      /* get pixel location in gd buffer */
-	    tpixel = &im->tpixels[y][x];
-            if (fg < 0) {
-              if (level < (gdAlphaMax / 2)) {
-                *tpixel = -fg;
-              }
-            } else {
-              if (im->alphaBlendingFlag) { 
-                *tpixel = gdAlphaBlend(*tpixel, (level << 24) + (fg & 0xFFFFFF));
-              } else {    
-                *tpixel = (level << 24) + (fg & 0xFFFFFF);
-              }
-            }
-	  } 
-        }
+	      tpixel = &im->tpixels[y][x];
+	      if (fg < 0)
+		{
+		  if (level < (gdAlphaMax / 2))
+		    {
+		      *tpixel = -fg;
+		    }
+		}
+	      else
+		{
+		  if (im->alphaBlendingFlag)
+		    {
+		      *tpixel =
+			gdAlphaBlend (*tpixel,
+				      (level << 24) + (fg & 0xFFFFFF));
+		    }
+		  else
+		    {
+		      *tpixel = (level << 24) + (fg & 0xFFFFFF);
+		    }
+		}
+	    }
+	}
       return (char *) NULL;
     }
-    /* Non-truecolor case, restored to its more or less original form */ 
+  /* Non-truecolor case, restored to its more or less original form */
   for (row = 0; row < bitmap.rows; row++)
     {
       int pcr;
       pc = row * bitmap.pitch;
       pcr = pc;
-      if(bitmap.pixel_mode==ft_pixel_mode_mono)
-             pc *= 8;    /* pc is measured in bits for monochrome images */
+      if (bitmap.pixel_mode == ft_pixel_mode_mono)
+	pc *= 8;		/* pc is measured in bits for monochrome images */
 
       y = pen_y + row;
 
@@ -674,16 +696,18 @@ gdft_draw_bitmap (gdCache_head_t *tc_cache, gdImage * im, int fg, FT_Bitmap bitm
 	    {
 	      tc_key.pixel = ((bitmap.buffer[pc / 8]
 			       << (pc % 8)) & 128) ? NUMCOLORS : 0;
-              /* 2.0.5: mode_mono fix from Giuliano Pochini */
-              tc_key.pixel = ((bitmap.buffer[(col>>3)+pcr]) & (1<<(~col&0x07)))
-		? NUMCOLORS : 0;
+	      /* 2.0.5: mode_mono fix from Giuliano Pochini */
+	      tc_key.pixel =
+		((bitmap.
+		  buffer[(col >> 3) +
+			 pcr]) & (1 << (~col & 0x07))) ? NUMCOLORS : 0;
 	    }
 	  else
 	    {
 	      return "Unsupported ft_pixel_mode";
 	    }
-	  if (tc_key.pixel > 0) /* if not background */
-	    {			
+	  if (tc_key.pixel > 0)	/* if not background */
+	    {
 	      x = pen_x + col;
 
 	      /* clip if out of bounds */
@@ -694,16 +718,15 @@ gdft_draw_bitmap (gdCache_head_t *tc_cache, gdImage * im, int fg, FT_Bitmap bitm
 	      if (tc_key.pixel == NUMCOLORS)
 		{
 		  /* use fg color directly. gd 2.0.2: watch out for
-                     negative indexes (thanks to David Marwood). */ 
-		    *pixel = (fg < 0) ? -fg : fg;
+		     negative indexes (thanks to David Marwood). */
+		  *pixel = (fg < 0) ? -fg : fg;
 		}
 	      else
 		{
 		  /* find antialised color */
-	
+
 		  tc_key.bgcolor = *pixel;
-		  tc_elem = (tweencolor_t *) gdCacheGet (
-							  tc_cache, &tc_key);
+		  tc_elem = (tweencolor_t *) gdCacheGet (tc_cache, &tc_key);
 		  *pixel = tc_elem->tweencolor;
 		}
 	    }
@@ -728,12 +751,12 @@ static gdCache_head_t *fontCache;
 static FT_Library library;
 
 void
-gdFreeFontCache()
+gdFreeFontCache ()
 {
   if (fontCache)
     {
-      gdCacheDelete(fontCache);
-      FT_Done_FreeType(library);
+      gdCacheDelete (fontCache);
+      FT_Done_FreeType (library);
     }
 }
 
@@ -744,14 +767,14 @@ char *
 gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
 		 double ptsize, double angle, int x, int y, char *string)
 {
-	return gdImageStringFTEx(im, brect, fg, fontlist,
-		ptsize, angle, x, y, string, 0);
+  return gdImageStringFTEx (im, brect, fg, fontlist,
+			    ptsize, angle, x, y, string, 0);
 }
 
 char *
 gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
-		 double ptsize, double angle, int x, int y, char *string,
-		gdFTStringExtraPtr strex)
+		   double ptsize, double angle, int x, int y, char *string,
+		   gdFTStringExtraPtr strex)
 {
   FT_BBox bbox, glyph_bbox;
   FT_Matrix matrix;
@@ -783,15 +806,18 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
    *   brand new image, the cache gives out bogus
    *   colorindexes.          -- 27.06.2001 <krisku@arrak.fi>
    */
-  gdCache_head_t  *tc_cache;
+  gdCache_head_t *tc_cache;
 
-  if (strex) {
-    if ((strex->flags & gdFTEX_LINESPACE) == gdFTEX_LINESPACE) {
-      linespace = strex->linespacing;
+  if (strex)
+    {
+      if ((strex->flags & gdFTEX_LINESPACE) == gdFTEX_LINESPACE)
+	{
+	  linespace = strex->linespacing;
+	}
     }
-  }
-  tc_cache = gdCacheCreate( TWEENCOLORCACHESIZE,
-               tweenColorTest, tweenColorFetch, tweenColorRelease );
+  tc_cache = gdCacheCreate (TWEENCOLORCACHESIZE,
+			    tweenColorTest, tweenColorFetch,
+			    tweenColorRelease);
 
 /***** initialize font library and font cache on first call ******/
 
@@ -799,7 +825,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
     {
       if (FT_Init_FreeType (&library))
 	{
-	  gdCacheDelete( tc_cache );
+	  gdCacheDelete (tc_cache);
 	  return "Failure to initialize font library";
 	}
       fontCache = gdCacheCreate (FONTCACHESIZE,
@@ -813,7 +839,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
   font = (font_t *) gdCacheGet (fontCache, &fontkey);
   if (!font)
     {
-      gdCacheDelete( tc_cache );
+      gdCacheDelete (tc_cache);
       return fontCache->error;
     }
   face = font->face;		/* shortcut */
@@ -822,7 +848,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
   if (FT_Set_Char_Size (face, 0, (FT_F26Dot6) (ptsize * 64),
 			GD_RESOLUTION, GD_RESOLUTION))
     {
-      gdCacheDelete( tc_cache );
+      gdCacheDelete (tc_cache);
       return "Could not set character size";
     }
 
@@ -881,7 +907,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
       if (ch == '\n')
 	{
 	  penf.y -= face->size->metrics.height * linespace;
-	  penf.y = (penf.y - 32) & -64;		/* round to next pixel row */
+	  penf.y = (penf.y - 32) & -64;	/* round to next pixel row */
 	  x1 = (penf.x * cos_a - penf.y * sin_a + 32) / 64;
 	  y1 = (penf.x * sin_a + penf.y * cos_a + 32) / 64;
 	  pen.x = pen.y = 0;
@@ -947,7 +973,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 	    }
 	}
       /* set rotation transform */
-      FT_Set_Transform(face, &matrix, NULL);
+      FT_Set_Transform (face, &matrix, NULL);
       /* Convert character code to glyph index */
       glyph_index = FT_Get_Char_Index (face, ch);
 
@@ -963,8 +989,8 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
       err = FT_Load_Glyph (face, glyph_index, render_mode);
       if (err)
 	{
-	  gdCacheDelete( tc_cache );
-	return "Problem loading glyph";
+	  gdCacheDelete (tc_cache);
+	  return "Problem loading glyph";
 	}
 
       /* transform glyph image */
@@ -976,26 +1002,26 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 	  glyph_bbox.yMin += penf.y;
 	  glyph_bbox.xMax += penf.x;
 	  glyph_bbox.yMax += penf.y;
-	  if (ch == ' ')   /* special case for trailing space */
-             glyph_bbox.xMax += slot->metrics.horiAdvance;
-          if (!i)
-	     {                   /* if first character, init BB corner values */
-	        bbox.xMin = glyph_bbox.xMin;
+	  if (ch == ' ')	/* special case for trailing space */
+	    glyph_bbox.xMax += slot->metrics.horiAdvance;
+	  if (!i)
+	    {			/* if first character, init BB corner values */
+	      bbox.xMin = glyph_bbox.xMin;
+	      bbox.yMin = glyph_bbox.yMin;
+	      bbox.xMax = glyph_bbox.xMax;
+	      bbox.yMax = glyph_bbox.yMax;
+	    }
+	  else
+	    {
+	      if (bbox.xMin > glyph_bbox.xMin)
+		bbox.xMin = glyph_bbox.xMin;
+	      if (bbox.yMin > glyph_bbox.yMin)
 		bbox.yMin = glyph_bbox.yMin;
+	      if (bbox.xMax < glyph_bbox.xMax)
 		bbox.xMax = glyph_bbox.xMax;
+	      if (bbox.yMax < glyph_bbox.yMax)
 		bbox.yMax = glyph_bbox.yMax;
-	     }
-	   else
-	     {
-	  if (bbox.xMin > glyph_bbox.xMin)
-	    bbox.xMin = glyph_bbox.xMin;
-	  if (bbox.yMin > glyph_bbox.yMin)
-	    bbox.yMin = glyph_bbox.yMin;
-	  if (bbox.xMax < glyph_bbox.xMax)
-	    bbox.xMax = glyph_bbox.xMax;
-	  if (bbox.yMax < glyph_bbox.yMax)
-	    bbox.yMax = glyph_bbox.yMax;
-	     }
+	    }
 	  i++;
 	}
 
@@ -1006,9 +1032,9 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 	      err = FT_Glyph_To_Bitmap (&image, ft_render_mode_normal, 0, 1);
 	      if (err)
 		{
-		  gdCacheDelete( tc_cache );
-		return "Problem rendering glyph";
-	    }
+		  gdCacheDelete (tc_cache);
+		  return "Problem rendering glyph";
+		}
 	    }
 
 	  /* now, draw to our target surface */
@@ -1059,7 +1085,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 
   if (tmpstr)
     gdFree (tmpstr);
-  gdCacheDelete( tc_cache );
+  gdCacheDelete (tc_cache);
   return (char *) NULL;
 }
 

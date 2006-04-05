@@ -2,7 +2,8 @@
 #define GD_H 1
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /* default fontpath for unix systems  - whatever happened to standards ! */
@@ -67,88 +68,92 @@ extern "C" {
 	based on the alpha channel value of the source color.
 	The resulting color is opaque. */
 
-int gdAlphaBlend(int dest, int src);
+  int gdAlphaBlend (int dest, int src);
 
-typedef struct gdImageStruct {
-	/* Palette-based image pixels */
-	unsigned char ** pixels;
-	int sx;
-	int sy;
-	/* These are valid in palette images only. See also
-		'alpha', which appears later in the structure to
-		preserve binary backwards compatibility */
-	int colorsTotal;
-	int red[gdMaxColors];
-	int green[gdMaxColors];
-	int blue[gdMaxColors]; 
-	int open[gdMaxColors];
-	/* For backwards compatibility, this is set to the
-		first palette entry with 100% transparency,
-		and is also set and reset by the 
-		gdImageColorTransparent function. Newer
-		applications can allocate palette entries
-		with any desired level of transparency; however,
-		bear in mind that many viewers, notably
-		many web browsers, fail to implement
-		full alpha channel for PNG and provide
-		support for full opacity or transparency only. */
-	int transparent;
-	int *polyInts;
-	int polyAllocated;
-	struct gdImageStruct *brush;
-	struct gdImageStruct *tile;	
-	int brushColorMap[gdMaxColors];
-	int tileColorMap[gdMaxColors];
-	int styleLength;
-	int stylePos;
-	int *style;
-	int interlace;
-	/* New in 2.0: thickness of line. Initialized to 1. */
-	int thick;
-	/* New in 2.0: alpha channel for palettes. Note that only
-		Macintosh Internet Explorer and (possibly) Netscape 6
-		really support multiple levels of transparency in
-		palettes, to my knowledge, as of 2/15/01. Most
-		common browsers will display 100% opaque and
-		100% transparent correctly, and do something 
-		unpredictable and/or undesirable for levels
-		in between. TBB */
-	int alpha[gdMaxColors]; 
-	/* Truecolor flag and pixels. New 2.0 fields appear here at the
-		end to minimize breakage of existing object code. */
-	int trueColor;
-	int ** tpixels;
-	/* Should alpha channel be copied, or applied, each time a
-		pixel is drawn? This applies to truecolor images only.
-		No attempt is made to alpha-blend in palette images,
-		even if semitransparent palette entries exist. 
-		To do that, build your image as a truecolor image,
-		then quantize down to 8 bits. */
-	int alphaBlendingFlag;
-	/* Should the alpha channel of the image be saved? This affects
-		PNG at the moment; other future formats may also
-		have that capability. JPEG doesn't. */
-	int saveAlphaFlag;
-} gdImage;
+  typedef struct gdImageStruct
+  {
+    /* Palette-based image pixels */
+    unsigned char **pixels;
+    int sx;
+    int sy;
+    /* These are valid in palette images only. See also
+       'alpha', which appears later in the structure to
+       preserve binary backwards compatibility */
+    int colorsTotal;
+    int red[gdMaxColors];
+    int green[gdMaxColors];
+    int blue[gdMaxColors];
+    int open[gdMaxColors];
+    /* For backwards compatibility, this is set to the
+       first palette entry with 100% transparency,
+       and is also set and reset by the 
+       gdImageColorTransparent function. Newer
+       applications can allocate palette entries
+       with any desired level of transparency; however,
+       bear in mind that many viewers, notably
+       many web browsers, fail to implement
+       full alpha channel for PNG and provide
+       support for full opacity or transparency only. */
+    int transparent;
+    int *polyInts;
+    int polyAllocated;
+    struct gdImageStruct *brush;
+    struct gdImageStruct *tile;
+    int brushColorMap[gdMaxColors];
+    int tileColorMap[gdMaxColors];
+    int styleLength;
+    int stylePos;
+    int *style;
+    int interlace;
+    /* New in 2.0: thickness of line. Initialized to 1. */
+    int thick;
+    /* New in 2.0: alpha channel for palettes. Note that only
+       Macintosh Internet Explorer and (possibly) Netscape 6
+       really support multiple levels of transparency in
+       palettes, to my knowledge, as of 2/15/01. Most
+       common browsers will display 100% opaque and
+       100% transparent correctly, and do something 
+       unpredictable and/or undesirable for levels
+       in between. TBB */
+    int alpha[gdMaxColors];
+    /* Truecolor flag and pixels. New 2.0 fields appear here at the
+       end to minimize breakage of existing object code. */
+    int trueColor;
+    int **tpixels;
+    /* Should alpha channel be copied, or applied, each time a
+       pixel is drawn? This applies to truecolor images only.
+       No attempt is made to alpha-blend in palette images,
+       even if semitransparent palette entries exist. 
+       To do that, build your image as a truecolor image,
+       then quantize down to 8 bits. */
+    int alphaBlendingFlag;
+    /* Should the alpha channel of the image be saved? This affects
+       PNG at the moment; other future formats may also
+       have that capability. JPEG doesn't. */
+    int saveAlphaFlag;
+  }
+  gdImage;
 
-typedef gdImage * gdImagePtr;
+  typedef gdImage *gdImagePtr;
 
-typedef struct {
-	/* # of characters in font */
-	int nchars;
-	/* First character is numbered... (usually 32 = space) */
-	int offset;
-	/* Character width and height */
-	int w;
-	int h;
-	/* Font data; array of characters, one row after another.
-		Easily included in code, also easily loaded from
-		data files. */
-	char *data;
-} gdFont;
+  typedef struct
+  {
+    /* # of characters in font */
+    int nchars;
+    /* First character is numbered... (usually 32 = space) */
+    int offset;
+    /* Character width and height */
+    int w;
+    int h;
+    /* Font data; array of characters, one row after another.
+       Easily included in code, also easily loaded from
+       data files. */
+    char *data;
+  }
+  gdFont;
 
 /* Text functions take these. */
-typedef gdFont *gdFontPtr;
+  typedef gdFont *gdFontPtr;
 
 /* For backwards compatibility only. Use gdImageSetStyle()
 	for MUCH more flexible line drawing. Also see
@@ -169,50 +174,54 @@ typedef gdFont *gdFontPtr;
 /* Functions to manipulate images. */
 
 /* Creates a palette-based image (up to 256 colors). */
-gdImagePtr gdImageCreate(int sx, int sy);
+  gdImagePtr gdImageCreate (int sx, int sy);
 
 /* An alternate name for the above (2.0). */
 #define gdImageCreatePalette gdImageCreate
 
 /* Creates a truecolor image (millions of colors). */
-gdImagePtr gdImageCreateTrueColor(int sx, int sy);
+  gdImagePtr gdImageCreateTrueColor (int sx, int sy);
 
 /* Creates an image from various file types. These functions
 	return a palette or truecolor image based on the
 	nature of the file being loaded. Truecolor PNG
 	stays truecolor; palette PNG stays palette-based;
 	JPEG is always truecolor. */
-gdImagePtr gdImageCreateFromPng(FILE *fd);
-gdImagePtr gdImageCreateFromPngCtx(gdIOCtxPtr in);
-gdImagePtr gdImageCreateFromWBMP(FILE *inFile);
-gdImagePtr gdImageCreateFromWBMPCtx(gdIOCtx *infile); 
-gdImagePtr gdImageCreateFromJpeg(FILE *infile);
-gdImagePtr gdImageCreateFromJpegCtx(gdIOCtx *infile);
+  gdImagePtr gdImageCreateFromPng (FILE * fd);
+  gdImagePtr gdImageCreateFromPngCtx (gdIOCtxPtr in);
+  gdImagePtr gdImageCreateFromWBMP (FILE * inFile);
+  gdImagePtr gdImageCreateFromWBMPCtx (gdIOCtx * infile);
+  gdImagePtr gdImageCreateFromJpeg (FILE * infile);
+  gdImagePtr gdImageCreateFromJpegCtx (gdIOCtx * infile);
 
 /* A custom data source. */
 /* The source function must return -1 on error, otherwise the number
         of bytes fetched. 0 is EOF, not an error! */
 /* context will be passed to your source function. */
 
-typedef struct {
-        int (*source) (void *context, char *buffer, int len);
-        void *context;
-} gdSource, *gdSourcePtr;
+  typedef struct
+  {
+    int (*source) (void *context, char *buffer, int len);
+    void *context;
+  }
+  gdSource, *gdSourcePtr;
 
-gdImagePtr gdImageCreateFromPngSource(gdSourcePtr in);
+  gdImagePtr gdImageCreateFromPngSource (gdSourcePtr in);
 
-gdImagePtr gdImageCreateFromGd(FILE *in);
-gdImagePtr gdImageCreateFromGdCtx(gdIOCtxPtr in);
+  gdImagePtr gdImageCreateFromGd (FILE * in);
+  gdImagePtr gdImageCreateFromGdCtx (gdIOCtxPtr in);
 
-gdImagePtr gdImageCreateFromGd2(FILE *in);
-gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in);
+  gdImagePtr gdImageCreateFromGd2 (FILE * in);
+  gdImagePtr gdImageCreateFromGd2Ctx (gdIOCtxPtr in);
 
-gdImagePtr gdImageCreateFromGd2Part(FILE *in, int srcx, int srcy, int w, int h);
-gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtxPtr in, int srcx, int srcy, int w, int h);
+  gdImagePtr gdImageCreateFromGd2Part (FILE * in, int srcx, int srcy, int w,
+				       int h);
+  gdImagePtr gdImageCreateFromGd2PartCtx (gdIOCtxPtr in, int srcx, int srcy,
+					  int w, int h);
 
-gdImagePtr gdImageCreateFromXbm(FILE *fd);
+  gdImagePtr gdImageCreateFromXbm (FILE * fd);
 
-void gdImageDestroy(gdImagePtr im);
+  void gdImageDestroy (gdImagePtr im);
 
 /* Replaces or blends with the background depending on the
 	most recent call to gdImageAlphaBlending and the
@@ -220,84 +229,99 @@ void gdImageDestroy(gdImagePtr im);
 	Tiling and line styling are also implemented
 	here. All other gd drawing functions pass through this call, 
 	allowing for many useful effects. */
-	
-void gdImageSetPixel(gdImagePtr im, int x, int y, int color);
 
-int gdImageGetPixel(gdImagePtr im, int x, int y);
+  void gdImageSetPixel (gdImagePtr im, int x, int y, int color);
 
-void gdImageLine(gdImagePtr im, int x1, int y1, int x2, int y2, int color);
+  int gdImageGetPixel (gdImagePtr im, int x, int y);
+
+  void gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color);
 
 /* For backwards compatibility only. Use gdImageSetStyle()
 	for much more flexible line drawing. */
-void gdImageDashedLine(gdImagePtr im, int x1, int y1, int x2, int y2, int color);
+  void gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2,
+			  int color);
 /* Corners specified (not width and height). Upper left first, lower right
  	second. */
-void gdImageRectangle(gdImagePtr im, int x1, int y1, int x2, int y2, int color);
+  void gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
+			 int color);
 /* Solid bar. Upper left corner first, lower right corner second. */
-void gdImageFilledRectangle(gdImagePtr im, int x1, int y1, int x2, int y2, int color);
-int gdImageBoundsSafe(gdImagePtr im, int x, int y);
-void gdImageChar(gdImagePtr im, gdFontPtr f, int x, int y, int c, int color);
-void gdImageCharUp(gdImagePtr im, gdFontPtr f, int x, int y, int c, int color);
-void gdImageString(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s, int color);
-void gdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s, int color);
-void gdImageString16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
-void gdImageStringUp16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
+  void gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
+			       int color);
+  int gdImageBoundsSafe (gdImagePtr im, int x, int y);
+  void gdImageChar (gdImagePtr im, gdFontPtr f, int x, int y, int c,
+		    int color);
+  void gdImageCharUp (gdImagePtr im, gdFontPtr f, int x, int y, int c,
+		      int color);
+  void gdImageString (gdImagePtr im, gdFontPtr f, int x, int y,
+		      unsigned char *s, int color);
+  void gdImageStringUp (gdImagePtr im, gdFontPtr f, int x, int y,
+			unsigned char *s, int color);
+  void gdImageString16 (gdImagePtr im, gdFontPtr f, int x, int y,
+			unsigned short *s, int color);
+  void gdImageStringUp16 (gdImagePtr im, gdFontPtr f, int x, int y,
+			  unsigned short *s, int color);
 
 /* clean up after using fonts in gdImageStringFT() */
-void gdFreeFontCache();
+  void gdFreeFontCache ();
 
 /* Calls gdImageStringFT. Provided for backwards compatibility only. */
-char *gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontlist,
-                double ptsize, double angle, int x, int y, char *string);
+  char *gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
+			  double ptsize, double angle, int x, int y,
+			  char *string);
 
 /* FreeType 2 text output */
-char *gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
-                double ptsize, double angle, int x, int y, char *string);
+  char *gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
+			 double ptsize, double angle, int x, int y,
+			 char *string);
 
 /* 2.0.5: provides an extensible way to pass additional parameters.
 	Thanks to Wez Furlong, sorry for the delay. */
 
-typedef struct {
-       int flags; /* for future expansion logical OR of gdFTEX_ values */
-       double linespacing; /* fine tune line spacing for '\n' */
-} gdFTStringExtra, *gdFTStringExtraPtr;
+  typedef struct
+  {
+    int flags;			/* for future expansion logical OR of gdFTEX_ values */
+    double linespacing;		/* fine tune line spacing for '\n' */
+  }
+  gdFTStringExtra, *gdFTStringExtraPtr;
 
 #define gdFTEX_LINESPACE 1
 
-char *gdImageStringFTEx(gdImage *im, int *brect, int fg, char *fontlist,
-                double ptsize, double angle, int x, int y, char *string,
-		gdFTStringExtraPtr strex);
+  char *gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
+			   double ptsize, double angle, int x, int y,
+			   char *string, gdFTStringExtraPtr strex);
 
 /* Point type for use in polygon drawing. */
-typedef struct {
-	int x, y;
-} gdPoint, *gdPointPtr;
+  typedef struct
+  {
+    int x, y;
+  }
+  gdPoint, *gdPointPtr;
 
-void gdImagePolygon(gdImagePtr im, gdPointPtr p, int n, int c);
-void gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c);
+  void gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c);
+  void gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c);
 
 /* These functions still work with truecolor images, 
 	for which they never return error. */
-int gdImageColorAllocate(gdImagePtr im, int r, int g, int b);
+  int gdImageColorAllocate (gdImagePtr im, int r, int g, int b);
 /* gd 2.0: palette entries with non-opaque transparency are permitted. */
-int gdImageColorAllocateAlpha(gdImagePtr im, int r, int g, int b, int a);
+  int gdImageColorAllocateAlpha (gdImagePtr im, int r, int g, int b, int a);
 /* Assumes opaque is the preferred alpha channel value */
-int gdImageColorClosest(gdImagePtr im, int r, int g, int b);
+  int gdImageColorClosest (gdImagePtr im, int r, int g, int b);
 /* Closest match taking all four parameters into account.
 	A slightly different color with the same transparency
 	beats the exact same color with radically different
 	transparency */
-int gdImageColorClosestAlpha(gdImagePtr im, int r, int g, int b, int a);
+  int gdImageColorClosestAlpha (gdImagePtr im, int r, int g, int b, int a);
 /* An alternate method */
-int gdImageColorClosestHWB(gdImagePtr im, int r, int g, int b);
+  int gdImageColorClosestHWB (gdImagePtr im, int r, int g, int b);
 /* Returns exact, 100% opaque matches only */
-int gdImageColorExact(gdImagePtr im, int r, int g, int b);
+  int gdImageColorExact (gdImagePtr im, int r, int g, int b);
 /* Returns an exact match only, including alpha */
-int gdImageColorExactAlpha(gdImagePtr im, int r, int g, int b, int a);
+  int gdImageColorExactAlpha (gdImagePtr im, int r, int g, int b, int a);
 /* Opaque only */
-int gdImageColorResolve(gdImagePtr im, int r, int g, int b);
+  int gdImageColorResolve (gdImagePtr im, int r, int g, int b);
 /* Based on gdImageColorExactAlpha and gdImageColorClosestAlpha */
-int gdImageColorResolveAlpha(gdImagePtr im, int r, int g, int b, int a);
+  int gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, int a);
 
 /* A simpler way to obtain an opaque truecolor value for drawing on a
 	truecolor image. Not for use with palette images! */
@@ -315,7 +339,7 @@ int gdImageColorResolveAlpha(gdImagePtr im, int r, int g, int b, int a);
 	((g) << 8) + \
 	(b))
 
-void gdImageColorDeallocate(gdImagePtr im, int color);
+  void gdImageColorDeallocate (gdImagePtr im, int color);
 
 /* Converts a truecolor image to a palette-based image,
 	using a high-quality two-pass quantization routine
@@ -333,7 +357,8 @@ void gdImageColorDeallocate(gdImagePtr im, int color);
         conversion to palette is not great (for small images
         it can be negative) and the quality loss is ugly. */
 
-void gdImageTrueColorToPalette(gdImagePtr im, int ditherFlag, int colorsWanted);
+  void gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
+				  int colorsWanted);
 
 /* Specifies a color index (if a palette image) or an
 	RGB color (if a truecolor image) which should be
@@ -344,55 +369,58 @@ void gdImageTrueColorToPalette(gdImagePtr im, int ditherFlag, int colorsWanted);
 	a truecolor image. Note that gdImageColorTransparent
 	is usually compatible with older browsers that
 	do not understand full alpha channels well. TBB */
-void gdImageColorTransparent(gdImagePtr im, int color);
+  void gdImageColorTransparent (gdImagePtr im, int color);
 
-void gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src);
-void gdImagePng(gdImagePtr im, FILE *out);
-void gdImagePngCtx(gdImagePtr im, gdIOCtx *out);
+  void gdImagePaletteCopy (gdImagePtr dst, gdImagePtr src);
+  void gdImagePng (gdImagePtr im, FILE * out);
+  void gdImagePngCtx (gdImagePtr im, gdIOCtx * out);
 
-void gdImageWBMP(gdImagePtr image, int fg, FILE *out);
-void gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out);
+  void gdImageWBMP (gdImagePtr image, int fg, FILE * out);
+  void gdImageWBMPCtx (gdImagePtr image, int fg, gdIOCtx * out);
 
 /* Guaranteed to correctly free memory returned
 	by the gdImage*Ptr functions */
-void gdFree(void *m);
+  void gdFree (void *m);
 
 /* Best to free this memory with gdFree(), not free() */
-void *gdImageWBMPPtr(gdImagePtr im, int *size, int fg);
+  void *gdImageWBMPPtr (gdImagePtr im, int *size, int fg);
 
 /* 100 is highest quality (there is always a little loss with JPEG).
 	0 is lowest. 10 is about the lowest useful setting. */
-void gdImageJpeg(gdImagePtr im, FILE *out, int quality);
-void gdImageJpegCtx(gdImagePtr im, gdIOCtx *out, int quality);
+  void gdImageJpeg (gdImagePtr im, FILE * out, int quality);
+  void gdImageJpegCtx (gdImagePtr im, gdIOCtx * out, int quality);
 
 /* Best to free this memory with gdFree(), not free() */
-void *gdImageJpegPtr(gdImagePtr im, int *size, int quality);
+  void *gdImageJpegPtr (gdImagePtr im, int *size, int quality);
 
 /* A custom data sink. For backwards compatibility. Use
 	gdIOCtx instead. */
 /* The sink function must return -1 on error, otherwise the number
         of bytes written, which must be equal to len. */
 /* context will be passed to your sink function. */
-typedef struct {
-        int (*sink) (void *context, const char *buffer, int len);
-        void *context;
-} gdSink, *gdSinkPtr;
+  typedef struct
+  {
+    int (*sink) (void *context, const char *buffer, int len);
+    void *context;
+  }
+  gdSink, *gdSinkPtr;
 
-void gdImagePngToSink(gdImagePtr im, gdSinkPtr out);
+  void gdImagePngToSink (gdImagePtr im, gdSinkPtr out);
 
-void gdImageGd(gdImagePtr im, FILE *out);
-void gdImageGd2(gdImagePtr im, FILE *out, int cs, int fmt);
-
-/* Best to free this memory with gdFree(), not free() */
-void* gdImagePngPtr(gdImagePtr im, int *size);
-
-/* Best to free this memory with gdFree(), not free() */
-void* gdImageGdPtr(gdImagePtr im, int *size);
+  void gdImageGd (gdImagePtr im, FILE * out);
+  void gdImageGd2 (gdImagePtr im, FILE * out, int cs, int fmt);
 
 /* Best to free this memory with gdFree(), not free() */
-void* gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
+  void *gdImagePngPtr (gdImagePtr im, int *size);
 
-void gdImageEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
+/* Best to free this memory with gdFree(), not free() */
+  void *gdImageGdPtr (gdImagePtr im, int *size);
+
+/* Best to free this memory with gdFree(), not free() */
+  void *gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size);
+
+  void gdImageEllipse (gdImagePtr im, int cx, int cy, int w, int h,
+		       int color);
 
 /* Style is a bitwise OR ( | operator ) of these.
 	gdArc and gdChord are mutually exclusive;
@@ -411,21 +439,29 @@ void gdImageEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
 #define gdNoFill 2
 #define gdEdged 4
 
-void gdImageFilledArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color, int style);
-void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color);
-void gdImageFilledEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
-void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color);
-void gdImageFill(gdImagePtr im, int x, int y, int color);
-void gdImageCopy(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int w, int h);
-void gdImageCopyMerge(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, 
-			int srcX, int srcY, int w, int h, int pct);
-void gdImageCopyMergeGray(gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
-                        int srcX, int srcY, int w, int h, int pct);
+  void gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s,
+			 int e, int color, int style);
+  void gdImageArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
+		   int color);
+  void gdImageFilledEllipse (gdImagePtr im, int cx, int cy, int w, int h,
+			     int color);
+  void gdImageFillToBorder (gdImagePtr im, int x, int y, int border,
+			    int color);
+  void gdImageFill (gdImagePtr im, int x, int y, int color);
+  void gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
+		    int srcX, int srcY, int w, int h);
+  void gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
+			 int srcX, int srcY, int w, int h, int pct);
+  void gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX,
+			     int dstY, int srcX, int srcY, int w, int h,
+			     int pct);
 
 /* Stretches or shrinks to fit, as needed. Does NOT attempt
 	to average the entire set of source pixels that scale down onto the
 	destination pixel. */
-void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH);
+  void gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
+			   int srcX, int srcY, int dstW, int dstH, int srcW,
+			   int srcH);
 
 /* gd 2.0: stretches or shrinks to fit, as needed. When called with a
 	truecolor destination image, this function averages the
@@ -436,7 +472,9 @@ void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int 
 	on modern hardware, except for some embedded devices. If the 
 	destination is a palette image, gdImageCopyResized is 
 	substituted automatically. */
-void gdImageCopyResampled(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH);
+  void gdImageCopyResampled (gdImagePtr dst, gdImagePtr src, int dstX,
+			     int dstY, int srcX, int srcY, int dstW, int dstH,
+			     int srcW, int srcH);
 
 /* gd 2.0.8: gdImageCopyRotated is added. Source
         is a rectangle, with its upper left corner at
@@ -445,23 +483,22 @@ void gdImageCopyResampled(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, in
         gdImageArc. Floating point destination center
         coordinates allow accurate rotation of
         objects of odd-numbered width or height. */
-void gdImageCopyRotated (gdImagePtr dst,
-                      gdImagePtr src,
-                      double dstX, double dstY,
-                      int srcX, int srcY,
-                      int srcWidth, int srcHeight,
-                      int angle);
+  void gdImageCopyRotated (gdImagePtr dst,
+			   gdImagePtr src,
+			   double dstX, double dstY,
+			   int srcX, int srcY,
+			   int srcWidth, int srcHeight, int angle);
 
-void gdImageSetBrush(gdImagePtr im, gdImagePtr brush);
-void gdImageSetTile(gdImagePtr im, gdImagePtr tile);
-void gdImageSetStyle(gdImagePtr im, int *style, int noOfPixels);
+  void gdImageSetBrush (gdImagePtr im, gdImagePtr brush);
+  void gdImageSetTile (gdImagePtr im, gdImagePtr tile);
+  void gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels);
 /* Line thickness (defaults to 1). Affects lines, ellipses, 
 	rectangles, polygons and so forth. */
-void gdImageSetThickness(gdImagePtr im, int thickness);
+  void gdImageSetThickness (gdImagePtr im, int thickness);
 /* On or off (1 or 0) for all three of these. */
-void gdImageInterlace(gdImagePtr im, int interlaceArg);
-void gdImageAlphaBlending(gdImagePtr im, int alphaBlendingArg);
-void gdImageSaveAlpha(gdImagePtr im, int saveAlphaArg);
+  void gdImageInterlace (gdImagePtr im, int interlaceArg);
+  void gdImageAlphaBlending (gdImagePtr im, int alphaBlendingArg);
+  void gdImageSaveAlpha (gdImagePtr im, int saveAlphaArg);
 
 /* Macros to access information about images. */
 
@@ -494,12 +531,12 @@ void gdImageSaveAlpha(gdImagePtr im, int saveAlphaArg);
 
 /* I/O Support routines. */
 
-gdIOCtx* gdNewFileCtx(FILE*);
-gdIOCtx* gdNewDynamicCtx(int, void*);
-gdIOCtx* gdNewSSCtx(gdSourcePtr in, gdSinkPtr out);
-void* gdDPExtractData(struct gdIOCtx* ctx, int *size);
+  gdIOCtx *gdNewFileCtx (FILE *);
+  gdIOCtx *gdNewDynamicCtx (int, void *);
+  gdIOCtx *gdNewSSCtx (gdSourcePtr in, gdSinkPtr out);
+  void *gdDPExtractData (struct gdIOCtx *ctx, int *size);
 
-#define GD2_CHUNKSIZE           128 
+#define GD2_CHUNKSIZE           128
 #define GD2_CHUNKSIZE_MIN	64
 #define GD2_CHUNKSIZE_MAX       4096
 
@@ -509,7 +546,7 @@ void* gdDPExtractData(struct gdIOCtx* ctx, int *size);
 #define GD2_FMT_COMPRESSED      2
 
 /* Image comparison definitions */
-int gdImageCompare(gdImagePtr im1, gdImagePtr im2);
+  int gdImageCompare (gdImagePtr im1, gdImagePtr im2);
 
 #define GD_CMP_IMAGE		1	/* Actual image IS different */
 #define GD_CMP_NUM_COLORS	2	/* Number of Colours in pallette differ */
@@ -522,10 +559,10 @@ int gdImageCompare(gdImagePtr im1, gdImagePtr im2);
 #define GD_CMP_TRUECOLOR	256	/* Truecolor vs palette differs */
 
 /* resolution affects ttf font rendering, particularly hinting */
-#define GD_RESOLUTION           96      /* pixels per inch */
+#define GD_RESOLUTION           96	/* pixels per inch */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GD_H */
+#endif				/* GD_H */

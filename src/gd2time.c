@@ -35,7 +35,8 @@ main (int argc, char **argv)
   w = atoi (argv[5]);
   h = atoi (argv[6]);
 
-  printf ("Extracting %d times from (%d, %d), size is %dx%d\n", c, x, y, w, h);
+  printf ("Extracting %d times from (%d, %d), size is %dx%d\n", c, x, y, w,
+	  h);
 
   t0 = time (0);
   for (i = 0; i < c; i++)

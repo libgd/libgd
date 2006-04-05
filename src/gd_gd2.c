@@ -37,10 +37,10 @@
 #define GD2_DBG(s)
 
 typedef struct
-  {
-    int offset;
-    int size;
-  }
+{
+  int offset;
+  int size;
+}
 t_chunk_info;
 
 extern int _gdGetColors (gdIOCtx * in, gdImagePtr im, int gd2xFlag);
@@ -49,10 +49,10 @@ extern void _gdPutColors (gdImagePtr im, gdIOCtx * out);
 /* */
 /* Read the extra info in the gd2 header. */
 /* */
-static
-int
+static int
 _gd2GetHeader (gdIOCtxPtr in, int *sx, int *sy,
- int *cs, int *vers, int *fmt, int *ncx, int *ncy, t_chunk_info ** chunkIdx)
+	       int *cs, int *vers, int *fmt, int *ncx, int *ncy,
+	       t_chunk_info ** chunkIdx)
 {
   int i;
   int ch;
@@ -178,8 +178,7 @@ fail1:
   return 0;
 }
 
-static
-  gdImagePtr
+static gdImagePtr
 _gd2CreateFromFile (gdIOCtxPtr in, int *sx, int *sy,
 		    int *cs, int *vers, int *fmt,
 		    int *ncx, int *ncy, t_chunk_info ** cidx)
@@ -217,9 +216,9 @@ fail1:
 
 }
 
-static
-int
-_gd2ReadChunk (int offset, char *compBuf, int compSize, char *chunkBuf, uLongf * chunkLen, gdIOCtx * in)
+static int
+_gd2ReadChunk (int offset, char *compBuf, int compSize, char *chunkBuf,
+	       uLongf * chunkLen, gdIOCtx * in)
 {
   int zerr;
 
@@ -239,9 +238,12 @@ _gd2ReadChunk (int offset, char *compBuf, int compSize, char *chunkBuf, uLongf *
     {
       return FALSE;
     };
-  GD2_DBG (printf ("Got %d bytes. Uncompressing into buffer of %d bytes\n", compSize, *chunkLen));
-  zerr = uncompress ((unsigned char *) chunkBuf, chunkLen,
-		     (unsigned char *) compBuf, compSize);
+  GD2_DBG (printf
+	   ("Got %d bytes. Uncompressing into buffer of %d bytes\n", compSize,
+	    *chunkLen));
+  zerr =
+    uncompress ((unsigned char *) chunkBuf, chunkLen,
+		(unsigned char *) compBuf, compSize);
   if (zerr != Z_OK)
     {
       GD2_DBG (printf ("Error %d from uncompress\n", zerr));
@@ -285,7 +287,9 @@ gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
   gdImagePtr im;
 
   /* Get the header */
-  im = _gd2CreateFromFile (in, &sx, &sy, &cs, &vers, &fmt, &ncx, &ncy, &chunkIdx);
+  im =
+    _gd2CreateFromFile (in, &sx, &sy, &cs, &vers, &fmt, &ncx, &ncy,
+			&chunkIdx);
 
   if (im == NULL)
     {
@@ -331,7 +335,9 @@ gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 	      yhi = im->sy;
 	    };
 
-	  GD2_DBG (printf ("Processing Chunk %d (%d, %d), y from %d to %d\n", chunkNum, cx, cy, ylo, yhi));
+	  GD2_DBG (printf
+		   ("Processing Chunk %d (%d, %d), y from %d to %d\n",
+		    chunkNum, cx, cy, ylo, yhi));
 
 	  if (fmt == GD2_FMT_COMPRESSED)
 	    {
@@ -472,7 +478,8 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
   /* - we change the file size, so don't want to use the code directly. */
   /*   but we do need to know the file size. */
   /* */
-  if (_gd2GetHeader (in, &fsx, &fsy, &cs, &vers, &fmt, &ncx, &ncy, &chunkIdx) != 1)
+  if (_gd2GetHeader (in, &fsx, &fsy, &cs, &vers, &fmt, &ncx, &ncy, &chunkIdx)
+      != 1)
     {
       goto fail1;
     }
@@ -574,14 +581,17 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 	      xhi = fsx;
 	    };
 
-	  GD2_DBG (printf ("Processing Chunk (%d, %d), from %d to %d\n", cx, cy, ylo, yhi));
+	  GD2_DBG (printf
+		   ("Processing Chunk (%d, %d), from %d to %d\n", cx, cy, ylo,
+		    yhi));
 
 	  if (fmt == GD2_FMT_RAW)
 	    {
 	      GD2_DBG (printf ("Using raw format data\n"));
 	      if (im->trueColor)
 		{
-		  dpos = (cy * (cs * fsx) + cx * cs * (yhi - ylo) * 4) + dstart;
+		  dpos =
+		    (cy * (cs * fsx) + cx * cs * (yhi - ylo) * 4) + dstart;
 		}
 	      else
 		{
@@ -593,7 +603,9 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 		  printf ("Error from seek: %d\n", errno);
 		  goto fail2;
 		};
-	      GD2_DBG (printf ("Reading (%d, %d) from position %d\n", cx, cy, dpos - dstart));
+	      GD2_DBG (printf
+		       ("Reading (%d, %d) from position %d\n", cx, cy,
+			dpos - dstart));
 	    }
 	  else
 	    {
@@ -609,10 +621,13 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 		  goto fail2;
 		};
 	      chunkPos = 0;
-	      GD2_DBG (printf ("Reading (%d, %d) from chunk %d\n", cx, cy, chunkNum));
+	      GD2_DBG (printf
+		       ("Reading (%d, %d) from chunk %d\n", cx, cy,
+			chunkNum));
 	    };
 
-	  GD2_DBG (printf ("   into (%d, %d) - (%d, %d)\n", xlo, ylo, xhi, yhi));
+	  GD2_DBG (printf
+		   ("   into (%d, %d) - (%d, %d)\n", xlo, ylo, xhi, yhi));
 	  for (y = ylo; (y < yhi); y++)
 	    {
 
@@ -644,10 +659,10 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 		    {
 		      if (im->trueColor)
 			{
-                          ch = chunkBuf[chunkPos++];
-                          ch = (ch << 8) + chunkBuf[chunkPos++];
-                          ch = (ch << 8) + chunkBuf[chunkPos++];
-                          ch = (ch << 8) + chunkBuf[chunkPos++];
+			  ch = chunkBuf[chunkPos++];
+			  ch = (ch << 8) + chunkBuf[chunkPos++];
+			  ch = (ch << 8) + chunkBuf[chunkPos++];
+			  ch = (ch << 8) + chunkBuf[chunkPos++];
 			}
 		      else
 			{
@@ -657,8 +672,8 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 
 		  /* Only use a point that is in the image. */
 		  if ((x >= srcx) && (x < (srcx + w)) && (x < fsx) && (x >= 0)
-		  && (y >= srcy) && (y < (srcy + h)) && (y < fsy) && (y >= 0)
-		    )
+		      && (y >= srcy) && (y < (srcy + h)) && (y < fsy)
+		      && (y >= 0))
 		    {
 		      im->pixels[y - srcy][x - srcx] = ch;
 		    }
@@ -684,8 +699,7 @@ fail1:
 
 }
 
-static
-void
+static void
 _gd2PutHeader (gdImagePtr im, gdIOCtx * out, int cs, int fmt, int cx, int cy)
 {
   int i;
@@ -808,7 +822,9 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 	      yhi = im->sy;
 	    };
 
-	  GD2_DBG (printf ("Processing Chunk (%dx%d), y from %d to %d\n", cx, cy, ylo, yhi));
+	  GD2_DBG (printf
+		   ("Processing Chunk (%dx%d), y from %d to %d\n", cx, cy,
+		    ylo, yhi));
 	  chunkLen = 0;
 	  for (y = ylo; (y < yhi); y++)
 	    {
@@ -873,7 +889,10 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 		{
 		  chunkIdx[chunkNum].offset = gdTell (out);
 		  chunkIdx[chunkNum++].size = compLen;
-		  GD2_DBG (printf ("Chunk %d size %d offset %d\n", chunkNum, chunkIdx[chunkNum - 1].size, chunkIdx[chunkNum - 1].offset));
+		  GD2_DBG (printf
+			   ("Chunk %d size %d offset %d\n", chunkNum,
+			    chunkIdx[chunkNum - 1].size,
+			    chunkIdx[chunkNum - 1].offset));
 
 		  if (gdPutBuf (compData, compLen, out) <= 0)
 		    {
@@ -893,7 +912,9 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
       GD2_DBG (printf ("Writing index\n"));
       for (x = 0; x < chunkNum; x++)
 	{
-	  GD2_DBG (printf ("Chunk %d size %d offset %d\n", x, chunkIdx[x].size, chunkIdx[x].offset));
+	  GD2_DBG (printf
+		   ("Chunk %d size %d offset %d\n", x, chunkIdx[x].size,
+		    chunkIdx[x].offset));
 	  gdPutInt (chunkIdx[x].offset, out);
 	  gdPutInt (chunkIdx[x].size, out);
 	};
@@ -935,14 +956,14 @@ gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
 gdImagePtr
 gdImageCreateFromGd2 (FILE * inFile)
 {
-  fprintf(stderr,"GD2 support is not available - no libz\n");
+  fprintf (stderr, "GD2 support is not available - no libz\n");
   return NULL;
 }
+
 gdImagePtr
 gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 {
-  fprintf(stderr,"GD2 support is not available - no libz\n");
+  fprintf (stderr, "GD2 support is not available - no libz\n");
   return NULL;
 }
 #endif /* HAVE_LIBZ */
-

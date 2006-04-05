@@ -1,12 +1,12 @@
 <html>
 <head>
-<TITLE>gd 2.0.8</TITLE>
+<TITLE>gd 2.0.9</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<h1>This is gd 2.0.8.</h1>
+<h1>This is gd 2.0.9.</h1>
 <p>
-<H2>gd 2.0.8</H2>
+<H2>gd 2.0.9</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -22,7 +22,7 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.8 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.9 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -35,8 +35,9 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-gd 2.0.8 <strong>requires</strong> that the following libraries 
-also be installed, in order to produce the related image formats:
+gd 2.0.9 <strong>requires</strong> that the following libraries 
+also be installed, in order to produce the related image formats.
+You may skip libraries associated with formats you do not use:
 <p>
 libpng (see the <a href="http://www.libpng.org/pub/png/">libpng home page</a>), if you want PNG
 <p>
@@ -65,7 +66,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.8">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.9">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -164,7 +165,7 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.8.
+with 2.0.9.
 <h4>Perl</h4>
 gd can also be used from Perl, courtesy of
 Lincoln Stein's
@@ -190,6 +191,16 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<P>
+<A NAME="whatsnew2.0.9"><H3>What's new in version 2.0.9?</H3></A>
+<P>
+<ul>
+<li>Version 2.0.9 contains a fix to gdImageCopyResized which allows
+correct results when copying a palette-based image with a single
+transparent index into a truecolor image. Thanks to Thorben
+Kundinger.
+<li>More <code>configure</code> fixes from Lars Hecking. Thanks, Lars. 
 </ul>
 <P>
 <A NAME="whatsnew2.0.8"><H3>What's new in version 2.0.8?</H3></A>
@@ -728,8 +739,8 @@ saving of alpha channel information to the file instead.
 <P>
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.8.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.8.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.9.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.9.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -740,10 +751,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.8".
+Unpacking the archive will produce a directory called "gd-2.0.9".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.8 directory and type:
+<code>cd</code> to the 2.0.9 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -1025,7 +1036,7 @@ argument.
 <DT><A NAME="gdFont">gdFont</A> <strong>(TYPE)</strong>
 <DD>
 A font structure. Used to declare the characteristics of a font.
-Plese see the files gdfontl.c and gdfontl.h for an example of the
+Please see the files gdfontl.c and gdfontl.h for an example of the
 proper declaration of this structure. You can provide your
 own font data by providing such a structure and the associated
 pixel array. You can determine the width and height of a single
@@ -2780,7 +2791,7 @@ char *gdImageStringTTF(gdImagePtr im, int *brect,
 	int x, int y, char *string)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
-<strong>DEPRECATED.</strong> THis function simply invokes
+<strong>DEPRECATED.</strong> This function simply invokes
 <a href="#gdImageStringFT">gdImageStringFT</a> for backwards
 compatibility with old code that was written with FreeType 1.x.
 </DL>

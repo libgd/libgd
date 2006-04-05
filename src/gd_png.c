@@ -43,9 +43,9 @@
 
 #ifndef PNG_SETJMP_NOT_SUPPORTED
 typedef struct _jmpbuf_wrapper
-  {
-    jmp_buf jmpbuf;
-  }
+{
+  jmp_buf jmpbuf;
+}
 jmpbuf_wrapper;
 
 static jmpbuf_wrapper gdPngJmpbufStruct;
@@ -81,19 +81,15 @@ gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 #endif
 
 static void
-gdPngReadData (png_structp png_ptr,
-	       png_bytep data, png_size_t length)
+gdPngReadData (png_structp png_ptr, png_bytep data, png_size_t length)
 {
-  gdGetBuf (data, length, (gdIOCtx *)
-	    png_get_io_ptr (png_ptr));
+  gdGetBuf (data, length, (gdIOCtx *) png_get_io_ptr (png_ptr));
 }
 
 static void
-gdPngWriteData (png_structp png_ptr,
-		png_bytep data, png_size_t length)
+gdPngWriteData (png_structp png_ptr, png_bytep data, png_size_t length)
 {
-  gdPutBuf (data, length, (gdIOCtx *)
-	    png_get_io_ptr (png_ptr));
+  gdPutBuf (data, length, (gdIOCtx *) png_get_io_ptr (png_ptr));
 }
 
 static void
@@ -231,7 +227,7 @@ gdImageCreateFromPngCtx (gdIOCtx * infile)
 	      im->alpha[i] = gdAlphaMax - (trans[i] >> 1);
 	      if ((trans[i] == 0) && (firstZero))
 		{
-                  /* 2.0.5: long-forgotten patch from Wez Furlong */
+		  /* 2.0.5: long-forgotten patch from Wez Furlong */
 		  transparent = i;
 		  firstZero = 0;
 		}
@@ -242,7 +238,8 @@ gdImageCreateFromPngCtx (gdIOCtx * infile)
     case PNG_COLOR_TYPE_GRAY:
     case PNG_COLOR_TYPE_GRAY_ALPHA:
       /* create a fake palette and check for single-shade transparency */
-      if ((palette = (png_colorp) gdMalloc (256 * sizeof (png_color))) == NULL)
+      if ((palette =
+	   (png_colorp) gdMalloc (256 * sizeof (png_color))) == NULL)
 	{
 	  fprintf (stderr, "gd-png error: cannot allocate gray palette\n");
 	  png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
@@ -316,7 +313,8 @@ gdImageCreateFromPngCtx (gdIOCtx * infile)
       png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
       return NULL;
     }
-  if ((row_pointers = (png_bytepp) gdMalloc (height * sizeof (png_bytep))) == NULL)
+  if ((row_pointers =
+       (png_bytepp) gdMalloc (height * sizeof (png_bytep))) == NULL)
     {
       fprintf (stderr, "gd-png error: cannot allocate row pointers\n");
       png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
@@ -383,7 +381,7 @@ gdImageCreateFromPngCtx (gdIOCtx * infile)
 	         127 is transparent, 0 opaque. A moment of convenience, 
 	         a lifetime of compatibility. */
 	      register png_byte a = gdAlphaMax -
-	      (row_pointers[j][boffset++] >> 1);
+		(row_pointers[j][boffset++] >> 1);
 	      im->tpixels[j][i] = gdTrueColorAlpha (r, g, b, a);
 	    }
 	}
@@ -407,7 +405,8 @@ gdImageCreateFromPngCtx (gdIOCtx * infile)
 	{
 	  if (!open[i])
 	    {
-	      fprintf (stderr, "gd-png warning: image data references out-of-range"
+	      fprintf (stderr,
+		       "gd-png warning: image data references out-of-range"
 		       " color index (%d)\n", i);
 	    }
 	}
@@ -466,7 +465,8 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 
 #ifndef PNG_SETJMP_NOT_SUPPORTED
   png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING,
-			       &gdPngJmpbufStruct, gdPngErrorHandler, NULL);
+				     &gdPngJmpbufStruct, gdPngErrorHandler,
+				     NULL);
 #else
   png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 #endif
@@ -493,7 +493,8 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
     }
 #endif
 
-  png_set_write_fn (png_ptr, (void *) outfile, gdPngWriteData, gdPngFlushData);
+  png_set_write_fn (png_ptr, (void *) outfile, gdPngWriteData,
+		    gdPngFlushData);
 
   /* This is best for palette images, and libpng defaults to it for
      palette images anyway, so we don't need to do it explicitly.
@@ -553,13 +554,15 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 	{
 	  png_set_IHDR (png_ptr, info_ptr, width, height, 8,
 			PNG_COLOR_TYPE_RGB_ALPHA, interlace_type,
-		     PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+			PNG_COMPRESSION_TYPE_DEFAULT,
+			PNG_FILTER_TYPE_DEFAULT);
 	}
       else
 	{
 	  png_set_IHDR (png_ptr, info_ptr, width, height, 8,
 			PNG_COLOR_TYPE_RGB, interlace_type,
-		     PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+			PNG_COMPRESSION_TYPE_DEFAULT,
+			PNG_FILTER_TYPE_DEFAULT);
 	}
     }
   else
@@ -570,9 +573,10 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
     }
   if (im->trueColor && (!im->saveAlphaFlag) && (transparent >= 0))
     {
-      trans_rgb_value.red = gdTrueColorGetRed (im->trueColor);
-      trans_rgb_value.green = gdTrueColorGetGreen (im->trueColor);
-      trans_rgb_value.blue = gdTrueColorGetBlue (im->trueColor);
+      /* 2.0.9: fixed by Thomas Winzig */
+      trans_rgb_value.red = gdTrueColorGetRed (im->transparent);
+      trans_rgb_value.green = gdTrueColorGetGreen (im->transparent);
+      trans_rgb_value.blue = gdTrueColorGetBlue (im->transparent);
       png_set_tRNS (png_ptr, info_ptr, 0, 0, &trans_rgb_value);
     }
   if (!im->trueColor)
@@ -588,8 +592,7 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
       int k;
       for (i = 0; (i < im->colorsTotal); i++)
 	{
-	  if ((!im->open[i]) &&
-	      (im->alpha[i] != gdAlphaOpaque))
+	  if ((!im->open[i]) && (im->alpha[i] != gdAlphaOpaque))
 	    {
 	      tc++;
 	    }
@@ -600,8 +603,7 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 	  for (i = 0; (i < im->colorsTotal); i++)
 	    {
 	      trans_values[i] = 255 -
-		((im->alpha[i] << 1) +
-		 (im->alpha[i] >> 6));
+		((im->alpha[i] << 1) + (im->alpha[i] >> 6));
 	    }
 	  png_set_tRNS (png_ptr, info_ptr, trans_values, 256, NULL);
 #endif
@@ -620,10 +622,9 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 		{
 		  if (im->alpha[i] != gdAlphaOpaque)
 		    {
-                      /* Andrew Hull: >> 6, not >> 7! (gd 2.0.5) */ 
+		      /* Andrew Hull: >> 6, not >> 7! (gd 2.0.5) */
 		      trans_values[j] = 255 -
-			((im->alpha[i] << 1) +
-			 (im->alpha[i] >> 6));
+			((im->alpha[i] << 1) + (im->alpha[i] >> 6));
 		      mapping[i] = j++;
 		    }
 		  else
@@ -683,7 +684,8 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
       for (j = 0; j < height; ++j)
 	{
 	  int bo = 0;
-	  if ((row_pointers[j] = (png_bytep) gdMalloc (width * channels)) == NULL)
+	  if ((row_pointers[j] =
+	       (png_bytep) gdMalloc (width * channels)) == NULL)
 	    {
 	      fprintf (stderr, "gd-png error: unable to allocate rows\n");
 	      for (i = 0; i < j; ++i)
@@ -704,7 +706,7 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 		     127 maps to 255. We also have to invert to match
 		     PNG's convention in which 255 is opaque. */
 		  a = gdTrueColorGetAlpha (im->tpixels[j][i]);
-                  /* Andrew Hull: >> 6, not >> 7! (gd 2.0.5) */ 
+		  /* Andrew Hull: >> 6, not >> 7! (gd 2.0.5) */
 		  row_pointers[j][bo++] = 255 - ((a << 1) + (a >> 6));
 		}
 	    }
@@ -725,7 +727,8 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 	  row_pointers = gdMalloc (sizeof (png_bytep) * height);
 	  if (row_pointers == NULL)
 	    {
-	      fprintf (stderr, "gd-png error: unable to allocate row_pointers\n");
+	      fprintf (stderr,
+		       "gd-png error: unable to allocate row_pointers\n");
 	    }
 	  for (j = 0; j < height; ++j)
 	    {

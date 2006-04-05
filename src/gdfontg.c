@@ -13,8 +13,7 @@
 
 #include "gdfontg.h"
 
-char gdFontGiantData[] =
-{
+char gdFontGiantData[] = {
 /* Char 0 */
   0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -4370,8 +4369,7 @@ char gdFontGiantData[] =
 
 };
 
-gdFont gdFontGiantRep =
-{
+gdFont gdFontGiantRep = {
   256,
   0,
   9,

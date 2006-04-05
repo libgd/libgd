@@ -13,8 +13,7 @@
 
 #include "gdfontt.h"
 
-char gdFontTinyData[] =
-{
+char gdFontTinyData[] = {
 /* Char 0 */
   0, 0, 0, 0, 0,
   0, 0, 0, 0, 0,
@@ -2578,8 +2577,7 @@ char gdFontTinyData[] =
 
 };
 
-gdFont gdFontTinyRep =
-{
+gdFont gdFontTinyRep = {
   256,
   0,
   5,

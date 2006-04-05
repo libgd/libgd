@@ -9,8 +9,14 @@
 /* Define to 1 if you have the <freetype/freetype.h> header file. */
 #undef HAVE_FREETYPE_FREETYPE_H
 
+/* Define if you have the iconv() function. */
+#undef HAVE_ICONV
+
 /* Define to 1 if you have the <iconv.h> header file. */
 #undef HAVE_ICONV_H
+
+/* Define if <iconv.h> defines iconv_t. */
+#undef HAVE_ICONV_T_DEF
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -65,6 +71,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define as const if the declaration of iconv() needs const. */
+#undef ICONV_CONST
 
 /* Name of package */
 #undef PACKAGE

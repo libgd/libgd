@@ -34,11 +34,11 @@
 /* this is used for creating images in main memory */
 
 typedef struct ssIOCtx
-  {
-    gdIOCtx ctx;
-    gdSourcePtr src;
-    gdSinkPtr snk;
-  }
+{
+  gdIOCtx ctx;
+  gdSourcePtr src;
+  gdSinkPtr snk;
+}
 ssIOCtx;
 
 typedef struct ssIOCtx *ssIOCtxPtr;
@@ -80,8 +80,7 @@ gdNewSSCtx (gdSourcePtr src, gdSinkPtr snk)
   return (gdIOCtx *) ctx;
 }
 
-static
-void
+static void
 gdFreeSsCtx (gdIOCtx * ctx)
 {
   gdFree (ctx);

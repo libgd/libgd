@@ -11,7 +11,8 @@
 int basis[91];
 int cost[360];
 
-int main (void)
+int
+main (void)
 {
   int i;
   printf ("#define costScale %d\n", scale);

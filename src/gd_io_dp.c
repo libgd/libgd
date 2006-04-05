@@ -31,20 +31,20 @@
 
 /* this is used for creating images in main memory */
 typedef struct dpStruct
-  {
-    void *data;
-    int logicalSize;
-    int realSize;
-    int dataGood;
-    int pos;
-  }
+{
+  void *data;
+  int logicalSize;
+  int realSize;
+  int dataGood;
+  int pos;
+}
 dynamicPtr;
 
 typedef struct dpIOCtx
-  {
-    gdIOCtx ctx;
-    dynamicPtr *dp;
-  }
+{
+  gdIOCtx ctx;
+  dynamicPtr *dp;
+}
 dpIOCtx;
 
 typedef struct dpIOCtx *dpIOCtxPtr;
@@ -137,8 +137,7 @@ gdDPExtractData (struct gdIOCtx *ctx, int *size)
   return data;
 }
 
-static
-void
+static void
 gdFreeDynamicCtx (struct gdIOCtx *ctx)
 {
   dynamicPtr *dp;

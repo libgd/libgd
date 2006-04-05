@@ -63,7 +63,9 @@ _gdGetColors (gdIOCtx * in, gdImagePtr im, int gd2xFlag)
 	  im->transparent = (-1);
 	}
     }
-  GD2_DBG (printf ("Pallette had %d colours (T=%d)\n", im->colorsTotal, im->transparent));
+  GD2_DBG (printf
+	   ("Pallette had %d colours (T=%d)\n", im->colorsTotal,
+	    im->transparent));
 
   for (i = 0; (i < gdMaxColors); i++)
     {
@@ -102,8 +104,7 @@ fail1:
 /* Use the common basic header info to make the image object. */
 /* This is also called from _gd2CreateFromFile */
 /* */
-static
-  gdImagePtr
+static gdImagePtr
 _gdCreateFromFile (gdIOCtx * in, int *sx, int *sy)
 {
   gdImagePtr im;
@@ -218,8 +219,7 @@ _gdPutColors (gdImagePtr im, gdIOCtx * out)
     }
 }
 
-static
-void
+static void
 _gdPutHeader (gdImagePtr im, gdIOCtx * out)
 {
   /* 65535 indicates this is a gd 2.x .gd file. */

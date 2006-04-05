@@ -4,13 +4,14 @@
 #
 AC_PREREQ(2.54)
 
-AC_INIT([GD], [2.0.8], [gd@boutell.com])
+#HEY! Change BOTH the vesion number and the GDLIB_REVISION setting!
+AC_INIT([GD], [2.0.9], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=0
-GDLIB_REVISION=6
+GDLIB_REVISION=9
 GDLIBNAME=gd
 
 AC_SUBST(GDLIB_MAJOR)
@@ -40,7 +41,20 @@ if test "x$x_libraries" != xNONE ; then
 fi
 
 AC_HEADER_STDC
-AC_CHECK_HEADERS([errno.h iconv.h limits.h stddef.h stdlib.h string.h unistd.h])
+AC_CHECK_HEADERS([errno.h limits.h stddef.h stdlib.h string.h unistd.h])
+
+AM_ICONV
+if test -n "$LIBICONV" ; then
+  LIBS="$LIBS $LIBICONV"
+fi
+
+AC_CHECK_HEADERS(iconv.h,
+  [AC_MSG_CHECKING(whether iconv.h defines iconv_t)
+   AC_EGREP_HEADER([typedef.*iconv_t],iconv.h,
+     [AC_MSG_RESULT(yes)
+      AC_DEFINE(HAVE_ICONV_T_DEF, 1,
+                [Define if <iconv.h> defines iconv_t.])],
+      AC_MSG_RESULT(no))])
 
 # Checks for typedefs, structures, and compiler characteristics.
 #AC_C_CONST
