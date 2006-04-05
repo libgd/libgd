@@ -4,6 +4,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "gd.h"
 
 /* A short program which converts a .png file into a .gd file, for

@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "gd.h"
 #include "gdhelpers.h"
 
@@ -37,7 +38,7 @@ gdImageCreateFromXpm (char *filename)
   gdImagePtr im = 0;
   char *apixel;
   int *pointer;
-  int red = 0, green = 0, blue = 0, color = 0;
+  int red = 0, green = 0, blue = 0;
   int *colors;
   int ret;
 
@@ -137,7 +138,7 @@ gdImageCreateFromXpm (char *filename)
     return (0);
   apixel[image.cpp] = '\0';
 
-  pointer = image.data;
+  pointer = (int *) image.data;
   for (i = 0; i < image.height; i++)
     {
       for (j = 0; j < image.width; j++)

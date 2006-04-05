@@ -4,6 +4,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "gd.h"
 
 /* If palette is true, we convert from truecolor to palette at the end,
@@ -23,13 +24,9 @@ main (int argc, char *argv[])
 #ifdef HAVE_LIBPNG
   /* Input and output files */
   FILE *in;
-  FILE *out;
 
   /* Input image */
   gdImagePtr im_in = 0;
-
-  /* Colors */
-  int lightBlue;
 
   if (argc != 2)
     {

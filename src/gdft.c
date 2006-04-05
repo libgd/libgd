@@ -29,7 +29,8 @@ char *
 gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
 		  double ptsize, double angle, int x, int y, char *string)
 {
-  gdImageStringFT (im, brect, fg, fontlist, ptsize,
+  /* 2.0.6: valid return */ 
+  return gdImageStringFT (im, brect, fg, fontlist, ptsize,
 		   angle, x, y, string);
 }
 
@@ -774,11 +775,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
   int render_mode = FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT;
   /* Now tuneable thanks to Wez Furlong */
   double linespace = LINESPACE;
-  if (strex) {
-    if ((strex->flags & gdFTEX_LINESPACE) == gdFTEX_LINESPACE) {
-      linespace = strex->linespacing;
-    }
-  }
+  /* 2.0.6: put this declaration with the other declarations! */
   /*
    *   make a new tweenColorCache on every call
    *   because caching colormappings between calls
@@ -788,6 +785,11 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
    */
   gdCache_head_t  *tc_cache;
 
+  if (strex) {
+    if ((strex->flags & gdFTEX_LINESPACE) == gdFTEX_LINESPACE) {
+      linespace = strex->linespacing;
+    }
+  }
   tc_cache = gdCacheCreate( TWEENCOLORCACHESIZE,
                tweenColorTest, tweenColorFetch, tweenColorRelease );
 

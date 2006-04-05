@@ -5,6 +5,7 @@
 
 #include "gd.h"
 #include <string.h>
+#include <stdlib.h>
 
 #define PI 3.141592
 #define DEG2RAD(x) ((x)*PI/180.)
