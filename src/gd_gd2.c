@@ -10,6 +10,9 @@
    *
  */
 
+/* 2.03: gd2 is no longer mandatory */
+#ifdef HAVE_LIBZ
+
 #include <stdio.h>
 #include <errno.h>
 #include <math.h>
@@ -921,3 +924,6 @@ gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
   out->free (out);
   return rv;
 }
+
+#endif /* HAVE_LIBZ */
+

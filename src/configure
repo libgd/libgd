@@ -28,7 +28,7 @@ $installPrefix = "/usr";
 #accommodated; surprisingly, I am not perfect)
 
 for ($i = 0; ($i < int(@ARGV)); $i++) {
-	if ($a eq "--prefix") {
+	if ($ARGV[$i] eq "--prefix") {
 		if ($ARGV[$i + 1] eq "") {
 			die "No directory specified for --prefix\n";
 		} else {
@@ -51,12 +51,12 @@ if (!&testCompiler) {
 
 #If we don't know, we try the elegant Linux way
 
-if ($os =~ /^(linux|irix|tru64|ultrix|openbsd|netbsd)/i) {
+if ($os =~ /^(linux|irix|tru64|ultrix|openbsd|netbsd|freebsd)/i) {
 	$sharedLinkHead = "ld -shared";
 	$sharedLinkTail = "";
 	print "Found OS with linux-like shared library link command\n";
 } elsif ($os =~ /^(sunos)/i) {
-	$sharedLinkHead = "ld -G";
+	$sharedLinkHead = "/usr/ccs/bin/ld -G";
 	$sharedLinkTail = "-ldl";
 	print "Found OS with sunos-like shared library link command\n";
 } elsif ($os =~ /^(darwin)/i) {
@@ -73,10 +73,18 @@ print "Shared library link command: $sharedLinkHead $sharedLinkTail\n";
 	
 if (&testLibrary("png", "png_create_read_struct (0, 0, 0, 0)", "-lz")) {
 	push @options, "png";
-	push @options, "z";
 	print "png library found.\n";
 } else {
-	print "Warning: png and/or zlib library not found, png will not be supported.\n";
+	print "Warning: png library not found, png will not be supported.\n";
+}
+
+if (&testLibrary("z", "deflate (0, 0)")) {
+	push @options, "z";
+	print "zlib library found.\n";
+	$zfound = 1;
+} else {
+	print "Warning: zlib library not found, png (which you might want a lot) and\n",
+		"gd2 (which you probably don't need) will not be supported.\n"; 
 }
 
 if (&testLibrary("jpeg", "jpeg_set_defaults (0)")) {
@@ -100,11 +108,46 @@ if (&testLibrary("xpm", "XpmReadFileToXpmImage(0, 0, 0)")) {
 	print "xpm library not found. That's OK. Almost no one needs xpm in gd.\n";
 }
 
+for $o (@options) {
+	$options{$o} = 1;
+}
+
+if (!int(@options)) {
+	print <<EOM
+*******************************************************************
+
+WARNING: NONE of the libraries needed to produce popular image
+formats were found. This is not a good thing. The library can
+be compiled, but it will not be able to produce PNG or JPEG
+or XPM images. Only a few minor formats can be supported without
+libraries. "make test" will not succeed without libraries; this
+is to be expected. IF YOU ARE NOT SURE THIS IS OK, you should go 
+get libpng, libjpeg and libz now, and install them. Then run
+configure again.
+
+*******************************************************************
+EOM
+;
+}
+
 print "Optional libraries found: @options\n";
 
 for $o (@options) {
 	$oflags .= " -DHAVE_LIB" . uc($o);
 	$lflags .= " -l$o";
+}
+
+if ($options{"png"}) {
+	$safePrograms = "pngtogd pngtogd2 gdtopng gd2topng gd2copypal gdparttopng webpng";
+} 
+ 
+if ($options{"freetype"} && $options{"jpeg"}) {
+	$safePrograms .= " annotate";
+} 
+
+@programs = split(/ /, $safePrograms);
+for $p (@programs) {
+	$installCommands .= "\tsh ./install-item 755 $p \$(INSTALL_BIN)/$p\n";
 }
 
 open(OUT, ">Makefile");
@@ -142,16 +185,15 @@ INSTALL_BIN=$installPrefix/bin
 # Update these with each release!
 
 MAJOR_VERSION=2
-VERSION=2.0.2
+VERSION=2.0.3
 
 COMPILER=$compiler
 
 CC=\$(COMPILER) \$(INCLUDEDIRS)
 LINK=\$(CC) \$(LIBDIRS) \$(LIBS)
 
-PROGRAMS=\$(BIN_PROGRAMS) \$(TEST_PROGRAMS)
+PROGRAMS=$safePrograms \$(TEST_PROGRAMS)
 
-BIN_PROGRAMS=pngtogd pngtogd2 gdtopng gd2topng gd2copypal gdparttopng webpng
 TEST_PROGRAMS=gdtest gddemo gd2time gdtestft testac
 
 default: instructions
@@ -177,15 +219,8 @@ instructions:
 
 test: \$(TEST_PROGRAMS)
 
-install: libgd.so.\${VERSION} \$(BIN_PROGRAMS)
-	sh ./install-item 755 pngtogd \$(INSTALL_BIN)/pngtogd
-	sh ./install-item 755 pngtogd2 \$(INSTALL_BIN)/pngtogd2
-	sh ./install-item 755 gdtopng \$(INSTALL_BIN)/gdtopng
-	sh ./install-item 755 gd2topng \$(INSTALL_BIN)/gd2topng
-	sh ./install-item 755 gd2copypal \$(INSTALL_BIN)/gd2copypal
-	sh ./install-item 755 gdparttopng \$(INSTALL_BIN)/gdparttopng
-	sh ./install-item 755 webpng \$(INSTALL_BIN)/webpng
-	sh ./install-item 755 bdftogd \$(INSTALL_BIN)/bdftogd
+install: libgd.so.\${VERSION} $safePrograms
+$installCommands	sh ./install-item 755 bdftogd \$(INSTALL_BIN)/bdftogd
 	sh ./install-item 644 gd.h \$(INSTALL_INCLUDE)/gd.h
 	sh ./install-item 644 gdcache.h \$(INSTALL_INCLUDE)/gdcache.h
 	sh ./install-item 644 gd_io.h \$(INSTALL_INCLUDE)/gd_io.h
@@ -206,6 +241,9 @@ pngtogd: pngtogd.o
 
 webpng: webpng.o
 	\$(CC) webpng.o -o webpng	\$(LIBDIRS) \$(LIBS)
+
+annotate: annotate.o
+	\$(CC) annotate.o -o annotate	\$(LIBDIRS) \$(LIBS)
 
 pngtogd2: pngtogd2.o
 	\$(CC) pngtogd2.o -o pngtogd2	\$(LIBDIRS) \$(LIBS)
@@ -261,7 +299,9 @@ libgd.a: \${LIBOBJS}
 	-ranlib libgd.a
 
 clean:
-	rm -f *.o *.a *.so *.so.* \${PROGRAMS} test/gdtest.jpg test/gdtest.wbmp test/fttest.png test/fttest.jpg
+	rm -f *.o *.a *.so *.so.* \${PROGRAMS} test/gdtest.jpg test/gdtest.wbmp test/fttest.png test/fttest.jpg *test.errors
+veryclean: clean
+	rm Makefile
 EOM
 ;
 
@@ -292,7 +332,12 @@ int main(int argc, char *argv[])
 }
 EOM
 ;
-	my($result) = system("cd $ltest; $compiler libtest.c -o libtest -l$library $reqLibraries >& ../libtest.errors");
+	# 2.03: have to close!
+	close(OUT);
+	# 2.03: make sure we pass the math library, many
+	# platforms require it separately
+	# 2.03: >& is a bash-ism, can't rely on it
+	my($result) = system("cd $ltest; $compiler libtest.c -o libtest $libDirs -l$library -lm $reqLibraries > ../libtest.errors 2>&1");
 	system("rm -rf $ltest");
 	if ($result != 0) {
 		return 0;
@@ -316,7 +361,10 @@ int main(int argc, char *argv[])
 }
 EOM
 ;
-	my($result) = system("cd $ctest; $compiler compilertest.c -o compilertest >& ../compilertest.errors");
+	# 2.03: have to close!
+	close(OUT);
+	# 2.03: correct for all sh, not just bash
+	my($result) = system("cd $ctest; $compiler compilertest.c -o compilertest > ../compilertest.errors 2>&1");
 	system("rm -rf $ctest");
 	if ($result != 0) {
 		return 0;

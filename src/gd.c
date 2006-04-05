@@ -2,7 +2,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#include <zlib.h>
+/* 2.03: don't include zlib here or we can't build without PNG */
 #include "gd.h"
 #include "gdhelpers.h"
 
