@@ -1,0 +1,6 @@
+libgd.a \
+		:st = .text 0x5ffb0000, 0x00010000:\
+		:st = .data 0x5ffc0000, 0x00040000:
+libgd.so.1.3 \
+		:st = .text 0x5ff60000, 0x00010000:\
+		:st = .data 0x5ff70000, 0x00040000:
