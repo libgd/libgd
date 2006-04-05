@@ -989,6 +989,10 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	}
       else if (encoding == gdFTEX_Big5)
 	{
+/* renamed sometime after freetype-2.1.4 */
+#ifndef FT_ENCODING_BIG5
+#define FT_ENCODING_BIG5 FT_ENCODING_MS_BIG5
+#endif
 	  if (charmap->encoding == FT_ENCODING_BIG5)
 	    {
 	      encodingfound++;
@@ -997,6 +1001,10 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	}
       else if (encoding == gdFTEX_Shift_JIS)
 	{
+/* renamed sometime after freetype-2.1.4 */
+#ifndef FT_ENCODING_SJIS
+#define FT_ENCODING_SJIS FT_ENCODING_MS_SJIS
+#endif
 	  if (charmap->encoding == FT_ENCODING_SJIS)
 	    {
 	      encodingfound++;
@@ -1006,10 +1014,10 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 #else
       if (encoding == gdFTEX_Unicode)
 	{
-	  if ((charmap->platform = 3 && charmap->encoding == 1)     /* Windows Unicode */
-	      || (charmap->platform == 3 && charmap->encoding == 0) /* Windows Symbol */
-	      || (charmap->platform == 2 && charmap->encoding == 1) /* ISO Unicode */
-	      || (charmap->platform == 0))                          /* Apple Unicode */
+	  if ((charmap->platform_id = 3 && charmap->encoding_id == 1)     /* Windows Unicode */
+	      || (charmap->platform_id == 3 && charmap->encoding_id == 0) /* Windows Symbol */
+	      || (charmap->platform_id == 2 && charmap->encoding_id == 1) /* ISO Unicode */
+	      || (charmap->platform_id == 0))                          /* Apple Unicode */
 	    {
 	      encodingfound++;
 	      break;
@@ -1017,7 +1025,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	}
       else if (encoding == gdFTEX_Big5)
 	{
-          if (charmap->platform == 3 && charmap->encoding == 4)     /* Windows Big5 */
+          if (charmap->platform_id == 3 && charmap->encoding_id == 4)     /* Windows Big5 */
 	    {
 	      encodingfound++;
 	      break;
@@ -1025,7 +1033,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	}
       else if (encoding == gdFTEX_Shift_JIS)
 	{
-          if (charmap->platform == 3 && charmap->encoding == 2)     /* Windows Sjis */
+          if (charmap->platform_id == 3 && charmap->encoding_id == 2)     /* Windows Sjis */
 	    {
 	      encodingfound++;
 	      break;
@@ -1111,7 +1119,7 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 #if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
       	      if (charmap->encoding == FT_ENCODING_MS_SYMBOL)
 #else
-	      if (charmap->platform == 3 && charmap->encoding == 0)
+	      if (charmap->platform_id == 3 && charmap->encoding_id == 0)
 #endif /* Freetype 2.1 or better */
 		{
 		  /* I do not know the significance of the constant 0xf000. */

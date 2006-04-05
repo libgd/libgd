@@ -1,5 +1,11 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h> /* For unlink function */
+
 #include "gd.h"
 
 /* A short program which converts a .png file into a .gd file, for

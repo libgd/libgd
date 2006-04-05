@@ -302,10 +302,10 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 		*/
 		gdImagePtr prev_pim = 0, prev_tim = previm;
 		int x, y;
-		int min_x;
+		int min_x = 0;
 		int min_y = tim->sy;
-		int max_x;
-		int max_y;
+		int max_x = 0;
+		int max_y = 0;
 		int colorMap[256];
 
 		if (previm->trueColor) {
