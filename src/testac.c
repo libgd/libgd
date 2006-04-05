@@ -11,12 +11,8 @@
    to test gdImageTrueColorToPalette and see file size/
    quality tradeoffs. */
 
-void testDrawing (
-		   gdImagePtr im_in,
-		   double scale,
-		   int blending,
-		   int palette,
-		   char *filename);
+void testDrawing (gdImagePtr im_in,
+		  double scale, int blending, int palette, char *filename);
 
 int
 main (int argc, char *argv[])
@@ -64,7 +60,7 @@ main (int argc, char *argv[])
   testDrawing (im_in, 2.0, 1, 1, "blending-doublesize-palette.png");
   gdImageDestroy (im_in);
 #else
-  fprintf(stderr, "No PNG library support.\n");
+  fprintf (stderr, "No PNG library support.\n");
 #endif
 
   return 0;
@@ -74,12 +70,8 @@ main (int argc, char *argv[])
    to test gdImageTrueColorToPalette and see file size/
    quality tradeoffs. */
 void
-testDrawing (
-	      gdImagePtr im_in,
-	      double scale,
-	      int blending,
-	      int palette,
-	      char *filename)
+testDrawing (gdImagePtr im_in,
+	     double scale, int blending, int palette, char *filename)
 {
   gdImagePtr im_out;
   FILE *out;
@@ -110,8 +102,9 @@ testDrawing (
   gdImageCopyResampled (im_out, im_in,
 			0, 0,
 			0, 0,
-       (int) (gdImageSX (im_in) * scale), (int) (gdImageSY (im_in) * scale),
-			gdImageSX (im_in), gdImageSY (im_in));
+			(int) (gdImageSX (im_in) * scale),
+			(int) (gdImageSY (im_in) * scale), gdImageSX (im_in),
+			gdImageSY (im_in));
   /* Write PNG */
   out = fopen (filename, "wb");
 
@@ -131,7 +124,7 @@ testDrawing (
 #ifdef HAVE_LIBPNG
   gdImagePng (im_out, out);
 #else
-  fprintf(stderr, "No PNG library support.\n");
+  fprintf (stderr, "No PNG library support.\n");
 #endif
   fclose (out);
 
