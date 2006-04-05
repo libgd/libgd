@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "gd.h"
 
 /* A short program which converts a .gif file into a .gd file, for
@@ -40,5 +42,7 @@ int main(int argc, char **argv)
 	gdImageGd2(im, out, cs, fmt);
 	fclose(out);
 	gdImageDestroy(im);
+
+	return 0;
 }
 
