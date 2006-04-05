@@ -465,7 +465,8 @@ gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 void
 gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 {
-  return gdImagePngCtxEx (im, outfile, -1);
+  /* 2.0.13: 'return' here was an error, thanks to Kevin Smith */
+  gdImagePngCtxEx (im, outfile, -1);
 }
 
 /* This routine is based in part on code from Dale Lutz (Safe Software Inc.)

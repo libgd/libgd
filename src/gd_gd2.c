@@ -649,7 +649,7 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 	      if (!_gd2ReadChunk (chunkIdx[chunkNum].offset,
 				  compBuf,
 				  chunkIdx[chunkNum].size,
-				  chunkBuf, &chunkLen, in))
+				  (char*) chunkBuf, &chunkLen, in))
 		{
 		  printf ("Error reading comproessed chunk\n");
 		  goto fail2;
@@ -671,7 +671,7 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 		    {
 		      if (im->trueColor)
 			{
-			  if (!gdGetInt (&ch, in))
+			  if (!gdGetInt ( (int*) &ch, in))
 			    {
 			      ch = 0;
 			      /*printf("EOF while reading file\n"); */
