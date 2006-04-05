@@ -7,6 +7,10 @@
  *       entities.tcl
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct entities_s {
 	char	*name;
 	int	value;
@@ -267,3 +271,7 @@ struct entities_s {
 
 #define ENTITY_NAME_LENGTH_MAX 8
 #define NR_OF_ENTITIES 252
+
+#ifdef __cplusplus
+}
+#endif
