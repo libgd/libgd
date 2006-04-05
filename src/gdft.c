@@ -386,8 +386,9 @@ fontFetch (char **error, void *key)
        * Allocate an oversized buffer that is guaranteed to be
        * big enough for all paths to be tested.
        */
+      /* 2.0.22: Thorben Kundinger: +8 is needed, not +6. */
       fullname = gdRealloc (fullname,
-			    strlen (fontsearchpath) + strlen (name) + 6);
+			    strlen (fontsearchpath) + strlen (name) + 8);
       /* if name is an absolute or relative pathname then test directly */
       if (strchr (name, '/')
 	  || (name[0] != 0 && name[1] == ':'
@@ -397,8 +398,8 @@ fontFetch (char **error, void *key)
 	  if (access (fullname, R_OK) == 0)
 	    {
 	      font_found++;
-              /* 2.0.16: memory leak fixed, Gustavo Scotti */ 		
-              gdFree(path);
+	      /* 2.0.16: memory leak fixed, Gustavo Scotti */
+	      gdFree (path);
 	      break;
 	    }
 	}
@@ -479,16 +480,20 @@ fontFetch (char **error, void *key)
       platform = charmap->platform_id;
       encoding = charmap->encoding_id;
 
-/* EAM DEBUG - Newer versions of libfree2 make it easier by defining encodings */
-#if (defined(FREETYPE_MAJOR) && (FREETYPE_MAJOR >=2 ) && (FREETYPE_MINOR >= 1))
+/* EAM DEBUG - Newer versions of libfree2 make it easier 
+	by defining encodings */
+/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
+
+#if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
       if (charmap->encoding == FT_ENCODING_MS_SYMBOL
-      ||  charmap->encoding == FT_ENCODING_ADOBE_CUSTOM
-      ||  charmap->encoding == FT_ENCODING_ADOBE_STANDARD) {
-      	a->have_char_map_unicode = 1;
-	found = charmap;
-	a->face->charmap = charmap;
-	return (void *)a;
-      }
+	  || charmap->encoding == FT_ENCODING_ADOBE_CUSTOM
+	  || charmap->encoding == FT_ENCODING_ADOBE_STANDARD)
+	{
+	  a->have_char_map_unicode = 1;
+	  found = charmap;
+	  a->face->charmap = charmap;
+	  return (void *) a;
+	}
 #endif /* Freetype 2.1 or better */
 /* EAM DEBUG */
 
@@ -649,7 +654,7 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
 	  pcr = pc;
 	  y = pen_y + row;
 	  /* clip if out of bounds */
-          /* 2.0.16: clipping rectangle, not image bounds */		
+	  /* 2.0.16: clipping rectangle, not image bounds */
 	  if ((y > im->cy2) || (y < im->cy1))
 	    continue;
 	  for (col = 0; col < bitmap.width; col++, pc++)
@@ -690,7 +695,7 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
 	      level = gdAlphaMax - level;
 	      x = pen_x + col;
 	      /* clip if out of bounds */
-              /* 2.0.16: clip to clipping rectangle, Matt McNabb */
+	      /* 2.0.16: clip to clipping rectangle, Matt McNabb */
 	      if ((x > im->cx2) || (x < im->cx1))
 		continue;
 	      /* get pixel location in gd buffer */
@@ -804,14 +809,14 @@ extern int any2eucjp (char *, char *, unsigned int);
 /* Fonts can be used across multiple images */
 
 /* 2.0.16: thread safety (the font cache is shared) */
-gdMutexDeclare(gdFontCacheMutex);
+gdMutexDeclare (gdFontCacheMutex);
 static gdCache_head_t *fontCache;
 static FT_Library library;
 
 void
 gdFreeFontCache ()
 {
-  gdFontCacheShutdown();
+  gdFontCacheShutdown ();
 }
 
 void
@@ -819,7 +824,7 @@ gdFontCacheShutdown ()
 {
   if (fontCache)
     {
-      gdMutexShutdown(gdFontCacheMutex);
+      gdMutexShutdown (gdFontCacheMutex);
       gdCacheDelete (fontCache);
       FT_Done_FreeType (library);
       /* 2.0.16: Gustavo Scotti: make sure we don't free this twice */
@@ -838,22 +843,24 @@ gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
 			    ptsize, angle, x, y, string, 0);
 }
 
-int gdFontCacheSetup(void)
+int
+gdFontCacheSetup (void)
 {
-	if (fontCache) {
-		/* Already set up */
-		return 0;
-	}
-	gdMutexSetup(gdFontCacheMutex);
-	if (FT_Init_FreeType (&library))
-	{
-		gdMutexShutdown(gdFontCacheMutex);
-		return -1;
-	}
-	fontCache = gdCacheCreate (FONTCACHESIZE,
-		 fontTest, fontFetch, fontRelease);
-	return 0;
+  if (fontCache)
+    {
+      /* Already set up */
+      return 0;
+    }
+  gdMutexSetup (gdFontCacheMutex);
+  if (FT_Init_FreeType (&library))
+    {
+      gdMutexShutdown (gdFontCacheMutex);
+      return -1;
+    }
+  fontCache = gdCacheCreate (FONTCACHESIZE, fontTest, fontFetch, fontRelease);
+  return 0;
 }
+
 
 char *
 gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
@@ -880,7 +887,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
   int render = (im && (im->trueColor || (fg <= 255 && fg >= -255)));
   FT_BitmapGlyph bm;
   /* 2.0.13: Bob Ostermann: don't force autohint, that's just for testing 
-    freetype and doesn't look as good */
+     freetype and doesn't look as good */
   int render_mode = FT_LOAD_DEFAULT;
   int m, mfound;
   /* Now tuneable thanks to Wez Furlong */
@@ -894,6 +901,8 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
    *   colorindexes.          -- 27.06.2001 <krisku@arrak.fi>
    */
   gdCache_head_t *tc_cache;
+  /* Tuneable horizontal and vertical resolution in dots per inch */
+  int hdpi, vdpi;
   if (strex)
     {
       if ((strex->flags & gdFTEX_LINESPACE) == gdFTEX_LINESPACE)
@@ -908,13 +917,14 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 /***** initialize font library and font cache on first call ******/
   if (!fontCache)
     {
-      if (gdFontCacheSetup() != 0) {
-	gdCacheDelete (tc_cache);
-        return "Failure to initialize font library";
-      }
+      if (gdFontCacheSetup () != 0)
+	{
+	  gdCacheDelete (tc_cache);
+	  return "Failure to initialize font library";
+	}
     }
 /*****/
-  gdMutexLock(gdFontCacheMutex);
+  gdMutexLock (gdFontCacheMutex);
   /* get the font (via font cache) */
   fontkey.fontlist = fontlist;
   fontkey.library = &library;
@@ -922,17 +932,29 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
   if (!font)
     {
       gdCacheDelete (tc_cache);
-      gdMutexUnlock(gdFontCacheMutex);
+      gdMutexUnlock (gdFontCacheMutex);
       return fontCache->error;
     }
   face = font->face;		/* shortcut */
   slot = face->glyph;		/* shortcut */
 
-  if (FT_Set_Char_Size (face, 0, (FT_F26Dot6) (ptsize * 64),
-			GD_RESOLUTION, GD_RESOLUTION))
+  /*
+   * Added hdpi and vdpi to support images at non-screen resolutions, i.e. 300 dpi TIFF,
+   *    or 100h x 50v dpi FAX format. 2.0.23.
+   * 2004/02/27 Mark Shackelford, mark.shackelford@acs-inc.com
+   */
+  hdpi = GD_RESOLUTION;
+  vdpi = GD_RESOLUTION;
+  if (strex && (strex->flags & gdFTEX_RESOLUTION))
+    {
+      hdpi = strex->hdpi;
+      vdpi = strex->vdpi;
+    }
+
+  if (FT_Set_Char_Size (face, 0, (FT_F26Dot6) (ptsize * 64), hdpi, vdpi))
     {
       gdCacheDelete (tc_cache);
-      gdMutexUnlock(gdFontCacheMutex);
+      gdMutexUnlock (gdFontCacheMutex);
       return "Could not set character size";
     }
 
@@ -993,7 +1015,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
   if (!mfound)
     {
       /* No character set found! */
-      gdMutexUnlock(gdFontCacheMutex);
+      gdMutexUnlock (gdFontCacheMutex);
       return "No character set found";
     }
 
@@ -1035,7 +1057,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
       /* newlines */
       if (ch == '\n')
 	{
-          /* 2.0.13: reset penf.x. Christopher J. Grayce */
+	  /* 2.0.13: reset penf.x. Christopher J. Grayce */
 	  penf.x = 0;
 	  penf.y -= face->size->metrics.height * linespace;
 	  penf.y = (penf.y - 32) & -64;	/* round to next pixel row */
@@ -1051,79 +1073,80 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 #if (defined(FREETYPE_MAJOR) && (FREETYPE_MAJOR >=2 ) && (FREETYPE_MINOR >= 1))
       if (font->face->charmap->encoding == FT_ENCODING_MS_SYMBOL)
 	{
-         /* I do not know the significance of the constant 0xf000. */
-         /* It was determined by inspection of the character codes */
-         /* stored in Microsoft font symbol.ttf                    */
-           len = gdTcl_UtfToUniChar (next, &ch);
-           ch |= 0xf000;
-           next += len;
-	} else
+	  /* I do not know the significance of the constant 0xf000. */
+	  /* It was determined by inspection of the character codes */
+	  /* stored in Microsoft font symbol.ttf                    */
+	  len = gdTcl_UtfToUniChar (next, &ch);
+	  ch |= 0xf000;
+	  next += len;
+	}
+      else
 #endif /* Freetype 2.1 or better */
 /* EAM DEBUG */
-	
-      switch (m)
-	{
-	case gdFTEX_Unicode:
-	  if (font->have_char_map_unicode)
-	    {
-	      /* use UTF-8 mapping from ASCII */
-	      len = gdTcl_UtfToUniChar (next, &ch);
-	      next += len;
-	    }
-	  break;
-	case gdFTEX_Shift_JIS:
-	  if (font->have_char_map_sjis)
-	    {
-	      unsigned char c;
-	      int jiscode;
-	      c = *next;
-	      if (0xA1 <= c && c <= 0xFE)
-		{
-		  next++;
-		  jiscode = 0x100 * (c & 0x7F) + ((*next) & 0x7F);
 
-		  ch = (jiscode >> 8) & 0xFF;
-		  jiscode &= 0xFF;
-
-		  if (ch & 1)
-		    jiscode += 0x40 - 0x21;
-		  else
-		    jiscode += 0x9E - 0x21;
-
-		  if (jiscode >= 0x7F)
-		    jiscode++;
-		  ch = (ch - 0x21) / 2 + 0x81;
-		  if (ch >= 0xA0)
-		    ch += 0x40;
-
-		  ch = (ch << 8) + jiscode;
-		}
-	      else
-		{
-		  ch = c & 0xFF;	/* don't extend sign */
-		}
-	      next++;
-	    }
-	  break;
-	case gdFTEX_Big5:
+	switch (m)
 	  {
-	    /*
-	     * Big 5 mapping:
-	     * use "JIS-8 half-width katakana" coding from 8-bit characters. Ref:
-	     * ftp://ftp.ora.com/pub/examples/nutshell/ujip/doc/japan.inf-032092.sjs
-	     */
-	    ch = (*next) & 0xFF;	/* don't extend sign */
-	    next++;
-	    if (ch >= 161	/* first code of JIS-8 pair */
-		&& *next)
-	      {			/* don't advance past '\0' */
-		/* TBB: Fix from Kwok Wah On: & 255 needed */
-		ch = (ch * 256) + ((*next) & 255);
+	  case gdFTEX_Unicode:
+	    if (font->have_char_map_unicode)
+	      {
+		/* use UTF-8 mapping from ASCII */
+		len = gdTcl_UtfToUniChar (next, &ch);
+		next += len;
+	      }
+	    break;
+	  case gdFTEX_Shift_JIS:
+	    if (font->have_char_map_sjis)
+	      {
+		unsigned char c;
+		int jiscode;
+		c = *next;
+		if (0xA1 <= c && c <= 0xFE)
+		  {
+		    next++;
+		    jiscode = 0x100 * (c & 0x7F) + ((*next) & 0x7F);
+
+		    ch = (jiscode >> 8) & 0xFF;
+		    jiscode &= 0xFF;
+
+		    if (ch & 1)
+		      jiscode += 0x40 - 0x21;
+		    else
+		      jiscode += 0x9E - 0x21;
+
+		    if (jiscode >= 0x7F)
+		      jiscode++;
+		    ch = (ch - 0x21) / 2 + 0x81;
+		    if (ch >= 0xA0)
+		      ch += 0x40;
+
+		    ch = (ch << 8) + jiscode;
+		  }
+		else
+		  {
+		    ch = c & 0xFF;	/* don't extend sign */
+		  }
 		next++;
 	      }
+	    break;
+	  case gdFTEX_Big5:
+	    {
+	      /*
+	       * Big 5 mapping:
+	       * use "JIS-8 half-width katakana" coding from 8-bit characters. Ref:
+	       * ftp://ftp.ora.com/pub/examples/nutshell/ujip/doc/japan.inf-032092.sjs
+	       */
+	      ch = (*next) & 0xFF;	/* don't extend sign */
+	      next++;
+	      if (ch >= 161	/* first code of JIS-8 pair */
+		  && *next)
+		{		/* don't advance past '\0' */
+		  /* TBB: Fix from Kwok Wah On: & 255 needed */
+		  ch = (ch * 256) + ((*next) & 255);
+		  next++;
+		}
+	    }
+	    break;
 	  }
-	  break;
-	}
       /* set rotation transform */
       FT_Set_Transform (face, &matrix, NULL);
       /* Convert character code to glyph index */
@@ -1144,7 +1167,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
       if (err)
 	{
 	  gdCacheDelete (tc_cache);
-          gdMutexUnlock(gdFontCacheMutex);
+	  gdMutexUnlock (gdFontCacheMutex);
 	  return "Problem loading glyph";
 	}
 
@@ -1188,7 +1211,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 	      if (err)
 		{
 		  gdCacheDelete (tc_cache);
-                  gdMutexUnlock(gdFontCacheMutex);
+		  gdMutexUnlock (gdFontCacheMutex);
 		  return "Problem rendering glyph";
 		}
 	    }
@@ -1242,7 +1265,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
   if (tmpstr)
     gdFree (tmpstr);
   gdCacheDelete (tc_cache);
-  gdMutexUnlock(gdFontCacheMutex);
+  gdMutexUnlock (gdFontCacheMutex);
   return (char *) NULL;
 }
 

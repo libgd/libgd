@@ -137,36 +137,40 @@ main (void)
       gdImageLine (im_out, 0, 255, 255, 0, gdStyledBrushed);
     }
   /* Text (non-truetype; see gdtestft for a freetype demo) */
-  fonts[0] = gdFontGetTiny();
-  fonts[1] = gdFontGetSmall();
-  fonts[2] = gdFontGetMediumBold();
-  fonts[3] = gdFontGetLarge();
-  fonts[4] = gdFontGetGiant();
+  fonts[0] = gdFontGetTiny ();
+  fonts[1] = gdFontGetSmall ();
+  fonts[2] = gdFontGetMediumBold ();
+  fonts[3] = gdFontGetLarge ();
+  fonts[4] = gdFontGetGiant ();
   y = 0;
-  for (i = 0; (i <= 4); i++) {
-    gdImageString (im_out, fonts[i], 32, 32 + y, (unsigned char *) "hi", red);
-    y += fonts[i]->h;
-  }
+  for (i = 0; (i <= 4); i++)
+    {
+      gdImageString (im_out, fonts[i], 32, 32 + y, (unsigned char *) "hi",
+		     red);
+      y += fonts[i]->h;
+    }
   y = 0;
-  for (i = 0; (i <= 4); i++) {
-    gdImageStringUp (im_out, fonts[i], 64 + y, 64, 
-    (unsigned char *) "hi", red);
-    y += fonts[i]->h;
-  }
+  for (i = 0; (i <= 4); i++)
+    {
+      gdImageStringUp (im_out, fonts[i], 64 + y, 64,
+		       (unsigned char *) "hi", red);
+      y += fonts[i]->h;
+    }
   /* Random antialiased lines; coordinates all over the image, 
-    but the output will respect a small clipping rectangle */
-  gdImageSetClip(im_out, 0, gdImageSY(im_out) - 100,
-    100, gdImageSY(im_out)); 
+     but the output will respect a small clipping rectangle */
+  gdImageSetClip (im_out, 0, gdImageSY (im_out) - 100,
+		  100, gdImageSY (im_out));
   /* Fixed seed for reproducibility of results */
-  srand(100);
-  for (i = 0; (i < 100); i++) {
-    int x1 = rand() % gdImageSX(im_out);
-    int y1 = rand() % gdImageSY(im_out);
-    int x2 = rand() % gdImageSX(im_out);
-    int y2 = rand() % gdImageSY(im_out);
-    gdImageSetAntiAliased(im_out, white);
-    gdImageLine (im_out, x1, y1, x2, y2, gdAntiAliased);
-  }
+  srand (100);
+  for (i = 0; (i < 100); i++)
+    {
+      int x1 = rand () % gdImageSX (im_out);
+      int y1 = rand () % gdImageSY (im_out);
+      int x2 = rand () % gdImageSX (im_out);
+      int y2 = rand () % gdImageSY (im_out);
+      gdImageSetAntiAliased (im_out, white);
+      gdImageLine (im_out, x1, y1, x2, y2, gdAntiAliased);
+    }
   /* Make output image interlaced (progressive, in the case of JPEG) */
   gdImageInterlace (im_out, 1);
   out = fopen ("demoout.png", "wb");

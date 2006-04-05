@@ -757,15 +757,18 @@ LOCAL (void)
   cinfo->colormap[2][icolor] = (JSAMPLE) ((c2total + (total >> 1)) / total);
 #else
   /* 2.0.16: Paul den Dulk found an occasion where total can be 0 */
-  if (count) {
-    im->red[icolor] = (int) ((c0total + (total >> 1)) / total);
-    im->green[icolor] = (int) ((c1total + (total >> 1)) / total);
-    im->blue[icolor] = (int) ((c2total + (total >> 1)) / total);
-  } else {
-    im->red[icolor] = 255;
-    im->green[icolor] = 255;
-    im->blue[icolor] = 255;
-  }
+  if (count)
+    {
+      im->red[icolor] = (int) ((c0total + (total >> 1)) / total);
+      im->green[icolor] = (int) ((c1total + (total >> 1)) / total);
+      im->blue[icolor] = (int) ((c2total + (total >> 1)) / total);
+    }
+  else
+    {
+      im->red[icolor] = 255;
+      im->green[icolor] = 255;
+      im->blue[icolor] = 255;
+    }
 #endif
 }
 

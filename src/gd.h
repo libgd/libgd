@@ -36,9 +36,11 @@ extern "C"
 #endif
 
 /* some might want to set DEFAULT_FONTPATH from configure in config.h */
+
+/* 2.0.23: more Type 1 fonts */
 #ifndef DEFAULT_FONTPATH
 /* default fontpath for unix systems  - whatever happened to standards ! */
-#define DEFAULT_FONTPATH "/usr/X11R6/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/truetype:/usr/X11R6/lib/X11/fonts/TTF:/usr/share/fonts/TrueType:/usr/share/fonts/truetype:/usr/openwin/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/Type1"
+#define DEFAULT_FONTPATH "/usr/X11R6/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/truetype:/usr/X11R6/lib/X11/fonts/TTF:/usr/share/fonts/TrueType:/usr/share/fonts/truetype:/usr/openwin/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/Type1:/usr/lib/X11/fonts/Type1:/usr/openwin/lib/X11/fonts/Type1"
 #endif
 #ifndef PATHSEPARATOR
 #define PATHSEPARATOR ":"
@@ -373,11 +375,15 @@ extern "C"
 				   gdFTEX_Shift_JIS, or gdFTEX_Big5;
 				   when not specified, maps are searched
 				   for in the above order. */
+    int hdpi;                   /* if (flags & gdFTEX_RESOLUTION) */
+    int vdpi;			/* if (flags & gdFTEX_RESOLUTION) */
+
   }
   gdFTStringExtra, *gdFTStringExtraPtr;
 
 #define gdFTEX_LINESPACE 1
 #define gdFTEX_CHARMAP 2
+#define gdFTEX_RESOLUTION 4
 
 /* These are NOT flags; set one in 'charmap' if you set the
 	gdFTEX_CHARMAP bit in 'flags'. */

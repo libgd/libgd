@@ -5,13 +5,13 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the vesion number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.0.22], [gd@boutell.com])
+AC_INIT([GD], [2.0.23], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=0
-GDLIB_REVISION=22
+GDLIB_REVISION=23
 GDLIBNAME=gd
 
 AC_SUBST(GDLIB_MAJOR)
@@ -320,8 +320,8 @@ else
 fi
 
 #TBB: png12's png_create_read_struct is just as good 
-
-if test "$ac_cv_lib_png12_png_create_read_struct" == yes; then
+#2.0.23: should be = not ==  
+if test "$ac_cv_lib_png12_png_create_read_struct" = yes; then
   ac_cv_lib_png_png_create_read_struct=yes
 fi 
 

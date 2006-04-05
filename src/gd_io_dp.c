@@ -72,7 +72,8 @@ static long dynamicTell (struct gdIOCtx *);
 gdIOCtx *
 gdNewDynamicCtx (int initialSize, void *data)
 {
-  gdNewDynamicCtxEx(initialSize, data, 1);
+  /* 2.0.23: Phil Moore: 'return' keyword was missing! */
+  return gdNewDynamicCtxEx (initialSize, data, 1);
 }
 
 gdIOCtx *
@@ -197,9 +198,10 @@ dynamicSeek (struct gdIOCtx *ctx, const int pos)
   if (bytesNeeded > dp->realSize)
     {
       /* 2.0.21 */
-      if (!dp->freeOK) {
-        return FALSE;
-      }
+      if (!dp->freeOK)
+	{
+	  return FALSE;
+	}
       if (!gdReallocDynamic (dp, dp->realSize * 2))
 	{
 	  dp->dataGood = FALSE;
@@ -372,9 +374,10 @@ appendDynamic (dynamicPtr * dp, const void *src, int size)
   if (bytesNeeded > dp->realSize)
     {
       /* 2.0.21 */
-      if (!dp->freeOK) {
-        return FALSE;
-      }
+      if (!dp->freeOK)
+	{
+	  return FALSE;
+	}
       if (!gdReallocDynamic (dp, bytesNeeded * 2))
 	{
 	  dp->dataGood = FALSE;
@@ -435,8 +438,9 @@ static int
 trimDynamic (dynamicPtr * dp)
 {
   /* 2.0.21: we don't reallocate memory we don't own */
-  if (!dp->freeOK) {
-    return TRUE;
-  }
+  if (!dp->freeOK)
+    {
+      return TRUE;
+    }
   return gdReallocDynamic (dp, dp->logicalSize);
 }

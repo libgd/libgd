@@ -486,7 +486,8 @@ gdImageCreateFromGd2Part (FILE * inFile, int srcx, int srcy, int w, int h)
 }
 
 gdImagePtr
-gdImageCreateFromGd2PartPtr (int size, void *data, int srcx, int srcy, int w, int h)
+gdImageCreateFromGd2PartPtr (int size, void *data, int srcx, int srcy, int w,
+			     int h)
 {
   gdImagePtr im;
   gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
@@ -669,7 +670,7 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 	      if (!_gd2ReadChunk (chunkIdx[chunkNum].offset,
 				  compBuf,
 				  chunkIdx[chunkNum].size,
-				  (char*) chunkBuf, &chunkLen, in))
+				  (char *) chunkBuf, &chunkLen, in))
 		{
 		  printf ("Error reading comproessed chunk\n");
 		  goto fail2;
@@ -691,7 +692,7 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 		    {
 		      if (im->trueColor)
 			{
-			  if (!gdGetInt ( (int*) &ch, in))
+			  if (!gdGetInt ((int *) &ch, in))
 			    {
 			      ch = 0;
 			      /*printf("EOF while reading file\n"); */
@@ -701,7 +702,7 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 		      else
 			{
 			  ch = gdGetC (in);
-			  if ((int)ch == EOF)
+			  if ((int) ch == EOF)
 			    {
 			      ch = 0;
 			      /*printf("EOF while reading file\n"); */
