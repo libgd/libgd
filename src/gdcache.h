@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* 
  * gdcache.h
  *
@@ -83,3 +87,7 @@ gdCache_head_t *gdCacheCreate (int size,
 void gdCacheDelete (gdCache_head_t * head);
 
 void *gdCacheGet (gdCache_head_t * head, void *keydata);
+
+#ifdef __cplusplus
+}
+#endif

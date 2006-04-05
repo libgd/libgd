@@ -216,7 +216,7 @@ BGD_DECLARE(void) gdImageWBMP (gdImagePtr im, int fg, FILE * outFile)
 /* gdImageWBMPPtr
    ** --------------
  */
-void *
+BGD_DECLARE(void *)
 gdImageWBMPPtr (gdImagePtr im, int *size, int fg)
 {
   void *rv;
@@ -226,3 +226,5 @@ gdImageWBMPPtr (gdImagePtr im, int *size, int fg)
   out->gd_free (out);
   return rv;
 }
+
+
