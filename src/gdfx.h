@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef GDFX_H
 #define GDFX_H 1
 
@@ -63,3 +67,7 @@ BGD_DECLARE(char *) gdImageStringFTCircle(
 
 #endif /* GDFX_H */
 
+
+#ifdef __cplusplus
+}
+#endif
