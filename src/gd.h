@@ -5,6 +5,7 @@
 	dllimport when importing from it, nothing when
 	not on Silly Silly Windows (tm Aardman Productions). */
 
+/* 2.0.20: for headers */
 #ifdef BGDWIN32
 #define BGD_EXPORT __declspec(dllexport)
 #else
@@ -13,6 +14,19 @@
 #else
 /* 2.0.19: should be 'extern', especially for font data pointers */
 #define BGD_EXPORT extern
+#endif /* WIN32 */
+#endif /* BGDWIN32 */
+
+/* 2.0.20: for actual storage of exported data, functions don't need this,
+  currently needed only for font pointers */
+#ifdef BGDWIN32
+#define BGD_EXPORT_DATA_IMPL __declspec(dllexport)
+#else
+#ifdef WIN32
+#define BGD_EXPORT_DATA_IMPL __declspec(dllimport)
+#else
+/* 2.0.20: should be nothing at all */
+#define BGD_EXPORT_DATA_IMPL
 #endif /* WIN32 */
 #endif /* BGDWIN32 */
 
@@ -323,6 +337,10 @@ extern "C"
 /* Optional: clean up after application is done using fonts in 
  BGD_EXPORT   gdImageStringFT(). */
  BGD_EXPORT void gdFontCacheShutdown (void);
+/* 2.0.20: for backwards compatibility. A few applications did start calling
+ this function when it first appeared although it was never documented. 
+ Simply invokes gdFontCacheShutdown. */
+ BGD_EXPORT void gdFreeFontCache (void);
 
 /* Calls gdImageStringFT. Provided for backwards compatibility only. */
   BGD_EXPORT char *gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,

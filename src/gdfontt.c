@@ -2585,6 +2585,6 @@ gdFont gdFontTinyRep = {
   gdFontTinyData
 };
 
-BGD_EXPORT gdFontPtr gdFontTiny = &gdFontTinyRep;
+BGD_EXPORT_DATA_IMPL gdFontPtr gdFontTiny = &gdFontTinyRep;
 
 /* This file has not been truncated. */

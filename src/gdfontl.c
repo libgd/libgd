@@ -4634,6 +4634,6 @@ gdFont gdFontLargeRep = {
   gdFontLargeData
 };
 
-BGD_EXPORT gdFontPtr gdFontLarge = &gdFontLargeRep;
+BGD_EXPORT_DATA_IMPL gdFontPtr gdFontLarge = &gdFontLargeRep;
 
 /* This file has not been truncated. */

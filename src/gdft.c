@@ -809,6 +809,12 @@ static gdCache_head_t *fontCache;
 static FT_Library library;
 
 void
+gdFreeFontCache ()
+{
+  gdFontCacheShutdown();
+}
+
+void
 gdFontCacheShutdown ()
 {
   if (fontCache)
