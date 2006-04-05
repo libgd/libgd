@@ -156,8 +156,17 @@ void gdImageColorTransparent(gdImagePtr im, int color);
 void gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src);
 void gdImagePng(gdImagePtr im, FILE *out);
 void gdImagePngCtx(gdImagePtr im, gdIOCtx *out);
+void gdImageWBMP(gdImagePtr image, int fg, FILE *out);
+void gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out);
 
-/* A custom data sink. */
+void gdImageJpeg(gdImagePtr im, FILE *out, int quality);
+void gdImageJpegCtx(gdImagePtr im, gdIOCtx *out, int quality);
+void *gdImageJpegPtr(gdImagePtr im, int *size, int quality);
+gdImagePtr gdImageCreateFromJpeg(FILE *infile);
+gdImagePtr gdImageCreateFromJpegCtx(gdIOCtx *infile);
+
+/* A custom data sink. For backwards compatibility. Use
+	gdIOCtx instead. */
 /* The sink function must return -1 on error, otherwise the number
         of bytes written, which must be equal to len. */
 /* context will be passed to your sink function. */

@@ -13,23 +13,23 @@ AR=ar
 #an explicit path for it here, or install manually.
 INSTALL=install
 
-#If you don't have FreeType and/or Xpm installed, including the
+#If you don't have FreeType, libjpeg and/or Xpm installed, including the
 #header files, uncomment this (default).
-CFLAGS=-O
-#If you do have FreeType and/or Xpm fully installed, uncomment a
+#CFLAGS=-O
+#If you do have FreeType, libjpeg and/or Xpm fully installed, uncomment a
 #variation of this and comment out the line above. See also LIBS below.
-#CFLAGS=-O -DHAVE_XPM -DHAVE_LIBTTF
+CFLAGS=-O -DHAVE_XPM -DHAVE_JPEG -DHAVE_LIBTTF
 
 #If you don't have FreeType and/or Xpm fully installed, uncomment this
 #(default).
-LIBS=-lm -lgd -lpng -lz
+#LIBS=-lm -lgd -lpng -lz
 
-#If you do have FreeType and/or Xpm fully installed, uncomment a 
+#If you do have FreeType, JPEG and/or Xpm fully installed, uncomment a 
 #variation of this and comment out the line above. Note that
 #Xpm requires X11. See also CFLAGS above.
-#LIBS=-lm -lgd -lpng -lz -lttf -lXpm -lX11
+LIBS=-lm -lgd -lpng -lz -ljpeg -lttf -lXpm -lX11
 
-#Typical install locations for freetype, zlib, xpm and libpng header files.
+#Typical install locations for freetype, zlib, xpm, libjpeg and libpng header files.
 #If yours are somewhere else, change this. 
 INCLUDEDIRS=-I/usr/local/include -I/usr/include/X11 -I/usr/X11R6/include/X11
 
@@ -121,12 +121,12 @@ gdtestttf: gdtestttf.o libgd.a
 	$(CC) gdtestttf.o -o gdtestttf	$(LIBDIRS) $(LIBS)
 
 libgd.a: gd.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o gd_io_file.o gd_ss.o \
-	gd_io_ss.o gd_png.o gdxpm.o gdfontt.o gdfonts.o gdfontmb.o gdfontl.o \
+	gd_io_ss.o gd_png.o gd_jpeg.o gdxpm.o gdfontt.o gdfonts.o gdfontmb.o gdfontl.o \
 	gdfontg.o gdtables.o gdttf.o gdcache.o gdkanji.o \
 	gd.h gdfontt.h gdfonts.h gdfontmb.h gdfontl.h gdfontg.h
 	rm -f libgd.a
 	$(AR) rc libgd.a gd.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o \
-		gd_io_file.o gd_ss.o gd_io_ss.o gd_png.o gdxpm.o \
+		gd_io_file.o gd_ss.o gd_io_ss.o gd_png.o gd_jpeg.o gdxpm.o \
 		gdfontt.o gdfonts.o gdfontmb.o gdfontl.o gdfontg.o \
 		gdtables.o gdttf.o gdcache.o gdkanji.o
 	-ranlib libgd.a

@@ -85,6 +85,137 @@ int gdImageColorClosest(gdImagePtr im, int r, int g, int b)
 	return ct;
 }
 
+/* This code is taken from http://www.acm.org/jgt/papers/SmithLyons96/hwb_rgb.html, an article
+ * on colour conversion to/from RBG and HWB colour systems. 
+ * It has been modified to return the converted value as a * parameter. 
+ */
+
+#define RETURN_HWB(h, w, b) {HWB->H = h; HWB->W = w; HWB->B = b; return HWB;} 
+#define RETURN_RGB(r, g, b) {RGB->R = r; RGB->G = g; RGB->B = b; return RGB;} 
+#define HWB_UNDEFINED -1
+#define SETUP_RGB(s, r, g, b) {s.R = r/255.0; s.G = g/255.0; s.B = b/255.0;}
+
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MIN3(a,b,c) ((a)<(b)?(MIN(a,c)):(MIN(b,c)))
+#define MAX(a,b) ((a)<(b)?(b):(a))
+#define MAX3(a,b,c) ((a)<(b)?(MAX(b,c)):(MAX(a,c)))
+
+
+/*
+ * Theoretically, hue 0 (pure red) is identical to hue 6 in these transforms. Pure 
+ * red always maps to 6 in this implementation. Therefore UNDEFINED can be 
+ * defined as 0 in situations where only unsigned numbers are desired.
+ */
+typedef struct {float R, G, B;} RGBType; 
+typedef struct {float H, W, B;} HWBType;
+
+static HWBType* RGB_to_HWB( RGBType RGB, HWBType* HWB) {
+
+	/*
+	 * RGB are each on [0, 1]. W and B are returned on [0, 1] and H is  
+	 * returned on [0, 6]. Exception: H is returned UNDEFINED if W == 1 - B.  
+	 */
+
+ 	float R = RGB.R, G = RGB.G, B = RGB.B, w, v, b, f;  
+	int i;  
+  
+ 	w = MIN3(R, G, B);  
+ 	v = MAX3(R, G, B);  
+ 	b = 1 - v;  
+	if (v == w) RETURN_HWB(HWB_UNDEFINED, w, b);  
+ 	f = (R == w) ? G - B : ((G == w) ? B - R : R - G);  
+ 	i = (R == w) ? 3 : ((G == w) ? 5 : 1);  
+	RETURN_HWB(i - f /(v - w), w, b);  
+
+}
+
+static float HWB_Diff(int r1, int g1, int b1, int r2, int g2, int b2) {
+	RGBType		RGB1, RGB2;
+	HWBType		HWB1, HWB2;
+	float		diff;
+
+	SETUP_RGB(RGB1, r1, g1, b1);
+	SETUP_RGB(RGB2, r2, g2, b2);	
+
+	RGB_to_HWB(RGB1, &HWB1);
+	RGB_to_HWB(RGB2, &HWB2);
+
+	/*
+	 * I made this bit up; it seems to produce OK results, and it is certainly
+	 * more visually correct than the current RGB metric. (PJW)
+	 */
+
+	if ( (HWB1.H == HWB_UNDEFINED) || (HWB2.H == HWB_UNDEFINED) ) {
+		diff = 0; /* Undefined hues always match... */
+	} else {
+		diff = abs(HWB1.H - HWB2.H);
+		if (diff > 3) {
+			diff = 6 - diff; /* Remember, it's a colour circle */
+		}
+	}
+
+	diff = diff*diff + (HWB1.W - HWB2.W)*(HWB1.W - HWB2.W) + (HWB1.B - HWB2.B)*(HWB1.B - HWB2.B);
+
+	return diff;
+}
+
+
+/*
+ * This is not actually used, but is here for completeness, in case someone wants to
+ * use the HWB stuff for anything else...
+ */
+static RGBType* HWB_to_RGB( HWBType HWB, RGBType* RGB ) {
+
+	/* 
+	 * H is given on [0, 6] or UNDEFINED. W and B are given on [0, 1].  
+	 * RGB are each returned on [0, 1]. 
+	 */
+ 
+	float h = HWB.H, w = HWB.W, b = HWB.B, v, n, f;  
+	int i;  
+  
+	v = 1 - b;  
+	if (h == HWB_UNDEFINED) RETURN_RGB(v, v, v);  
+	i = floor(h);  
+	f = h - i;  
+	if (i & 1) f = 1 - f; /* if i is odd */ 
+	n = w + f * (v - w); /* linear interpolation between w and v */ 
+	switch (i) {  
+		case 6:  
+		case 0: RETURN_RGB(v, n, w);  
+		case 1: RETURN_RGB(n, v, w);  
+		case 2: RETURN_RGB(w, v, n);  
+		case 3: RETURN_RGB(w, n, v);  
+		case 4: RETURN_RGB(n, w, v);  
+		case 5: RETURN_RGB(v, w, n);  
+	}  
+
+}
+
+int gdImageColorClosestHWB(gdImagePtr im, int r, int g, int b)
+{
+	int i;
+	long rd, gd, bd;
+	int ct = (-1);
+	int first = 1;
+	float mindist = 0;
+	for (i=0; (i<(im->colorsTotal)); i++) {
+		float dist;
+		if (im->open[i]) {
+			continue;
+		}
+		dist = HWB_Diff(im->red[i], im->green[i], im->blue[i], r, g, b); 
+		if (first || (dist < mindist)) {
+			mindist = dist;	
+			ct = i;
+			first = 0;
+		}
+	}
+	return ct;
+}
+
+
+
 int gdImageColorExact(gdImagePtr im, int r, int g, int b)
 {
 	int i;
@@ -200,7 +331,7 @@ void gdImagePaletteCopy(gdImagePtr to, gdImagePtr from)
 		for (y=0 ; y < (to->sy) ; y++) {
 			p = gdImageGetPixel(to, x, y);
 			if (xlate[p] == -1) {
-				xlate[p] = gdImageColorClosest(from, to->red[p], to->green[p], to->blue[p]);
+				xlate[p] = gdImageColorClosestHWB(from, to->red[p], to->green[p], to->blue[p]);
 				/*printf("Mapping %d (%d, %d, %d) to %d (%d, %d, %d)\n", */
 				/*	p,  to->red[p], to->green[p], to->blue[p], */
 				/*	xlate[p], from->red[xlate[p]], from->green[xlate[p]], from->blue[xlate[p]]); */

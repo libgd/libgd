@@ -1,22 +1,28 @@
 
-                                   gd 1.7.3
+                                    gd 1.8
                                        
 A graphics library for fast image creation
 
 Follow this link to the latest version of this document.
 
-     _HEY! READ THIS!_ gd 1.7.3 creates PNG images, not GIF images. This
-     is a good thing. PNG is a more compact format, and full compression
-     is available. Existing code will need modification to call
-     gdImagePng instead of gdImageGif. _Please do not ask us to send you
-     the old GIF version of GD._ Unisys holds a patent on the LZW
-     compression algorithm, which is used in fully compressed GIF
-     images. We are still investigating the legal issues surrounding
-     various alternative means of producing a valid GIF file.
+     _HEY! READ THIS!_ gd 1.8 creates PNG, JPEG and WBMP images, not GIF
+     images. This is a good thing. PNG is a more compact format, and
+     full compression is available. JPEG works well with photographic
+     images, and is still more compatible with the major Web browsers
+     than even PNG is. WBMP is intended for wireless devices (not
+     regular web browsers). Existing code will need modification to call
+     gdImagePng or gdImageJpeg instead of gdImageGif. _Please do not ask
+     us to send you the old GIF version of GD._ Unisys holds a patent on
+     the LZW compression algorithm, which is used in fully compressed
+     GIF images. The best solution is to move to legally unencumbered,
+     well-compressed, modern image formats such as PNG and JPEG as soon
+     as possible.
      
-     gd 1.7.3 _requires_ that the following libraries also be installed:
+     gd 1.8 _requires_ that the following libraries also be installed:
      
      libpng
+     
+     jpeg-6b or later
      
      zlib
      
@@ -36,6 +42,7 @@ Follow this link to the latest version of this document.
   Table of Contents
   
      * Credits and license terms
+     * What's new in version 1.8?
      * What's new in version 1.7.3?
      * What's new in version 1.7.2?
      * What's new in version 1.7.1?
@@ -69,22 +76,29 @@ Follow this link to the latest version of this document.
 
 COPYRIGHT STATEMENT FOLLOWS THIS LINE
 
-     Portions copyright 1994, 1995, 1996, 1997, 1998, 1999, by Cold
+     Portions copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000 by Cold
      Spring Harbor Laboratory. Funded under Grant P41-RR02188 by the
      National Institutes of Health.
      
-     Portions copyright 1996, 1997, 1998, 1999, by Boutell.Com, Inc.
+     Portions copyright 1996, 1997, 1998, 1999, 2000 by Boutell.Com,
+     Inc.
      
-     Portions relating to GD2 format copyright 1999 Philip Warner.
+     Portions relating to GD2 format copyright 1999, 2000 Philip Warner.
      
-     Portions relating to PNG copyright 1999, Greg Roelofs.
+     Portions relating to PNG copyright 1999, 2000 Greg Roelofs.
      
-     Portions relating to libttf copyright 1999, John Ellson
+     Portions relating to libttf copyright 1999, 2000 John Ellson
      (ellson@lucent.com).
      
-     _Permission has been granted to copy and distribute gd in any
-     context without fee, including a commercial application, provided
-     that this notice is present in user-accessible supporting
+     Portions relating to JPEG copyright 2000, Doug Becker and copyright
+     (C) 1994-1998, Thomas G. Lane. This software is based in part on
+     the work of the Independent JPEG Group.
+     
+     Portions relating to WBMP copyright 2000 Maurice Szmurlo.
+     
+     _Permission has been granted to copy, distribute and modify gd in
+     any context without fee, including a commercial application,
+     provided that this notice is present in user-accessible supporting
      documentation._
      
      This does not affect your ownership of the derived work itself, and
@@ -99,8 +113,8 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      particular purpose, with respect to this code and accompanying
      documentation.
      
-     Although their code does not appear in gd 1.7.3, the authors wish
-     to thank David Koblas, David Rowley, and Hutchison Avenue Software
+     Although their code does not appear in gd 1.8, the authors wish to
+     thank David Koblas, David Rowley, and Hutchison Avenue Software
      Corporation for their prior contributions.
      
 END OF COPYRIGHT STATEMENT
@@ -109,10 +123,10 @@ END OF COPYRIGHT STATEMENT
   
    gd is a graphics library. It allows your code to quickly draw images
    complete with lines, arcs, text, multiple colors, cut and paste from
-   other images, and flood fills, and write out the result as a .PNG
-   file. This is particularly useful in World Wide Web applications,
-   where .PNG is one of the formats accepted for inline images by most
-   browsers.
+   other images, and flood fills, and write out the result as a PNG or
+   JPEG file. This is particularly useful in World Wide Web applications,
+   where PNG and JPEG are two of the formats accepted for inline images
+   by most browsers.
    
    gd is not a paint program. If you are looking for a paint program, you
    are looking in the wrong place. If you are not a programmer, you are
@@ -122,7 +136,7 @@ END OF COPYRIGHT STATEMENT
    It is not necessary or desirable for gd to become a kitchen-sink
    graphics package, but version 1.7.3 incorporates most of the commonly
    requested features for an 8-bit 2D package. Support for truecolor
-   images, JPEG and truecolor PNG is planned for version 2.0.
+   images, including truecolor JPEG and PNG, is planned for version 2.0.
    
   What if I want to use another programming language?
   
@@ -138,6 +152,10 @@ END OF COPYRIGHT STATEMENT
    extension package. (Gdtclft2.0 or later is needed for gd-1.6 and up
    with PNG output.)
    
+    Pascal
+    
+   Pascal enthusiasts should look into Michael Bradbury's gdfp package.
+   
     Any Language
     
    There are, at the moment, at least three simple interpreters that
@@ -150,6 +168,25 @@ END OF COPYRIGHT STATEMENT
      * tgd, by Bradley K. Sherman
      * fly, by Martin Gleeson
        
+  What's new in version 1.8?
+  
+     * Support for JPEG output, courtesy of Doug Becker
+     * A link to Michael Bradbery's Pascal wrapper
+     * Support for WBMP output, courtesy of Maurice Szmurlo
+     * gdImageColorClosestHWB function based on hue, whiteness,
+       blackness, superior to the regular gdImageColorClosest function,
+       courtesy of Philip Warner
+     * License clarification: yes, you can modify gd
+       
+    Additional JPEG Information
+    
+   Support for reading and writing JPEG-format images is courtesy of Doug
+   Becker and the Independent JPEG Group / Thomas G. Lane. You can get
+   the latest version of the IJG JPEG software from
+   ftp://ftp.uu.net/graphics/jpeg/ (e.g., the jpegsrc.v6b.tar.gz file).
+   You _must_ use version 6b or later of the IJG JPEG software. You might
+   also consult the JPEG FAQ at http://www.faqs.org/faqs/jpeg-faq/.
+   
   What's new in version 1.7.3?
   
    Another attempt at Makefile fixes to permit linking with all libraries
@@ -295,8 +332,8 @@ END OF COPYRIGHT STATEMENT
           of an image)
           gdImageCopyMergeGray - Similar to gdImageCopyMerge, but tries
           to preserve source image hue.
-          gdImagePngPtr, gdImageGdPtr, gdImageGd2Ptr - return memort
-          blocks for each type of image.
+          gdImagePngPtr, gdImageJpegPtr, gdImageWBMPPtr, gdImageGdPtr,
+          gdImageGd2Ptr - return memort blocks for each type of image.
           gdImageCreateFromPngCtx, gdImageCreateFromGdCtx,
           gdImageCreateFromGd2Ctx, gdImageCreateFromGd2PartCtx - Support
           for new I/O context.
@@ -420,11 +457,11 @@ END OF COPYRIGHT STATEMENT
    (Windows), please consult with an experienced user of your system.
    Sorry, we cannot answer questions about basic Internet skills.
    
-   Unpacking the archive will produce a directory called "gd-1.7.3".
+   Unpacking the archive will produce a directory called "gd-1.8".
    
     For Unix
     
-   cd to the 1.7.3 directory. Edit the Makefile with your preferred text
+   cd to the 1.8 directory. Edit the Makefile with your preferred text
    editor and make any necessary changes to the settings at the top,
    especially if you want Xpm or TrueType support. Next, type "make". If
    you are the system administrator, and you wish to make the gd library
@@ -432,6 +469,10 @@ END OF COPYRIGHT STATEMENT
    
    If you get errors, edit the Makefile again, paying special attention
    to the INCLUDEDIRS and LIBDIRS settings.
+   
+   IF YOU GET LINKER ERRORS, TRY JUGGLING THE ORDER OF THE -l DIRECTIVES
+   IN THE MAKEFILE. Some platforms may prefer that the libraries be
+   listed in the opposite order.
    
     For Windows, Mac, Et Cetera
     
@@ -460,10 +501,10 @@ END OF COPYRIGHT STATEMENT
    
   gd basics: using gd in your program
   
-   gd lets you create PNG images on the fly. To use gd in your program,
-   include the file gd.h, and link with the libgd.a library produced by
-   "make libgd.a", under Unix. Under other operating systems you will add
-   gd.c to your own project.
+   gd lets you create PNG or JPEG images on the fly. To use gd in your
+   program, include the file gd.h, and link with the libgd.a library
+   produced by "make libgd.a", under Unix. Under other operating systems
+   you will add gd.c to your own project.
    
    If you want to use the provided fonts, include gdfontt.h, gdfonts.h,
    gdfontmb.h, gdfontl.h and/or gdfontg.h. For more impressive results,
@@ -486,8 +527,8 @@ END OF COPYRIGHT STATEMENT
 int main() {
         /* Declare the image */
         gdImagePtr im;
-        /* Declare an output file */
-        FILE *out;
+        /* Declare output files */
+        FILE *pngout, *jpegout;
         /* Declare color indexes */
         int black;
         int white;
@@ -509,13 +550,21 @@ int main() {
 
         /* Open a file for writing. "wb" means "write binary", important
                 under MSDOS, harmless under Unix. */
-        out = fopen("test.png", "wb");
+        pngout = fopen("test.png", "wb");
 
-        /* Output the image to the disk file. */
-        gdImagePng(im, out);
+        /* Do the same for a JPEG-format file. */
+        jpegout = fopen("test.jpg", "wb");
 
-        /* Close the file. */
-        fclose(out);
+        /* Output the image to the disk file in PNG format. */
+        gdImagePng(im, pngout);
+
+        /* Output the same image in JPEG format, using the default
+                JPEG quality setting. */
+        gdImageJpeg(im, jpegout, -1);
+
+        /* Close the files. */
+        fclose(pngout);
+        fclose(jpegout);
 
         /* Destroy the image in memory. */
         gdImageDestroy(im);
@@ -524,7 +573,7 @@ int main() {
    When executed, this program creates an image, allocates two colors
    (the first color allocated becomes the background color), draws a
    diagonal line (note that 0, 0 is the upper left corner), writes the
-   image to a PNG file, and destroys the image.
+   image to PNG and JPEG files, and destroys the image.
    
    The above example program should give you an idea of how the package
    works. gd provides many additional functions, which are listed in the
@@ -673,6 +722,30 @@ im = gdImageCreate(64, 64);
 /* ... Use the image ... */
 gdImageDestroy(im);
 
+   gdImageCreateFromJpeg(FILE *in) _(FUNCTION)_
+          gdImageCreateFromJpegCtx(FILE *in) _(FUNCTION)_
+          
+          
+          gdImageCreateFromJpeg is called to load images from JPEG format
+          files. Invoke gdImageCreateFromJpeg with an already opened
+          pointer to a file containing the desired image.
+          gdImageCreateFromJpeg returns a gdImagePtr to the new image, or
+          NULL if unable to load the image (most often because the file
+          is corrupt or does not contain a JPEG image).
+          gdImageCreateFromPng does _not_ close the file. You can inspect
+          the sx and sy members of the image to determine its size. The
+          image must eventually be destroyed using gdImageDestroy().
+          
+
+gdImagePtr im;
+... inside a function ...
+FILE *in;
+in = fopen("myjpeg.jpg", "rb");
+im = gdImageCreateFromJpeg(in);
+fclose(in);
+/* ... Use the image ... */
+gdImageDestroy(im);
+
    gdImageCreateFromPng(FILE *in) _(FUNCTION)_
           gdImageCreateFromPngCtx(gdIOCtx *in) _(FUNCTION)_
           
@@ -742,13 +815,13 @@ static int freadWrapper(void *context, char *buf, int len)
           pointer to a file containing the desired image in the gd file
           format, which is specific to gd and intended for very fast
           loading. (It is _not_ intended for compression; for
-          compression, use PNG.) gdImageCreateFromGd returns a gdImagePtr
-          to the new image, or NULL if unable to load the image (most
-          often because the file is corrupt or does not contain a gd
-          format image). gdImageCreateFromGd does _not_ close the file.
-          You can inspect the sx and sy members of the image to determine
-          its size. The image must eventually be destroyed using
-          gdImageDestroy().
+          compression, use PNG or JPEG.) gdImageCreateFromGd returns a
+          gdImagePtr to the new image, or NULL if unable to load the
+          image (most often because the file is corrupt or does not
+          contain a gd format image). gdImageCreateFromGd does _not_
+          close the file. You can inspect the sx and sy members of the
+          image to determine its size. The image must eventually be
+          destroyed using gdImageDestroy().
           
 
 ... inside a function ...
@@ -858,14 +931,65 @@ im = gdImageCreate(10, 10);
 /* Now destroy it */
 gdImageDestroy(im);
 
-   void gdImagePng(gdImagePtr im, FILE *out) _(FUNCTION)_
-          gdImagePng outputs the specified image to the specified file in
-          PNG format. The file must be open for writing. Under MSDOS and
-          all versions of Windows, it is important to use "wb" as opposed
-          to simply "w" as the mode when opening the file, and under Unix
-          there is no penalty for doing so. gdImagePng does _not_ close
-          the file; your code must do so.
+   void gdImageJpeg(gdImagePtr im, FILE *out, int quality) _(FUNCTION)_
+          void gdImageJpegCtx(gdImagePtr im, gdIOCtx *out, int quality)
           
+   _(FUNCTION)_
+   
+   gdImageJpeg outputs the specified image to the specified file in JPEG
+   format. The file must be open for writing. Under MSDOS and all
+   versions of Windows, it is important to use "wb" as opposed to simply
+   "w" as the mode when opening the file, and under Unix there is no
+   penalty for doing so. gdImageJpeg does _not_ close the file; your code
+   must do so.
+   
+   If quality is negative, the default IJG JPEG quality value (which
+   should yield a good general quality / size tradeoff for most
+   situations) is used. Otherwise, for practical purposes, quality should
+   be a value in the range 0-95, higher quality values usually implying
+   both higher quality and larger image sizes.
+   
+   If you have set image interlacing using gdImageInterlace, this
+   function will interpret that to mean you wish to output a progressive
+   JPEG. Some programs (e.g., Web browsers) can display progressive JPEGs
+   incrementally; this can be useful when browsing over a relatively slow
+   communications link, for example. Progressive JPEGs can also be
+   slightly smaller than sequential (non-progressive) JPEGs.
+
+... inside a function ...
+gdImagePtr im;
+int black, white;
+FILE *out;
+/* Create the image */
+im = gdImageCreate(100, 100);
+/* Allocate background */
+white = gdImageColorAllocate(im, 255, 255, 255);
+/* Allocate drawing color */
+black = gdImageColorAllocate(im, 0, 0, 0);
+/* Draw rectangle */
+gdImageRectangle(im, 0, 0, 99, 99, black);
+/* Open output file in binary mode */
+out = fopen("rect.jpg", "wb");
+/* Write JPEG using default quality */
+gdImageJpeg(im, out, -1);
+/* Close file */
+fclose(out);
+/* Destroy image */
+gdImageDestroy(im);
+
+   void* gdImageJpegPtr(gdImagePtr im, int *size) _(FUNCTION)_
+   Identical to gdImageJpeg except that it returns a pointer to a memory
+   area with the JPEG data. This memory must be freed by the caller when
+   it is no longer needed. The 'size' parameter receives the total size
+   of the block of memory.
+   
+   void gdImagePng(gdImagePtr im, FILE *out) _(FUNCTION)_
+   gdImagePng outputs the specified image to the specified file in PNG
+   format. The file must be open for writing. Under MSDOS and all
+   versions of Windows, it is important to use "wb" as opposed to simply
+   "w" as the mode when opening the file, and under Unix there is no
+   penalty for doing so. gdImagePng does _not_ close the file; your code
+   must do so.
 
 ... inside a function ...
 gdImagePtr im;
@@ -889,29 +1013,27 @@ fclose(out);
 gdImageDestroy(im);
 
    void* gdImagePngPtr(gdImagePtr im, int *size) _(FUNCTION)_
-          Identical to gdImagePng except that it returns a pointer to a
-          memory area with the PNG data. This memory must be freed by the
-          caller when it is no longer needed. The 'size' parameter
-          received the total size of the block of memory.
-          
+   Identical to gdImagePng except that it returns a pointer to a memory
+   area with the PNG data. This memory must be freed by the caller when
+   it is no longer needed. The 'size' parameter receives the total size
+   of the block of memory.
+   
    gdImagePngToSink(gdImagePtr im, gdSinkPtr out) _(FUNCTION)_
-          gdImagePngToSink is called to write a PNG to a data "sink"
-          (destination) other than a file. Usage is very similar to the
-          gdImagePng function, except that the programmer provides a
-          custom data sink.
-          
-          The programmer must write an output function which accepts a
-          context pointer, a buffer, and a number of bytes to be written
-          as arguments. This function must write the number of bytes
-          requested and return that number, unless an error has occurred,
-          in which case the function should return -1. The programmer
-          then creates a gdSink structure and sets the sink pointer to
-          the output function and the context pointer to any value which
-          is useful to the programmer.
-          
-          The example below implements gdImagePng by creating a custom
-          data source and invoking gdImagePngFromSink.
-          
+   gdImagePngToSink is called to write a PNG to a data "sink"
+   (destination) other than a file. Usage is very similar to the
+   gdImagePng function, except that the programmer provides a custom data
+   sink.
+   
+   The programmer must write an output function which accepts a context
+   pointer, a buffer, and a number of bytes to be written as arguments.
+   This function must write the number of bytes requested and return that
+   number, unless an error has occurred, in which case the function
+   should return -1. The programmer then creates a gdSink structure and
+   sets the sink pointer to the output function and the context pointer
+   to any value which is useful to the programmer.
+   
+   The example below implements gdImagePng by creating a custom data
+   source and invoking gdImagePngFromSink.
 
 static int stdioSink(void *context, char *buffer, int len)
 {
@@ -926,19 +1048,58 @@ void gdImagePng(gdImagePtr im, FILE *out)
         gdImagePngToSink(im, &mySink);
 }
 
+   void gdImageWBMP(gdImagePtr im, int fg, FILE *out)
+   gdImageWBMPCtx(gdIOCtx *out) _(FUNCTION)__(FUNCTION)_
+   gdImageWBMP outputs the specified image to the specified file in WBMP
+   format. The file must be open for writing. Under MSDOS and all
+   versions of Windows, it is important to use "wb" as opposed to simply
+   "w" as the mode when opening the file, and under Unix there is no
+   penalty for doing so. gdImageWBMP does _not_ close the file; your code
+   must do so.
+   
+   _WBMP file support is black and white only. The color index specified
+   by the fg argument is the "foreground," and only pixels of this color
+   will be set in the WBMP file._ All other pixels will be considered
+   "background."
+
+... inside a function ...
+gdImagePtr im;
+int black, white;
+FILE *out;
+/* Create the image */
+im = gdImageCreate(100, 100);
+/* Allocate background */
+white = gdImageColorAllocate(im, 255, 255, 255);
+/* Allocate drawing color */
+black = gdImageColorAllocate(im, 0, 0, 0);
+/* Draw rectangle */
+gdImageRectangle(im, 0, 0, 99, 99, black);
+/* Open output file in binary mode */
+out = fopen("rect.wbmp", "wb");
+/* Write WBMP, with black as foreground */
+gdImageWBMP(im, black, out);
+/* Close file */
+fclose(out);
+/* Destroy image */
+gdImageDestroy(im);
+
+   void* gdImageWBMPPtr(gdImagePtr im, int *size) _(FUNCTION)_
+   Identical to gdImageWBMP except that it returns a pointer to a memory
+   area with the WBMP data. This memory must be freed by the caller when
+   it is no longer needed. The 'size' parameter receives the total size
+   of the block of memory.
+   
    void gdImageGd(gdImagePtr im, FILE *out) _(FUNCTION)_
-          gdImageGd outputs the specified image to the specified file in
-          the gd image format. The file must be open for writing. Under
-          MSDOS and all versions of Windows, it is important to use "wb"
-          as opposed to simply "w" as the mode when opening the file, and
-          under Unix there is no penalty for doing so. gdImagePng does
-          _not_ close the file; your code must do so.
-          
-          The gd image format is intended for fast reads and writes of
-          images your program will need frequently to build other images.
-          It is _not_ a compressed format, and is not intended for
-          general use.
-          
+   gdImageGd outputs the specified image to the specified file in the gd
+   image format. The file must be open for writing. Under MSDOS and all
+   versions of Windows, it is important to use "wb" as opposed to simply
+   "w" as the mode when opening the file, and under Unix there is no
+   penalty for doing so. gdImagePng does _not_ close the file; your code
+   must do so.
+   
+   The gd image format is intended for fast reads and writes of images
+   your program will need frequently to build other images. It is _not_ a
+   compressed format, and is not intended for general use.
 
 ... inside a function ...
 gdImagePtr im;
@@ -962,34 +1123,31 @@ fclose(out);
 gdImageDestroy(im);
 
    void* gdImageGdPtr(gdImagePtr im, int *size) _(FUNCTION)_
-          Identical to gdImageGd except that it returns a pointer to a
-          memory area with the GD data. This memory must be freed by the
-          caller when it is no longer needed. The 'size' parameter
-          received the total size of the block of memory.
-          
+   Identical to gdImageGd except that it returns a pointer to a memory
+   area with the GD data. This memory must be freed by the caller when it
+   is no longer needed. The 'size' parameter receives the total size of
+   the block of memory.
+   
    void gdImageGd2(gdImagePtr im, FILE *out, int chunkSize, int fmt)
-          _(FUNCTION)_
-          gdImageGd2 outputs the specified image to the specified file in
-          the gd2 image format. The file must be open for writing. Under
-          MSDOS and all versions of Windows, it is important to use "wb"
-          as opposed to simply "w" as the mode when opening the file, and
-          under Unix there is no penalty for doing so. gdImageGd2 does
-          _not_ close the file; your code must do so.
-          
-          The gd2 image format is intended for fast reads and writes of
-          parts of images. It is a compressed format, and well suited to
-          retrieving smll sections of much larger images. The third and
-          fourth parameters are the 'chunk size' and format
-          resposectively.
-          
-          The file is stored as a series of compressed subimages, and the
-          _Chunk Size_ determines the sub-image size - a value of zero
-          causes the GD library to use the default.
-          
-          It is also possible to store GD2 files in an uncompressed
-          format, in which case the fourth parameter should be
-          GD2_FMT_RAW.
-          
+   _(FUNCTION)_
+   gdImageGd2 outputs the specified image to the specified file in the
+   gd2 image format. The file must be open for writing. Under MSDOS and
+   all versions of Windows, it is important to use "wb" as opposed to
+   simply "w" as the mode when opening the file, and under Unix there is
+   no penalty for doing so. gdImageGd2 does _not_ close the file; your
+   code must do so.
+   
+   The gd2 image format is intended for fast reads and writes of parts of
+   images. It is a compressed format, and well suited to retrieving smll
+   sections of much larger images. The third and fourth parameters are
+   the 'chunk size' and format resposectively.
+   
+   The file is stored as a series of compressed subimages, and the _Chunk
+   Size_ determines the sub-image size - a value of zero causes the GD
+   library to use the default.
+   
+   It is also possible to store GD2 files in an uncompressed format, in
+   which case the fourth parameter should be GD2_FMT_RAW.
 
 ... inside a function ...
 gdImagePtr im;
@@ -1013,12 +1171,12 @@ fclose(out);
 gdImageDestroy(im);
 
    void* gdImageGd2Ptr(gdImagePtr im, int chunkSize, int fmt, int *size)
-          _(FUNCTION)_
-          Identical to gdImageGd2 except that it returns a pointer to a
-          memory area with the GD2 data. This memory must be freed by the
-          caller when it is no longer needed. The 'size' parameter
-          received the total size of the block of memory.
-          
+   _(FUNCTION)_
+   Identical to gdImageGd2 except that it returns a pointer to a memory
+   area with the GD2 data. This memory must be freed by the caller when
+   it is no longer needed. The 'size' parameter receives the total size
+   of the block of memory.
+   
   Drawing Functions
   
    void gdImageSetPixel(gdImagePtr im, int x, int y, int color)
@@ -1865,10 +2023,11 @@ gdImageDestroy(im);
                 working with existing PNG files that already use 256
                 colors.) Note that gdImageColorAllocate does not check
                 for existing colors that match your request; see
-                gdImageColorExact and gdImageColorClosest for ways to
-                locate existing colors that approximate the color desired
-                in situations where a new color is not available. Also
-                see gdImageColorResolve, new in gd-1.6.2.
+                gdImageColorExact, gdImageColorClosest and
+                gdImageColorClosestHWB for ways to locate existing colors
+                that approximate the color desired in situations where a
+                new color is not available. Also see gdImageColorResolve,
+                new in gd-1.6.2.
                 
 
 ... inside a function ...
@@ -1922,6 +2081,49 @@ red = gdImageColorAllocate(im, 255, 0, 0);
 if (red == (-1)) {
         /* Find the _closest_ color instead. */
         red = gdImageColorClosest(im, 255, 0, 0);
+}
+/* Draw a dashed line from the upper left corner to the lower right corner */
+gdImageDashedLine(im, 0, 0, 99, 99, red);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+gdImageDestroy(im);
+
+        int gdImageColorClosestHWB(gdImagePtr im, int r, int g, int b)
+                _(FUNCTION)_
+                gdImageColorClosestHWB searches the colors which have
+                been defined thus far in the image specified and returns
+                the index of the color with hue, whiteness and blackness
+                closest to the requested color. This scheme is typically
+                superior to the Euclidian distance scheme used by
+                gdImageColorClosest.
+                
+                If no colors have yet been allocated in the image,
+                gdImageColorClosestHWB returns -1.
+                
+                This function is most useful as a backup method for
+                choosing a drawing color when an image already contains
+                gdMaxColors (256) colors and no more can be allocated.
+                (This is not uncommon when working with existing PNG
+                files that already use many colors.) See
+                gdImageColorExact for a method of locating exact matches
+                only.
+                
+
+... inside a function ...
+gdImagePtr im;
+FILE *in;
+int red;
+/* Let's suppose that photo.png is a scanned photograph with
+        many colors. */
+in = fopen("photo.png", "rb");
+im = gdImageCreateFromPng(in);
+fclose(in);
+/* Try to allocate red directly */
+red = gdImageColorAllocate(im, 255, 0, 0);
+/* If we fail to allocate red... */
+if (red == (-1)) {
+        /* Find the _closest_ color instead. */
+        red = gdImageColorClosestHWB(im, 255, 0, 0);
 }
 /* Draw a dashed line from the upper left corner to the lower right corner */
 gdImageDashedLine(im, 0, 0, 99, 99, red);
@@ -2070,16 +2272,20 @@ gdImageDestroy(im);
                 for the specified image to the specified index. To
                 indicate that there should be _no_ transparent color,
                 invoke gdImageColorTransparent with a color index of -1.
+                Note that JPEG images do not support transparency, so
+                this setting has no effect when writing JPEG images.
                 
                 The color index used should be an index allocated by
                 gdImageColorAllocate, whether explicitly invoked by your
                 code or implicitly invoked by loading an image. In order
                 to ensure that your image has a reasonable appearance
                 when viewed by users who do not have transparent
-                background capabilities, be sure to give reasonable RGB
-                values to the color you allocate for use as a transparent
-                color, _even though it will be transparent on systems
-                that support transparency_.
+                background capabilities (or when you are writing a
+                JPEG-format file, which does not support transparency),
+                be sure to give reasonable RGB values to the color you
+                allocate for use as a transparent color, _even though it
+                will be transparent on systems that support PNG
+                transparency_.
                 
 
 ... inside a function ...
@@ -2267,9 +2473,9 @@ gdImageCopyMergeGray(im_out, im_in, 100, 200, 0, 0, 30, 50, 50);
 
         void gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src)
                 _(FUNCTION)_
-                Copies a palette from one image to another, doing it's
-                best to match the colors in the target image to the
-                colors in the source palette.
+                Copies a palette from one image to another, attempting to
+                match the colors in the target image to the colors in the
+                source palette.
                 
   Miscellaneous Functions
   
@@ -2296,22 +2502,31 @@ cmpMask = gdImageCompare(im1, im2);
                       which lines will appear on the display from first
                       to last, or in an interlaced fashion, in which the
                       image will "fade in" over several passes. By
-                      default, images are not interlaced.
+                      default, images are not interlaced. (When writing
+                      JPEG images, interlacing implies generating
+                      progressive JPEG files, which are represented as a
+                      series of scans of increasing quality.
+                      Noninterlaced gd images result in regular
+                      [sequential] JPEG data streams.)
                       
                       A nonzero value for the interlace argument turns on
                       interlace; a zero value turns it off. Note that
                       interlace has no effect on other functions, and has
-                      no meaning unless you save the image in PNG format;
-                      the gd and xbm formats do not support interlace.
+                      no meaning unless you save the image in PNG or JPEG
+                      format; the gd and xbm formats do not support
+                      interlace.
                       
-                      When a PNG is loaded with gdImageCreateFromPng ,
+                      When a PNG is loaded with gdImageCreateFromPng or a
+                      JPEG is loaded with gdImageCreateFromJpeg,
                       interlace will be set according to the setting in
-                      the PNG file.
+                      the PNG or JPEG file.
                       
-                      Note that many PNG viewers and web browsers do _not_
-                      support interlace. However, the interlaced PNG
-                      should still display; it will simply appear all at
-                      once, just as other images do.
+                      Note that many PNG and JPEG viewers and web
+                      browsers do _not_ support interlace or the
+                      incremental display of progressive JPEGs. However,
+                      the interlaced PNG or progressive JPEG should still
+                      display; it will simply appear all at once, just as
+                      other images do.
                       
 
 gdImagePtr im;
@@ -2322,7 +2537,7 @@ FILE *out;
 gdImageInterlace(im, 1);
 /* And open an output file */
 out = fopen("test.png", "wb");
-/* And save the image */
+/* And save the image  -- could also use gdImageJpeg */
 gdImagePng(im, out);
 fclose(out);
 gdImageDestroy(im);
@@ -2410,21 +2625,21 @@ gdImageDestroy(im);
   About the additional .gd image file format
   
                             In addition to reading and writing the PNG
-                            format and reading the X Bitmap format, gd
-                            has the capability to read and write its own
-                            ".gd" format. This format is _not_ intended
-                            for general purpose use and should never be
-                            used to distribute images. It is not a
-                            compressed format. Its purpose is solely to
-                            allow very fast loading of images your
-                            program needs often in order to build other
-                            images for output. If you are experiencing
-                            performance problems when loading large,
-                            fixed PNG images your program needs to
-                            produce its output images, you may wish to
-                            examine the functions gdImageCreateFromGd and
-                            gdImageGd, which read and write .gd format
-                            images.
+                            and JPEG formats and reading the X Bitmap
+                            format, gd has the capability to read and
+                            write its own ".gd" format. This format is
+                            _not_ intended for general purpose use and
+                            should never be used to distribute images. It
+                            is not a compressed format. Its purpose is
+                            solely to allow very fast loading of images
+                            your program needs often in order to build
+                            other images for output. If you are
+                            experiencing performance problems when
+                            loading large, fixed PNG images your program
+                            needs to produce its output images, you may
+                            wish to examine the functions
+                            gdImageCreateFromGd and gdImageGd, which read
+                            and write .gd format images.
                             
                             The program "pngtogd.c" is provided as a
                             simple way of converting .png files to .gd
@@ -2445,9 +2660,9 @@ gdImageDestroy(im);
                             image files. Its purpose is solely to allow
                             very fast loading of _parts_ of images If you
                             are experiencing performance problems when
-                            loading large, fixed PNG images your program
-                            needs to produce its output images, you may
-                            wish to examine the functions
+                            loading large, fixed PNG or JPEG images your
+                            program needs to produce its output images,
+                            you may wish to examine the functions
                             gdImageCreateFromGd2,
                             gdImageCreateFromGd2Part and gdImageGd2,
                             which read and write .gd2 format images.
@@ -2539,24 +2754,25 @@ typedef struct gdIOCtx {
                             gdImageCopyResized | gdImageCreate |
                             gdImageCreateFromGd | gdImageCreateFromGd2 |
                             gdImageCreateFromGd2Part |
-                            gdImageCreateFromPng |
-                            gdImageCreateFromPngSource |
+                            gdImageCreateFromJpeg | gdImageCreateFromPng
+                            | gdImageCreateFromPngSource |
                             gdImageCreateFromXbm | gdImageCreateFromXpm |
                             gdImageDashedLine | gdImageDestroy |
                             gdImageFill | gdImageFillToBorder |
                             gdImageFilledRectangle | gdImageGd |
                             gdImageGd2 | gdImageGetInterlaced |
                             gdImageGetPixel | gdImageGetTransparent |
-                            gdImageGreen | gdImageInterlace | gdImageLine
-                            | gdImageFilledPolygon | gdImagePaletteCopy |
-                            gdImagePng | gdImagePngToSink |
-                            gdImagePolygon | gdImagePtr |
-                            gdImageRectangle | gdImageRed |
-                            gdImageSetBrush | gdImageSetPixel |
-                            gdImageSetStyle | gdImageSetTile |
-                            gdImageString | gdImageString16 |
-                            gdImageStringTTF | gdImageStringUp |
-                            gdImageStringUp16 | gdMaxColors | gdPoint |
+                            gdImageGreen | gdImageInterlace | gdImageJpeg
+                            | gdImageLine | gdImageFilledPolygon |
+                            gdImagePaletteCopy | gdImagePng |
+                            gdImagePngToSink | gdImagePolygon |
+                            gdImagePtr | gdImageWBMP | gdImageRectangle |
+                            gdImageRed | gdImageSetBrush |
+                            gdImageSetPixel | gdImageSetStyle |
+                            gdImageSetTile | gdImageString |
+                            gdImageString16 | gdImageStringTTF |
+                            gdImageStringUp | gdImageStringUp16 |
+                            gdImageWBMP | gdMaxColors | gdPoint |
                             gdStyled | gdStyledBrushed | gdTiled |
                             gdTransparent
                             

@@ -246,13 +246,31 @@ int main(int argc, char **argv)
 	printf("[Merged Image has %d colours]\n",im2->colorsTotal);
 	CompareImages("Merged (gdtest.png, gdtest_merge.png)", im2, im3);
 
-        /*out = fopen("gdtest_merge.png", "wb"); */
-        /*gdImageLzw(im2, out); */
-        /*fclose(out); */
-
 	gdImageDestroy(im2);
         gdImageDestroy(im3);
 
+	out = fopen("test/gdtest.jpg", "wb");
+	if (!out) {
+		fprintf(stderr, "Can't create file test/gdtest.jpg.\n");
+		exit(1);
+	}
+	gdImageJpeg(im, out, -1);	
+	fclose(out);
+	in = fopen("test/gdtest.jpg", "rb");
+	if (!in) {
+		fprintf(stderr, "Can't open file test/gdtest.jpg.\n");
+		exit(1);
+	}
+	im2 = gdImageCreateFromJpeg(in);
+	fclose(in);
+	if (!im2) {
+		fprintf(stderr, "gdImageCreateFromJpeg failed.\n");
+		exit(1);
+	}
+	gdImageDestroy(im2);	
+	printf("Created test/gdtest.jpg successfully. Compare this image\n"
+		"to the input image manually. Some difference must be\n"
+		"expected as JPEG is a lossy file format.\n");
 	gdImageDestroy(im);
 	gdImageDestroy(ref);
 
