@@ -134,7 +134,6 @@ fileSeek (struct gdIOCtx *ctx, const int pos)
 {
   fileIOCtx *fctx;
   fctx = (fileIOCtx *) ctx;
-
   return (fseek (fctx->f, pos, SEEK_SET) == 0);
 }
 

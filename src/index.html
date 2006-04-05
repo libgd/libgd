@@ -1,12 +1,12 @@
 <html>
 <head>
-<TITLE>gd 2.0.10</TITLE>
+<TITLE>gd 2.0.11</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<h1>This is gd 2.0.10.</h1>
+<h1>This is gd 2.0.11.</h1>
 <p>
-<H2>gd 2.0.10</H2>
+<H2>gd 2.0.11</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -22,7 +22,7 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.10 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.11 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -35,7 +35,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-gd 2.0.10 <strong>requires</strong> that the following libraries 
+gd 2.0.11 <strong>requires</strong> that the following libraries 
 also be installed, in order to produce the related image formats.
 You may skip libraries associated with formats you do not use:
 <p>
@@ -66,7 +66,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.10">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.11">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -165,10 +165,10 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.10.
+with 2.0.11.
 <h4>PHP</h4>
 A variant of gd 2.x is included in PHP 4.3.0. It is also possible
-to patch PHP 4.2.3 for use with gd 2.0.10; see the
+to patch PHP 4.2.3 for use with gd 2.0.11; see the
 <a href="http://www.boutell.com/gd/">gd home page</a> for a link to
 that information. It would be a Good Idea to merge all of the things
 that are better in mainstream gd and all of the things that are
@@ -198,6 +198,29 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<P>
+<A NAME="whatsnew2.0.11"><H3>What's new in version 2.0.11?</H3></A>
+<P>
+<ul>
+<li>Support for the "gd2" file format, which allows fast loading of all or
+only part of an existing image, has been properly debugged for use with
+truecolor images. (Palette images already worked properly, except for a
+bug when loading from a regular file with gdImageCreateFromGd2Part, which
+has also been fixed.) .gd2 files can be either compressed or uncompressed,
+and they allow useful tricks such as fast loading of a 500x500 pixel
+region of a 6000x3000 pixel image, without uncompressing <em>all</em> of the
+image. .gd2 is NOT a general purpose file format and should only be used
+where quick loading of a background image or subset of a larger image
+is required. For more information, see
+<a href="#gdImageGd2">gdImageGd2</a>, 
+<a href="#gdImageCreateFromGd2">gdImageCreateFromGd2</a>,
+and 
+<a href="#gdImageCreateFromGd2Part">gdImageCreateFromGd2Part</a>.
+<li>The gd2topng utility has been extended to support extraction of
+only part of an image from a .gd2 file. This is both a demonstration and 
+a practical tool.
+<li>Additional <code>configure</code> improvements by Lars Hecking.
 </ul>
 <P>
 <A NAME="whatsnew2.0.10"><H3>What's new in version 2.0.10?</H3></A>
@@ -649,7 +672,7 @@ Version 1.5 featured the following changes:
 <p>
 <dt><b>Extended I/O capabilities.</b>
 <dd>      The source/sink feature has been extended to support GD2 file formats (which
-          require seek/tell functions), and to allow more general non-file I/O.
+          require seek/tell functions; seek must return 1 for success, 0 for failure), and to allow more general non-file I/O.
 <p>
 <dt><b>Better support for Lincoln Stein's Perl Module</b>
 <dd>      The new gdImage*Ptr function returns the chosen format stored in a block of memory.
@@ -768,8 +791,8 @@ saving of alpha channel information to the file instead.
 <P>
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.10.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.10.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.11.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.11.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -780,10 +803,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.10".
+Unpacking the archive will produce a directory called "gd-2.0.11".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.10 directory and type:
+<code>cd</code> to the 2.0.11 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -3797,8 +3820,8 @@ typedef struct gdIOCtx {
         void     (*putC)(struct gdIOCtx*, int);
         int     (*putBuf)(struct gdIOCtx*, const void*, int);
 
-        int     (*seek)(struct gdIOCtx*, const int);
-        long    (*tell)(struct gdIOCtx*);
+        int     (*seek)(struct gdIOCtx*, const int); /* Returns 1 on SUCCESS */
+        long    (*tell)(struct gdIOCtx*); 
 
         void    (*free)(struct gdIOCtx*);
 
@@ -3822,7 +3845,7 @@ that it will only be used in limited cirsumstances. At the time of writing
 <TR><TD>All</TD><td width=20>&nbsp;</td><TD>Must have 'free',</td></tr>
 <TR><TD>Anything that reads from the context</TD><td></td><TD>Must have 'getC' and 'getBuf',</td></tr>
 <TR><TD>Anything that writes to the context</TD><td></td><TD>Must have 'putC' and 'putBuf'.</td></tr>
-<TR><TD>If gdCreateFromGd2Part is called</td><td></td><TD>Must also have 'seek' and 'tell'.</td></tr>
+<TR><TD>If gdCreateFromGd2Part is called</td><td></td><TD>Must also have 'seek' and 'tell'. Note: seek must return 1 on SUCCESS and 0 on FAILURE.</td></tr>
 <TR><TD>If gdImageGd2 is called</td><td></td><TD>Must also have 'seek' and 'tell'.</td></tr>
 </Table>
 

@@ -11,7 +11,9 @@ typedef struct gdIOCtx
   void (*putC) (struct gdIOCtx *, int);
   int (*putBuf) (struct gdIOCtx *, const void *, int);
 
-  int (*seek) (struct gdIOCtx *, const int);
+  /* seek must return 1 on SUCCESS, 0 on FAILURE. Unlike fseek! */
+  int (*seek) (struct gdIOCtx *, const int); 
+
   long (*tell) (struct gdIOCtx *);
 
   void (*gd_free) (struct gdIOCtx *);

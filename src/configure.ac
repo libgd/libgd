@@ -5,13 +5,13 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the vesion number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.0.10], [gd@boutell.com])
+AC_INIT([GD], [2.0.11], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=0
-GDLIB_REVISION=10
+GDLIB_REVISION=11
 GDLIBNAME=gd
 
 AC_SUBST(GDLIB_MAJOR)
@@ -33,10 +33,10 @@ AC_PROG_RANLIB
 dnl may be required for freetype and Xpm
 AC_PATH_X
 
-if test "x$x_includes" != xNONE ; then
+if test -n "$x_includes" && test "x$x_includes" != xNONE ; then
   CPPFLAGS="$CPPFLAGS -I$x_includes"
 fi
-if test "x$x_libraries" != xNONE ; then
+if test -n "$x_libraries" && test "x$x_libraries" != xNONE ; then
   LDFLAGS="$LDFLAGS -L$x_libraries"
 fi
 
