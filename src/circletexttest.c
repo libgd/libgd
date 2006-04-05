@@ -1,5 +1,9 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
-#include <gd.h>
+#include "gd.h"
 
 /* 2.0.22: oops, we need config.h */
 #include "config.h"
