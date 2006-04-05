@@ -17,7 +17,7 @@ main (int argc, char **argv)
 {
   gdImagePtr im;
   FILE *in, *out;
-  int x, y, w, h;
+  int x=0, y=0, w=0, h=0;
   if ((argc != 3) && (argc != 7))
     {
       fprintf (stderr,
