@@ -16,7 +16,8 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
-#ifndef MSWIN32
+/* 2.0.10: WIN32, not MSWIN32 */
+#ifndef WIN32
 #include <unistd.h>
 #else
 #include <io.h>

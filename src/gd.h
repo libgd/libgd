@@ -218,8 +218,9 @@ extern "C"
 				       int h);
   gdImagePtr gdImageCreateFromGd2PartCtx (gdIOCtxPtr in, int srcx, int srcy,
 					  int w, int h);
-
-  gdImagePtr gdImageCreateFromXbm (FILE * fd);
+  /* 2.0.10: prototype was missing */
+  gdImagePtr gdImageCreateFromXpm (char *filename);
+  gdImagePtr gdImageCreateFromXbm (FILE * in);
 
   void gdImageDestroy (gdImagePtr im);
 

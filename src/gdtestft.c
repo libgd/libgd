@@ -81,7 +81,7 @@ main (int argc, char *argv[])
   /* create an image just big enough for the string (x3) */
   sx = MAXX (brect) - MINX (brect) + 6;
   sy = MAXY (brect) - MINY (brect) + 6;
-#if 1
+#if 0
   /* Would be palette color 8-bit (which of course is still allowed,
      but not impressive when used with a JPEG background and antialiasing
      and alpha channel and so on!) */
@@ -189,7 +189,8 @@ main (int argc, char *argv[])
 	  fprintf (stderr, "Can't create test/fttest.png\n");
 	  exit (1);
 	}
-#ifdef HAVE_LIBJPEG
+	/* 2.0.10: correct ifdef, thanks to Gabriele Verzeletti */
+#ifdef HAVE_LIBPNG
       gdImagePng (im, out);
 #else
       fprintf (stderr, "No PNG library support.\n");

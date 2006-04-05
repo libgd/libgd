@@ -60,7 +60,7 @@ main (void)
       im_in = gdImageCreateFromPng (in);
       fclose (in);
       /* Now copy, and magnify as we do so */
-      gdImageCopyResized (im_out, im_in, 32, 32, 0, 0, 192, 192, 255, 255);
+      gdImageCopyResampled (im_out, im_in, 32, 32, 0, 0, 192, 192, 255, 255);
       /* Now display variously rotated space shuttles in a circle of our own */
       for (a = 0; (a < 360); a += 45)
 	{

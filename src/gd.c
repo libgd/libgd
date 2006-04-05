@@ -11,6 +11,8 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
+#define gdImageBoundsSafeMacro(im, x, y) (!((((y) < 0) || ((y) >= (im)->sy)) || (((x) < 0) || ((x) >= (im)->sx))))
+
 #ifdef _OSD_POSIX		/* BS2000 uses the EBCDIC char set instead of ASCII */
 #define CHARSET_EBCDIC
 #define __attribute__(any)	/*nothing */
@@ -611,6 +613,75 @@ gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
 
 }
 
+/* 2.0.10: before the drawing routines, some code to clip points that are
+ * outside the drawing window.  Nick Atty (nick@canalplan.org.uk)
+ *
+ * This is the Sutherland Hodgman Algorithm, as implemented by
+ * Duvanenko, Robbins and Gyurcsik - SH(DRG) for short.  See Dr Dobb's
+ * Journal, January 1996, pp107-110 and 116-117
+ *
+ * Given the end points of a line, and a bounding rectangle (which we
+ * know to be from (0,0) to (SX,SY)), adjust the endpoints to be on
+ * the edges of the rectangle if the line should be drawn at all,
+ * otherwise return a failure code */
+
+/* this does "one-dimensional" clipping: note that the second time it
+   is called, all the x parameters refer to height and the y to width
+   - the comments ignore this (if you can understand it when it's
+   looking at the X parameters, it should become clear what happens on
+   the second call!)  The code is simplified from that in the article,
+   as we know that gd images always start at (0,0) */
+
+static int clip_1d(int *x0, int *y0, int *x1, int *y1, int maxdim) {
+  double m;      /* gradient of line */
+  if(*x0 < 0) {  /* start of line is left of window */
+    if(*x1 < 0)  /* as is the end, so the line never cuts the window */
+      return 0;
+    m = (*y1 - *y0)/(double)(*x1 - *x0);  /* calculate the slope of the line */
+    /* adjust x0 to be on the left boundary (ie to be zero), and y0 to match */
+    *y0 -= m * *x0;
+    *x0 = 0;
+    /* now, perhaps, adjust the far end of the line as well */
+    if(*x1 > maxdim) {
+      *y1 += m * (maxdim - *x1);
+      *x1 = maxdim;
+    }
+    return 1;
+  }
+  if(*x0 > maxdim) {   /* start of line is right of window -
+                          complement of above */
+    if(*x1 > maxdim)   /* as is the end, so the line misses the window */
+      return 0;
+    m = (*y1 - *y0)/(double)(*x1 - *x0);  /* calculate the slope of the line */
+    *y0 += m * (maxdim - *x0);    /* adjust so point is on the right
+                                     boundary */
+    *x0 = maxdim;                  
+    /* now, perhaps, adjust the end of the line */
+    if(*x1 < 0) {
+      *y1 -= m * *x1;
+      *x1 = 0;
+    }
+    return 1;
+  }
+  /* the final case - the start of the line is inside the window */
+  if(*x1 > maxdim) {  /* other end is outside to the right */
+    m = (*y1 - *y0)/(double)(*x1 - *x0);  /* calculate the slope of the line */
+    *y1 += m * (maxdim - *x1);
+    *x1 = maxdim;
+    return 1;
+  }
+  if(*x1 < 0) {      /* other end is outside to the left */
+    m = (*y1 - *y0)/(double)(*x1 - *x0);  /* calculate the slope of the line */
+    *y1 -= m * *x1;
+    *x1 = 0;
+    return 1;
+  }
+  /* only get here if both points are inside the window */
+  return 1;
+}
+
+/* end of line clipping code */
+
 void
 gdImageSetPixel (gdImagePtr im, int x, int y, int color)
 {
@@ -653,7 +724,7 @@ gdImageSetPixel (gdImagePtr im, int x, int y, int color)
       gdImageTileApply (im, x, y);
       break;
     default:
-      if (gdImageBoundsSafe (im, x, y))
+      if (gdImageBoundsSafeMacro (im, x, y))
 	{
 	  if (im->trueColor)
 	    {
@@ -800,7 +871,7 @@ gdImageTileApply (gdImagePtr im, int x, int y)
 int
 gdImageGetPixel (gdImagePtr im, int x, int y)
 {
-  if (gdImageBoundsSafe (im, x, y))
+  if (gdImageBoundsSafeMacro (im, x, y))
     {
       if (im->trueColor)
 	{
@@ -841,6 +912,15 @@ gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
   int wid;
   int w, wstart;
   int thick = im->thick;
+
+  /* 2.0.10: Nick Atty: clip to edges of drawing rectangle, return if no
+     points need to be drawn */
+
+  if(clip_1d(&x1,&y1,&x2,&y2,gdImageSX(im)) == 0)
+    return;
+  if(clip_1d(&y1,&x1,&y2,&x2,gdImageSY(im)) == 0)
+    return;
+
   dx = abs (x2 - x1);
   dy = abs (y2 - y1);
   if (dy <= dx)
@@ -1162,7 +1242,7 @@ dashedSet (gdImagePtr im, int x, int y, int color,
 int
 gdImageBoundsSafe (gdImagePtr im, int x, int y)
 {
-  return (!(((y < 0) || (y >= im->sy)) || ((x < 0) || (x >= im->sx))));
+  return gdImageBoundsSafeMacro(im, x, y);
 }
 
 void
@@ -1663,6 +1743,18 @@ gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
 			int color)
 {
   int x, y;
+  /* Nick Atty: limit the points at the edge.  Note that this also
+     nicely kills any plotting for rectangles completely outside the
+     window as it makes the tests in the for loops fail */
+  if(x1 < 0)
+    x1=0;
+  if(x1 > gdImageSX(im))
+    x1=gdImageSX(im);
+  if(y1 < 0)
+    y1 = 0;
+  if(y1 > gdImageSY(im))
+    y1 = gdImageSY(im);
+
   for (y = y1; (y <= y2); y++)
     {
       for (x = x1; (x <= x2); x++)
@@ -1684,16 +1776,18 @@ gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
   if (dst->trueColor)
     {
       /* 2.0: much easier when the destination is truecolor. */
+      /* 2.0.10: needs a transparent-index check that is still valid if
+        the source is not truecolor. Thanks to Frank Warmerdam. */
       for (y = 0; (y < h); y++)
 	{
 	  for (x = 0; (x < w); x++)
 	    {
-	      int c = gdImageGetTrueColorPixel (src, srcX + x,
+              int p = gdImageGetPixel(src, srcX + x, srcY + y);
+              if (p != src->transparent) {
+	        int c = gdImageGetTrueColorPixel (src, srcX + x,
 						srcY + y);
-	      if (c != src->transparent)
-		{
-		  gdImageSetPixel (dst, dstX + x, dstY + y, c);
-		}
+		gdImageSetPixel (dst, dstX + x, dstY + y, c);
+              }
 	    }
 	}
       return;
@@ -2101,6 +2195,12 @@ gdImageCopyRotated (gdImagePtr dst,
    arithmetic. The routine below is shamelessly, gloriously
    floating point. TBB */
 
+/* 2.0.10: cast instead of floor() yields 35% performance improvement. 
+	Thanks to John Buckman. */
+
+#define floor2(exp) ((long) exp)
+/*#define floor2(exp) floor(exp)*/
+
 void
 gdImageCopyResampled (gdImagePtr dst,
 		      gdImagePtr src,
@@ -2130,18 +2230,18 @@ gdImageCopyResampled (gdImagePtr dst,
 	  do
 	    {
 	      float yportion;
-	      if (floor (sy) == floor (sy1))
+	      if (floor2 (sy) == floor2 (sy1))
 		{
-		  yportion = 1.0 - (sy - floor (sy));
+		  yportion = 1.0 - (sy - floor2 (sy));
 		  if (yportion > sy2 - sy1)
 		    {
 		      yportion = sy2 - sy1;
 		    }
-		  sy = floor (sy);
+		  sy = floor2 (sy);
 		}
-	      else if (sy == floor (sy2))
+	      else if (sy == floor2 (sy2))
 		{
-		  yportion = sy2 - floor (sy2);
+		  yportion = sy2 - floor2 (sy2);
 		}
 	      else
 		{
@@ -2155,18 +2255,18 @@ gdImageCopyResampled (gdImagePtr dst,
 		  float xportion;
 		  float pcontribution;
 		  int p;
-		  if (floor (sx) == floor (sx1))
+		  if (floor2 (sx) == floor2 (sx1))
 		    {
-		      xportion = 1.0 - (sx - floor (sx));
+		      xportion = 1.0 - (sx - floor2 (sx));
 		      if (xportion > sx2 - sx1)
 			{
 			  xportion = sx2 - sx1;
 			}
-		      sx = floor (sx);
+		      sx = floor2 (sx);
 		    }
-		  else if (sx == floor (sx2))
+		  else if (sx == floor2 (sx2))
 		    {
-		      xportion = sx2 - floor (sx2);
+		      xportion = sx2 - floor2 (sx2);
 		    }
 		  else
 		    {

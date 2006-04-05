@@ -16,6 +16,9 @@
  * Modification 4/18/00 TBB: JPEG_DEBUG rather than just DEBUG,
  * so VC++ builds don't spew to standard output, causing
  * major CGI brain damage
+ *
+ * 2.0.10: more efficient gdImageCreateFromJpegCtx, thanks to
+ * Christian Aberger 
  */
 
 #ifdef HAVE_CONFIG_H
@@ -429,8 +432,10 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
     }
   rowptr[0] = row;
 
-  for (i = 0; i < cinfo.output_height; i++)
+  for (i = 0; i < cinfo.output_height; i++) 
     {
+      register JSAMPROW currow = row;
+      register int *tpix = im->tpixels[i];
       nrows = jpeg_read_scanlines (&cinfo, rowptr, 1);
       if (nrows != 1)
 	{
@@ -438,10 +443,10 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
 		   " returns %u, expected 1\n", nrows);
 	  goto error;
 	}
-
-      for (j = 0; j < cinfo.output_width; j++)
-	im->tpixels[i][j] = gdTrueColor (row[j * 3], row[j * 3 + 1],
-					 row[j * 3 + 2]);
+      for (j = 0; j < cinfo.output_width; j++, currow += 3, tpix++) 
+         {
+           *tpix = gdTrueColor (currow[0], currow[1], currow[2]);
+         }
     }
 
   if (jpeg_finish_decompress (&cinfo) != TRUE)
@@ -491,7 +496,8 @@ typedef struct
   gdIOCtx *infile;		/* source stream */
   unsigned char *buffer;	/* start of buffer */
   safeboolean start_of_file;	/* have we gotten any data yet? */
- }
+ 
+}
 my_source_mgr;
 
 typedef my_source_mgr *my_src_ptr;
@@ -559,24 +565,35 @@ fill_input_buffer (j_decompress_ptr cinfo)
     /* size_t got; */
     /* char *s; */
     memset (src->buffer, 0, INPUT_BUF_SIZE);
-  while (nbytes < INPUT_BUF_SIZE)
+  
+while (nbytes < INPUT_BUF_SIZE)
     {
-      int got = gdGetBuf (src->buffer + nbytes, INPUT_BUF_SIZE - nbytes,
+      
+int got = gdGetBuf (src->buffer + nbytes, 
+INPUT_BUF_SIZE - nbytes,
 			   src->infile);
-      if ((got == EOF) || (got == 0))
+      
+if ((got == EOF) || (got == 0))
 	{
 	  
 	    /* EOF or error. If we got any data, don't worry about it.
 	       If we didn't, then this is unexpected. */ 
 	    if (!nbytes)
 	    {
-	      nbytes = -1;
-	    }
-	  break;
-	}
-      nbytes += got;
-    }
-  if (nbytes <= 0)
+	      
+nbytes = -1;
+	    
+}
+	  
+break;
+	
+}
+      
+nbytes += got;
+    
+}
+  
+if (nbytes <= 0)
     {
       if (src->start_of_file)	/* Treat empty input file as fatal error */
 	ERREXIT (cinfo, JERR_INPUT_EMPTY);
@@ -688,7 +705,8 @@ jpeg_gdIOCtx_src (j_decompress_ptr cinfo, gdIOCtx * infile)
       src->buffer = (unsigned char *)
 	(*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
 				    INPUT_BUF_SIZE * sizeof (unsigned char));
-    }
+    
+}
 
   src = (my_src_ptr) cinfo->src;
   src->pub.init_source = init_source;
