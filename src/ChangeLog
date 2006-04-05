@@ -1,3 +1,8 @@
+990922 Thomas Boutell (TBB)
+	- autoconf/automake removed in favor of an improved Makefile.
+	  I was getting unbelievable amounts of confused email.
+	- Documentation updates.
+	- ANSI C correctness.
 990729 Thomas Boutell (TBB)
 	- It would probably be a good idea to free the 
 	  png_write_struct, wouldn't it.

@@ -2,6 +2,10 @@
 #ifndef _GDFONTG_H_
 #define _GDFONTG_H_ 1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 	This is a header file for gd font, generated using
 	bdftogd version 0.51 by Jan Pazdziora, adelton@fi.muni.cz
@@ -16,6 +20,10 @@
 #include "gd.h"
 
 extern gdFontPtr gdFontGiant;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

@@ -1,6 +1,10 @@
 #ifndef GD_H
 #define GD_H 1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* gd.h: declarations file for the graphic-draw module.
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted, provided
@@ -225,4 +229,9 @@ int gdImageCompare(gdImagePtr im1, gdImagePtr im2);
 #define GD_CMP_TRANSPARENT	32	/* Transparent colour */
 #define GD_CMP_BACKGROUND	64	/* Background colour */
 #define GD_CMP_INTERLACE	128	/* Interlaced setting */
+
+#ifdef __cplusplus
+}
 #endif
+
+#endif /* GD_H */

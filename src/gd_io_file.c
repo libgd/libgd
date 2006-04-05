@@ -12,6 +12,13 @@
 *
 */
 
+/* For platforms with incomplete ANSI defines. Fortunately,
+	SEEK_SET is defined to be zero by the standard. */
+
+#ifndef SEEK_SET
+#define SEEK_SET 0
+#endif /* SEEK_SET */
+
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -60,7 +67,7 @@ gdIOCtx* gdNewFileCtx (FILE *f) {
   ctx->ctx.free = freeFileCtx;
 
   return (gdIOCtx*)ctx;
-};
+}
 
 static 
 void freeFileCtx(gdIOCtx *ctx)
@@ -108,6 +115,7 @@ static int fileGetchar( gdIOCtx* ctx)
 
   return getc(fctx->f);
 }
+
 
 static int fileSeek(struct gdIOCtx* ctx, const int pos)
 {

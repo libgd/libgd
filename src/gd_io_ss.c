@@ -67,7 +67,7 @@ gdIOCtx* gdNewSSCtx (gdSourcePtr src, gdSinkPtr snk) {
   ctx->ctx.free = freeSsCtx;
 
   return (gdIOCtx*)ctx;
-};
+}
 
 static
 void freeSsCtx(gdIOCtx *ctx)

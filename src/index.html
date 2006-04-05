@@ -1,16 +1,16 @@
 <HTML>
 <HEAD>
-<TITLE>gd 1.6.3</TITLE>
+<TITLE>gd 1.7.0</TITLE>
 </HEAD>
 <BODY>
-<H1>gd 1.6.3</H1>
+<H1>gd 1.7.0</H1>
 <H2>A graphics library for fast image creation</H2>
 <H2>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
 of this document</A>.</H2>
 <blockquote>
 <strong>HEY! READ THIS!</strong>
-gd 1.6.3 creates PNG images, not GIF images. This is a good thing.
+gd 1.7.0 creates PNG images, not GIF images. This is a good thing.
 PNG is a more compact format, and full compression is available.
 Existing code will need modification to call gdImagePng instead
 of gdImageGif. <strong>Please do not ask us to send you the old GIF
@@ -19,12 +19,23 @@ algorithm, which is used in fully compressed GIF images. We are
 still investigating the legal issues surrounding various
 alternative means of producing a valid GIF file.
 <p>
-gd 1.6.3 <strong>requires</strong> that the following libraries 
+gd 1.7.0 <strong>requires</strong> that the following libraries 
 also be installed:
 <p>
 libpng
 <p>
 zlib
+<p>
+If you want to use the TrueType font support, you must also
+install the <strong>Freetype library</strong>, including
+the <strong><code>freetype.h</code> header file</strong>.
+See the <a href="http://www.freetype.org/">Freetype Home Page</a>.
+No, I cannot explain why that site is down on a particular day,
+and no, I can't send you a copy.
+<p>
+If you want to use the Xpm color bitmap loading support, you must also
+have the X Window System and the Xpm library installed (Xpm is often
+included in modern X distributions).
 <p>
 Please read the documentation and install the required libraries.
 Do not send email asking why <code>png.h</code> is not found. 
@@ -34,6 +45,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
+<LI><A HREF="#whatsnew1.7">What's new in version 1.7?</A>
 <LI><A HREF="#whatsnew1.6.3">What's new in version 1.6.3?</A>
 <LI><A HREF="#whatsnew1.6.2">What's new in version 1.6.2?</A>
 <LI><A HREF="#whatsnew1.6.1">What's new in version 1.6.1?</A>
@@ -95,7 +107,7 @@ including but not limited to implied warranties of merchantability and
 fitness for a particular purpose, with respect to this code and accompanying
 documentation.
 <p>
-Although their code does not appear in gd 1.6.3, the authors wish to 
+Although their code does not appear in gd 1.7.0, the authors wish to 
 thank David Koblas, David Rowley, and Hutchison Avenue Software 
 Corporation for their prior contributions.
 </blockquote>
@@ -118,9 +130,9 @@ in the wrong place.
 <P>
 gd does not provide for every possible desirable graphics
 operation. It is not necessary or desirable for gd to become
-a kitchen-sink graphics package, but version 1.6.3 incorporates
+a kitchen-sink graphics package, but version 1.7.0 incorporates
 most of the commonly requested features for an 8-bit 2D package.
-Support for scalable fonts, and truecolor images, JPEG and 
+Support for truecolor images, JPEG and 
 truecolor PNG is planned for version 2.0.
 <P>
 <A NAME="gdother"><H3>What if I want to use another programming
@@ -130,22 +142,53 @@ gd can also be used from Perl, courtesy of
 Lincoln Stein's
 <a href="http://www-genome.wi.mit.edu/ftp/pub/software/WWW/GD.html">
 GD.pm</a> library, which uses gd as the basis for a set of
-Perl 5.x classes. Not yet updated for gd 1.6.3.
+Perl 5.x classes. Updated to gd 1.6 and up.
 <h4>Tcl</h4>
 gd can be used from Tcl with John Ellson's
 <a href=http://www.tcltk.com/ftp/ellson/>Gdtclft</a>
 dynamically loaded extension package.
-(Gdtclft2.0 or later is needed for gd-1.6.3 with PNG output.)
+(Gdtclft2.0 or later is needed for gd-1.6 and up with PNG output.)
 <h4>Any Language</h4>
 There are, at the moment, at least three simple interpreters that
 perform gd operations. You can output the desired commands to a simple
 text file from whatever scripting language you prefer to use, then
 invoke the interpreter.
 <p>
-These packages have not been updated to gd 1.6.3 as of this writing.
+These packages have not been updated to gd 1.6 and up as of this writing.
 <ul>
 <li><a href="http://s27w007.pswfs.gov/tgd/">tgd</a>, by Bradley K. Sherman
 <li><a href="http://www.unimelb.edu.au/fly/fly.html">fly</a>, by Martin Gleeson
+</ul>
+<P><A NAME="whatsnew1.7"><H3>What's new in version 1.7?</H3></A>
+Version 1.7 contains the following changes:
+<ul>
+<li>Japanese language support for the TrueType functions.
+Thanks to Masahito Yamaga.
+<li><code>autoconf</code> and <code>configure</code> have been removed, in favor of a 
+carefully designed Makefile which produces and properly installs
+the library and the binaries. System-dependent variables are
+at the top of the Makefile for easy modification. I'm sorry, 
+folks, but autoconf generated <strong>many, many confused email 
+messages</strong> from people who didn't have things where autoconf 
+expected to find them. I am not an autoconf/automake wizard, and 
+gd is a simple, very compact library which does not need to 
+be a shared library. I <strong>did</strong> make many improvements
+over the old gd 1.3 Makefile, which were directly inspired by the 
+autoconf version found in the 1.6 series (thanks to John Ellson).
+<li>Completely ANSI C compliant, according to the <code>-pedantic-errors</code>
+flag of gcc. Several pieces of not-quite-ANSI-C code were causing problems
+for those with non-gcc compilers.
+<li><code>gdttf.c</code> patched to allow the use of Windows symbol
+fonts, when present (thanks to Joseph Peppin). 
+<li><code>extern "C"</code> wrappers added to <code>gd.h</code> and the
+font header files for the convenience of C++ programmers. 
+<code>bdftogd</code> was also modified to automatically insert these
+wrappers into future font header files. Thanks to John Lindal.
+<li>Compiles correctly on platforms that don't define <code>SEEK_SET</code>.
+Thanks to Robert Bonomi.
+<li>Loads Xpm images via the 
+<a href="#gdImageCreateFromXpm"><code>gdImageCreateFromXpm</code></a>
+function, if the Xpm library is available. Thanks to Caolan McNamara.
 </ul>
 <P><A NAME="whatsnew1.6.3"><H3>What's new in version 1.6.3?</H3></A>
 Version 1.6.3 corrects a memory leak in gd_png.c. This leak caused
@@ -339,13 +382,13 @@ newsgroups relevant to your particular system.
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>By HTTP</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-1.6.3.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd163.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-1.7.0.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-1.7.0.zip">.ZIP File (Windows)</a>
 </ul>
 <h4>By FTP</h4>
 <ul>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.6.3.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd163.zip">.ZIP File (Windows)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.7.0.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.7.0.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -356,13 +399,18 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-1.6.3".
+Unpacking the archive will produce a directory called "gd-1.7.0".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the gd-1.6.3 directory and type "./configure",
-followed by "make". If you are the system administrator, and you
+<code>cd</code> to the 1.7.0 directory. Edit the Makefile with
+your preferred text editor and make any necessary changes to the
+settings at the top, especially if you want Xpm or TrueType support.
+Next, type "make". If you are the system administrator, and you
 wish to make the gd library available to other programs, you may 
 also wish to type "make install".
+<p>
+If you get errors, edit the Makefile again, paying special attention
+to the INCLUDEDIRS and LIBDIRS settings.
 <h4>For Windows, Mac, Et Cetera</h4>
 Create a project using your favorite programming environment.
 Copy all of the gd files to the project directory. Add <code>gd.c</code>
@@ -778,6 +826,31 @@ using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
 FILE *in;
 in = fopen("myxbm.xbm", "rb");
 im = gdImageCreateFromXbm(in);
+fclose(in);
+/* ... Use the image ... */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
+<DT><A NAME="gdImageCreateFromXpm">gdImageCreateFromXpm(FILE *in)</A>
+<strong>(FUNCTION)</strong>
+<DD>
+gdImageCreateFromXbm is called to load images from XPM X Window System
+color bitmap format files. This function is available only if HAVE_XPM
+is selected in the Makefile and the Xpm library is linked with the
+application. Invoke gdImageCreateFromXpm with an already opened pointer 
+to a file containing the desired image.
+gdImageCreateFromXpm
+returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or NULL
+if unable to load the image (most often because the file is corrupt or
+does not contain an XPM bitmap format image). gdImageCreateFromXpm does
+<em>not</em> close the file. You can inspect the sx and sy members of the
+image to determine its size. The image must eventually be destroyed
+using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+FILE *in;
+in = fopen("myxpm.xpm", "rb");
+im = gdImageCreateFromXpm(in);
 fclose(in);
 /* ... Use the image ... */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
@@ -2569,6 +2642,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A> |
 <A HREF="#gdImageCreateFromPngSource">gdImageCreateFromPngSource</A> |
 <A HREF="#gdImageCreateFromXbm">gdImageCreateFromXbm</A> |
+<A HREF="#gdImageCreateFromXpm">gdImageCreateFromXpm</A> |
 <A HREF="#gdImageDashedLine">gdImageDashedLine</A> |
 <A HREF="#gdImageDestroy">gdImageDestroy</A> |
 <A HREF="#gdImageFill">gdImageFill</A> |

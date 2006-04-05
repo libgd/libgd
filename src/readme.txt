@@ -1,17 +1,44 @@
-         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
-         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
-         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
-         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
 
-                                   gd 1.6.1
+                                   gd 1.7.0
                                        
 A graphics library for fast image creation
 
 Follow this link to the latest version of this document.
 
+     _HEY! READ THIS!_ gd 1.7.0 creates PNG images, not GIF images. This
+     is a good thing. PNG is a more compact format, and full compression
+     is available. Existing code will need modification to call
+     gdImagePng instead of gdImageGif. _Please do not ask us to send you
+     the old GIF version of GD._ Unisys holds a patent on the LZW
+     compression algorithm, which is used in fully compressed GIF
+     images. We are still investigating the legal issues surrounding
+     various alternative means of producing a valid GIF file.
+     
+     gd 1.7.0 _requires_ that the following libraries also be installed:
+     
+     libpng
+     
+     zlib
+     
+     If you want to use the TrueType font support, you must also install
+     the _Freetype library_, including the _freetype.h header file_. See
+     the Freetype Home Page. No, I cannot explain why that site is down
+     on a particular day, and no, I can't send you a copy.
+     
+     If you want to use the Xpm color bitmap loading support, you must
+     also have the X Window System and the Xpm library installed (Xpm is
+     often included in modern X distributions).
+     
+     Please read the documentation and install the required libraries.
+     Do not send email asking why png.h is not found. See the
+     requirements section for more information. Thank you!
+     
   Table of Contents
   
      * Credits and license terms
+     * What's new in version 1.7?
+     * What's new in version 1.6.3?
+     * What's new in version 1.6.2?
      * What's new in version 1.6.1?
      * What's new in version 1.6?
      * What is gd?
@@ -20,7 +47,7 @@ Follow this link to the latest version of this document.
      * How do I get gd?
      * How do I build gd?
      * gd basics: using gd in your program
-     * webgif: a useful example
+     * webpng: a useful example
      * Function and type reference by category
      * About the additional .gd image file format
      * Please tell us you're using gd!
@@ -49,9 +76,13 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      
      Portions relating to PNG copyright 1999, Greg Roelofs.
      
+     Portions relating to libttf copyright 1999, John Ellson
+     (ellson@lucent.com).
+     
      _Permission has been granted to copy and distribute gd in any
-     context, including a commercial application, provided that this
-     notice is present in user-accessible supporting documentation._
+     context without fee, including a commercial application, provided
+     that this notice is present in user-accessible supporting
+     documentation._
      
      This does not affect your ownership of the derived work itself, and
      the intent is to assure proper credit for the authors of gd, not to
@@ -59,26 +90,15 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      ask. "Derived works" includes all programs that utilize the
      library. Credit must be given in user-accessible documentation.
      
-     Permission to use, copy, modify, and distribute this software and
-     its documentation for any purpose and without fee is hereby
-     granted, provided that the above copyright notice appear in all
-     copies and that both that copyright notice and this permission
-     notice appear in supporting documentation. This software is
-     provided "as is" without express or implied warranty.
+     _This software is provided "AS IS."_ The copyright holders disclaim
+     all warranties, either express or implied, including but not
+     limited to implied warranties of merchantability and fitness for a
+     particular purpose, with respect to this code and accompanying
+     documentation.
      
-     Although their code does not appear in gd 1.6.1, the authors wish
+     Although their code does not appear in gd 1.7.0, the authors wish
      to thank David Koblas, David Rowley, and Hutchison Avenue Software
      Corporation for their prior contributions.
-     
-     Permission to use, copy, modify, and distribute this software and
-     its documentation for any purpose and without fee is hereby
-     granted, provided that the above copyright notice appear in all
-     copies and that both that copyright notice and this permission
-     notice appear in supporting documentation. _This software is
-     provided "AS IS."_ The copyright holders disclaim all warranties,
-     either express or implied, including but not limited to implied
-     warranties of merchantability and fitness for a particular purpose,
-     with respect to this code and accompanying documentation.
      
 END OF COPYRIGHT STATEMENT
 
@@ -97,18 +117,23 @@ END OF COPYRIGHT STATEMENT
    
    gd does not provide for every possible desirable graphics operation.
    It is not necessary or desirable for gd to become a kitchen-sink
-   graphics package, but version 1.6.1 incorporates most of the commonly
-   requested features for an 8-bit 2D package. Support for scalable
-   fonts, and truecolor images, JPEG and truecolor PNG is planned for
-   version 2.0.
+   graphics package, but version 1.7.0 incorporates most of the commonly
+   requested features for an 8-bit 2D package. Support for truecolor
+   images, JPEG and truecolor PNG is planned for version 2.0.
    
   What if I want to use another programming language?
   
     Perl
     
    gd can also be used from Perl, courtesy of Lincoln Stein's GD.pm
-   library, which uses gd as the basis for a set of Perl 5.x classes. Not
-   yet updated for gd 1.6.1.
+   library, which uses gd as the basis for a set of Perl 5.x classes.
+   Updated to gd 1.6 and up.
+   
+    Tcl
+    
+   gd can be used from Tcl with John Ellson's Gdtclft dynamically loaded
+   extension package. (Gdtclft2.0 or later is needed for gd-1.6 and up
+   with PNG output.)
    
     Any Language
     
@@ -117,10 +142,66 @@ END OF COPYRIGHT STATEMENT
    text file from whatever scripting language you prefer to use, then
    invoke the interpreter.
    
-   These packages have not been updated to gd 1.6.1 as of this writing.
+   These packages have not been updated to gd 1.6 and up as of this
+   writing.
      * tgd, by Bradley K. Sherman
      * fly, by Martin Gleeson
        
+  What's new in version 1.7?
+  
+   Version 1.7 contains the following changes:
+     * Japanese language support for the TrueType functions. Thanks to
+       Masahito Yamaga.
+     * autoconf and configure have been removed, in favor of a carefully
+       designed Makefile which produces and properly installs the library
+       and the binaries. System-dependent variables are at the top of the
+       Makefile for easy modification. I'm sorry, folks, but autoconf
+       generated _many, many confused email messages_ from people who
+       didn't have things where autoconf expected to find them. I am not
+       an autoconf/automake wizard, and gd is a simple, very compact
+       library which does not need to be a shared library. I _did_ make
+       many improvements over the old gd 1.3 Makefile, which were
+       directly inspired by the autoconf version found in the 1.6 series
+       (thanks to John Ellson).
+     * Completely ANSI C compliant, according to the -pedantic-errors
+       flag of gcc. Several pieces of not-quite-ANSI-C code were causing
+       problems for those with non-gcc compilers.
+     * gdttf.c patched to allow the use of Windows symbol fonts, when
+       present (thanks to Joseph Peppin).
+     * extern "C" wrappers added to gd.h and the font header files for
+       the convenience of C++ programmers. bdftogd was also modified to
+       automatically insert these wrappers into future font header files.
+       Thanks to John Lindal.
+     * Compiles correctly on platforms that don't define SEEK_SET. Thanks
+       to Robert Bonomi.
+     * Loads Xpm images via the gdImageCreateFromXpm function, if the Xpm
+       library is available. Thanks to Caolan McNamara.
+       
+  What's new in version 1.6.3?
+  
+   Version 1.6.3 corrects a memory leak in gd_png.c. This leak caused a
+   significant amount of memory to be allocated and not freed when
+   writing a PNG image.
+   
+  What's new in version 1.6.2?
+  
+   Version 1.6.2 from John Ellson adds two new functions:
+     * gdImageStringTTF - scalable, rotatable, anti-aliased, TrueType
+       strings using the FreeType library, but only if libttf is found by
+       configure. _We do not provide TrueType fonts. Obtaining them is
+       entirely up to you._
+     * gdImageColorResolve - an efficient alternative for the common code
+       fragment:
+
+
+      if ((color=gdImageColorExact(im,R,G,B)) < 0)
+          if ((color=gdImageColorAllocate(im,R,G,B)) < 0)
+              color=gdImageColorClosest(im,R,G,B);
+
+   Also in this release the build process has been converted to GNU
+   autoconf/automake/libtool conventions so that both (or either) static
+   and shared libraries can be built.
+   
   What's new in version 1.6.1?
   
    Version 1.6.1 incorporates superior PNG reading and writing code from
@@ -248,8 +329,8 @@ END OF COPYRIGHT STATEMENT
           containing more than 256 characters should work if the
           gdImageString16 and gdImageStringUp16 routines are used.
           
-   Improvements to the "webgif" example/utility
-          The "webgif" utility is now a slightly more useful application.
+   Improvements to the "webpng" example/utility
+          The "webpng" utility is now a slightly more useful application.
           Thanks to Brian Dowling for this code.
           
    Corrections to the color resolution field of GIF output
@@ -281,9 +362,11 @@ END OF COPYRIGHT STATEMENT
    industry standard. Ask your ISP why it is missing._
    
    As of version 1.6, you also need the zlib compression library, and the
-   libpng library. zlib is available for a variety of platforms from the
-   zlib web site. libpng is available for a variety of platforms from the
-   PNG web site.
+   libpng library. As of version 1.6.2, you can draw text using
+   antialiased TrueType fonts if you also have the libttf library
+   installed, but this is not mandatory. zlib is available for a variety
+   of platforms from the zlib web site. libpng is available for a variety
+   of platforms from the PNG web site.
    
    You will also want a PNG viewer, if you do not already have one for
    your system, since you will need a good way to check the results of
@@ -312,13 +395,18 @@ END OF COPYRIGHT STATEMENT
    (Windows), please consult with an experienced user of your system.
    Sorry, we cannot answer questions about basic Internet skills.
    
-   Unpacking the archive will produce a directory called "gd1.6.1".
+   Unpacking the archive will produce a directory called "gd-1.7.0".
    
     For Unix
     
-   cd to the gd1.6.1 directory and examine the Makefile, which you will
-   probably need to change slightly depending on your operating system
-   and your needs.
+   cd to the 1.7.0 directory. Edit the Makefile with your preferred text
+   editor and make any necessary changes to the settings at the top,
+   especially if you want Xpm or TrueType support. Next, type "make". If
+   you are the system administrator, and you wish to make the gd library
+   available to other programs, you may also wish to type "make install".
+   
+   If you get errors, edit the Makefile again, paying special attention
+   to the INCLUDEDIRS and LIBDIRS settings.
    
     For Windows, Mac, Et Cetera
     
@@ -327,16 +415,9 @@ END OF COPYRIGHT STATEMENT
    Add other source files as appropriate. Learning the basic skills of
    creating projects with your chosen C environment is up to you.
    
-   Now, to build the demonstration program, just type "make gddemo" if
-   you are working in a command-line environment, or build a project that
-   includes gddemo.c if you are using a graphical environment. If all
-   goes well, the program "gddemo" will be compiled and linked without
-   incident. Depending on your system you may need to edit the Makefile.
-   Understanding the basic techniques of compiling and linking programs
-   on your system is up to you.
-   
-   You have now built a demonstration program which shows off the
-   capabilities of gd. To see it in action, type "gddemo".
+   You have now built both the gd library and a demonstration program
+   which shows off the capabilities of gd. To see it in action, type
+   "gddemo".
    
    gddemo should execute without incident, creating the file demoout.png.
    (Note there is also a file named demoin.png, which is provided in the
@@ -360,10 +441,12 @@ END OF COPYRIGHT STATEMENT
    gd.c to your own project.
    
    If you want to use the provided fonts, include gdfontt.h, gdfonts.h,
-   gdfontmb.h, gdfontl.h and/or gdfontg.h. If you are not using the
-   provided Makefile and/or a library-based approach, be sure to include
-   the source modules as well in your project. (They may be too large for
-   16-bit memory models, that is, 16-bit DOS and Windows.)
+   gdfontmb.h, gdfontl.h and/or gdfontg.h. For more impressive results,
+   install libttf and use the new gdImageStringTTF function. If you are
+   not using the provided Makefile and/or a library-based approach, be
+   sure to include the source modules as well in your project. (They may
+   be too large for 16-bit memory models, that is, 16-bit DOS and
+   Windows.)
    
    Here is a short example program. _(For a more advanced example, see
    gddemo.c, included in the distribution. gddemo.c is NOT the same
@@ -709,6 +792,30 @@ gdImagePtr im;
 FILE *in;
 in = fopen("myxbm.xbm", "rb");
 im = gdImageCreateFromXbm(in);
+fclose(in);
+/* ... Use the image ... */
+gdImageDestroy(im);
+
+   gdImageCreateFromXpm(FILE *in) _(FUNCTION)_
+          gdImageCreateFromXbm is called to load images from XPM X Window
+          System color bitmap format files. This function is available
+          only if HAVE_XPM is selected in the Makefile and the Xpm
+          library is linked with the application. Invoke
+          gdImageCreateFromXpm with an already opened pointer to a file
+          containing the desired image. gdImageCreateFromXpm returns a
+          gdImagePtr to the new image, or NULL if unable to load the
+          image (most often because the file is corrupt or does not
+          contain an XPM bitmap format image). gdImageCreateFromXpm does
+          _not_ close the file. You can inspect the sx and sy members of
+          the image to determine its size. The image must eventually be
+          destroyed using gdImageDestroy().
+          
+
+... inside a function ...
+gdImagePtr im;
+FILE *in;
+in = fopen("myxpm.xpm", "rb");
+im = gdImageCreateFromXpm(in);
 fclose(in);
 /* ... Use the image ... */
 gdImageDestroy(im);
@@ -1429,18 +1536,19 @@ gdImageDestroy(im);
                 c, int color) _(FUNCTION)_
                 gdImageChar is used to draw single characters on the
                 image. (To draw multiple characters, use gdImageString or
-                gdImageString16.) The second argument is a pointer to a
-                font definition structure; five fonts are provided with
-                gd, gdFontTiny, gdFontSmall, gdFontMediumBold,
-                gdFontLarge, and gdFontGiant. You must include the files
-                "gdfontt.h", "gdfonts.h", "gdfontmb.h", "gdfontl.h" and
-                "gdfontg.h" respectively and (if you are not using a
-                library-based approach) link with the corresponding .c
-                files to use the provided fonts. The character specified
-                by the fifth argument is drawn from left to right in the
-                specified color. (See gdImageCharUp for a way of drawing
-                vertical text.) Pixels not set by a particular character
-                retain their previous color.
+                gdImageString16. See also gdImageStringTTF, new with
+                gd-1.6.2.) The second argument is a pointer to a font
+                definition structure; five fonts are provided with gd,
+                gdFontTiny, gdFontSmall, gdFontMediumBold, gdFontLarge,
+                and gdFontGiant. You must include the files "gdfontt.h",
+                "gdfonts.h", "gdfontmb.h", "gdfontl.h" and "gdfontg.h"
+                respectively and (if you are not using a library-based
+                approach) link with the corresponding .c files to use the
+                provided fonts. The character specified by the fifth
+                argument is drawn from left to right in the specified
+                color. (See gdImageCharUp for a way of drawing vertical
+                text.) Pixels not set by a particular character retain
+                their previous color.
                 
 
 #include "gd.h"
@@ -1511,8 +1619,9 @@ gdImageDestroy(im);
                 provided fonts. The null-terminated C string specified by
                 the fifth argument is drawn from left to right in the
                 specified color. (See gdImageStringUp for a way of
-                drawing vertical text.) Pixels not set by a particular
-                character retain their previous color.
+                drawing vertical text. See also gdImageStringTTF, new
+                with gd-1.6.2.) Pixels not set by a particular character
+                retain their previous color.
                 
 
 #include "gd.h"
@@ -1627,6 +1736,92 @@ gdImageDestroy(im);
                 who have them. A more frequently used routine is
                 gdImageStringUp.
                 
+        char *gdImageStringTTF(gdImagePtr im, int *brect, int fg, char
+                *fontname, double ptsize, double angle, int x, int y,
+                char *string) _(FUNCTION)_
+                gdImageStringTTF is draws a string of anti-aliased
+                characters on the image using the FreeType library to
+                print from user-supplied TrueType fonts. _We do not
+                provide TrueType fonts. Obtaining them is entirely up to
+                you._ The string is anti-aliased, meaning that there
+                should be less "jaggies." The fontname is the full
+                pathname to a TrueType font file. The string may be
+                arbitrarily scaled (ptsize) and rotated (angle in
+                radians).
+                
+                The user-supplied int brect[8] array is filled on return
+                from gdImageStringTTF with the 8 elements representing
+                the 4 corner coordinates of the bounding rectangle.
+                0 lower left corner, X position
+                lower left corner, Y position
+                lower right corner, X position
+                3 lower right corner, Y position
+                4 upper right corner, X position
+                5 upper right corner, Y position
+                6 upper left corner, X position
+                7 upper left corner, Y position
+                
+                The points are relative to the text regardless of the
+                angle, so "upper left" means in the top left-hand corner
+                seeing the text horizontally.
+                
+                Use a NULL gdImagePtr to get the bounding rectangle
+                without rendering. This is a relatively cheap operation
+                if followed by a rendering of the same string, because of
+                the caching of the partial rendering during bounding
+                rectangle calculation.
+                
+                The string is rendered in the color indicated by the gf
+                color index. Use the negative of the desired color index
+                to disable anti-aliasing.
+                
+                The string may contain UTF-8 sequences like: "&#192;"
+                
+                gdImageStringTTF will return a null char* on success, or
+                an error string on failure.
+                
+
+#include "gd.h"
+#include <string.h>
+... inside a function ...
+gdImagePtr im;
+int black;
+int white;
+int brect[8];
+int x, y;
+char *err;
+
+char *s = "Hello."; /* String to draw. */
+double sz = 40.;
+char *f = "/usr/local/share/ttf/Times.ttf";  /* User supplied font */
+
+/* obtain brect so that we can size the image */
+err = gdImageStringTTF(NULL,&brect[0],0,f,sz,0.,0,0,s);
+if (err) {fprintf(stderr,err); return 1;}
+
+/* create an image big enough for the string plus a little whitespace */
+x = brect[2]-brect[6] + 6;
+y = brect[3]-brect[7] + 6;
+im = gdImageCreate(x,y);
+
+/* Background color (first allocated) */
+white = gdImageColorResolve(im, 255, 255, 255);
+black = gdImageColorResolve(im, 0, 0, 0);
+
+/* render the string, offset origin to center string*/
+/* note that we use top-left coordinate for adjustment
+ * since gd origin is in top-left with y increasing downwards. */
+x = 3 - brect[6];
+y = 3 - brect[7];
+err = gdImageStringTTF(im,&brect[0],black,f,sz,0.0,x,y,s);
+if (err) {fprintf(stderr,err); return 1;}
+
+/* Write img to stdout */
+gdImagePng(im, stdout);
+
+/* Destroy it */
+gdImageDestroy(im);
+
   Color-handling functions
   
         int gdImageColorAllocate(gdImagePtr im, int r, int g, int b)
@@ -1647,7 +1842,8 @@ gdImageDestroy(im);
                 for existing colors that match your request; see
                 gdImageColorExact and gdImageColorClosest for ways to
                 locate existing colors that approximate the color desired
-                in situations where a new color is not available.
+                in situations where a new color is not available. Also
+                see gdImageColorResolve, new in gd-1.6.2.
                 
 
 ... inside a function ...
@@ -1736,6 +1932,35 @@ if (red == (-1)) {
         /* Out of colors, so find the _closest_ color instead. */
         red = gdImageColorClosest(im, 255, 0, 0);
 }
+/* Draw a dashed line from the upper left corner to the lower right corner */
+gdImageDashedLine(im, 0, 0, 99, 99, red);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+gdImageDestroy(im);
+
+        int gdImageColorResolve(gdImagePtr im, int r, int g, int b)
+                _(FUNCTION)_
+                gdImageColorResolve searches the colors which have been
+                defined thus far in the image specified and returns the
+                index of the first color with RGB values which exactly
+                match those of the request. If no allocated color matches
+                the request precisely, then gdImageColorResolve tries to
+                allocate the exact color. If there is no space left in
+                the color table then gdImageColorResolve returns the
+                closest color (as in gdImageColorClosest). This function
+                always returns an index of a color.
+                
+
+... inside a function ...
+gdImagePtr im;
+int red;
+in = fopen("photo.png", "rb");
+im = gdImageCreateFromPng(in);
+fclose(in);
+/* The image may already contain red; if it does, we'll save a slot
+        in the color table by using that color. */
+/* Get index of red, or color closest to red */
+red = gdImageColorResolve(im, 255, 0, 0);
 /* Draw a dashed line from the upper left corner to the lower right corner */
 gdImageDashedLine(im, 0, 0, 99, 99, red);
 /* ... Do something with the image, such as saving it to a file... */
@@ -2023,6 +2248,22 @@ gdImageCopyMergeGray(im_out, im_in, 100, 200, 0, 0, 30, 50, 50);
                 
   Miscellaneous Functions
   
+              int gdImageCompare(gdImagePtr im1, gdImagePtr im2)
+                      _(FUNCTION)_
+                      gdImageCompare returns a bitmap indicating if the
+                      two images are different. The members of the bitmap
+                      are defined in gd.h, but the most important is
+                      GD_CMP_IMAGE, which indicated that the images will
+                      actually appear different when displayed. Other,
+                      less important, differences relate to pallette
+                      entries. Any difference in the transparent colour
+                      is assumed to make images display differently, even
+                      if the transparent colour is not used.
+                      
+
+... Inside a function ...
+cmpMask = gdImageCompare(im1, im2);
+
               gdImageInterlace(gdImagePtr im, int interlace) _(FUNCTION)_
                       
                       gdImageInterlace is used to determine whether an
@@ -2063,127 +2304,139 @@ gdImageDestroy(im);
 
   Constants
   
-              gdBrushed _(CONSTANT)_
-                      Used in place of a color when invoking a
-                      line-drawing function such as gdImageLine or
-                      gdImageRectangle. When gdBrushed is used as the
-                      color, the brush image set with gdImageSetBrush is
-                      drawn in place of each pixel of the line (the brush
-                      is usually larger than one pixel, creating the
-                      effect of a wide paintbrush). See also
-                      gdStyledBrushed for a way to draw broken lines with
-                      a series of distinct copies of an image.
-                      
-              gdMaxColors_(CONSTANT)_
-                      The constant 256. This is the maximum number of
-                      colors in a PNG file according to the PNG standard,
-                      and is also the maximum number of colors in a gd
-                      image.
-                      
-              gdStyled _(CONSTANT)_
-                      Used in place of a color when invoking a
-                      line-drawing function such as gdImageLine or
-                      gdImageRectangle. When gdStyled is used as the
-                      color, the colors of the pixels are drawn
-                      successively from the style that has been set with
-                      gdImageSetStyle. If the color of a pixel is equal
-                      to gdTransparent, that pixel is not altered. (This
-                      mechanism is completely unrelated to the
-                      "transparent color" of the image itself; see
-                      gdImageColorTransparent gdImageColorTransparent for
-                      that mechanism.) See also gdStyledBrushed.
-                      
-              gdStyledBrushed _(CONSTANT)_
-                      Used in place of a color when invoking a
-                      line-drawing function such as gdImageLine or
-                      gdImageRectangle. When gdStyledBrushed is used as
-                      the color, the brush image set with gdImageSetBrush
-                      is drawn at each pixel of the line, providing that
-                      the style set with gdImageSetStyle contains a
-                      nonzero value (OR gdTransparent, which does not
-                      equal zero but is supported for consistency) for
-                      the current pixel. (Pixels are drawn successively
-                      from the style as the line is drawn, returning to
-                      the beginning when the available pixels in the
-                      style are exhausted.) Note that this differs from
-                      the behavior of gdStyled, in which the values in
-                      the style are used as actual pixel colors, except
-                      for gdTransparent.
-                      
-              gdDashSize _(CONSTANT)_
-                      The length of a dash in a dashed line. Defined to
-                      be 4 for backwards compatibility with programs that
-                      use gdImageDashedLine. New programs should use
-                      gdImageSetStyle and call the standard gdImageLine
-                      function with the special "color" gdStyled or
-                      gdStyledBrushed.
-                      
-              gdTiled _(CONSTANT)_
-                      Used in place of a normal color in
-                      gdImageFilledRectangle, gdImageFilledPolygon,
-                      gdImageFill, and gdImageFillToBorder. gdTiled
-                      selects a pixel from the tile image set with
-                      gdImageSetTile in such a way as to ensure that the
-                      filled area will be tiled with copies of the tile
-                      image. See the discussions of gdImageFill and
-                      gdImageFillToBorder for special restrictions
-                      regarding those functions.
-                      
-              gdTransparent _(CONSTANT)_
-                      Used in place of a normal color in a style to be
-                      set with gdImageSetStyle. gdTransparent is _not_
-                      the transparent color index of the image; for that
-                      functionality please see gdImageColorTransparent.
-                      
+                    gdBrushed _(CONSTANT)_
+                            Used in place of a color when invoking a
+                            line-drawing function such as gdImageLine or
+                            gdImageRectangle. When gdBrushed is used as
+                            the color, the brush image set with
+                            gdImageSetBrush is drawn in place of each
+                            pixel of the line (the brush is usually
+                            larger than one pixel, creating the effect of
+                            a wide paintbrush). See also gdStyledBrushed
+                            for a way to draw broken lines with a series
+                            of distinct copies of an image.
+                            
+                    gdMaxColors_(CONSTANT)_
+                            The constant 256. This is the maximum number
+                            of colors in a PNG file according to the PNG
+                            standard, and is also the maximum number of
+                            colors in a gd image.
+                            
+                    gdStyled _(CONSTANT)_
+                            Used in place of a color when invoking a
+                            line-drawing function such as gdImageLine or
+                            gdImageRectangle. When gdStyled is used as
+                            the color, the colors of the pixels are drawn
+                            successively from the style that has been set
+                            with gdImageSetStyle. If the color of a pixel
+                            is equal to gdTransparent, that pixel is not
+                            altered. (This mechanism is completely
+                            unrelated to the "transparent color" of the
+                            image itself; see gdImageColorTransparent
+                            gdImageColorTransparent for that mechanism.)
+                            See also gdStyledBrushed.
+                            
+                    gdStyledBrushed _(CONSTANT)_
+                            Used in place of a color when invoking a
+                            line-drawing function such as gdImageLine or
+                            gdImageRectangle. When gdStyledBrushed is
+                            used as the color, the brush image set with
+                            gdImageSetBrush is drawn at each pixel of the
+                            line, providing that the style set with
+                            gdImageSetStyle contains a nonzero value (OR
+                            gdTransparent, which does not equal zero but
+                            is supported for consistency) for the current
+                            pixel. (Pixels are drawn successively from
+                            the style as the line is drawn, returning to
+                            the beginning when the available pixels in
+                            the style are exhausted.) Note that this
+                            differs from the behavior of gdStyled, in
+                            which the values in the style are used as
+                            actual pixel colors, except for
+                            gdTransparent.
+                            
+                    gdDashSize _(CONSTANT)_
+                            The length of a dash in a dashed line.
+                            Defined to be 4 for backwards compatibility
+                            with programs that use gdImageDashedLine. New
+                            programs should use gdImageSetStyle and call
+                            the standard gdImageLine function with the
+                            special "color" gdStyled or gdStyledBrushed.
+                            
+                    gdTiled _(CONSTANT)_
+                            Used in place of a normal color in
+                            gdImageFilledRectangle, gdImageFilledPolygon,
+                            gdImageFill, and gdImageFillToBorder. gdTiled
+                            selects a pixel from the tile image set with
+                            gdImageSetTile in such a way as to ensure
+                            that the filled area will be tiled with
+                            copies of the tile image. See the discussions
+                            of gdImageFill and gdImageFillToBorder for
+                            special restrictions regarding those
+                            functions.
+                            
+                    gdTransparent _(CONSTANT)_
+                            Used in place of a normal color in a style to
+                            be set with gdImageSetStyle. gdTransparent is
+                            _not_ the transparent color index of the
+                            image; for that functionality please see
+                            gdImageColorTransparent.
+                            
   About the additional .gd image file format
   
-                      In addition to reading and writing the PNG format
-                      and reading the X Bitmap format, gd has the
-                      capability to read and write its own ".gd" format.
-                      This format is _not_ intended for general purpose
-                      use and should never be used to distribute images.
-                      It is not a compressed format. Its purpose is
-                      solely to allow very fast loading of images your
-                      program needs often in order to build other images
-                      for output. If you are experiencing performance
-                      problems when loading large, fixed PNG images your
-                      program needs to produce its output images, you may
-                      wish to examine the functions gdImageCreateFromGd
-                      and gdImageGd, which read and write .gd format
-                      images.
-                      
-                      The program "pngtogd.c" is provided as a simple way
-                      of converting .png files to .gd format. I emphasize
-                      again that you will not need to use this format
-                      unless you have a need for high-speed loading of a
-                      few frequently-used images in your program.
-                      
+                            In addition to reading and writing the PNG
+                            format and reading the X Bitmap format, gd
+                            has the capability to read and write its own
+                            ".gd" format. This format is _not_ intended
+                            for general purpose use and should never be
+                            used to distribute images. It is not a
+                            compressed format. Its purpose is solely to
+                            allow very fast loading of images your
+                            program needs often in order to build other
+                            images for output. If you are experiencing
+                            performance problems when loading large,
+                            fixed PNG images your program needs to
+                            produce its output images, you may wish to
+                            examine the functions gdImageCreateFromGd and
+                            gdImageGd, which read and write .gd format
+                            images.
+                            
+                            The program "pngtogd.c" is provided as a
+                            simple way of converting .png files to .gd
+                            format. I emphasize again that you will not
+                            need to use this format unless you have a
+                            need for high-speed loading of a few
+                            frequently-used images in your program.
+                            
   About the .gd2 image file format
   
-                      In addition to reading and writing the PNG format
-                      and reading the X Bitmap format, gd has the
-                      capability to read and write its own ".gd2" format.
-                      This format is _not_ intended for general purpose
-                      use and should never be used to distribute images.
-                      It is a compressed format allowing pseudo-random
-                      access to large image files. Its purpose is solely
-                      to allow very fast loading of _parts_ of images If
-                      you are experiencing performance problems when
-                      loading large, fixed PNG images your program needs
-                      to produce its output images, you may wish to
-                      examine the functions gdImageCreateFromGd2,
-                      gdImageCreateFromGd2Part and gdImageGd2, which read
-                      and write .gd2 format images.
-                      
-                      The program "pngtogd2.c" is provided as a simple
-                      way of converting .png files to .gd2 format.
-                      
+                            In addition to reading and writing the PNG
+                            format and reading the X Bitmap format, gd
+                            has the capability to read and write its own
+                            ".gd2" format. This format is _not_ intended
+                            for general purpose use and should never be
+                            used to distribute images. It is a compressed
+                            format allowing pseudo-random access to large
+                            image files. Its purpose is solely to allow
+                            very fast loading of _parts_ of images If you
+                            are experiencing performance problems when
+                            loading large, fixed PNG images your program
+                            needs to produce its output images, you may
+                            wish to examine the functions
+                            gdImageCreateFromGd2,
+                            gdImageCreateFromGd2Part and gdImageGd2,
+                            which read and write .gd2 format images.
+                            
+                            The program "pngtogd2.c" is provided as a
+                            simple way of converting .png files to .gd2
+                            format.
+                            
   About the gdIOCtx structure
   
-                      Version 1.5 of GD added a new style of I/O based on
-                      an IOCtx structure (the most up-to-date version can
-                      be found in gd_io.h):
-                      
+                            Version 1.5 of GD added a new style of I/O
+                            based on an IOCtx structure (the most
+                            up-to-date version can be found in gd_io.h):
+                            
 
 typedef struct gdIOCtx {
         int     (*getC)(struct gdIOCtx*);
@@ -2199,76 +2452,87 @@ typedef struct gdIOCtx {
 
 } gdIOCtx;
 
-              Most functions that accepted files in previous versions now
-                      also have a counterpart that accepts an I/O
-                      context. These functions have a 'Ctx' suffix.
-                      
-                      The Ctx routines use the function pointers in the
-                      I/O context pointed to by gdIOCtx to perform all
-                      I/O. Examples of how to implement an I/O context
-                      can be found in io_file.c (which provides a wrapper
-                      for file routines), and io_dp.c (which implements
-                      in-memory storage).
-                      
-                      It is not necessary to implement all functions in
-                      an I/O context if you know that it will only be
-                      used in limited cirsumstances. At the time of
-                      writing (Version 1.6.1, July 1999), the known
-                      requirements are:
-                      
-                      All   Must have 'free',
-                      Anything that reads from the context Must have
-                      'getC' and 'getBuf',
-                      Anything that writes to the context Must have
-                      'putC' and 'putBuf'.
-                      If gdCreateFromGd2Part is called Must also have
-                      'seek' and 'tell'.
-                      If gdImageGd2 is called Must also have 'seek' and
-                      'tell'.
-                      
+                    Most functions that accepted files in previous
+                            versions now also have a counterpart that
+                            accepts an I/O context. These functions have
+                            a 'Ctx' suffix.
+                            
+                            The Ctx routines use the function pointers in
+                            the I/O context pointed to by gdIOCtx to
+                            perform all I/O. Examples of how to implement
+                            an I/O context can be found in io_file.c
+                            (which provides a wrapper for file routines),
+                            and io_dp.c (which implements in-memory
+                            storage).
+                            
+                            It is not necessary to implement all
+                            functions in an I/O context if you know that
+                            it will only be used in limited
+                            cirsumstances. At the time of writing
+                            (Version 1.6.1, July 1999), the known
+                            requirements are:
+                            
+                            All   Must have 'free',
+                            Anything that reads from the context Must
+                            have 'getC' and 'getBuf',
+                            Anything that writes to the context Must have
+                            'putC' and 'putBuf'.
+                            If gdCreateFromGd2Part is called Must also
+                            have 'seek' and 'tell'.
+                            If gdImageGd2 is called Must also have 'seek'
+                            and 'tell'.
+                            
   Please tell us you're using gd!
   
-                      When you contact us and let us know you are using
-                      gd, you help us justify the time spent in
-                      maintaining and improving it. So please let us
-                      know. If the results are publicly visible on the
-                      web, a URL is a wonderful thing to receive, but if
-                      it's not a publicly visible project, a simple note
-                      is just as welcome.
-                      
+                            When you contact us and let us know you are
+                            using gd, you help us justify the time spent
+                            in maintaining and improving it. So please
+                            let us know. If the results are publicly
+                            visible on the web, a URL is a wonderful
+                            thing to receive, but if it's not a publicly
+                            visible project, a simple note is just as
+                            welcome.
+                            
   If you have problems
   
-                      If you have any difficulties with gd, feel free to
-                      contact the author, Thomas Boutell. Problems
-                      relating to the gd2 format should be addressed to
-                      Philip Warner.
-                      
-                      _Be sure to read this manual carefully first. _
-                      
+                            If you have any difficulties with gd, feel
+                            free to contact the author, Thomas Boutell.
+                            Problems relating to the gd2 format should be
+                            addressed to Philip Warner.
+                            
+                            _Be sure to read this manual carefully first.
+                            _
   Alphabetical quick index
   
-                      gdBrushed | gdDashSize | gdFont | gdFontPtr |
-                      gdImage | gdImageArc | gdImageBlue |
-                      gdImageBoundsSafe | gdImageChar | gdImageCharUp |
-                      gdImageColorAllocate | gdImageColorClosest |
-                      gdImageColorDeallocate | gdImageColorExact |
-                      gdImageColorTransparent | gdImageCopy |
-                      gdImageCopyResized | gdImageCreate |
-                      gdImageCreateFromGd | gdImageCreateFromGd2 |
-                      gdImageCreateFromGd2Part | gdImageCreateFromPng |
-                      gdImageCreateFromPngSource | gdImageCreateFromXbm |
-                      gdImageDashedLine | gdImageDestroy | gdImageFill |
-                      gdImageFillToBorder | gdImageFilledRectangle |
-                      gdImageGd | gdImageGd2 | gdImageGetInterlaced |
-                      gdImageGetPixel | gdImageGetTransparent |
-                      gdImageGreen | gdImageInterlace | gdImageLine |
-                      gdImageFilledPolygon | gdImagePaletteCopy |
-                      gdImagePng | gdImagePngToSink | gdImagePolygon |
-                      gdImagePtr | gdImageRectangle | gdImageRed |
-                      gdImageSetBrush | gdImageSetPixel | gdImageSetStyle
-                      | gdImageSetTile | gdImageString | gdImageString16
-                      | gdImageStringUp | gdImageStringUp16 | gdMaxColors
-                      | gdPoint | gdStyled | gdStyledBrushed | gdTiled |
-                      gdTransparent
-                      
-                      _Boutell.Com, Inc._
+                            gdBrushed | gdDashSize | gdFont | gdFontPtr |
+                            gdImage | gdImageArc | gdImageBlue |
+                            gdImageBoundsSafe | gdImageChar |
+                            gdImageCharUp | gdImageColorAllocate |
+                            gdImageColorClosest | gdImageColorDeallocate
+                            | gdImageColorExact | gdImageColorResolve |
+                            gdImageColorTransparent | gdImageCopy |
+                            gdImageCopyResized | gdImageCreate |
+                            gdImageCreateFromGd | gdImageCreateFromGd2 |
+                            gdImageCreateFromGd2Part |
+                            gdImageCreateFromPng |
+                            gdImageCreateFromPngSource |
+                            gdImageCreateFromXbm | gdImageCreateFromXpm |
+                            gdImageDashedLine | gdImageDestroy |
+                            gdImageFill | gdImageFillToBorder |
+                            gdImageFilledRectangle | gdImageGd |
+                            gdImageGd2 | gdImageGetInterlaced |
+                            gdImageGetPixel | gdImageGetTransparent |
+                            gdImageGreen | gdImageInterlace | gdImageLine
+                            | gdImageFilledPolygon | gdImagePaletteCopy |
+                            gdImagePng | gdImagePngToSink |
+                            gdImagePolygon | gdImagePtr |
+                            gdImageRectangle | gdImageRed |
+                            gdImageSetBrush | gdImageSetPixel |
+                            gdImageSetStyle | gdImageSetTile |
+                            gdImageString | gdImageString16 |
+                            gdImageStringTTF | gdImageStringUp |
+                            gdImageStringUp16 | gdMaxColors | gdPoint |
+                            gdStyled | gdStyledBrushed | gdTiled |
+                            gdTransparent
+                            
+                            _Boutell.Com, Inc._

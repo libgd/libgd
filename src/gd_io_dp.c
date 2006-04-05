@@ -88,7 +88,7 @@ gdIOCtx* gdNewDynamicCtx (int initialSize, void *data) {
   ctx->ctx.free = freeDynamicCtx;
 
   return (gdIOCtx*)ctx;
-};
+}
 
 void* gdDPExtractData(struct gdIOCtx* ctx, int *size)
 {
@@ -197,7 +197,7 @@ static dynamicPtr* newDynamic (int initialSize, void *data) {
   dp->pos = 0;
 
   return dp;
-};
+}
 
 static int 
 dynamicPutbuf( struct gdIOCtx* ctx, const void *buf, int size )

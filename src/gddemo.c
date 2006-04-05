@@ -95,8 +95,10 @@ int main(void)
 		gdImageLine(im_out, 0, 127, 127, 0, gdStyledBrushed);
 	}
 	/* Text */
-	gdImageString(im_out, gdFontGiant, 16, 16, "hi", red);
-	gdImageStringUp(im_out, gdFontSmall, 32, 32, "hi", red);
+	gdImageString(im_out, gdFontGiant, 16, 16, 
+		(unsigned char *) "hi", red);
+	gdImageStringUp(im_out, gdFontSmall, 32, 32, 
+		(unsigned char *) "hi", red);
 	/* Make output image interlaced (allows "fade in" in some viewers,
 		and in the latest web browsers) */
 	gdImageInterlace(im_out, 1);

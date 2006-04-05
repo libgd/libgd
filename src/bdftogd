@@ -183,11 +183,19 @@ print FILEH <<"EOF";
 #ifndef $capdef
 #define $capdef 1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 $info
 
 #include "gd.h"
 
 extern gdFontPtr $gdname;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

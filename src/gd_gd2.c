@@ -201,14 +201,15 @@ int _gd2ReadChunk(int offset, char *compBuf, int compSize, char *chunkBuf, uLong
 		return FALSE;
 	};
 	GD2_DBG(printf("Got %d bytes. Uncompressing into buffer of %d bytes\n", compSize, *chunkLen));
-	zerr = uncompress(chunkBuf, chunkLen,  compBuf, compSize);
+	zerr = uncompress((unsigned char *) chunkBuf, chunkLen,  
+		(unsigned char *) compBuf, compSize);
         if (zerr != Z_OK) {
 		GD2_DBG(printf("Error %d from uncompress\n",zerr));
                 return FALSE;
         };
 	GD2_DBG(printf("Got chunk\n"));
 	return TRUE;
-};
+}
 
 gdImagePtr gdImageCreateFromGd2(FILE *inFile)
 {
@@ -668,7 +669,10 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
                         };
 			if (fmt == GD2_FMT_COMPRESSED) {
                         	compLen = compMax;
-                        	if (compress(&compData[0], &compLen, &chunkData[0], chunkLen) != Z_OK) {
+                        	if (compress((unsigned char *) 
+					&compData[0], &compLen, 
+					(unsigned char *) &chunkData[0], 
+					chunkLen) != Z_OK) {
                                 	printf("Error from compressing\n");
                         	} else {
                                 	chunkIdx[chunkNum].offset = gdTell(out);

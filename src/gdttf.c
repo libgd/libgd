@@ -65,8 +65,8 @@ typedef struct {
 	TT_Face				face;
 	TT_Face_Properties  properties;
 	TT_Instance			instance;
-	TT_CharMap			char_map_Unicode, char_map_Big5, char_map_Roman;
-	int					have_char_map_Unicode, have_char_map_Big5, have_char_map_Roman;
+	TT_CharMap			char_map_Unicode, char_map_Big5, char_map_Sjis, char_map_Roman;
+	int					have_char_map_Unicode, have_char_map_Big5, have_char_map_Sjis, have_char_map_Roman;
 	TT_Matrix			matrix;
 	TT_Instance_Metrics	imetrics;
 	gdCache_head_t		*glyphCache;
@@ -176,6 +176,10 @@ static void bitmapRelease( void *element );
  *
  *---------------------------------------------------------------------------
  */
+
+#ifdef JISX0208
+#include "jisx0208.h"
+#endif
  
 #define Tcl_UniChar int
 #define TCL_UTF_MAX 3
@@ -213,6 +217,22 @@ gdTcl_UtfToUniChar(char *str, Tcl_UniChar *chPtr)
      */
 
     byte = *((unsigned char *) str);
+#ifdef JISX0208
+    if (0xA1 <= byte && byte <= 0xFE) {
+	int jiscode, ku, ten;
+
+	jiscode = 0x100 * (byte & 0x7F) + (str[1] & 0x7F);
+	ku = (jiscode >> 8) - 0x20;
+	ten = (jiscode % 256) - 0x20;
+	if ( (ku < 1 || ku > 92) || (ten < 1 || ten > 94) ) {
+    		*chPtr = (Tcl_UniChar) byte;
+    		return 1;
+	}
+
+	*chPtr = (Tcl_UniChar) UnicodeTbl[ku - 1][ten - 1];
+	return 2;
+    } else
+#endif /* JISX0208 */
     if (byte < 0xC0) {
 	/*
 	 * Handles properly formed UTF-8 characters between 0x01 and 0x7F.
@@ -353,10 +373,14 @@ fontFetch ( char **error, void *key )
 	map_found = 0;
 	a->have_char_map_Unicode = 0;
 	a->have_char_map_Big5 = 0;
+	a->have_char_map_Sjis = 0;
 	a->have_char_map_Roman = 0;
 	for (i = 0; i < n; i++) {
 		TT_Get_CharMap_ID(a->face, i, &platform, &encoding);
 		if ((platform == 3 && encoding == 1)           /* Windows Unicode */
+		 || (platform == 3 && encoding == 0)           /* Windows
+Symbol */
+
 		 || (platform == 2 && encoding == 1)           /* ISO Unicode */
 		 || (platform == 0)) {                          /* Apple Unicode */
 			TT_Get_CharMap(a->face, i, &a->char_map_Unicode);
@@ -365,6 +389,10 @@ fontFetch ( char **error, void *key )
 		} else if (platform == 3 && encoding == 4) {   /* Windows Big5 */
 			TT_Get_CharMap(a->face, i, &a->char_map_Big5);
 			a->have_char_map_Big5 = 1;
+			map_found++;
+		} else if (platform == 3 && encoding == 2) {   /* Windows Sjis */
+			TT_Get_CharMap(a->face, i, &a->char_map_Sjis);
+			a->have_char_map_Sjis = 1;
 			map_found++;
 		} else if ((platform == 1 && encoding == 0)    /* Apple Roman */
 		 || (platform == 2 && encoding == 0)) {         /* ISO ASCII */
@@ -447,6 +475,8 @@ glyphFetch ( char **error, void *key )
 		glyph_code = TT_Char_Index(b->font->char_map_Roman, a->character);
 	} else if ( b->font->have_char_map_Big5) {
 		glyph_code = TT_Char_Index(b->font->char_map_Big5, a->character);
+	} else if ( b->font->have_char_map_Sjis) {
+		glyph_code = TT_Char_Index(b->font->char_map_Sjis, a->character);
 	}
 	if ((err=TT_Load_Glyph(b->font->instance, a->glyph, glyph_code, flags))) {
 		*error = "TT_Load_Glyph problem";
@@ -642,6 +672,30 @@ gdttfchar(gdImage *im, int fg, font_t *font,
 	if (font->have_char_map_Unicode) { /* use UTF-8 mapping from ASCII */
 		len = gdTcl_UtfToUniChar(*next, &ch);
 		*next += len;
+	} else
+	if (font->have_char_map_Sjis) {
+		unsigned char c;
+		int jiscode;
+
+		c = (unsigned char)(**next);
+		if ( 0xA1 <= c && c <= 0xFE ) {
+			(*next)++;
+			jiscode = 0x100 * ((c)&0x7F) + ((**next)&0x7F);
+
+			ch = (jiscode >> 8) & 0xFF;
+			jiscode &= 0xFF;
+
+			if (ch & 1) jiscode += 0x40 - 0x21;
+			else        jiscode += 0x9E - 0x21;
+
+			if (jiscode >= 0x7F) jiscode++;
+			ch = (ch - 0x21) / 2 + 0x81;
+			if (ch >= 0xA0) ch += 0x40;
+
+			ch = (ch << 8) + jiscode;
+		} else
+			ch = (**next) & 255;         /* don't extend sign */
+		(*next)++;
 	} else {
 		/*
 		 * Big 5 mapping:
@@ -713,6 +767,8 @@ gdttfchar(gdImage *im, int fg, font_t *font,
 	return (char *)NULL;
 }
 
+extern int any2eucjp(unsigned char *, unsigned char *, unsigned int);
+
 /********************************************************************/
 /* gdImageStringTTF -  render a utf8 string onto a gd image         */ 
 
@@ -727,6 +783,7 @@ char * gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontname,
 	font_t *font;
 	fontkey_t fontkey;
 	char *error, *next;
+	char *tmpstr;
 
 	/****** initialize font engine on first call ************/
 	static gdCache_head_t	*fontCache;
@@ -755,7 +812,18 @@ char * gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontname,
 
 	advance_x = advance_y = 0;
 
+#ifndef JISX0208
+	if (font->have_char_map_Sjis) {
+#endif
+		if (tmpstr = (unsigned char *)malloc(BUFSIZ)) {
+			any2eucjp(tmpstr, string, BUFSIZ);
+			next=tmpstr;
+		} else
+		next=string;
+#ifndef JISX0208
+	} else
 	next=string;
+#endif
 	while (*next) {	  
 		ch = *next;
 
@@ -813,6 +881,7 @@ char * gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontname,
 		i++;
 	}
 
+    if ( tmpstr ) free(tmpstr);
     return (char *)NULL;
 }
 
