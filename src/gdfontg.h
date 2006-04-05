@@ -20,7 +20,7 @@ extern "C"
 
 #include "gd.h"
 
-   BGD_EXPORT  gdFontPtr gdFontGiant;
+   BGD_EXPORT gdFontPtr gdFontGiant;
 
 #ifdef __cplusplus
 }

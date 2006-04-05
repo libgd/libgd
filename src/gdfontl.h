@@ -21,7 +21,7 @@ extern "C"
 
 #include "gd.h"
 
-   BGD_EXPORT  gdFontPtr gdFontLarge;
+   BGD_EXPORT gdFontPtr gdFontLarge;
 
 #ifdef __cplusplus
 }

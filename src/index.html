@@ -1,12 +1,10 @@
-<html>
+<!-- REMEMBER TO EDIT index.html.source -->
 <head>
-<TITLE>gd 2.0.18</TITLE>
+<TITLE>gd 2.0.19</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<h1>This is gd 2.0.18.</h1>
-<p>
-<H2>gd 2.0.18</H2>
+<H2>gd 2.0.19</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -22,7 +20,7 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.18 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.19 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -35,7 +33,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-When building from soruce, gd 2.0.18 <strong>requires</strong> that the 
+When building from soruce, gd 2.0.19 <strong>requires</strong> that the 
 following libraries also be installed, in order to produce the related 
 image formats. The win32 binary release (bgd) already contains the
 appropriate libraries.
@@ -68,7 +66,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.18">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.19">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -167,10 +165,10 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.18.
+with 2.0.19.
 <h4>PHP</h4>
 A variant of gd 2.x is included in PHP 4.3.0. It is also possible
-to patch PHP 4.2.3 for use with gd 2.0.18; see the
+to patch PHP 4.2.3 for use with gd 2.0.19; see the
 <a href="http://www.boutell.com/gd/">gd home page</a> for a link to
 that information. It would be a Good Idea to merge all of the things
 that are better in mainstream gd and all of the things that are
@@ -208,7 +206,9 @@ invoke the interpreter.
 <A NAME="whatsnew2.0.18"><H3>What's new in version 2.0.18?</H3></A>
 <P>
 <ul>
-<li>Win32 binary distribution of bgd.dll now available.
+<li>A Win32 binary distribution of "bgd.dll," built with mingw32 and
+tested with win32 versions of the demo programs as console applications,
+is now available.
 <li>Semicolon rather than space used as the default separator of
 alternative font file paths in <a href="#gdImageStringFT">gdImageStringFT</a>,
 for better compatibility with Windows and other environments where
@@ -974,31 +974,38 @@ saving of alpha channel information to the file instead.
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>Binaries (DLL for Windows programmers):</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/bgd.zip">.ZIP File of DLL, Headers, Et Cetera</a>
+<li><a href="http://www.boutell.com/gd/http/gdwin32.zip">.ZIP File of DLL, Headers, Et Cetera</a>
+<p>
 </ul>
 <h4>Source Code:</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.18.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.18.zip">.ZIP File of SOURCE CODE (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.19.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.19.zip">.ZIP File of SOURCE CODE (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
 <blockquote>
-Win32 DLL users will not need to read this section. Simply use
-the provided DLL for your programming. You can build an MSVC
-import library, if needed, using the provided batch file
-<code>makemsvcimport.bat</code>.
+Win32 DLL users: if you are using MSVC, use the provided batch file
+<code>makemsvcimport.bat</code> to make a bgd.lib import library
+corresponding to the provided bgd.dll. Copy bgd.dll to your
+application directory, or to your Windows sytem directory. In the
+settings of your MSVC project, you <b>MUST</b> choose the
+"multithreaded DLL" library option under "code generation." 
+mingw32 and cygwin users can simply link with the provided libbgd.a 
+stub library in order to use the DLL.
 </blockquote>
+Building gd From the Source
+<p>
 In order to build gd, you must first unpack the archive you have
 downloaded. If you are not familiar with <code>tar</code> and
 <code>gunzip</code> (Unix) or <code>ZIP</code> (Windows), please
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.18".
+Unpacking the archive will produce a directory called "gd-2.0.19".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.18 directory and type:
+<code>cd</code> to the 2.0.19 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -1034,6 +1041,9 @@ to <code>Makefile</code>. However, <code>./configure</code> is
 almost always your best bet.
 <blockquote>
 <h4>For Windows</h4>
+Use the DLL version! See the paragraph at the beginning of this sectino.
+If you really want to compile it yourself for some strange reason, read on.
+<p>
 Create a project using your favorite programming environment.
 Copy all of the gd files to the project directory. Add <code>gd.c</code>
 to your project. Add other source files as appropriate. Learning the
@@ -4581,5 +4591,4 @@ purchase gd support at the hourly rate above.
 <em><A HREF="http://www.boutell.com/">
 Boutell.Com, Inc.</A></em>
 </body>
-</html>
 

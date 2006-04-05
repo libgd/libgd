@@ -11,7 +11,8 @@
 #ifdef WIN32
 #define BGD_EXPORT __declspec(dllimport)
 #else
-#define BGD_EXPORT
+/* 2.0.19: should be 'extern', especially for font data pointers */
+#define BGD_EXPORT extern
 #endif /* WIN32 */
 #endif /* BGDWIN32 */
 
