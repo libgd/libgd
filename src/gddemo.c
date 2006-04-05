@@ -168,8 +168,8 @@ main (void)
       int y1 = rand () % gdImageSY (im_out);
       int x2 = rand () % gdImageSX (im_out);
       int y2 = rand () % gdImageSY (im_out);
-      gdImageSetAntiAliased (im_out, white);
-      gdImageLine (im_out, x1, y1, x2, y2, gdAntiAliased);
+      gdImageSetAntiAliased (im_out, white); 
+      gdImageLine (im_out, x1, y1, x2, y2, gdAntiAliased); 
     }
   /* Make output image interlaced (progressive, in the case of JPEG) */
   gdImageInterlace (im_out, 1);

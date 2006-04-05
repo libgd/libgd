@@ -176,22 +176,14 @@ extern "C"
        have that capability. JPEG doesn't. */
     int saveAlphaFlag;
 
-    /* 2.0.12: anti-aliased globals */
+    /* There should NEVER BE ACCESSOR MACROS FOR ITEMS BELOW HERE, so this
+       part of the structure can be safely changed in new releases. */
+
+    /* 2.0.12: anti-aliased globals. 2.0.26: just a few vestiges after
+      switching to the fast, memory-cheap implementation from PHP-gd. */
     int AA;
     int AA_color;
     int AA_dont_blend;
-    unsigned char **AA_opacity;
-    int AA_polygon;
-    /* Stored and pre-computed variables for determining the perpendicular
-       distance from a point to the anti-aliased line being drawn: */
-    int AAL_x1;
-    int AAL_y1;
-    int AAL_x2;
-    int AAL_y2;
-    int AAL_Bx_Ax;
-    int AAL_By_Ay;
-    int AAL_LAB_2;
-    float AAL_LAB;
 
     /* 2.0.12: simple clipping rectangle. These values
       must be checked for safety when set; please use
@@ -316,6 +308,7 @@ BGD_DECLARE(void) gdImageSetPixel (gdImagePtr im, int x, int y, int color);
 
 BGD_DECLARE(int) gdImageGetPixel (gdImagePtr im, int x, int y);
 
+/* Now a No-Op, but kept for binary compatibility. */
 BGD_DECLARE(void) gdImageAABlend (gdImagePtr im);
 
 BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color);
