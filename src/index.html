@@ -1,17 +1,17 @@
 <HTML>
 <HEAD>
-<TITLE>gd 1.5</TITLE>
+<TITLE>gd 1.6</TITLE>
 </HEAD>
 <BODY>
-<H1>gd 1.5</H1>
-<H2>A graphics library for fast GIF creation</H2>
+<H1>gd 1.6</H1>
+<H2>A graphics library for fast image creation</H2>
 <H2>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
 of this document</A>.</H2>
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew1.5">What's new in version 1.5?</A>
+<LI><A HREF="#whatsnew1.6">What's new in version 1.6?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -40,23 +40,12 @@ pleased to correct them.</strong>
 COPYRIGHT STATEMENT FOLLOWS THIS LINE
 </pre>
 <blockquote>
-Portions copyright 1994, 1995, 1996, 1997, 1998, by Cold Spring
+
+Portions copyright 1994, 1995, 1996, 1997, 1998, 1999, by Cold Spring
 Harbor Laboratory. Funded under Grant P41-RR02188 by the National
 Institutes of Health.
 <P>
-Portions copyright 1996, 1997, 1998, by Boutell.Com, Inc.
-<p>
-GIF decompression code copyright 1990, 1991, 1993, by David Koblas
-(koblas@netcom.com).
-<p>
-Non-LZW-based GIF compression code copyright 1998, by Hutchison Avenue
-Software Corporation (<a href="http://www.hasc.com">http://www.hasc.com/</a>,
-info@hasc.com).
-<p>LZW-based GIF compression code David Rowley. This code is compiled
-only if the compiler macro LZW_LICENCED is defined when gd is built.
-Obtaining a license for the Unisys LZW compression patent is
-entirely between the user and Unisys. The authors of gd can provide
-NO assistance in this matter.
+Portions copyright 1996, 1997, 1998, 1999, by Boutell.Com, Inc.
 <p>
 Portions relating to GD2 format copyright 1999 Philip Warner.
 <p>
@@ -77,6 +66,19 @@ copyright notice and this permission notice appear in supporting
 documentation.  This software is provided "as is" without express or
 implied warranty.
 <p>
+Although their code does not appear in gd 1.6, the authors wish to 
+thank David Koblas, David Rowley, and Hutchison Avenue Software 
+Corporation for their prior contributions.
+<p>
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted, provided
+that the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation. <strong>This software is provided "AS IS."</strong>
+The copyright holders disclaim all warranties, either express or implied,
+including but not limited to implied warranties of merchantability and
+fitness for a particular purpose, with respect to this code and accompanying
+documentation.
 </blockquote>
 <pre>
 END OF COPYRIGHT STATEMENT
@@ -86,9 +88,9 @@ END OF COPYRIGHT STATEMENT
 gd is a graphics library. It allows your code to quickly
 draw images complete with lines, arcs, text, multiple
 colors, cut and paste from other images, and flood fills, and
-write out the result as a .GIF file. This is particularly
-useful in World Wide Web applications, where .GIF is the
-format used for inline images.
+write out the result as a .PNG file. This is particularly
+useful in World Wide Web applications, where .PNG is one
+of the formats accepted for inline images by most browsers.
 <P>
 gd is not a paint program.
 If you are looking for a paint program, you are looking in
@@ -97,11 +99,10 @@ in the wrong place.
 <P>
 gd does not provide for every possible desirable graphics
 operation. It is not necessary or desirable for gd to become
-a kitchen-sink graphics package, but version 1.3 incorporates
+a kitchen-sink graphics package, but version 1.6 incorporates
 most of the commonly requested features for an 8-bit 2D package.
-Support for scalable fonts, and truecolor images, JPEG and PNG
-is planned for version 2.0. Version 1.3 was released to correct
-longstanding bugs and provide an LZW-free GIF compression routine.
+Support for scalable fonts, and truecolor images, JPEG and 
+truecolor PNG is planned for version 2.0.
 <P>
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
@@ -110,7 +111,7 @@ gd can also be used from Perl, courtesy of
 Lincoln Stein's
 <a href="http://www-genome.wi.mit.edu/ftp/pub/software/WWW/GD.html">
 GD.pm</a> library, which uses gd as the basis for a set of
-Perl 5.x classes. GD.pm is based on gd 1.1.1 but gd 1.2 should
+Perl 5.x classes. Not yet updated for gd 1.6.
 be compatible.
 <h4>Any Language</h4>
 There are, at the moment, at least three simple interpreters that
@@ -118,16 +119,27 @@ perform gd operations. You can output the desired commands to a simple
 text file from whatever scripting language you prefer to use, then
 invoke the interpreter.
 <p>
-These packages are based on gd 1.2 as of this writing but should
-be compatible with gd 1.3x with minimal tweaking.
+These packages have not been updated to gd 1.6 as of this writing.
 <ul>
 <li><a href="http://s27w007.pswfs.gov/tgd/">tgd</a>, by Bradley K. Sherman
 <li><a href="http://www.unimelb.edu.au/fly/fly.html">fly</a>, by Martin Gleeson
 </ul>
+<P><A NAME="whatsnew1.6"><H3>What's new in version 1.6?</H3></A>
+Version 1.6 features the following changes:
+<p>
+<strong>Support for 8-bit palette PNG images has been added.
+Support for GIF has been removed.</strong> This step was taken
+to completely avoid the legal controversy regarding the LZW
+compression algorithm used in GIF. Unisys holds a patent which
+is relevant to LZW compression. PNG is a superior image format
+in any case. Now that PNG is supported by both Microsoft
+Internet Explorer and Netscape (in their recent releases),
+we highly recommend that GD users upgrade in order to get 
+well-compressed images in a format which is legally unemcumbered.
 
 <P><A NAME="whatsnew1.5"><H3>What's new in version 1.5?</H3></A>
 
-Version 1.5 features the following changes:
+Version 1.5 featured the following changes:
 
 <dl>
 <dt><b>New GD2 format</b>
@@ -151,21 +163,14 @@ Version 1.5 features the following changes:
 <dd>      The new gdImage*Ptr function returns the chosen format stored in a block of memory.
           This can be directly used by the GD perl module.
 <p>
-<dt><b>LZW-based GIF compression code available for Unisys licensees</b>
-<dd>      Parties holding a legitimate license to use the patented
-LZW compression algorithm can produce smaller GIFs if the compiler 
-macro LZW_LICENCED is defined when gd is built. Obtaining a license for the 
-Unisys LZW compression patent is entirely between the user and Unisys. 
-The authors of gd can provide NO assistance in this matter.
 <dt><b>Added functions</b>
 <dd>gdImageCreateFromGd2Part - allows retrieval of part of an image (good for huge images, like maps),
 <br>gdImagePaletteCopy - Copies a palette from one image to another, doing it's best to match the colors in the target image to the colors in the source palette.
 <br>gdImageGd2, gdImageCreateFromGd2 - Support for new format
-<br>gdImageLzw - Optional support for LZW (for those who have a licence). Disabled by default.
 <br>gdImageCopyMerge - Merges two images (useful to highlight part of an image)
 <br>gdImageCopyMergeGray - Similar to gdImageCopyMerge, but tries to preserve source image hue.
-<br>gdImageGifPtr, gdImageLzwPtr, gdImageGdPtr, gdImageGd2Ptr - return memort blocks for each type of image.
-<br>gdImageCreateFromGifCtx, gdImageCreateFromGdCtx, gdImageCreateFromGd2Ctx, gdImageCreateFromGd2PartCtx - Support for new I/O context.
+<br>gdImagePngPtr, gdImageGdPtr, gdImageGd2Ptr - return memort blocks for each type of image.
+<br>gdImageCreateFromPngCtx, gdImageCreateFromGdCtx, gdImageCreateFromGd2Ctx, gdImageCreateFromGd2PartCtx - Support for new I/O context.
 
 </dl>
 
@@ -183,11 +188,11 @@ previous releases, including version 1.3.
 <dt>Support for alternate data sources
 <dd>Programmers who wish to load a GIF from something other
 than a stdio FILE * stream can use the new
-<a href="#gdImageCreateFromGifSource">gdImageCreateFromGifSource</a> function.
+<a href="#gdImageCreateFromPngSource">gdImageCreateFromPngSource</a> function.
 <dt>Support for alternate data destinations
 <dd>Programmers who wish to write a GIF to something other
 than a stdio FILE * stream can use the new
-<a href="#gdImageGifToSink">gdImageGifToSink</a> function.
+<a href="#gdImagePngToSink">gdImagePngToSink</a> function.
 <dt>More tolerant when reading GIFs
 <dd>
 Version 1.4 does not crash when reading certain animated GIFs,
@@ -200,16 +205,15 @@ Version 1.3 features the following changes:
 <dl>
 <dt>Non-LZW-based GIF compression code
 <dd>
-Version 1.3 contains GIF compression code that uses simple Run Length
+Version 1.3 contained GIF compression code that uses simple Run Length
 Encoding instead of LZW compression, while still retaining compatibility
 with normal LZW-based GIF decoders (your browser will still like your GIFs).
-<strong>LZW compression is patented by Unisys. This is why there have
-been no new versions of gd for a long time. THANKS to
+<strong>LZW compression is patented by Unisys. We are currently reevaluating
+the approach taken by gd 1.3. The current release of gd does not support
+this approach. We recommend that you use the current release, and generate
+PNG images.</strong> Thanks to 
 Hutchison Avenue Software Corporation for contributing
-this code. THE NEW CODE PRODUCES LARGER GIFS AND IS NOT WELL
-SUITED TO PHOTOGRAPHIC IMAGES. THIS IS A LEGAL ISSUE.
-IT IS NOT A QUESTION OF TECHNICAL SKILL. PLEASE DON'T
-COMPLAIN ABOUT THE SIZE OF GIF OUTPUT. THANKS!</strong>
+the RLE GIF code.
 <dt>8-bit fonts, and 8-bit font support
 <dd>This improves support for European languages. Thanks are due
 to Honza Pazdziora <adelton@informatics.muni.cz> and also to
@@ -251,28 +255,32 @@ Most Unix users who do not already have gcc should get it.
 gcc is free, ANSI compliant and a de facto industry standard.
 Ask your ISP why it is missing.</strong>
 <P>
-As of version 1.5, you also need the zlib compression library.
-It is available for a variety of platforms from
-<a href=http://www.cdrom.com/pub/infozip/zlib/>the zlib web site</a>.
+As of version 1.6, you also need the zlib compression library,
+and the libpng library. 
+zlib is available for a variety of platforms from
+<a href="http://www.cdrom.com/pub/infozip/zlib/">the zlib web site</a>.
+libpng is available for a variety of platforms from
+<a href="http://www.cdrom.com/pub/png/">the PNG web site</a>.
 <P>
-You will also want a GIF viewer, if you do not already have
+You will also want a PNG viewer, if you do not already have
 one for your system, since you will need a good way to check the
-results of your work. Any web browser will work, but you might
-be happier with a package like Lview Pro for Windows or
-xv for X. There are GIF viewers available for every graphics-capable
-computer out there, so consult newsgroups relevant to
-your particular system.
+results of your work. Netscape 4.04 and higher, and Microsoft
+Internet Explorer 4.0 or higher, both support PNG.
+For some purposes you might be happier with a package like 
+Lview Pro for Windows or xv for X. There are PNG viewers available 
+for every graphics-capable modern operating system, so consult 
+newsgroups relevant to your particular system.
 <P>
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>By HTTP</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd1.5.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd15.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd1.6.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd16.zip">.ZIP File (Windows)</a>
 </ul>
 <h4>By FTP</h4>
 <ul>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd1.5.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd15.zip">.ZIP File (Windows)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd1.6.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd16.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -283,10 +291,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd1.5".
+Unpacking the archive will produce a directory called "gd1.6".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the gd1.5 directory and examine the Makefile, which
+<code>cd</code> to the gd1.6 directory and examine the Makefile, which
 you will probably need to change slightly depending on your operating
 system and your needs.
 <h4>For Windows, Mac, Et Cetera</h4>
@@ -309,22 +317,22 @@ the capabilities of gd. To see it in action, type
 "gddemo".
 <P>
 gddemo should execute without incident, creating the file
-demoout.gif. (Note there is also a file named demoin.gif,
+demoout.png. (Note there is also a file named demoin.png,
 which is provided in the package as part of the demonstration.)
 <P>
-Display demoout.gif in your GIF viewer. The image should
+Display demoout.png in your PNG viewer. The image should
 be 128x128 pixels and should contain an image of the
 space shuttle with quite a lot of graphical elements drawn
 on top of it.
 <P>
-(If you are missing the demoin.gif file, the other items
+(If you are missing the demoin.png file, the other items
 should appear anyway.)
 <P>
-Look at demoin.gif to see the original space shuttle
+Look at demoin.png to see the original space shuttle
 image which was scaled and copied into the output image.
 <P>
 <A NAME="basics"><H3>gd basics: using gd in your program</H3></A>
-gd lets you create GIF images on the fly. To use gd in your
+gd lets you create PNG images on the fly. To use gd in your
 program, include the file gd.h, and link with the libgd.a
 library produced by "make libgd.a", under Unix. Under other
 operating systems you will add gd.c to your own project.
@@ -344,7 +352,7 @@ it demonstrates additional features!)</strong>
 /* Bring in gd library functions */
 #include "gd.h"
 
-/* Bring in standard I/O so we can output the GIF to a file */
+/* Bring in standard I/O so we can output the PNG to a file */
 #include &lt;stdio.h&gt;
 
 int main() {
@@ -373,10 +381,10 @@ int main() {
 
 	/* Open a file for writing. "wb" means "write binary", important
 		under MSDOS, harmless under Unix. */
-	out = fopen("test.gif", "wb");
+	out = fopen("test.png", "wb");
 
 	/* Output the image to the disk file. */
-	<A HREF="#gdImageGif">gdImageGif</A>(im, out);	
+	<A HREF="#gdImagePng">gdImagePng</A>(im, out);	
 
 	/* Close the file. */
 	fclose(out);
@@ -388,7 +396,7 @@ int main() {
 When executed, this program creates an image, allocates
 two colors (the first color allocated becomes the background
 color), draws a diagonal line (note that 0, 0 is the upper
-left corner), writes the image to a GIF file, and
+left corner), writes the image to a PNG file, and
 destroys the image.
 <P>
 The above example program should
@@ -397,16 +405,16 @@ gd provides many additional functions, which are listed
 in the following reference chapters, complete with code
 snippets demonstrating each. There is also an
 <A HREF="#index">alphabetical index</A>.
-<H3><A NAME="webgif">Webgif: a more powerful gd example</A></H3>
-Webgif is a simple utility program to manipulate GIFs from the
+<H3><A NAME="webpng">Webpng: a more powerful gd example</A></H3>
+Webpng is a simple utility program to manipulate PNGs from the
 command line. It is written for Unix and similar command-line
 systems, but should be easily adapted for other environments.
-Webgif allows you to set transparency and interlacing and
-output interesting information about the GIF in question.
+Webpng allows you to set transparency and interlacing and
+output interesting information about the PNG in question.
 <P>
-webgif.c is provided in the distribution. Unix users can
-simply type "make webgif" to compile the program. Type
-"webgif" with no arguments to see the available options.
+webpng.c is provided in the distribution. Unix users can
+simply type "make webpng" to compile the program. Type
+"webpng" with no arguments to see the available options.
 <H2><A NAME="reference">Function and type reference</A></H2>
 <UL>
 <LI><A HREF="#types">Types</A></LI>
@@ -511,10 +519,10 @@ typedef struct {
         void *context;
 } gdSource, *gdSourcePtr;
 </pre>
-Represents a source from which a GIF can be read.
-Programmers who do not wish to read GIFs from a file can provide
+Represents a source from which a PNG can be read.
+Programmers who do not wish to read PNGs from a file can provide
 their own alternate input mechanism, using the
-<a href="#gdImageCreateFromGifSource">gdImageCreateFromGifSource</a> function.
+<a href="#gdImageCreateFromPngSource">gdImageCreateFromPngSource</a> function.
 See the documentation of that function for an example of the
 proper use of this type.
 <DT><A NAME="gdSink">gdSink</A> <strong>(TYPE)</strong>
@@ -525,10 +533,10 @@ typedef struct {
         void *context;
 } gdSink, *gdSinkPtr;
 </PRE>
-Represents a "sink" (destination) to which a GIF can be written.
-Programmers who do not wish to write GIFs to a file can provide
+Represents a "sink" (destination) to which a PNG can be written.
+Programmers who do not wish to write PNGs to a file can provide
 their own alternate output mechanism, using the
-<a href="#gdImageGifToSink">gdImageGifToSink</a> function.
+<a href="#gdImagePngToSink">gdImagePngToSink</a> function.
 See the documentation of that function for an example of the
 proper use of this type.
 <H3><A NAME="creating">Image creation, destruction, loading and saving</A></H3>
@@ -549,19 +557,19 @@ im = gdImageCreate(64, 64);
 /* ... Use the image ... */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
-<DT><A NAME="gdImageCreateFromGif">gdImageCreateFromGif(FILE *in)</A>
+<DT><A NAME="gdImageCreateFromPng">gdImageCreateFromPng(FILE *in)</A>
 <strong>(FUNCTION)</strong>
-<BR><A NAME="gdImageCreateFromGifCtx">gdImageCreateFromGifCtx(<a href=#gdioctx>gdIOCtx</a> *in)</A>
+<BR><A NAME="gdImageCreateFromPngCtx">gdImageCreateFromPngCtx(<a href=#gdioctx>gdIOCtx</a> *in)</A>
 <strong>(FUNCTION)</strong>
 <p>
 <DD>
-gdImageCreateFromGif is called to load images from GIF format files.
-Invoke gdImageCreateFromGif with an already opened pointer to a file
+gdImageCreateFromPng is called to load images from PNG format files.
+Invoke gdImageCreateFromPng with an already opened pointer to a file
 containing the desired image.
-gdImageCreateFromGif
+gdImageCreateFromPng
 returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or NULL
 if unable to load the image (most often because the file is corrupt or
-does not contain a GIF image). gdImageCreateFromGif does <em>not</em>
+does not contain a PNG image). gdImageCreateFromPng does <em>not</em>
 close the file. You can inspect the sx and sy members of the
 image to determine its size. The image must eventually be destroyed
 using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
@@ -569,18 +577,18 @@ using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
 ... inside a function ...
 FILE *in;
-in = fopen("mygif.gif", "rb");
-im = gdImageCreateFromGif(in);
+in = fopen("mypng.png", "rb");
+im = gdImageCreateFromPng(in);
 fclose(in);
 /* ... Use the image ... */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
-<DT><A NAME="gdImageCreateFromGifSource">gdImageCreateFromGifSource(gdSourcePtr in)</A>
+<DT><A NAME="gdImageCreateFromPngSource">gdImageCreateFromPngSource(gdSourcePtr in)</A>
 <strong>(FUNCTION)</strong>
 <dd>
-gdImageCreateFromGifSource is called to load a GIF from
+gdImageCreateFromPngSource is called to load a PNG from
 a data source other than a file. Usage is very similar to
-the <a href="#gdImageCreateFromGif">gdImageCreateFromGif</a> function,
+the <a href="#gdImageCreateFromPng">gdImageCreateFromPng</a> function,
 except that the programmer provides a custom data source.
 <p>
 The programmer must write an input function which accepts
@@ -596,17 +604,17 @@ the context pointer to any value which is useful to the
 programmer.
 <p>
 The example below
-implements <a href="#gdImageCreateFromGif">gdImageCreateFromGif</a>
-by creating a custom data source and invoking gdImageCreateFromGifSource.
+implements <a href="#gdImageCreateFromPng">gdImageCreateFromPng</a>
+by creating a custom data source and invoking gdImageCreateFromPngSource.
 <pre>
 static int freadWrapper(void *context, char *buf, int len);
 
-gdImagePtr gdImageCreateFromGif(FILE *in)
+gdImagePtr gdImageCreateFromPng(FILE *in)
 {
         gdSource s;
         s.source = freadWrapper;
         s.context = in;
-        return gdImageCreateFromGifSource(&s);
+        return gdImageCreateFromPngSource(&s);
 }
 
 static int freadWrapper(void *context, char *buf, int len)
@@ -626,7 +634,7 @@ Invoke gdImageCreateFromGd
 with an already opened pointer to a file containing the desired image
 in the <A HREF="#gdformat">gd file format</A>, which is specific to
 gd and intended for very fast loading. (It is <em>not</em> intended for
-compression; for compression, use GIF.)
+compression; for compression, use PNG.)
 gdImageCreateFromGd
 returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or NULL
 if unable to load the image (most often because the file is corrupt or
@@ -727,15 +735,15 @@ im = <A HREF="#gdImageCreate">gdImageCreate</A>(10, 10);
 /* Now destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
-<DT><A NAME="gdImageGif">
-void gdImageGif(gdImagePtr im, FILE *out)</A>
+<DT><A NAME="gdImagePng">
+void gdImagePng(gdImagePtr im, FILE *out)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
-gdImageGif outputs the specified image to the specified
-file in GIF format. The file must be open for writing. Under MSDOS
+gdImagePng outputs the specified image to the specified
+file in PNG format. The file must be open for writing. Under MSDOS
 and all versions of Windows, it is important to use "wb" as opposed
 to simply "w" as the mode when opening the file, and under Unix there
-is no penalty for doing so. gdImageGif does <em>not</em>
+is no penalty for doing so. gdImagePng does <em>not</em>
 close the file; your code must do so.
 <PRE>
 ... inside a function ...
@@ -751,29 +759,29 @@ black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);
 /* Draw rectangle */
 <A HREF="#gdImageRectangle">gdImageRectangle</A>(im, 0, 0, 99, 99, black);
 /* Open output file in binary mode */
-out = fopen("rect.gif", "wb");
-/* Write GIF */
-gdImageGif(im, out);
+out = fopen("rect.png", "wb");
+/* Write PNG */
+gdImagePng(im, out);
 /* Close file */
 fclose(out);
 /* Destroy image */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
 
-<DT><A NAME="gdImageGifPtr">
-void* gdImageGifPtr(gdImagePtr im, int *size)</A>
+<DT><A NAME="gdImagePngPtr">
+void* gdImagePngPtr(gdImagePtr im, int *size)</A>
 <STRONG>(FUNCTION)</STRONG>
-<DD>Identical to gdImageGif except that it returns a pointer to a memory
-area with the GIF data. This memory must be freed by the caller when it is
+<DD>Identical to gdImagePng except that it returns a pointer to a memory
+area with the PNG data. This memory must be freed by the caller when it is
 no longer needed. The 'size' parameter received the total size of the block
 of memory.
 
-<DT><A NAME="gdImageGifToSink">gdImageGifToSink(gdImagePtr im, gdSinkPtr out)</A>
+<DT><A NAME="gdImagePngToSink">gdImagePngToSink(gdImagePtr im, gdSinkPtr out)</A>
 <strong>(FUNCTION)</strong>
 <dd>
-gdImageGifToSink is called to write a GIF to
+gdImagePngToSink is called to write a PNG to
 a data "sink" (destination) other than a file. Usage is very similar to
-the <a href="#gdImageGif">gdImageGif</a> function,
+the <a href="#gdImagePng">gdImagePng</a> function,
 except that the programmer provides a custom data sink.
 <p>
 The programmer must write an output function which accepts
@@ -788,20 +796,20 @@ the context pointer to any value which is useful to the
 programmer.
 <p>
 The example below
-implements <a href="#gdImageGif">gdImageGif</a>
-by creating a custom data source and invoking gdImageGifFromSink.
+implements <a href="#gdImagePng">gdImagePng</a>
+by creating a custom data source and invoking gdImagePngFromSink.
 <pre>
 static int stdioSink(void *context, char *buffer, int len)
 {
 	return fwrite(buffer, 1, len, (FILE *) context);
 }
 
-void gdImageGif(gdImagePtr im, FILE *out)
+void gdImagePng(gdImagePtr im, FILE *out)
 {
 	gdSink mySink;
 	mySink.context = (void *) out;
 	mySink.sink = stdioSink;
-	gdImageGifToSink(im, &mySink);
+	gdImagePngToSink(im, &mySink);
 }
 </pre>
 <DT><A NAME="gdImageGd">
@@ -813,7 +821,7 @@ file in the <A HREF="#gdformat">gd image format</A>. The file must
 be open for writing. Under MSDOS and all versions of Windows, it is
 important to use "wb" as
 opposed to simply "w" as the mode when opening the file, and under
-Unix there is no penalty for doing so. gdImageGif does <em>not</em>
+Unix there is no penalty for doing so. gdImagePng does <em>not</em>
 close the file; your code must do so.
 <P>
 The gd image format is intended for fast reads and writes of
@@ -1232,7 +1240,7 @@ If the brush image does not have the same color map as the
 first image, any colors missing from the first image
 will be allocated. If not enough colors can be allocated,
 the closest colors already available will be used. This
-allows arbitrary GIFs to be used as brush images. It also
+allows arbitrary PNGs to be used as brush images. It also
 means, however, that you should not set a brush unless you
 will actually use it; if you set a rapid succession of
 different brush images, you can quickly fill your color map,
@@ -1251,11 +1259,11 @@ course set a new brush to replace it.
 FILE *in;
 int black;
 im = <A HREF="#gdImageCreate">gdImageCreate</A>(100, 100);
-/* Open the brush GIF. For best results, portions of the
+/* Open the brush PNG. For best results, portions of the
 	brush that should be transparent (ie, not part of the
 	brush shape) should have the transparent color index. */
-in = fopen("star.gif", "rb");
-brush = <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A>(in);
+in = fopen("star.png", "rb");
+brush = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
 /* Background color (first allocated) */
 black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);	
 gdImageSetBrush(im, brush);
@@ -1288,7 +1296,7 @@ If the tile image does not have the same color map as the
 first image, any colors missing from the first image
 will be allocated. If not enough colors can be allocated,
 the closest colors already available will be used. This
-allows arbitrary GIFs to be used as tile images. It also
+allows arbitrary PNGs to be used as tile images. It also
 means, however, that you should not set a tile unless you
 will actually use it; if you set a rapid succession of
 different tile images, you can quickly fill your color map,
@@ -1307,12 +1315,12 @@ course set a new tile to replace it.
 FILE *in;
 int black;
 im = <A HREF="#gdImageCreate">gdImageCreate</A>(100, 100);
-/* Open the tile GIF. For best results, portions of the
+/* Open the tile PNG. For best results, portions of the
 	tile that should be transparent (ie, allowing the
 	background to shine through) should have the transparent
 	color index. */
-in = fopen("star.gif", "rb");
-tile = <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A>(in);
+in = fopen("star.png", "rb");
+tile = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
 /* Background color (first allocated) */
 black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);	
 gdImageSetTile(im, tile);
@@ -1416,8 +1424,8 @@ directly.
 FILE *in;
 gdImagePtr im;
 int c;
-in = fopen("mygif.gif", "rb");
-im = <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A>(in);
+in = fopen("mypng.png", "rb");
+im = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
 fclose(in);
 c = gdImageGetPixel(im, gdImageSX(im) / 2, gdImageSY(im) / 2);
 printf("The value of the center pixel is %d; RGB values are %d,%d,%d\n",
@@ -1712,7 +1720,7 @@ you are setting the background color for that image.
 In the event that all <A HREF="#gdMaxColors">gdMaxColors</A> colors
 (256) have already been allocated, gdImageColorAllocate will
 return -1 to indicate failure. (This is not uncommon when
-working with existing GIF files that already use 256 colors.)
+working with existing PNG files that already use 256 colors.)
 Note that gdImageColorAllocate
 does not check for existing colors that match your request;
 see <A HREF="#gdImageColorExact">gdImageColorExact</A>
@@ -1753,7 +1761,7 @@ This function is most useful as a backup method for choosing
 a drawing color when an image already contains
 <A HREF="#gdMaxColors">gdMaxColors</A> (256) colors and
 no more can be allocated. (This is not uncommon when
-working with existing GIF files that already use many colors.)
+working with existing PNG files that already use many colors.)
 See <A HREF="#gdImageColorExact">gdImageColorExact</A>
 for a method of locating exact matches only.
 <PRE>
@@ -1761,10 +1769,10 @@ for a method of locating exact matches only.
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
 FILE *in;
 int red;
-/* Let's suppose that photo.gif is a scanned photograph with
+/* Let's suppose that photo.png is a scanned photograph with
 	many colors. */
-in = fopen("photo.gif", "rb");
-im = <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A>(in);
+in = fopen("photo.png", "rb");
+im = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
 fclose(in);
 /* Try to allocate red directly */
 red = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 0, 0);	
@@ -1794,8 +1802,8 @@ for a way to find the color closest to the color requested.
 ... inside a function ...
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
 int red;
-in = fopen("photo.gif", "rb");
-im = <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A>(in);
+in = fopen("photo.png", "rb");
+im = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
 fclose(in);
 /* The image may already contain red; if it does, we'll save a slot
 	in the color table by using that color. */
@@ -1884,8 +1892,8 @@ index among them will be reused by the next
 ... inside a function ...
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
 int red, blue;
-in = fopen("photo.gif", "rb");
-im = <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A>(in);
+in = fopen("photo.png", "rb");
+im = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
 fclose(in);
 /* Look for red in the color table. */
 red = gdImageColorExact(im, 255, 0, 0);
@@ -1925,8 +1933,8 @@ that support transparency</em>.
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
 int black;
 FILE *in, *out;
-in = fopen("photo.gif", "rb");
-im = <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A>(in);
+in = fopen("photo.png", "rb");
+im = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
 fclose(in);
 /* Look for black in the color table and make it transparent. */
 black = <A HREF="#gdImageColorExact">gdImageColorExact</A>(im, 0, 0, 0);
@@ -1936,8 +1944,8 @@ if (black != (-1)) {
 	gdImageColorTransparent(im, black);
 }
 /* Save the newly-transparent image back to the file */
-out = fopen("photo.gif", "wb");
-<A HREF="#gdImageGif">gdImageGif</A>(im, out);
+out = fopen("photo.png", "wb");
+<A HREF="#gdImagePng">gdImagePng</A>(im, out);
 fclose(out);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
@@ -1990,9 +1998,9 @@ pixel being copied.
 int x, y;
 FILE *in;
 FILE *out;
-/* Load a small gif to tile the larger one with */
-in = fopen("small.gif", "rb");
-im_in = <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A>(in);
+/* Load a small png to tile the larger one with */
+in = fopen("small.png", "rb");
+im_in = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
 fclose(in);
 /* Make the output image four times as large on both axes */
 im_out = <A HREF="#gdImageCreate">gdImageCreate</A>(im_in->sx * 4, im_in->sy * 4);
@@ -2005,8 +2013,8 @@ for (y = 0; (y < 4); y++) {
 			im_in->sx, im_in->sy);
 	}
 }
-out = fopen("tiled.gif", "wb");
-<A HREF="#gdImageGif">gdImageGif</A>(im_out, out);
+out = fopen("tiled.png", "wb");
+<A HREF="#gdImagePng">gdImagePng</A>(im_out, out);
 fclose(out);
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im_in);
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im_out);
@@ -2060,9 +2068,9 @@ pixel being copied.
 int x, y;
 FILE *in;
 FILE *out;
-/* Load a small gif to expand in the larger one */
-in = fopen("small.gif", "rb");
-im_in = <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A>(in);
+/* Load a small png to expand in the larger one */
+in = fopen("small.png", "rb");
+im_in = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
 fclose(in);
 /* Make the output image four times as large on both axes */
 im_out = <A HREF="#gdImageCreate">gdImageCreate</A>(im_in->sx * 4, im_in->sy * 4);
@@ -2070,8 +2078,8 @@ im_out = <A HREF="#gdImageCreate">gdImageCreate</A>(im_in->sx * 4, im_in->sy * 4
 gdImageCopyResized(im_out, im_in, 0, 0, 0, 0,
 	im_out->sx, im_out->sy,
 	im_in->sx, im_in->sy);	
-out = fopen("large.gif", "wb");
-<A HREF="#gdImageGif">gdImageGif</A>(im_out, out);
+out = fopen("large.png", "wb");
+<A HREF="#gdImagePng">gdImagePng</A>(im_out, out);
 fclose(out);
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im_in);
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im_out);
@@ -2126,14 +2134,14 @@ interlaced.
 A nonzero value for the interlace argument turns on interlace;
 a zero value turns it off. Note that interlace has no effect
 on other functions, and has no meaning unless you save the
-image in GIF format; the gd and xbm formats do not support
+image in PNG format; the gd and xbm formats do not support
 interlace.
 <P>
-When a GIF is loaded with <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif
-</A>, interlace will be set according to the setting in the GIF file.
+When a PNG is loaded with <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng
+</A>, interlace will be set according to the setting in the PNG file.
 <P>
-Note that many GIF viewers and web browsers do <em>not</em> support
-interlace. However, the interlaced GIF should still display; it
+Note that many PNG viewers and web browsers do <em>not</em> support
+interlace. However, the interlaced PNG should still display; it
 will simply appear all at once, just as other images do.
 <PRE>
 gdImagePtr im;
@@ -2143,9 +2151,9 @@ FILE *out;
 /* Now turn on interlace */
 gdImageInterlace(im, 1);
 /* And open an output file */
-out = fopen("test.gif", "wb");
+out = fopen("test.png", "wb");
 /* And save the image */
-<A HREF="#gdImageGif">gdImageGif</A>(im, out);
+<A HREF="#gdImagePng">gdImagePng</A>(im, out);
 fclose(out);
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
@@ -2166,8 +2174,8 @@ of a wide paintbrush). See also
 to draw broken lines with a series of distinct copies of an image.
 <DT><A NAME="gdMaxColors"><code>gdMaxColors</code><strong>(CONSTANT)</strong>
 <DD>
-The constant 256. This is the maximum number of colors in a GIF file
-according to the GIF standard, and is also the maximum number of
+The constant 256. This is the maximum number of colors in a PNG file
+according to the PNG standard, and is also the maximum number of
 colors in a gd image.
 <DT><A NAME="gdStyled">gdStyled</A> <strong>(CONSTANT)</strong>
 <DD>
@@ -2234,27 +2242,27 @@ see <A HREF="gdImageColorTransparent">gdImageColorTransparent</A>.
 </DL>
 
 <A NAME="gdformat"><H3>About the additional .gd image file format</H3></A>
-In addition to reading and writing the GIF format and reading the
+In addition to reading and writing the PNG format and reading the
 X Bitmap format, gd has the capability to read and write its
 own ".gd" format. This format is <em>not</em> intended for
 general purpose use and should never be used to distribute
 images. It is not a compressed format. Its purpose is solely to
 allow very fast loading of images your program needs often in
 order to build other images for output. If you are experiencing
-performance problems when loading large, fixed GIF images your
+performance problems when loading large, fixed PNG images your
 program needs to produce its output images, you may wish
 to examine the functions <A HREF="#gdImageCreateFromGd">
 gdImageCreateFromGd</A> and <A HREF="#gdImageGd">gdImageGd</A>,
 which read and write .gd format images.
 
 <P>
-The program "giftogd.c" is provided as a simple way of converting
-.gif files to .gd format. I emphasize again that you will not
+The program "pngtogd.c" is provided as a simple way of converting
+.png files to .gd format. I emphasize again that you will not
 need to use this format unless you have a need for high-speed loading
 of a few frequently-used images in your program.
 
 <A NAME="gd2format"><H3>About the .gd2 image file format</H3></A>
-In addition to reading and writing the GIF format and reading the
+In addition to reading and writing the PNG format and reading the
 X Bitmap format, gd has the capability to read and write its
 own ".gd2" format. This format is <em>not</em> intended for
 general purpose use and should never be used to distribute
@@ -2262,7 +2270,7 @@ images. It is a compressed format allowing pseudo-random access
 to large image files. Its purpose is solely to
 allow very fast loading of <strong>parts</strong> of images
 If you are experiencing
-performance problems when loading large, fixed GIF images your
+performance problems when loading large, fixed PNG images your
 program needs to produce its output images, you may wish
 to examine the functions <A HREF="#gdImageCreateFromGd2">
 gdImageCreateFromGd2</A>, <A HREF="#gdImageCreateFromGd2Part">
@@ -2270,12 +2278,12 @@ gdImageCreateFromGd2Part</A> and <A HREF="#gdImageGd2">gdImageGd2</A>,
 which read and write .gd2 format images.
 
 <P>
-The program "giftogd2.c" is provided as a simple way of converting
-.gif files to .gd2 format.
+The program "pngtogd2.c" is provided as a simple way of converting
+.png files to .gd2 format.
 
 <A NAME="gdioctx"><H3>About the gdIOCtx structure</H3></A>
-Version 1.5 of GD incorporates a new style of I/O based on an IOCtx
-structure (the most up-to-date version can be found in io.h):
+Version 1.5 of GD added a new style of I/O based on an IOCtx
+structure (the most up-to-date version can be found in gd_io.h):
 <PRE>
 typedef struct gdIOCtx {
         int     (*getC)(struct gdIOCtx*);
@@ -2303,7 +2311,7 @@ io_dp.c (which implements in-memory storage).
 <p>
 It is not necessary to implement all functions in an I/O context if you know
 that it will only be used in limited cirsumstances. At the time of writing
-(Version 1.5, June 1999), the known requirements are:
+(Version 1.6, June 1999), the known requirements are:
 <p>
 <Table>
 <TR><TD>All</TD><td width=20>&nbsp;</td><TD>Must have 'free',</td></tr>
@@ -2354,8 +2362,8 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageCreateFromGd">gdImageCreateFromGd</A> |
 <A HREF="#gdImageCreateFromGd2">gdImageCreateFromGd2</A> |
 <A HREF="#gdImageCreateFromGd2Part">gdImageCreateFromGd2Part</A> |
-<A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A> |
-<A HREF="#gdImageCreateFromGifSource">gdImageCreateFromGifSource</A> |
+<A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A> |
+<A HREF="#gdImageCreateFromPngSource">gdImageCreateFromPngSource</A> |
 <A HREF="#gdImageCreateFromXbm">gdImageCreateFromXbm</A> |
 <A HREF="#gdImageDashedLine">gdImageDashedLine</A> |
 <A HREF="#gdImageDestroy">gdImageDestroy</A> |
@@ -2367,13 +2375,13 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageGetInterlaced">gdImageGetInterlaced</A> |
 <A HREF="#gdImageGetPixel">gdImageGetPixel</A> |
 <A HREF="#gdImageGetTransparent">gdImageGetTransparent</A> |
-<A HREF="#gdImageGif">gdImageGif</A> |
-<A HREF="#gdImageGifToSink">gdImageGifToSink</A> |
 <A HREF="#gdImageGreen">gdImageGreen</A> |
 <A HREF="#gdImageInterlace">gdImageInterlace</A> |
 <A HREF="#gdImageLine">gdImageLine</A> |
 <A HREF="#gdImageFilledPolygon">gdImageFilledPolygon</A> |
 <A HREF="#gdImagePaletteCopy">gdImagePaletteCopy</A> |
+<A HREF="#gdImagePng">gdImagePng</A> |
+<A HREF="#gdImagePngToSink">gdImagePngToSink</A> |
 <A HREF="#gdImagePolygon">gdImagePolygon</A> |
 <A HREF="#gdImagePtr">gdImagePtr</A> |
 <A HREF="#gdImageRectangle">gdImageRectangle</A> |

@@ -10,10 +10,10 @@
 CC=gcc 
 AR=ar
 #CFLAGS= -ggdb
-CFLAGS= -O 
-LIBS=-L. -lgd -lz -lm
+CFLAGS= -g 
+LIBS=-L. -lgd -lz -lm -lpng
 
-all: libgd.a gdtest gddemo giftolzw giftogd giftogd2 gdtogif gd2togif gd2tolzw gd2copypal gdparttogif gd2time webgif
+all: libgd.a gdtest gddemo pngtogd pngtogd2 gdtopng gd2topng gd2copypal gdparttopng gd2time webpng
 
 gdtest:	gdtest.o libgd.a gd.h
 	$(CC) gdtest.o -o gdtest        $(LIBS)
@@ -21,42 +21,38 @@ gdtest:	gdtest.o libgd.a gd.h
 gddemo: gddemo.o libgd.a gd.h gdfonts.h gdfontl.h
 	$(CC) gddemo.o -o gddemo	$(LIBS)
 
-giftogd: giftogd.o libgd.a gd.h
-	$(CC) giftogd.o -o giftogd	$(LIBS) 
+pngtogd: pngtogd.o libgd.a gd.h
+	$(CC) pngtogd.o -o pngtogd	$(LIBS) 
 
-giftogd2: giftogd2.o libgd.a gd.h
-	$(CC) giftogd2.o -o giftogd2      $(LIBS)
+pngtogd2: pngtogd2.o libgd.a gd.h
+	$(CC) pngtogd2.o -o pngtogd2      $(LIBS)
 
-gdtogif: gdtogif.o libgd.a gd.h
-	$(CC) gdtogif.o -o gdtogif      $(LIBS)
+gdtopng: gdtopng.o libgd.a gd.h
+	$(CC) gdtopng.o -o gdtopng      $(LIBS)
 
-giftolzw: giftolzw.o libgd.a gd.h
-	$(CC) giftolzw.o -o giftolzw      $(LIBS)
-
-gd2togif: gd2togif.o libgd.a gd.h
-	$(CC) gd2togif.o -o gd2togif      $(LIBS)
-
-gd2tolzw: gd2tolzw.o libgd.a gd.h
-	$(CC) gd2tolzw.o -o gd2tolzw      $(LIBS)
+gd2topng: gd2topng.o libgd.a gd.h
+	$(CC) gd2topng.o -o gd2topng      $(LIBS)
 
 gd2copypal: gd2copypal.o libgd.a gd.h
 	$(CC) gd2copypal.o -o gd2copypal      $(LIBS)
 
-gdparttogif: gdparttogif.o libgd.a gd.h
-	$(CC) gdparttogif.o -o gdparttogif      $(LIBS)
+gdparttopng: gdparttopng.o libgd.a gd.h
+	$(CC) gdparttopng.o -o gdparttopng      $(LIBS)
 
 gd2time: gd2time.o libgd.a gd.h
 	$(CC) gd2time.o -o gd2time      $(LIBS)
 
-libgd.a: gd.o io.o io_file.o io_dp.o io_ss.o gd_gif_in.o gd_gif_out.o gd_lzw_out.o gd_gd.o gd_gd2.o gdfontt.o gdfonts.o gdfontmb.o gdfontl.o gdfontg.o \
+libgd.a: gd.o gd_io.o gd_io_file.o gd_io_dp.o gd_io_ss.o gd_png.o gd_ss.o \
+	gd_gd.o gd_gd2.o gdfontt.o gdfonts.o gdfontmb.o gdfontl.o gdfontg.o \
 	gd.h gdfontt.h gdfonts.h gdfontmb.h gdfontl.h gdfontg.h
 	rm -f libgd.a
-	$(AR) rc libgd.a gd.o io.o io_file.o io_dp.o gd_gif_in.o gd_gif_out.o gd_lzw_out.o gd_gd.o gd_gd2.o gdfontt.o gdfonts.o gdfontmb.o \
-		gdfontl.o gdfontg.o
+	$(AR) rc libgd.a gd.o gd_io.o gd_io_file.o gd_io_dp.o gd_io_ss.o \
+		gd_png.o gd_ss.o gd_gd.o gd_gd2.o \
+		gdfontt.o gdfonts.o gdfontmb.o gdfontl.o gdfontg.o
 
-webgif: webgif.o libgd.a gd.h
-	$(CC) webgif.o -o webgif	$(LIBS)
+webpng: webpng.o libgd.a gd.h
+	$(CC) webpng.o -o webpng	$(LIBS)
 
 clean:
-	rm -f *.o *.a gddemo gdtest giftogd giftogd2 giftolzw gdtogif gd2togif gd2tolzw gdparttogif gd2time gd2copypal webgif 
+	rm -f *.o *.a gddemo gdtest pngtogd pngtogd2 gdtopng gd2topng gdparttopng gd2time gd2copypal webpng 
 

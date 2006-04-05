@@ -1,3 +1,13 @@
+990715 Thomas Boutell (TBB)
+
+Removed all GIF capability in favor of PNG
+in order to remove any possible LZW patent concerns.
+
+990701 Philip Warner (pjw) as documented by TBB
+
+Implemented gdImageSink (missing in initial 1.5 release),
+renamed all new source files to have a gd_ prefix.
+
 990628 Thomas Boutell (TBB)
 
 Removed all C++ style comments for broader compatibility.
