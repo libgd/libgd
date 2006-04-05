@@ -1,0 +1,25 @@
+1.2, 95/8/10
+  * Created README, INSTALL and .lsm -files, and updated Makefile to
+    create a distribution.
+  * Removed -w from perl-line, since perl complained about uninitialized
+    variables when checking empty ARGV.
+  * Renamed this file from gdprog.ver to gd.ver
+
+0.24, 95/6/4
+  * Fixed a bug: The program wouldn't change to directories containing
+    a space in the name. Thanks to Alexey Marinichev <lyosha@tdb.uu.se>
+    for spotting this bug.
+
+0.23, 95/2/16
+  * No longer aborts if unable to read a directory, but rather
+    gives a warning.
+
+0.22, 95/2/12
+  * Hopefully removed bug that caused looping when certain unknown
+    directories were given.
+
+0.2, 94/10/23
+  * No longer follows directories that are symlinks, since
+    these may cause cyclic references.
+
+0.1, 94/9/22

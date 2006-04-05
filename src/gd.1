@@ -1,0 +1,72 @@
+.TH GD 1
+.SH NAME
+gd \- alias: quickly change to another directory
+.SH SYNOPSIS
+.ll +8
+.B gd
+.RB [ " \-r "
+]
+.RB [ " \-\-rebuild "
+]
+[
+.I "directory"
+]
+.ll -8
+.SH DESCRIPTION
+.I gd
+makes it possible to move to another directory without entering more
+of it's name than the start of the last path-element.
+It keeps a file containing the directory structure of and in the
+home directory of each user.
+
+Note:
+.I gd
+is supposed to be a shell-alias or -function. See
+gdprog(1) for installation instructions.
+
+The program will first check if a normal chdir to the given
+directory will work. If not, it searches the (home-) directory
+tree top to bottom, left to right (in an alphabetic manner) for
+a match. The search starts with the directory after the current,
+and wraps around to the start when the end is reached.
+
+To save some typing, a match is defined to be a directory who's
+`last name' starts with the name given.
+
+Scanning the directory structure takes some time, so instead of
+doing that,
+.I gd
+keeps the structure in a file. This file needs to be updated
+whenever directories are added or removed. If, whenever
+.I gd
+is started, the current directory
+(below home) is not in the file, a rescan will be performed
+automatically. However, if the directory structure is changed without
+.IR gd 's
+knowing, you may have to rebuild the file using the \-r option.
+This is the case if
+.I gd
+is unable to find an existing directory, or
+if it tries to move to a location that no longer exists.
+.SH OPTIONS
+.TP
+.B \-r, \-\-rebuild
+Rebuild the directory structure file. Use this when
+.I gd
+complains about unknown directories, or to update the file
+when directories have been added or removed.
+.SH FILES
+The directory structure is stored in .gdinfo in the user's
+home-directory.
+.SH ENVIRONMENT
+The environment variable
+.B HOME
+is used to determine the homedirectory of the current user.
+.SH SEE ALSO
+gdprog(1)
+.SH HISTORY
+.I gd
+appeared in 1990 as an MS-DOS program (by the same author).
+.SH AUTHOR
+This perl-program was written from scratch in 1994 by Sverre H. Huseby,
+Norway (sverrehu@ifi.uio.no)

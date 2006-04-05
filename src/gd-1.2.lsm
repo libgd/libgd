@@ -1,0 +1,17 @@
+Begin3
+Title:		gd - Goto Directory
+Version:	1.2
+Entered-date:	11AUG95
+Description:	gd makes it possible to change to another directory without
+		entering more of it's name than the start of the last
+		path-element. 
+Keywords:	directory
+Author: 	sverrehu@ifi.uio.no (Sverre H. Huseby)
+Primary-site:	sunsite.unc.edu /pub/Linux/utils/shell
+		gd-1.2.tar.gz
+Platforms:	Requires perl. Works with perl5, and probably perl4 too.
+Copying-policy:	BeerWare: If you have the time and money, send me a bottle
+		of your favourite beer. If not, just send me a mail or
+		something. Copy and use as you wish; just leave the
+		author's name where you find it.
+End

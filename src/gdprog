@@ -1,0 +1,258 @@
+#! /usr/local/bin/perl
+# $Id$
+$prog_ver = "v1.2";       # Remember to update version in Makefile too!
+$prog_date = "10/8/95";
+#############################################################################
+### gdprog/gd by Sverre H. Huseby, Norway.
+###
+### Enables quickly changing to a directory below home by only giving
+### parts of the `basename'. For instance: "gd sun" may change to
+### ~/bin/sun4
+###
+### Configuration section ###################################################
+
+$gd = "gd";
+$gdprog = "gdprog";
+$gdfilebase = ".gdinfo";
+
+### End of configuration section ############################################
+
+$home = $ENV{'HOME'};
+$gdfile = "$home/$gdfilebase";
+
+$force_rebuild = 0;
+$target_dir = "";
+
+$installed = 0;
+@dirs = ();
+
+sub collectDirs {
+    local($curr) = @_;
+    local(@glob, @loc, $name, $q, $ndirs);
+    @glob = ();
+    $q = $ndirs = 0;
+    while ($q <= $ndirs) {
+	@loc = ();
+	if (opendir(D, $curr)) {
+	    while ($name = readdir(D)) {
+		$name = "$curr/$name";
+		# Don't follow symlinked directories - may be cyclic.
+		if (! -l $name && -d _) {
+		    next if $name =~ m#/\.\.?$#;
+		    push(@loc, $name);
+		    ++$ndirs;
+		}
+	    }
+	    close(D);
+	    push(@glob, sort @loc);
+	} else {
+	    print "$gd: warning: unable to open dir $curr\n";
+	}
+	$curr = $glob[$q++];
+    }
+    @glob;
+}
+
+sub buildDirTree {
+    local($q);
+    print STDERR "Building directory tree, storing in ~/$gdfilebase\n";
+    @dirs = &collectDirs($home);
+    open(F, ">$gdfile") || die "$gd: unable to write to $gdfile\n";
+    for ($q = 0; $q < @dirs; $q++) {
+	$_ = $dirs[$q];
+	s#^$home/##;
+	print F "$_\n";
+    }
+    close(F);
+}
+
+sub loadDirTree {
+    @dirs = ();
+    if (!-f $gdfile) {
+	&buildDirTree;
+    } else {
+	open(F, $gdfile) || die "$gd: unable to read $gdfile\n";
+	while (<F>) {
+	    chop;
+	    push(@dirs, "$home/$_");
+	}
+	close(F);
+    }
+}
+
+sub fullyMatchDir {
+    local($dir) = @_;
+    local($q);
+    for ($q = 0; $q < @dirs; $q++) {
+	last if $dirs[$q] =~ m#^$dir$#;
+    }
+    if ($q == @dirs) {
+	-1;
+    } else {
+	$q;
+    }
+}
+
+sub partiallyMatchDir {
+    local($dir, $startidx) = @_;
+    local($q, $cnt, $totcnt);
+    $totcnt = @dirs + 0;
+    for ($q = $startidx, $cnt = 0; $cnt < $totcnt; $q++, $cnt++) {
+	$q = 0 if $q >= $totcnt;
+	last if $dirs[$q] =~ m#/$dir[^/]*$#;
+    }
+    if ($q == $startidx && $cnt) {
+	-1;
+    } else {
+	$q;
+    }
+}
+
+sub gotoDirectory {
+    local($currdir, $curridx, $short_dir, $idx);
+    $target_dir =~ s#(.*[^/]*)/$#$1#;
+    if ($force_rebuild) {
+	&buildDirTree;
+    } else {
+	&loadDirTree;
+    }
+    $currdir = `pwd`;
+    $currdir =~ s#/?\n+##;
+    $curridx = -1;
+    if ($currdir =~ m#^$home/.+#) {
+	if (($curridx = &fullyMatchDir($currdir)) == -1 && !$force_rebuild) {
+	    &buildDirTree;
+	    if (($curridx = &fullyMatchDir($currdir)) == -1) {
+		$curridx = -1;
+	    }
+	}
+    }
+    if (!chdir($target_dir)) {
+	if (($idx = &partiallyMatchDir($target_dir, $curridx + 1)) == -1) {
+	    die "$gd: unknown directory: $target_dir\n";
+	}
+	$target_dir = $dirs[$idx];
+	chdir($target_dir) || die "$gd: unable to chdir to $target_dir\n";
+    }
+    $short_dir = $target_dir;
+    $short_dir =~ s#^$home#~#;
+    print STDERR "--> $short_dir\n";
+    print "$target_dir\n";
+    exit 0;
+}
+
+sub installBashFunction {
+    print "function gd() { GD_DIR=`$0 gd \$*` && cd \"\$GD_DIR\" }\n";
+    exit 0;
+}
+
+sub installTcshAlias {
+    print "alias gd 'set gd_dir=`$0 gd \\!*` && cd \"\$gd_dir\"'\n";
+    exit 0;
+}
+
+sub showUsage {
+    if ($installed) {
+#/*
+        print STDERR <<EOT;
+	
+$gd $prog_ver $prog_date - Sverre H. Huseby, Norway
+
+Goto Directory. Maintains a file named $gdfilebase in the home
+directory. This file contains the treestructure of the home, so
+that $gd can quickly find a directory.
+
+usage: $gd [options] directory
+
+       Options:
+         -r, --rebuild
+             Update the treestructure file. Used when changes has been
+	     made to the directories.
+
+       The directory name need not be fully specified.
+
+       Note that $gd will try a `normal' chdir before searching the
+       file for names.
+       
+EOT
+#*/
+    } else {
+#/*
+        print STDERR <<EOT;
+	
+$gdprog $prog_ver $prog_date - Sverre H. Huseby, Norway
+
+This program should not be called directly, but rather through
+a shell-alias or -function named gd. If you use any of the shells
+the program knows about, use the following to install the alias:
+
+       eval `$gdprog [install-option]`
+      
+       install-option is one of:
+       -ib, --install-bash
+               Print installation command for bash
+       -it, --install-tcsh
+               Print installation command for tcsh
+
+To install manually, create an alias $gd that calls $gdprog with
+gd as the first parameter, followed by the parameters to $gd.
+The output should be stored in a shell-variable, and passed to
+cd if $gdprog exited with success.
+
+EOT
+#*/
+    }
+    exit 1;
+}
+
+sub getOptions {
+    local($a, $cnt, $id);
+    if ($ARGV[0] eq "gd") {
+	$installed = 1;
+	$id = $gd;
+	shift @ARGV;
+    } else {
+	$id = $gdprog;
+    }
+    &showUsage if !@ARGV;
+    $cnt = 0;
+    while (@ARGV) {
+	$a = shift @ARGV;
+        if ($a =~ m#^-#) {
+	    if ($a eq "-h" || $a eq "--help") {
+	        &showUsage;
+	    } elsif (!$installed && ($a eq "-ib" || $a eq "--install-bash")) {
+	        &installBashFunction;
+	    } elsif (!$installed && ($a eq "-it" || $a eq "--install-tcsh")) {
+	        &installTcshAlias;
+	    } elsif ($installed && ($a eq "-r" || $a eq "--rebuild")) {
+	        $force_rebuild = 1;
+	    } else {
+	        die "$id: unknown option $a\n";
+	    }
+        } elsif ($installed) {
+            if ($cnt == 0) {
+                $target_dir = $a;
+                ++$cnt;
+            } else {
+                die "$gd: more than one directory given\n";
+            }
+        } else {
+	    die "$gdprog: unknown argument $a\n";
+	}
+    }
+}
+
+### main() ############################################################
+
+&getOptions;
+if (length($target_dir) == 0) {
+    if ($force_rebuild) {
+	&buildDirTree;
+    } else {
+	die "$gd: no directory given\n";
+    }
+} else {
+    &gotoDirectory;
+}
+exit 1;

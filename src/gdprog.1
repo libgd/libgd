@@ -1,0 +1,72 @@
+.TH GDPROG 1
+.SH NAME
+gdprog \- helper program for gd alias
+.SH SYNOPSIS
+.ll +8
+.B gdprog
+.RB [ " \-ib "
+]
+.RB [ " \-\-install\-bash "
+]
+.RB [ " \-it "
+]
+.RB [ " \-\-install\-tcsh "
+]
+.ll -8
+.SH DESCRIPTION
+.I gdprog
+is not supposed to be called directly, but rather through the
+alias or shell-function
+.I gd.
+Please read the man-page for gd(1) before reading any further.
+
+If
+.I gdprog
+is started with one of the options mentioned below (and above), it will
+output a string suitable for installing the alias in the specified
+shell. Thus, to install the alias, you may evaluate the output from
+.I gdprog
+as in
+
+    eval `gdprog \-\-install\-bash`
+
+If
+.I gdprog
+is not in a directory mentioned in your PATH-variable, you must
+enter the full path to the program.
+
+If the first argument to
+.I gdprog
+is "gd", it assumes it is called from the alias, and behaves as
+another program (See gd(1) for details). Thus, if you want to install
+the alias manually, you should pass "gd" followed by any parameters
+given to the alias.
+
+After successfully locating a directory,
+.I gdprog
+outputs the full directory name, and exits with success. In that case
+the alias should store the output in a shell-variable, and pass it to
+.IR cd .
+
+All messages are written to stderr, so they will be visible even
+if stdout is redirected. If
+.I gdprog
+returns with failure, a suitable error-message is displayed, so the
+alias should do nothing.
+.SH OPTIONS
+.TP
+.B \-ib, \-\-install\-bash
+Output a string that will install a bash-function for
+.IR gd .
+.TP
+.B \-it, \-\-install\-tcsh
+Print a command suitable for installing the
+.IR gd -
+alias in tcsh.
+.PP
+Please let me know of installation strings for other shells...
+.SH SEE ALSO
+gd(1)
+.SH AUTHOR
+This perl-program was written from scratch in 1994 by Sverre H. Huseby,
+Norway (sverrehu@ifi.uio.no)

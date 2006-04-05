@@ -1,0 +1,29 @@
+gd - Goto Directory
+===================
+
+gd will let you change to a subdirectory within your personal
+home-directory tree just by specifying parts of the directory name. It
+is inspired by old versions (with no tree-visualizer) of Norton Change
+Directory for M$-DOS. To work as expected, the user will have to
+install a shell-alias or -function. Please see the manual pages for
+end user installation.
+
+The program is written in perl by
+
+	Sverre H. Huseby
+	Maridalsvn. 122, leil. 101
+	N-0461 Oslo
+	Norway
+
+	sverrehu@ifi.uio.no
+
+You can use and copy this for free. If you decide to use it, please do
+me three small favours:
+
+	1. Tell me! (E-mail, postcard, letter, whatever. If you wish
+	   to give me something, please send a bottle of your
+	   favourite beer (making this BeerWare))
+	2. Let your friends and favourite download site have a copy!
+	   (with all files intact, please..)
+	3. Report any bugs you find!
+

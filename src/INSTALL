@@ -1,0 +1,14 @@
+Installing gd
+=============
+
+Note that this describes system level installation. Each user will
+have to make a shell-alias or -function to use gd. Please see the
+manual pages for how to do that.
+
+Installing gd is quite simple, just copy `gdprog' to some
+bin-directory, and `gd.1' and `gdprog.1' to a matching
+man/man1-directory.
+
+You may also execute `make install'. This will install `gdprog' in
+/usr/local/bin, and `gd.1' and `gdprog.1' in /usr/local/man/man1.
+
