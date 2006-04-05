@@ -1,11 +1,11 @@
 
-                                   gd 1.8.1
+                                   gd 1.8.3
                                        
 A graphics library for fast image creation
 
 Follow this link to the latest version of this document.
 
-     _HEY! READ THIS!_ gd 1.8.1 creates PNG, JPEG and WBMP images, not
+     _HEY! READ THIS!_ gd 1.8.3 creates PNG, JPEG and WBMP images, not
      GIF images. This is a good thing. PNG is a more compact format, and
      full compression is available. JPEG works well with photographic
      images, and is still more compatible with the major Web browsers
@@ -18,7 +18,7 @@ Follow this link to the latest version of this document.
      well-compressed, modern image formats such as PNG and JPEG as soon
      as possible.
      
-     gd 1.8.1 _requires_ that the following libraries also be installed:
+     gd 1.8.3 _requires_ that the following libraries also be installed:
      
      libpng
      
@@ -42,6 +42,8 @@ Follow this link to the latest version of this document.
   Table of Contents
   
      * Credits and license terms
+     * What's new in version 1.8.3?
+     * What's new in version 1.8.2?
      * What's new in version 1.8.1?
      * What's new in version 1.8?
      * What's new in version 1.7.3?
@@ -95,7 +97,8 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      (C) 1994-1998, Thomas G. Lane. This software is based in part on
      the work of the Independent JPEG Group.
      
-     Portions relating to WBMP copyright 2000 Maurice Szmurlo.
+     Portions relating to WBMP copyright 2000 Maurice Szmurlo and Johan
+     Van den Brande.
      
      _Permission has been granted to copy, distribute and modify gd in
      any context without fee, including a commercial application,
@@ -114,7 +117,7 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      particular purpose, with respect to this code and accompanying
      documentation.
      
-     Although their code does not appear in gd 1.8.1, the authors wish
+     Although their code does not appear in gd 1.8.3, the authors wish
      to thank David Koblas, David Rowley, and Hutchison Avenue Software
      Corporation for their prior contributions.
      
@@ -145,7 +148,7 @@ END OF COPYRIGHT STATEMENT
     
    gd can also be used from Perl, courtesy of Lincoln Stein's GD.pm
    library, which uses gd as the basis for a set of Perl 5.x classes.
-   Updated to gd 1.6 and up.
+   Highly recommended.
    
     Tcl
     
@@ -156,6 +159,10 @@ END OF COPYRIGHT STATEMENT
     Pascal
     
    Pascal enthusiasts should look into Michael Bradbury's gdfp package.
+   
+    Haskell
+    
+   A new gd interface is now available for Haskell programmers.
    
     Any Language
     
@@ -168,6 +175,26 @@ END OF COPYRIGHT STATEMENT
    writing.
      * tgd, by Bradley K. Sherman
      * fly, by Martin Gleeson
+       
+  What's new in version 1.8.3?
+  
+     * WBMP output memory leak fixed
+     * #include <gd.h> corrected to #include "gd.h" in gd_wbmp.c
+     * Documented the fact that the source and output images shouldn't
+       match in the WBMP test except for black and white source images
+       
+  What's new in version 1.8.2?
+  
+     * WBMP support debugged and improved by Johann Van den Brande
+     * WBMP tests added to gdtest.c by Thomas Boutell
+     * Use of platform-dependent 'install' command removed by Thomas
+       Boutell
+     * Comments added to Makefile warning users to juggle the order of
+       the libraries if the linker complains; is there any portable way
+       to do this automatically, short of using autoconf?
+     * Documentation of gdImageCreateFromXpm corrected
+     * Updated links to fast-moving, always dodging libpng and zlib web
+       sites
        
   What's new in version 1.8.1?
   
@@ -466,11 +493,11 @@ END OF COPYRIGHT STATEMENT
    (Windows), please consult with an experienced user of your system.
    Sorry, we cannot answer questions about basic Internet skills.
    
-   Unpacking the archive will produce a directory called "gd-1.8.1".
+   Unpacking the archive will produce a directory called "gd-1.8.3".
    
     For Unix
     
-   cd to the 1.8.1 directory. Edit the Makefile with your preferred text
+   cd to the 1.8.3 directory. Edit the Makefile with your preferred text
    editor and make any necessary changes to the settings at the top,
    especially if you want Xpm or TrueType support. Next, type "make". If
    you are the system administrator, and you wish to make the gd library
@@ -903,19 +930,18 @@ fclose(in);
 /* ... Use the image ... */
 gdImageDestroy(im);
 
-   gdImageCreateFromXpm(FILE *in) _(FUNCTION)_
+   gdImageCreateFromXpm(char *filename) _(FUNCTION)_
           gdImageCreateFromXbm is called to load images from XPM X Window
           System color bitmap format files. This function is available
           only if HAVE_XPM is selected in the Makefile and the Xpm
-          library is linked with the application. Invoke
-          gdImageCreateFromXpm with an already opened pointer to a file
-          containing the desired image. gdImageCreateFromXpm returns a
-          gdImagePtr to the new image, or NULL if unable to load the
-          image (most often because the file is corrupt or does not
-          contain an XPM bitmap format image). gdImageCreateFromXpm does
-          _not_ close the file. You can inspect the sx and sy members of
-          the image to determine its size. The image must eventually be
-          destroyed using gdImageDestroy().
+          library is linked with the application. Unlike most gd file
+          functions, the Xpm functions require filenames, not file
+          pointers. gdImageCreateFromXpm returns a gdImagePtr to the new
+          image, or NULL if unable to load the image (most often because
+          the file is corrupt or does not contain an XPM bitmap format
+          image). You can inspect the sx and sy members of the image to
+          determine its size. The image must eventually be destroyed
+          using gdImageDestroy().
           
 
 ... inside a function ...

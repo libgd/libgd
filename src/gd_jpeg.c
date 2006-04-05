@@ -11,6 +11,10 @@
  * Caveat emptor.
  *
  * Copyright 2000 Doug Becker, mailto:thebeckers@home.com
+ *
+ * Modification 4/18/00 TBB: JPEG_DEBUG rather than just DEBUG,
+ * so VC++ builds don't spew to standard output, causing
+ * major CGI brain damage
  */
 
 #ifdef HAVE_JPEG
@@ -97,7 +101,7 @@ gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
     JDIMENSION nlines;
     char comment[255];
 
-#ifdef DEBUG
+#ifdef JPEG_DEBUG
     printf("gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
     printf("gd-jpeg: JPEG library version %d, %d-bit sample values\n",
 	   JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
@@ -107,7 +111,7 @@ gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	    printf("gd-jpeg: gd colormap index %d: (%d, %d, %d)\n", i,
 		   im->red[i], im->green[i], im->blue[i]);
     }
-#endif /* DEBUG */
+#endif /* JPEG_DEBUG */
 
     memset(&cinfo, 0, sizeof(cinfo));
     memset(&jerr, 0, sizeof(jerr));
@@ -135,7 +139,7 @@ gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
     /* If user requests interlace, translate that to progressive JPEG */
     if (gdImageGetInterlaced(im)) {
-#ifdef DEBUG
+#ifdef JPEG_DEBUG
 	printf("gd-jpeg: interlace set, outputting progressive"
 	       " JPEG image\n"); 
 #endif	
@@ -230,7 +234,7 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
     int i, j, retval;
     JDIMENSION nrows;
 
-#ifdef DEBUG
+#ifdef JPEG_DEBUG
     printf("gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
     printf("gd-jpeg: JPEG library version %d, %d-bit sample values\n",
 	   JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
@@ -292,7 +296,7 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	fprintf(stderr, "gd-jpeg: warning: jpeg_start_decompress"
 		" reports suspended data source\n");
 
-#ifdef DEBUG
+#ifdef JPEG_DEBUG
     printf("gd-jpeg: JPEG image information:");
     if (cinfo.saw_JFIF_marker)
 	printf(" JFIF version %d.%.2d",
@@ -338,7 +342,7 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
     }
     printf(" colorspace\n");
     fflush(stdout);
-#endif /* DEBUG */
+#endif /* JPEG_DEBUG */
 
     gdImageInterlace(im, cinfo.progressive_mode != 0);
 
@@ -363,7 +367,7 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
 #error IJG JPEG library BITS_IN_JSAMPLE value must be 8 or 12
 #endif
 	im->open[i] = 0;
-#ifdef DEBUG
+#ifdef JPEG_DEBUG
 	printf("gd-jpeg: gd colormap index %d set to (%d, %d, %d)\n", i,
 	       im->red[i], im->green[i], im->blue[i]);
 #endif

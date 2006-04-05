@@ -168,6 +168,10 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
     switch (color_type) {
         case PNG_COLOR_TYPE_PALETTE:
             png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette);
+#ifdef DEBUG
+            fprintf(stderr, "gd-png color_type is palette, colors: %d\n",
+                num_palette);
+#endif /* DEBUG */
             if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
                 int real_num_trans = 0, idx_first_trans = -1;
                 int min_trans = 256, idx_min_trans = -1;
@@ -205,9 +209,22 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
                 return NULL;
             }
             palette_allocated = TRUE;
+            if (bit_depth < 8)
+            {
+              num_palette = 1<<bit_depth;
+              for (i = 0;  i < 256;  ++i)
+              {
+                j = (255*i)/(num_palette-1);
+                palette[i].red = palette[i].green = palette[i].blue = j;
+              }
+            }
+            else
+            {
             num_palette = 256;
-            for (i = 0;  i < 256;  ++i) {
+              for (i = 0;  i < 256;  ++i)
+              {
                 palette[i].red = palette[i].green = palette[i].blue = i;
+              }
             }
             if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
                 png_get_tRNS(png_ptr, info_ptr, NULL, NULL, &trans_gray_rgb);

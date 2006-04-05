@@ -1,292 +1,208 @@
-/* 
-   Creation of wbmp image files with gd library
-   gd_wbmp.c
+/*
+   	WBMP: Wireless Bitmap Type 0: B/W, Uncompressed Bitmap
+   	Specification of the WBMP format can be found in the file: 
+	SPEC-WAESpec-19990524.pdf
+   	You can download the WAP specification on: http://www.wapforum.com/ 
 
-   Copyright (C) Maurice Szmurlo --- T-SIT --- January 2000
-   (Maurice.Szmurlo@info.unicaen.fr)
+   	gd_wbmp.c
 
-   Permission to use, copy, modify, and distribute this software and its
-   documentation for any purpose and without fee is hereby granted, provided
-   that the above copyright notice appear in all copies and that both that
-   copyright notice and this permission notice appear in supporting
-   documentation.  This software is provided "as is" without express or
-   implied warranty.
-
-   -----------------------------------------------------------------------------------------
-   Parts od this code are inspired by  'pbmtowbmp.c' and 'wbmptopbm.c' by 
-   Terje Sannum <terje@looplab.com>.
-   **
-   ** Permission to use, copy, modify, and distribute this software and its
-   ** documentation for any purpose and without fee is hereby granted, provided
-   ** that the above copyright notice appear in all copies and that both that
-   ** copyright notice and this permission notice appear in supporting
-   ** documentation.  This software is provided "as is" without express or
-   ** implied warranty.
-   **
-   -----------------------------------------------------------------------------------------
-
-   Todo:
-
-   gdCreateFromWBMP function for reading WBMP files
-
-   -----------------------------------------------------------------------------------------
-
-   Compilation:
+   	Copyright (C) Johan Van den Brande (johan@vandenbrande.com)
    
-   * testing the mbi data structure:
-   gcc -Wall -W -D__MBI_DEBUG__ gd_wbmp.c -o mbi -L/usr/local/lib -lgd
-   
-   * testing generation of wbmp images
-   gcc -Wall -W -D__GD_WBMP_DEBUG__ gd_wbmp.c -o gd_wbmp -L/usr/local/lib -lgd -lpng
-   
-   * simply making the object file
-   gcc -c -Wall -W gd_wbmp.c -o gd_wbmp.o
+	Fixed: gdImageWBMPPtr, gdImageWBMP
+
+   	Recoded: gdImageWBMPCtx for use with my wbmp library
+	(wbmp library included, but you can find the latest distribution
+	 at http://www.vandenbrande.com/wbmp)
+
+	Implemented: gdImageCreateFromWBMPCtx, gdImageCreateFromWBMP 
+
+   	---------------------------------------------------------------------------
+
+   	Parts of this code are from Maurice Smurlo.
+
+
+   	** Copyright (C) Maurice Szmurlo --- T-SIT --- January 2000
+   	** (Maurice.Szmurlo@info.unicaen.fr)
+
+   	** Permission to use, copy, modify, and distribute this software and its
+   	** documentation for any purpose and without fee is hereby granted, provided
+   	** that the above copyright notice appear in all copies and that both that
+   	** copyright notice and this permission notice appear in supporting
+   	** documentation.  This software is provided "as is" without express or
+   	** implied warranty.
+
+   	---------------------------------------------------------------------------
+   	Parts od this code are inspired by  'pbmtowbmp.c' and 'wbmptopbm.c' by 
+   	Terje Sannum <terje@looplab.com>.
+   	**
+   	** Permission to use, copy, modify, and distribute this software and its
+   	** documentation for any purpose and without fee is hereby granted, provided
+   	** that the above copyright notice appear in all copies and that both that
+   	** copyright notice and this permission notice appear in supporting
+   	** documentation.  This software is provided "as is" without express or
+   	** implied warranty.
+   	**
+   	---------------------------------------------------------------------------
+
+   	Todo:
+
+   	gdCreateFromWBMP function for reading WBMP files
+
+   	----------------------------------------------------------------------------
 */
 
-#include <gd.h>
 #include <gdfonts.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 
+#include "gd.h"
+#include "wbmp.h"
 
-/* *************************** Multi Byte Integer Funcionnalities  *************************** */
 
-/* **************************************************
-  An mbi is an array of bytes.
-  For 32 bit integers, 5 bytes are sufficient.
+/* gd_putout
+** ---------
+** Wrapper around gdPutC for use with writewbmp
+**
 */
-typedef unsigned char mbi_t[6];
+int gd_putout( int i, void * out )
+{
+    gdPutC( i , (gdIOCtx *) out );
+}   
 
 
-/* **************************************************
-  initialization of an mbi in order to be used by the int2mbi function
+/* gd_getin
+** --------
+** Wrapper around gdGetC for use with readwbmp
+**
 */
-static void mbiInit(mbi_t  mbi) {
-  int i;
-  mbi[0] = mbi[5] = (unsigned char)0;
-  for(i=1; i<5; mbi[i++] = 0x80);
+int gd_getin( void *in )
+{
+	return( gdGetC( ( gdIOCtx *) in ) );
 }
 
 
-/*  **************************************************
-   Displays the content of the mbi as a serie of hexa bytes.
-   For debuging purpose only
-*/
-#ifdef __MBI_DEBUG__
-static void mbiDisplay(mbi_t mbi, FILE *out) {
-  unsigned int i;
-  fprintf(out, "MBI:%d [", (unsigned int)mbi[0]);
-  if(mbi[0] > 0)
-	fprintf(out, "%X", (unsigned int)mbi[1]);
-  for(i=2; i<=mbi[0]; i++)
-	fprintf(out, ":%02X", (unsigned int)mbi[i]);
-  fprintf(out, "]\n");
-}
-#endif /* __MBI_DEBUG__ */
-
-
-/* **************************************************
-  writes the bytes constituing the mbi on the stream 'out'
-*/
-static void mbiPrint(mbi_t mbi, gdIOCtx *out) {
-  unsigned int i;
-  for(i=1; i<=(unsigned int)mbi[0]; gdPutC(mbi[i++], out));
-}
-
-
-/* **************************************************
-   Conversion routines:
-   unsigned int        ->  multi byte integer
-   multi byte integer  ->  unsigned int
-*/
-static void int2mbi(mbi_t mbi, unsigned int val) {
-  unsigned int i, j;
-  mbiInit(mbi);
-  for(i=5; i>0; i--) {
-	mbi[i] = mbi[i] | (val & 0x7F);
-	val = val >> 7;
-  }
-  for(j=1; (mbi[j] & 0x7F) == 0 && j<=5; j++);
-  mbi[0] = (unsigned char)(5-j+1);
-  for(i=1; i<=mbi[0]; mbi[i++] = mbi[j++]);
-}
-
-static unsigned int mbi2int(mbi_t mbi) {
-  unsigned int res=0,  i;
-  for(i=0; i<(unsigned int)mbi[0]; i++)
-	res = (res << 7) | (unsigned int) ( mbi[i+1] & 0x7F );
-  return res;
-}
-
-#ifdef __MBI_DEBUG__
-int main(void) {
-  mbi_t mbi;
-  fprintf(stdout, "testing Multi Byte Integers:\n");
-
-  int2mbi(mbi, 0);
-  mbiDisplay(mbi, stdout);
-  fprintf(stdout, ">> = %u\n", mbi2int(mbi));
-
-  /* 0xA0 and 0x60 are the two examples from the wbmp specs */
-  int2mbi(mbi, 0xA0);
-  mbiDisplay(mbi, stdout);
-  fprintf(stdout, ">> = %u\n", mbi2int(mbi));
-  
-  int2mbi(mbi, 0x60);
-  mbiDisplay(mbi, stdout);
-  fprintf(stdout, ">> = %u\n", mbi2int(mbi));
-
-  int2mbi(mbi, 1024+512);
-  mbiDisplay(mbi, stdout);
-  fprintf(stdout, ">> = %u\n", mbi2int(mbi));
-
-  int2mbi(mbi, 1024+512+1);
-  mbiDisplay(mbi, stdout);
-  fprintf(stdout, ">> = %u\n", mbi2int(mbi));
-
-  int2mbi(mbi, 775432);
-  mbiDisplay(mbi, stdout);
-  fprintf(stdout, ">> = %u\n", mbi2int(mbi));
-
-  int2mbi(mbi, 405589432);
-  mbiDisplay(mbi, stdout);
-  fprintf(stdout, ">> = %u\n", mbi2int(mbi));
-
-  int2mbi(mbi, UINT_MAX);
-  mbiDisplay(mbi, stdout);
-  fprintf(stdout, ">> = %u\n", mbi2int(mbi));
-
-  fprintf(stdout, "\n");
-  return 0;
-}
-#endif
-
-/* *************************** GD interface *************************** */
-
-/*
-  Write the image as a wbmp file
-  Parameters are:
-  image:  gd image structure;
-  fg:     the index of the foreground color. any other value will be considered 
-          as background and will not be written
-  out:    the stream where to write
+/*	gdImageWBMPCtx
+**  --------------
+**  Write the image as a wbmp file
+**  Parameters are:
+**  image:  gd image structure;
+**  fg:     the index of the foreground color. any other value will be 
+**          considered as background and will not be written
+**  out:    the stream where to write
 */
 void gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out) {
   
-  int x, y;
-  mbi_t mbi;
+  	int 	x, y, pos;
+    Wbmp 	*wbmp;
 
-  /* wbmp images are type 0: B&W; no compression; empty FixHeaderFlield */
-  gdPutC(0, out);					/* header */
-  gdPutC(0, out);					/* FixHeaderFlield */
 
-  /* width and height as mbi */
-  int2mbi(mbi, gdImageSX(image));    /* width */
-  mbiPrint(mbi, out);
-  int2mbi(mbi, gdImageSY(image));    /* height */
-  mbiPrint(mbi, out);
+	/* create the WBMP */
+	if ( (wbmp = createwbmp( gdImageSX(image), gdImageSY(image), WBMP_WHITE)) == NULL )
+		fprintf(stderr, "Could not create WBMP\n");
 
-  /* 
-	 now come the pixels as strings of bits padded with 0's at the end of the
-	 lines, if necessary
-  */
-  for(y=0; y<gdImageSY(image); y++) {
-	unsigned char nbPixs = 0;		/* how many pixels already written */
-	unsigned char pixels = 0;	    /* the 8 pixels string */
-	for(x=0; x<gdImageSX(image); x++) {
-	  if(gdImageGetPixel(image, x, y) == fg) {
-		pixels = pixels | (1 << (7-nbPixs)); 
-	  }
-	  nbPixs ++;
-	  if(nbPixs == 8) { /* 8 pixels written -> write to file */
-		gdPutC(pixels, out);
-		pixels = 0;
-		nbPixs = 0;
-	  }
+  	/* fill up the WBMP structure */
+	pos = 0;  
+	for(y=0; y<gdImageSY(image); y++) 
+	{
+		for(x=0; x<gdImageSX(image); x++) 
+		{
+	  		if(gdImageGetPixel(image, x, y) == fg) 
+			{
+				wbmp->bitmap[pos] = WBMP_BLACK; 
+	  		}
+			pos++;
+	  	}
 	}
-	/* if there are pixels left to write, write them */
-	if(nbPixs != 0)
-	  gdPutC(pixels, out);
-  }
+
+	/* write the WBMP to a gd file descriptor */		
+	if ( writewbmp( wbmp, &gd_putout, out ) )
+		fprintf(stderr, "Could not save WBMP\n");
+	/* des submitted this bugfix: free the memory. */
+	freewbmp(wbmp);
 }
 
-/*
-  Write the image as a wbmp file
-  Parameters are:
-  image:  gd image structure;
-  fg:     the index of the foreground color. any other value will be considered 
-          as background and will not be written
-  out:    the stream where to write
+
+/* gdImageCreateFromWBMPCtx
+** ------------------------
+** Create a gdImage from a WBMP file input from an gdIOCtx
 */
-void gdImageWBMP(gdImagePtr image, int fg, FILE *out)
+gdImagePtr	gdImageCreateFromWBMPCtx( gdIOCtx *infile )
+{
+	FILE *wbmp_file;
+	Wbmp *wbmp;
+    gdImagePtr im = NULL; 
+	int black, white;
+	int col, row, pos;
+
+	if ( readwbmp( &gd_getin, infile, &wbmp ) )
+		return (NULL);
+
+    if (!(im = gdImageCreate(wbmp->width, wbmp->height)))
+	{
+    	freewbmp( wbmp );
+		return (NULL);   	
+	}
+
+	/* create the background color */
+	white = gdImageColorAllocate(im, 255, 255, 255);
+	/* create foreground color */
+	black = gdImageColorAllocate(im, 0,   0,   0);
+
+	/* fill in image (in a wbmp 1 = white/ 0 = black) */
+	pos = 0;
+	for(row=0; row<wbmp->height; row++)
+	{
+		for(col=0; col<wbmp->width; col++)
+		{
+			if (wbmp->bitmap[pos++] == WBMP_WHITE)
+			{
+				gdImageSetPixel(im, col, row, white);		
+			}
+			else
+			{
+				gdImageSetPixel(im, col, row, black);
+			}
+		}
+	}	
+
+	freewbmp( wbmp );	
+
+	return(im);
+}
+
+
+/* gdImageCreateFromWBMP
+** ---------------------
+*/
+gdImagePtr gdImageCreateFromWBMP( FILE *inFile )
+{
+	gdImagePtr	im;
+	gdIOCtx *in = gdNewFileCtx( inFile );
+	im = gdImageCreateFromWBMPCtx( in );
+	in->free(in);
+	return (im);
+}
+
+/* gdImageWBMP
+** -----------
+*/
+void gdImageWBMP(gdImagePtr im, int fg, FILE *outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
-	gdImageWBMPCtx(im, out);
+	gdImageWBMPCtx(im, fg, out);
 	out->free(out);
 }
 
-void* gdImageWBMPPtr(gdImagePtr im, int *size)
+/* gdImageWBMPPtr
+** --------------
+*/
+void *gdImageWBMPPtr(gdImagePtr im, int *size, int fg)
 {
         void *rv;
         gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
-        gdImageWBMPCtx(im, out);
+        gdImageWBMPCtx(im, fg, out);
         rv = gdDPExtractData(out, size);
         out->free(out);
         return rv;
 }
- 
-#ifdef __GD_WBMP_DEBUG__
-int  main(int argc, char **argv) {
-
-  gdImagePtr image;
-  int bg, fg;
-  FILE *out;
-
-  if(argc != 2) {
-	fprintf(stderr, "usage %s <wbmp file>\n", argv[0]);
-	exit(1);
-  }
-  
-  fprintf(stdout, "testing gd generation of WBMP files\n");
-
-  fprintf(stdout, "Opening WBMP file '%s'\n", argv[1]);
-  if(!(out = fopen(argv[1], "w"))) {
-	fprintf(stderr, "Cannot open out file '%s'\n", argv[1]);
-	exit(1);
-  }
-
-  fprintf(stdout, "Creating GD image and drawing...y\n");
-  if(!(image = gdImageCreate(60, 30))) {
-	fprintf(stderr, "Cannot create image 30x60\n");
-	exit(1);
-  }
-
-  /* don't really care about rgb values */
-  bg = gdImageColorAllocate(image, 0, 0, 0);
-  fg = gdImageColorAllocate(image, 255, 255, 255);
-
-  /* draw something : */
-  gdImageRectangle(image, 1, 1, gdImageSX(image)-2, gdImageSY(image)-2, fg);
-  
-  /* write something interesting */
-  gdImageString(image, gdFontSmall, 3, 0, "Hello", fg);
-
-  /* write the wbmp file */
-  fprintf(stdout, "Writing WBMP file '%s':\n", argv[1]);
-  gdImageWBMP(image, fg, out);
-  fclose(out);
-  fprintf(stdout, "Written.\nTry now to load the file '%s' with a WAP browser.\n", argv[1]);
-  
-
-
-
-
-  fprintf(stdout, "\n");
-  return 0;
-}
-#endif /* __GD_WBMP_DEBUG__ */
-
-
-
-  

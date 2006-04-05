@@ -9,11 +9,6 @@ int unlink(const char * filename) {
 #endif
 #include "gd.h"
 
-/* A short program which converts a .png file into a .gd file, for
-	your convenience in creating images on the fly from a
-	basis image that must be loaded quickly. The .gd format
-	is not intended to be a general-purpose format. */
-
 void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2);
 
 static int freadWrapper(void *context, char *buf, int len);
@@ -30,7 +25,8 @@ int main(int argc, char **argv)
 	int		colRed, colBlu;
 	gdSource	imgsrc;
 	gdSink		imgsnk;
-
+	int		foreground;
+	int		i;
 	if (argc != 2) {
 		fprintf(stderr, "Usage: gdtest filename.png\n");
 		exit(1);
@@ -244,7 +240,7 @@ int main(int argc, char **argv)
 
         in = fopen("test/gdtest_merge.png", "rb");
         if (!in) {
-                fprintf(stderr, "gdtest.gd2 does not exist!\n");
+                fprintf(stderr, "gdtest_merge.png does not exist!\n");
                 exit(1);
         }
         im3 = gdImageCreateFromPng(in);
@@ -280,6 +276,51 @@ int main(int argc, char **argv)
 		"to the input image manually. Some difference must be\n"
 		"expected as JPEG is a lossy file format.\n");
 #endif /* HAVE_JPEG */
+	/* Assume the color closest to black is the foreground
+		color for the B&W wbmp image. */	
+	fprintf(stderr, "NOTE: the WBMP output image will NOT match the original unless the original\n"
+	"is also black and white. This is OK!\n");
+	foreground = gdImageColorClosest(im, 0, 0, 0);
+	fprintf(stderr, "Foreground index is %d\n", foreground);
+	if (foreground == -1) {
+		fprintf(stderr, "Source image has no colors, skipping wbmp test.\n");
+	} else {
+		out = fopen("test/gdtest.wbmp", "wb");
+		if (!out) {
+			fprintf(stderr, "Can't create file test/gdtest.wbmp.\n");
+			exit(1);
+		}
+		gdImageWBMP(im, foreground, out);	
+		fclose(out);
+		in = fopen("test/gdtest.wbmp", "rb");
+		if (!in) {
+			fprintf(stderr, "Can't open file test/gdtest.wbmp.\n");
+			exit(1);
+		}
+		im2 = gdImageCreateFromWBMP(in);
+		fprintf(stderr, "WBMP has %d colors\n", gdImageColorsTotal(im2));
+		fprintf(stderr, "WBMP colors are:\n");
+		for (i = 0; (i < gdImageColorsTotal(im2)); i++) {
+			fprintf(stderr, "%02X%02X%02X\n",
+				gdImageRed(im2, i), 
+				gdImageGreen(im2, i),
+				gdImageBlue(im2, i)); 
+		}
+		fclose(in);
+		if (!im2) {
+			fprintf(stderr, "gdImageCreateFromWBMP failed.\n");
+			exit(1);
+		}
+		CompareImages("WBMP test (gdtest.png, gdtest.wbmp)", ref, im2);
+		out = fopen("test/gdtest_wbmp_to_png.png", "wb");
+		if (!out) {
+			fprintf(stderr, "Can't create file test/gdtest_wbmp_to_png.png.\n");
+			exit(1);
+		}
+		gdImagePng(im2, out);	
+		fclose(out);
+		gdImageDestroy(im2);	
+	}
 	gdImageDestroy(im);
 	gdImageDestroy(ref);
 
