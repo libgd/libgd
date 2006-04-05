@@ -20,6 +20,7 @@ extern "C"
 #include "gd.h"
 
    BGD_EXPORT  gdFontPtr gdFontMediumBold;
+   BGD_EXPORT  gdFontPtr gdFontGetMediumBold(void);
 
 #ifdef __cplusplus
 }

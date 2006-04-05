@@ -5,13 +5,13 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the vesion number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.0.21], [gd@boutell.com])
+AC_INIT([GD], [2.0.22], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=0
-GDLIB_REVISION=21
+GDLIB_REVISION=22
 GDLIBNAME=gd
 
 AC_SUBST(GDLIB_MAJOR)
@@ -269,9 +269,22 @@ AC_ARG_WITH(png,dnl
 [  --with-png=DIR          where to find the png library],,
   withval=yes)
 
+# libpng12.so is a nightmare. We have to test separately for
+# libpng12-config and libpng-config. If we find libpng12-config,
+# we don't look for the other, which will just be a symlink to it,
+# confusing autoconf into thinking the library itself will be named -lpng,
+# which it won't be. Awful. This code will suffice unless the libpng
+# authors decide to do this AGAIN. Which I really hope they won't. TBB
+
 if test "$withval" != no; then
+  AC_PATH_PROG([LIBPNG12_CONFIG], [libpng12-config])
   AC_PATH_PROG([LIBPNG_CONFIG], [libpng-config])
-  if test -n "$LIBPNG_CONFIG"; then
+  if test -n "$LIBPNG12_CONFIG"; then
+    libpng_CPPFLAGS=`libpng12-config --cflags`
+    # should be --ldopts, but it's currently broken
+    libpng_LDFLAGS=`libpng12-config --ldflags`
+    libpng_LDFLAGS=`echo " $libpng_LDFLAGS" | sed 's/ -l[[^ ]][[^ ]]*//g'`
+  elif test -n "$LIBPNG_CONFIG"; then
     libpng_CPPFLAGS=`libpng-config --cflags`
     # should be --ldopts, but it's currently broken
     libpng_LDFLAGS=`libpng-config --ldflags`
@@ -281,23 +294,36 @@ if test "$withval" != no; then
     libpng_LDFLAGS="-L$withval/lib"
   fi
 
-  _cppflags="$CPPFLAGS"
-  _ldflags="$LDFLAGS"
-  CPPFLAGS="$CPPFLAGS $libpng_CPPFLAGS"
-  LDFLAGS="$LDFLAGS $libpng_LDFLAGS"
-
   AC_CHECK_HEADERS(png.h,,
     [AC_CHECK_HEADERS(libpng/png.h,
        [CPPFLAGS="$CPPFLAGS $libpng_CPPFLAGS/libpng"],
        [CPPFLAGS="$_cppflags"])])
 
-  AC_CHECK_LIB(png,png_create_read_struct,,
-    [LDFLAGS="$_ldflags"  
-     AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
+  if test -n "$LIBPNG12_CONFIG"; then
+    AC_CHECK_LIB(png12,png_create_read_struct,
+      [LIBS="-lpng12 $LIBS"
+       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
+      [LDFLAGS="$_ldflags"  
+       AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
+  elif test -n "$LIBPNG_CONFIG"; then
+    AC_CHECK_LIB(png,png_create_read_struct,,
+      [LDFLAGS="$_ldflags"  
+       AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
+  else
+    AC_CHECK_LIB(png,png_create_read_struct,,
+      [LDFLAGS="$_ldflags"  
+       AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
+  fi
 else
   ac_cv_lib_png_png_create_read_struct=no
   AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])
 fi
+
+#TBB: png12's png_create_read_struct is just as good 
+
+if test "$ac_cv_lib_png12_png_create_read_struct" == yes; then
+  ac_cv_lib_png_png_create_read_struct=yes
+fi 
 
 dnl FreeType configure tests snarfed from libwmf ..
 AC_ARG_WITH(freetype,dnl

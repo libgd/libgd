@@ -3866,4 +3866,9 @@ gdFont gdFontMediumBoldRep = {
 
 BGD_EXPORT_DATA_IMPL gdFontPtr gdFontMediumBold = &gdFontMediumBoldRep;
 
+gdFontPtr gdFontGetMediumBold(void)
+{
+	return gdFontMediumBold;
+}
+
 /* This file has not been truncated. */

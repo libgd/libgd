@@ -1,3 +1,4 @@
+/* TODO: make sure you didn't break resampling */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -228,7 +229,7 @@ gdImageColorClosestAlpha (gdImagePtr im, int r, int g, int b, int a)
       bd = (im->blue[i] - b);
       /* gd 2.02: whoops, was - b (thanks to David Marwood) */
       /* gd 2.16: was blue rather than alpha! Geez! Thanks to 
-		Artur Jakub Jerzak */
+         Artur Jakub Jerzak */
       ad = (im->alpha[i] - a);
       dist = rd * rd + gd * gd + bd * bd + ad * ad;
       if (first || (dist < mindist))
@@ -956,13 +957,13 @@ gdImageAntiAliasedApply (gdImagePtr im, int px, int py)
   int Bx_Cx = im->AAL_x2 - px;
   int By_Cy = im->AAL_y2 - py;
   /* 2.0.13: bounds check! AA_opacity is just as capable of
-    overflowing as the main pixel array. Arne Jorgensen. 
-    2.0.14: typo fixed. 2.0.15: moved down below declarations
-    to satisfy non-C++ compilers. */
+     overflowing as the main pixel array. Arne Jorgensen. 
+     2.0.14: typo fixed. 2.0.15: moved down below declarations
+     to satisfy non-C++ compilers. */
   if (!gdImageBoundsSafeMacro (im, px, py))
-  {
-    return;
-  }
+    {
+      return;
+    }
   /* Get the squares of the lengths of the segemnts AC and BC. */
   LAC_2 = (Ax_Cx * Ax_Cx) + (Ay_Cy * Ay_Cy);
   LBC_2 = (Bx_Cx * Bx_Cx) + (By_Cy * By_Cy);
@@ -2246,11 +2247,11 @@ gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
   /* Fixed by Mao Morimoto 2.0.16 */
   for (i = 0; (i < srcW); i++)
     {
-      stx[i] = dstW * (i+1) / srcW - dstW * i / srcW ;
+      stx[i] = dstW * (i + 1) / srcW - dstW * i / srcW;
     }
   for (i = 0; (i < srcH); i++)
     {
-      sty[i] = dstH * (i+1) / srcH - dstH * i / srcH ;
+      sty[i] = dstH * (i + 1) / srcH - dstH * i / srcH;
     }
   for (i = 0; (i < gdMaxColors); i++)
     {
@@ -2280,8 +2281,8 @@ gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 		      mapTo = gdImageGetTrueColorPixel (src, x, y);
 		      if (gdImageGetTransparent (src) == tmp)
 			{
-                          /* 2.0.21, TK: not tox++ */
-                          tox += stx[x - srcX];
+			  /* 2.0.21, TK: not tox++ */
+			  tox += stx[x - srcX];
 			  continue;
 			}
 		    }
@@ -2292,8 +2293,8 @@ gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 		      /* Added 7/24/95: support transparent copies */
 		      if (gdImageGetTransparent (src) == mapTo)
 			{
-                          /* 2.0.21, TK: not tox++ */
-                          tox += stx[x - srcX];
+			  /* 2.0.21, TK: not tox++ */
+			  tox += stx[x - srcX];
 			  continue;
 			}
 		    }
@@ -2457,6 +2458,7 @@ gdImageCopyResampled (gdImagePtr dst,
 		      int dstW, int dstH, int srcW, int srcH)
 {
   int x, y;
+  double sy1, sy2, sx1, sx2;
   if (!dst->trueColor)
     {
       gdImageCopyResized (dst, src, dstX, dstY, srcX, srcY, dstW, dstH,
@@ -2465,19 +2467,20 @@ gdImageCopyResampled (gdImagePtr dst,
     }
   for (y = dstY; (y < dstY + dstH); y++)
     {
+      sy1 = ((double) y - (double) dstY) * (double) srcH / (double) dstH;
+      sy2 = ((double) (y + 1) - (double) dstY) * (double) srcH /
+	(double) dstH;
       for (x = dstX; (x < dstX + dstW); x++)
 	{
-	  float sy1, sy2, sx1, sx2;
-	  float sx, sy;
-	  float spixels = 0;
-	  float red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
-	  sy1 = ((float) y - (float) dstY) * (float) srcH / (float) dstH;
-	  sy2 = ((float) (y + 1) - (float) dstY) * (float) srcH /
-	    (float) dstH;
+	  double sx, sy;
+	  double spixels = 0;
+	  double red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
+	  sx1 = ((double) x - (double) dstX) * (double) srcW / dstW;
+	  sx2 = ((double) (x + 1) - (double) dstX) * (double) srcW / dstW;
 	  sy = sy1;
 	  do
 	    {
-	      float yportion;
+	      double yportion;
 	      if (floor2 (sy) == floor2 (sy1))
 		{
 		  yportion = 1.0 - (sy - floor2 (sy));
@@ -2495,13 +2498,11 @@ gdImageCopyResampled (gdImagePtr dst,
 		{
 		  yportion = 1.0;
 		}
-	      sx1 = ((float) x - (float) dstX) * (float) srcW / dstW;
-	      sx2 = ((float) (x + 1) - (float) dstX) * (float) srcW / dstW;
 	      sx = sx1;
 	      do
 		{
-		  float xportion;
-		  float pcontribution;
+		  double xportion;
+		  double pcontribution;
 		  int p;
 		  if (floor2 (sx) == floor2 (sx1))
 		    {
@@ -2787,12 +2788,14 @@ gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 	}
     }
   /* 2.0.16: Optimization by Ilia Chipitsine -- don't waste time offscreen */
-  if (miny < 0) {
-    miny = 0;
-  }
-  if (maxy >= gdImageSY(im)) {
-    maxy = gdImageSY(im) - 1;
-  } 
+  if (miny < 0)
+    {
+      miny = 0;
+    }
+  if (maxy >= gdImageSY (im))
+    {
+      maxy = gdImageSY (im) - 1;
+    }
   /* Fix in 1.3: count a vertex only once */
   for (y = miny; (y <= maxy); y++)
     {
@@ -3076,30 +3079,38 @@ gdImageSaveAlpha (gdImagePtr im, int saveAlphaArg)
 void
 gdImageSetClip (gdImagePtr im, int x1, int y1, int x2, int y2)
 {
-  if (x1 < 0) {
-    x1 = 0;
-  }
-  if (x1 >= im->sx) {
-    x1 = im->sx - 1;
-  }
-  if (x2 < 0) {
-    x2 = 0;
-  }
-  if (x2 >= im->sx) {
-    x2 = im->sx - 1;
-  }
-  if (y1 < 0) {
-    y1 = 0;
-  }
-  if (y1 >= im->sy) {
-    y1 = im->sy - 1;
-  }
-  if (y2 < 0) {
-    y2 = 0;
-  }
-  if (y2 >= im->sy) {
-    y2 = im->sy - 1;
-  }
+  if (x1 < 0)
+    {
+      x1 = 0;
+    }
+  if (x1 >= im->sx)
+    {
+      x1 = im->sx - 1;
+    }
+  if (x2 < 0)
+    {
+      x2 = 0;
+    }
+  if (x2 >= im->sx)
+    {
+      x2 = im->sx - 1;
+    }
+  if (y1 < 0)
+    {
+      y1 = 0;
+    }
+  if (y1 >= im->sy)
+    {
+      y1 = im->sy - 1;
+    }
+  if (y2 < 0)
+    {
+      y2 = 0;
+    }
+  if (y2 >= im->sy)
+    {
+      y2 = im->sy - 1;
+    }
   im->cx1 = x1;
   im->cy1 = y1;
   im->cx2 = x2;
@@ -3114,5 +3125,3 @@ gdImageGetClip (gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P)
   *x2P = im->cx2;
   *y2P = im->cy2;
 }
-
-

@@ -3866,4 +3866,9 @@ gdFont gdFontSmallRep = {
 
 BGD_EXPORT_DATA_IMPL gdFontPtr gdFontSmall = &gdFontSmallRep;
 
+gdFontPtr gdFontGetSmall(void)
+{
+	return gdFontSmall;
+}
+
 /* This file has not been truncated. */

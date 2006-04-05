@@ -4379,4 +4379,9 @@ gdFont gdFontGiantRep = {
 
 BGD_EXPORT_DATA_IMPL gdFontPtr gdFontGiant = &gdFontGiantRep;
 
+gdFontPtr gdFontGetGiant(void)
+{
+	return gdFontGiant;
+}
+
 /* This file has not been truncated. */

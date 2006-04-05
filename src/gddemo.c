@@ -7,8 +7,11 @@
 #include <math.h>
 #include <stdlib.h>
 #include "gd.h"
-#include "gdfontg.h"
+#include "gdfontt.h"
 #include "gdfonts.h"
+#include "gdfontmb.h"
+#include "gdfontl.h"
+#include "gdfontg.h"
 
 int
 main (void)
@@ -33,6 +36,10 @@ main (void)
   /* Points for polygon */
   gdPoint points[3];
   int i;
+
+  /* gd fonts for font test */
+  gdFontPtr fonts[5];
+  int y;
 
   /* Create output image, in true color. */
   im_out = gdImageCreateTrueColor (256 + 384, 384);
@@ -130,8 +137,22 @@ main (void)
       gdImageLine (im_out, 0, 255, 255, 0, gdStyledBrushed);
     }
   /* Text (non-truetype; see gdtestft for a freetype demo) */
-  gdImageString (im_out, gdFontGiant, 32, 32, (unsigned char *) "hi", red);
-  gdImageStringUp (im_out, gdFontSmall, 64, 64, (unsigned char *) "hi", red);
+  fonts[0] = gdFontGetTiny();
+  fonts[1] = gdFontGetSmall();
+  fonts[2] = gdFontGetMediumBold();
+  fonts[3] = gdFontGetLarge();
+  fonts[4] = gdFontGetGiant();
+  y = 0;
+  for (i = 0; (i <= 4); i++) {
+    gdImageString (im_out, fonts[i], 32, 32 + y, (unsigned char *) "hi", red);
+    y += fonts[i]->h;
+  }
+  y = 0;
+  for (i = 0; (i <= 4); i++) {
+    gdImageStringUp (im_out, fonts[i], 64 + y, 64, 
+    (unsigned char *) "hi", red);
+    y += fonts[i]->h;
+  }
   /* Random antialiased lines; coordinates all over the image, 
     but the output will respect a small clipping rectangle */
   gdImageSetClip(im_out, 0, gdImageSY(im_out) - 100,

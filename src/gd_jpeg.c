@@ -281,6 +281,8 @@ gdImageCreateFromJpegPtr (int size, void *data)
 
 void jpeg_gdIOCtx_src (j_decompress_ptr cinfo, gdIOCtx * infile);
 
+static int CMYKToRGB(int c, int m, int y, int k, int inverted);
+
 /* 
  * Create a gd-format image from the JPEG-format INFILE.  Returns the
  * image, or NULL upon error.
@@ -297,7 +299,8 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
   JSAMPROW rowptr[1];
   int i, j, retval;
   JDIMENSION nrows;
-
+  int channels = 3;
+  int inverted = 0;
 #ifdef JPEG_DEBUG
   printf ("gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
   printf ("gd-jpeg: JPEG library version %d, %d-bit sample values\n",
@@ -325,11 +328,15 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
 
   jpeg_gdIOCtx_src (&cinfo, infile);
 
+  /* 2.0.22: save the APP14 marker to check for Adobe Photoshop CMYK
+    files with inverted components. */
+  jpeg_save_markers(&cinfo, JPEG_APP0 + 14, 256);
+
   retval = jpeg_read_header (&cinfo, TRUE);
   if (retval != JPEG_HEADER_OK)
     fprintf (stderr, "gd-jpeg: warning: jpeg_read_header returns"
 	     " %d, expected %d\n", retval, JPEG_HEADER_OK);
-
+  
   if (cinfo.image_height > INT_MAX)
     fprintf (stderr, "gd-jpeg: warning: JPEG image height (%u) is"
 	     " greater than INT_MAX (%d) (and thus greater than"
@@ -347,12 +354,16 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
       fprintf (stderr, "gd-jpeg error: cannot allocate gdImage" " struct\n");
       goto error;
     }
-
-  /*
-   * Force the image into RGB colorspace, but don't 
-   * reduce the number of colors anymore (GD 2.0) 
-   */
-  cinfo.out_color_space = JCS_RGB;
+  /* 2.0.22: very basic support for reading CMYK colorspace files. Nice for
+    thumbnails but there's no support for fussy adjustment of the
+    assumed properties of inks and paper. */
+  if ((cinfo.jpeg_color_space == JCS_CMYK) ||
+    (cinfo.jpeg_color_space == JCS_YCCK))
+  {
+    cinfo.out_color_space = JCS_CMYK;
+  } else {
+    cinfo.out_color_space = JCS_RGB;
+  }
 
   if (jpeg_start_decompress (&cinfo) != TRUE)
     fprintf (stderr, "gd-jpeg: warning: jpeg_start_decompress"
@@ -415,14 +426,41 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
 #if 0
   gdImageInterlace (im, cinfo.progressive_mode != 0);
 #endif
-  if (cinfo.output_components != 3)
+  if (cinfo.out_color_space == JCS_RGB) 
+  {
+    if (cinfo.output_components != 3)
     {
       fprintf (stderr, "gd-jpeg: error: JPEG color quantization"
 	       " request resulted in output_components == %d"
-	       " (expected 3)\n", cinfo.output_components);
+	       " (expected 3 for RGB)\n", cinfo.output_components);
       goto error;
     }
-
+    channels = 3;
+  } else if (cinfo.out_color_space == JCS_CMYK) {
+    jpeg_saved_marker_ptr marker;
+    if (cinfo.output_components != 4)
+    {
+      fprintf (stderr, "gd-jpeg: error: JPEG color quantization"
+	       " request resulted in output_components == %d"
+	       " (expected 4 for CMYK)\n", cinfo.output_components);
+      goto error;
+    }
+    channels = 4;
+    marker = cinfo.marker_list;
+    while (marker) {
+      if ((marker->marker == (JPEG_APP0 + 14)) &&
+        (marker->data_length >= 12) && (!strncmp((const char *) marker->data,
+          "Adobe", 5)))
+      {
+        inverted = 1;
+        break;
+      }
+      marker = marker->next;
+    }
+  } else {
+    fprintf (stderr, "gd-jpeg: error: unexpected colorspace\n");
+    goto error;
+  }
 #if BITS_IN_JSAMPLE == 12
   fprintf (stderr, "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
 	   "precision. This is mostly useless, because JPEGs on the web are\n"
@@ -433,7 +471,7 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
   goto error;
 #endif /* BITS_IN_JSAMPLE == 12 */
 
-  row = gdCalloc (cinfo.output_width * 3, sizeof (JSAMPLE));
+  row = gdCalloc (cinfo.output_width * channels, sizeof (JSAMPLE));
   if (row == 0)
     {
       fprintf (stderr, "gd-jpeg: error: unable to allocate row for"
@@ -441,24 +479,41 @@ gdImageCreateFromJpegCtx (gdIOCtx * infile)
       goto error;
     }
   rowptr[0] = row;
-
-  for (i = 0; i < cinfo.output_height; i++)
-    {
-      register JSAMPROW currow = row;
-      register int *tpix = im->tpixels[i];
-      nrows = jpeg_read_scanlines (&cinfo, rowptr, 1);
-      if (nrows != 1)
-	{
-	  fprintf (stderr, "gd-jpeg: error: jpeg_read_scanlines"
-		   " returns %u, expected 1\n", nrows);
-	  goto error;
-	}
-      for (j = 0; j < cinfo.output_width; j++, currow += 3, tpix++)
-	{
-	  *tpix = gdTrueColor (currow[0], currow[1], currow[2]);
-	}
-    }
-
+  if (cinfo.out_color_space == JCS_CMYK) {
+    for (i = 0; i < cinfo.output_height; i++)
+      {
+        register JSAMPROW currow = row;
+        register int *tpix = im->tpixels[i];
+        nrows = jpeg_read_scanlines (&cinfo, rowptr, 1);
+        if (nrows != 1)
+  	{
+  	  fprintf (stderr, "gd-jpeg: error: jpeg_read_scanlines"
+  		   " returns %u, expected 1\n", nrows);
+  	  goto error;
+  	}
+        for (j = 0; j < cinfo.output_width; j++, currow += 4, tpix++)
+  	{
+  	  *tpix = CMYKToRGB (currow[0], currow[1], currow[2], currow[3], inverted);
+  	}
+      }
+  } else {
+    for (i = 0; i < cinfo.output_height; i++)
+      {
+        register JSAMPROW currow = row;
+        register int *tpix = im->tpixels[i];
+        nrows = jpeg_read_scanlines (&cinfo, rowptr, 1);
+        if (nrows != 1)
+  	{
+  	  fprintf (stderr, "gd-jpeg: error: jpeg_read_scanlines"
+  		   " returns %u, expected 1\n", nrows);
+  	  goto error;
+  	}
+        for (j = 0; j < cinfo.output_width; j++, currow += 3, tpix++)
+  	{
+  	  *tpix = gdTrueColor (currow[0], currow[1], currow[2]);
+  	}
+      }
+  } 
   if (jpeg_finish_decompress (&cinfo) != TRUE)
     fprintf (stderr, "gd-jpeg: warning: jpeg_finish_decompress"
 	     " reports suspended data source\n");
@@ -477,6 +532,54 @@ error:
   if (im)
     gdImageDestroy (im);
   return 0;
+}
+
+/* A very basic conversion approach, TBB */
+ 
+static int CMYKToRGB(int c, int m, int y, int k, int inverted)
+{
+  if (inverted) {
+    c = 255 - c;
+    m = 255 - m;
+    y = 255 - y;
+    k = 255 - k;
+  }
+  return gdTrueColor((255 - c) * (255 - k) / 255,
+     (255 - m) * (255 - k) / 255, 
+     (255 - y) * (255 - k) / 255);
+#if 0
+  if (inverted) {
+    c = 255 - c;
+    m = 255 - m;
+    y = 255 - y;
+    k = 255 - k;
+  }
+  c = c * (255 - k) / 255 + k;
+  if (c > 255) {
+    c = 255;
+  }
+  if (c < 0) {
+    c = 0;
+  } 
+  m = m * (255 - k) / 255 + k;
+  if (m > 255) {
+    m = 255;
+  }
+  if (m < 0) {
+    m = 0;
+  } 
+  y = y * (255 - k) / 255 + k;
+  if (y > 255) {
+    y = 255;
+  }
+  if (y < 0) {
+    y = 0;
+  } 
+  c = 255 - c;
+  m = 255 - m;
+  y = 255 - y;
+  return gdTrueColor(c, m, y);
+#endif
 }
 
 /*

@@ -1,10 +1,10 @@
 <!-- REMEMBER TO EDIT index.html.source -->
 <head>
-<TITLE>gd 2.0.21</TITLE>
+<TITLE>gd 2.0.22</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<H2>gd 2.0.21</H2>
+<H2>gd 2.0.22</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -20,7 +20,7 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.21 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.22 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -33,7 +33,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-When building from soruce, gd 2.0.21 <strong>requires</strong> that the 
+When building from soruce, gd 2.0.22 <strong>requires</strong> that the 
 following libraries also be installed, in order to produce the related 
 image formats. The win32 binary release (bgd) already contains the
 appropriate libraries.
@@ -66,7 +66,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.21">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.22">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -165,10 +165,10 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.21.
+with 2.0.22.
 <h4>PHP</h4>
 A variant of gd 2.x is included in PHP 4.3.0. It is also possible
-to patch PHP 4.2.3 for use with gd 2.0.21; see the
+to patch PHP 4.2.3 for use with gd 2.0.22; see the
 <a href="http://www.boutell.com/gd/">gd home page</a> for a link to
 that information. It would be a Good Idea to merge all of the things
 that are better in mainstream gd and all of the things that are
@@ -187,8 +187,9 @@ gd can be used from Tcl with John Ellson's
 <a href=http://www.graphviz.org/pub/>Gdtclft</a>
 dynamically loaded extension package.
 <h4>Pascal</h4>
-Pascal enthusiasts should look into Michael Bradbury's
-<a href="http://www.elj.com/dev/free-pascal/gdfp/">gdfp</a> package.
+Pascal enthusiasts should look into the
+<a href="http://www.freepascal.org/">freepascal</a> project, a
+free Pascal compiler that includes gd support.
 <h4>REXX</h4>
 A 
 <a href="http://www.lightlink.com/hessling/RexxGd/index.html">gd interface 
@@ -201,6 +202,30 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<P>
+<A NAME="whatsnew2.0.22"><H3>What's new in version 2.0.22?</H3></A>
+<P>
+<ul>
+<li>Win32 DLL users: working with pointers exported by DLLs is 
+difficult and causes unexpected results. gd 2.0.22 exports new
+functions for retrieving the basic gd fonts:
+<a href="#gdFontGetTiny">gdFontGetTiny()</a>,
+<a href="#gdFontGetSmall">gdFontGetSmall()</a>,
+<a href="#gdFontGetMediumBold">gdFontGetMediumBold()</a>,
+<a href="#gdFontGetLarge">gdFontGetLarge()</a>, and
+<a href="#gdFontGetHuge">gdFontGetHuge()</a>. You may safely assign the
+return values from these functions to a local <code>gdFontPtr</code>.
+Direct use of <code>gdFontLarge</code>, etc. is strongly deprecated
+for users of <code>bgd.dll</code>; use these new functions instead.
+<li>Basic support for loading CMYK-colorspace JPEG images. They are
+of course converted to RGB which is a lossy process, however the
+results do look quite good and are certainly fine for thumbnails and
+web previews of DTP work.
+<li>"make" no longer fails on <code>circletexttest</code> if 
+PNG support is missing. 
+<li>Small performance improvements to gdImageCopyResampled; larger
+improvements are forthcoming.
 </ul>
 <P>
 <A NAME="whatsnew2.0.21"><H3>What's new in version 2.0.21?</H3></A>
@@ -303,6 +328,7 @@ gdImageToPalette. Fixed.
 offscreen scanlines during polygon rasterization.
 <li>Optimized PNG saving by Phong Tran. Speeds up saves a 
 little bit. 
+<li>Bug in gdImageCopyResized fixed by Mao Morimoto.
 </ul>
 <P>
 <A NAME="whatsnew2.0.15"><H3>What's new in version 2.0.15?</H3></A>
@@ -1022,8 +1048,8 @@ saving of alpha channel information to the file instead.
 </ul>
 <h4>Source Code:</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.21.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.21.zip">.ZIP File of SOURCE CODE (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.22.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.22.zip">.ZIP File of SOURCE CODE (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -1045,10 +1071,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.21".
+Unpacking the archive will produce a directory called "gd-2.0.22".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.21 directory and type:
+<code>cd</code> to the 2.0.22 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -3039,6 +3065,81 @@ structure members directly.
 </DL>
 <H3><A NAME="fonts">Fonts and text-handling functions</A></H3>
 <DL>
+<DT><A NAME="gdFontGetSmall">
+gdFontPtr gdFontGetSmall(void)</a>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Returns a font pointer for the "small" gd font. Your code must
+include the header file <code>gdfonts.h</code> before
+calling this function. Under Windows, due to the nature of DLLs, 
+the use of this function is strongly recommended rather than attempting
+to use the <code>gdFontSmall</code> pointer directly. (You may
+safely assign the result to a local <code>gdFontPtr</code> variable
+in your own code.)
+<p>
+See <a href="#gdImageString">gdImageString</a> for more information
+and examples, or <a href="#gdImageStringFT">gdImageStringFT</a> for a
+freetype-based alternative that supports truetype fonts.
+<DT><A NAME="gdFontGetLarge">
+gdFontPtr gdFontGetLarge(void)</a>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Returns a font pointer for the "large" gd font. Your code must
+include the header file <code>gdfontl.h</code> before
+calling this function. Under Windows, due to the nature of DLLs, 
+the use of this function is strongly recommended rather than attempting
+to use the <code>gdFontLarge</code> pointer directly. (You may
+safely assign the result to a local <code>gdFontPtr</code> variable
+in your own code.)
+<p>
+See <a href="#gdImageString">gdImageString</a> for more information
+and examples, or <a href="#gdImageStringFT">gdImageStringFT</a> for a
+freetype-based alternative that supports truetype fonts.
+<DT><A NAME="gdFontGetMediumBold">
+gdFontPtr gdFontGetMediumBold(void)</a>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Returns a font pointer for the "medium bold" gd font. Your code must
+include the header file <code>gdfontmb.h</code> before
+calling this function. Under Windows, due to the nature of DLLs, 
+the use of this function is strongly recommended rather than attempting
+to use the <code>gdFontMediumBold</code> pointer directly. (You may
+safely assign the result to a local <code>gdFontPtr</code> variable
+in your own code.)
+<p>
+See <a href="#gdImageString">gdImageString</a> for more information
+and examples, or <a href="#gdImageStringFT">gdImageStringFT</a> for a
+freetype-based alternative that supports truetype fonts.
+<DT><A NAME="gdFontGetGiant">
+gdFontPtr gdFontGetGiant(void)</a>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Returns a font pointer for the "giant" gd font. Your code must
+include the header file <code>gdfontg.h</code> before
+calling this function. Under Windows, due to the nature of DLLs, 
+the use of this function is strongly recommended rather than attempting
+to use the <code>gdFontGiant</code> pointer directly. (You may
+safely assign the result to a local <code>gdFontPtr</code> variable
+in your own code.)
+<p>
+See <a href="#gdImageString">gdImageString</a> for more information
+and examples, or <a href="#gdImageStringFT">gdImageStringFT</a> for a
+freetype-based alternative that supports truetype fonts.
+<DT><A NAME="gdFontGetTiny">
+gdFontPtr gdFontGetTiny(void)</a>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Returns a font pointer for the "tiny" gd font. Your code must
+include the header file <code>gdfontt.h</code> before
+calling this function. Under Windows, due to the nature of DLLs, 
+the use of this function is strongly recommended rather than attempting
+to use the <code>gdFontTiny</code> pointer directly. (You may
+safely assign the result to a local <code>gdFontPtr</code> variable
+in your own code.)
+<p>
+See <a href="#gdImageString">gdImageString</a> for more information
+and examples, or <a href="#gdImageStringFT">gdImageStringFT</a> for a
+freetype-based alternative that supports truetype fonts.
 <DT><A NAME="gdImageChar">
 void gdImageChar(gdImagePtr im, gdFontPtr font, int x, int y,
 	int c, int color)</A>
@@ -3052,11 +3153,22 @@ See also <A HREF="#gdImageStringFT">gdImageStringFT</A> for a high quality
 solution.)
 The second argument is a pointer to a font definition structure; five fonts are
 provided with gd, gdFontTiny, gdFontSmall, gdFontMediumBold,
-gdFontLarge, and gdFontGiant. You must
-include the files "gdfontt.h", "gdfonts.h", "gdfontmb.h",
+gdFontLarge, and gdFontGiant. 
+<p>
+You must include the files "gdfontt.h", "gdfonts.h", "gdfontmb.h",
 "gdfontl.h" and "gdfontg.h" respectively
 and (if you are not using a library-based approach) link with the
 corresponding .c files to use the provided fonts.
+<p>
+<blockquote>
+<b>Windows DLL users:</b> although you can use
+these DLL-exported pointers directly, you cannot easily assign them to other 
+pointers. This will cause hard-to-debug problems. To avoid such troubles, you 
+should call the functions gdFontGetTiny(), gdFontGetSmall(), 
+gdFontGetMediumBold(), gdFontGetLarge(), and gdFontGetGiant() in order to 
+obtain pointers to the fonts under Windows.
+</blockquote>
+<p>
 The character specified by the fifth
 argument is drawn from left to right in the specified
 color. (See <A HREF="#gdImageCharUp">gdImageCharUp</A> for a way
@@ -3075,7 +3187,7 @@ black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
 white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);	
 /* Draw a character. */
-gdImageChar(im, gdFontLarge, 0, 0, 'Q', white);
+gdImageChar(im, gdFontGetLarge(), 0, 0, 'Q', white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
@@ -3096,7 +3208,18 @@ gdFontLarge, and gdFontGiant. You must
 include the files "gdfontt.h", "gdfonts.h", "gdfontmb.h",
 "gdfontl.h" and "gdfontg.h" respectively
 and (if you are not using a library-based approach) link with the
-corresponding .c files to use the provided fonts. The character specified by
+corresponding .c files to use the provided fonts. 
+<p>
+<blockquote>
+<b>Windows DLL users:</b> although you can use
+these DLL-exported pointers directly, you cannot easily assign them to other 
+pointers. This will cause hard-to-debug problems. To avoid such troubles, you 
+should call the functions gdFontGetTiny(), gdFontGetSmall(), 
+gdFontGetMediumBold(), gdFontGetLarge(), and gdFontGetGiant() in order to 
+obtain pointers to the fonts under Windows.
+</blockquote>
+<p>
+The character specified by
 the fifth argument is drawn
 from bottom to top, rotated at a 90-degree angle,  in the specified
 color.  (See <A HREF="#gdImageChar">gdImageChar</A> for a way
@@ -3115,8 +3238,8 @@ black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
 white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);	
 /* Draw a character upwards so it rests against the top of the image. */
-gdImageCharUp(im, gdFontLarge,
-	0, gdFontLarge->h, 'Q', white);
+gdImageCharUp(im, gdFontGetLarge(),
+	0, gdFontGetLarge()->h, 'Q', white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
@@ -3136,6 +3259,15 @@ include the files "gdfontt.h", "gdfonts.h", "gdfontmb.h",
 "gdfontl.h" and "gdfontg.h" respectively
 and (if you are not using a library-based approach) link with the
 corresponding .c files to use the provided fonts.
+<p>
+<blockquote>
+<b>Windows DLL users:</b> although you can use
+these DLL-exported pointers directly, you cannot easily assign them to other 
+pointers. This will cause hard-to-debug problems. To avoid such troubles, you 
+should call the functions gdFontGetTiny(), gdFontGetSmall(), 
+gdFontGetMediumBold(), gdFontGetLarge(), and gdFontGetGiant() in order to 
+obtain pointers to the fonts under Windows.
+</blockquote>
 The null-terminated C string specified
 by the fifth argument is drawn from left to right in the specified
 color.  (See <A HREF="#gdImageStringUp">gdImageStringUp</A> for a way
@@ -3159,9 +3291,9 @@ black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
 white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);	
 /* Draw a centered string. */
-gdImageString(im, gdFontLarge,
-	im->sx / 2 - (strlen(s) * gdFontLarge->w / 2),
-	im->sy / 2 - gdFontLarge->h / 2,
+gdImageString(im, gdFontGetLarge(),
+	im->sx / 2 - (strlen(s) * gdFontGetLarge()->w / 2),
+	im->sy / 2 - gdFontGetLarge()->h / 2,
 	s, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
@@ -3172,16 +3304,23 @@ void gdImageString16(gdImagePtr im, gdFontPtr font, int x, int y,
 unsigned short *s, int color)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
-gdImageString is used to draw multiple 16-bit characters on the image.
+gdImageString16 is used to draw multiple 16-bit characters on the image.
 (To draw single characters, use <A HREF="#gdImageChar">
-gdImageChar</A>.) The second argument is a
-pointer to a font definition structure; five fonts are
-provided with gd, gdFontTiny, gdFontSmall, gdFontMediumBold,
-gdFontLarge, and gdFontGiant. You must
-include the files "gdfontt.h", "gdfonts.h", "gdfontmb.h",
-"gdfontl.h" and "gdfontg.h" respectively
-and (if you are not using a library-based approach) link with the
-corresponding .c files to use the provided fonts.
+gdImageChar16</A>.) The second argument is a
+pointer to a font definition structure; no 16-bit fonts are
+provided with gd as standard equipment and there does not seem to be
+much momentum to create them although the bdftogd script can do so. The 
+preferred solution is <a href="#gdImageStringFT">gdImageStringFT</a>, which
+uses freetype to provide truetype font support. 
+<p>
+<blockquote>
+<b>Windows DLL users:</b> although you can use
+these DLL-exported pointers directly, you cannot easily assign them to other 
+pointers. This will cause hard-to-debug problems. To avoid such troubles, you 
+should call the functions gdFontGetTiny(), gdFontGetSmall(), 
+gdFontGetMediumBold(), gdFontGetLarge(), and gdFontGetGiant() in order to 
+obtain pointers to the fonts under Windows.
+</blockquote>
 The null-terminated string of characters represented as 16-bit unsigned
 short integers specified by the fifth argument is drawn from left to right
 in the specified
@@ -3207,7 +3346,17 @@ gdFontLarge, and gdFontGiant. You must
 include the files "gdfontt.h", "gdfonts.h", "gdfontmb.h",
 "gdfontl.h" and "gdfontg.h" respectively
 and (if you are not using a library-based approach) link with the
-corresponding .c files to use the provided fonts.The null-terminated C string specified
+corresponding .c files to use the provided fonts.
+<blockquote>
+<b>Windows DLL users:</b> although you can use
+these DLL-exported pointers directly, you cannot easily assign them to other 
+pointers. This will cause hard-to-debug problems. To avoid such troubles, you 
+should call the functions gdFontGetTiny(), gdFontGetSmall(), 
+gdFontGetMediumBold(), gdFontGetLarge(), and gdFontGetGiant() in order to 
+obtain pointers to the fonts under Windows.
+</blockquote>
+
+The null-terminated C string specified
 by the fifth argument is drawn from bottom to top (rotated
 90 degrees) in the specified color.  (See
 <A HREF="#gdImageString">gdImageString</A> for a way
@@ -3230,9 +3379,9 @@ black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);
 white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);	
 /* Draw a centered string going upwards. Axes are reversed,
 	and Y axis is decreasing as the string is drawn. */
-gdImageStringUp(im, gdFontLarge,
-	im->w / 2 - gdFontLarge->h / 2,
-	im->h / 2 + (strlen(s) * gdFontLarge->w / 2),
+gdImageStringUp(im, gdFontGetLarge(),
+	im->w / 2 - gdFontGetLarge()->h / 2,
+	im->h / 2 + (strlen(s) * gdFontGetLarge()->w / 2),
 	s, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
@@ -3253,6 +3402,14 @@ include the files "gdfontt.h", "gdfonts.h", "gdfontmb.h",
 "gdfontl.h" and "gdfontg.h" respectively
 and (if you are not using a library-based approach) link with the
 corresponding .c files to use the provided fonts.
+<blockquote>
+<b>Windows DLL users:</b> although you can use
+these DLL-exported pointers directly, you cannot easily assign them to other 
+pointers. This will cause hard-to-debug problems. To avoid such troubles, you 
+should call the functions gdFontGetTiny(), gdFontGetSmall(), 
+gdFontGetMediumBold(), gdFontGetLarge(), and gdFontGetGiant() in order to 
+obtain pointers to the fonts under Windows.
+</blockquote>
 The null-terminated string of characters represented as 16-bit unsigned
 short integers specified by the fifth argument is drawn from bottom to top
 in the specified color.
@@ -4606,6 +4763,11 @@ purchase gd support at the hourly rate above.
 <A HREF="#gdBrushed">gdBrushed</A> |
 <A HREF="#gdDashSize">gdDashSize</A> |
 <A HREF="#gdFont">gdFont</A> |
+<A HREF="#gdFontGetHuge">gdFontGetHuge</A> |
+<A HREF="#gdFontGetLarge">gdFontGetLarge</A> |
+<A HREF="#gdFontGetMediumBold">gdFontGetMediumBold</A> |
+<A HREF="#gdFontGetSmall">gdFontGetSmall</A> |
+<A HREF="#gdFontGetTiny">gdFontGetTiny</A> |
 <A HREF="#gdFontCacheSetup">gdFontCacheSetup</A> |
 <A HREF="#gdFontCacheShutdown">gdFontCacheShutdown</A> |
 <A HREF="#gdFontPtr">gdFontPtr</A> |

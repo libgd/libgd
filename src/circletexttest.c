@@ -1,9 +1,17 @@
 #include <stdio.h>
 #include <gd.h>
 
+/* 2.0.22: oops, we need config.h */
+#include "config.h"
+
 int
 main (int argc, char *argv[])
 {
+	/* 2.0.22: can't depend on PNG either  */
+#ifndef HAVE_LIBPNG
+	fprintf(stderr, "Requires PNG support, gd was compiled without it\n");
+	exit(0);
+#else
 	FILE *in = 0;
 	FILE *out;
 	gdImagePtr im;
@@ -48,6 +56,7 @@ main (int argc, char *argv[])
 	gdImagePng(im, out);
 	fclose(out);
 	gdImageDestroy(im);
+#endif /* HAVE_LIBPNG */
 	return 0;
 }
 
