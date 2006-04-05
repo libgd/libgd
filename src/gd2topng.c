@@ -20,27 +20,33 @@ main (int argc, char **argv)
   int x, y, w, h;
   if ((argc != 3) && (argc != 7))
     {
-      fprintf (stderr, "Usage: gd2topng filename.gd2 filename.png [srcx srcy width height]\n");
-      fprintf (stderr, "If the coordinates are absent,t he entire image is converted.\n");
+      fprintf (stderr,
+	       "Usage: gd2topng filename.gd2 filename.png [srcx srcy width height]\n");
+      fprintf (stderr,
+	       "If the coordinates are absent,t he entire image is converted.\n");
       exit (1);
     }
-  if (argc == 7) {
-    x = atoi(argv[3]);
-    y = atoi(argv[4]);
-    w = atoi(argv[5]);
-    h = atoi(argv[6]);
-  }
+  if (argc == 7)
+    {
+      x = atoi (argv[3]);
+      y = atoi (argv[4]);
+      w = atoi (argv[5]);
+      h = atoi (argv[6]);
+    }
   in = fopen (argv[1], "rb");
   if (!in)
     {
       fprintf (stderr, "Input file does not exist!\n");
       exit (1);
     }
-  if (argc == 7) {
-    im = gdImageCreateFromGd2Part (in, x, y, w, h);
-  } else {
-    im = gdImageCreateFromGd2 (in);
-  }
+  if (argc == 7)
+    {
+      im = gdImageCreateFromGd2Part (in, x, y, w, h);
+    }
+  else
+    {
+      im = gdImageCreateFromGd2 (in);
+    }
   fclose (in);
   if (!im)
     {

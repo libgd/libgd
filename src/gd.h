@@ -6,9 +6,14 @@ extern "C"
 {
 #endif
 
+/* some might want to set DEFAULT_FONTPATH from configure in config.h */
+#ifndef DEFAULT_FONTPATH
 /* default fontpath for unix systems  - whatever happened to standards ! */
 #define DEFAULT_FONTPATH "/usr/X11R6/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/truetype:/usr/X11R6/lib/X11/fonts/TTF:/usr/share/fonts/TrueType:/usr/share/fonts/truetype:/usr/openwin/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/Type1"
+#endif
+#ifndef PATHSEPARATOR
 #define PATHSEPARATOR ":"
+#endif
 
 /* gd.h: declarations file for the graphic-draw module.
  * Permission to use, copy, modify, and distribute this software and its
@@ -131,6 +136,31 @@ extern "C"
        PNG at the moment; other future formats may also
        have that capability. JPEG doesn't. */
     int saveAlphaFlag;
+
+    /* 2.0.12: anti-aliased globals */
+    int AA;
+    int AA_color;
+    int AA_dont_blend;
+    unsigned char **AA_opacity;
+    int AA_polygon;
+    /* Stored and pre-computed variables for determining the perpendicular
+       distance from a point to the anti-aliased line being drawn: */
+    int AAL_x1;
+    int AAL_y1;
+    int AAL_x2;
+    int AAL_y2;
+    int AAL_Bx_Ax;
+    int AAL_By_Ay;
+    int AAL_LAB_2;
+    float AAL_LAB;
+
+    /* 2.0.12: simple clipping rectangle. These values
+      must be checked for safety when set; please use
+      gdImageSetClip */
+    int cx1;
+    int cy1;
+    int cx2;
+    int cy2;
   }
   gdImage;
 
@@ -170,6 +200,8 @@ extern "C"
 /* NOT the same as the transparent color index.
 	This is used in line styles only. */
 #define gdTransparent (-6)
+
+#define gdAntiAliased (-7)
 
 /* Functions to manipulate images. */
 
@@ -235,6 +267,8 @@ extern "C"
 
   int gdImageGetPixel (gdImagePtr im, int x, int y);
 
+  void gdImageAABlend (gdImagePtr im);
+
   void gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color);
 
 /* For backwards compatibility only. Use gdImageSetStyle()
@@ -248,6 +282,8 @@ extern "C"
 /* Solid bar. Upper left corner first, lower right corner second. */
   void gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
 			       int color);
+  void gdImageSetClip(gdImagePtr im, int x1, int y1, int x2, int y2);
+  void gdImageGetClip(gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P);
   int gdImageBoundsSafe (gdImagePtr im, int x, int y);
   void gdImageChar (gdImagePtr im, gdFontPtr f, int x, int y, int c,
 		    int color);
@@ -280,12 +316,23 @@ extern "C"
 
   typedef struct
   {
-    int flags;			/* for future expansion logical OR of gdFTEX_ values */
+    int flags;			/* Logical OR of gdFTEX_ values */
     double linespacing;		/* fine tune line spacing for '\n' */
+    int charmap;		/* TBB: 2.0.12: may be gdFTEX_Unicode,
+				   gdFTEX_Shift_JIS, or gdFTEX_Big5;
+				   when not specified, maps are searched
+				   for in the above order. */
   }
   gdFTStringExtra, *gdFTStringExtraPtr;
 
 #define gdFTEX_LINESPACE 1
+#define gdFTEX_CHARMAP 2
+
+/* These are NOT flags; set one in 'charmap' if you set the
+	gdFTEX_CHARMAP bit in 'flags'. */
+#define gdFTEX_Unicode 0
+#define gdFTEX_Shift_JIS 1
+#define gdFTEX_Big5 2
 
   char *gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 			   double ptsize, double angle, int x, int y,
@@ -375,6 +422,12 @@ extern "C"
   void gdImagePaletteCopy (gdImagePtr dst, gdImagePtr src);
   void gdImagePng (gdImagePtr im, FILE * out);
   void gdImagePngCtx (gdImagePtr im, gdIOCtx * out);
+  /* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
+     1 is FASTEST but produces larger files, 9 provides the best
+     compression (smallest files) but takes a long time to compress, and
+     -1 selects the default compiled into the zlib library. */
+  void gdImagePngEx (gdImagePtr im, FILE * out, int level);
+  void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * out, int level);
 
   void gdImageWBMP (gdImagePtr image, int fg, FILE * out);
   void gdImageWBMPCtx (gdImagePtr image, int fg, gdIOCtx * out);
@@ -413,6 +466,7 @@ extern "C"
 
 /* Best to free this memory with gdFree(), not free() */
   void *gdImagePngPtr (gdImagePtr im, int *size);
+  void *gdImagePngPtrEx (gdImagePtr im, int *size, int level);
 
 /* Best to free this memory with gdFree(), not free() */
   void *gdImageGdPtr (gdImagePtr im, int *size);
@@ -492,6 +546,8 @@ extern "C"
 
   void gdImageSetBrush (gdImagePtr im, gdImagePtr brush);
   void gdImageSetTile (gdImagePtr im, gdImagePtr tile);
+  void gdImageSetAntiAliased (gdImagePtr im, int c);
+  void gdImageSetAntiAliasedDontBlend (gdImagePtr im, int c, int dont_blend);
   void gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels);
 /* Line thickness (defaults to 1). Affects lines, ellipses, 
 	rectangles, polygons and so forth. */

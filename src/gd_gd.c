@@ -30,7 +30,15 @@ _gdGetColors (gdIOCtx * in, gdImagePtr im, int gd2xFlag)
   int i;
   if (gd2xFlag)
     {
-      if (!gdGetByte (&im->trueColor, in))
+      int trueColorFlag;
+      if (!gdGetByte (&trueColorFlag, in))
+	{
+	  goto fail1;
+	}
+      /* 2.0.12: detect bad truecolor .gd files created by pre-2.0.12.
+         Beginning in 2.0.12 truecolor is indicated by the initial 2-byte
+         signature. */
+      if (trueColorFlag != im->trueColor)
 	{
 	  goto fail1;
 	}
@@ -66,7 +74,10 @@ _gdGetColors (gdIOCtx * in, gdImagePtr im, int gd2xFlag)
   GD2_DBG (printf
 	   ("Pallette had %d colours (T=%d)\n", im->colorsTotal,
 	    im->transparent));
-
+  if (im->trueColor)
+    {
+      return TRUE;
+    }
   for (i = 0; (i < gdMaxColors); i++)
     {
       if (!gdGetByte (&im->red[i], in))
@@ -102,21 +113,28 @@ fail1:
 
 /* */
 /* Use the common basic header info to make the image object. */
-/* This is also called from _gd2CreateFromFile */
 /* */
 static gdImagePtr
 _gdCreateFromFile (gdIOCtx * in, int *sx, int *sy)
 {
   gdImagePtr im;
   int gd2xFlag = 0;
+  int trueColorFlag = 0;
   if (!gdGetWord (sx, in))
     {
       goto fail1;
     }
-  if (*sx == 65535)
+  if ((*sx == 65535) || (*sx == 65534))
     {
       /* This is a gd 2.0 .gd file */
       gd2xFlag = 1;
+      /* 2.0.12: 65534 signals a truecolor .gd file. 
+         There is a slight redundancy here but we can
+         live with it. */
+      if (*sx == 65534)
+	{
+	  trueColorFlag = 1;
+	}
       if (!gdGetWord (sx, in))
 	{
 	  goto fail1;
@@ -128,9 +146,14 @@ _gdCreateFromFile (gdIOCtx * in, int *sx, int *sy)
     }
 
   GD2_DBG (printf ("Image is %dx%d\n", *sx, *sy));
-
-  im = gdImageCreate (*sx, *sy);
-
+  if (trueColorFlag)
+    {
+      im = gdImageCreateTrueColor (*sx, *sy);
+    }
+  else
+    {
+      im = gdImageCreate (*sx, *sy);
+    }
   if (!_gdGetColors (in, im, gd2xFlag))
     {
       goto fail2;
@@ -173,21 +196,40 @@ gdImageCreateFromGdCtx (gdIOCtxPtr in)
     };
 
   /* Then the data... */
-  for (y = 0; (y < sy); y++)
+  /* 2.0.12: support truecolor properly in .gd as well as in .gd2.
+     Problem reported by Andreas Pfaller. */
+  if (im->trueColor)
     {
-      for (x = 0; (x < sx); x++)
+      for (y = 0; (y < sy); y++)
 	{
-	  int ch;
-	  ch = gdGetC (in);
-	  if (ch == EOF)
+	  for (x = 0; (x < sx); x++)
 	    {
-	      goto fail2;
+	      int pix;
+	      if (!gdGetInt (&pix, in))
+		{
+		  goto fail2;
+		}
+	      im->tpixels[y][x] = pix;
 	    }
-	  /* ROW-MAJOR IN GD 1.3 */
-	  im->pixels[y][x] = ch;
 	}
     }
-
+  else
+    {
+      for (y = 0; (y < sy); y++)
+	{
+	  for (x = 0; (x < sx); x++)
+	    {
+	      int ch;
+	      ch = gdGetC (in);
+	      if (ch == EOF)
+		{
+		  goto fail2;
+		}
+	      /* ROW-MAJOR IN GD 1.3 */
+	      im->pixels[y][x] = ch;
+	    }
+	}
+    }
   return im;
 
 fail2:
@@ -222,8 +264,16 @@ _gdPutColors (gdImagePtr im, gdIOCtx * out)
 static void
 _gdPutHeader (gdImagePtr im, gdIOCtx * out)
 {
-  /* 65535 indicates this is a gd 2.x .gd file. */
-  gdPutWord (65535, out);
+  /* 65535 indicates this is a gd 2.x .gd file. 
+     2.0.12: 65534 indicates truecolor. */
+  if (im->trueColor)
+    {
+      gdPutWord (65534, out);
+    }
+  else
+    {
+      gdPutWord (65535, out);
+    }
   gdPutWord (im->sx, out);
   gdPutWord (im->sy, out);
 

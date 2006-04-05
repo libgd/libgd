@@ -2,7 +2,7 @@
 /********************************************/
 /* gd interface to freetype library         */
 /*                                          */
-/* John Ellson   ellson@lucent.com          */
+/* John Ellson   ellson@graphviz.org        */
 /********************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -21,6 +21,7 @@
 #include <unistd.h>
 #else
 #include <io.h>
+#define R_OK 04			/* Needed in Windows */
 #endif
 
 /* number of antialised colors for indexed bitmaps */
@@ -77,7 +78,7 @@ gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
 
 /*
  * DEFAULT_FONTPATH and PATHSEPARATOR are host type dependent and
- * are normally set by configure in gvconfig.h.  These are just
+ * are normally set by configure in config.h.  These are just
  * some last resort values that might match some Un*x system
  * if building this version of gd separate from graphviz.
  */
@@ -379,8 +380,8 @@ fontFetch (char **error, void *key)
        */
       fullname = gdRealloc (fullname,
 			    strlen (fontsearchpath) + strlen (name) + 6);
-      /* if name is an absolute filename then test directly */
-      if (*name == '/'
+      /* if name is an absolute or relative pathname then test directly */
+      if (strchr (name, '/')
 	  || (name[0] != 0 && name[1] == ':'
 	      && (name[2] == '/' || name[2] == '\\')))
 	{
@@ -421,12 +422,21 @@ fontFetch (char **error, void *key)
   if (!font_found)
     {
       *error = "Could not find/open font";
+      /* 2.0.12: TBB: free these. Thanks to Frank Faubert. */
+      free (a->fontlist);
+      free (fullname);
+      gdFree (a);
+
       return NULL;
     }
 
   err = FT_New_Face (*b->library, fullname, 0, &a->face);
   if (err)
     {
+      /* 2.0.12: TBB: free these. Thanks to Frank Faubert. */
+      free (a->fontlist);
+      free (fullname);
+      gdFree (a);
       *error = "Could not read font";
       return NULL;
     }
@@ -471,6 +481,9 @@ fontFetch (char **error, void *key)
   if (!found)
     {
       *error = "Unable to find a CharMap that I can handle";
+      /* 2.0.12: TBB: free these. Thanks to Frank Faubert. */
+      free (a->fontlist);
+      gdFree (a);
       return NULL;
     }
   /* 2.0.5: we should actually return this */
@@ -797,6 +810,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
   int render = (im && (im->trueColor || (fg <= 255 && fg >= -255)));
   FT_BitmapGlyph bm;
   int render_mode = FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT;
+  int m, mfound;
   /* Now tuneable thanks to Wez Furlong */
   double linespace = LINESPACE;
   /* 2.0.6: put this declaration with the other declarations! */
@@ -868,6 +882,50 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
     {
       render_mode |= FT_LOAD_MONOCHROME;
     }
+  /* 2.0.12: allow explicit specification of the preferred map;
+     but we still fall back if it is not available. */
+  m = gdFTEX_Unicode;
+  if (strex && (strex->flags & gdFTEX_CHARMAP))
+    {
+      m = strex->charmap;
+    }
+  /* Try all three types of maps, but start with the specified one */
+  mfound = 0;
+  for (i = 0; (i < 3); i++)
+    {
+      switch (m)
+	{
+	case gdFTEX_Unicode:
+	  if (font->have_char_map_unicode)
+	    {
+	      mfound = 1;
+	    }
+	  break;
+	case gdFTEX_Shift_JIS:
+	  if (font->have_char_map_sjis)
+	    {
+	      mfound = 1;
+	    }
+	  break;
+	case gdFTEX_Big5:
+	  {
+	    /* This was the 'else' case, we can't really 'detect' it */
+	    mfound = 1;
+	  }
+	  break;
+	}
+      if (mfound)
+	{
+	  break;
+	}
+      m++;
+      m %= 3;
+    }
+  if (!mfound)
+    {
+      /* No character set found! */
+      return "No character set found";
+    }
 
 #ifndef JISX0208
   if (font->have_char_map_sjis)
@@ -916,62 +974,68 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 	  next++;
 	  continue;
 	}
-
-      if (font->have_char_map_unicode)
+      switch (m)
 	{
-	  /* use UTF-8 mapping from ASCII */
-	  len = gdTcl_UtfToUniChar (next, &ch);
-	  next += len;
-	}
-      else if (font->have_char_map_sjis)
-	{
-	  unsigned char c;
-	  int jiscode;
-
-	  c = *next;
-	  if (0xA1 <= c && c <= 0xFE)
+	case gdFTEX_Unicode:
+	  if (font->have_char_map_unicode)
 	    {
-	      next++;
-	      jiscode = 0x100 * (c & 0x7F) + ((*next) & 0x7F);
+	      /* use UTF-8 mapping from ASCII */
+	      len = gdTcl_UtfToUniChar (next, &ch);
+	      next += len;
+	    }
+	  break;
+	case gdFTEX_Shift_JIS:
+	  if (font->have_char_map_sjis)
+	    {
+	      unsigned char c;
+	      int jiscode;
+	      c = *next;
+	      if (0xA1 <= c && c <= 0xFE)
+		{
+		  next++;
+		  jiscode = 0x100 * (c & 0x7F) + ((*next) & 0x7F);
 
-	      ch = (jiscode >> 8) & 0xFF;
-	      jiscode &= 0xFF;
+		  ch = (jiscode >> 8) & 0xFF;
+		  jiscode &= 0xFF;
 
-	      if (ch & 1)
-		jiscode += 0x40 - 0x21;
+		  if (ch & 1)
+		    jiscode += 0x40 - 0x21;
+		  else
+		    jiscode += 0x9E - 0x21;
+
+		  if (jiscode >= 0x7F)
+		    jiscode++;
+		  ch = (ch - 0x21) / 2 + 0x81;
+		  if (ch >= 0xA0)
+		    ch += 0x40;
+
+		  ch = (ch << 8) + jiscode;
+		}
 	      else
-		jiscode += 0x9E - 0x21;
-
-	      if (jiscode >= 0x7F)
-		jiscode++;
-	      ch = (ch - 0x21) / 2 + 0x81;
-	      if (ch >= 0xA0)
-		ch += 0x40;
-
-	      ch = (ch << 8) + jiscode;
-	    }
-	  else
-	    {
-	      ch = c & 0xFF;	/* don't extend sign */
-	    }
-	  next++;
-	}
-      else
-	{
-	  /*
-	   * Big 5 mapping:
-	   * use "JIS-8 half-width katakana" coding from 8-bit characters. Ref:
-	   * ftp://ftp.ora.com/pub/examples/nutshell/ujip/doc/japan.inf-032092.sjs
-	   */
-	  ch = (*next) & 0xFF;	/* don't extend sign */
-	  next++;
-	  if (ch >= 161		/* first code of JIS-8 pair */
-	      && *next)
-	    {			/* don't advance past '\0' */
-	      /* TBB: Fix from Kwok Wah On: & 255 needed */
-	      ch = (ch * 256) + ((*next) & 255);
+		{
+		  ch = c & 0xFF;	/* don't extend sign */
+		}
 	      next++;
 	    }
+	  break;
+	case gdFTEX_Big5:
+	  {
+	    /*
+	     * Big 5 mapping:
+	     * use "JIS-8 half-width katakana" coding from 8-bit characters. Ref:
+	     * ftp://ftp.ora.com/pub/examples/nutshell/ujip/doc/japan.inf-032092.sjs
+	     */
+	    ch = (*next) & 0xFF;	/* don't extend sign */
+	    next++;
+	    if (ch >= 161	/* first code of JIS-8 pair */
+		&& *next)
+	      {			/* don't advance past '\0' */
+		/* TBB: Fix from Kwok Wah On: & 255 needed */
+		ch = (ch * 256) + ((*next) & 255);
+		next++;
+	      }
+	  }
+	  break;
 	}
       /* set rotation transform */
       FT_Set_Transform (face, &matrix, NULL);
@@ -984,6 +1048,8 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 	  FT_Get_Kerning (face, previous, glyph_index,
 			  ft_kerning_default, &delta);
 	  pen.x += delta.x;
+	  /* 2.0.12: indispensable for an accurate bounding box. */
+	  penf.x += delta.x;
 	}
 
       /* load glyph image into the slot (erase previous one) */

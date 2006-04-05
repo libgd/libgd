@@ -189,7 +189,7 @@ main (int argc, char *argv[])
 	  fprintf (stderr, "Can't create test/fttest.png\n");
 	  exit (1);
 	}
-	/* 2.0.10: correct ifdef, thanks to Gabriele Verzeletti */
+      /* 2.0.10: correct ifdef, thanks to Gabriele Verzeletti */
 #ifdef HAVE_LIBPNG
       gdImagePng (im, out);
 #else

@@ -1,12 +1,12 @@
 <html>
 <head>
-<TITLE>gd 2.0.11</TITLE>
+<TITLE>gd 2.0.12</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<h1>This is gd 2.0.11.</h1>
+<h1>This is gd 2.0.12.</h1>
 <p>
-<H2>gd 2.0.11</H2>
+<H2>gd 2.0.12</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -22,7 +22,7 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.11 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.12 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -35,7 +35,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-gd 2.0.11 <strong>requires</strong> that the following libraries 
+gd 2.0.12 <strong>requires</strong> that the following libraries 
 also be installed, in order to produce the related image formats.
 You may skip libraries associated with formats you do not use:
 <p>
@@ -66,7 +66,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.11">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.12">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -106,9 +106,9 @@ Portions relating to GD2 format copyright 1999, 2000, 2001, 2002 Philip Warner.
 <p>
 Portions relating to PNG copyright 1999, 2000, 2001, 2002 Greg Roelofs.
 <p>
-Portions relating to gdttf.c copyright 1999, 2000, 2001, 2002 John Ellson (ellson@lucent.com).
+Portions relating to gdttf.c copyright 1999, 2000, 2001, 2002 John Ellson (ellson@graphviz.org).
 <p>
-Portions relating to gdft.c copyright 2001, 2002 John Ellson (ellson@lucent.com).
+Portions relating to gdft.c copyright 2001, 2002 John Ellson (ellson@graphviz.org).
 <p>
 Portions relating to JPEG and to color quantization copyright 2000, 2001, 2002, Doug Becker and copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, Thomas G. Lane.  This software is based 
 in part on the work of the Independent JPEG Group. See the file
@@ -165,10 +165,10 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.11.
+with 2.0.12.
 <h4>PHP</h4>
 A variant of gd 2.x is included in PHP 4.3.0. It is also possible
-to patch PHP 4.2.3 for use with gd 2.0.11; see the
+to patch PHP 4.2.3 for use with gd 2.0.12; see the
 <a href="http://www.boutell.com/gd/">gd home page</a> for a link to
 that information. It would be a Good Idea to merge all of the things
 that are better in mainstream gd and all of the things that are
@@ -198,6 +198,87 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<P>
+<A NAME="whatsnew2.0.12"><H3>What's new in version 2.0.12?</H3></A>
+<P>
+<ul>
+<li>Small but numerous code cleanups by Dr. Martin Zinser.
+<li><a href="#gdImageSetClip">gdImageSetClip</a> and
+<a href="#gdImageGetClip">gdImageGetClip</a> have been added. All
+drawing routines now stay within the specified clipping rectangle.
+Note that the <a href="#gdImageBoundsSafe">gdImageBoundsSafe</a> function
+now returns true only if the specified location is within the
+clipping rectangle. Of course, the default clipping area is the 
+entire image. The behavior of existing gd applications does not change.
+<li>Support for fast drawing of antialiased lines and polygons,
+by Bright Fulton and Frank Faubert. To learn more about this feature,
+read about the <a href="#gdImageSetAntiAliased">gdImageSetAntiAliased</a> 
+function, which is used to set the foreground color for antialiasing,
+as well as the <a href="#gdAntiAliased">gdAntiAliased</a> constant, which
+is passed to line- and polygon-drawing functions in place of a color.
+This code does not currently support an alpha channel component in the
+specified foreground color, or in the existing background image, 
+but <em>does</em> perform alpha blending against an opaque background.
+Also see the 
+<a href="#gdImageSetAntiAliasedDontBlend">gdImageSetAntiAliasedDontBlend</a> 
+function, which allows the specification of a special background
+color that should never be blended with the foreground.
+<li>Fixes to color mapping in <a href="#gdImageCopyMergeGray">gdImageCopyMergeGray</a>. Thanks to Philip Warner.
+<li><a href="#gdImageStringFTEx">gdImageStringFTEx</a> now supports
+explicit specification of the desired character mapping.
+This is useful when a font offers more than one of Unicode,
+Shift_JIS, and Big5. 
+<li>The PNG compression level can now be specified when writing PNG
+images. See the new <a href="#gdImagePngEx">gdImagePngEx</a>,
+<a href="#gdImagePngEx">gdImagePngEx</a>,
+<a href="#gdImagePngCtxEx">gdImagePngCtxEx</a>, and
+<a href="#gdImagePngPtrEx">gdImagePngPtrEx</a> functions.
+<li>The annotate utility builds without error in the absence of
+freetype, although of course it is not useful without freetype.
+<li>Thorben Kundinger fixed a bug relating to the use of palette-based
+images as brushes when drawing on truecolor images.
+<li>Michael Schwartz corrected a problem with his code for drawing
+thick lines.
+<li>Prior to 2.0.12, any alpha channel component in the
+<em>destination</em> image was ignored when drawing with
+alpha blending in effect (see 
+<a href="#gdImageAlphaBlending">gdImageAlphaBlending</a>). 2.0.12
+correctly preserves an appropriate proportion of the alpha component
+of the destination, just as it preserves an appropriate proportion
+of the red, green and blue components, depending on the opacity
+of the foreground. Thanks to Frank Warmerdam for pointing out the issue.
+<li>Memory leaks on failed attempts to load fonts
+in <a href="#gdImageStringFTEx">gdImageStringFTEx</a> were corrected.
+Thanks to Frank Faubert.
+<li>The impact of kerning is now correctly included in the calculation
+of the bounding box returned by the freetype text routines. This issue
+was pointed out by several individuals.
+<li>Color problems with the <code>gd2</code> file format routines
+were fixed by Steven Brown. These problems were due to the
+incorrect use of a signed integer.
+<li>Version 2.0.12 supports the <code>gd</code> file format correctly
+for truecolor images. Truecolor <code>gd</code> files created with
+earlier releases in the 2.0 series must be written again. The <code>gd</code>
+file format is used to quickly load an entire uncompressed image, typically 
+an existing background to which additional material will be added; it is not a 
+general purpose file format. More advanced capabilities are also available
+via the <code>gd2</code> format. Thanks to Andreas Pfaller for reporting 
+the problem. 
+<li>Signed vs. unsigned problem caused misbehavior when attempting to
+load a bad JPEG image. Thanks to Geert Jansen.
+<li>Existing truecolor PNG images with simple single-color transparency are 
+now loaded properly, thanks to Slaven Rezic.
+<li>The <a href="#gdImageTrueColorToPalette">gdImageTrueColorToPalette</a>
+function no longer attempts to preserve an alpha channel in the original.
+My attempt to do so resulted in significantly inferior output even if no
+alpha channel was present in the original. Thanks to Barend Gehrels for
+submitting a new adaptation of Tom Lane's jquant2.c which does a very
+high-quality job of palette conversion. Thanks also to Steven Brown, who
+submitted patches allowing a single 100% transparent color in the
+original truecolor image to be preserved. In practice, more complex 
+alpha channels in palettes are ill-supported and difficult to 
+allocate skillfully.
 </ul>
 <P>
 <A NAME="whatsnew2.0.11"><H3>What's new in version 2.0.11?</H3></A>
@@ -346,6 +427,7 @@ works properly.
 very handy tool for adding freetype text to existing JPEGs. After
 <code>make install</code>, type <code>annotate -h</code> for more 
 information. Thanks to Joel Dubiner.
+</ul>
 <P>
 <A NAME="whatsnew2.0.2"><H3>What's new in version 2.0.2?</H3></A>
 <ul>
@@ -493,7 +575,7 @@ read old .gd and .gd2 files correctly.
 </ul>
 <P><A NAME="whatsnew1.8.4"><H3>What's new in version 1.8.4?</H3></A>
 <ul>
-<li>Add support for FreeType2  (John Ellson  ellson@lucent.com)
+<li>Add support for FreeType2  (John Ellson  ellson@graphviz.org)
 <li>Add support for finding in fonts in a builtin DEFAULT_FONTPATH,
 or in a path from the GDFONTPATH environment variable.
 <li>remove some unused symbols to reduce compiler warnings
@@ -605,7 +687,7 @@ Version 1.6.3 corrects a memory leak in gd_png.c. This leak caused
 a significant amount of memory to be allocated and not freed when
 writing a PNG image. 
 <P><A NAME="whatsnew1.6.2"><H3>What's new in version 1.6.2?</H3></A>
-Version 1.6.2 from John Ellson <ellson@lucent.com> adds two new functions:
+Version 1.6.2 from John Ellson <ellson@graphviz.org> adds two new functions:
 <ul>
 <li>gdImageStringTTF - scalable, rotatable, anti-aliased, TrueType strings using
 the FreeType library, but only if libttf is found by configure.
@@ -791,8 +873,8 @@ saving of alpha channel information to the file instead.
 <P>
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.11.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.11.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.12.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.12.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -803,10 +885,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.11".
+Unpacking the archive will produce a directory called "gd-2.0.12".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.11 directory and type:
+<code>cd</code> to the 2.0.12 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -1085,6 +1167,51 @@ binary code that references particular structure members.
 A pointer to an image structure. <A HREF="#gdImageCreate">gdImageCreate</A>
 returns this type, and the other functions expect it as the first
 argument.
+<DT><A NAME="gdIoCtx">gdIOCtx</a> <strong>(TYPE)</strong>
+<DD>
+Most of the gd functions that read and write files, such as
+<a href="#gdImagePng">gdImagePng</a> and <a href="#gdImageCreateFromJpeg</a>,
+also have variants that accept a gdIOCtx structure; see
+<a href="#gdImagePngCtx">gdImagePngCtx</a> and 
+<a href="#gdImageCreateFromJpegCtx</a>. Those who wish to provide
+their own custom routines to read and write images can populate a
+gdIOCtx structure with functions of their own devising to 
+to read and write data. For image reading, the only mandatory
+functions are getC and getBuf, which must return the number of
+characters actually read, or a negative value on error or EOF.
+These functions must read the number of characters requested 
+unless at the end of the file. For image writing, the only mandatory 
+functions are putC and putBuf, which return the number of 
+characters written; these functions must write the number of 
+characters requested except in the event of an error. The seek
+and tell functions are only required in conjunction with the
+<code>gd2</code> file format, which supports quick loading of
+partial images. The gd_free function will not be invoked when
+calling the standard Ctx functions; it is an implementation
+convenience when adding new data types to gd. For examples,
+see gd_png.c, gd_gd2.c, gd_jpeg.c, etc., all of which rely
+on gdIOCtx to implement the standard image read and write functions.
+
+<pre>
+typedef struct gdIOCtx
+{
+  int (*getC) (struct gdIOCtx *);
+  int (*getBuf) (struct gdIOCtx *, void *, int wanted);
+
+  void (*putC) (struct gdIOCtx *, int);
+  int (*putBuf) (struct gdIOCtx *, const void *, int wanted);
+
+  /* seek must return 1 on SUCCESS, 0 on FAILURE. Unlike fseek! */
+  int (*seek) (struct gdIOCtx *, const int);
+
+  long (*tell) (struct gdIOCtx *);
+
+  void (*gd_free) (struct gdIOCtx *);
+
+} gdIOCtx;
+</pre>
+
+
 <DT><A NAME="gdFont">gdFont</A> <strong>(TYPE)</strong>
 <DD>
 A font structure. Used to declare the characteristics of a font.
@@ -1466,7 +1593,7 @@ im = <A HREF="#gdImageCreate">gdImageCreate</A>(10, 10);
 <DT><A NAME="gdImageJpeg">
 void gdImageJpeg(gdImagePtr im, FILE *out, int quality)</A>
 <STRONG>(FUNCTION)</STRONG><BR>
-void gdImageJpegCtx(gdImagePtr im, gdIOCtx *out, int quality)</A>
+<a name="gdImageJpegCtx">void gdImageJpegCtx(gdImagePtr im, gdIOCtx *out, int quality)</A>
 <STRONG>(FUNCTION)</STRONG><BR>
 <DD>
 gdImageJpeg outputs the specified image to the specified
@@ -1523,6 +1650,10 @@ build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
 <DT><A NAME="gdImagePng">
 void gdImagePng(gdImagePtr im, FILE *out)</A>
+<br>
+<A NAME="gdImagePngCtx">
+void gdImagePngCtx(gdImagePtr im, gdIOCtx *out)</A>
+
 <STRONG>(FUNCTION)</STRONG>
 <DD>
 gdImagePng outputs the specified image to the specified
@@ -1553,7 +1684,24 @@ fclose(out);
 /* Destroy image */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImagePngEx">
+void gdImagePngEx(gdImagePtr im, FILE *out, int level)</A>
+<br>
+<A NAME="gdImagePngCtxEx">
+void gdImagePngCtxEx(gdImagePtr im, gdIOCtx *out, int level)</A>
 
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Like <a href="#gdImagePng">gdImagePng</a>, gdImagePngEx outputs the 
+specified image to the specified file in PNG format. In addition,
+gdImagePngEx allows the level of compression to be specified. A compression
+level of 0 means "no compression." A compression level of 1 means
+"compressed, but as quickly as possible." A compression level of 9
+means "compressed as much as possible to produce the smallest possible
+file." A compression level of -1 will use the default compression level
+at the time zlib was compiled on your system.
+<p>
+For more information, see <a href="#gdImagePng">gdImagePng</a>.
 <DT><A NAME="gdImagePngPtr">
 void* gdImagePngPtr(gdImagePtr im, int *size)</A>
 <STRONG>(FUNCTION)</STRONG>
@@ -1564,7 +1712,20 @@ unless the caller is absolutely certain that the same implementations of
 malloc, free, etc. are used both at library build time and at application
 build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
-
+<DT><A NAME="gdImagePngPtrEx">
+void* gdImagePngPtrEx(gdImagePtr im, int *size, int level)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Like <a href="#gdImagePngPtr">gdImagePngPtr</a>, gdImagePngPtrEx returns a
+pointer to a PNG image in allocated memory.
+In addition, gdImagePngPtrEx allows the level of compression to be 
+specified. A compression level of 0 means "no compression." A compression level of 1 means
+"compressed, but as quickly as possible." A compression level of 9
+means "compressed as much as possible to produce the smallest possible
+file." A compression level of -1 will use the default compression level
+at the time zlib was compiled on your system.
+<p>
+For more information, see <a href="#gdImagePngPtr">gdImagePngPtr</a>.
 <DT><A NAME="gdImagePngToSink">gdImagePngToSink(gdImagePtr im, gdSinkPtr out)</A>
 <strong>(FUNCTION)</strong>
 <dd>
@@ -1701,6 +1862,9 @@ of memory.
 
 <DT><A NAME="gdImageGd2">
 void gdImageGd2(gdImagePtr im, FILE *out, int chunkSize, int fmt)</A>
+<br>
+<A NAME="gdImageGd2Ctx">
+void gdImageGd2Ctx(gdImagePtr im, gdIOCtx *out, int chunkSize, int fmt)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
 gdImageGd2 outputs the specified image to the specified
@@ -1758,24 +1922,28 @@ unless the caller is absolutely certain that the same implementations of
 malloc, free, etc. are used both at library build time and at application
 build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
-<DT><A NAME="gdImageToPalette">
-void gdImageToPalette(gdImagePtr im, int ditherFlag, int colorsWanted)</A>
+<DT><A NAME="gdImageTrueColorToPalette">
+void gdImageTrueColorToPalette(gdImagePtr im, int ditherFlag, int colorsWanted)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>Converts a truecolor image to a palette-based image,
-using a high-quality two-pass quantization routine
-which attempts to preserve alpha channel information
-as well as R/G/B color information when creating
-a palette. If ditherFlag is set, the image will be
+using a high-quality two-pass quantization routine.
+If ditherFlag is set, the image will be
 dithered to approximate colors better, at the expense
 of some obvious "speckling." colorsWanted can be
 anything up to 256. If the original source image
 includes photographic information or anything that
-came out of a JPEG, 256 is strongly recommended.
+came out of a JPEG, 256 is strongly recommended. 
+100% transparency of a single transparent color in the
+original truecolor image will be preserved. There is no other
+support for preservation of alpha channel or transparency in
+the destination image.
 <p>
-Better yet, don't use this function -- write real
+For best results, don't use this function -- write real
 truecolor PNGs and JPEGs. The disk space gain of
 conversion to palette is not great (for small images
-it can be negative) and the quality loss is ugly.
+it can be negative) and the quality loss is ugly. However,
+the version of this function included in version 2.0.12 does
+do a better job than the version included prior to 2.0.12.
 </DL>
 <H3><A NAME="drawing">Drawing Functions</A></H3>
 <DL>
@@ -2150,6 +2318,87 @@ gdImageFill(im, 50, 50, red);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImageSetAntiAliased">void gdImageSetAntiAliased(gdImagePtr im, int c)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+"Antialiasing" is a process by which jagged edges associated with line
+drawing can be reduced by blending the foreground color with an appropriate
+percentage of the background, depending on how much of the pixel in question
+is actually within the boundaries of the line being drawn. 
+All line-drawing functions,
+such as <A HREF="#gdImageLine">gdImageLine</A> and
+<A HREF="#gdImagePolygon">gdImagePolygon</A>, will draw antialiased lines
+if the special "color" <A HREF="#gdAntiAliased">
+gdAntiAliased</A> is used when calling them.
+<P>
+gdImageSetAntiAliased is used to specify the actual foreground color
+to be used when drawing antialiased lines. You may set any color to
+be the foreground, however as of version 2.0.12 an alpha channel
+component is not supported. 
+<p>
+Antialiased lines can be drawn on both truecolor and palette-based
+images. However, attempts to draw antialiased lines on 
+highly complex palette-based backgrounds may not give satisfactory
+results, due to the limited number of colors available in the
+palette. Antialiased line-drawing on simple backgrounds should
+work well with palette-based images; otherwise create or fetch
+a truecolor image instead.
+<P>
+You need not take any special action when you are finished
+with antialised line drawing.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im, brush;
+int black;
+int blue;
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(100, 100);
+/* Background color (first allocated) */
+black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);	
+blue = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 255);
+gdImageSetAntiAliased(im, blue);
+/* Draw a smooth line from the upper left corner to the lower right corner. */
+<A HREF="#gdImageLine">gdImageLine</A>(im, 0, 0, 99, 99, <A HREF="#gdBrushed">gdAntiAliased</A>);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
+See also <a href="#gdAntiAliased">gdAntiAliased</a> and
+<a href="#gdSetAntiAliasedDontBlend">gdSetAntiAliasedDontBlend</a>.
+<DT><A NAME="gdImageSetAntiAliasedDontBlend">void gdImageSetAntiAliasedDontBlend(gdImagePtr im, int c)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Normally, when drawing lines with the special
+<a href="#gdAntiAliased">gdAntiAliased</a> "color," blending with the 
+background to reduce jagged edges is the desired behavior. However, when
+it is desired that lines not be blended with one particular color when
+it is encountered in the background, the 
+gdImageSetAntiAliasedDontBlend function can be used to indicate the
+special color that the foreground should stand out more clearly against.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im, brush;
+int black;
+int blue;
+int white;
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(100, 100);
+/* Background color (first allocated) */
+black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);	
+blue = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 255);
+white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);
+
+gdImageSetAntiAliased(im, blue);
+/* The portion of the line that crosses this white rectangle will
+  not be blended smoothly */
+gdImageSetAntiAliasedDontBlend(im, white);
+gdImageFilledRectangle(im, 25, 25, 75, 75, white);
+/* Draw a smooth line from the upper left corner to the lower right corner. */
+<A HREF="#gdImageLine">gdImageLine</A>(im, 0, 0, 99, 99, <A HREF="#gdBrushed">gdAntiAliased</A>);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
+See also <a href="#gdAntiAliased">gdAntiAliased</a> and
+<a href="#gdSetAntiAliased">gdSetAntiAliased</a>.
 <DT><A NAME="gdImageSetBrush">void gdImageSetBrush(gdImagePtr im, gdImagePtr brush)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
@@ -2333,6 +2582,28 @@ gdImageSetStyle(im, styleDashed, 6);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImageSetThickness">void gdImageSetThickness(gdImagePtr im, int thickness)</A> <STRONG>(FUNCTION)</STRONG>
+<DD>gdImageSetThickness determines the width of lines drawn by the
+<a href="#gdImageLine">gdImageLine</a>, <a href="#gdImagePolygon">gdImagePolygon</a>
+and related functions, in pixels. 
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int black;
+int white;
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(100, 100);
+/* Background color (first allocated) */
+black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);	
+/* Allocate the color white (red, green and blue all maximum). */
+white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);	
+/* Set thickness. */
+gdImageSetThickness(im, 4);
+/* Draw a fat line from the upper left corner to the lower right corner. */
+gdImageLine(im, 0, 0, 99, 99, white);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
 <DT><A NAME="gdImageAlphaBlending">void gdImageAlphaBlending(gdImagePtr im, int blending)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
@@ -2377,7 +2648,7 @@ gdImageAlphaBlending(im, 0);
 void gdImageSaveAlpha(gdImagePtr im, int saveFlag)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
-By default, gd 2.0.2 and above does not attempt to save full alpha channel information
+By default, gd 2.0.2 and above do not attempt to save full alpha channel information
 (as opposed to single-color transparency) when saving PNG images. (PNG
 is currently the only output format supported by gd which can accommodate
 alpa channel information.) This saves space in the output file. If you wish
@@ -2387,6 +2658,60 @@ information, and call <a href="#gdImageAlphaBlending">gdImageAlphaBlending(im, 0
 to turn off alpha blending within the library so that alpha channel
 information is actually stored in the image rather than being composited
 immediately at the time that drawing functions are invoked.
+<DT><A NAME="gdImageSetClip">
+void gdImageSetClip(gdImagePtr im, int x1, int y1, int x2, int y2)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Establishes a clipping rectangle. Once gdImageSetClip has been called,
+all future drawing operations will remain within the specified clipping
+area, until a new gdImageSetClip call takes place. For instance, 
+if a clipping rectangle of 25, 25, 75, 75 has been set within a
+100x100 image, a diagonal line from 0,0 to 99,99 will appear only 
+between 25,25 and 75,75.
+<p>
+If gdImageSetClip is never called, the clipping area will be the
+entire image. 
+<p>
+The parameters passed to gdImageSetClip are checked against the dimensions
+of the image and limited to "safe" values.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int black;
+int white;
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(100, 100);
+/* Background color (first allocated) */
+black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);	
+/* Allocate the color white (red, green and blue all maximum). */
+white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);	
+/* Set the clipping rectangle. */
+gdImageSetClip(im, 25, 25, 75, 75);
+/* Draw a line from the upper left corner to the lower right corner. 
+  Only the part within the clipping rectangle will appear. */
+<a href="#gdImageLine">gdImageLine</a>(im, 0, 0, 99, 99, white);
+/* ... Do something with the image, such as saving it to a file ... */
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
+See also <a href="#gdImageGetClip">gdImageGetClip</a>.
+<DT><A NAME="gdImageGetClip">
+void gdImageGetClip(gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Fetches the boundaries of the current clipping rectangle.
+<pre>
+... Inside a function ... 
+gdImagePtr im = <a href="#gdImageCreateTrueColor">gdImageCreateTrueColor</a>(100, 100);
+int x1, y1, x2, y2;
+gdImageSetClip(im, 25, 25, 75, 75);
+gdImageGetClip(im, &x1, &y1, &x2, &y2);
+printf("%d %d %d %d\n", x1, y1, x2, y2);
+</pre>
+The above code would print:
+<pre>
+25 25 75 75
+</pre>
+See also <a href="#gdImageSetClip">gdImageSetClip</a>.
 </DL>
 <H3><A NAME="query">Query Functions</A></H3>
 <DL>
@@ -2430,10 +2755,13 @@ printf("The value of the center pixel is %d; RGB values are %d,%d,%d\n",
 int gdImageBoundsSafe(gdImagePtr im, int x, int y)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
-gdImageBoundsSafe returns true (1) if the specified point is within the bounds
-of the image, false (0) if not. This function is intended primarily for
+gdImageBoundsSafe returns true (1) if the specified point is within the 
+current clipping rectangle, false (0) if not. The clipping rectangle is
+set by <a href="#gdImageSetClip">gdImageSetClip</a> and defaults
+to the entire image. This function is intended primarily for
 use by those who wish to add functions to gd. All of the gd drawing
-functions already clip safely to the edges of the image.
+functions already clip safely using this function or its macro
+equivalent in gd.c, gdImageBoundsSafeMacro.
 <PRE>
 ... inside a function ...
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
@@ -2804,6 +3132,7 @@ if (err) {fprintf(stderr,err); return 1;}
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+See also <a href="#gdImageStringFTEx">gdImageStringFTEx</a>.
 <DT><A NAME="gdImageStringFTEx">
 char *gdImageStringFTEx(gdImagePtr im, int *brect,
 	int fg, char *fontname, double ptsize, double angle,
@@ -2824,17 +3153,36 @@ typedef struct {
        int flags; 
        /* fine tune line spacing for '\n' */
        double linespacing; 
+       /* Preferred character mapping */
+       int charmap;
 } gdFTStringExtra, *gdFTStringExtraPtr;
 </pre>
-To output multiline text with a specific line spacing, set 
-<code>flags</code> to <code>gdFTEX_LINESPACE</code>, and set
-<code>linespacing</code> to the desired spacing, expressed as a
+To output multiline text with a specific line spacing, 
+include <code>gdFTEX_LINESPACE</code> in the setting of
+<code>flags</code>:
+<pre>
+flags |= gdFTEX_LINESPACE;
+</pre>
+And also set <code>linespacing</code> to the desired spacing, expressed as a
 multiple of the font height. Thus a line spacing of 1.0 is the
 minimum to guarantee that lines of text do not collide.
 <p>
 If <code>gdFTEX_LINESPACE</code> is not present, or 
 <code>strex</code> is null, or <a href="#gdImageStringFT">gdImageStringFT</a>
 is called, <code>linespacing</code> defaults to 1.05.
+<p>
+To specify a preference for Unicode, Shift_JIS Big5 character encoding,
+set or To output multiline text with a specific line spacing, 
+include <code>gdFTEX_CHARMAP</code> in the setting of
+<code>flags</code>:
+<pre>
+flags |= gdFTEX_CHARMAP;
+</pre>
+And set <code>charmap</code> to the desired value, which can be
+any of gdFTEX_Unicode, gdFTEX_Shift_JIS, or gdFTEX_Big5. If you do not
+specify a preference, Unicode will be tried first. If the preferred
+character mapping is not found in the font, other character mappings 
+are attempted.
 <p>
 For more information, see <a href="#gdImageStringFT">gdImageStringFT</a>.
 <DT><A NAME="gdImageStringTTF">
@@ -3183,25 +3531,25 @@ gdImageColorsTotal is a macro which returns the number of
 colors currently allocated in a palette image. For truecolor
 images, the result of this call is undefined and should not
 be used.
-<DT><A NAME="gdImageColorRed">
-int gdImageColorRed(gdImagePtr im, int c)</A>
+<DT><A NAME="gdImageRed">
+int gdImageRed(gdImagePtr im, int c)</A>
 <STRONG>(MACRO)</STRONG>
 <DD>
-gdImageColorRed is a macro which returns the red portion
+gdImageRed is a macro which returns the red portion
 of the specified color in the image. This macro works
 for both palette and truecolor images.
-<DT><A NAME="gdImageColorGreen">
-int gdImageColorGreen(gdImagePtr im, int c)</A>
+<DT><A NAME="gdImageGreen">
+int gdImageGreen(gdImagePtr im, int c)</A>
 <STRONG>(MACRO)</STRONG>
 <DD>
-gdImageColorGreen is a macro which returns the green portion
+gdImageGreen is a macro which returns the green portion
 of the specified color in the image.  This macro works
 for both palette and truecolor images.
-<DT><A NAME="gdImageColorBlue">
-int gdImageColorBlue(gdImagePtr im, int c)</A>
+<DT><A NAME="gdImageBlue">
+int gdImageBlue(gdImagePtr im, int c)</A>
 <STRONG>(MACRO)</STRONG>
 <DD>
-gdImageColorBlue is a macro which returns the blue portion
+gdImageBlue is a macro which returns the blue portion
 of the specified color in the image.  This macro works
 for both palette and truecolor images.
 <DT><A NAME="gdImageGetInterlaced">
@@ -3688,6 +4036,17 @@ originally allocated the block.
 </DL>
 <H3><A NAME="constants">Constants</A></H3>
 <DL>
+<DT><A NAME="gdAntiAliased">gdAntiAliased</A> <strong>(CONSTANT)</strong>
+<DD>
+Used in place of a color when invoking a line-drawing
+function such as <A HREF="#gdImageLine">gdImageLine</A>
+or <A HREF="#gdImageRectangle">gdImageRectangle</A>.
+When gdAntiAliased is used as the color, the foreground color
+set with <a href="#gdImageSetAntiAliased">gdImageSetAntiAliased</a>
+is used, with antialiasing mechanisms to minimize any
+"jagged" appearance. 
+For more information, see
+<a href="#gdImageSetAntiAliased">gdImageSetAntiAliased</a>.
 <DT><A NAME="gdBrushed">gdBrushed</A> <strong>(CONSTANT)</strong>
 <DD>
 Used in place of a color when invoking a line-drawing
@@ -3702,9 +4061,10 @@ of a wide paintbrush). See also
 to draw broken lines with a series of distinct copies of an image.
 <DT><A NAME="gdMaxColors"><code>gdMaxColors</code><strong>(CONSTANT)</strong>
 <DD>
-The constant 256. This is the maximum number of colors in a PNG file
-according to the PNG standard, and is also the maximum number of
-colors in a gd image.
+The constant 256. This is the maximum number of colors in a palette-based
+PNG file according to the PNG standard, and is also the maximum number of
+colors in a palette-based gd image. This of course does not apply to
+truecolor images.
 <DT><A NAME="gdStyled">gdStyled</A> <strong>(CONSTANT)</strong>
 <DD>
 Used in place of a color when invoking a line-drawing
@@ -3881,6 +4241,7 @@ and/or confusion, be sure to specifically mention that you wish to
 purchase gd support at the hourly rate above.
 
 <H3><A NAME="index">Alphabetical quick index</A></H3>
+<A HREF="#gdAntiAliased">gdAntiAliased</A> |
 <A HREF="#gdBrushed">gdBrushed</A> |
 <A HREF="#gdDashSize">gdDashSize</A> |
 <A HREF="#gdFont">gdFont</A> |
@@ -3915,9 +4276,13 @@ purchase gd support at the hourly rate above.
 <A HREF="#gdImageCreate">gdImageCreateTrueColor</A> |
 <A HREF="#gdImageCreateFromGd">gdImageCreateFromGd</A> |
 <A HREF="#gdImageCreateFromGd2">gdImageCreateFromGd2</A> |
+<A HREF="#gdImageCreateFromGd2Ctx">gdImageCreateFromGd2Ctx</A> |
 <A HREF="#gdImageCreateFromGd2Part">gdImageCreateFromGd2Part</A> |
+<A HREF="#gdImageCreateFromGd2PartCtx">gdImageCreateFromGd2PartCtx</A> |
 <A HREF="#gdImageCreateFromJpeg">gdImageCreateFromJpeg</A> |
+<A HREF="#gdImageCreateFromJpegCtx">gdImageCreateFromJpegCtx</A> |
 <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A> |
+<A HREF="#gdImageCreateFromPngCtx">gdImageCreateFromPngCtx</A> |
 <A HREF="#gdImageCreateFromPngSource">gdImageCreateFromPngSource</A> |
 <A HREF="#gdImageCreateFromXbm">gdImageCreateFromXbm</A> |
 <A HREF="#gdImageCreateFromXpm">gdImageCreateFromXpm</A> |
@@ -3936,20 +4301,30 @@ purchase gd support at the hourly rate above.
 <A HREF="#gdImageGreen">gdImageGreen</A> |
 <A HREF="#gdImageInterlace">gdImageInterlace</A> |
 <A HREF="#gdImageJpeg">gdImageJpeg</A> |
+<A HREF="#gdImageJpegCtx">gdImageJpegCtx</A> |
 <A HREF="#gdImageLine">gdImageLine</A> |
 <A HREF="#gdImageFilledPolygon">gdImageFilledPolygon</A> |
 <A HREF="#gdImagePaletteCopy">gdImagePaletteCopy</A> |
 <A HREF="#gdImagePng">gdImagePng</A> |
+<A HREF="#gdImagePngEx">gdImagePngEx</A> |
+<A HREF="#gdImagePngCtx">gdImagePngCtx</A> |
+<A HREF="#gdImagePngCtxEx">gdImagePngCtxEx</A> |
+<A HREF="#gdImagePngPtr">gdImagePngPtr</A> |
+<A HREF="#gdImagePngPtrEx">gdImagePngPtrEx</A> |
 <A HREF="#gdImagePngToSink">gdImagePngToSink</A> |
 <A HREF="#gdImagePolygon">gdImagePolygon</A> |
 <A HREF="#gdImagePtr">gdImagePtr</A> |
 <A HREF="#gdImageWBMP">gdImageWBMP</A> |
+<A HREF="#gdImageWBMPCtx">gdImageWBMPCtx</A> |
 <A HREF="#gdImageRectangle">gdImageRectangle</A> |
 <A HREF="#gdImageRed">gdImageRed</A> |
 <A HREF="#gdImageSaveAlpha">gdImageSaveAlpha</A> |
+<A HREF="#gdImageSetAntiAliased">gdImageSetAntiAliased</A> |
+<A HREF="#gdImageSetAntiAliasedDontBlend">gdImageSetAntiAliasedDontBlend</A> |
 <A HREF="#gdImageSetBrush">gdImageSetBrush</A> |
 <A HREF="#gdImageSetPixel">gdImageSetPixel</A> |
 <A HREF="#gdImageSetStyle">gdImageSetStyle</A> |
+<A HREF="#gdImageSetThickness">gdImageSetThickness</A> |
 <A HREF="#gdImageSetTile">gdImageSetTile</A> |
 <A HREF="#gdImageString">gdImageString</A> |
 <A HREF="#gdImageString16">gdImageString16</A> |

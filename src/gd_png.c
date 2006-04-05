@@ -334,7 +334,6 @@ gdImageCreateFromPngCtx (gdIOCtx * infile)
   if (!im->trueColor)
     {
       im->colorsTotal = num_palette;
-      im->transparent = transparent;
       /* load the palette and mark all entries "open" (unused) for now */
       open = im->open;
       for (i = 0; i < num_palette; ++i)
@@ -349,6 +348,9 @@ gdImageCreateFromPngCtx (gdIOCtx * infile)
 	  open[i] = 1;
 	}
     }
+  /* 2.0.12: Slaven Rezic: palette images are not the only images
+     with a simple transparent color setting */
+  im->transparent = transparent;
   im->interlace = (interlace_type == PNG_INTERLACE_ADAM7);
 
   /* can't nuke structs until done with palette */
@@ -423,10 +425,18 @@ gdImageCreateFromPngCtx (gdIOCtx * infile)
 
 
 void
+gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
+{
+  gdIOCtx *out = gdNewFileCtx (outFile);
+  gdImagePngCtxEx (im, out, level);
+  out->gd_free (out);
+}
+
+void
 gdImagePng (gdImagePtr im, FILE * outFile)
 {
   gdIOCtx *out = gdNewFileCtx (outFile);
-  gdImagePngCtx (im, out);
+  gdImagePngCtxEx (im, out, -1);
   out->gd_free (out);
 }
 
@@ -435,10 +445,27 @@ gdImagePngPtr (gdImagePtr im, int *size)
 {
   void *rv;
   gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
-  gdImagePngCtx (im, out);
+  gdImagePngCtxEx (im, out, -1);
   rv = gdDPExtractData (out, size);
   out->gd_free (out);
   return rv;
+}
+
+void *
+gdImagePngPtrEx (gdImagePtr im, int *size, int level)
+{
+  void *rv;
+  gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
+  gdImagePngCtxEx (im, out, level);
+  rv = gdDPExtractData (out, size);
+  out->gd_free (out);
+  return rv;
+}
+
+void
+gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
+{
+  return gdImagePngCtxEx (im, outfile, -1);
 }
 
 /* This routine is based in part on code from Dale Lutz (Safe Software Inc.)
@@ -446,7 +473,7 @@ gdImagePngPtr (gdImagePtr im, int *size)
  *  (http://www.cdrom.com/pub/png/pngbook.html).
  */
 void
-gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
+gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 {
   int i, j, bit_depth = 0, interlace_type;
   int width = im->sx;
@@ -503,8 +530,8 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
      fussing with such things. */
 /*  png_set_filter(png_ptr, 0, PNG_FILTER_NONE);  */
 
-  /* may want to force maximum compression, but time penalty is large */
-/*  png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);  */
+  /* 2.0.12: this is finally a parameter */
+  png_set_compression_level (png_ptr, level);
 
   /* can set this to a smaller value without compromising compression if all
    * image data is 16K or less; will save some decoder memory [min == 8] */

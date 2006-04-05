@@ -5,13 +5,13 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the vesion number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.0.11], [gd@boutell.com])
+AC_INIT([GD], [2.0.12], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=0
-GDLIB_REVISION=11
+GDLIB_REVISION=12
 GDLIBNAME=gd
 
 AC_SUBST(GDLIB_MAJOR)
@@ -67,11 +67,14 @@ AC_CHECK_HEADERS(iconv.h,
 #AC_FUNC_VPRINTF
 #AC_CHECK_FUNCS([floor memset sqrt strchr strdup strtol])
 
+dnl do we need to specify -lm explicitly?
+AC_CHECK_FUNC(sin,,[AC_CHECK_LIB(m,sin)])
+
 dnl zlib is required
 AC_CHECK_LIB(z,deflate,
-  [LIBS="-lz -lm $LIBS"
+  [LIBS="-lz $LIBS"
    AC_DEFINE(HAVE_LIBZ, 1, [ Define if you have zlib. ])],
-  [AC_MSG_WARN([zlib is required - see http://www.gzip.org/zlib/])],[-lm])
+  [AC_MSG_WARN([zlib is required - see http://www.gzip.org/zlib/])])
 
 dnl libpng is required
 AC_ARG_WITH(png,dnl
@@ -83,7 +86,8 @@ if test "$withval" != no; then
   if test -n "$LIBPNG_CONFIG"; then
     libpng_CPPFLAGS=`libpng-config --cflags`
     # should be --ldopts, but it's currently broken
-    libpng_LDFLAGS=`libpng-config --ldflags | sed 's/-l[[^ ]][[^ ]]*//g'`
+    libpng_LDFLAGS=`libpng-config --ldflags`
+    libpng_LDFLAGS=`echo " $libpng_LDFLAGS" | sed 's/ -l[[^ ]][[^ ]]*//g'`
   elif test -d "$withval"; then
     libpng_CPPFLAGS="-I$withval/include"
     libpng_LDFLAGS="-L$withval/lib"
@@ -127,11 +131,11 @@ if test "$withval" != no; then
   if test -n "$FREETYPE_CONFIG"; then
     if test -n "$FREETYPE_DIR"; then
       libft_INCLUDES="`$FREETYPE_CONFIG --cflags` -I$FREETYPE_DIR/include"
-      libft_LDFLAGS=`$FREETYPE_CONFIG --libs |sed 's/-l[[^ ]][[^ ]]*//g'`
     else
       libft_INCLUDES=`$FREETYPE_CONFIG --cflags`
-      libft_LDFLAGS=`$FREETYPE_CONFIG --libs |sed 's/-l[[^ ]][[^ ]]*//g'`
     fi
+    libft_LDFLAGS=`$FREETYPE_CONFIG --libs`
+    libft_LDFLAGS=`echo " $libft_LDFLAGS" |sed 's/ -l[[^ ]][[^ ]]*//g'`
   else
     if test -n "$FREETYPE_DIR"; then
       libft_INCLUDES="-I$FREETYPE_DIR/include/freetype2 -I$FREETYPE_DIR/include"

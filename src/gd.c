@@ -11,7 +11,8 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
-#define gdImageBoundsSafeMacro(im, x, y) (!((((y) < 0) || ((y) >= (im)->sy)) || (((x) < 0) || ((x) >= (im)->sx))))
+/* 2.0.12: this now checks the clipping rectangle */
+#define gdImageBoundsSafeMacro(im, x, y) (!((((y) < (im)->cy1) || ((y) > (im)->cy2)) || (((x) < (im)->cx1) || ((x) > (im)->cx2))))
 
 #ifdef _OSD_POSIX		/* BS2000 uses the EBCDIC char set instead of ASCII */
 #define CHARSET_EBCDIC
@@ -65,6 +66,7 @@ extern int gdSinT[];
 
 static void gdImageBrushApply (gdImagePtr im, int x, int y);
 static void gdImageTileApply (gdImagePtr im, int x, int y);
+static void gdImageAntiAliasedApply (gdImagePtr im, int x, int y);
 static int gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 
 gdImagePtr
@@ -76,6 +78,8 @@ gdImageCreate (int sx, int sy)
   memset (im, 0, sizeof (gdImage));
   /* Row-major ever since gd 1.3 */
   im->pixels = (unsigned char **) gdMalloc (sizeof (unsigned char *) * sy);
+  im->AA_opacity =
+    (unsigned char **) gdMalloc (sizeof (unsigned char *) * sy);
   im->polyInts = 0;
   im->polyAllocated = 0;
   im->brush = 0;
@@ -85,6 +89,8 @@ gdImageCreate (int sx, int sy)
     {
       /* Row-major ever since gd 1.3 */
       im->pixels[i] = (unsigned char *) gdCalloc (sx, sizeof (unsigned char));
+      im->AA_opacity[i] =
+	(unsigned char *) gdCalloc (sx, sizeof (unsigned char));
     }
   im->sx = sx;
   im->sy = sy;
@@ -92,6 +98,8 @@ gdImageCreate (int sx, int sy)
   im->transparent = (-1);
   im->interlace = 0;
   im->thick = 1;
+  im->AA = 0;
+  im->AA_polygon = 0;
   for (i = 0; (i < gdMaxColors); i++)
     {
       im->open[i] = 1;
@@ -101,6 +109,10 @@ gdImageCreate (int sx, int sy)
     };
   im->trueColor = 0;
   im->tpixels = 0;
+  im->cx1 = 0;
+  im->cy1 = 0;
+  im->cx2 = im->sx - 1;
+  im->cy2 = im->sy - 1;
   return im;
 }
 
@@ -112,6 +124,8 @@ gdImageCreateTrueColor (int sx, int sy)
   im = (gdImage *) gdMalloc (sizeof (gdImage));
   memset (im, 0, sizeof (gdImage));
   im->tpixels = (int **) gdMalloc (sizeof (int *) * sy);
+  im->AA_opacity =
+    (unsigned char **) gdMalloc (sizeof (unsigned char *) * sy);
   im->polyInts = 0;
   im->polyAllocated = 0;
   im->brush = 0;
@@ -120,6 +134,8 @@ gdImageCreateTrueColor (int sx, int sy)
   for (i = 0; (i < sy); i++)
     {
       im->tpixels[i] = (int *) gdCalloc (sx, sizeof (int));
+      im->AA_opacity[i] =
+	(unsigned char *) gdCalloc (sx, sizeof (unsigned char));
     }
   im->sx = sx;
   im->sy = sy;
@@ -134,6 +150,12 @@ gdImageCreateTrueColor (int sx, int sy)
   im->saveAlphaFlag = 0;
   im->alphaBlendingFlag = 1;
   im->thick = 1;
+  im->AA = 0;
+  im->AA_polygon = 0;
+  im->cx1 = 0;
+  im->cy1 = 0;
+  im->cx2 = im->sx - 1;
+  im->cy2 = im->sy - 1;
   return im;
 }
 
@@ -156,6 +178,14 @@ gdImageDestroy (gdImagePtr im)
 	  gdFree (im->tpixels[i]);
 	}
       gdFree (im->tpixels);
+    }
+  if (im->AA_opacity)
+    {
+      for (i = 0; (i < im->sy); i++)
+	{
+	  gdFree (im->AA_opacity[i]);
+	}
+      gdFree (im->AA_opacity);
     }
   if (im->polyInts)
     {
@@ -632,50 +662,58 @@ gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
    the second call!)  The code is simplified from that in the article,
    as we know that gd images always start at (0,0) */
 
-static int clip_1d(int *x0, int *y0, int *x1, int *y1, int maxdim) {
-  double m;      /* gradient of line */
-  if(*x0 < 0) {  /* start of line is left of window */
-    if(*x1 < 0)  /* as is the end, so the line never cuts the window */
-      return 0;
-    m = (*y1 - *y0)/(double)(*x1 - *x0);  /* calculate the slope of the line */
-    /* adjust x0 to be on the left boundary (ie to be zero), and y0 to match */
-    *y0 -= m * *x0;
-    *x0 = 0;
-    /* now, perhaps, adjust the far end of the line as well */
-    if(*x1 > maxdim) {
+static int
+clip_1d (int *x0, int *y0, int *x1, int *y1, int maxdim)
+{
+  double m;			/* gradient of line */
+  if (*x0 < 0)
+    {				/* start of line is left of window */
+      if (*x1 < 0)		/* as is the end, so the line never cuts the window */
+	return 0;
+      m = (*y1 - *y0) / (double) (*x1 - *x0);	/* calculate the slope of the line */
+      /* adjust x0 to be on the left boundary (ie to be zero), and y0 to match */
+      *y0 -= m * *x0;
+      *x0 = 0;
+      /* now, perhaps, adjust the far end of the line as well */
+      if (*x1 > maxdim)
+	{
+	  *y1 += m * (maxdim - *x1);
+	  *x1 = maxdim;
+	}
+      return 1;
+    }
+  if (*x0 > maxdim)
+    {				/* start of line is right of window -
+				   complement of above */
+      if (*x1 > maxdim)		/* as is the end, so the line misses the window */
+	return 0;
+      m = (*y1 - *y0) / (double) (*x1 - *x0);	/* calculate the slope of the line */
+      *y0 += m * (maxdim - *x0);	/* adjust so point is on the right
+					   boundary */
+      *x0 = maxdim;
+      /* now, perhaps, adjust the end of the line */
+      if (*x1 < 0)
+	{
+	  *y1 -= m * *x1;
+	  *x1 = 0;
+	}
+      return 1;
+    }
+  /* the final case - the start of the line is inside the window */
+  if (*x1 > maxdim)
+    {				/* other end is outside to the right */
+      m = (*y1 - *y0) / (double) (*x1 - *x0);	/* calculate the slope of the line */
       *y1 += m * (maxdim - *x1);
       *x1 = maxdim;
+      return 1;
     }
-    return 1;
-  }
-  if(*x0 > maxdim) {   /* start of line is right of window -
-                          complement of above */
-    if(*x1 > maxdim)   /* as is the end, so the line misses the window */
-      return 0;
-    m = (*y1 - *y0)/(double)(*x1 - *x0);  /* calculate the slope of the line */
-    *y0 += m * (maxdim - *x0);    /* adjust so point is on the right
-                                     boundary */
-    *x0 = maxdim;                  
-    /* now, perhaps, adjust the end of the line */
-    if(*x1 < 0) {
+  if (*x1 < 0)
+    {				/* other end is outside to the left */
+      m = (*y1 - *y0) / (double) (*x1 - *x0);	/* calculate the slope of the line */
       *y1 -= m * *x1;
       *x1 = 0;
+      return 1;
     }
-    return 1;
-  }
-  /* the final case - the start of the line is inside the window */
-  if(*x1 > maxdim) {  /* other end is outside to the right */
-    m = (*y1 - *y0)/(double)(*x1 - *x0);  /* calculate the slope of the line */
-    *y1 += m * (maxdim - *x1);
-    *x1 = maxdim;
-    return 1;
-  }
-  if(*x1 < 0) {      /* other end is outside to the left */
-    m = (*y1 - *y0)/(double)(*x1 - *x0);  /* calculate the slope of the line */
-    *y1 -= m * *x1;
-    *x1 = 0;
-    return 1;
-  }
   /* only get here if both points are inside the window */
   return 1;
 }
@@ -723,6 +761,9 @@ gdImageSetPixel (gdImagePtr im, int x, int y, int color)
     case gdTiled:
       gdImageTileApply (im, x, y);
       break;
+    case gdAntiAliased:
+      gdImageAntiAliasedApply (im, x, y);
+      break;
     default:
       if (gdImageBoundsSafeMacro (im, x, y))
 	{
@@ -767,21 +808,46 @@ gdImageBrushApply (gdImagePtr im, int x, int y)
   srcy = 0;
   if (im->trueColor)
     {
-      for (ly = y1; (ly < y2); ly++)
+      if (im->brush->trueColor)
 	{
-	  srcx = 0;
-	  for (lx = x1; (lx < x2); lx++)
+	  for (ly = y1; (ly < y2); ly++)
 	    {
-	      int p;
-	      p = gdImageGetTrueColorPixel (im->brush, srcx, srcy);
-	      /* 2.0.9, Thomas Winzig: apply simple full transparency */
-	      if (p != gdImageGetTransparent (im->brush))
+	      srcx = 0;
+	      for (lx = x1; (lx < x2); lx++)
 		{
-		  gdImageSetPixel (im, lx, ly, p);
+		  int p;
+		  p = gdImageGetTrueColorPixel (im->brush, srcx, srcy);
+		  /* 2.0.9, Thomas Winzig: apply simple full transparency */
+		  if (p != gdImageGetTransparent (im->brush))
+		    {
+		      gdImageSetPixel (im, lx, ly, p);
+		    }
+		  srcx++;
 		}
-	      srcx++;
+	      srcy++;
 	    }
-	  srcy++;
+	}
+      else
+	{
+	  /* 2.0.12: Brush palette, image truecolor (thanks to Thorben Kundinger
+	     for pointing out the issue) */
+	  for (ly = y1; (ly < y2); ly++)
+	    {
+	      srcx = 0;
+	      for (lx = x1; (lx < x2); lx++)
+		{
+		  int p, tc;
+		  p = gdImageGetPixel (im->brush, srcx, srcy);
+		  tc = gdImageGetTrueColorPixel (im->brush, srcx, srcy);
+		  /* 2.0.9, Thomas Winzig: apply simple full transparency */
+		  if (p != gdImageGetTransparent (im->brush))
+		    {
+		      gdImageSetPixel (im, lx, ly, tc);
+		    }
+		  srcx++;
+		}
+	      srcy++;
+	    }
 	}
     }
   else
@@ -868,6 +934,63 @@ gdImageTileApply (gdImagePtr im, int x, int y)
     }
 }
 
+static void
+gdImageAntiAliasedApply (gdImagePtr im, int px, int py)
+{
+  float p_dist, p_alpha;
+  unsigned char opacity;
+
+  /* 
+   * Find the perpendicular distance from point C (px, py) to the line 
+   * segment AB that is being drawn.  (Adapted from an algorithm from the
+   * comp.graphics.algorithms FAQ.)
+   */
+
+  int LAC_2, LBC_2;
+
+  int Ax_Cx = im->AAL_x1 - px;
+  int Ay_Cy = im->AAL_y1 - py;
+
+  int Bx_Cx = im->AAL_x2 - px;
+  int By_Cy = im->AAL_y2 - py;
+
+  /* Get the squares of the lengths of the segemnts AC and BC. */
+  LAC_2 = (Ax_Cx * Ax_Cx) + (Ay_Cy * Ay_Cy);
+  LBC_2 = (Bx_Cx * Bx_Cx) + (By_Cy * By_Cy);
+
+  if (((im->AAL_LAB_2 + LAC_2) >= LBC_2) &&
+      ((im->AAL_LAB_2 + LBC_2) >= LAC_2))
+    {
+      /* The two angles are acute.  The point lies inside the portion of the 
+       * plane spanned by the line segment. */
+      p_dist = fabs ((float) ((Ay_Cy * im->AAL_Bx_Ax) -
+			      (Ax_Cx * im->AAL_By_Ay)) / im->AAL_LAB);
+    }
+  else
+    {
+      /* The point is past an end of the line segment.  It's length from the 
+       * segment is the shorter of the lengths from the endpoints, but call
+       * the distance -1, so as not to compute the alpha nor draw the pixel.
+       */
+      p_dist = -1;
+    }
+
+  if ((p_dist >= 0) && (p_dist <= (float) (im->thick)))
+    {
+      p_alpha = pow (1.0 - (p_dist / 1.5), 2);
+
+      if (p_alpha > 0)
+	{
+	  if (p_alpha >= 1)
+	    opacity = 255;
+	  else
+	    opacity = (unsigned char) (p_alpha * 255.0);
+	  if (!(im->AA_polygon) || (im->AA_opacity[py][px] < opacity))
+	    im->AA_opacity[py][px] = opacity;
+	}
+    }
+}
+
 int
 gdImageGetPixel (gdImagePtr im, int x, int y)
 {
@@ -904,6 +1027,63 @@ gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
     }
 }
 
+void
+gdImageAABlend (gdImagePtr im)
+{
+  float p_alpha, old_alpha;
+  int color = im->AA_color, color_red, color_green, color_blue;
+  int old_color, old_red, old_green, old_blue;
+  int p_color, p_red, p_green, p_blue;
+  int px, py;
+
+  color_red = gdImageRed (im, color);
+  color_green = gdImageGreen (im, color);
+  color_blue = gdImageBlue (im, color);
+
+  /* Impose the anti-aliased drawing on the image. */
+  for (py = 0; py < im->sy; py++)
+    {
+      for (px = 0; px < im->sx; px++)
+	{
+	  if (im->AA_opacity[py][px] != 0)
+	    {
+	      old_color = gdImageGetPixel (im, px, py);
+
+	      if ((old_color != color)
+		  && ((old_color != im->AA_dont_blend)
+		      || (im->AA_opacity[py][px] == 255)))
+		{
+		  /* Only blend with different colors that aren't the 
+		   * dont_blend color. */
+		  p_alpha = (float) (im->AA_opacity[py][px]) / 255.0;
+		  old_alpha = 1.0 - p_alpha;
+
+		  if (p_alpha >= 1.0)
+		    p_color = color;
+		  else
+		    {
+		      old_red = gdImageRed (im, old_color);
+		      old_green = gdImageGreen (im, old_color);
+		      old_blue = gdImageBlue (im, old_color);
+
+		      p_red = (int) (((float) color_red * p_alpha) +
+				     ((float) old_red * old_alpha));
+		      p_green = (int) (((float) color_green * p_alpha) +
+				       ((float) old_green * old_alpha));
+		      p_blue = (int) (((float) color_blue * p_alpha) +
+				      ((float) old_blue * old_alpha));
+		      p_color =
+			gdImageColorResolve (im, p_red, p_green, p_blue);
+		    }
+		  gdImageSetPixel (im, px, py, p_color);
+		}
+	    }
+	}
+      /* Clear the AA_opacity array behind us. */
+      memset (im->AA_opacity[py], 0, im->sx);
+    }
+}
+
 /* Bresenham as presented in Foley & Van Dam */
 void
 gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
@@ -916,10 +1096,30 @@ gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
   /* 2.0.10: Nick Atty: clip to edges of drawing rectangle, return if no
      points need to be drawn */
 
-  if(clip_1d(&x1,&y1,&x2,&y2,gdImageSX(im)) == 0)
+  if (clip_1d (&x1, &y1, &x2, &y2, gdImageSX (im)) == 0)
     return;
-  if(clip_1d(&y1,&x1,&y2,&x2,gdImageSY(im)) == 0)
+  if (clip_1d (&y1, &x1, &y2, &x2, gdImageSY (im)) == 0)
     return;
+
+  /* gdAntiAliased passed as color: set anti-aliased line (AAL) global vars. */
+  if (color == gdAntiAliased)
+    {
+      im->AAL_x1 = x1;
+      im->AAL_y1 = y1;
+      im->AAL_x2 = x2;
+      im->AAL_y2 = y2;
+
+      /* Compute what we can for point-to-line distance calculation later. */
+      im->AAL_Bx_Ax = x2 - x1;
+      im->AAL_By_Ay = y2 - y1;
+      im->AAL_LAB_2 =
+	(im->AAL_Bx_Ax * im->AAL_Bx_Ax) + (im->AAL_By_Ay * im->AAL_By_Ay);
+      im->AAL_LAB = sqrt (im->AAL_LAB_2);
+
+      /* For AA, we must draw pixels outside the width of the line.  Keep in
+       * mind that this will be curtailed by cos/sin of theta later. */
+      thick += 4;
+    }
 
   dx = abs (x2 - x1);
   dy = abs (y2 - y1);
@@ -933,7 +1133,17 @@ gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 	}
       else
 	{
-	  wid = thick * cos (atan2 (dy, dx));
+	  /* 2.0.12: Michael Schwartz: divide rather than multiply;
+	     TBB: but watch out for /0! */
+	  double ac = cos (atan2 (dy, dx));
+	  if (ac != 0)
+	    {
+	      wid = thick / ac;
+	    }
+	  else
+	    {
+	      wid = 1;
+	    }
 	  if (wid == 0)
 	    {
 	      wid = 1;
@@ -1004,7 +1214,17 @@ gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
   else
     {
       /* More-or-less vertical. use wid for horizontal stroke */
-      wid = thick * sin (atan2 (dy, dx));
+      /* 2.0.12: Michael Schwartz: divide rather than multiply;
+         TBB: but watch out for /0! */
+      double as = sin (atan2 (dy, dx));
+      if (as != 0)
+	{
+	  wid = thick / as;
+	}
+      else
+	{
+	  wid = 1;
+	}
       if (wid == 0)
 	wid = 1;
 
@@ -1070,6 +1290,10 @@ gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 	    }
 	}
     }
+
+  /* If this is the only line we are drawing, go ahead and blend. */
+  if ((color == gdAntiAliased) && !(im->AA_polygon))
+    gdImageAABlend (im);
 }
 static void dashedSet (gdImagePtr im, int x, int y, int color,
 		       int *onP, int *dashStepP, int wid, int vert);
@@ -1089,7 +1313,17 @@ gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
   if (dy <= dx)
     {
       /* More-or-less horizontal. use wid for vertical stroke */
-      wid = thick * sin (atan2 (dy, dx));
+      /* 2.0.12: Michael Schwartz: divide rather than multiply;
+         TBB: but watch out for /0! */
+      double as = sin (atan2 (dy, dx));
+      if (as != 0)
+	{
+	  wid = thick / as;
+	}
+      else
+	{
+	  wid = 1;
+	}
       vert = 1;
 
       d = 2 * dy - dx;
@@ -1147,8 +1381,17 @@ gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
     }
   else
     {
-      /* More-or-less vertical. use wid for horizontal stroke */
-      wid = thick * sin (atan2 (dy, dx));
+      /* 2.0.12: Michael Schwartz: divide rather than multiply;
+         TBB: but watch out for /0! */
+      double as = sin (atan2 (dy, dx));
+      if (as != 0)
+	{
+	  wid = thick / as;
+	}
+      else
+	{
+	  wid = 1;
+	}
       vert = 0;
 
       d = 2 * dx - dy;
@@ -1242,7 +1485,7 @@ dashedSet (gdImagePtr im, int x, int y, int color,
 int
 gdImageBoundsSafe (gdImagePtr im, int x, int y)
 {
-  return gdImageBoundsSafeMacro(im, x, y);
+  return gdImageBoundsSafeMacro (im, x, y);
 }
 
 void
@@ -1411,9 +1654,6 @@ gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
   int i;
   int lx = 0, ly = 0;
   int fx = 0, fy = 0;
-  int w2, h2;
-  w2 = w / 2;
-  h2 = h / 2;
   while (e < s)
     {
       e += 360;
@@ -1421,8 +1661,8 @@ gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
   for (i = s; (i <= e); i++)
     {
       int x, y;
-      x = ((long) gdCosT[i % 360] * (long) w2 / 1024) + cx;
-      y = ((long) gdSinT[i % 360] * (long) h2 / 1024) + cy;
+      x = ((long) gdCosT[i % 360] * (long) w / (2 * 1024)) + cx;
+      y = ((long) gdSinT[i % 360] * (long) h / (2 * 1024)) + cy;
       if (i != s)
 	{
 	  if (!(style & gdChord))
@@ -1746,14 +1986,14 @@ gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
   /* Nick Atty: limit the points at the edge.  Note that this also
      nicely kills any plotting for rectangles completely outside the
      window as it makes the tests in the for loops fail */
-  if(x1 < 0)
-    x1=0;
-  if(x1 > gdImageSX(im))
-    x1=gdImageSX(im);
-  if(y1 < 0)
+  if (x1 < 0)
+    x1 = 0;
+  if (x1 > gdImageSX (im))
+    x1 = gdImageSX (im);
+  if (y1 < 0)
     y1 = 0;
-  if(y1 > gdImageSY(im))
-    y1 = gdImageSY(im);
+  if (y1 > gdImageSY (im))
+    y1 = gdImageSY (im);
 
   for (y = y1; (y <= y2); y++)
     {
@@ -1777,17 +2017,18 @@ gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
     {
       /* 2.0: much easier when the destination is truecolor. */
       /* 2.0.10: needs a transparent-index check that is still valid if
-        the source is not truecolor. Thanks to Frank Warmerdam. */
+         the source is not truecolor. Thanks to Frank Warmerdam. */
       for (y = 0; (y < h); y++)
 	{
 	  for (x = 0; (x < w); x++)
 	    {
-              int p = gdImageGetPixel(src, srcX + x, srcY + y);
-              if (p != src->transparent) {
-	        int c = gdImageGetTrueColorPixel (src, srcX + x,
-						srcY + y);
-		gdImageSetPixel (dst, dstX + x, dstY + y, c);
-              }
+	      int p = gdImageGetPixel (src, srcX + x, srcY + y);
+	      if (p != src->transparent)
+		{
+		  int c = gdImageGetTrueColorPixel (src, srcX + x,
+						    srcY + y);
+		  gdImageSetPixel (dst, dstX + x, dstY + y, c);
+		}
 	    }
 	}
       return;
@@ -1878,8 +2119,12 @@ gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 	      tox++;
 	      continue;
 	    }
-	  /* If it's the same image, mapping is trivial */
-	  if (dst == src)
+	  /* 
+	   * If it's the same image, mapping is NOT trivial since we 
+	   * merge with greyscale target, but if pct is 100, the grey 
+	   * value is not used, so it becomes trivial. pjw 2.0.12. 
+	   */
+	  if (dst == src && pct == 100)
 	    {
 	      nc = c;
 	    }
@@ -1942,11 +2187,11 @@ gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 		+ 0.58700 * dst->green[dc] + 0.11400 * dst->blue[dc];
 
 	      ncR = gdImageRed (src, c) * (pct / 100.0)
-		+ gdImageRed (dst, dc) * g * ((100 - pct) / 100.0);
+		+ g * ((100 - pct) / 100.0);
 	      ncG = gdImageGreen (src, c) * (pct / 100.0)
-		+ gdImageGreen (dst, dc) * g * ((100 - pct) / 100.0);
+		+ g * ((100 - pct) / 100.0);
 	      ncB = gdImageBlue (src, c) * (pct / 100.0)
-		+ gdImageBlue (dst, dc) * g * ((100 - pct) / 100.0);
+		+ g * ((100 - pct) / 100.0);
 
 	      /* First look for an exact match */
 	      nc = gdImageColorExact (dst, ncR, ncG, ncB);
@@ -2457,6 +2702,12 @@ gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
     {
       return;
     }
+
+  /* Let it be known that we are drawing a polygon so that the opacity
+   * mask doesn't get cleared after each line. */
+  if (c == gdAntiAliased)
+    im->AA_polygon = 1;
+
   lx = p->x;
   ly = p->y;
   gdImageLine (im, lx, ly, p[n - 1].x, p[n - 1].y, c);
@@ -2466,6 +2717,12 @@ gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
       gdImageLine (im, lx, ly, p->x, p->y, c);
       lx = p->x;
       ly = p->y;
+    }
+
+  if (c == gdAntiAliased)
+    {
+      im->AA_polygon = 0;
+      gdImageAABlend (im);
     }
 }
 
@@ -2488,10 +2745,17 @@ gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
   int x2, y2;
   int ind1, ind2;
   int ints;
+  int fill_color;
   if (!n)
     {
       return;
     }
+
+  if (c == gdAntiAliased)
+    fill_color = im->AA_color;
+  else
+    fill_color = c;
+
   if (!im->polyAllocated)
     {
       im->polyInts = (int *) gdMalloc (sizeof (int) * n);
@@ -2556,22 +2820,33 @@ gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 	    {
 	      continue;
 	    }
+
+	  /* Do the following math as float intermediately, and round to ensure
+	   * that Polygon and FilledPolygon for the same set of points have the
+	   * same footprint. */
 	  if ((y >= y1) && (y < y2))
 	    {
-	      im->polyInts[ints++] = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+	      im->polyInts[ints++] = (float) ((y - y1) * (x2 - x1)) /
+		(float) (y2 - y1) + 0.5 + x1;
 	    }
 	  else if ((y == maxy) && (y > y1) && (y <= y2))
 	    {
-	      im->polyInts[ints++] = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+	      im->polyInts[ints++] = (float) ((y - y1) * (x2 - x1)) /
+		(float) (y2 - y1) + 0.5 + x1;
 	    }
 	}
       qsort (im->polyInts, ints, sizeof (int), gdCompareInt);
 
       for (i = 0; (i < (ints)); i += 2)
 	{
-	  gdImageLine (im, im->polyInts[i], y, im->polyInts[i + 1], y, c);
+	  gdImageLine (im, im->polyInts[i], y, im->polyInts[i + 1], y,
+		       fill_color);
 	}
     }
+
+  /* If we are drawing this AA, then redraw the border with AA lines. */
+  if (c == gdAntiAliased)
+    gdImagePolygon (im, p, n, c);
 }
 
 int
@@ -2640,6 +2915,22 @@ gdImageSetTile (gdImagePtr im, gdImagePtr tile)
 }
 
 void
+gdImageSetAntiAliased (gdImagePtr im, int c)
+{
+  im->AA = 1;
+  im->AA_color = c;
+  im->AA_dont_blend = -1;
+}
+
+void
+gdImageSetAntiAliasedDontBlend (gdImagePtr im, int c, int dont_blend)
+{
+  im->AA = 1;
+  im->AA_color = c;
+  im->AA_dont_blend = dont_blend;
+}
+
+void
 gdImageInterlace (gdImagePtr im, int interlaceArg)
 {
   im->interlace = interlaceArg;
@@ -2697,8 +2988,14 @@ gdImageCompare (gdImagePtr im1, gdImagePtr im2)
     {
       for (x = 0; (x < sx); x++)
 	{
-	  p1 = im1->pixels[y][x];
-	  p2 = im2->pixels[y][x];
+	  p1 =
+	    im1->trueColor ? gdImageTrueColorPixel (im1, x,
+						    y) :
+	    gdImagePalettePixel (im1, x, y);
+	  p2 =
+	    im2->trueColor ? gdImageTrueColorPixel (im2, x,
+						    y) :
+	    gdImagePalettePixel (im2, x, y);
 	  if (gdImageRed (im1, p1) != gdImageRed (im2, p2))
 	    {
 	      cmpStatus |= GD_CMP_COLOR + GD_CMP_IMAGE;
@@ -2735,7 +3032,12 @@ gdImageCompare (gdImagePtr im1, gdImagePtr im2)
 int
 gdAlphaBlend (int dst, int src)
 {
-  return (((((gdAlphaTransparent - gdTrueColorGetAlpha (src)) *
+  /* 2.0.12: TBB: alpha in the destination should be a 
+     component of the result. Thanks to Frank Warmerdam for
+     pointing out the issue. */
+  return ((((gdTrueColorGetAlpha (src) *
+	     gdTrueColorGetAlpha (dst)) / gdAlphaMax) << 24) +
+	  ((((gdAlphaTransparent - gdTrueColorGetAlpha (src)) *
 	     gdTrueColorGetRed (src) / gdAlphaMax) +
 	    (gdTrueColorGetAlpha (src) *
 	     gdTrueColorGetRed (dst)) / gdAlphaMax) << 16) +
@@ -2760,3 +3062,46 @@ gdImageSaveAlpha (gdImagePtr im, int saveAlphaArg)
 {
   im->saveAlphaFlag = saveAlphaArg;
 }
+
+void
+gdImageSetClip (gdImagePtr im, int x1, int y1, int x2, int y2)
+{
+  if (x1 < 0) {
+    x1 = 0;
+  }
+  if (x1 >= im->sx) {
+    x1 = im->sx - 1;
+  }
+  if (x2 < 0) {
+    x2 = 0;
+  }
+  if (x2 >= im->sx) {
+    x2 = im->sx - 1;
+  }
+  if (y1 < 0) {
+    y1 = 0;
+  }
+  if (y1 >= im->sy) {
+    y1 = im->sy - 1;
+  }
+  if (y2 < 0) {
+    y2 = 0;
+  }
+  if (y2 >= im->sy) {
+    y2 = im->sy - 1;
+  }
+  im->cx1 = x1;
+  im->cy1 = y1;
+  im->cx2 = x2;
+  im->cy2 = y2;
+}
+
+void
+gdImageGetClip (gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P)
+{
+  *x1P = im->cx1;
+  *y1P = im->cy1;
+  *x2P = im->cx2;
+  *y2P = im->cy2;
+}
+

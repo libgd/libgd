@@ -143,8 +143,8 @@ _gd2GetHeader (gdIOCtxPtr in, int *sx, int *sy,
   GD2_DBG (printf ("Format: %d\n", *fmt));
 
   if ((*fmt != GD2_FMT_RAW) && (*fmt != GD2_FMT_COMPRESSED) &&
-		(*fmt != GD2_FMT_TRUECOLOR_RAW) &&
-		(*fmt != GD2_FMT_TRUECOLOR_COMPRESSED))
+      (*fmt != GD2_FMT_TRUECOLOR_RAW) &&
+      (*fmt != GD2_FMT_TRUECOLOR_COMPRESSED))
     {
       GD2_DBG (printf ("Bad data format: %d\n", *fmt));
       goto fail1;
@@ -165,7 +165,7 @@ _gd2GetHeader (gdIOCtxPtr in, int *sx, int *sy,
     };
   GD2_DBG (printf ("%d Chunks vertically\n", *ncy));
 
-  if (gd2_compressed(*fmt))
+  if (gd2_compressed (*fmt))
     {
       nc = (*ncx) * (*ncy);
       GD2_DBG (printf ("Reading %d chunk index entries\n", nc));
@@ -205,11 +205,14 @@ _gd2CreateFromFile (gdIOCtxPtr in, int *sx, int *sy,
       GD2_DBG (printf ("Bad GD2 header\n"));
       goto fail1;
     }
-  if (gd2_truecolor(*fmt)) {
-    im = gdImageCreateTrueColor (*sx, *sy);
-  } else {
-    im = gdImageCreate (*sx, *sy);
-  }
+  if (gd2_truecolor (*fmt))
+    {
+      im = gdImageCreateTrueColor (*sx, *sy);
+    }
+  else
+    {
+      im = gdImageCreate (*sx, *sy);
+    }
   if (im == NULL)
     {
       GD2_DBG (printf ("Could not create gdImage\n"));
@@ -316,7 +319,7 @@ gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
   bytesPerPixel = im->trueColor ? 4 : 1;
   nc = ncx * ncy;
 
-  if (gd2_compressed(fmt)) 
+  if (gd2_compressed (fmt))
     {
       /* Find the maximum compressed chunk size. */
       compMax = 0;
@@ -357,7 +360,7 @@ gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 		   ("Processing Chunk %d (%d, %d), y from %d to %d\n",
 		    chunkNum, cx, cy, ylo, yhi));
 
-	  if (gd2_compressed(fmt))
+	  if (gd2_compressed (fmt))
 	    {
 
 	      chunkLen = chunkMax;
@@ -365,7 +368,7 @@ gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 	      if (!_gd2ReadChunk (chunkIdx[chunkNum].offset,
 				  compBuf,
 				  chunkIdx[chunkNum].size,
-				  chunkBuf, &chunkLen, in))
+				  (char *) chunkBuf, &chunkLen, in))
 		{
 		  GD2_DBG (printf ("Error reading comproessed chunk\n"));
 		  goto fail2;
@@ -384,7 +387,7 @@ gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 		  xhi = im->sx;
 		};
 	      /*GD2_DBG(printf("y=%d: ",y)); */
-	      if (!gd2_compressed(fmt)) 
+	      if (!gd2_compressed (fmt))
 		{
 		  for (x = xlo; x < xhi; x++)
 		    {
@@ -425,7 +428,7 @@ gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 			  int r = chunkBuf[chunkPos++] << 16;
 			  int g = chunkBuf[chunkPos++] << 8;
 			  int b = chunkBuf[chunkPos++];
-                          /* 2.0.11: tpixels */
+			  /* 2.0.11: tpixels */
 			  im->tpixels[y][x] = a + r + g + b;
 			}
 		      else
@@ -480,9 +483,12 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
   int x, y, ylo, yhi, xlo, xhi;
   int dstart, dpos;
   int i;
-  int ch, vers, fmt;
+  /* 2.0.12: unsigned is correct; fixes problems with color munging.
+     Thanks to Steven Brown. */
+  unsigned int ch;
+  int vers, fmt;
   t_chunk_info *chunkIdx = NULL;
-  char *chunkBuf = NULL;
+  unsigned char *chunkBuf = NULL;
   int chunkNum;
   int chunkMax = 0;
   uLongf chunkLen;
@@ -506,11 +512,14 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
   GD2_DBG (printf ("File size is %dx%d\n", fsx, fsy));
 
   /* This is the difference - make a file based on size of chunks. */
-  if (gd2_truecolor(fmt)) {
-    im = gdImageCreateTrueColor (w, h);
-  } else {
-    im = gdImageCreate (w, h);
-  }
+  if (gd2_truecolor (fmt))
+    {
+      im = gdImageCreateTrueColor (w, h);
+    }
+  else
+    {
+      im = gdImageCreate (w, h);
+    }
   if (im == NULL)
     {
       goto fail1;
@@ -525,7 +534,7 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
   /* Process the header info */
   nc = ncx * ncy;
 
-  if (gd2_compressed(fmt)) 
+  if (gd2_compressed (fmt))
     {
       /* Find the maximum compressed chunk size. */
       compMax = 0;
@@ -608,20 +617,21 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 		   ("Processing Chunk (%d, %d), from %d to %d\n", cx, cy, ylo,
 		    yhi));
 
-	  if (!gd2_compressed(fmt)) 
+	  if (!gd2_compressed (fmt))
 	    {
 	      GD2_DBG (printf ("Using raw format data\n"));
 	      if (im->trueColor)
 		{
 		  dpos =
-		    (cy * (cs * fsx) * 4 + cx * cs * (yhi - ylo) * 4) + dstart;
+		    (cy * (cs * fsx) * 4 + cx * cs * (yhi - ylo) * 4) +
+		    dstart;
 		}
 	      else
 		{
 		  dpos = cy * (cs * fsx) + cx * cs * (yhi - ylo) + dstart;
 		}
-              /* gd 2.0.11: gdSeek returns TRUE on success, not 0.
-                 Longstanding bug. 01/16/03 */
+	      /* gd 2.0.11: gdSeek returns TRUE on success, not 0.
+	         Longstanding bug. 01/16/03 */
 	      if (!gdSeek (in, dpos))
 		{
 		  printf ("Error from seek: %d\n", errno);
@@ -657,7 +667,7 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 
 	      for (x = xlo; x < xhi; x++)
 		{
-		  if (!gd2_compressed(fmt)) 
+		  if (!gd2_compressed (fmt))
 		    {
 		      if (im->trueColor)
 			{
@@ -699,12 +709,15 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 		      && (y >= srcy) && (y < (srcy + h)) && (y < fsy)
 		      && (y >= 0))
 		    {
-                      /* 2.0.11: tpixels */
-                      if (im->trueColor) {  
-		        im->tpixels[y - srcy][x - srcx] = ch;
-                      } else {
-		        im->pixels[y - srcy][x - srcx] = ch;
-                      }   
+		      /* 2.0.11: tpixels */
+		      if (im->trueColor)
+			{
+			  im->tpixels[y - srcy][x - srcx] = ch;
+			}
+		      else
+			{
+			  im->pixels[y - srcy][x - srcx] = ch;
+			}
 		    }
 		};
 	    };
@@ -775,12 +788,13 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
   /* Force fmt to a valid value since we don't return anything. */
   /* */
   if ((fmt != GD2_FMT_RAW) && (fmt != GD2_FMT_COMPRESSED))
-  { 	
+    {
       fmt = im->trueColor ? GD2_FMT_TRUECOLOR_COMPRESSED : GD2_FMT_COMPRESSED;
-  };
-  if (im->trueColor) {
-    fmt += 2;
-  }
+    };
+  if (im->trueColor)
+    {
+      fmt += 2;
+    }
   /* */
   /* Make sure chunk size is valid. These are arbitrary values; 64 because it seems */
   /* a little silly to expect performance improvements on a 64x64 bit scale, and  */
@@ -807,7 +821,7 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
   /* Write the standard header. */
   _gd2PutHeader (im, out, cs, fmt, ncx, ncy);
 
-  if (gd2_compressed(fmt)) 
+  if (gd2_compressed (fmt))
     {
       /* */
       /* Work out size of buffer for compressed data, If CHUNKSIZE is large, */
@@ -869,15 +883,15 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 		  xhi = im->sx;
 		};
 
-	      if (gd2_compressed(fmt))
+	      if (gd2_compressed (fmt))
 		{
 		  for (x = xlo; x < xhi; x++)
 		    {
-                      /* 2.0.11: use truecolor pixel array. TBB */
+		      /* 2.0.11: use truecolor pixel array. TBB */
 		      /*GD2_DBG(printf("%d...",x)); */
 		      if (im->trueColor)
 			{
-		          int p = im->tpixels[y][x];
+			  int p = im->tpixels[y][x];
 			  chunkData[chunkLen++] = gdTrueColorGetAlpha (p);
 			  chunkData[chunkLen++] = gdTrueColorGetRed (p);
 			  chunkData[chunkLen++] = gdTrueColorGetGreen (p);
@@ -885,7 +899,7 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 			}
 		      else
 			{
-		          int p = im->pixels[y][x];
+			  int p = im->pixels[y][x];
 			  chunkData[chunkLen++] = p;
 			}
 		    };
@@ -908,7 +922,7 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 		};
 	      /*GD2_DBG(printf("y=%d done.\n",y)); */
 	    };
-	  if (gd2_compressed(fmt))
+	  if (gd2_compressed (fmt))
 	    {
 	      compLen = compMax;
 	      if (compress ((unsigned char *)
@@ -936,7 +950,7 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 	    };
 	};
     };
-  if (gd2_compressed(fmt))
+  if (gd2_compressed (fmt))
     {
       /* Save the position, write the index, restore position (paranoia). */
       GD2_DBG (printf ("Seeking %d to write index\n", idxPos));

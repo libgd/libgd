@@ -142,7 +142,7 @@ include_HEADERS = gd.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.
 
 lib_LTLIBRARIES = libgd.la
 
-libgd_la_SOURCES = gd.c gd_gd.c gd_gd2.c gd_io.c gd_io_dp.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c gdfonts.c gdfontt.c gdft.c gdhelpers.c gdhelpers.h gdkanji.c gdtables.c gdxpm.c jisx0208.h mathmake.c wbmp.c wbmp.h
+libgd_la_SOURCES = gd.c gd_gd.c gd_gd2.c gd_io.c gd_io_dp.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c gdfonts.c gdfontt.c gdft.c gdhelpers.c gdhelpers.h gdkanji.c gdtables.c gdxpm.c jisx0208.h wbmp.c wbmp.h
 
 libgd_la_LDFLAGS = -version-info 2:0:0
 
@@ -159,7 +159,7 @@ am_libgd_la_OBJECTS = gd.lo gd_gd.lo gd_gd2.lo gd_io.lo gd_io_dp.lo \
 	gd_io_file.lo gd_io_ss.lo gd_jpeg.lo gd_png.lo gd_ss.lo \
 	gd_topal.lo gd_wbmp.lo gdcache.lo gdfontg.lo gdfontl.lo \
 	gdfontmb.lo gdfonts.lo gdfontt.lo gdft.lo gdhelpers.lo \
-	gdkanji.lo gdtables.lo gdxpm.lo mathmake.lo wbmp.lo
+	gdkanji.lo gdtables.lo gdxpm.lo wbmp.lo
 libgd_la_OBJECTS = $(am_libgd_la_OBJECTS)
 bin_PROGRAMS = annotate$(EXEEXT) gdparttopng$(EXEEXT) gdtopng$(EXEEXT) \
 	gd2copypal$(EXEEXT) gd2topng$(EXEEXT) pngtogd$(EXEEXT) \
@@ -268,9 +268,9 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/gdparttopng.Po ./$(DEPDIR)/gdtables.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gdtest.Po ./$(DEPDIR)/gdtestft.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/gdtopng.Po ./$(DEPDIR)/gdxpm.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/mathmake.Plo ./$(DEPDIR)/pngtogd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pngtogd2.Po ./$(DEPDIR)/testac.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/wbmp.Plo ./$(DEPDIR)/webpng.Po
+@AMDEP_TRUE@	./$(DEPDIR)/pngtogd.Po ./$(DEPDIR)/pngtogd2.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/testac.Po ./$(DEPDIR)/wbmp.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/webpng.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
@@ -506,7 +506,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdtestft.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdtopng.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdxpm.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mathmake.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngtogd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngtogd2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testac.Po@am__quote@

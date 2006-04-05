@@ -3,6 +3,10 @@
 
 #include <stdio.h>
 
+#ifdef VMS
+#define Putchar gdPutchar
+#endif
+
 typedef struct gdIOCtx
 {
   int (*getC) (struct gdIOCtx *);
@@ -12,7 +16,7 @@ typedef struct gdIOCtx
   int (*putBuf) (struct gdIOCtx *, const void *, int);
 
   /* seek must return 1 on SUCCESS, 0 on FAILURE. Unlike fseek! */
-  int (*seek) (struct gdIOCtx *, const int); 
+  int (*seek) (struct gdIOCtx *, const int);
 
   long (*tell) (struct gdIOCtx *);
 

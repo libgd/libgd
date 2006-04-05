@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 #include "gd.h"
 #include "gdfontg.h"
 #include "gdfonts.h"
@@ -31,6 +32,7 @@ main (void)
 
   /* Points for polygon */
   gdPoint points[3];
+  int i;
 
   /* Create output image, in true color. */
   im_out = gdImageCreateTrueColor (256 + 384, 384);
@@ -74,11 +76,13 @@ main (void)
   red = gdImageColorAllocate (im_out, 255, 0, 0);
   green = gdImageColorAllocate (im_out, 0, 255, 0);
   blue = gdImageColorAllocate (im_out, 0, 0, 255);
-  /* Rectangle */
+  /* Fat Rectangle */
+  gdImageSetThickness (im_out, 4);
   gdImageLine (im_out, 16, 16, 240, 16, green);
   gdImageLine (im_out, 240, 16, 240, 240, green);
   gdImageLine (im_out, 240, 240, 16, 240, green);
   gdImageLine (im_out, 16, 240, 16, 16, green);
+  gdImageSetThickness (im_out, 1);
   /* Circle */
   gdImageArc (im_out, 128, 128, 60, 20, 0, 720, blue);
   /* Arc */
@@ -94,6 +98,13 @@ main (void)
   points[2].x = 128;
   points[2].y = 128;
   gdImageFilledPolygon (im_out, points, 3, green);
+  /* 2.0.12: Antialiased Polygon */
+  gdImageSetAntiAliased (im_out, green);
+  for (i = 0; (i < 3); i++)
+    {
+      points[i].x += 128;
+    }
+  gdImageFilledPolygon (im_out, points, 3, gdAntiAliased);
   /* Brush. A fairly wild example also involving a line style! */
   if (im_in)
     {
@@ -118,13 +129,32 @@ main (void)
       /* Draw the styled, brushed line */
       gdImageLine (im_out, 0, 255, 255, 0, gdStyledBrushed);
     }
-  /* Text */
+  /* Text (non-truetype; see gdtestft for a freetype demo) */
   gdImageString (im_out, gdFontGiant, 32, 32, (unsigned char *) "hi", red);
   gdImageStringUp (im_out, gdFontSmall, 64, 64, (unsigned char *) "hi", red);
+  /* Random antialiased lines; coordinates all over the image, 
+    but the output will respect a small clipping rectangle */
+  gdImageSetClip(im_out, 0, gdImageSY(im_out) - 100,
+    100, gdImageSY(im_out)); 
+  /* Fixed seed for reproducibility of results */
+  srand(100);
+  for (i = 0; (i < 100); i++) {
+    int x1 = rand() % gdImageSX(im_out);
+    int y1 = rand() % gdImageSY(im_out);
+    int x2 = rand() % gdImageSX(im_out);
+    int y2 = rand() % gdImageSY(im_out);
+    gdImageSetAntiAliased(im_out, white);
+    gdImageLine (im_out, x1, y1, x2, y2, gdAntiAliased);
+  }
   /* Make output image interlaced (progressive, in the case of JPEG) */
   gdImageInterlace (im_out, 1);
   out = fopen ("demoout.png", "wb");
   /* Write PNG */
+  gdImagePng (im_out, out);
+  fclose (out);
+  /* 2.0.12: also write a paletteized version */
+  out = fopen ("demooutp.png", "wb");
+  gdImageTrueColorToPalette (im_out, 0, 256);
   gdImagePng (im_out, out);
   fclose (out);
   gdImageDestroy (im_out);
