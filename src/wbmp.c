@@ -119,6 +119,14 @@ createwbmp (int width, int height, int color)
   if ((wbmp = (Wbmp *) gdMalloc (sizeof (Wbmp))) == NULL)
     return (NULL);
 
+  if (overflow2(sizeof (int), width)) {
+    gdFree(wbmp);
+    return NULL;
+  }
+  if (overflow2(sizeof (int) * width, height)) {
+    gdFree(wbmp);
+    return NULL;
+  }
   if ((wbmp->bitmap =
        (int *) gdMalloc (sizeof (int) * width * height)) == NULL)
     {
@@ -180,6 +188,12 @@ readwbmp (int (*getin) (void *in), void *in, Wbmp ** return_wbmp)
   printf ("W: %d, H: %d\n", wbmp->width, wbmp->height);
 #endif
 
+  if (overflow2(sizeof (int), wbmp->width) ||
+    overflow2(sizeof (int) * wbmp->width, wbmp->height))
+    {
+      gdFree(wbmp);
+      return (-1);
+    }
   if ((wbmp->bitmap =
        (int *) gdMalloc (sizeof (int) * wbmp->width * wbmp->height)) == NULL)
     {

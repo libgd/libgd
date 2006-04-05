@@ -33,7 +33,7 @@ main (int argc, char *argv[])
         gdImageAlphaBlending(im, TRUE);
 
 	gdImageFilledRectangle (im, 30, 30, 70, 70, green);
-	gdImageStringFT (im, NULL, black, "times", 18, 0, 50, 50, "Hello");
+	gdImageStringFT (im, NULL, black, "Times", 18, 0, 50, 50, "Hello");
 
 	gdImageSaveAlpha (im, TRUE);
 
