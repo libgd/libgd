@@ -99,8 +99,7 @@ gd_getin (void *in)
    **          considered as background and will not be written
    **  out:    the stream where to write
  */
-void
-gdImageWBMPCtx (gdImagePtr image, int fg, gdIOCtx * out)
+BGD_DECLARE(void) gdImageWBMPCtx (gdImagePtr image, int fg, gdIOCtx * out)
 {
 
   int x, y, pos;
@@ -138,8 +137,7 @@ gdImageWBMPCtx (gdImagePtr image, int fg, gdIOCtx * out)
    ** ------------------------
    ** Create a gdImage from a WBMP file input from an gdIOCtx
  */
-gdImagePtr
-gdImageCreateFromWBMPCtx (gdIOCtx * infile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx (gdIOCtx * infile)
 {
   /* FILE *wbmp_file; */
   Wbmp *wbmp;
@@ -187,8 +185,7 @@ gdImageCreateFromWBMPCtx (gdIOCtx * infile)
 /* gdImageCreateFromWBMP
    ** ---------------------
  */
-gdImagePtr
-gdImageCreateFromWBMP (FILE * inFile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP (FILE * inFile)
 {
   gdImagePtr im;
   gdIOCtx *in = gdNewFileCtx (inFile);
@@ -197,8 +194,7 @@ gdImageCreateFromWBMP (FILE * inFile)
   return (im);
 }
 
-gdImagePtr
-gdImageCreateFromWBMPPtr (int size, void *data)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr (int size, void *data)
 {
   gdImagePtr im;
   gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
@@ -210,8 +206,7 @@ gdImageCreateFromWBMPPtr (int size, void *data)
 /* gdImageWBMP
    ** -----------
  */
-void
-gdImageWBMP (gdImagePtr im, int fg, FILE * outFile)
+BGD_DECLARE(void) gdImageWBMP (gdImagePtr im, int fg, FILE * outFile)
 {
   gdIOCtx *out = gdNewFileCtx (outFile);
   gdImageWBMPCtx (im, fg, out);

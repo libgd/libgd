@@ -1316,7 +1316,11 @@ pass2_no_dither (j_decompress_ptr cinfo,
 #else
 	  r = gdTrueColorGetRed (*inptr);
 	  g = gdTrueColorGetGreen (*inptr);
-	  b = gdTrueColorGetBlue (*inptr++);
+	  /* 
+	     2.0.24: inptr must not be incremented until after
+	     transparency check, if any. Thanks to "Super Pikeman." 
+	   */
+	  b = gdTrueColorGetBlue (*inptr);
 
 	  /* If the pixel is transparent, we assign it the palette index that
 	   * will later be added at the end of the palette as the transparent
@@ -1324,8 +1328,10 @@ pass2_no_dither (j_decompress_ptr cinfo,
 	  if ((im->transparent >= 0) && (im->transparent == *inptr))
 	    {
 	      *outptr++ = im->colorsTotal;
+	      inptr++;
 	      continue;
 	    }
+	  inptr++;
 #endif
 	  c0 = r >> C0_SHIFT;
 	  c1 = g >> C1_SHIFT;
@@ -1752,8 +1758,7 @@ zeroHistogram (hist3d histogram)
 GLOBAL (void)
 jinit_2pass_quantizer (j_decompress_ptr cinfo)
 #else
-void
-gdImageTrueColorToPalette (gdImagePtr im, int dither, int colorsWanted)
+BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colorsWanted)
 #endif
 {
   my_cquantize_ptr cquantize = NULL;
