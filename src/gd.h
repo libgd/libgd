@@ -326,13 +326,6 @@ BGD_DECLARE(void) gdImageSetPixel (gdImagePtr im, int x, int y, int color);
 BGD_DECLARE(int) gdImageGetPixel (gdImagePtr im, int x, int y);
 BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 
-/* translate a fontconfig fontpattern into a fontpath. return NULL if OK, else return error string */
-BGD_DECLARE(char *) font_pattern(char **fontpath, char *fontpattern);
-
-/* translate a font file basename, or relative file name, or a list of such, into a fontpath, retun NULL if OK, else return error string */
-BGD_DECLARE(char *) font_path(char **fontpath, char *name_list);
-
-/* Now a No-Op, but kept for binary compatibility. */
 BGD_DECLARE(void) gdImageAABlend (gdImagePtr im);
 
 BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color);

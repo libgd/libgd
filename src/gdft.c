@@ -30,6 +30,47 @@
 
 static int fontConfigFlag = 0;
 
+static char *font_path(char **fontpath, char *name_list);
+/* translate a fontconfig fontpattern into a fontpath. 
+	return NULL if OK, else return error string */
+static char *font_pattern(char **fontpath, char *fontpattern);
+
+/* 2.0.30: move these up here so we can build correctly without freetype
+	but with fontconfig */
+
+/*
+ * The character (space) used to separate alternate fonts in the
+ * fontlist parameter to gdImageStringFT. 2.0.18: space was a
+ * poor choice for this.
+ */
+#define LISTSEPARATOR ";"
+
+/*
+ * DEFAULT_FONTPATH and PATHSEPARATOR are host type dependent and
+ * are normally set by configure in config.h.  These are just
+ * some last resort values that might match some Un*x system
+ * if building this version of gd separate from graphviz.
+ */
+#ifndef DEFAULT_FONTPATH
+#if defined(__APPLE__) || (defined(__MWERKS__) && defined(macintosh))
+#define DEFAULT_FONTPATH "/usr/share/fonts/truetype:/System/Library/Fonts:/Library/Fonts"
+#else
+#define DEFAULT_FONTPATH "/usr/share/fonts/truetype"
+#endif
+#endif
+#ifndef PATHSEPARATOR
+#define PATHSEPARATOR ":"
+#endif
+
+#ifndef TRUE
+#define FALSE 0
+#define TRUE !FALSE
+#endif
+
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+
+
 BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
 		  double ptsize, double angle, int x, int y, char *string)
 {
@@ -86,38 +127,6 @@ BGD_DECLARE(char *) font_pattern(char **fontpath, char *fontpattern)
  *      Line separation will be rounded up to next pixel row.
  */
 #define LINESPACE 1.05
-
-/*
- * The character (space) used to separate alternate fonts in the
- * fontlist parameter to gdImageStringFT. 2.0.18: space was a
- * poor choice for this.
- */
-#define LISTSEPARATOR ";"
-
-/*
- * DEFAULT_FONTPATH and PATHSEPARATOR are host type dependent and
- * are normally set by configure in config.h.  These are just
- * some last resort values that might match some Un*x system
- * if building this version of gd separate from graphviz.
- */
-#ifndef DEFAULT_FONTPATH
-#if defined(__APPLE__) || (defined(__MWERKS__) && defined(macintosh))
-#define DEFAULT_FONTPATH "/usr/share/fonts/truetype:/System/Library/Fonts:/Library/Fonts"
-#else
-#define DEFAULT_FONTPATH "/usr/share/fonts/truetype"
-#endif
-#endif
-#ifndef PATHSEPARATOR
-#define PATHSEPARATOR ":"
-#endif
-
-#ifndef TRUE
-#define FALSE 0
-#define TRUE !FALSE
-#endif
-
-#define MAX(a,b) ((a)>(b)?(a):(b))
-#define MIN(a,b) ((a)<(b)?(a):(b))
 
 typedef struct
 {
@@ -1508,7 +1517,7 @@ static char* find_postscript_font(FcPattern **fontpattern, char* fontname)
 }
 #endif
 
-BGD_DECLARE(char *) font_pattern(char **fontpath, char *fontpattern)
+static char * font_pattern(char **fontpath, char *fontpattern)
 {
   FcPattern* font = NULL;
   FcChar8* file;
@@ -1545,7 +1554,7 @@ BGD_DECLARE(char *) font_pattern(char **fontpath, char *fontpattern)
 #endif /* HAVE_LIBFONTCONFIG */
 
 /* Look up font using font names as file names. */
-BGD_DECLARE(char *) font_path(char **fontpath, char *name_list)
+static char * font_path(char **fontpath, char *name_list)
 {
   int font_found = 0;
   char *fontsearchpath, *fontlist;
