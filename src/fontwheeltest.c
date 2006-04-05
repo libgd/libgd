@@ -83,7 +83,9 @@ dotest (char *font, int size, double incr,
   FILE *out;
   int bg;
   int fc;
+#if 0
   int lc;
+#endif
   int xc = w / 2;
   int yc = h / 2;
 
@@ -93,7 +95,9 @@ dotest (char *font, int size, double incr,
   gdImageFilledRectangle (im, 1, 1, w - 1, h - 1, bg);
 
   fc = gdImageColorAllocate (im, 255, 192, 192);
+#if 0
   lc = gdImageColorAllocate (im, 192, 255, 255);
+#endif
 
   out = fopen (filename, "wb");
 

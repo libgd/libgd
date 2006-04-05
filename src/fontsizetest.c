@@ -1,3 +1,4 @@
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -55,7 +56,6 @@ dotest (char *font, int w, int h, char *string, const char *filename)
   FILE *out;
   int bg;
   int fc;
-  int lc;
 
   im = gdImageCreate (w, h);
   bg = gdImageColorAllocate (im, 0, 0, 0);
@@ -63,7 +63,6 @@ dotest (char *font, int w, int h, char *string, const char *filename)
   gdImageFilledRectangle (im, 1, 1, w - 1, h - 1, bg);
 
   fc = gdImageColorAllocate (im, 255, 192, 192);
-  lc = gdImageColorAllocate (im, 192, 255, 255);
 
   out = fopen (filename, "wb");
 
