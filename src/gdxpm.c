@@ -34,7 +34,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm (char *filename)
   int i, j, k, number;
   char buf[5];
   gdImagePtr im = 0;
-  char *apixel;
   int *pointer;
   int red = 0, green = 0, blue = 0;
   int *colors;
@@ -131,11 +130,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm (char *filename)
 	fprintf (stderr, "ARRRGH\n");
     }
 
-  apixel = (char *) gdMalloc (image.cpp + 1);
-  if (apixel == NULL)
-    return (0);
-  apixel[image.cpp] = '\0';
-
   pointer = (int *) image.data;
   for (i = 0; i < image.height; i++)
     {
@@ -145,7 +139,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm (char *filename)
 	  gdImageSetPixel (im, j, i, colors[k]);
 	}
     }
-  gdFree (apixel);
   gdFree (colors);
   return (im);
 }
