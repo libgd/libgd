@@ -64,11 +64,14 @@ int main(int argc, char *argv[])
 #if 0
 	im = gdImageCreate(500,500);
 #else
-	im = gdImageCreate(x,y);
+	/* gd 2.0: true color images can use freetype too */
+	im = gdImageCreateTrueColor(x,y);
 #endif
 
-	/* Background color (first allocated) */
+	/* Background color. gd 2.0: fill the image with it; truecolor
+		images have a black background otherwise. */
 	white = gdImageColorResolve(im, 255, 255, 255);
+	gdImageFilledRectangle(im, 0, 0, x, y, white);
 	black = gdImageColorResolve(im, 0, 0, 0);
 
 	/* render the string, offset origin to center string*/

@@ -110,15 +110,20 @@ int main(int argc, char **argv)
 		} else if (!strcmp(argv[i], "-l")) {
 			/* List the colors in the color table. */
 			int j;
-			/* Tabs used below. */
-			printf("Index	Red	Green	Blue\n");
-			for (j=0; (j < gdImageColorsTotal(im)); j++) {
-				/* Use access macros to learn colors. */
-				printf("%d	%d	%d	%d\n",
-					j, 
-					gdImageRed(im, j),
-					gdImageGreen(im, j),
-					gdImageBlue(im, j));
+			if (!im->trueColor) {
+				/* Tabs used below. */
+				printf("Index	Red	Green	Blue Alpha\n");
+				for (j=0; (j < gdImageColorsTotal(im)); j++) {
+					/* Use access macros to learn colors. */
+					printf("%d	%d	%d	%d	%d\n",
+						j, 
+						gdImageRed(im, j),
+						gdImageGreen(im, j),
+						gdImageBlue(im, j),
+						gdImageAlpha(im, j));
+				}
+			} else {
+				printf("Truecolor image, no palette entries to list.\n");
 			}
 			no = 0;
 		} else if (!strcmp(argv[i], "-d")) {
@@ -129,10 +134,10 @@ int main(int argc, char **argv)
 				gdImageColorsTotal(im));
 			t = gdImageGetTransparent(im);
 			if (t != (-1)) {
-				printf("Transparent index: %d\n", t);
+				printf("First 100% transparent index: %d\n", t);
 			} else {
 				/* -1 means the image is not transparent. */
-				printf("Transparent index: none\n");
+				printf("First 100% transparent index: none\n");
 			}
 			if (gdImageGetInterlaced(im)) {
 				printf("Interlaced: yes\n");	

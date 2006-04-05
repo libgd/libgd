@@ -20,15 +20,18 @@
 /* number of antialised colors for indexed bitmaps */
 #define NUMCOLORS 8
 
+char * gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontlist,
+	double ptsize, double angle, int x, int y, char *string)
+{
+	gdImageStringFT(im, brect, fg, fontlist, ptsize,
+		angle, x, y, string);
+}
+
 #ifndef HAVE_LIBFREETYPE
 char * gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
 	double ptsize, double angle, int x, int y, char *string)
 {
-#ifdef HAVE_LIBTTF
-	return gdImageStringTTF(im,brect,fg,fontlist,ptsize,angle,x,y,string);
-#else
 	return "libgd was not built with FreeType font support\n";
-#endif
 }
 #else
 
@@ -93,16 +96,16 @@ typedef struct {
 } fontkey_t;
 
 typedef struct { 
-    unsigned char       pixel;		/* key */
-    unsigned char       bgcolor;	/* key */
+    int      pixel;		/* key */
+    int      bgcolor;	/* key */
     int			fgcolor;	/* key */ /* -ve means no antialias */
     gdImagePtr          im;		/* key */
-    unsigned char       tweencolor;
+    int      tweencolor;
 } tweencolor_t;
 
 typedef struct {
-    unsigned char       pixel;		/* key */
-    unsigned char       bgcolor;	/* key */
+    int      pixel;		/* key */
+    int      bgcolor;	/* key */
     int			fgcolor;	/* key */ /* -ve means no antialias */
     gdImagePtr          im;		/* key */
 } tweencolorkey_t;  
@@ -447,10 +450,18 @@ tweenColorFetch (char **error, void *key)
 		a->tweencolor = -fg;
 	} else {
 		npixel = NUMCOLORS - pixel;
-		a->tweencolor = gdImageColorResolve(im,
-			(pixel * im->red[fg] + npixel * im->red[bg]) / NUMCOLORS,
-			(pixel * im->green[fg] + npixel * im->green[bg]) / NUMCOLORS,
-			(pixel * im->blue[fg] + npixel * im->blue[bg]) / NUMCOLORS);
+		if (im->trueColor) {
+			a->tweencolor = gdTrueColorAlpha(
+				(pixel * gdTrueColorGetRed(fg) + npixel * gdTrueColorGetRed(bg)) / NUMCOLORS,
+				(pixel * gdTrueColorGetGreen(fg) + npixel * gdTrueColorGetGreen(bg)) / NUMCOLORS,
+				(pixel * gdTrueColorGetBlue(fg) + npixel * gdTrueColorGetBlue(bg)) / NUMCOLORS,
+				gdTrueColorGetAlpha(fg));
+		} else {
+			a->tweencolor = gdImageColorResolve(im,
+				(pixel * im->red[fg] + npixel * im->red[bg]) / NUMCOLORS,
+				(pixel * im->green[fg] + npixel * im->green[bg]) / NUMCOLORS,
+				(pixel * im->blue[fg] + npixel * im->blue[bg]) / NUMCOLORS);
+		}
 	}
 	return (void *)a;
 }   
@@ -464,7 +475,8 @@ tweenColorRelease(void *element)
 /* draw_bitmap - transfers glyph bitmap to GD image */
 static char *
 gdft_draw_bitmap(gdImage *im, int fg, FT_Bitmap bitmap, int pen_x, int pen_y) {
-	char			*pixel;
+	unsigned char		*pixel;
+	int			*tpixel;
 	int			x, y, row, col, pc;
 
 	tweencolor_t		*tc_elem;
@@ -478,7 +490,7 @@ gdft_draw_bitmap(gdImage *im, int fg, FT_Bitmap bitmap, int pen_x, int pen_y) {
 			tweenColorTest, tweenColorFetch, tweenColorRelease);
 	}
 
-	/* copy to gif, mapping colors */
+	/* copy to image, mapping colors */
 	tc_key.fgcolor = fg;
 	tc_key.im = im;
 	for (row = 0; row < bitmap.rows; row++) {
@@ -511,18 +523,33 @@ gdft_draw_bitmap(gdImage *im, int fg, FT_Bitmap bitmap, int pen_x, int pen_y) {
 
 				/* clip if out of bounds */
 				if (x >= im->sx || x < 0) continue;
-
 				/* get pixel location in gd buffer */
-				pixel = &im->pixels[y][x];
+				if (im->trueColor) {
+					tpixel = &im->tpixels[y][x];
+				} else {
+					pixel = &im->pixels[y][x];
+				}
 				if (tc_key.pixel == NUMCOLORS) {
 					/* use fg color directly */
-					*pixel = fg;
+					if (im->trueColor) {
+						*tpixel = fg;
+					} else {
+						*pixel = fg;
+					}
 				} else {
 					/* find antialised color */
-					tc_key.bgcolor = *pixel;
+					if (im->trueColor) {
+						tc_key.bgcolor = *tpixel;
+					} else {
+						tc_key.bgcolor = *pixel;
+					}
 					tc_elem = (tweencolor_t *)gdCacheGet(
 						tc_cache, &tc_key);
-					*pixel = tc_elem->tweencolor;
+					if (im->trueColor) {
+						*tpixel = tc_elem->tweencolor;
+					} else {
+						*pixel = tc_elem->tweencolor;
+					}
 				}
 			}
 		}
@@ -538,11 +565,9 @@ extern int any2eucjp(char *, char *, unsigned int);
 char * gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
 		double ptsize, double angle, int x, int y, char *string)
 {
-	FT_F26Dot6	ur_x=0, ur_y=0, ll_x=0, ll_y=0;
-	FT_F26Dot6	advance_x, advance_y;
-	FT_BBox		bbox;
+	FT_BBox		bbox, glyph_bbox;
 	FT_Matrix	matrix;
-	FT_Vector	pen, delta;
+	FT_Vector	pen, delta, penf;
 	FT_Face		face;
 	FT_Glyph	image;
 	FT_GlyphSlot	slot;
@@ -557,6 +582,8 @@ char * gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
 	fontkey_t	fontkey;
 	char		*next;
 	char		*tmpstr = 0;
+	int render = (im && fg <=255 && fg >= -255);
+	FT_BitmapGlyph bm;
 
 	/***** initialize font library and font cache on first call ******/
 	static gdCache_head_t	*fontCache;
@@ -591,12 +618,12 @@ char * gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
 	matrix.xy = - matrix.yx;
 	matrix.yy = matrix.xx;
 
-	pen.x = pen.y = 0;	   /* running position of rotated string */
+	penf.x = penf.y = 0; /* running position of non-rotated string */
+	pen.x = pen.y = 0;   /* running position of rotated string */
+	bbox.xMin = bbox.xMax = bbox.yMin = bbox.yMax = 0;
 
 	use_kerning = FT_HAS_KERNING(face);
 	previous = 0;
-
-	advance_x = advance_y = 0; /* running position (26.6) of right string */
 
 #ifndef JISX0208
 	if (font->have_char_map_sjis) {
@@ -617,9 +644,9 @@ char * gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
 
 		/* carriage returns */
 		if (ch == '\r') {
-			advance_x = 0;
-			x1 = (advance_x * cos_a - advance_y * sin_a + 32) / 64;
-			y1 = (advance_x * sin_a + advance_y * cos_a + 32) / 64;
+			penf.x = 0;
+			x1 = (penf.x * cos_a - penf.y * sin_a + 32) / 64;
+			y1 = (penf.x * sin_a + penf.y * cos_a + 32) / 64;
 			pen.x = pen.y = 0;
 			previous = 0; /* clear kerning flag */
 			next++;
@@ -627,10 +654,10 @@ char * gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
 		}
 		/* newlines */
 		if (ch == '\n') {
-			advance_y -= face->size->metrics.height * LINESPACE;
-			advance_y = (advance_y-32) & -64; /* round to next pixel row */
-			x1 = (advance_x * cos_a - advance_y * sin_a + 32) / 64;
-			y1 = (advance_x * sin_a + advance_y * cos_a + 32) / 64;
+			penf.y -= face->size->metrics.height * LINESPACE;
+			penf.y = (penf.y-32) & -64; /* round to next pixel row */
+			x1 = (penf.x * cos_a - penf.y * sin_a + 32) / 64;
+			y1 = (penf.x * sin_a + penf.y * cos_a + 32) / 64;
 			pen.x = pen.y = 0;
 			previous = 0; /* clear kerning flag */
 			next++;
@@ -681,82 +708,99 @@ char * gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
 			}
 		}
 	
-		FT_Set_Transform(face, &matrix, &pen);
-	
 		/* Convert character code to glyph index */
 		glyph_index = FT_Get_Char_Index( face, ch );
 
-		/* retieve kerning distance and move pen position */
+		/* retrieve kerning distance and move pen position */
 		if ( use_kerning && previous && glyph_index ) {
 			FT_Get_Kerning( face, previous, glyph_index, 
 				ft_kerning_default, &delta );
-			pen.x += delta.x >> 6;
+			pen.x += delta.x;
 		}
 
 		/* load glyph image into the slot (erase previous one) */
-		err = FT_Load_Glyph(face, glyph_index, FT_LOAD_RENDER);
-		if (err) {
-			return "Problem loading glyph";
+		err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+		if (err) return "Problem loading glyph";
+
+		/* transform glyph image */
+		FT_Get_Glyph(slot, &image);
+		if (brect) { /* only if need brect */
+			FT_Glyph_Get_CBox(image, ft_glyph_bbox_gridfit, &glyph_bbox);
+			if (!i) { /* if first character, init BB corner values */
+				bbox.xMin = bbox.yMin = (1 << 30) - 1;
+				bbox.xMax = bbox.yMax = -bbox.xMin;
+			}
+			glyph_bbox.xMin += penf.x; glyph_bbox.yMin += penf.y;
+			glyph_bbox.xMax += penf.x; glyph_bbox.yMax += penf.y;
+			if (bbox.xMin > glyph_bbox.xMin) bbox.xMin = glyph_bbox.xMin;
+			if (bbox.yMin > glyph_bbox.yMin) bbox.yMin = glyph_bbox.yMin;
+			if (bbox.xMax < glyph_bbox.xMax) bbox.xMax = glyph_bbox.xMax;
+			if (bbox.yMax < glyph_bbox.yMax) bbox.yMax = glyph_bbox.yMax;
+			i++;
 		}
 
-		/* if null *im, or invalid color,
-			 then assume user just wants brect */
-		if (im && fg <= 255 && fg >= -255) {
+		/* transform glyph image */
+		FT_Glyph_Transform(image, &matrix, 0);
 
-        		/* now, draw to our target surface */
-			gdft_draw_bitmap(im, fg, slot->bitmap,
-				x + x1 + pen.x + slot->bitmap_left,
-				y - y1 + pen.y - slot->bitmap_top);
+		if (render) {
+			if (image->format != ft_glyph_format_bitmap) {
+				err = FT_Glyph_To_Bitmap(&image, ft_render_mode_normal, 0, 1);
+				if (err) return "Problem rendering glyph";
+			}
+
+			/* now, draw to our target surface */
+			bm = (FT_BitmapGlyph)image;
+			gdft_draw_bitmap(im, fg, bm->bitmap,
+				x + x1 + ((pen.x + 31) >> 6) + bm->left,
+				y - y1 + ((pen.y + 31) >> 6) - bm->top);
 		}
-
-       		/* increment pen position */
-		pen.x += slot->advance.x >> 6;
-		pen.y -= slot->advance.y >> 6;
 
 		/* record current glyph index for kerning */
 		previous = glyph_index;
 	
-		if (brect) { /* only if need brect */
-			if (! i++) { /* if first character, init BB corner values */
-                                ll_x = slot->metrics.horiBearingX;
-                                ll_y = slot->metrics.horiBearingY - slot->metrics.height;
-                                ur_x = slot->metrics.horiBearingX + slot->metrics.width;
-                                ur_y = slot->metrics.horiBearingY;
-                        }
-                        else {
-                                if (! advance_x) ll_x = MIN(slot->metrics.horiBearingX, ll_x);
-                                ll_y = MIN(advance_y + slot->metrics.horiBearingY - slot->metrics.height, ll_y);
-                                ur_x = MAX(advance_x + slot->metrics.horiBearingX + slot->metrics.width, ur_x);
-                                if (! advance_y) ur_y = MAX(slot->metrics.horiBearingY, ur_y);
-                        }
-		}
+		/* increment pen position */
+		pen.x += image->advance.x >> 10;
+		pen.y -= image->advance.y >> 10;
 
-		advance_x += slot->metrics.horiAdvance;
+		penf.x += slot->metrics.horiAdvance;
+
+		FT_Done_Glyph(image);
 	}
 
 	if (brect) {  /* only if need brect */
+		/* For perfect rounding, must get sin(a + pi/4) and sin(a - pi/4). */
+		double d1 = sin(angle + 0.78539816339744830962);
+		double d2 = sin(angle - 0.78539816339744830962);
+
 		/* rotate bounding rectangle */
-		brect[0] = (int)(ll_x * cos_a - ll_y * sin_a);
-		brect[1] = (int)(ll_x * sin_a + ll_y * cos_a);
-		brect[2] = (int)(ur_x * cos_a - ll_y * sin_a);
-		brect[3] = (int)(ur_x * sin_a + ll_y * cos_a);
-		brect[4] = (int)(ur_x * cos_a - ur_y * sin_a);
-		brect[5] = (int)(ur_x * sin_a + ur_y * cos_a);
-		brect[6] = (int)(ll_x * cos_a - ur_y * sin_a);
-		brect[7] = (int)(ll_x * sin_a + ur_y * cos_a);
+		brect[0] = (int)(bbox.xMin * cos_a - bbox.yMin * sin_a);
+		brect[1] = (int)(bbox.xMin * sin_a + bbox.yMin * cos_a);
+		brect[2] = (int)(bbox.xMax * cos_a - bbox.yMin * sin_a);
+		brect[3] = (int)(bbox.xMax * sin_a + bbox.yMin * cos_a);
+		brect[4] = (int)(bbox.xMax * cos_a - bbox.yMax * sin_a);
+		brect[5] = (int)(bbox.xMax * sin_a + bbox.yMax * cos_a);
+		brect[6] = (int)(bbox.xMin * cos_a - bbox.yMax * sin_a);
+		brect[7] = (int)(bbox.xMin * sin_a + bbox.yMax * cos_a);
 	
 		/* scale, round and offset brect */
-		i = 0;
-		while (i<8) {
-			brect[i] = x + (brect[i] + 32) / 64;
-			i++;
-			brect[i] = y - (brect[i] + 32) / 64;
-			i++;
-		}
+		brect[0] = x + gdroundupdown(brect[0], d2 > 0);
+		brect[1] = y - gdroundupdown(brect[1], d1 < 0);
+		brect[2] = x + gdroundupdown(brect[2], d1 > 0);
+		brect[3] = y - gdroundupdown(brect[3], d2 > 0);
+		brect[4] = x + gdroundupdown(brect[4], d2 < 0);
+		brect[5] = y - gdroundupdown(brect[5], d1 > 0);
+		brect[6] = x + gdroundupdown(brect[6], d1 < 0);
+		brect[7] = y - gdroundupdown(brect[7], d2 < 0);
 	}
 
 	if ( tmpstr ) gdFree(tmpstr);
 	return (char *)NULL;
+}
+
+int gdroundupdown(FT_F26Dot6 v1, int updown) {
+	return (!updown) 
+		? (v1 < 0 ? ((v1 - 63) >> 6) : v1 >> 6) 
+		: (v1 > 0 ? ((v1 + 63) >> 6) : v1 >> 6);
 }
 
 #endif /* HAVE_LIBFREETYPE */

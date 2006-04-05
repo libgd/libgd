@@ -10,7 +10,7 @@ int main(void)
 	FILE *out;
 
 	/* Input and output images */
-	gdImagePtr im_in, im_out;
+	gdImagePtr im_in = 0, im_out = 0;
 
 	/* Brush image */
 	gdImagePtr brush;
@@ -24,9 +24,8 @@ int main(void)
 	/* Points for polygon */
 	gdPoint points[3];
 
-	/* Create output image, 128 by 128 pixels. */
-	im_out = gdImageCreate(128, 128);
-
+	/* Create output image, 256 by 256 pixels, true color. */
+	im_out = gdImageCreateTrueColor(256, 256);
 	/* First color allocated is background. */
 	white = gdImageColorAllocate(im_out, 255, 255, 255);
 
@@ -35,7 +34,6 @@ int main(void)
 
 	/* Try to load demoin.png and paste part of it into the
 		output image. */
-
 	in = fopen("demoin.png", "rb");
 	if (!in) {
 		fprintf(stderr, "Can't load source image; this demo\n");
@@ -47,34 +45,35 @@ int main(void)
 		fclose(in);
 		/* Now copy, and magnify as we do so */
 		gdImageCopyResized(im_out, im_in, 
-			16, 16, 0, 0, 96, 96, 127, 127);		
+			32, 32, 0, 0, 192, 192, 255, 255);		
 	}
 	red = gdImageColorAllocate(im_out, 255, 0, 0);
 	green = gdImageColorAllocate(im_out, 0, 255, 0);
 	blue = gdImageColorAllocate(im_out, 0, 0, 255);
 	/* Rectangle */
-	gdImageLine(im_out, 8, 8, 120, 8, green);	
-	gdImageLine(im_out, 120, 8, 120, 120, green);	
-	gdImageLine(im_out, 120, 120, 8, 120, green);	
-	gdImageLine(im_out, 8, 120, 8, 8, green);	
+	gdImageLine(im_out, 16, 16, 240, 16, green);	
+	gdImageLine(im_out, 240, 16, 240, 240, green);	
+	gdImageLine(im_out, 240, 240, 16, 240, green);	
+	gdImageLine(im_out, 16, 240, 16, 16, green);	
 	/* Circle */
-	gdImageArc(im_out, 64, 64, 30, 10, 0, 360, blue);
+	gdImageArc(im_out, 128, 128, 60, 20, 0, 720, blue);
 	/* Arc */
-	gdImageArc(im_out, 64, 64, 20, 20, 45, 135, blue);
-	/* Flood fill */
-	gdImageFill(im_out, 4, 4, blue);
+	gdImageArc(im_out, 128, 128, 40, 40, 90, 270, blue);
+	/* Flood fill: doesn't do much on a continuously
+		variable tone jpeg original. */
+	gdImageFill(im_out, 8, 8, blue);
 	/* Polygon */
-	points[0].x = 32;
+	points[0].x = 64;
 	points[0].y = 0;
 	points[1].x = 0;
-	points[1].y = 64;	
-	points[2].x = 64;
-	points[2].y = 64;	
+	points[1].y = 128;	
+	points[2].x = 128;
+	points[2].y = 128;	
 	gdImageFilledPolygon(im_out, points, 3, green);
 	/* Brush. A fairly wild example also involving a line style! */
 	if (im_in) {
 		int style[8];
-		brush = gdImageCreate(8, 8);
+		brush = gdImageCreateTrueColor(16, 16);
 		gdImageCopyResized(brush, im_in,
 			0, 0, 0, 0, 
 			gdImageSX(brush), gdImageSY(brush),
@@ -92,15 +91,14 @@ int main(void)
 		style[7] = 1;
 		gdImageSetStyle(im_out, style, 8);
 		/* Draw the styled, brushed line */
-		gdImageLine(im_out, 0, 127, 127, 0, gdStyledBrushed);
+		gdImageLine(im_out, 0, 255, 255, 0, gdStyledBrushed);
 	}
 	/* Text */
-	gdImageString(im_out, gdFontGiant, 16, 16, 
+	gdImageString(im_out, gdFontGiant, 32, 32, 
 		(unsigned char *) "hi", red);
-	gdImageStringUp(im_out, gdFontSmall, 32, 32, 
+	gdImageStringUp(im_out, gdFontSmall, 64, 64, 
 		(unsigned char *) "hi", red);
-	/* Make output image interlaced (allows "fade in" in some viewers,
-		and in the latest web browsers) */
+	/* Make output image interlaced (progressive, in the case of JPEG) */
 	gdImageInterlace(im_out, 1);
 	out = fopen("demoout.png", "wb");
 	/* Write PNG */

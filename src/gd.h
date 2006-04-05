@@ -24,7 +24,9 @@ extern "C" {
 #include <stdio.h>
 #include "gd_io.h"
 
-/* This can't be changed in the current palette-only version of gd. */
+/* The maximum number of palette entries in palette-based images.
+	In the wonderful new world of gd 2.0, you can of course have
+	many more colors when using truecolor mode. */
 
 #define gdMaxColors 256
 
@@ -33,15 +35,63 @@ extern "C" {
 	access sx, sy, the color table, and colorsTotal for 
 	read-only purposes. */
 
+/* If 'truecolor' is set true, the image is truecolor; 
+	pixels are represented by integers, which
+	must be 32 bits wide or more. 
+
+	True colors are repsented as follows:
+
+	ARGB
+
+	Where 'A' (alpha channel) occupies only the
+	LOWER 7 BITS of the MSB. This very small 
+	loss of alpha channel resolution allows gd 2.x
+	to keep backwards compatibility by allowing
+	signed integers to be used to represent colors,
+	and negative numbers to represent special cases,
+	just as in gd 1.x. */
+
+#define gdAlphaMax 127
+#define gdAlphaOpaque 0
+#define gdAlphaTransparent 127
+#define gdRedMax 255
+#define gdGreenMax 255
+#define gdBlueMax 255
+#define gdTrueColorGetAlpha(c) (((c) & 0x7F000000) >> 24)
+#define gdTrueColorGetRed(c) (((c) & 0xFF0000) >> 16)
+#define gdTrueColorGetGreen(c) (((c) & 0x00FF00) >> 8)
+#define gdTrueColorGetBlue(c) ((c) & 0x0000FF)
+
+/* This function accepts truecolor pixel values only. The 
+	source color is composited with the destination color
+	based on the alpha channel value of the source color.
+	The resulting color is opaque. */
+
+int gdAlphaBlend(int dest, int src);
+
 typedef struct gdImageStruct {
+	/* Palette-based image pixels */
 	unsigned char ** pixels;
 	int sx;
 	int sy;
+	/* These are valid in palette images only. See also
+	/* 'alpha', which appears later in the structure to
+		preserve binary backwards compatibility */
 	int colorsTotal;
 	int red[gdMaxColors];
 	int green[gdMaxColors];
 	int blue[gdMaxColors]; 
 	int open[gdMaxColors];
+	/* For backwards compatibility, this is set to the
+		first palette entry with 100% transparency,
+		and is also set and reset by the 
+		gdImageColorTransparent function. Newer
+		applications can allocate palette entries
+		with any desired level of transparency; however,
+		bear in mind that many viewers, notably
+		many web browsers, fail to implement
+		full alpha channel for PNG and provide
+		support for full opacity or transparency only. */
 	int transparent;
 	int *polyInts;
 	int polyAllocated;
@@ -53,6 +103,32 @@ typedef struct gdImageStruct {
 	int stylePos;
 	int *style;
 	int interlace;
+	/* New in 2.0: thickness of line. Initialized to 1. */
+	int thick;
+	/* New in 2.0: alpha channel for palettes. Note that only
+		Macintosh Internet Explorer and (possibly) Netscape 6
+		really support multiple levels of transparency in
+		palettes, to my knowledge, as of 2/15/01. Most
+		common browsers will display 100% opaque and
+		100% transparent correctly, and do something 
+		unpredictable and/or undesirable for levels
+		in between. TBB */
+	int alpha[gdMaxColors]; 
+	/* Truecolor flag and pixels. New 2.0 fields appear here at the
+		end to minimize breakage of existing object code. */
+	int trueColor;
+	int ** tpixels;
+	/* Should alpha channel be copied, or applied, each time a
+		pixel is drawn? This applies to truecolor images only.
+		No attempt is made to alpha-blend in palette images,
+		even if semitransparent palette entries exist. 
+		To do that, build your image as a truecolor image,
+		then quantize down to 8 bits. */
+	int alphaBlendingFlag;
+	/* Should the alpha channel of the image be saved? This affects
+		PNG at the moment; other future formats may also
+		have that capability. JPEG doesn't. */
+	int saveAlphaFlag;
 } gdImage;
 
 typedef gdImage * gdImagePtr;
@@ -92,7 +168,20 @@ typedef gdFont *gdFontPtr;
 
 /* Functions to manipulate images. */
 
+/* Creates a palette-based image (up to 256 colors). */
 gdImagePtr gdImageCreate(int sx, int sy);
+
+/* An alternate name for the above (2.0). */
+#define gdImageCreatePalette gdImageCreate
+
+/* Creates a truecolor image (millions of colors). */
+gdImagePtr gdImageCreateTrueColor(int sx, int sy);
+
+/* Creates an image from various file types. These functions
+	return a palette or truecolor image based on the
+	nature of the file being loaded. Truecolor PNG
+	stays truecolor; palette PNG stays palette-based;
+	JPEG is always truecolor. */
 gdImagePtr gdImageCreateFromPng(FILE *fd);
 gdImagePtr gdImageCreateFromPngCtx(gdIOCtxPtr in);
 gdImagePtr gdImageCreateFromWBMP(FILE *inFile);
@@ -124,9 +213,20 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtxPtr in, int srcx, int srcy, int w,
 gdImagePtr gdImageCreateFromXbm(FILE *fd);
 
 void gdImageDestroy(gdImagePtr im);
+
+/* Replaces or blends with the background depending on the
+	most recent call to gdImageAlphaBlending and the
+	alpha channel value of 'color'; default is to overwrite. 
+	Tiling and line styling are also implemented
+	here. All other gd drawing functions pass through this call, 
+	allowing for many useful effects. */
+	
 void gdImageSetPixel(gdImagePtr im, int x, int y, int color);
+
 int gdImageGetPixel(gdImagePtr im, int x, int y);
+
 void gdImageLine(gdImagePtr im, int x1, int y1, int x2, int y2, int color);
+
 /* For backwards compatibility only. Use gdImageSetStyle()
 	for much more flexible line drawing. */
 void gdImageDashedLine(gdImagePtr im, int x1, int y1, int x2, int y2, int color);
@@ -143,11 +243,11 @@ void gdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s,
 void gdImageString16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
 void gdImageStringUp16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
 
-/* FreeType 1.x text output (DEPRECATED) */
+/* Calls gdImageStringFT. Provided for backwards compatibility only. */
 char *gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontlist,
                 double ptsize, double angle, int x, int y, char *string);
 
-/* FreeType 2 text output (NIFTY) */
+/* FreeType 2 text output */
 char *gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
                 double ptsize, double angle, int x, int y, char *string);
 
@@ -159,12 +259,74 @@ typedef struct {
 void gdImagePolygon(gdImagePtr im, gdPointPtr p, int n, int c);
 void gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c);
 
+/* These functions still work with truecolor images, 
+	for which they never return error. */
 int gdImageColorAllocate(gdImagePtr im, int r, int g, int b);
+/* gd 2.0: palette entries with non-opaque transparency are permitted. */
+int gdImageColorAllocateAlpha(gdImagePtr im, int r, int g, int b, int a);
+/* Assumes opaque is the preferred alpha channel value */
 int gdImageColorClosest(gdImagePtr im, int r, int g, int b);
+/* Closest match taking all four parameters into account.
+	A slightly different color with the same transparency
+	beats the exact same color with radically different
+	transparency */
+int gdImageColorClosestAlpha(gdImagePtr im, int r, int g, int b, int a);
+/* Returns exact, 100% opaque matches only */
 int gdImageColorExact(gdImagePtr im, int r, int g, int b);
+/* Returns an exact match only, including alpha */
+int gdImageColorExactAlpha(gdImagePtr im, int r, int g, int b, int a);
+/* Opaque only */
 int gdImageColorResolve(gdImagePtr im, int r, int g, int b);
+/* Based on gdImageColorExactAlpha and gdImageColorClosestAlpha */
+int gdImageColorResolveAlpha(gdImagePtr im, int r, int g, int b, int a);
+
+/* A simpler way to obtain an opaque truecolor value for drawing on a
+	truecolor image. Not for use with palette images! */
+
+#define gdTrueColor(r, g, b) (((r) << 16) + \
+	((g) << 8) + \
+	(b))
+
+/* Returns a truecolor value with an alpha channel component.
+	gdAlphaMax (127, **NOT 255**) is transparent, 0 is completely
+	opaque. */
+
+#define gdTrueColorAlpha(r, g, b, a) (((a) << 24) + \
+	((r) << 16) + \
+	((g) << 8) + \
+	(b))
+
 void gdImageColorDeallocate(gdImagePtr im, int color);
+
+/* Converts a truecolor image to a palette-based image,
+	using a high-quality two-pass quantization routine
+	which attempts to preserve alpha channel information
+	as well as R/G/B color information when creating
+	a palette. If ditherFlag is set, the image will be
+	dithered to approximate colors better, at the expense
+	of some obvious "speckling." colorsWanted can be
+	anything up to 256. If the original source image
+	includes photographic information or anything that
+	came out of a JPEG, 256 is strongly recommended.
+
+	Better yet, don't use this function -- write real
+	truecolor PNGs and JPEGs. The disk space gain of
+        conversion to palette is not great (for small images
+        it can be negative) and the quality loss is ugly. */
+
+void gdImageTrueColorToPalette(gdImagePtr im, int ditherFlag, int colorsWanted);
+
+/* Specifies a color index (if a palette image) or an
+	RGB color (if a truecolor image) which should be
+	considered 100% transparent. FOR TRUECOLOR IMAGES,
+	THIS IS IGNORED IF AN ALPHA CHANNEL IS BEING
+	SAVED. Use gdImageSaveAlpha(im, 0); to
+	turn off the saving of a full alpha channel in
+	a truecolor image. Note that gdImageColorTransparent
+	is usually compatible with older browsers that
+	do not understand full alpha channels well. TBB */
 void gdImageColorTransparent(gdImagePtr im, int color);
+
 void gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src);
 void gdImagePng(gdImagePtr im, FILE *out);
 void gdImagePngCtx(gdImagePtr im, gdIOCtx *out);
@@ -209,7 +371,14 @@ void* gdImageGdPtr(gdImagePtr im, int *size);
 /* Best to free this memory with gdFree(), not free() */
 void* gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
 
+void gdImageEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
 void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color);
+
+#define gdPie   0
+#define gdChord 1
+
+void gdImageFilledEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color, int style);
+void gdImageFilledArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color, int style);
 void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color);
 void gdImageFill(gdImagePtr im, int x, int y, int color);
 void gdImageCopy(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int w, int h);
@@ -218,24 +387,61 @@ void gdImageCopyMerge(gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 void gdImageCopyMergeGray(gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
                         int srcX, int srcY, int w, int h, int pct);
 
-/* Stretches or shrinks to fit, as needed */
+/* Stretches or shrinks to fit, as needed. Does NOT attempt
+	to average the entire set of source pixels that scale down onto the
+	destination pixel. */
 void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH);
+
+/* gd 2.0: stretches or shrinks to fit, as needed. When called with a
+	truecolor destination image, this function averages the
+	entire set of source pixels that scale down onto the
+	destination pixel, taking into account what portion of the
+	destination pixel each source pixel represents. This is a
+	floating point operation, but this is not a performance issue
+	on modern hardware, except for some embedded devices. If the 
+	destination is a palette image, gdImageCopyResized is 
+	substituted automatically. */
+void gdImageCopyResampled(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH);
+
 void gdImageSetBrush(gdImagePtr im, gdImagePtr brush);
 void gdImageSetTile(gdImagePtr im, gdImagePtr tile);
 void gdImageSetStyle(gdImagePtr im, int *style, int noOfPixels);
-/* On or off (1 or 0) */
+/* Line thickness (defaults to 1). Affects lines, ellipses, 
+	rectangles, polygons and so forth. */
+void gdImageSetThickness(gdImagePtr im, int thickness);
+/* On or off (1 or 0) for all three of these. */
 void gdImageInterlace(gdImagePtr im, int interlaceArg);
+void gdImageAlphaBlending(gdImagePtr im, int alphaBlendingArg);
+void gdImageSaveAlpha(gdImagePtr im, int saveAlphaArg);
 
-/* Macros to access information about images. READ ONLY. Changing
-	these values will NOT have the desired result. */
+/* Macros to access information about images. */
+
+/* Returns nonzero if the image is a truecolor image,
+	zero for a palette image. */
+
+#define gdImageTrueColor(im) ((im)->trueColor)
+
 #define gdImageSX(im) ((im)->sx)
 #define gdImageSY(im) ((im)->sy)
 #define gdImageColorsTotal(im) ((im)->colorsTotal)
-#define gdImageRed(im, c) ((im)->red[(c)])
-#define gdImageGreen(im, c) ((im)->green[(c)])
-#define gdImageBlue(im, c) ((im)->blue[(c)])
+#define gdImageRed(im, c) ((im)->trueColor ? gdTrueColorGetRed(c) : \
+	(im)->red[(c)])
+#define gdImageGreen(im, c) ((im)->trueColor ? gdTrueColorGetGreen(c) : \
+	(im)->green[(c)])
+#define gdImageBlue(im, c) ((im)->trueColor ? gdTrueColorGetBlue(c) : \
+	(im)->blue[(c)])
+#define gdImageAlpha(im, c) ((im)->trueColor ? gdTrueColorGetAlpha(c) : \
+	(im)->alpha[(c)])
 #define gdImageGetTransparent(im) ((im)->transparent)
 #define gdImageGetInterlaced(im) ((im)->interlace)
+
+/* These macros provide direct access to pixels in
+	palette-based and truecolor images, respectively.
+	If you use these macros, you must perform your own
+	bounds checking. Use of the macro for the correct type
+	of image is also your responsibility. */
+#define gdImagePalettePixel(im, x, y) (im)->pixels[(y)][(x)]
+#define gdImageTrueColorPixel(im, x, y) (im)->tpixels[(y)][(x)]
 
 /* I/O Support routines. */
 
@@ -248,7 +454,7 @@ void* gdDPExtractData(struct gdIOCtx* ctx, int *size);
 #define GD2_CHUNKSIZE_MIN	64
 #define GD2_CHUNKSIZE_MAX       4096
 
-#define GD2_VERS                1
+#define GD2_VERS                2
 #define GD2_ID                  "gd2"
 #define GD2_FMT_RAW             1
 #define GD2_FMT_COMPRESSED      2
@@ -264,6 +470,7 @@ int gdImageCompare(gdImagePtr im1, gdImagePtr im2);
 #define GD_CMP_TRANSPARENT	32	/* Transparent colour */
 #define GD_CMP_BACKGROUND	64	/* Background colour */
 #define GD_CMP_INTERLACE	128	/* Interlaced setting */
+#define GD_CMP_TRUECOLOR	256	/* Truecolor vs palette differs */
 
 /* resolution affects ttf font rendering, particularly hinting */
 #define GD_RESOLUTION           96      /* pixels per inch */

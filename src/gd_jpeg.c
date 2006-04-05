@@ -6,9 +6,10 @@
  * Group.  For more information on the IJG JPEG software (and JPEG
  * documentation, etc.), see ftp://ftp.uu.net/graphics/jpeg/.
  *
- * NOTE: IJG 12-bit JSAMPLE (BITS_IN_JSAMPLE == 12) mode, although
- * theoretically supported in this code, has not really been tested.
- * Caveat emptor.
+ * NOTE: IJG 12-bit JSAMPLE (BITS_IN_JSAMPLE == 12) mode is not
+ * supported at all on read in gd 2.0, and is not supported on write
+ * except for palette images, which is sort of pointless (TBB). Even that
+ * has never been tested according to DB.
  *
  * Copyright 2000 Doug Becker, mailto:thebeckers@home.com
  *
@@ -17,20 +18,22 @@
  * major CGI brain damage
  */
 
+/* TBB: move this up so include files are not brought in */
+#ifdef HAVE_LIBJPEG
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
 #include <limits.h>
 #include <string.h>
+
 /* 1.8.1: remove dependency on jinclude.h */
 #include "jpeglib.h"
 #include "jerror.h"
 #include "gd.h"
 #include "gdhelpers.h"
 
-#ifdef HAVE_LIBJPEG
-
-static const char * const GD_JPEG_VERSION = "2.0";
+static const char * const GD_JPEG_VERSION = "1.0";
 
 typedef struct _jmpbuf_wrapper {
     jmp_buf jmpbuf;
@@ -106,11 +109,12 @@ gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
     printf("gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
     printf("gd-jpeg: JPEG library version %d, %d-bit sample values\n",
 	   JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
-
-    for (i = 0; i < im->colorsTotal; i++) {
-	if (!im->open[i])
-	    printf("gd-jpeg: gd colormap index %d: (%d, %d, %d)\n", i,
-		   im->red[i], im->green[i], im->blue[i]);
+    if (!im->trueColor) {
+	    for (i = 0; i < im->colorsTotal; i++) {
+		if (!im->open[i])
+		    printf("gd-jpeg: gd colormap index %d: (%d, %d, %d)\n", i,
+			   im->red[i], im->green[i], im->blue[i]);
+	    }
     }
 #endif /* JPEG_DEBUG */
 
@@ -171,36 +175,60 @@ gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	strcat(comment + strlen(comment), " default quality\n");
     jpeg_write_marker(&cinfo, JPEG_COM, (unsigned char *)comment,
 		      (unsigned int)strlen(comment));
+    if (im->trueColor) {
+#if BITS_IN_JSAMPLE == 12
+            fprintf(stderr, "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
+		"precision. This is mostly useless, because JPEGs on the web are\n"
+		"8-bit and such versions of the jpeg library won't read or write\n"
+		"them. GD doesn't support these unusual images. Edit your\n"
+		"jmorecfg.h file to specify the correct precision and completely\n"
+		"'make clean' and 'make install' libjpeg again. Sorry.\n");
+	    goto error;
+#endif /* BITS_IN_JSAMPLE == 12 */	
+	    for (i = 0; i < im->sy; i++) {
+		for (jidx = 0, j = 0; j < im->sx; j++) {
+		    int val = im->tpixels[i][j];
+	            row[jidx++] = gdTrueColorGetRed(val);
+	            row[jidx++] = gdTrueColorGetGreen(val);
+	            row[jidx++] = gdTrueColorGetBlue(val);
+		}
 
-    for (i = 0; i < im->sy; i++) {
-	for (jidx = 0, j = 0; j < im->sx; j++) {
-	    int idx = im->pixels[i][j];
+		nlines = jpeg_write_scanlines(&cinfo, rowptr, 1);
+		if (nlines != 1)
+		    fprintf(stderr, "gd_jpeg: warning: jpeg_write_scanlines"
+			    " returns %u -- expected 1\n", nlines);
+	    }    
+	} else {
+	    for (i = 0; i < im->sy; i++) {
+		for (jidx = 0, j = 0; j < im->sx; j++) {
+		    int idx = im->pixels[i][j];
 
-	    /*
-	     * NB: Although gd RGB values are ints, their max value is
-	     * 255 (see the documentation for gdImageColorAllocate())
-	     * -- perfect for 8-bit JPEG encoding (which is the norm)
-	     */
-#if BITS_IN_JSAMPLE == 8
-	    row[jidx++] = im->red[idx];
-	    row[jidx++] = im->green[idx];
-	    row[jidx++] = im->blue[idx];
-#elif BITS_IN_JSAMPLE == 12
-	    row[jidx++] = im->red[idx] << 4;
-	    row[jidx++] = im->green[idx] << 4;
-	    row[jidx++] = im->blue[idx] << 4;
-#else
-#error IJG JPEG library BITS_IN_JSAMPLE value must be 8 or 12
-#endif
-	}
+		    /*
+		     * NB: Although gd RGB values are ints, their max value is
+		     * 255 (see the documentation for gdImageColorAllocate())
+		     * -- perfect for 8-bit JPEG encoding (which is the norm)
+		     */
+	#if BITS_IN_JSAMPLE == 8
+		    row[jidx++] = im->red[idx];
+		    row[jidx++] = im->green[idx];
+		    row[jidx++] = im->blue[idx];
+	#elif BITS_IN_JSAMPLE == 12
+		    row[jidx++] = im->red[idx] << 4;
+		    row[jidx++] = im->green[idx] << 4;
+		    row[jidx++] = im->blue[idx] << 4;
+	#else
+	#error IJG JPEG library BITS_IN_JSAMPLE value must be 8 or 12
+	#endif
+		}
 
-	nlines = jpeg_write_scanlines(&cinfo, rowptr, 1);
-	if (nlines != 1)
-	    fprintf(stderr, "gd_jpeg: warning: jpeg_write_scanlines"
-		    " returns %u -- expected 1\n", nlines);
+		nlines = jpeg_write_scanlines(&cinfo, rowptr, 1);
+		if (nlines != 1)
+		    fprintf(stderr, "gd_jpeg: warning: jpeg_write_scanlines"
+			    " returns %u -- expected 1\n", nlines);
+	    }
     }
-
     jpeg_finish_compress(&cinfo);
+error:
     jpeg_destroy_compress(&cinfo);
     gdFree(row);
 }
@@ -277,21 +305,19 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
 		" greater than INT_MAX (%d) (and thus greater than"
 		" gd can handle)\n", cinfo.image_width, INT_MAX);
 
-    im = gdImageCreate((int)cinfo.image_width,
+    im = gdImageCreateTrueColor((int)cinfo.image_width,
 		       (int)cinfo.image_height);
     if (im == 0) {
         fprintf(stderr, "gd-jpeg error: cannot allocate gdImage"
 		" struct\n");
-	goto error;
+        goto error;
     }
 
     /*
-     * Have the JPEG library quantize the number of image colors to
-     * 256 maximum; force into RGB colorspace
+     * Force the image into RGB colorspace, but don't 
+     * reduce the number of colors anymore (GD 2.0) 
      */
     cinfo.out_color_space = JCS_RGB;
-    cinfo.quantize_colors = TRUE;
-    cinfo.desired_number_of_colors = gdMaxColors;
 
     if (jpeg_start_decompress(&cinfo) != TRUE)
 	fprintf(stderr, "gd-jpeg: warning: jpeg_start_decompress"
@@ -345,36 +371,35 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
     fflush(stdout);
 #endif /* JPEG_DEBUG */
 
+       /* REMOVED by TBB 2/12/01. This field of the structure is
+          documented as private, and sure enough it's gone in the
+          latest libjpeg, replaced by something else. Unfortunately
+          there is still no right way to find out if the file was
+          progressive or not; just declare your intent before you
+          write one by calling gdImageInterlace(im, 1) yourself. 
+          After all, we're not really supposed to rework JPEGs and
+          write them out again anyway. Lossy compression, remember? */
+#if 0
     gdImageInterlace(im, cinfo.progressive_mode != 0);
-
-    im->colorsTotal = cinfo.actual_number_of_colors;
-    if (cinfo.output_components != 1) {
+#endif
+    if (cinfo.output_components != 3) {
 	fprintf(stderr, "gd-jpeg: error: JPEG color quantization"
 		" request resulted in output_components == %d"
-		" (expected 1)\n",  cinfo.output_components);
+		" (expected 3)\n",  cinfo.output_components);
 	goto error;
     }
 
-    for (i = 0; i < im->colorsTotal; i++) {
-#if BITS_IN_JSAMPLE == 8
-	im->red[i] = cinfo.colormap[0][i];
-	im->green[i] = cinfo.colormap[1][i];
-	im->blue[i] = cinfo.colormap[2][i];
-#elif BITS_IN_JSAMPLE == 12
-	im->red[i] = (cinfo.colormap[0][i] >> 4) & 0xff;
-	im->green[i] = (cinfo.colormap[1][i] >> 4) & 0xff;
-	im->blue[i] = (cinfo.colormap[2][i] >> 4) & 0xff;
-#else
-#error IJG JPEG library BITS_IN_JSAMPLE value must be 8 or 12
-#endif
-	im->open[i] = 0;
-#ifdef JPEG_DEBUG
-	printf("gd-jpeg: gd colormap index %d set to (%d, %d, %d)\n", i,
-	       im->red[i], im->green[i], im->blue[i]);
-#endif
-    }
+#if BITS_IN_JSAMPLE == 12
+    fprintf(stderr, "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
+	"precision. This is mostly useless, because JPEGs on the web are\n"
+	"8-bit and such versions of the jpeg library won't read or write\n"
+	"them. GD doesn't support these unusual images. Edit your\n"
+	"jmorecfg.h file to specify the correct precision and completely\n"
+	"'make clean' and 'make install' libjpeg again. Sorry.\n");
+    goto error;
+#endif /* BITS_IN_JSAMPLE == 12 */
 
-    row = gdCalloc(cinfo.output_width, sizeof(JSAMPLE));
+    row = gdCalloc(cinfo.output_width * 3, sizeof(JSAMPLE));
     if (row == 0) {
 	fprintf(stderr, "gd-jpeg: error: unable to allocate row for"
 		" JPEG scanline: gdCalloc returns NULL\n");
@@ -391,7 +416,8 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	}
 
 	for (j = 0; j < cinfo.output_width; j++)
-	    im->pixels[i][j] = row[j];
+	    im->tpixels[i][j] = gdTrueColor(row[j * 3], row[j * 3 + 1],
+		row[j * 3 + 2]);
     }
 
     if (jpeg_finish_decompress(&cinfo) != TRUE)

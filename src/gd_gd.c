@@ -19,20 +19,34 @@ extern void gdImageGd(gdImagePtr im, FILE *out);
 /* */
 /* Shared code to read color tables from gd file. */
 /* */
-int _gdGetColors(gdIOCtx *in, gdImagePtr im)
+int _gdGetColors(gdIOCtx *in, gdImagePtr im, int gd2xFlag)
 {
         int i;
-
-        if (!gdGetByte(&im->colorsTotal, in)) {
-                goto fail1;
-        }
-        if (!gdGetWord(&im->transparent, in)) {
-                goto fail1;
-        }
-        if (im->transparent == 257) {
-                im->transparent = (-1);
-        }
-
+	if (gd2xFlag) {	
+		if (!gdGetByte(&im->trueColor, in)) {
+			goto fail1;
+		}
+		/* This should have been a word all along */
+		if (!im->trueColor) {
+			if (!gdGetWord(&im->colorsTotal, in)) {
+				goto fail1;
+			}
+		}
+		/* Int to accommodate truecolor single-color transparency */
+		if (!gdGetInt(&im->transparent, in)) {
+			goto fail1;
+		}
+	} else {
+		if (!gdGetByte(&im->colorsTotal, in)) {
+			goto fail1;
+		}
+		if (!gdGetWord(&im->transparent, in)) {
+			goto fail1;
+		}
+		if (im->transparent == 257) {
+			im->transparent = (-1);
+		}
+	}
         GD2_DBG(printf("Pallette had %d colours (T=%d)\n",im->colorsTotal, im->transparent));
 
         for (i=0; (i<gdMaxColors); i++) {
@@ -45,6 +59,11 @@ int _gdGetColors(gdIOCtx *in, gdImagePtr im)
                 if (!gdGetByte(&im->blue[i], in)) {
                         goto fail1;
                 }
+		if (gd2xFlag) {
+			if (!gdGetByte(&im->alpha[i], in)) {
+				goto fail1;
+			}
+		}
         }
 
         for (i=0; (i < im->colorsTotal); i++) {
@@ -64,10 +83,17 @@ static
 gdImagePtr _gdCreateFromFile(gdIOCtx *in, int *sx, int *sy)
 {
         gdImagePtr im;
-
+	int gd2xFlag = 0;
         if (!gdGetWord(sx, in)) {
                 goto fail1;
         }
+	if (*sx == 65535) {
+		/* This is a gd 2.0 .gd file */
+		gd2xFlag = 1;
+		if (!gdGetWord(sx, in)) {
+			goto fail1;
+		}
+	}	
         if (!gdGetWord(sy, in)) {
                 goto fail1;
         }
@@ -76,7 +102,7 @@ gdImagePtr _gdCreateFromFile(gdIOCtx *in, int *sx, int *sy)
 
         im = gdImageCreate(*sx, *sy);
 
-        if (!_gdGetColors(in, im)) {
+        if (!_gdGetColors(in, im, gd2xFlag)) {
                 goto fail2;
         }
 
@@ -139,22 +165,26 @@ void _gdPutColors(gdImagePtr im, gdIOCtx *out)
         int i;
         int trans;
 
-        gdPutC((unsigned char)im->colorsTotal, out);
-        trans = im->transparent;
-        if (trans == (-1)) {
-                trans = 257;
-        }
-        gdPutWord(trans, out);
-        for (i=0; (i<gdMaxColors); i++) {
-                gdPutC((unsigned char)im->red[i], out);
-                gdPutC((unsigned char)im->green[i], out);
-                gdPutC((unsigned char)im->blue[i], out);
-        }
+        gdPutC(im->trueColor, out);
+	if (!im->trueColor) {
+		gdPutWord(im->colorsTotal, out);
+	}
+        gdPutInt(im->transparent, out);
+	if (!im->trueColor) {
+		for (i=0; (i<gdMaxColors); i++) {
+			gdPutC((unsigned char)im->red[i], out);
+			gdPutC((unsigned char)im->green[i], out);
+			gdPutC((unsigned char)im->blue[i], out);
+			gdPutC((unsigned char)im->alpha[i], out);
+		}
+	}
 }
 
 static
 void _gdPutHeader(gdImagePtr im, gdIOCtx *out)
 {
+	/* 65535 indicates this is a gd 2.x .gd file. */
+        gdPutWord(65535, out);
         gdPutWord(im->sx, out);
         gdPutWord(im->sy, out);
 
@@ -171,7 +201,11 @@ static void _gdImageGd(gdImagePtr im, gdIOCtx *out)
 	for (y=0; (y < im->sy); y++) {	
 		for (x=0; (x < im->sx); x++) {	
 			/* ROW-MAJOR IN GD 1.3 */
-			gdPutC((unsigned char)im->pixels[y][x], out);
+			if (im->trueColor) {
+				gdPutInt(im->tpixels[y][x], out);
+			} else {
+				gdPutC((unsigned char)im->pixels[y][x], out);
+			}
 		}
 	}
 }

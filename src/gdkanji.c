@@ -7,9 +7,7 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
-#ifdef HAVE_STDARG_H
 #include <stdarg.h>
-#endif
 #if defined(HAVE_ICONV_H) || defined(HAVE_ICONV)
 #include <iconv.h>
 #ifdef HAVE_ERRNO_H
@@ -56,15 +54,9 @@
 #define ESC 27
 #define SS2 142
 
-#ifdef __STDC__
 static void debug(const char *format, ...)
-#else
-static debug(format, ...)
-char *format;
-#endif
 {
 #ifdef DEBUG
-#ifdef HAVE_STDARG_H
 	va_list args;
 
 	va_start(args, format);
@@ -73,17 +65,10 @@ char *format;
 	fprintf(stdout, "\n");
 	va_end(args);
 #endif
-#endif
 }
 
-#ifdef __STDC__
 static void error(const char *format, ...)
-#else
-static error(format, ...)
-char *format;
-#endif
 {
-#ifdef HAVE_STDARG_H
 	va_list args;
 
 	va_start(args, format);
@@ -91,17 +76,11 @@ char *format;
 	vfprintf(stderr, format, args);
 	fprintf(stderr, "\n");
 	va_end(args);
-#endif
 }
 
 /* DetectKanjiCode() derived from DetectCodeType() by Ken Lunde. */
 
-#ifdef __STDC__
 static int DetectKanjiCode(unsigned char *str)
-#else
-static int DetectKanjiCode(str)
-unsigned char *str;
-#endif
 {
 	static int whatcode;
 	int c, i;
@@ -221,12 +200,7 @@ unsigned char *str;
 
 /* SJIStoJIS() is sjis2jis() by Ken Lunde. */
 
-#ifdef __STDC__
 static void SJIStoJIS(int *p1, int *p2)
-#else
-static SJIStoJIS(p1, p2)
-int *p1, *p2;
-#endif
 {
 	register unsigned char c1 = *p1;
 	register unsigned char c2 = *p2;
@@ -243,12 +217,7 @@ int *p1, *p2;
 #define IS_DAKU(c) ((c >= 182 && c <= 196) || (c >= 202 && c <= 206) || (c == 179))
 #define IS_HANDAKU(c) (c >= 202 && c <= 206)
 
-#ifdef __STDC__
 static void han2zen(int *p1, int *p2)
-#else
-static han2zen(p1, p2)
-int *p1, *p2;
-#endif
 {
 	int c = *p1;
 	int daku = FALSE;
@@ -291,13 +260,7 @@ int *p1, *p2;
 /* Recast strcpy to handle unsigned chars used below. */
 #define ustrcpy(A,B) (strcpy((char*)(A),(const char*)(B)))
 
-#ifdef __STDC__
 static void do_convert(unsigned char *to, unsigned char *from, const char *code)
-#else
-static do_convert(to, from, code)
-unsigned char *to, *from;
-char *code;
-#endif
 {
 #ifdef HAVE_ICONV
 	iconv_t cd;
@@ -399,12 +362,7 @@ char *code;
 #endif /* HAVE_ICONV */
 }
 
-#ifdef __STDC__
 static int do_check_and_conv(unsigned char *to, unsigned char *from)
-#else
-static int do_check_and_conv(to, from)
-unsigned char *to, *from;
-#endif
 {
 	static unsigned char tmp[BUFSIZ];
 	int p1, p2, i, j;
@@ -484,13 +442,7 @@ unsigned char *to, *from;
 	return kanji;
 }
 
-#ifdef __STDC__
 int any2eucjp(unsigned char *dest, unsigned char *src, unsigned int dest_max)
-#else
-int any2eucjp(dest, src, dest_max)
-unsigned char *dest, *src;
-unsigned int dest_max;
-#endif
 {
 	static unsigned char tmp_dest[BUFSIZ];
 	int ret;
@@ -514,12 +466,7 @@ unsigned int dest_max;
 }
 
 #if 0
-#ifdef __STDC__
 unsigned int strwidth(unsigned char *s)
-#else
-unsigned int strwidth(s)
-unsigned char *s;
-#endif
 {
 	unsigned char *t;
 	unsigned int i;

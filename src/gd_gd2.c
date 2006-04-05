@@ -30,9 +30,9 @@
 typedef struct {
 	int	offset;
 	int	size;
-	} t_chunk_info;
+} t_chunk_info;
 
-extern int _gdGetColors(gdIOCtx *in, gdImagePtr im);
+extern int _gdGetColors(gdIOCtx *in, gdImagePtr im, int gd2xFlag);
 extern void _gdPutColors(gdImagePtr im, gdIOCtx *out);
 
 /* */
@@ -74,11 +74,11 @@ int _gd2GetHeader(gdIOCtxPtr in, int *sx, int *sy,
         };
 	GD2_DBG(printf("Version: %d\n", *vers));
 
-	if (*vers != 1) {
+	if ((*vers != 1) && (*vers != 2)) {
 		GD2_DBG(printf("Bad version: %d\n", *vers));
 		goto fail1;
 	};
-
+	
 	/* Image Size */
         if (!gdGetWord(sx, in)) {
 		GD2_DBG(printf("Could not get x-size\n"));
@@ -90,7 +90,7 @@ int _gd2GetHeader(gdIOCtxPtr in, int *sx, int *sy,
 	}
 	GD2_DBG(printf("Image is %dx%d\n", *sx, *sy));
 
-        /* Chunk Size */
+        /* Chunk Size (pixels, not bytes!) */
         if (gdGetWord(cs, in) != 1) {
                 goto fail1;
         };
@@ -167,7 +167,7 @@ gdImagePtr _gd2CreateFromFile(gdIOCtxPtr in, int *sx, int *sy,
 		goto fail1;
 	};
 
-	if (!_gdGetColors(in, im)) {
+	if (!_gdGetColors(in, im, (*vers) == 2)) {
 		GD2_DBG(printf("Could not read color palette\n"));
 		goto fail2;
 	}
@@ -238,6 +238,7 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
 	uLongf 	chunkLen;
 	int	chunkPos;
 	int 	compMax;
+	int bytesPerPixel;
 	char	*compBuf = NULL; /* So we can gdFree it with impunity. */
 
         gdImagePtr im;
@@ -248,7 +249,7 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
         if (im == NULL) {
                 return 0;
         };
-
+	bytesPerPixel = im->trueColor ? 4 : 1;
 	nc = ncx * ncy;
 
 	if (fmt == GD2_FMT_COMPRESSED) {
@@ -262,7 +263,7 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
 		compMax++;
 
 		/* Allocate buffers */
-		chunkMax = cs * cs;
+		chunkMax = cs * bytesPerPixel * cs;
 		chunkBuf = gdCalloc(chunkMax,1);
 		compBuf = gdCalloc(compMax,1);
 		GD2_DBG(printf("Largest compressed chunk is %d bytes\n",compMax));
@@ -311,19 +312,35 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
 				if (fmt == GD2_FMT_RAW) {
                                 	for (x= xlo ; x < xhi; x++) {
 
-						ch = gdGetC(in);
-						if (ch == EOF) {
-							ch = 0;
-							/*printf("EOF while reading\n"); */
-							/*gdImageDestroy(im); */
-							/*return 0; */
+						if (im->trueColor) {
+								if (!gdGetInt(&im->tpixels[y][x], in)) {
+									/*printf("EOF while reading\n"); */
+									/*gdImageDestroy(im); */
+									/*return 0; */
+									im->tpixels[y][x] = 0;
+								}
+						} else {
+								int ch;
+								if (!gdGetByte(&ch, in)) {
+									/*printf("EOF while reading\n"); */
+									/*gdImageDestroy(im); */
+									/*return 0; */
+									ch = 0;
+								}
+								im->pixels[y][x] = ch;
 						}
-						/*GD2_DBG(printf(" (%d, %d)", x, y)); */
-						im->pixels[y][x] = ch;
 					}
 				} else {
 					for (x= xlo ; x < xhi; x++) {
-                                                im->pixels[y][x] = chunkBuf[chunkPos++];
+						if (im->trueColor) {
+								im->pixels[y][x] = 
+									(chunkBuf[chunkPos++] << 24) +
+									(chunkBuf[chunkPos++] << 16) +
+									(chunkBuf[chunkPos++] << 8) +
+									chunkBuf[chunkPos++];
+						} else {
+                                im->pixels[y][x] = chunkBuf[chunkPos++];
+						}
                                         };
                                 };
 				/*GD2_DBG(printf("\n")); */
@@ -399,7 +416,7 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
                 goto fail1;
         };
 
-	if (!_gdGetColors(in, im)) {
+	if (!_gdGetColors(in, im, vers == 2)) {
 		goto fail2;
 	}
         GD2_DBG(printf("Image palette completed: %d colours\n", im->colorsTotal));
@@ -417,7 +434,11 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
                 };
                 compMax++;
 
-                chunkMax = cs * cs;
+				if (im->trueColor) {
+						chunkMax = cs * cs * 4;
+				} else {
+						chunkMax = cs * cs;
+				}
                 chunkBuf = gdCalloc(chunkMax,1);
                 compBuf = gdCalloc(compMax,1);
         };
@@ -464,7 +485,11 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
 
 			if (fmt == GD2_FMT_RAW) {
 				GD2_DBG(printf("Using raw format data\n"));
-				dpos = cy * (cs * fsx) + cx * cs * (yhi-ylo)  + dstart;
+				if (im->trueColor) {
+					dpos = (cy * (cs * fsx) + cx * cs * (yhi-ylo) * 4) + dstart;
+				} else {
+					dpos = cy * (cs * fsx) + cx * cs * (yhi-ylo) + dstart;
+				}
 
 				if (gdSeek(in, dpos) != 0) {
 					printf("Error from seek: %d\n",errno);
@@ -491,17 +516,30 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
                         for (y=ylo ; (y < yhi); y++) {
 
                                 for (x= xlo ; x < xhi; x++) {
-
-
                         		if (fmt == GD2_FMT_RAW) {
-                                        	ch = gdGetC(in);
-                                        	if (ch == EOF) {
-                                                	ch = 0;
-                                                	/*printf("EOF while reading file\n"); */
-                                                	/*goto fail2; */
-                                        	};
+						if (im->trueColor) {
+							if (!gdGetInt(&ch, in)) {
+								ch = 0;
+								/*printf("EOF while reading file\n"); */
+								/*goto fail2; */
+							}
+						} else {
+							ch = gdGetC(in);
+							if (ch == EOF) {
+								ch = 0;
+								/*printf("EOF while reading file\n"); */
+								/*goto fail2; */
+							}
+						}
 					} else {
-						ch = chunkBuf[chunkPos++];
+						if (im->trueColor) {
+							ch = chunkBuf[chunkPos++] << 24 + 
+								chunkBuf[chunkPos++] << 16 + 
+								chunkBuf[chunkPos++] << 8 + 
+								chunkBuf[chunkPos++];
+						} else {
+								ch = chunkBuf[chunkPos++];
+						}
 					};
 
 					/* Only use a point that is in the image. */
@@ -569,6 +607,7 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
         int     idxSize;
         t_chunk_info     *chunkIdx = NULL;
         int     posSave;
+	int bytesPerPixel = im->trueColor ? 4 : 1;
 	int	compMax;
 
         /*printf("Trying to write GD2 file\n"); */
@@ -609,12 +648,12 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 		/* The zlib notes say output buffer size should be (input size) * 1.01 * 12 */
 		/* - we'll use 1.02 to be paranoid. */
 		/* */
-        	compMax = cs * cs * 1.02 + 12;
+        	compMax = cs * bytesPerPixel * cs * 1.02 + 12;
 
 		/* */
 		/* Allocate the buffers.  */
 		/* */
-		chunkData = gdCalloc(cs*cs,1);
+		chunkData = gdCalloc(cs*bytesPerPixel*cs,1);
 		compData = gdCalloc(compMax,1);
 
 		/* */
@@ -657,13 +696,26 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 
 				if (fmt == GD2_FMT_COMPRESSED) {
 	                                for (x= xlo ; x < xhi; x++) {
+											int p = im->pixels[y][x];
                                          	/*GD2_DBG(printf("%d...",x)); */
-                                        	chunkData[chunkLen++] = im->pixels[y][x];
+											if (im->trueColor) {
+													chunkData[chunkLen++] = gdTrueColorGetAlpha(p);
+													chunkData[chunkLen++] = gdTrueColorGetRed(p);
+													chunkData[chunkLen++] = gdTrueColorGetGreen(p);
+													chunkData[chunkLen++] = gdTrueColorGetBlue(p);
+											} else {
+													chunkData[chunkLen++] = p;
+											}
 					};
 				} else {
                                 	for (x= xlo ; x < xhi; x++) {
                                                 /*GD2_DBG(printf("%d, ",x)); */
-						gdPutC((unsigned char)im->pixels[y][x], out);
+						
+						if (im->trueColor) {
+								gdPutInt(im->tpixels[y][x], out);
+						} else {
+								gdPutC((unsigned char)im->pixels[y][x], out);
+						}
 					};
 				};
 				/*GD2_DBG(printf("y=%d done.\n",y)); */

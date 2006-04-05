@@ -1,3 +1,5 @@
+#ifdef HAVE_LIBPNG
+
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -9,8 +11,6 @@
 #define TRUE 1
 #define FALSE 0
 
-#ifdef HAVE_LIBPNG
-
 /*---------------------------------------------------------------------------
 
     gd_png.c                 Copyright 1999 Greg Roelofs and Thomas Boutell
@@ -20,14 +20,17 @@
     except that these functions are noisier in the case of errors (comment
     out all fprintf() statements to disable that).
 
-    Only GIF-like PNG features are currently supported; that is, images must
-    either be indexed-color to begin with or they will be converted to it,
-    and they can have, at most, a single, fully transparent palette entry or
-    color.  (Alpha channels are ignored.)  Since gd images are artificially
-    generated, gamma is also ignored, and there is currently no support for
-    embedded text annotations (a la GIF comments) in gd.
+    GD 2.0 supports RGBA truecolor and will read and write truecolor PNGs.
+    GD 2.0 supports 8 bits of color resolution per channel and 
+    7 bits of alpha channel resolution. Images with more than 8 bits
+    per channel are reduced to 8 bits. Images with an alpha channel are
+    only able to resolve down to '1/128th opaque' instead of '1/256th',
+    and this conversion is also automatic. I very much doubt you can see it.
+    Both tRNS and true alpha are supported.
 
-    Last updated:  19 July 1999
+    Gamma is ignored, and there is no support for text annotations.
+
+    Last updated:  9 February 2001
 
   ---------------------------------------------------------------------------*/
 
@@ -107,6 +110,7 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
     int num_palette, num_trans;
     png_colorp palette;
     png_color_16p trans_gray_rgb;
+    png_color_16p trans_color_rgb;
     png_bytep trans;
     png_bytep image_data = NULL;
     png_bytepp row_pointers = NULL;
@@ -164,17 +168,25 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
 
     png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type,
       &interlace_type, NULL, NULL);
+    if ((color_type == PNG_COLOR_TYPE_RGB) ||
+        (color_type == PNG_COLOR_TYPE_RGB_ALPHA))
+    {
+       im = gdImageCreateTrueColor((int)width, (int)height);
+    } else {
+       im = gdImageCreate((int)width, (int)height);
+    }
+    if (im == NULL) {
+        fprintf(stderr, "gd-png error: cannot allocate gdImage struct\n");
+        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+        gdFree(image_data);
+        gdFree(row_pointers);
+        return NULL;
+    }
 
     if (bit_depth == 16)
         png_set_strip_16(png_ptr);
     else if (bit_depth < 8)
         png_set_packing(png_ptr);   /* expand to 1 byte per pixel */
-
-    if (color_type & PNG_COLOR_MASK_ALPHA) {
-         fprintf(stderr, "gd-png warning: alpha channel not supported\n");
-         png_set_strip_alpha(png_ptr);
-    }
-
     switch (color_type) {
         case PNG_COLOR_TYPE_PALETTE:
             png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette);
@@ -183,29 +195,19 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
                 num_palette);
 #endif /* DEBUG */
             if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
-                int real_num_trans = 0, idx_first_trans = -1;
-                int min_trans = 256, idx_min_trans = -1;
-
+				/* gd 2.0: we support this rather thoroughly now. Grab the
+					first fully transparent entry, if any, as the value of 
+					the simple-transparency index, mostly for backwards
+					binary compatibility. The alpha channel is where it's
+					really at these days. */
+				int firstZero = 1;
                 png_get_tRNS(png_ptr, info_ptr, &trans, &num_trans, NULL);
                 for (i = 0;  i < num_trans;  ++i) {
-                    if (trans[i] < 255) {
-                        ++real_num_trans;
-                        if (idx_first_trans < 0)
-                            idx_first_trans = i;
-                        if (trans[i] < min_trans) {
-                            min_trans = trans[i];
-                            idx_min_trans = i;
-                        }
-                    }
-                }
-                if (real_num_trans > 0) {
-                    if (real_num_trans > 1 || trans[idx_first_trans] != 0) {
-                        fprintf(stderr, "gd-png warning: only single-color, "
-                          "100%% transparency supported\n");
-                        transparent = idx_min_trans;
-                    } else {
-                        transparent = idx_first_trans;
-                    }
+					im->alpha[i] = gdAlphaMax - (trans[i] >> 1);
+					if ((trans[i] == 0) && (firstZero)) {
+						im->transparent = i;
+						firstZero = 0;
+					}
                 }
             }
             break;
@@ -257,83 +259,19 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
 
         case PNG_COLOR_TYPE_RGB:
         case PNG_COLOR_TYPE_RGB_ALPHA:
-            /* allocate a palette and check for single-shade transparency */
-            if ((palette = (png_colorp)gdMalloc(256*sizeof(png_color))) == NULL) {
-                fprintf(stderr, "gd-png error: cannot allocate RGB palette\n");
-                png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-                return NULL;
-            }
-            palette_allocated = TRUE;
-            num_palette = 256;
+	    /* gd 2.0: we now support truecolor. See the comment above
+               for a rare situation in which the transparent pixel may not
+               work properly with 16-bit channels. */
             if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
-                png_get_tRNS(png_ptr, info_ptr, NULL, NULL, &trans_gray_rgb);
-                if (bit_depth == 16) {   /* png_set_strip_16() not yet active */
-                    palette[0].red   = trans_gray_rgb->red   >> 8;
-                    palette[0].green = trans_gray_rgb->green >> 8;
-                    palette[0].blue  = trans_gray_rgb->blue  >> 8;
-                } else {
-                    palette[0].red   = trans_gray_rgb->red;
-                    palette[0].green = trans_gray_rgb->green;
-                    palette[0].blue  = trans_gray_rgb->blue;
-                }
-                transparent = 0;
-                /* Note that the same error exists in the 16-bit RGB case as in
-                 * the grayscale case, except that the degeneracy is now 16.8
-                 * million to 1 (at a minimum--actually more than that due to
-                 * quantization).  Again, this is an extremely rare problem.
-                 * Unfortunately, it also affects 8-bit-per-sample RGB images
-                 * (quantization), unless libpng is doing something sneaky... */
-            } else {
-                palette[0].red = palette[0].green = palette[0].blue = 224;
-            }
-
-#if 0  /* libpng.txt demo code looks broken--need to check both PLTE and hIST */
-            if (png_get_valid(png_ptr, info_ptr, PNG_INFO_PLTE)) {
-                png_color_16p histogram;
-
-                png_get_hIST(png_ptr, info_ptr, &histogram);
-                png_set_dither(png_ptr, palette, num_palette,
-                  max_screen_colors, histogram, 1);
-            } else
-#endif
-            {
-                int idx, red, green, blue;
-
-#ifdef PALETTE_6x7x6
-                /* allocate a 6x7x6 color cube, starting at index 4 */
-                idx = 4;
-                for (red = 0;  red < 256;  red += 51) {
-                    for (i = 0;  i < 7;  ++i) {
-                        green = (i * 425) / 10;            /* i.e., 42.5 */
-                        for (blue = 0;  blue < 256;  blue += 51) {
-                            palette[idx].red = red;
-                            palette[idx].green = green;
-                            palette[idx].blue = blue;
-                            ++idx;
-                        }
-                    }
-                }
-                /* fill in remaining entries (1-3) with common gray values */
-                palette[1].red = palette[1].green = palette[1].blue = 192;
-                palette[2].red = palette[2].green = palette[2].blue = 128;
-                palette[3].red = palette[3].green = palette[3].blue = 64;
-                /* final argument (full_dither) *must* be 1: */
-                png_set_dither(png_ptr, palette, 256, 256, NULL, 1);
-#else
-                /* allocate a 6x6x6 color cube, starting at index 0 or 1 */
-                idx = (transparent < 0)? 0 : 1;
-                for (red = 0;  red < 256;  red += 51) {
-                    for (green = 0;  green < 256;  green += 51) {
-                        for (blue = 0;  blue < 256;  blue += 51) {
-                            palette[idx].red = red;
-                            palette[idx].green = green;
-                            palette[idx].blue = blue;
-                            ++idx;
-                        }
-                    }
-                }
-                png_set_dither(png_ptr, palette, idx, idx, NULL, 1);
-#endif
+                png_get_tRNS(png_ptr, info_ptr, NULL, NULL, &trans_color_rgb);
+                if (bit_depth == 16)  /* png_set_strip_16() not yet in effect */
+                    transparent = gdTrueColor(trans_color_rgb->red >> 8,
+			trans_color_rgb->green >> 8,
+			trans_color_rgb->blue >> 8);
+                else
+                    transparent = gdTrueColor(trans_color_rgb->red,
+			trans_color_rgb->green,
+			trans_color_rgb->blue);
             }
             break;
     }
@@ -362,48 +300,70 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
     png_read_image(png_ptr, row_pointers);   /* read whole image... */
     png_read_end(png_ptr, NULL);             /* ...done! */
 
-    if ((im = gdImageCreate((int)width, (int)height)) == NULL) {
-        fprintf(stderr, "gd-png error: cannot allocate gdImage struct\n");
-        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-        gdFree(image_data);
-        gdFree(row_pointers);
-        return NULL;
+    if (!im->trueColor) { 
+        im->colorsTotal = num_palette;
+        im->transparent = transparent;
+        /* load the palette and mark all entries "open" (unused) for now */
+        open = im->open;
+        for (i = 0;  i < num_palette;  ++i) {
+            im->red[i]   = palette[i].red;
+            im->green[i] = palette[i].green;
+            im->blue[i]  = palette[i].blue;
+            open[i] = 1;
+        }
+        for (i = num_palette;  i < gdMaxColors;  ++i) {
+            open[i] = 1;
+        }
     }
-
-    im->colorsTotal = num_palette;
-    im->transparent = transparent;
     im->interlace = (interlace_type == PNG_INTERLACE_ADAM7);
-
-    /* load the palette and mark all entries "open" (unused) for now */
-    open = im->open;
-    for (i = 0;  i < num_palette;  ++i) {
-        im->red[i]   = palette[i].red;
-        im->green[i] = palette[i].green;
-        im->blue[i]  = palette[i].blue;
-        open[i] = 1;
-    }
-    for (i = num_palette;  i < gdMaxColors;  ++i) {
-        open[i] = 1;
-    }
 
     /* can't nuke structs until done with palette */
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-
-    /* could copy data with memcpy(), but also want to check colormap entries */
-    for (j = 0;  j < height;  ++j) {
-        for (i = 0;  i < width;  ++i) {
-            register png_byte idx = row_pointers[j][i];
-
-            im->pixels[j][i] = idx;
-            open[idx] = 0;
+    switch (color_type) {
+        case PNG_COLOR_TYPE_RGB:
+        for (j = 0;  j < height;  j++) {
+            int boffset = 0;
+            for (i = 0;  i < width;  i++) {
+                register png_byte r = row_pointers[j][boffset++];
+                register png_byte g = row_pointers[j][boffset++];
+                register png_byte b = row_pointers[j][boffset++];
+                im->tpixels[j][i] = gdTrueColor(r, g, b);
+            }
+        }
+        break;
+        case PNG_COLOR_TYPE_RGB_ALPHA:
+        for (j = 0;  j < height;  j++) {
+            int boffset = 0;
+            for (i = 0;  i < width;  i++) {
+                register png_byte r = row_pointers[j][boffset++];
+                register png_byte g = row_pointers[j][boffset++];
+                register png_byte b = row_pointers[j][boffset++];
+                /* gd has only 7 bits of alpha channel resolution, and
+                     127 is transparent, 0 opaque. A moment of convenience, 
+                     a lifetime of compatibility. */
+                register png_byte a = gdAlphaMax - 
+                    (row_pointers[j][boffset++] >> 1);
+                im->tpixels[j][i] = gdTrueColorAlpha(r, g, b, a);
+            }
+        }
+        break;
+        default:
+        /* Palette image, or something coerced to be one */
+        for (j = 0;  j < height;  ++j) {
+            for (i = 0;  i < width;  ++i) {
+                register png_byte idx = row_pointers[j][i];
+                im->pixels[j][i] = idx;
+                open[idx] = 0;
+            }
         }
     }
-
 #ifdef DEBUG
-    for (i = num_palette;  i < gdMaxColors;  ++i) {
-        if (!open[i]) {
-            fprintf(stderr, "gd-png warning: image data references out-of-range"
-              " color index (%d)\n", i);
+    if (!im->trueColor) {
+        for (i = num_palette;  i < gdMaxColors;  ++i) {
+            if (!open[i]) {
+                fprintf(stderr, "gd-png warning: image data references out-of-range"
+                  " color index (%d)\n", i);
+            }
         }
     }
 #endif
@@ -445,8 +405,9 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
     int height = im->sy;
     int colors = im->colorsTotal;
     int *open = im->open;
-    int mapping[gdMaxColors];		/* mapping[gif_index] == png_index */
-    png_byte trans_value = 0;
+    int mapping[gdMaxColors];		/* mapping[gd_index] == png_index */
+    png_byte trans_values[256];
+    png_color_16 trans_rgb_value;
     png_color palette[gdMaxColors];
     png_structp png_ptr;
     png_infop info_ptr;
@@ -482,9 +443,11 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
 
     png_set_write_fn(png_ptr, (void *)outfile, gdPngWriteData, gdPngFlushData);
 
-    /* For now gd only supports palette images, for which filter type NONE is
-     * almost guaranteed to be the best.  But that's what libpng defaults to
-     * for palette images anyway, so no need to set this explicitly. */
+    /* This is best for palette images, and libpng defaults to it for
+       palette images anyway, so we don't need to do it explicitly.
+       What to ideally do for truecolor images depends, alas, on the image.
+       gd is intentionally imperfect and doesn't spend a lot of time
+       fussing with such things. */
 /*  png_set_filter(png_ptr, 0, PNG_FILTER_NONE);  */
 
     /* may want to force maximum compression, but time penalty is large */
@@ -494,74 +457,128 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
      * image data is 16K or less; will save some decoder memory [min == 8] */
 /*  png_set_compression_window_bits(png_ptr, 15);  */
 
-    if (transparent >= im->colorsTotal ||
-       (transparent >= 0 && open[transparent])) 
-        transparent = -1;
-
-    for (i = 0;  i < gdMaxColors;  ++i)
-        mapping[i] = -1;
-
-    /* count actual number of colors used (colorsTotal == high-water mark) */
-    colors = 0;
-    for (i = 0;  i < im->colorsTotal;  ++i) {
-        if (!open[i]) {
-            mapping[i] = colors;
-            ++colors;
-        }
+    if (!im->trueColor) {
+        if (transparent >= im->colorsTotal ||
+           (transparent >= 0 && open[transparent])) 
+            transparent = -1;
     }
-    if (colors < im->colorsTotal) {
-        remap = TRUE;
-        if (transparent >= 0)
-            transparent = mapping[transparent];
+    if (!im->trueColor) {
+        for (i = 0;  i < gdMaxColors;  ++i)
+            mapping[i] = -1;
     }
-
-    if (colors <= 2)
-        bit_depth = 1;
-    else if (colors <= 4)
-        bit_depth = 2;
-    else if (colors <= 16)
-        bit_depth = 4;
-    else
-        bit_depth = 8;
-
+    if (!im->trueColor) {
+	    /* count actual number of colors used (colorsTotal == high-water mark) */
+	    colors = 0;
+	    for (i = 0;  i < im->colorsTotal;  ++i) {
+		if (!open[i]) {
+		    mapping[i] = colors;
+		    ++colors;
+		}
+	    }
+	    if (colors < im->colorsTotal) {
+		remap = TRUE;
+	    }
+	    if (colors <= 2)
+		bit_depth = 1;
+	    else if (colors <= 4)
+		bit_depth = 2;
+	    else if (colors <= 16)
+		bit_depth = 4;
+	    else
+		bit_depth = 8;
+    }
     interlace_type = im->interlace? PNG_INTERLACE_ADAM7 : PNG_INTERLACE_NONE;
 
-    png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth,
-      PNG_COLOR_TYPE_PALETTE, interlace_type,
-      PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-
-    if (transparent >= 0) {
-        /* always write PNG files with the transparent palette entry first to
-         * minimize size of the tRNS chunk; swap if necessary */
-        if (transparent != 0) {
-            if (!remap) {		/* so colors == im->colorsTotal */
-                remap = TRUE;
-                for (i = 0;  i < colors;  ++i)
-                    mapping[i] = i;
-            }
-            mapping[transparent] = 0;
-            mapping[0] = transparent;
-        }
-        png_set_tRNS(png_ptr, info_ptr, &trans_value, 1, NULL);
+    if (im->trueColor) {
+	if (im->saveAlphaFlag) {
+		png_set_IHDR(png_ptr, info_ptr, width, height, 8,
+		  PNG_COLOR_TYPE_RGB_ALPHA, interlace_type,
+		  PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+	} else {
+		png_set_IHDR(png_ptr, info_ptr, width, height, 8,
+		  PNG_COLOR_TYPE_RGB, interlace_type,
+		  PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+	}
+    } else {
+        png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth,
+          PNG_COLOR_TYPE_PALETTE, interlace_type,
+          PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
     }
+	if (im->trueColor && (!im->saveAlphaFlag) && (transparent >= 0)) {
+		trans_rgb_value.red = gdTrueColorGetRed(im->trueColor);
+		trans_rgb_value.green = gdTrueColorGetGreen(im->trueColor);
+		trans_rgb_value.blue = gdTrueColorGetBlue(im->trueColor);
+		png_set_tRNS(png_ptr, info_ptr, 0, 0, &trans_rgb_value);
+	}
+	if (!im->trueColor) {
+		/* Oy veh. Remap the PNG palette to put the 
+			entries with interesting alpha channel
+			values first. This minimizes the size
+			of the tRNS chunk and thus the size
+			of the PNG file as a whole. */
+		int tc = 0;
+		int i;
+		int j;
+		int k;
+		int highTrans = -1;
+		for (i = 0; (i < im->colorsTotal); i++) {
+			if ((!im->open[i]) && 
+				(im->alpha[i] != gdAlphaOpaque)) 
+			{
+				tc++;
+			}
+		}	
+		if (tc) {
+#if 0
+			for (i = 0; (i < im->colorsTotal); i++) {
+				trans_values[i] = 255 - 
+					((im->alpha[i] << 1) + 
+					(im->alpha[i] >> 7));
+			}
+			png_set_tRNS(png_ptr, info_ptr, trans_values, 256, NULL);
+#endif
+			if (!remap) {
+				remap = TRUE;
+			}
+			/* (Semi-)transparent indexes come up from the bottom
+				of the list of real colors; opaque
+				indexes come down from the top */
+			j = 0;
+			k = colors - 1;
+			for (i = 0; (i < im->colorsTotal); i++) {
+				if (!im->open[i]) {
+					if (im->alpha[i] != gdAlphaOpaque) {
+						trans_values[j] = 255 - 
+							((im->alpha[i] << 1) + 
+							(im->alpha[i] >> 7));
+						mapping[i] = j++;
+					} else {
+						mapping[i] = k--;
+					}
+				}
+			}		
+			png_set_tRNS(png_ptr, info_ptr, trans_values, tc, NULL);
+		}	
+	}
 
-    /* convert GIF palette to libpng layout */
-    if (remap)
-        for (i = 0;  i < im->colorsTotal;  ++i) {
-            if (mapping[i] < 0)
-                continue;
-            palette[mapping[i]].red   = im->red[i];
-            palette[mapping[i]].green = im->green[i];
-            palette[mapping[i]].blue  = im->blue[i];
-        }
-    else
-        for (i = 0;  i < colors;  ++i) {
-            palette[i].red   = im->red[i];
-            palette[i].green = im->green[i];
-            palette[i].blue  = im->blue[i];
-        }
-    png_set_PLTE(png_ptr, info_ptr, palette, colors);
-
+    /* convert palette to libpng layout */
+    if (!im->trueColor) {
+	    if (remap)
+		for (i = 0;  i < im->colorsTotal;  ++i) {
+		    if (mapping[i] < 0)
+			continue;
+		    palette[mapping[i]].red   = im->red[i];
+		    palette[mapping[i]].green = im->green[i];
+		    palette[mapping[i]].blue  = im->blue[i];
+		}
+	    else
+		for (i = 0;  i < colors;  ++i) {
+		    palette[i].red   = im->red[i];
+		    palette[i].green = im->green[i];
+		    palette[i].blue  = im->blue[i];
+		}
+	    png_set_PLTE(png_ptr, info_ptr, palette, colors);
+    }
 
     /* write out the PNG header info (everything up to first IDAT) */
     png_write_info(png_ptr, info_ptr);
@@ -575,21 +592,37 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
      * pointers and can be passed to png_write_image() function directly.
      * The remapping case could be accomplished with less memory for non-
      * interlaced images, but interlacing causes some serious complications. */
-    if (remap) {
+    if (im->trueColor) {
+	int channels = im->saveAlphaFlag ? 4 : 3;
+        /* Our little 7-bit alpha channel trick costs us a bit here. */
         png_bytep *row_pointers;
 	row_pointers = gdMalloc(sizeof(png_bytep) * height);
         if (row_pointers == NULL) {
             fprintf(stderr, "gd-png error: unable to allocate row_pointers\n");
         }
         for (j = 0;  j < height;  ++j) {
-            if ((row_pointers[j] = (png_bytep)gdMalloc(width)) == NULL) {
+            int bo = 0;
+            if ((row_pointers[j] = (png_bytep)gdMalloc(width * channels)) == NULL) {
                 fprintf(stderr, "gd-png error: unable to allocate rows\n");
                 for (i = 0;  i < j;  ++i)
                     gdFree(row_pointers[i]);
                 return;
             }
-            for (i = 0;  i < width;  ++i)
-                row_pointers[j][i] = mapping[im->pixels[j][i]];
+            for (i = 0;  i < width;  ++i) {
+		unsigned char a;
+                row_pointers[j][bo++] = gdTrueColorGetRed(im->tpixels[j][i]);
+                row_pointers[j][bo++] = gdTrueColorGetGreen(im->tpixels[j][i]);
+                row_pointers[j][bo++] = gdTrueColorGetBlue(im->tpixels[j][i]);
+		if (im->saveAlphaFlag) {
+			/* convert the 7-bit alpha channel to an 8-bit alpha channel.
+			   We do a little bit-flipping magic, repeating the MSB
+			   as the LSB, to ensure that 0 maps to 0 and
+			   127 maps to 255. We also have to invert to match
+			   PNG's convention in which 255 is opaque. */
+			a = gdTrueColorGetAlpha(im->tpixels[j][i]);
+			row_pointers[j][bo++] = 255 - ((a << 1) + (a >> 7));
+		}
+            }
         }
 
         png_write_image(png_ptr, row_pointers);
@@ -597,13 +630,38 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
 
         for (j = 0;  j < height;  ++j)
             gdFree(row_pointers[j]);
-	gdFree(row_pointers);
-    } else {
-        png_write_image(png_ptr, im->pixels);
-        png_write_end(png_ptr, info_ptr);
+	gdFree(row_pointers);        
+    } else {    
+	    if (remap) {
+		png_bytep *row_pointers;
+		row_pointers = gdMalloc(sizeof(png_bytep) * height);
+		if (row_pointers == NULL) {
+		    fprintf(stderr, "gd-png error: unable to allocate row_pointers\n");
+		}
+		for (j = 0;  j < height;  ++j) {
+		    if ((row_pointers[j] = (png_bytep)gdMalloc(width)) == NULL) {
+			fprintf(stderr, "gd-png error: unable to allocate rows\n");
+			for (i = 0;  i < j;  ++i)
+			    gdFree(row_pointers[i]);
+			return;
+		    }
+		    for (i = 0;  i < width;  ++i)
+			row_pointers[j][i] = mapping[im->pixels[j][i]];
+		}
+
+		png_write_image(png_ptr, row_pointers);
+		png_write_end(png_ptr, info_ptr);
+
+		for (j = 0;  j < height;  ++j)
+		    gdFree(row_pointers[j]);
+		gdFree(row_pointers);
+	    } else {
+		png_write_image(png_ptr, im->pixels);
+		png_write_end(png_ptr, info_ptr);
+	    }
     }
     /* 1.6.3: maybe we should give that memory BACK! TBB */
-        png_destroy_write_struct(&png_ptr, &info_ptr);
+    png_destroy_write_struct(&png_ptr, &info_ptr);
 }
 
 

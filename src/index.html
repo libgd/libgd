@@ -1,17 +1,24 @@
 <HTML>
 <HEAD>
-<TITLE>gd 1.8.4</TITLE>
+<TITLE>gd 2.0.0</TITLE>
 </HEAD>
 <BODY>
 <!-- BANNER HERE -->
-<H1>gd 1.8.4</H1>
-<H2>A graphics library for fast image creation</H2>
-<H2>Follow this link to the
+<h1>This is gd 2.0.0 BETA.</h1>
+<strong>If you have problems, report them
+in detail, and consider using gd 1.8.4 until gd 2.0 final is out.</strong>
+<p>
+The gd 2.0 documentation update is not complete, but most new features
+are documented to some degree and the what's new section is reasonably
+complete. Enjoy!
+<H2>gd 2.0.0</H2>
+<H3>A graphics library for fast image creation</H3>
+<H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
-of this document</A>.</H2>
+of this document</A>.</H3>
 <blockquote>
 <strong>HEY! READ THIS!</strong>
-gd 1.8.4 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.0 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works well with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -24,7 +31,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-gd 1.8.4 <strong>requires</strong> that the following libraries 
+gd 2.0.0 <strong>requires</strong> that the following libraries 
 also be installed:
 <p>
 libpng (see the <a href="http://www.libpng.org/pub/png/">libpng home page</a>)
@@ -47,13 +54,14 @@ included in modern X distributions).
 <p>
 Please read the documentation and install the required libraries.
 Do not send email asking why <code>png.h</code> is not found. 
+Do not send email asking why <code>libgd.so</code> is not found, either.
 See the <a href="#required">requirements section</a> for more
 information. Thank you!
 </blockquote>
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew1.8.4">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -83,11 +91,11 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
 </pre>
 <blockquote>
 
-Portions copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000 by Cold Spring
+Portions copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001 by Cold Spring
 Harbor Laboratory. Funded under Grant P41-RR02188 by the National
 Institutes of Health.
 <P>
-Portions copyright 1996, 1997, 1998, 1999, 2000 by Boutell.Com, Inc.
+Portions copyright 1996, 1997, 1998, 1999, 2000, 2001 by Boutell.Com, Inc.
 <p>
 Portions relating to GD2 format copyright 1999, 2000 Philip Warner.
 <p>
@@ -95,9 +103,10 @@ Portions relating to PNG copyright 1999, 2000 Greg Roelofs.
 <p>
 Portions relating to libttf copyright 1999, 2000 John Ellson (ellson@lucent.com).
 <p>
-Portions relating to JPEG copyright 2000, Doug Becker and copyright (C)
-1994-1998, Thomas G. Lane.  This software is based in part on the work
-of the Independent JPEG Group.
+Portions relating to JPEG and to color quantization copyright 2000, Doug 
+Becker and copyright (C) 1994-1998, Thomas G. Lane.  This software is based 
+in part on the work of the Independent JPEG Group. See the file
+README-JPEG.TXT for more information.
 <p>
 Portions relating to WBMP copyright 2000 Maurice Szmurlo and Johan Van 
 den Brande.
@@ -118,7 +127,7 @@ including but not limited to implied warranties of merchantability and
 fitness for a particular purpose, with respect to this code and accompanying
 documentation.
 <p>
-Although their code does not appear in gd 1.8.4, the authors wish to 
+Although their code does not appear in gd 2.0.0, the authors wish to 
 thank David Koblas, David Rowley, and Hutchison Avenue Software 
 Corporation for their prior contributions.
 </blockquote>
@@ -137,17 +146,20 @@ of the formats accepted for inline images by most browsers.
 gd is not a paint program.
 If you are looking for a paint program, you are looking in
 the wrong place. If you are not a programmer, you are looking
-in the wrong place.
+in the wrong place, unless you are installing a required
+library in order to run an application.
 <P>
 gd does not provide for every possible desirable graphics
 operation. It is not necessary or desirable for gd to become
-a kitchen-sink graphics package, but version 1.7.3 incorporates
-most of the commonly requested features for an 8-bit 2D package.
-Support for truecolor images, including truecolor JPEG and PNG,
-is planned for version 2.0.
+a kitchen-sink graphics package, but version 2.0 does include
+most frequently requested features, including both truecolor and
+palette images, resampling (smooth resizing of truecolor images)
+and so forth.
 <P>
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
+Not all of these tools are necessarily up to date and fully compatible
+with 2.0.0.
 <h4>Perl</h4>
 gd can also be used from Perl, courtesy of
 Lincoln Stein's
@@ -180,6 +192,88 @@ invoke the interpreter.
 <ul>
 <li><a href="http://s27w007.pswfs.gov/tgd/">tgd</a>, by Bradley K. Sherman
 <li><a href="http://www.unimelb.edu.au/fly/fly.html">fly</a>, by Martin Gleeson
+</ul>
+<P><A NAME="whatsnew2.0"><H3>What's new in version 2.0?</H3></A>
+<ul>
+<li><strong>Support for truecolor images!</strong> Version 2.0 can
+load truecolor PNGs with no loss of color information, and almost
+no loss of alpha channel information. Version 2.0 can also load
+truecolor JPEGs with as little loss as possible; however, bear in
+mind that JPEG is a lossy format, so repeated load/save cycles
+always reduce image quality. This is not a bug. To create
+a truecolor image from scratch, call the new
+<a href="#gdImageCreateTrueColor">gdImageCreateTrueColor</a>
+function. The <a href="#gdImageCreate">gdImageCreate</a> function
+is still available to create palette images, and may also be
+referred to as <a href="#gdImageCreatePalette">gdImageCreatePalette</a>.
+<li><strong>Support for alpha channels!</strong> In addition to
+24 bits of color information for each pixel (eight bits of
+red, green, and blue respectively), version 2.0 supports
+7 bits of "alpha channel" information. This is used to determine
+exactly how transparent the pixel should be. There is also support
+for a full 7 bits of transparency for each individual palette index
+in a palette-based image. Please note that, as of this writing,
+only Macintosh Internet Explorer 5.x and Mozilla/Netscape 6.x
+display partial transparency properly.
+<li>The new <a href="#gdImageAlphaBlending">gdImageAlphaBlending</a>
+function allows for two different modes of drawing. In blending mode,
+the alpha channel component of the color supplied to all drawing
+functions, such as <a href="#gdImageSetPixel">gdImageSetPixel</a>,
+determines how much of the underlying color should be allowed to
+shine through. The resulting image is not transparent. In non-blending 
+mode, drawing color is copied literally with the alpha channel 
+information, resulting in a transparent image. Blending mode is
+not available when drawing on palette images. 
+<li>The <a href="#gdImageCopyResampled">gdImageCopyResampled</a>
+function provides "smooth" copying from a large image to a smaller
+one, using a weighted average of the pixels of the source area rather 
+than selecting one representative pixel. This function is identical
+to <a href="#gdImageCopyResized">gdImageCopyResized</a> when the
+destination image is a palette image.
+<li>The <a href="#gdImageTrueColorToPalette">gdImageTrueColorToPalette</a>
+function converts a truecolor image to a palette image. The code for
+this function was originally drawn from the Independent JPEG Group library
+code, which is excellent. The code has been modified to preserve as much
+alpha channel information as possible in the resulting palette, in addition 
+to preserving colors as well as possible. This does not work as well as
+might be hoped. It is usually best to simply produce a truecolor
+output image instead, which guarantees the highest output quality.
+<li>A very high degree of backwards compatibility with existing
+gd 1.x code has been maintained, at both the source code and binary
+level. <strong>Code which directly accesses the <code>pixels</code> array
+will fail only if it encounters an existing truecolor image</strong>, which may
+happen if the code attempts to open and modify an existing JPEG or 
+truecolor PNG. Such code should be modified to check the
+<code>trueColor</code> flag of the <code>gdImage</code> structure, and
+refer to the <code>tpixels</code> array instead when it is set.
+<li>gd is now compiled and installed as a shared library. However,
+gd still does not use autoconf, because I (TBB) have very limited
+patience with autoconf. These days, most Unix systems provide a fairly
+POSIX-standard environment, and the provided Makefile is likely to work well
+if users read it and follow the instructions at the top.
+<li>Support for line thickness was added by Michael Schwartz. My apologies
+to him for sitting on his patches for so long. See the new
+<a href="#gdImageSetThickness">gdImageSetThickness</a> function, which
+affects all standard gd functions that draw lines and curves. In addition,
+Michael added a convenient <a href="#gdImageEllipse">gdImageEllipse</a>
+function. 
+<li>The new <a href="#gdImageFilledArc">gdImageFilledArc</a> function
+provides a straightforward way to draw filled arcs. Also,
+<a href="#gdImageFilledEllipse">gdImageFilledEllipse</a> is a 
+convenient way to fill an ellipse without specifying starting
+and ending angles. Thanks go out to F J Franklin.
+<li>To put an end to the confusion, TrueType 1.x support has been
+removed in favor of TrueType 2.x support. The old
+gdImageStringTTF function simply invokes gdImageStringFT.
+<li>The specialized .gd and .gd2 file formats have been upgraded to support
+truecolor. New images written by the versions of these functions
+found in 2.0 will be rejected, with varying degrees of grace, by
+older versions of gd. THIS AFFECTS THE .GD and .GD2 FORMATS ONLY. IF YOU
+ARE CONFUSED BY THIS PARAGRAPH, IT PROBABLY DOESN'T APPLY TO ANYTHING
+YOU WILL EVER ENCOUNTER. Since these file formats are absolutely,
+positively *not* designed for distributing images, just for
+preprocessing them, this should not be a big problem. gd 2.0 should
+read old .gd and .gd2 files correctly.
 </ul>
 <P><A NAME="whatsnew1.8.4"><H3>What's new in version 1.8.4?</H3></A>
 <ul>
@@ -482,13 +576,13 @@ newsgroups relevant to your particular system.
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>By HTTP</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-1.8.4.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-1.8.4.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.0.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.0.zip">.ZIP File (Windows)</a>
 </ul>
 <h4>By FTP</h4>
 <ul>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.8.4.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.8.4.zip">.ZIP File (Windows)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-2.0.0.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-2.0.0.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -499,15 +593,15 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-1.8.4".
+Unpacking the archive will produce a directory called "gd-2.0.0".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 1.8.4 directory. Edit the Makefile with
+<code>cd</code> to the 2.0.0 directory. Edit the Makefile with
 your preferred text editor and make any necessary changes to the
 settings at the top, especially if you want Xpm or TrueType support.
-Next, type "make". If you are the system administrator, and you
-wish to make the gd library available to other programs, you may 
-also wish to type "make install".
+Next, type "make install". Because gd 2.0 and above installs
+as a shared library, it is necessary to install the library properly
+before running gd-based programs.
 <p>
 If you get errors, edit the Makefile again, paying special attention
 to the INCLUDEDIRS and LIBDIRS settings.
@@ -522,9 +616,10 @@ to your project. Add other source files as appropriate. Learning the
 basic skills of creating projects with your chosen C environment
 is up to you. 
 <P>
-You have now built both the gd library and a demonstration program which 
-shows off the capabilities of gd. To see it in action, type
-"gddemo".
+If you wish to test the library, type "make test" AFTER you have
+successfully executed "make install". This will build
+several test programs, including "gddemo". Run gddemo to see some of
+the capabilities of gd.
 <P>
 gddemo should execute without incident, creating the file
 demoout.png. (Note there is also a file named demoin.png,
@@ -653,31 +748,93 @@ filling functions</A></LI>
 <DT><A NAME="gdImage"><code>gdImage</code><strong>(TYPE)</strong></A>
 <DD>
 The data structure in which gd stores images. <A HREF="#gdImageCreate">
-gdImageCreate</A> returns
+gdImageCreate</A>, <a href="#gdImageCreateTrueColor">gdImageCreateTrueColor</a>
+and the various image file-loading functions return
 a pointer to this type, and the other functions expect to receive
-a pointer to this type as their first argument. You may
-read the members <code>sx</code> (size on X axis),
-<code>sy</code> (size on Y axis), <code>colorsTotal</code>
-(total colors), <code>red</code> (red component of colors;
-an array of 256 integers between 0 and 255), <code>green</code>
-(green component of colors, as above), <code>blue</code>
-(blue component of colors, as above), and <code>transparent</code>
-(index of transparent color, -1 if none); please do so
-using the macros provided. Do NOT set the members directly
-from your code; use the functions provided.
+a pointer to this type as their first argument. It is reasonably safe to
+examine any of the members of this structure. It is also reasonably
+safe to modify individual pixels within the <code>pixels</code> 
+or <code>tpixels</code> arrays. If the <code>trueColor</code> flag
+is set, the <code>tpixels</code> array is valid; otherwise the
+<code>pixels</code> array is valid.
+<p>
+The <code>colorsTotal</code>, <code>red</code>, <code>green</code>,
+<code>blue</code>, <code>alpha</code> and <code>open</code> arrays
+manage the palette. They are valid only when the <code>trueColor</code>
+flag is not set. 
+The <code>transparent</code> value contains the palette index of the first
+transparent color as read-only information for backwards compatibility;
+gd 2.0 stores this information in the <code>alpha</code> array so that
+variable transparency can be supported for each palette entry. However,
+for truecolor images, <code>transparent</code> represents a single
+RGB color which is <strong>always 100% transparent</strong>, and this
+feature is generally supported by browsers which do not support 
+full alpha channels.
 <PRE>
 typedef struct {
+	/* Palette-based image pixels */
 	unsigned char ** pixels;
 	int sx;
 	int sy;
+	/* These are valid in palette images only. See also
+	/* 'alpha', which appears later in the structure to
+		preserve binary backwards compatibility */
 	int colorsTotal;
 	int red[gdMaxColors];
 	int green[gdMaxColors];
-	int blue[gdMaxColors];
+	int blue[gdMaxColors]; 
 	int open[gdMaxColors];
+	/* For backwards compatibility, this is set to the
+		first palette entry with 100% transparency,
+		and is also set and reset by the 
+		gdImageColorTransparent function. Newer
+		applications can allocate palette entries
+		with any desired level of transparency; however,
+		bear in mind that many viewers, notably
+		many web browsers, fail to implement
+		full alpha channel for PNG and provide
+		support for full opacity or transparency only. */
 	int transparent;
+	int *polyInts;
+	int polyAllocated;
+	struct gdImageStruct *brush;
+	struct gdImageStruct *tile;	
+	int brushColorMap[gdMaxColors];
+	int tileColorMap[gdMaxColors];
+	int styleLength;
+	int stylePos;
+	int *style;
+	int interlace;
+	/* New in 2.0: alpha channel for palettes. Note that only
+		Macintosh Internet Explorer and (possibly) Netscape 6
+		really support multiple levels of transparency in
+		palettes, to my knowledge, as of 2/15/01. Most
+		common browsers will display 100% opaque and
+		100% transparent correctly, and do something 
+		unpredictable and/or undesirable for levels
+		in between. TBB */
+	int alpha[gdMaxColors]; 
+	/* Truecolor flag and pixels. New 2.0 fields appear here at the
+		end to minimize breakage of existing object code. */
+	int trueColor;
+	int ** tpixels;
+	/* Should alpha channel be copied, or applied, each time a
+		pixel is drawn? This applies to truecolor images only.
+		No attempt is made to alpha-blend in palette images,
+		even if semitransparent palette entries exist. 
+		To do that, build your image as a truecolor image,
+		then quantize down to 8 bits. */
+	int alphaBlendingFlag;
+	/* Should the alpha channel of the image be saved? This affects
+		PNG at the moment; other future formats may also
+		have that capability. JPEG doesn't. */
+	int saveAlphaFlag;
 } gdImage;
 </PRE>
+<p>
+The order of the structure members may appear confusing, but was chosen
+deliberately to increase backwards compatibility with existing gd 1.x-based
+binary code that references particular structure members.
 <DT><A NAME="gdImagePtr">gdImagePtr</A> <strong>(TYPE)</strong>
 <DD>
 A pointer to an image structure. <A HREF="#gdImageCreate">gdImageCreate</A>
@@ -764,7 +921,25 @@ proper use of this type.
 <DT><A NAME="gdImageCreate">gdImageCreate(sx, sy)</A>
 <strong>(FUNCTION)</strong>
 <DD>
-gdImageCreate is called to create images. Invoke gdImageCreate
+gdImageCreate is called to create palette-based images, with no
+more than 256 colors. Invoke gdImageCreate
+with the x and y dimensions of the desired image. gdImageCreate
+returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or
+NULL if unable to
+allocate the image. The image must eventually be destroyed
+using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+im = gdImageCreate(64, 64);
+/* ... Use the image ... */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
+<DT><A NAME="gdImageCreateTrueColor">gdImageCreateTrueColor(sx, sy)</A>
+<strong>(FUNCTION)</strong>
+<DD>
+gdImageCreateTrueColor is called to create truecolor images, with 
+an essentially unlimited number of colors. Invoke gdImageCreate
 with the x and y dimensions of the desired image. gdImageCreate
 returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or
 NULL if unable to
@@ -782,18 +957,25 @@ im = gdImageCreate(64, 64);
 <br>
 <A NAME="gdImageCreateFromJpegCtx">gdImageCreateFromJpegCtx(FILE *in)</A>
 <strong>(FUNCTION)</strong>
+<p><DT><A NAME="gdImageCreateFromJpeg">gdImageCreateFromJpeg(FILE *in)</A>
+<strong>(FUNCTION)</strong>
+<br>
+<A NAME="gdImageCreateFromJpegCtx">gdImageCreateFromJpegCtx(FILE *in)</A>
+<strong>(FUNCTION)</strong>
 <p>
 <DD>
 gdImageCreateFromJpeg is called to load images from JPEG format files.
 Invoke gdImageCreateFromJpeg with an already opened pointer to a file
 containing the desired image.
 gdImageCreateFromJpeg
-returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or NULL
+returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new 
+truecolor image, or NULL
 if unable to load the image (most often because the file is corrupt or
-does not contain a JPEG image). gdImageCreateFromPng does <em>not</em>
+does not contain a JPEG image). gdImageCreateFromJpeg does <em>not</em>
 close the file. You can inspect the sx and sy members of the
 image to determine its size. The image must eventually be destroyed
-using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
+using <A HREF="#gdImageDestroy">gdImageDestroy()</A>. <strong>The
+returned image is always a truecolor image.</strong> 
 <PRE>
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
 ... inside a function ...
@@ -820,6 +1002,18 @@ does not contain a PNG image). gdImageCreateFromPng does <em>not</em>
 close the file. You can inspect the sx and sy members of the
 image to determine its size. The image must eventually be destroyed
 using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
+<p>
+If the PNG image being loaded is a truecolor image, the resulting
+gdImagePtr will refer to a truecolor image. If the PNG image
+being loaded is a palette or grayscale image, the resulting
+gdImagePtr will refer to a palette image. gd retains only 8 bits
+of resolution for each of the red, green and blue channels, and
+only 7 bits of resolution for the alpha channel. The former
+restriction affects only a handful of very rare 48-bit color
+and 16-bit grayscale PNG images. The second restriction affects
+all semitransparent PNG images, but the difference is essentially
+invisible to the eye. 7 bits of alpha channel resolution is,
+in practice, quite a lot.
 <PRE>
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
 ... inside a function ...
@@ -912,7 +1106,8 @@ Invoke gdImageCreateFromGd2
 with an already opened pointer to a file containing the desired image
 in the <A HREF="#gdformat">gd2 file format</A>, which is specific to
 gd2 and intended for fast loading of parts of large images.
-(It is a compressed format, but generally not as good a LZW compression).
+(It is a compressed format, but generally not as good as maximum
+compression of the entire image would be.)
 gdImageCreateFromGd
 returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or NULL
 if unable to load the image (most often because the file is corrupt or
@@ -1516,7 +1711,36 @@ gdImageArc(im, 50, 25, 98, 48, 0, 360, white);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
-<DT><A NAME="gdImageFillToBorder">void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color)
+<DT><A NAME="gdImageFilledArc">void gdImageFilledArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color, int style)</A>
+<STRONG> (FUNCTION)</STRONG>
+<DD>
+gdImageArc is used to draw a partial ellipse centered at the given point,
+with the specified width and height in pixels. The arc begins at
+the position in degrees specified by <code>s</code> and ends at
+the position specified by <code>e</code>. The arc is filled in
+the color specified by the second to last argument. A circle can be drawn
+by beginning from 0 degrees and ending at 360 degrees, with
+width and height being equal. e must be greater than s. Values greater
+than 360 are interpreted modulo 360. The last argument specifies
+whether the function should draw a triangular chord 
+(<code>gdImageChord</code>) or the more frequently desired pie slice
+(<code>gdImagePie</code>).
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int black;
+int white;
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(100, 50);
+/* Background color (first allocated) */
+black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);	
+/* Allocate the color white (red, green and blue all maximum). */
+white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);	
+/* Inscribe a filled pie slice in the image. */
+gdImageFilledArc(im, 50, 25, 98, 48, 0, 45, white, gdPie);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE><DT><A NAME="gdImageFillToBorder">void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color)
 <STRONG> (FUNCTION)</STRONG>
 <DD>
 gdImageFillToBorder floods a portion of the image with the specified
@@ -1788,10 +2012,58 @@ gdImageSetStyle(im, styleDashed, 6);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImageAlphaBlending">void gdImageAlphaBlending(gdImagePtr im, int blending)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+The <a href="#gdImageAlphaBlending">gdImageAlphaBlending</a>
+function allows for two different modes of drawing on truecolor
+images. In blending mode, the alpha channel component of the color 
+supplied to all drawing functions, such as 
+<a href="#gdImageSetPixel">gdImageSetPixel</a>, determines how much of 
+the underlying color should be allowed to shine through. As a result, 
+gd automatically blends the existing color at that point with the
+drawing color, and stores the result in the image. The resulting pixel
+is opaque. In non-blending mode, the drawing color is copied literally 
+with its alpha channel information, replacing the destination pixel.
+Blending mode is not available when drawing on palette images. 
+<PRE>
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int red, blue;
+im = <A HREF="#gdImageCreate">gdImageCreateTrueColor</A>(100, 100);
+/* Background color */
+red = <A HREF="#gdTrueColor">gdTrueColor</A>(im, 255, 0, 0);	
+gdImageFilledRectangle(im, 0, 0, 100, 100, red);
+/* Drawing color. Full transparency would be an alpha channel value
+	of 127 (gd has a 7 bit alpha chnanel). 0 is opaque,
+	127 is transparent. So cut gdAlphaTransparent in half to get
+	50% blending. */
+blue = <A HREF="#gdTrueColor">gdTrueColorAlpha</A>(im, 0, 0, 255, gdAlphaTransparent / 2);	
+/* Draw with blending. Result will be 50% red, 50% blue: yellow 
+	(emitted light, remember, not reflected light. What you learned 
+	in Kindergarten is wrong here). */
+gdImageAlphaBlending(im, 1);
+<a href="#gdImageFilledRectangle">gdImageFilledRectangle</a>(im, 0, 0, 25, 25, blue);
+/* Draw without blending. Result will be 50% blue, 50%
+	the background color of the image viewer or web browser
+	used; results in browsers that don't support
+	semi-transparent pixels are unpredictable! */
+gdImageAlphaBlending(im, 0);
+<a href="#gdImageFilledRectangle">gdImageFilledRectangle</a>(im, 75, 75, 25, 25, blue);
+/* Write the image to disk, etc. */
+</pre>
 </DL>
 <H3><A NAME="query">Query Functions</A></H3>
 <DL>
 <DT><A NAME="gdImageBlue">
+int gdImageAlpha(gdImagePtr im, int color)</A>
+<STRONG>(MACRO)</STRONG>
+<DD>
+gdImageAlpha is a macro which returns the alpha channel component of
+the specified color index. Alpha channel values vary between
+0 (gdAlphaOpaque), which does not blend at all with the background,
+through 127 (gdAlphaTransparent), which allows the background to
+shine through 100%. Use this macro rather than accessing the
+structure members directly.
 int gdImageBlue(gdImagePtr im, int color)</A>
 <STRONG>(MACRO)</STRONG>
 <DD>
@@ -2199,102 +2471,10 @@ char *gdImageStringTTF(gdImagePtr im, int *brect,
 	int x, int y, char *string)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
-<strong>DEPRECATED.</strong> gdImageStringTTF draws text using the
-FreeType 1.x library. For better results, use 
-<a href="#gdImageStringFT">gdImageStringFT</a> and FreeType 2.x. 
-<p>
-gdImageStringTTF draws a string of anti-aliased characters on the image using 
-the <A HREF=http://www.freetype.org/>FreeType</A>
-library to render user-supplied TrueType fonts. <strong>We do not provide 
-TrueType fonts (.ttf and .ttc files). Obtaining them is entirely up to 
-you.</strong> The string is anti-aliased, meaning that there should be 
-fewer "jaggies" visible. The fontname is the full pathname to a TrueType 
-font file, or a font face name if the GDFONTPATH environment variable
-or FreeType's DEFAULT_FONTPATH variable have been set intelligently. 
-The string may be arbitrarily scaled (ptsize) and rotated (angle in radians).
-<p>
-The user-supplied int brect[8] array is filled on return from gdImageStringTTF
-with the 8 elements representing the 4 corner coordinates of the
-bounding rectangle.
-<TABLE BORDER="1">
-<TR><TD ALIGN="LEFT" VALIGN="TOP" >0</TD><TD ALIGN="LEFT" VALIGN="TOP">
-lower left corner, X position</TD></TR>
-<TR><TD ALIGN="LEFT" VALIGN="TOP >1</TD><TD ALIGN="LEFT" VALIGN="TOP">
-lower left corner, Y position</TD></TR>
-<TR><TD ALIGN="LEFT" VALIGN="TOP >2</TD><TD ALIGN="LEFT" VALIGN="TOP">
-lower right corner, X position</TD></TR>
-<TR><TD ALIGN="LEFT" VALIGN="TOP">3</TD><TD ALIGN="LEFT" VALIGN="TOP">
-lower right corner, Y position</TD></TR>
-<TR><TD ALIGN="LEFT" VALIGN="TOP">4</TD><TD ALIGN="LEFT" VALIGN="TOP">
-upper right corner, X position</TD></TR>
-<TR><TD ALIGN="LEFT" VALIGN="TOP">5</TD><TD ALIGN="LEFT" VALIGN="TOP">
-upper right corner, Y position</TD></TR>
-<TR><TD ALIGN="LEFT" VALIGN="TOP">6</TD><TD ALIGN="LEFT" VALIGN="TOP">
-upper left corner, X position</TD></TR>
-<TR><TD ALIGN="LEFT" VALIGN="TOP">7</TD><TD ALIGN="LEFT" VALIGN="TOP">
-upper left corner, Y position</TD></TR>
-</TABLE>
-<p>
-The points are relative to the text regardless of the angle, so "upper left"
-means in the top left-hand corner seeing the text horizontally.
-<p>
-Use a NULL gdImagePtr to get the bounding rectangle without rendering.
-This is a relatively cheap operation if followed by a rendering of the same
-string, because of the caching of the partial rendering during bounding
-rectangle calculation.
-<p>
-The string is rendered in the color indicated by the gf color index.
-<strong>Use the negative of the desired color index to 
-disable anti-aliasing.</strong>
-<p>
-The string may contain UTF-8 sequences like: "&amp;#192;"
-<p>
-gdImageStringTTF will return a null char* on success, or an error
-string on failure.
-<PRE>
-#include "gd.h"
-#include &lt;string.h&gt;
-... inside a function ...
-<A HREF="#gdImagePtr">gdImagePtr</A> im;
-int black;
-int white;
-int brect[8];
-int x, y;
-char *err;
-
-char *s = "Hello."; /* String to draw. */
-double sz = 40.;
-char *f = "/usr/local/share/ttf/Times.ttf";  /* User supplied font */
-
-/* obtain brect so that we can size the image */
-err = <A HREF="#gdImageStringTTF">gdImageStringTTF</A>(NULL,&brect[0],0,f,sz,0.,0,0,s);
-if (err) {fprintf(stderr,err); return 1;}
-
-/* create an image big enough for the string plus a little whitespace */
-x = brect[2]-brect[6] + 6;
-y = brect[3]-brect[7] + 6;
-im = <A HREF="#gdImageCreate">gdImageCreate</A>(x,y);
-
-/* Background color (first allocated) */
-white = <A HREF="#gdImageColorResolve">gdImageColorResolve</A>(im, 255, 255, 255);
-black = <A HREF="#gdImageColorResolve">gdImageColorResolve</A>(im, 0, 0, 0);
-
-/* render the string, offset origin to center string*/
-/* note that we use top-left coordinate for adjustment
- * since gd origin is in top-left with y increasing downwards. */
-x = 3 - brect[6];
-y = 3 - brect[7];
-err = <A HREF="#gdImageStringTTF">gdImageStringTTF</A>(im,&brect[0],black,f,sz,0.0,x,y,s);
-if (err) {fprintf(stderr,err); return 1;}
-
-/* Write img to stdout */
-<A HREF="#gdImagePng">gdImagePng</A>(im, stdout);
-
-/* Destroy it */
-<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
-</PRE>
-
-</DL>
+<strong>DEPRECATED.</strong> THis function simply invokes
+<a href="#gdImageStringFT">gdImageStringFT</a> for backwards
+compatibility with old code that was written with FreeType 1.x.
+/DL>
 <H3><A NAME="colors">Color-handling functions</A></H3>
 <DL>
 <DT><A NAME="gdImageColorAllocate">
@@ -2753,6 +2933,73 @@ fclose(out);
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im_in);
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im_out);
 </PRE>
+<DT><A NAME="gdImageCopyResampled">void gdImageCopyResampled(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int destW, int destH, int srcW, int srcH)
+<STRONG> (FUNCTION)</STRONG>
+<DD>
+gdImageCopyResampled is used to copy a rectangular portion of one image to
+another image, smoothly interpolating pixel values so that, in particular,
+reducing the size of an image still retains a great deal of clarity. The 
+X and Y dimensions of the original region and the
+destination region can vary, resulting in stretching or shrinking of
+the region as appropriate. (For a simpler version of this function
+which does not deal with resizing, see <A HREF="#gdImageCopy">
+gdImageCopy</A>. For a version which does not interpolate pixel values,
+see <A HREF="#gdImageCopyResized">gdImageCopyResized</A>.
+<p>
+Pixel values are only interpolated if the destination image is a
+truecolor image. Otherwise, 
+<a href="#gdImageCopyResized">gdImageCopyResized</a> is 
+automatically invoked.
+<P>
+The <code>dst</code> argument is the destination image to which the
+region will be copied. The <code>src</code> argument is the source
+image from which the region is copied. The <code>dstX</code>
+and <code>dstY</code> arguments specify the point in the destination
+image to which the region will be copied. The <code>srcX</code>
+and <code>srcY</code> arguments specify the upper left corner
+of the region in the source image. The <code>dstW</code>
+and <code>dstH</code> arguments specify the width and height
+of the destination region. The <code>srcW</code>
+and <code>srcH</code> arguments specify the width and height
+of the source region and can differ from the destination size,
+allowing a region to be scaled during the copying process.
+<P>
+When you copy a region from one location in an image to another
+location in the same image, gdImageCopy will perform as expected
+unless the regions overlap, in which case the result is
+unpredictable. If this presents a problem, create a scratch image
+in which to keep intermediate results.
+<P>
+<strong>Important note on copying between images:</strong> since images
+do not necessarily have the same color tables, pixels are not simply set
+to the same color index values to copy them. If the destination image
+is a palette image, gd will use the 
+<a href="#gdImageColorResolve">gdImageColorResolve</a> function to
+determine the best color available.
+<PRE>
+... Inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im_in;
+<A HREF="#gdImagePtr">gdImagePtr</A> im_out;
+int x, y;
+FILE *in;
+FILE *out;
+/* Load a large png to shrink in the smaller one */
+in = fopen("large.png", "rb");
+im_in = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
+fclose(in);
+/* Make the output image four times as small on both axes. Use
+	a true color image so that we can interpolate colors. */
+im_out = <A HREF="#gdImageCreate">gdImageCreateTrueColor</A>(im_in->sx / 4, im_in->sy / 4);
+/* Now copy the large image, but four times smaller */
+gdImageCopyResampled(im_out, im_in, 0, 0, 0, 0,
+	im_out->sx, im_out->sy,
+	im_in->sx, im_in->sy);	
+out = fopen("large.png", "wb");
+<A HREF="#gdImagePng">gdImagePng</A>(im_out, out);
+fclose(out);
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im_in);
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im_out);
+</PRE>
 
 <DT><A NAME="gdImageCopyMerge">void gdImageCopyMerge(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int w, int h, int pct)
 <STRONG> (FUNCTION)</STRONG>
@@ -3045,6 +3292,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdFontPtr">gdFontPtr</A> |
 <A HREF="#gdFree">gdFree</A> |
 <A HREF="#gdImage">gdImage</A> |
+<A HREF="#gdImageAlphaBlending">gdImageAlphaBlending</A> |
 <A HREF="#gdImageArc">gdImageArc</A> |
 <A HREF="#gdImageBlue">gdImageBlue</A> |
 <A HREF="#gdImageBoundsSafe">gdImageBoundsSafe</A> |
@@ -3057,8 +3305,13 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageColorResolve">gdImageColorResolve</A> |
 <A HREF="#gdImageColorTransparent">gdImageColorTransparent</A> |
 <A HREF="#gdImageCopy">gdImageCopy</A> |
+<A HREF="#gdImageCopyMerge">gdImageCopyMerge</A> |
+<A HREF="#gdImageCopyMergeGray">gdImageMergeGray</A> |
 <A HREF="#gdImageCopyResized">gdImageCopyResized</A> |
+<A HREF="#gdImageCopyResampled">gdImageCopyResampled</A> |
 <A HREF="#gdImageCreate">gdImageCreate</A> |
+<A HREF="#gdImageCreate">gdImageCreatePalette</A> |
+<A HREF="#gdImageCreate">gdImageCreateTrueColor</A> |
 <A HREF="#gdImageCreateFromGd">gdImageCreateFromGd</A> |
 <A HREF="#gdImageCreateFromGd2">gdImageCreateFromGd2</A> |
 <A HREF="#gdImageCreateFromGd2Part">gdImageCreateFromGd2Part</A> |
@@ -3070,6 +3323,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageDashedLine">gdImageDashedLine</A> |
 <A HREF="#gdImageDestroy">gdImageDestroy</A> |
 <A HREF="#gdImageFill">gdImageFill</A> |
+<A HREF="#gdImageArc">gdImageFilledArc</A> |
 <A HREF="#gdImageFillToBorder">gdImageFillToBorder</A> |
 <A HREF="#gdImageFilledRectangle">gdImageFilledRectangle</A> |
 <A HREF="#gdImageGd">gdImageGd</A> |
