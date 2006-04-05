@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -11,10 +10,6 @@
 
 #define TRUE 1
 #define FALSE 0
-
-/* Exported functions: */
-extern void gdImageGd (gdImagePtr im, FILE * out);
-
 
 /* Use this for commenting out debug-print statements. */
 /* Just use the first '#define' to allow all the prints... */
@@ -166,8 +161,7 @@ fail1:
   return 0;
 }
 
-gdImagePtr
-gdImageCreateFromGd (FILE * inFile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGd (FILE * inFile)
 {
   gdImagePtr im;
   gdIOCtx *in;
@@ -180,8 +174,7 @@ gdImageCreateFromGd (FILE * inFile)
   return im;
 }
 
-gdImagePtr
-gdImageCreateFromGdPtr (int size, void *data)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGdPtr (int size, void *data)
 {
   gdImagePtr im;
   gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
@@ -190,8 +183,7 @@ gdImageCreateFromGdPtr (int size, void *data)
   return im;
 }
 
-gdImagePtr
-gdImageCreateFromGdCtx (gdIOCtxPtr in)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGdCtx (gdIOCtxPtr in)
 {
   int sx, sy;
   int x, y;
@@ -315,16 +307,14 @@ _gdImageGd (gdImagePtr im, gdIOCtx * out)
     }
 }
 
-void
-gdImageGd (gdImagePtr im, FILE * outFile)
+BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * outFile)
 {
   gdIOCtx *out = gdNewFileCtx (outFile);
   _gdImageGd (im, out);
   out->gd_free (out);
 }
 
-void *
-gdImageGdPtr (gdImagePtr im, int *size)
+BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size)
 {
   void *rv;
   gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
