@@ -86,16 +86,14 @@ fatal_jpeg_error (j_common_ptr cinfo)
  * should be near optimal for many applications).  See the IJG JPEG
  * library documentation for more details.  */
 
-void
-gdImageJpeg (gdImagePtr im, FILE * outFile, int quality)
+BGD_DECLARE(void) gdImageJpeg (gdImagePtr im, FILE * outFile, int quality)
 {
   gdIOCtx *out = gdNewFileCtx (outFile);
   gdImageJpegCtx (im, out, quality);
   out->gd_free (out);
 }
 
-void *
-gdImageJpegPtr (gdImagePtr im, int *size, int quality)
+BGD_DECLARE(void *) gdImageJpegPtr (gdImagePtr im, int *size, int quality)
 {
   void *rv;
   gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
@@ -107,8 +105,7 @@ gdImageJpegPtr (gdImagePtr im, int *size, int quality)
 
 void jpeg_gdIOCtx_dest (j_compress_ptr cinfo, gdIOCtx * outfile);
 
-void
-gdImageJpegCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
+BGD_DECLARE(void) gdImageJpegCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -259,8 +256,7 @@ gdImageJpegCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
   gdFree (row);
 }
 
-gdImagePtr
-gdImageCreateFromJpeg (FILE * inFile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg (FILE * inFile)
 {
   gdImagePtr im;
   gdIOCtx *in = gdNewFileCtx (inFile);
@@ -269,8 +265,7 @@ gdImageCreateFromJpeg (FILE * inFile)
   return im;
 }
 
-gdImagePtr
-gdImageCreateFromJpegPtr (int size, void *data)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr (int size, void *data)
 {
   gdImagePtr im;
   gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
@@ -287,8 +282,7 @@ static int CMYKToRGB (int c, int m, int y, int k, int inverted);
  * Create a gd-format image from the JPEG-format INFILE.  Returns the
  * image, or NULL upon error.
  */
-gdImagePtr
-gdImageCreateFromJpegCtx (gdIOCtx * infile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx (gdIOCtx * infile)
 {
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr jerr;

@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -97,8 +96,7 @@ gdPngFlushData (png_structp png_ptr)
 {
 }
 
-gdImagePtr
-gdImageCreateFromPng (FILE * inFile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * inFile)
 {
   gdImagePtr im;
   gdIOCtx *in = gdNewFileCtx (inFile);
@@ -107,8 +105,7 @@ gdImageCreateFromPng (FILE * inFile)
   return im;
 }
 
-gdImagePtr
-gdImageCreateFromPngPtr (int size, void *data)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data)
 {
   gdImagePtr im;
   gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
@@ -120,8 +117,7 @@ gdImageCreateFromPngPtr (int size, void *data)
 /* This routine is based in part on the Chapter 13 demo code in "PNG: The
  *  Definitive Guide" (http://www.cdrom.com/pub/png/pngbook.html).
  */
-gdImagePtr
-gdImageCreateFromPngCtx (gdIOCtx * infile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 {
   png_byte sig[8];
   png_structp png_ptr;
@@ -433,24 +429,21 @@ gdImageCreateFromPngCtx (gdIOCtx * infile)
 }
 
 
-void
-gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
+BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
 {
   gdIOCtx *out = gdNewFileCtx (outFile);
   gdImagePngCtxEx (im, out, level);
   out->gd_free (out);
 }
 
-void
-gdImagePng (gdImagePtr im, FILE * outFile)
+BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * outFile)
 {
   gdIOCtx *out = gdNewFileCtx (outFile);
   gdImagePngCtxEx (im, out, -1);
   out->gd_free (out);
 }
 
-void *
-gdImagePngPtr (gdImagePtr im, int *size)
+BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size)
 {
   void *rv;
   gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
@@ -460,8 +453,7 @@ gdImagePngPtr (gdImagePtr im, int *size)
   return rv;
 }
 
-void *
-gdImagePngPtrEx (gdImagePtr im, int *size, int level)
+BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 {
   void *rv;
   gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
@@ -471,8 +463,7 @@ gdImagePngPtrEx (gdImagePtr im, int *size, int level)
   return rv;
 }
 
-void
-gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
+BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 {
   /* 2.0.13: 'return' here was an error, thanks to Kevin Smith */
   gdImagePngCtxEx (im, outfile, -1);
@@ -482,8 +473,7 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
  *  and in part on demo code from Chapter 15 of "PNG: The Definitive Guide"
  *  (http://www.cdrom.com/pub/png/pngbook.html).
  */
-void
-gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
+BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 {
   int i, j, bit_depth = 0, interlace_type;
   int width = im->sx;
