@@ -341,6 +341,8 @@ void gdFree(void *m);
 /* Best to free this memory with gdFree(), not free() */
 void *gdImageWBMPPtr(gdImagePtr im, int *size, int fg);
 
+/* 100 is highest quality (there is always a little loss with JPEG).
+	0 is lowest. 10 is about the lowest useful setting. */
 void gdImageJpeg(gdImagePtr im, FILE *out, int quality);
 void gdImageJpegCtx(gdImagePtr im, gdIOCtx *out, int quality);
 

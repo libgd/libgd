@@ -121,8 +121,13 @@ gdImageCreateTrueColor (int sx, int sy)
   im->transparent = (-1);
   im->interlace = 0;
   im->trueColor = 1;
-  im->saveAlphaFlag = 1;
-  im->alphaBlendingFlag = 0;
+  /* 2.0.2: alpha blending is now on by default, and saving of alpha is
+    off by default. This allows font antialiasing to work as expected
+    on the first try in JPEGs -- quite important -- and also allows 
+    for smaller PNGs when saving of alpha channel is not really 
+    desired, which it usually isn't! */
+  im->saveAlphaFlag = 0;
+  im->alphaBlendingFlag = 1;
   im->thick = 1;
   return im;
 }
@@ -186,7 +191,8 @@ gdImageColorClosestAlpha (gdImagePtr im, int r, int g, int b, int a)
       rd = (im->red[i] - r);
       gd = (im->green[i] - g);
       bd = (im->blue[i] - b);
-      ad = (im->blue[i] - b);
+      /* gd 2.02: whoops, was - b (thanks to David Marwood) */
+      ad = (im->blue[i] - a);
       dist = rd * rd + gd * gd + bd * bd + ad * ad;
       if (first || (dist < mindist))
 	{

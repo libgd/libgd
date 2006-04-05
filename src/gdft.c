@@ -478,7 +478,10 @@ tweenColorTest (void *element, void *key)
  * Computes a color in im's color table that is part way between
  * the background and foreground colors proportional to the gray
  * pixel value in the range 0-NUMCOLORS. The fg and bg colors must already
- * be in the color table.
+ * be in the color table for palette images. For truecolor images the
+ * returned value simply has an alpha component and gdImageAlphaBlend
+ * does the work so that text can be alpha blended across a complex
+ * background (TBB; and for real in 2.0.2).
  */
 static void *
 tweenColorFetch (char **error, void *key)
@@ -502,26 +505,10 @@ tweenColorFetch (char **error, void *key)
   else
     {
       npixel = NUMCOLORS - pixel;
-      if (im->trueColor)
-	{
-	  /* 2.0.1: use gdImageSetPixel to do the alpha blending work,
-	     or to just store the alpha level. All we have to do here
-	     is incorporate our knowledge of the percentage of this
-	     pixel that is really "lit" by pushing the alpha value
-	     up toward transparency in edge regions. */
-	  a->tweencolor = gdTrueColorAlpha (
-					     gdTrueColorGetRed (fg),
-					     gdTrueColorGetGreen (fg),
-					     gdTrueColorGetBlue (fg),
-	       gdAlphaMax - (gdTrueColorGetAlpha (fg) * pixel / NUMCOLORS));
-	}
-      else
-	{
 	  a->tweencolor = gdImageColorResolve (im,
 		   (pixel * im->red[fg] + npixel * im->red[bg]) / NUMCOLORS,
 	       (pixel * im->green[fg] + npixel * im->green[bg]) / NUMCOLORS,
 		(pixel * im->blue[fg] + npixel * im->blue[bg]) / NUMCOLORS);
-	}
     }
   return (void *) a;
 }
@@ -555,6 +542,66 @@ gdft_draw_bitmap (gdImage * im, int fg, FT_Bitmap bitmap, int pen_x, int pen_y)
   /* copy to image, mapping colors */
   tc_key.fgcolor = fg;
   tc_key.im = im;
+  /* Truecolor version; does not require the cache */
+  if (im->trueColor) 
+    {
+    for (row = 0; row < bitmap.rows; row++)
+      {
+        pc = row * bitmap.pitch;
+        y = pen_y + row;
+        /* clip if out of bounds */
+        if (y >= im->sy || y < 0)
+	  continue;
+      for (col = 0; col < bitmap.width; col++, pc++)
+	{
+          int level;  
+	  if (bitmap.pixel_mode == ft_pixel_mode_grays)
+	    {
+	      /*
+	       * Scale to 128 levels of alpha for gd use.
+               * alpha 0 is opacity, so be sure to invert at the end
+	       */
+	      level = (bitmap.buffer[pc] * gdAlphaMax /
+                (bitmap.num_grays - 1)); 
+            }
+          else if (bitmap.pixel_mode = ft_pixel_mode_mono)
+            {
+              level = ((bitmap.buffer[pc / 8]
+			       << (pc % 8)) & 128) ? gdAlphaOpaque :
+                gdAlphaTransparent;
+            }  
+          else 
+	    {
+	      return "Unsupported ft_pixel_mode";
+	    }
+          if (fg >= 0) {
+            /* Consider alpha in the foreground color itself to be an
+              upper bound on how opaque things get */
+            level = level * (gdAlphaMax - gdTrueColorGetAlpha(fg)) / gdAlphaMax;
+          }
+          level = gdAlphaMax - level;  
+          x = pen_x + col;
+	      /* clip if out of bounds */
+	      if (x >= im->sx || x < 0)
+		continue;
+	      /* get pixel location in gd buffer */
+	    tpixel = &im->tpixels[y][x];
+            if (fg < 0) {
+              if (level < (gdAlphaMax / 2)) {
+                *tpixel = -fg;
+              }
+            } else {
+              if (im->alphaBlendingFlag) { 
+                *tpixel = gdAlphaBlend(*tpixel, (level << 24) + (fg & 0xFFFFFF));
+              } else {    
+                *tpixel = (level << 24) + (fg & 0xFFFFFF);
+              }
+            }
+	  } 
+        }
+      return (char *) NULL;
+    }
+    /* Non-truecolor case, restored to its more or less original form */ 
   for (row = 0; row < bitmap.rows; row++)
     {
       pc = row * bitmap.pitch;
@@ -586,56 +633,29 @@ gdft_draw_bitmap (gdImage * im, int fg, FT_Bitmap bitmap, int pen_x, int pen_y)
 	    {
 	      return "Unsupported ft_pixel_mode";
 	    }
-
-	  if (tc_key.pixel > 0)
-	    {			/* if not background */
+	  if (tc_key.pixel > 0) /* if not background */
+	    {			
 	      x = pen_x + col;
 
 	      /* clip if out of bounds */
 	      if (x >= im->sx || x < 0)
 		continue;
 	      /* get pixel location in gd buffer */
-	      if (im->trueColor)
-		{
-		  tpixel = &im->tpixels[y][x];
-		}
-	      else
-		{
-		  pixel = &im->pixels[y][x];
-		}
+	      pixel = &im->pixels[y][x];
 	      if (tc_key.pixel == NUMCOLORS)
 		{
-		  /* use fg color directly */
-		  if (im->trueColor)
-		    {
-		      *tpixel = fg;
-		    }
-		  else
-		    {
-		      *pixel = fg;
-		    }
+		  /* use fg color directly. gd 2.0.2: watch out for
+                     negative indexes (thanks to David Marwood). */ 
+		    *pixel = (fg < 0) ? -fg : fg;
 		}
 	      else
 		{
 		  /* find antialised color */
-		  if (im->trueColor)
-		    {
-		      tc_key.bgcolor = *tpixel;
-		    }
-		  else
-		    {
-		      tc_key.bgcolor = *pixel;
-		    }
+	
+		  tc_key.bgcolor = *pixel;
 		  tc_elem = (tweencolor_t *) gdCacheGet (
 							  tc_cache, &tc_key);
-		  if (im->trueColor)
-		    {
-		      *tpixel = tc_elem->tweencolor;
-		    }
-		  else
-		    {
-		      *pixel = tc_elem->tweencolor;
-		    }
+		  *pixel = tc_elem->tweencolor;
 		}
 	    }
 	}

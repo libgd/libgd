@@ -1,28 +1,23 @@
 <HTML>
 <HEAD>
-<TITLE>gd 2.0.1</TITLE>
+<TITLE>gd 2.0.2</TITLE>
 </HEAD>
 <BODY>
 <!-- BANNER HERE -->
-<h1>This is gd 2.0.1 BETA.</h1>
-<strong>If you have problems, report them
-in detail, and consider using gd 1.8.4 until gd 2.0 final is out.</strong>
+<h1>This is gd 2.0.2.</h1>
 <p>
-The gd 2.0 documentation update is not complete, but most new features
-are documented to some degree and the what's new section is reasonably
-complete. Enjoy!
-<H2>gd 2.0.1</H2>
+<H2>gd 2.0.2</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
 of this document</A>.</H3>
 <blockquote>
 <strong>HEY! READ THIS!</strong>
-gd 2.0.1 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.2 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
-available.  JPEG works well with photographic images, and is still
+available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
-intended for wireless devices (not regular web browsers). Existing
+intended for wireless devices (not regular web browsers). Old
 code will need modification to call gdImagePng or gdImageJpeg instead
 of gdImageGif. <strong>Please do not ask us to send you the old GIF
 version of GD.</strong> Unisys holds a patent on the LZW compression
@@ -31,15 +26,14 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-gd 2.0.1 <strong>requires</strong> that the following libraries 
-also be installed:
+gd 2.0.2 <strong>requires</strong> that the following libraries 
+also be installed, in order to produce the related image formats:
 <p>
-libpng (see the <a href="http://www.libpng.org/pub/png/">libpng home page</a>)
+libpng (see the <a href="http://www.libpng.org/pub/png/">libpng home page</a>), if you want PNG
 <p>
-zlib (see the <a href="http://www.info-zip.org/pub/infozip/zlib/">info-zip home page</a>)
-zlib
+zlib (see the <a href="http://www.info-zip.org/pub/infozip/zlib/">info-zip home page</a>), if you want PNG
 <p>
-jpeg-6b or later, if desired (see the <a href="http://www.ijg.org/">Independent JPEG Group home page</a>)
+jpeg-6b or later, if desired (see the <a href="http://www.ijg.org/">Independent JPEG Group home page</a>), if you want JPEG
 <p>
 If you want to use the TrueType font support, you must also
 install the <strong>FreeType 2.x library</strong>, including
@@ -50,7 +44,8 @@ can't send you a copy.
 <p>
 If you want to use the Xpm color bitmap loading support, you must also
 have the X Window System and the Xpm library installed (Xpm is often
-included in modern X distributions).
+included in modern X distributions). Most of the time you won't
+need Xpm.
 <p>
 Please read the documentation and install the required libraries.
 Do not send email asking why <code>png.h</code> is not found. 
@@ -61,7 +56,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.1">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.2">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -73,7 +68,7 @@ information. Thank you!
 <LI><A HREF="#gdformat">About the additional .gd image file format</A>
 <LI><A HREF="#informing"><strong>Please</strong>
  tell us you're using gd!</A>
-<LI><A HREF="#problems">If you have problems</A>
+<LI><A HREF="#support">How do I get support?</A>
 <LI><A HREF="#index">Alphabetical quick index</A>
 </UL>
 <P><A HREF="http://www.boutell.com/">
@@ -91,24 +86,23 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
 </pre>
 <blockquote>
 
-Portions copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001 by Cold Spring
+Portions copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002 by Cold Spring
 Harbor Laboratory. Funded under Grant P41-RR02188 by the National
 Institutes of Health.
 <P>
-Portions copyright 1996, 1997, 1998, 1999, 2000, 2001 by Boutell.Com, Inc.
+Portions copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002 by Boutell.Com, Inc.
 <p>
-Portions relating to GD2 format copyright 1999, 2000 Philip Warner.
+Portions relating to GD2 format copyright 1999, 2000, 2001, 2002 Philip Warner.
 <p>
-Portions relating to PNG copyright 1999, 2000 Greg Roelofs.
+Portions relating to PNG copyright 1999, 2000, 2001, 2002 Greg Roelofs.
 <p>
-Portions relating to libttf copyright 1999, 2000 John Ellson (ellson@lucent.com).
+Portions relating to libttf copyright 1999, 2000, 2001, 2002 John Ellson (ellson@lucent.com).
 <p>
-Portions relating to JPEG and to color quantization copyright 2000, Doug 
-Becker and copyright (C) 1994-1998, Thomas G. Lane.  This software is based 
+Portions relating to JPEG and to color quantization copyright 2000, 2001, 2002, Doug Becker and copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, Thomas G. Lane.  This software is based 
 in part on the work of the Independent JPEG Group. See the file
 README-JPEG.TXT for more information.
 <p>
-Portions relating to WBMP copyright 2000 Maurice Szmurlo and Johan Van 
+Portions relating to WBMP copyright 2000, 2001, 2002 Maurice Szmurlo and Johan Van 
 den Brande.
 <p>
 <strong>Permission has been granted to copy, distribute and modify gd in any
@@ -127,7 +121,7 @@ including but not limited to implied warranties of merchantability and
 fitness for a particular purpose, with respect to this code and accompanying
 documentation.
 <p>
-Although their code does not appear in gd 2.0.1, the authors wish to 
+Although their code does not appear in gd 2.0.2, the authors wish to 
 thank David Koblas, David Rowley, and Hutchison Avenue Software 
 Corporation for their prior contributions.
 </blockquote>
@@ -159,40 +153,56 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.1.
+with 2.0.2.
 <h4>Perl</h4>
 gd can also be used from Perl, courtesy of
 Lincoln Stein's
-<a href="http://www-genome.wi.mit.edu/ftp/pub/software/WWW/GD.html">
+<a href="http://stein.cshl.org/WWW/software/GD/">
 GD.pm</a> library, which uses gd as the basis for a set of
 Perl 5.x classes. Highly recommended.
-<h4>Tcl</h4>
-gd can be used from Tcl with John Ellson's
-<a href=http://www.tcltk.com/ftp/ellson/>Gdtclft</a>
-dynamically loaded extension package.
-(Gdtclft2.0 or later is needed for gd-1.6 and up with PNG output.)
 <h4>Pascal</h4>
 Pascal enthusiasts should look into Michael Bradbury's
 <a href="http://www.elj.com/dev/free-pascal/gdfp/">gdfp</a> package.
-<h4>Haskell</h4>
-A new gd interface is now available for
-<a href="http://www.numeric-quest.com/haskell/gd/index.html">Haskell
-programmers</a>.
 <h4>REXX</h4>
 A 
 <a href="http://www.lightlink.com/hessling/RexxGd/index.html">gd interface 
 for the REXX language</a> is available.
 <h4>Any Language</h4>
-There are, at the moment, at least three simple interpreters that
-perform gd operations. You can output the desired commands to a simple
+The "fly" interpreter performs gd operations specified in a text file.
+You can output the desired commands to a simple
 text file from whatever scripting language you prefer to use, then
 invoke the interpreter.
 <p>
-
 <ul>
-<li><a href="http://s27w007.pswfs.gov/tgd/">tgd</a>, by Bradley K. Sherman
-<li><a href="http://www.unimelb.edu.au/fly/fly.html">fly</a>, by Martin Gleeson
+<li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
 </ul>
+<P>
+<A NAME="whatsnew2.0.2"><H3>What's new in version 2.0.2?</H3></A>
+<ul>
+<li>A "configure" script has been added. After wrestling with GNU
+autoconf for a while, I got tired of trying to make it detect libraries
+but accept their absence gracefully, and so on. Instead, I wrote a short
+Perl script which does the job and builds a reasonable Makefile. Those
+who find it doesn't detect their system's needs properly are welcome
+to contribute patches or the necessary commands.
+<li>Antialiased freetype text output now works properly in both
+truecolor and non-truecolor contexts! Hurrah! On a truecolor image
+it is possible, for instance, to draw antialiased text on an arbitrarily
+complex background with 50% alpha blending (transparency), and get the
+expected pretty results. Thanks to Joel Dubiner for his support of this work.
+<li><strong>By default, alpha blending is now done within the library.</strong>
+Also, by default, alpha channel is not saved with PNG images. This means
+that programmers who try loading a JPEG, scribbling some pretty antialiased
+text on it, and saving the JPEG again will now get the results they
+expected. It also means that, by default, users will not run afoul of
+the fact that many web browsers don't properly support full PNG alpha
+channel. 
+<li>Various submitted bug fixes have been incorporated.
+<li>Various other submitted changes have not been incorporated. Sorry.
+The interval between 2.0.1 and 2.0.2 was simply too long, and changes
+accumulated which were not mutually compatible. I'll do better in
+the future, especially with bug fixes.
+</ul> 
 <P><A NAME="whatsnew2.0.1"><H3>What's new in version 2.0.1?</H3></A>
 <ul>
 <li>Workaround for a bug in gcc, apparently found in gcc 2.7.2 and up.
@@ -604,21 +614,21 @@ You will also want a PNG viewer, if you do not already have
 one for your system, since you will need a good way to check the
 results of your work. Netscape 4.04 and higher, and Microsoft
 Internet Explorer 4.0 or higher, both support PNG.
-For some purposes you might be happier with a package like 
-Lview Pro for Windows or xv for X. There are PNG viewers available 
-for every graphics-capable modern operating system, so consult 
-newsgroups relevant to your particular system.
+<strong>Not every PNG-compatible viewer supports alpha channel
+transparency,</strong> which is why gd 2.0.2 and above do alpha
+blending in the library by default; it is possible to turn on the
+saving of alpha channel information to the file instead.
 <P>
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>By HTTP</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.1.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.1.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.2.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.2.zip">.ZIP File (Windows)</a>
 </ul>
 <h4>By FTP</h4>
 <ul>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-2.0.1.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-2.0.1.zip">.ZIP File (Windows)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-2.0.2.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-2.0.2.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -629,33 +639,52 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.1".
+Unpacking the archive will produce a directory called "gd-2.0.2".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.1 directory. Edit the Makefile with
-your preferred text editor and make any necessary changes to the
-settings at the top, especially if you want Xpm or TrueType support.
-Next, type "make install". Because gd 2.0 and above installs
+<code>cd</code> to the 2.0.2 directory and type:
+<p>
+<code>./configure</code>
+<p>
+If all goes well, this will create a Makefile. If all does not go well --
+for instance, if neither the the JPEG nor the PNG and ZLIB libraries
+are found -- you will need to install those libraries, then come back
+and run <code>configure</code> again. 
+<p>
+If necessary, make changes to the resulting Makefile. Then, 
+type "make install". Because gd 2.0 and above installs
 as a shared library, it is necessary to install the library properly
 before running gd-based programs.
 <p>
-If you get errors, edit the Makefile again, paying special attention
-to the INCLUDEDIRS and LIBDIRS settings.
+If you get errors, edit the Makefile again or customize 'configure', 
+paying special attention to the INCLUDEDIRS and LIBDIRS settings.
 <p>
 IF YOU GET LINKER ERRORS, TRY JUGGLING THE ORDER OF THE -l DIRECTIVES
 IN THE MAKEFILE. Some platforms may prefer that the libraries be listed
-in the opposite order.
-<h4>For Windows, Mac, Et Cetera</h4>
+in the opposite order. <strong>If you find such a platform where
+linking does not work properly, plese send the correct linking
+commands to gd@boutell.com</strong>.
+<blockquote>
+<h4>For Windows</h4>
 Create a project using your favorite programming environment.
 Copy all of the gd files to the project directory. Add <code>gd.c</code>
 to your project. Add other source files as appropriate. Learning the
 basic skills of creating projects with your chosen C environment
-is up to you. 
+is up to you. Alternatively, use the free <code>mingw32</code> 
+or <code>cygwin</code> tools, which may prove to be compatible
+with the provided <code>configure</code> script.
+</blockquote>
 <P>
 If you wish to test the library, type "make test" AFTER you have
 successfully executed "make install". This will build
-several test programs, including "gddemo". Run gddemo to see some of
-the capabilities of gd.
+several test programs, including "gddemo". (Not all of these
+programs are expected to print completely successful messages,
+depending on the nature of the image formats with which some of
+the tests are tried; for instance, WBMP is a black and white
+format, so loss of color information is expected there.)
+Run gddemo to see some of the capabilities of gd. Run
+gdtestft to play with the freetype support, if you have built
+gd with it and have access to truetype fonts.
 <P>
 gddemo should execute without incident, creating the file
 demoout.png. (Note there is also a file named demoin.png,
@@ -674,13 +703,17 @@ image which was scaled and copied into the output image.
 <P>
 <A NAME="basics"><H3>gd basics: using gd in your program</H3></A>
 gd lets you create PNG or JPEG images on the fly. To use gd in your
-program, include the file gd.h, and link with the libgd.a
-library produced by "make libgd.a", under Unix. Under other
-operating systems you will add gd.c to your own project.
+program, include the file gd.h, and link with the gd
+library and the other required libraries; the syntax for
+most Unix flavors is:
+<pre>
+-lgd -lpng -lz -ljpeg -lfreetype -lm
+</pre>
+Assuming that all of these libraries are available.
 <P>
-If you want to use the provided fonts, include
+If you want to use the provided simple fonts, include
 gdfontt.h, gdfonts.h, gdfontmb.h, gdfontl.h and/or gdfontg.h. For
-more impressive results, install FreeType 2.x and use the new 
+more impressive results, install FreeType 2.x and use the 
 <a href="#gdImageStringFT">gdImageStringFT</a>
 function. If you are not using the provided Makefile and/or a 
 library-based approach, be sure to include the source modules as well in your
@@ -983,6 +1016,7 @@ allocate the image. The image must eventually be destroyed
 using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
 <p>
 Truecolor images are always filled with black at creation time.
+There is no concept of a "background" color index.
 <PRE>
 ... inside a function ...
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
@@ -1002,7 +1036,7 @@ im = gdImageCreateTrueColor(64, 64);
 <strong>(FUNCTION)</strong>
 <p>
 <DD>
-gdImageCreateFromJpeg is called to load images from JPEG format files.
+gdImageCreateFromJpeg is called to load truecolor images from JPEG format files.
 Invoke gdImageCreateFromJpeg with an already opened pointer to a file
 containing the desired image.
 gdImageCreateFromJpeg
@@ -1534,7 +1568,24 @@ unless the caller is absolutely certain that the same implementations of
 malloc, free, etc. are used both at library build time and at application
 build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
-
+<DT><A NAME="gdImageToPalette">
+void gdImageToPalette(gdImagePtr im, int ditherFlag, int colorsWanted)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>Converts a truecolor image to a palette-based image,
+using a high-quality two-pass quantization routine
+which attempts to preserve alpha channel information
+as well as R/G/B color information when creating
+a palette. If ditherFlag is set, the image will be
+dithered to approximate colors better, at the expense
+of some obvious "speckling." colorsWanted can be
+anything up to 256. If the original source image
+includes photographic information or anything that
+came out of a JPEG, 256 is strongly recommended.
+<p>
+Better yet, don't use this function -- write real
+truecolor PNGs and JPEGs. The disk space gain of
+conversion to palette is not great (for small images
+it can be negative) and the quality loss is ugly.
 </DL>
 <H3><A NAME="drawing">Drawing Functions</A></H3>
 <DL>
@@ -2097,7 +2148,8 @@ gdImageSetStyle(im, styleDashed, 6);
 <DD>
 The <a href="#gdImageAlphaBlending">gdImageAlphaBlending</a>
 function allows for two different modes of drawing on truecolor
-images. In blending mode, the alpha channel component of the color 
+images. In blending mode, which is <strong>on by default (gd 2.0.2
+and above)</strong>, the alpha channel component of the color 
 supplied to all drawing functions, such as 
 <a href="#gdImageSetPixel">gdImageSetPixel</a>, determines how much of 
 the underlying color should be allowed to shine through. As a result, 
@@ -2131,6 +2183,20 @@ gdImageAlphaBlending(im, 0);
 <a href="#gdImageFilledRectangle">gdImageFilledRectangle</a>(im, 75, 75, 25, 25, blue);
 /* Write the image to disk, etc. */
 </pre>
+<DT><A NAME="gdImageSaveAlpha">
+void gdImageSaveAlpha(gdImagePtr im, int saveFlag)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+By default, gd 2.0.2 and above does not attempt to save full alpha channel information
+(as opposed to single-color transparency) when saving PNG images. (PNG
+is currently the only output format supported by gd which can accommodate
+alpa channel information.) This saves space in the output file. If you wish
+to create an image with alpha channel information for use with tools that
+support it, call gdImageSaveAlpha(im, 1) to turn on saving of such 
+information, and call <a href="#gdImageAlphaBlending">gdImageAlphaBlending(im, 0)</a>
+to turn off alpha blending within the library so that alpha channel
+information is actually stored in the image rather than being composited
+immediately at the time that drawing functions are invoked.
 </DL>
 <H3><A NAME="query">Query Functions</A></H3>
 <DL>
@@ -3509,14 +3575,26 @@ visible on the web, a URL is a wonderful thing to receive, but
 if it's not a publicly visible project, a simple note is just
 as welcome.
 
-<A NAME="problems"><H3>If you have problems</H3></A>
-If you have any difficulties with gd, feel free to contact
-the author, <A HREF="http://www.boutell.com/boutell/">Thomas Boutell</A>.
-Problems relating to the gd2 format should be addressed to
-<a href=mailto:pjw@thyme.com.au>Philip Warner</a>.
-<p><strong>
-Be sure to read this manual carefully first.
-</strong>
+<A NAME="support"><H3>How do I get support?</H3></A>
+<h4>Free Support</h4>
+
+Anyone can mail questions about the gd library to
+<a href="mailto:boutell@boutell.com">boutell@boutell.com</a>. However, 
+I receive a very large volume of email on
+many subjects, and while I do my best to respond to all queries this can
+take some time. Sometimes the response must take the form of an eventual
+new release or an addition to a FAQ or other document, as opposed to an
+detailed individual response.
+
+<h4>Hourly Support</h4>
+Those requiring support in detail may arrange for direct support
+from the author, Thomas Boutell, at the rate of $50/hr, billed
+directly by credit card. Purchase orders are also accepted from
+Fortune 500 corporations and institutions in good standing.
+To make arrangements, contact 
+<a href="mailto:support@boutell.com">support@boutell.com</a>. To avoid delay
+and/or confusion, be sure to specifically mention that you wish to
+purchase gd support at the hourly rate above.
 
 <H3><A NAME="index">Alphabetical quick index</A></H3>
 <A HREF="#gdBrushed">gdBrushed</A> |
@@ -3582,6 +3660,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageWBMP">gdImageWBMP</A> |
 <A HREF="#gdImageRectangle">gdImageRectangle</A> |
 <A HREF="#gdImageRed">gdImageRed</A> |
+<A HREF="#gdImageSaveAlpha">gdImageSaveAlpha</A> |
 <A HREF="#gdImageSetBrush">gdImageSetBrush</A> |
 <A HREF="#gdImageSetPixel">gdImageSetPixel</A> |
 <A HREF="#gdImageSetStyle">gdImageSetStyle</A> |
@@ -3592,6 +3671,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageStringTTF">gdImageStringTTF</A> |
 <A HREF="#gdImageStringUp">gdImageStringUp</A> |
 <A HREF="#gdImageStringUp">gdImageStringUp16</A> |
+<A HREF="#gdImageToPalette">gdImageToPalette</A> |
 <A HREF="#gdImageWBMP">gdImageWBMP</A> |
 <A HREF="#gdMaxColors">gdMaxColors</A> |
 <A HREF="#gdPoint">gdPoint</A> |

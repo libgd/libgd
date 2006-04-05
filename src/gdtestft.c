@@ -28,11 +28,12 @@ main (int argc, char *argv[])
   fprintf (stderr, "make clean, and type make again.\n");
   return 1;
 #else
-  gdImagePtr im;
-  int black;
+  gdImagePtr im, im2;
+  int blue;
+  int blueAlpha;
   int white;
   int brect[8];
-  int x, y;
+  int x, y, sx, sy;
   char *err;
   FILE *out;
 #ifdef JISX0208
@@ -48,14 +49,17 @@ main (int argc, char *argv[])
 #else
   double angle = DEG2RAD (-90);
 #endif
-
-#ifdef JISX0208
-  char *f = "/usr/openwin/lib/locale/ja/X11/fonts/TT/HG-MinchoL.ttf";	/* UNICODE */
-  /* char *f = "/usr/local/lib/fonts/truetype/DynaFont/dfpop1.ttf"; *//* SJIS */
-#else
-  char *f = "times";		/* TrueType font */
-#endif
-
+  char *f;
+  if (argc == 2) {
+    f = argv[1];
+  } else {
+    /* 2.02: usage message. Defaulting to Times wasn't working well for the
+      many people with no /usr/share/fonts/truetype. */
+    fprintf(stderr, "Usage: gdtestft fontfilename\n");
+    fprintf(stderr, "If fontfilename is not a full or relative path, GDFONTPATH is searched for\n"
+                    "it. If GDFONTPATH is not set, /usr/share/fonts/truetype is searched.\n");
+    exit(1);
+  }
   /* obtain brect so that we can size the image */
   err = gdImageStringFT ((gdImagePtr) NULL, &brect[0], 0, f, sz, angle, 0, 0, s);
   if (err)
@@ -64,42 +68,84 @@ main (int argc, char *argv[])
       return 1;
     }
 
-  /* create an image just big enough for the string */
-  x = MAXX (brect) - MINX (brect) + 6;
-  y = MAXY (brect) - MINY (brect) + 6;
+  /* create an image just big enough for the string (x3) */
+  sx = MAXX (brect) - MINX (brect) + 6;
+  sy = MAXY (brect) - MINY (brect) + 6;
 #if 0
-  im = gdImageCreate (500, 500);
+  /* Would be palette color 8-bit (which of course is still allowed,
+    but not impressive when used with a JPEG background and antialiasing
+    and alpha channel and so on!) */	
+  im = gdImageCreate (sx * 3, sy);
 #else
-  /* gd 2.0: true color images can use freetype too */
-  im = gdImageCreateTrueColor (x, y);
+  /* gd 2.0: true color images can use freetype too,
+    and they can do antialiasing against arbitrary
+    complex backgrounds. */
+  im = gdImageCreateTrueColor (sx * 3, sy);
 #endif
-
   /* Background color. gd 2.0: fill the image with it; truecolor
      images have a black background otherwise. */
   white = gdImageColorResolve (im, 255, 255, 255);
-  gdImageFilledRectangle (im, 0, 0, x, y, white);
-  black = gdImageColorResolve (im, 0, 0, 0);
-
+  /* Load a pretty background and resample it to cover the entire image */
+  {
+    FILE *in = fopen("eleanor.jpg", "rb");
+    gdImagePtr imb; 
+    if (in) {
+      imb = gdImageCreateFromJpeg(in);
+      if (!imb) {
+        fprintf(stderr, "gdImageCreateFromJpeg failed\n");
+        exit(1);
+      }
+      /* Resample background image to cover new image exactly */
+      gdImageCopyResampled(im, imb, 0, 0, 0, 0, sx * 3, sy, 
+        gdImageSX(imb), gdImageSY(imb));
+    } else {
+      /* Can't get background, so paint a simple one */
+      /* Truecolor images start out black, so paint it white */
+      gdImageFilledRectangle (im, 0, 0, sx * 3, sy, white);
+    }   
+  }
+  /* TBB 2.0.2: only black was working, and I didn't know it because
+    the test program used black. Funny, huh? Let's do a more interesting
+    color this time.  */
+  blue = gdImageColorResolve (im, 128, 192, 255);
+  /* Almost-transparent blue (alpha blending), with antialiasing */
+  blueAlpha = gdImageColorResolveAlpha(im, 128, 192, 255, gdAlphaMax / 2);
   /* render the string, offset origin to center string */
   x = 0 - MINX (brect) + 3;
   y = 0 - MINY (brect) + 3;
 
-  err = gdImageStringFT (im, NULL, black, f, sz, angle, x, y, s);
+  /* With antialiasing (positive color value) */
+  err = gdImageStringFT (im, NULL, blue, f, sz, angle, x, y, s);
   if (err)
     {
       fprintf (stderr, err);
       return 1;
     }
-  /* TBB: Write img to test/fttest.png */
-  out = fopen ("test/fttest.png", "wb");
+  /* Without antialiasing (negative color value) */
+  err = gdImageStringFT (im, NULL, -blue, f, sz, angle, sx + x, y, s);
+  if (err)
+    {
+      fprintf (stderr, err);
+      return 1;
+    }
+  /* With antialiasing, and 50% alpha blending */
+  err = gdImageStringFT (im, NULL, blueAlpha, f, sz, angle, sx * 2 + x, y, s);
+  if (err)
+    {
+      fprintf (stderr, err);
+      return 1;
+    }
+  /* TBB: Write img to test/fttest.jpg */
+  out = fopen ("test/fttest.jpg", "wb");
   if (!out)
     {
       fprintf (stderr, "Can't create test/fttest.png\n");
       exit (1);
     }
-  gdImagePng (im, out);
+  /* Fairly high JPEG quality setting */
+  gdImageJpeg (im, out, 90);
   fclose (out);
-  fprintf (stderr, "Test image written to test/fttest.png\n");
+  fprintf (stderr, "Test image written to test/fttest.jpg\n");
   /* Destroy it */
   gdImageDestroy (im);
 

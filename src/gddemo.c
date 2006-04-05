@@ -27,8 +27,12 @@ main (void)
 
   /* Create output image, 256 by 256 pixels, true color. */
   im_out = gdImageCreateTrueColor (256, 256);
-  /* First color allocated is background. */
+
+  /* 2.0.2: first color allocated would automatically be background in a 
+    palette based image. Since this is a truecolor image, with an 
+    automatic background of black, we must fill it explicitly. */
   white = gdImageColorAllocate (im_out, 255, 255, 255);
+  gdImageFilledRectangle(im_out, 0, 0, 256, 256, white);
 
   /* Set transparent color. */
   gdImageColorTransparent (im_out, white);
