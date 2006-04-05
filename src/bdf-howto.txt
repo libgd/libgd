@@ -1,0 +1,3 @@
+fstobdf -server 10.1.1.2:7100 -fn -adobe-courier-bold-r-normal--14-100-
+100-100-m-90-iso8859-1 | ./bdftogd FontAdobe gdfonta
+

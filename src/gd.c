@@ -24,7 +24,7 @@ gdImagePtr gdImageCreate(int sx, int sy)
 		/* NOW ROW-MAJOR IN GD 1.3 */
 		im->pixels[i] = (unsigned char *) calloc(
 			sx, sizeof(unsigned char));
-	}	
+	}
 	im->sx = sx;
 	im->sy = sy;
 	im->colorsTotal = 0;
@@ -38,7 +38,7 @@ void gdImageDestroy(gdImagePtr im)
 	int i;
 	for (i=0; (i<im->sy); i++) {
 		free(im->pixels[i]);
-	}	
+	}
 	free(im->pixels);
 	if (im->polyInts) {
 			free(im->polyInts);
@@ -60,12 +60,12 @@ int gdImageColorClosest(gdImagePtr im, int r, int g, int b)
 		if (im->open[i]) {
 			continue;
 		}
-		rd = (im->red[i] - r);	
+		rd = (im->red[i] - r);
 		gd = (im->green[i] - g);
 		bd = (im->blue[i] - b);
 		dist = rd * rd + gd * gd + bd * bd;
 		if ((i == 0) || (dist < mindist)) {
-			mindist = dist;	
+			mindist = dist;
 			ct = i;
 		}
 	}
@@ -79,7 +79,7 @@ int gdImageColorExact(gdImagePtr im, int r, int g, int b)
 		if (im->open[i]) {
 			continue;
 		}
-		if ((im->red[i] == r) && 
+		if ((im->red[i] == r) &&
 			(im->green[i] == g) &&
 			(im->blue[i] == b)) {
 			return i;
@@ -97,7 +97,7 @@ int gdImageColorAllocate(gdImagePtr im, int r, int g, int b)
 			ct = i;
 			break;
 		}
-	}	
+	}
 	if (ct == (-1)) {
 		ct = im->colorsTotal;
 		if (ct == gdMaxColors) {
@@ -177,7 +177,7 @@ static void gdImageBrushApply(gdImagePtr im, int x, int y)
 	}
 	hy = gdImageSY(im->brush)/2;
 	y1 = y - hy;
-	y2 = y1 + gdImageSY(im->brush);	
+	y2 = y1 + gdImageSY(im->brush);
 	hx = gdImageSX(im->brush)/2;
 	x1 = x - hx;
 	x2 = x1 + gdImageSX(im->brush);
@@ -195,8 +195,8 @@ static void gdImageBrushApply(gdImagePtr im, int x, int y)
 			srcx++;
 		}
 		srcy++;
-	}	
-}		
+	}
+}
 
 static void gdImageTileApply(gdImagePtr im, int x, int y)
 {
@@ -213,7 +213,7 @@ static void gdImageTileApply(gdImagePtr im, int x, int y)
 		gdImageSetPixel(im, x, y,
 			im->tileColorMap[p]);
 	}
-}		
+}
 
 int gdImageGetPixel(gdImagePtr im, int x, int y)
 {
@@ -270,7 +270,7 @@ void gdImageLine(gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 				}
 				gdImageSetPixel(im, x, y, color);
 			}
-		}		
+		}
 	} else {
 		d = 2*dx - dy;
 		incr1 = 2*dx;
@@ -361,7 +361,7 @@ void gdImageDashedLine(gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 				}
 				dashedSet(im, x, y, color, &on, &dashStep);
 			}
-		}		
+		}
 	} else {
 		d = 2*dx - dy;
 		incr1 = 2*dx;
@@ -420,7 +420,7 @@ static void dashedSet(gdImagePtr im, int x, int y, int color,
 	*dashStepP = dashStep;
 	*onP = on;
 }
-	
+
 
 int gdImageBoundsSafe(gdImagePtr im, int x, int y)
 {
@@ -428,7 +428,7 @@ int gdImageBoundsSafe(gdImagePtr im, int x, int y)
 		((x < 0) || (x >= im->sx))));
 }
 
-void gdImageChar(gdImagePtr im, gdFontPtr f, int x, int y, 
+void gdImageChar(gdImagePtr im, gdFontPtr f, int x, int y,
 	int c, int color)
 {
 	int cx, cy;
@@ -443,7 +443,7 @@ void gdImageChar(gdImagePtr im, gdFontPtr f, int x, int y,
 	for (py = y; (py < (y + f->h)); py++) {
 		for (px = x; (px < (x + f->w)); px++) {
 			if (f->data[fline + cy * f->w + cx]) {
-				gdImageSetPixel(im, px, py, color);	
+				gdImageSetPixel(im, px, py, color);
 			}
 			cx++;
 		}
@@ -452,7 +452,7 @@ void gdImageChar(gdImagePtr im, gdFontPtr f, int x, int y,
 	}
 }
 
-void gdImageCharUp(gdImagePtr im, gdFontPtr f, 
+void gdImageCharUp(gdImagePtr im, gdFontPtr f,
 	int x, int y, int c, int color)
 {
 	int cx, cy;
@@ -467,7 +467,7 @@ void gdImageCharUp(gdImagePtr im, gdFontPtr f,
 	for (py = y; (py > (y - f->w)); py--) {
 		for (px = x; (px < (x + f->h)); px++) {
 			if (f->data[fline + cy * f->w + cx]) {
-				gdImageSetPixel(im, px, py, color);	
+				gdImageSetPixel(im, px, py, color);
 			}
 			cy++;
 		}
@@ -476,7 +476,7 @@ void gdImageCharUp(gdImagePtr im, gdFontPtr f,
 	}
 }
 
-void gdImageString(gdImagePtr im, gdFontPtr f, 
+void gdImageString(gdImagePtr im, gdFontPtr f,
 	int x, int y, unsigned char *s, int color)
 {
 	int i;
@@ -488,7 +488,7 @@ void gdImageString(gdImagePtr im, gdFontPtr f,
 	}
 }
 
-void gdImageStringUp(gdImagePtr im, gdFontPtr f, 
+void gdImageStringUp(gdImagePtr im, gdFontPtr f,
 	int x, int y, unsigned char *s, int color)
 {
 	int i;
@@ -502,7 +502,7 @@ void gdImageStringUp(gdImagePtr im, gdFontPtr f,
 
 static int strlen16(unsigned short *s);
 
-void gdImageString16(gdImagePtr im, gdFontPtr f, 
+void gdImageString16(gdImagePtr im, gdFontPtr f,
 	int x, int y, unsigned short *s, int color)
 {
 	int i;
@@ -514,7 +514,7 @@ void gdImageString16(gdImagePtr im, gdFontPtr f,
 	}
 }
 
-void gdImageStringUp16(gdImagePtr im, gdFontPtr f, 
+void gdImageStringUp16(gdImagePtr im, gdFontPtr f,
 	int x, int y, unsigned short *s, int color)
 {
 	int i;
@@ -538,7 +538,7 @@ static int strlen16(unsigned short *s)
 
 /* s and e are integers modulo 360 (degrees), with 0 degrees
   being the rightmost extreme and degrees changing clockwise.
-  cx and cy are the center in pixels; w and h are the horizontal 
+  cx and cy are the center in pixels; w and h are the horizontal
   and vertical diameter in pixels. Nice interface, but slow, since
   I don't yet use Bresenham (I'm using an inefficient but
   simple solution with too much work going on in it; generalizing
@@ -558,10 +558,10 @@ void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int c
 	}
 	for (i=s; (i <= e); i++) {
 		int x, y;
-		x = ((long)cost[i % 360] * (long)w2 / costScale) + cx; 
+		x = ((long)cost[i % 360] * (long)w2 / costScale) + cx;
 		y = ((long)sint[i % 360] * (long)h2 / sintScale) + cy;
 		if (i != s) {
-			gdImageLine(im, lx, ly, x, y, color);	
+			gdImageLine(im, lx, ly, x, y, color);
 		}
 		lx = x;
 		ly = y;
@@ -613,7 +613,7 @@ void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color)
 	}
 	/* Seek right */
 	rightLimit = x;
-	for (i = (x+1); (i < im->sx); i++) {	
+	for (i = (x+1); (i < im->sx); i++) {
 		if (gdImageGetPixel(im, i, y) == border) {
 			break;
 		}
@@ -628,9 +628,9 @@ void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color)
 			int c;
 			c = gdImageGetPixel(im, i, y-1);
 			if (lastBorder) {
-				if ((c != border) && (c != color)) {	
-					gdImageFillToBorder(im, i, y-1, 
-						border, color);		
+				if ((c != border) && (c != color)) {
+					gdImageFillToBorder(im, i, y-1,
+						border, color);
 					lastBorder = 0;
 				}
 			} else if ((c == border) || (c == color)) {
@@ -645,9 +645,9 @@ void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color)
 			int c;
 			c = gdImageGetPixel(im, i, y+1);
 			if (lastBorder) {
-				if ((c != border) && (c != color)) {	
-					gdImageFillToBorder(im, i, y+1, 
-						border, color);		
+				if ((c != border) && (c != color)) {
+					gdImageFillToBorder(im, i, y+1,
+						border, color);
 					lastBorder = 0;
 				}
 			} else if ((c == border) || (c == color)) {
@@ -666,7 +666,7 @@ void gdImageFill(gdImagePtr im, int x, int y, int color)
 	old = gdImageGetPixel(im, x, y);
 	if (color == gdTiled) {
 		/* Tile fill -- got to watch out! */
-		int p, tileColor;	
+		int p, tileColor;
 		int srcx, srcy;
 		if (!im->tile) {
 			return;
@@ -675,7 +675,7 @@ void gdImageFill(gdImagePtr im, int x, int y, int color)
 			I can't do it without allocating another image */
 		if (gdImageGetTransparent(im->tile) != (-1)) {
 			return;
-		}	
+		}
 		srcx = x % gdImageSX(im->tile);
 		srcy = y % gdImageSY(im->tile);
 		p = gdImageGetPixel(im->tile, srcx, srcy);
@@ -704,7 +704,7 @@ void gdImageFill(gdImagePtr im, int x, int y, int color)
 	}
 	/* Seek right */
 	rightLimit = x;
-	for (i = (x+1); (i < im->sx); i++) {	
+	for (i = (x+1); (i < im->sx); i++) {
 		if (gdImageGetPixel(im, i, y) != old) {
 			break;
 		}
@@ -719,8 +719,8 @@ void gdImageFill(gdImagePtr im, int x, int y, int color)
 			int c;
 			c = gdImageGetPixel(im, i, y-1);
 			if (lastBorder) {
-				if (c == old) {	
-					gdImageFill(im, i, y-1, color);		
+				if (c == old) {
+					gdImageFill(im, i, y-1, color);
 					lastBorder = 0;
 				}
 			} else if (c != old) {
@@ -736,7 +736,7 @@ void gdImageFill(gdImagePtr im, int x, int y, int color)
 			c = gdImageGetPixel(im, i, y+1);
 			if (lastBorder) {
 				if (c == old) {
-					gdImageFill(im, i, y+1, color);		
+					gdImageFill(im, i, y+1, color);
 					lastBorder = 0;
 				}
 			} else if (c != old) {
@@ -745,7 +745,7 @@ void gdImageFill(gdImagePtr im, int x, int y, int color)
 		}
 	}
 }
-	
+
 /* Code drawn from ppmtogif.c, from the pbmplus package
 **
 ** Based on GIFENCOD by David Rowley <mgardi@watdscu.waterloo.edu>. A
@@ -766,7 +766,7 @@ void gdImageFill(gdImagePtr im, int x, int y, int color)
 ** CompuServe Incorporated.  GIF(sm) is a Service Mark property of
 ** CompuServe Incorporated.
 *
-*  Heavily modified by Mouse, 1998-02-12.  
+*  Heavily modified by Mouse, 1998-02-12.
 *  Remove LZW compression.
 *  Added miGIF run length compression.
 *
@@ -780,16 +780,29 @@ typedef int code_int;
 static int colorstobpp(int colors);
 static void BumpPixel (void);
 static int GIFNextPixel (gdImagePtr im);
-static void GIFEncode (FILE *fp, int GWidth, int GHeight, int GInterlace, int Background, int Transparent, int BitsPerPixel, int *Red, int *Green, int *Blue, gdImagePtr im);
-static void Putword (int w, FILE *fp);
-static void compress (int, FILE *, gdImagePtr, int);
+static void GIFEncode (gdSinkPtr fp, int GWidth, int GHeight, int GInterlace, int Background, int Transparent, int BitsPerPixel, int *Red, int *Green, int *Blue, gdImagePtr im);
+static void Putword (int w, gdSinkPtr fp);
+static void compress (int, gdSinkPtr, gdImagePtr, int);
 static void output (code_int code);
 static void char_init (void);
 static void char_out (int c);
 /* Allows for reuse */
 static void init_statics(void);
 
+static int stdioSink(void *context, char *buffer, int len)
+{
+	return fwrite(buffer, 1, len, (FILE *) context);
+}
+
 void gdImageGif(gdImagePtr im, FILE *out)
+{
+	gdSink mySink;
+	mySink.context = (void *) out;
+	mySink.sink = stdioSink;
+	gdImageGifToSink(im, &mySink);
+}
+
+void gdImageGifToSink(gdImagePtr im, gdSinkPtr out)
 {
 	int interlace, transparent, BitsPerPixel;
 	interlace = im->interlace;
@@ -922,10 +935,16 @@ GIFNextPixel(gdImagePtr im)
         return r;
 }
 
+static void sinkPutC(int B, gdSinkPtr fp)
+{
+	unsigned char b = B;
+	fp->sink(fp->context, (char *) &b, 1);
+}
+
 /* public */
 
 static void
-GIFEncode(FILE *fp, int GWidth, int GHeight, int GInterlace, int Background, int Transparent, int BitsPerPixel, int *Red, int *Green, int *Blue, gdImagePtr im)
+GIFEncode(gdSinkPtr fp, int GWidth, int GHeight, int GInterlace, int Background, int Transparent, int BitsPerPixel, int *Red, int *Green, int *Blue, gdImagePtr im)
 {
         int B;
         int RWidth, RHeight;
@@ -971,7 +990,7 @@ GIFEncode(FILE *fp, int GWidth, int GHeight, int GInterlace, int Background, int
         /*
          * Write the Magic header
          */
-        fwrite( Transparent < 0 ? "GIF87a" : "GIF89a", 1, 6, fp );
+        fp->sink(fp->context, Transparent < 0 ? "GIF87a" : "GIF89a", 6);
 
         /*
          * Write out the screen width and height
@@ -997,45 +1016,45 @@ GIFEncode(FILE *fp, int GWidth, int GHeight, int GInterlace, int Background, int
         /*
          * Write it out
          */
-        fputc( B, fp );
+        sinkPutC( B, fp );
 
         /*
          * Write out the Background colour
          */
-        fputc( Background, fp );
+        sinkPutC( Background, fp );
 
         /*
          * Byte of 0's (future expansion)
          */
-        fputc( 0, fp );
+        sinkPutC( 0, fp );
 
         /*
          * Write out the Global Colour Map
          */
         for( i=0; i<ColorMapSize; ++i ) {
-                fputc( Red[i], fp );
-                fputc( Green[i], fp );
-                fputc( Blue[i], fp );
+                sinkPutC( Red[i], fp );
+                sinkPutC( Green[i], fp );
+                sinkPutC( Blue[i], fp );
         }
 
 	/*
 	 * Write out extension for transparent colour index, if necessary.
 	 */
 	if ( Transparent >= 0 ) {
-	    fputc( '!', fp );
-	    fputc( 0xf9, fp );
-	    fputc( 4, fp );
-	    fputc( 1, fp );
-	    fputc( 0, fp );
-	    fputc( 0, fp );
-	    fputc( (unsigned char) Transparent, fp );
-	    fputc( 0, fp );
+	    sinkPutC( '!', fp );
+	    sinkPutC( 0xf9, fp );
+	    sinkPutC( 4, fp );
+	    sinkPutC( 1, fp );
+	    sinkPutC( 0, fp );
+	    sinkPutC( 0, fp );
+	    sinkPutC( (unsigned char) Transparent, fp );
+	    sinkPutC( 0, fp );
 	}
 
         /*
          * Write an Image separator
          */
-        fputc( ',', fp );
+        sinkPutC( ',', fp );
 
         /*
          * Write the Image header
@@ -1050,14 +1069,14 @@ GIFEncode(FILE *fp, int GWidth, int GHeight, int GInterlace, int Background, int
          * Write out whether or not the image is interlaced
          */
         if( Interlace )
-                fputc( 0x40, fp );
+                sinkPutC( 0x40, fp );
         else
-                fputc( 0x00, fp );
+                sinkPutC( 0x00, fp );
 
         /*
          * Write out the initial code size
          */
-        fputc( InitCodeSize, fp );
+        sinkPutC( InitCodeSize, fp );
 
         /*
          * Go and actually compress the data
@@ -1067,22 +1086,24 @@ GIFEncode(FILE *fp, int GWidth, int GHeight, int GInterlace, int Background, int
         /*
          * Write out a Zero-length packet (to end the series)
          */
-        fputc( 0, fp );
+        sinkPutC( 0, fp );
 
         /*
          * Write the GIF file terminator
          */
-        fputc( ';', fp );
+        sinkPutC( ';', fp );
 }
 
 /*
  * Write out a word to the GIF file
  */
 static void
-Putword(int w, FILE *fp)
+Putword(int w, gdSinkPtr fp)
 {
-        fputc( w & 0xff, fp );
-        fputc( (w / 256) & 0xff, fp );
+	unsigned char buf[2];
+	buf[0] = w & 0xff;
+	buf[1] = (w / 256) & 0xff;
+        fp->sink(fp->context, (char *) buf, 2);
 }
 
 #define GIFBITS 12
@@ -1101,22 +1122,22 @@ Putword(int w, FILE *fp)
  * documentation for any purpose and without fee is hereby granted, provided
  * that the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
- * documentation.  This software is provided "AS IS." The Hutchison Avenue 
- * Software Corporation disclaims all warranties, either express or implied, 
- * including but not limited to implied warranties of merchantability and 
+ * documentation.  This software is provided "AS IS." The Hutchison Avenue
+ * Software Corporation disclaims all warranties, either express or implied,
+ * including but not limited to implied warranties of merchantability and
  * fitness for a particular purpose, with respect to this code and accompanying
- * documentation. 
- * 
- * The miGIF compression routines do not, strictly speaking, generate files 
- * conforming to the GIF spec, since the image data is not LZW-compressed 
- * (this is the point: in order to avoid transgression of the Unisys patent 
- * on the LZW algorithm.)  However, miGIF generates data streams that any 
+ * documentation.
+ *
+ * The miGIF compression routines do not, strictly speaking, generate files
+ * conforming to the GIF spec, since the image data is not LZW-compressed
+ * (this is the point: in order to avoid transgression of the Unisys patent
+ * on the LZW algorithm.)  However, miGIF generates data streams that any
  * reasonably sane LZW decompresser will decompress to what we want.
  *
- * miGIF compression uses run length encoding. It compresses horizontal runs 
+ * miGIF compression uses run length encoding. It compresses horizontal runs
  * of pixels of the same color. This type of compression gives good results
- * on images with many runs, for example images with lines, text and solid 
- * shapes on a solid-colored background. It gives little or no compression 
+ * on images with many runs, for example images with lines, text and solid
+ * shapes on a solid-colored background. It gives little or no compression
  * on images with few runs, for example digital or scanned photos.
  *
  *                               der Mouse
@@ -1149,7 +1170,7 @@ static int code_clear;
 static int code_eof;
 static unsigned int obuf;
 static int obits;
-static FILE *ofile;
+static gdSinkPtr ofile;
 static unsigned char oblock[256];
 static int oblen;
 
@@ -1204,8 +1225,8 @@ static void write_block(void)
     for (i=0;i<oblen;i++) printf(" %02x",oblock[i]);
     printf("\n");
   }
- fputc(oblen,ofile);
- fwrite(&oblock[0],1,oblen,ofile);
+ sinkPutC(oblen,ofile);
+ ofile->sink(ofile->context, &oblock[0], oblen);
  oblen = 0;
 }
 
@@ -1432,7 +1453,7 @@ static void rl_flush(void)
  rl_count = 0;
 }
 
-static void compress(int init_bits, FILE *outfile, gdImagePtr im, int background)
+static void compress(int init_bits, gdSinkPtr outfile, gdImagePtr im, int background)
 {
  int c;
 
@@ -1445,7 +1466,7 @@ static void compress(int init_bits, FILE *outfile, gdImagePtr im, int background
  rl_basecode = code_eof + 1;
  out_bump_init = (1 << (init_bits - 1)) - 1;
  /* for images with a lot of runs, making out_clear_init larger will
-    give better compression. */ 
+    give better compression. */
  out_clear_init = (init_bits <= 3) ? 9 : (out_bump_init-1);
 #ifdef DEBUGGING_ENVARS
   { const char *ocienv;
@@ -1551,7 +1572,8 @@ static void init_statics(void) {
 #define LOCALCOLORMAP  0x80
 #define BitSet(byte, bit)      (((byte) & (bit)) == (bit))
 
-#define        ReadOK(file,buffer,len) (fread(buffer, len, 1, file) != 0)
+#define        ReadOK(from, buffer, len) \
+	(from->source(from->context, buffer, len) > 0)
 
 #define LM_to_uint(a,b)                        (((b)<<8)|(a))
 
@@ -1575,19 +1597,35 @@ static struct {
        int     disposal;
 } Gif89 = { -1, -1, -1, 0 };
 
-static int ReadColorMap (FILE *fd, int number, unsigned char (*buffer)[256]);
-static int DoExtension (FILE *fd, int label, int *Transparent);
-static int GetDataBlock (FILE *fd, unsigned char *buf);
-static int GetCode (FILE *fd, int code_size, int flag);
-static int LWZReadByte (FILE *fd, int flag, int input_code_size);
-static void ReadImage (gdImagePtr im, FILE *fd, int len, int height, unsigned char (*cmap)[256], int interlace, int ignore);
+static int ReadColorMap (gdSourcePtr fd, int number, unsigned char (*buffer)[256]);
+static int DoExtension (gdSourcePtr fd, int label, int *Transparent);
+static int GetDataBlock (gdSourcePtr fd, unsigned char *buf);
+static int GetCode (gdSourcePtr fd, int code_size, int flag);
+static int LWZReadByte (gdSourcePtr fd, int flag, int input_code_size);
+static void ReadImage (gdImagePtr im, gdSourcePtr fd, int len, int height, unsigned char (*cmap)[256], int interlace);
 
 int ZeroDataBlock;
 
+static int freadWrapper(void *context, char *buf, int len);
+
 gdImagePtr
-gdImageCreateFromGif(FILE *fd)
+gdImageCreateFromGif(FILE *in)
 {
-       int imageNumber;
+	gdSource s;
+	s.source = freadWrapper;
+	s.context = in;
+	return gdImageCreateFromGifSource(&s);
+}
+
+static int freadWrapper(void *context, char *buf, int len)
+{
+	int got = fread(buf, 1, len, (FILE *) context);
+	return got;
+}
+
+gdImagePtr
+gdImageCreateFromGifSource(gdSourcePtr fd)
+{
        int BitPixel;
        int ColorResolution;
        int Background;
@@ -1600,12 +1638,11 @@ gdImageCreateFromGif(FILE *fd)
        int             imw, imh;
        int             useGlobalColormap;
        int             bitPixel;
-       int             imageCount = 0;
+	int i;
        char            version[4];
        gdImagePtr im = 0;
        ZeroDataBlock = FALSE;
 
-       imageNumber = 1;
        if (! ReadOK(fd,buf,6)) {
 		return 0;
 	}
@@ -1636,25 +1673,7 @@ gdImageCreateFromGif(FILE *fd)
                        return 0;
                }
                if (c == ';') {         /* GIF terminator */
-                       int i;
-                       if (imageCount < imageNumber) {
-                               return 0;
-                       }
-                       /* Terminator before any image was declared! */
-                       if (!im) {
-                              return 0;
-                       }
-		       /* Check for open colors at the end, so
-                          we can reduce colorsTotal and ultimately
-                          BitsPerPixel */
-                       for (i=((im->colorsTotal-1)); (i>=0); i--) {
-                               if (im->open[i]) {
-                                       im->colorsTotal--;
-                               } else {
-                                       break;
-                               }
-                       } 
-                       return im;
+				   goto terminated;
                }
 
                if (c == '!') {         /* Extension */
@@ -1668,8 +1687,6 @@ gdImageCreateFromGif(FILE *fd)
                if (c != ',') {         /* Not a valid start character */
                        continue;
                }
-
-               ++imageCount;
 
                if (! ReadOK(fd,buf,9)) {
 	               return 0;
@@ -1686,26 +1703,42 @@ gdImageCreateFromGif(FILE *fd)
 	       }
                im->interlace = BitSet(buf[8], INTERLACE);
                if (! useGlobalColormap) {
-                       if (ReadColorMap(fd, bitPixel, localColorMap)) { 
+                       if (ReadColorMap(fd, bitPixel, localColorMap)) {
                                  return 0;
                        }
-                       ReadImage(im, fd, imw, imh, localColorMap, 
-                                 BitSet(buf[8], INTERLACE), 
-                                 imageCount != imageNumber);
+                       ReadImage(im, fd, imw, imh, localColorMap,
+                             BitSet(buf[8], INTERLACE));
                } else {
                        ReadImage(im, fd, imw, imh,
-                                 ColorMap, 
-                                 BitSet(buf[8], INTERLACE), 
-                                 imageCount != imageNumber);
+                                 ColorMap,
+                             BitSet(buf[8], INTERLACE));
                }
                if (Transparent != (-1)) {
                        gdImageColorTransparent(im, Transparent);
-               }	   
-       }
+               }
+				/* We have an image now. Let's get out of Dodge. */
+			   goto terminated;
+   }
+terminated:
+   /* Terminator before any image was declared! */
+   if (!im) {
+          return 0;
+   }
+		/* Check for open colors at the end, so
+			we can reduce colorsTotal and ultimately
+			BitsPerPixel */
+   for (i=((im->colorsTotal-1)); (i>=0); i--) {
+           if (im->open[i]) {
+                   im->colorsTotal--;
+           } else {
+                   break;
+           }
+   }
+   return im;
 }
 
 static int
-ReadColorMap(FILE *fd, int number, unsigned char (*buffer)[256])
+ReadColorMap(gdSourcePtr fd, int number, unsigned char (*buffer)[256])
 {
        int             i;
        unsigned char   rgb[3];
@@ -1725,7 +1758,7 @@ ReadColorMap(FILE *fd, int number, unsigned char (*buffer)[256])
 }
 
 static int
-DoExtension(FILE *fd, int label, int *Transparent)
+DoExtension(gdSourcePtr fd, int label, int *Transparent)
 {
        static unsigned char     buf[256];
 
@@ -1751,7 +1784,7 @@ DoExtension(FILE *fd, int label, int *Transparent)
 }
 
 static int
-GetDataBlock_(FILE *fd, unsigned char *buf)
+GetDataBlock_(gdSourcePtr fd, unsigned char *buf)
 {
        unsigned char   count;
 
@@ -1769,7 +1802,7 @@ GetDataBlock_(FILE *fd, unsigned char *buf)
 }
 
 static int
-GetDataBlock(FILE *fd, unsigned char *buf)
+GetDataBlock(gdSourcePtr fd, unsigned char *buf)
 {
  int rv;
  int i;
@@ -1787,7 +1820,7 @@ GetDataBlock(FILE *fd, unsigned char *buf)
 }
 
 static int
-GetCode_(FILE *fd, int code_size, int flag)
+GetCode_(gdSourcePtr fd, int code_size, int flag)
 {
        static unsigned char    buf[280];
        static int              curbit, lastbit, done, last_byte;
@@ -1805,7 +1838,7 @@ GetCode_(FILE *fd, int code_size, int flag)
                if (done) {
                        if (curbit >= lastbit) {
                                 /* Oh well */
-                       }                        
+                       }
                        return -1;
                }
                buf[0] = buf[last_byte-2];
@@ -1828,7 +1861,7 @@ GetCode_(FILE *fd, int code_size, int flag)
 }
 
 static int
-GetCode(FILE *fd, int code_size, int flag)
+GetCode(gdSourcePtr fd, int code_size, int flag)
 {
  int rv;
 
@@ -1837,8 +1870,9 @@ GetCode(FILE *fd, int code_size, int flag)
  return(rv);
 }
 
+#define STACK_SIZE ((1<<(MAX_LWZ_BITS))*2)
 static int
-LWZReadByte_(FILE *fd, int flag, int input_code_size)
+LWZReadByte_(gdSourcePtr fd, int flag, int input_code_size)
 {
        static int      fresh = FALSE;
        int             code, incode;
@@ -1847,7 +1881,7 @@ LWZReadByte_(FILE *fd, int flag, int input_code_size)
        static int      firstcode, oldcode;
        static int      clear_code, end_code;
        static int      table[2][(1<< MAX_LWZ_BITS)];
-       static int      stack[(1<<(MAX_LWZ_BITS))*2], *sp;
+   static int      stack[STACK_SIZE], *sp;
        register int    i;
 
        if (flag) {
@@ -1859,7 +1893,7 @@ LWZReadByte_(FILE *fd, int flag, int input_code_size)
                max_code = clear_code+2;
 
                GetCode(fd, 0, TRUE);
-               
+
                fresh = TRUE;
 
                for (i = 0; i < clear_code; ++i) {
@@ -1915,12 +1949,20 @@ LWZReadByte_(FILE *fd, int flag, int input_code_size)
 
                incode = code;
 
+			   if (sp == (stack + STACK_SIZE)) {
+					/* Bad compressed data stream */
+					return -1;
+			   }
                if (code >= max_code) {
                        *sp++ = firstcode;
                        code = oldcode;
                }
 
                while (code >= clear_code) {
+					   if (sp == (stack + STACK_SIZE)) {
+							/* Bad compressed data stream */
+							return -1;
+					   }
                        *sp++ = table[1][code];
                        if (code == table[0][code]) {
                                /* Oh well */
@@ -1950,7 +1992,7 @@ LWZReadByte_(FILE *fd, int flag, int input_code_size)
 }
 
 static int
-LWZReadByte(FILE *fd, int flag, int input_code_size)
+LWZReadByte(gdSourcePtr fd, int flag, int input_code_size)
 {
  int rv;
 
@@ -1960,17 +2002,17 @@ LWZReadByte(FILE *fd, int flag, int input_code_size)
 }
 
 static void
-ReadImage(gdImagePtr im, FILE *fd, int len, int height, unsigned char (*cmap)[256], int interlace, int ignore)
+ReadImage(gdImagePtr im, gdSourcePtr fd, int len, int height, unsigned char (*cmap)[256], int interlace)
 {
-       unsigned char   c;      
+       unsigned char   c;
        int             v;
        int             xpos = 0, ypos = 0, pass = 0;
        int i;
        /* Stash the color map into the image */
        for (i=0; (i<gdMaxColors); i++) {
-               im->red[i] = cmap[CM_RED][i];	
-               im->green[i] = cmap[CM_GREEN][i];	
-               im->blue[i] = cmap[CM_BLUE][i];	
+               im->red[i] = cmap[CM_RED][i];
+               im->green[i] = cmap[CM_GREEN][i];
+               im->blue[i] = cmap[CM_BLUE][i];
                im->open[i] = 1;
        }
        /* Many (perhaps most) of these colors will remain marked open. */
@@ -1979,18 +2021,9 @@ ReadImage(gdImagePtr im, FILE *fd, int len, int height, unsigned char (*cmap)[25
        **  Initialize the Compression routines
        */
        if (! ReadOK(fd,&c,1)) {
-               return; 
-       }
-       if (LWZReadByte(fd, TRUE, c) < 0) {
                return;
        }
-
-       /*
-       **  If this is an "uninteresting picture" ignore it.
-       */
-       if (ignore) {
-               while (LWZReadByte(fd, FALSE, c) >= 0)
-                       ;
+       if (LWZReadByte(fd, TRUE, c) < 0) {
                return;
        }
 
@@ -2043,8 +2076,8 @@ fini:
 
 void gdImageRectangle(gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
-	gdImageLine(im, x1, y1, x2, y1, color);		
-	gdImageLine(im, x1, y2, x2, y2, color);		
+	gdImageLine(im, x1, y1, x2, y1, color);
+	gdImageLine(im, x1, y2, x2, y2, color);
 	gdImageLine(im, x1, y1, x1, y2, color);
 	gdImageLine(im, x2, y1, x2, y2, color);
 }
@@ -2085,12 +2118,12 @@ void gdImageCopy(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, i
 				/* If it's the same image, mapping is trivial */
 				if (dst == src) {
 					nc = c;
-				} else { 
+				} else {
 					/* First look for an exact match */
 					nc = gdImageColorExact(dst,
 						src->red[c], src->green[c],
 						src->blue[c]);
-				}	
+				}
 				if (nc == (-1)) {
 					/* No, so try to allocate it */
 					nc = gdImageColorAllocate(dst,
@@ -2111,7 +2144,7 @@ void gdImageCopy(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, i
 		}
 		toy++;
 	}
-}			
+}
 
 void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH)
 {
@@ -2133,7 +2166,7 @@ void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int 
 	for (i=0; (i < srcW); i++) {
 		int got;
 		accum += (double)dstW/(double)srcW;
-		got = floor(accum);
+		got = (int) floor(accum);
 		stx[i] = got;
 		accum -= got;
 	}
@@ -2141,7 +2174,7 @@ void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int 
 	for (i=0; (i < srcH); i++) {
 		int got;
 		accum += (double)dstH/(double)srcH;
-		got = floor(accum);
+		got = (int) floor(accum);
 		sty[i] = got;
 		accum -= got;
 	}
@@ -2168,12 +2201,12 @@ void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int 
 					/* If it's the same image, mapping is trivial */
 					if (dst == src) {
 						nc = c;
-					} else { 
+					} else {
 						/* First look for an exact match */
 						nc = gdImageColorExact(dst,
 							src->red[c], src->green[c],
 							src->blue[c]);
-					}	
+					}
 					if (nc == (-1)) {
 						/* No, so try to allocate it */
 						nc = gdImageColorAllocate(dst,
@@ -2209,7 +2242,7 @@ int gdGetWord(int *result, FILE *in)
 		return 0;
 	}
 	*result = r << 8;
-	r = getc(in);	
+	r = getc(in);
 	if (r == EOF) {
 		return 0;
 	}
@@ -2266,9 +2299,9 @@ gdImagePtr gdImageCreateFromGd(FILE *in)
 		if (!gdGetByte(&im->blue[i], in)) {
 			goto fail2;
 		}
-	}	
+	}
 	for (y=0; (y<sy); y++) {
-		for (x=0; (x<sx); x++) {	
+		for (x=0; (x<sx); x++) {
 			int ch;
 			ch = getc(in);
 			if (ch == EOF) {
@@ -2285,7 +2318,7 @@ fail2:
 fail1:
 	return 0;
 }
-	
+
 void gdImageGd(gdImagePtr im, FILE *out)
 {
 	int x, y;
@@ -2297,15 +2330,15 @@ void gdImageGd(gdImagePtr im, FILE *out)
 	trans = im->transparent;
 	if (trans == (-1)) {
 		trans = 257;
-	}	
+	}
 	gdPutWord(trans, out);
 	for (i=0; (i<gdMaxColors); i++) {
 		putc((unsigned char)im->red[i], out);
-		putc((unsigned char)im->green[i], out);	
-		putc((unsigned char)im->blue[i], out);	
+		putc((unsigned char)im->green[i], out);
+		putc((unsigned char)im->blue[i], out);
 	}
-	for (y=0; (y < im->sy); y++) {	
-		for (x=0; (x < im->sx); x++) {	
+	for (y=0; (y < im->sy); y++) {
+		for (x=0; (x < im->sx); x++) {
 			/* ROW-MAJOR IN GD 1.3 */
 			putc((unsigned char)im->pixels[y][x], out);
 		}
@@ -2315,7 +2348,7 @@ void gdImageGd(gdImagePtr im, FILE *out)
 gdImagePtr
 gdImageCreateFromXbm(FILE *fd)
 {
-	gdImagePtr im;	
+	gdImagePtr im;
 	int bit;
 	int w, h;
 	int bytes;
@@ -2384,7 +2417,7 @@ gdImageCreateFromXbm(FILE *fd)
 			}
 			if (ch == 'x') {
 				break;
-			}	
+			}
 		}
 		/* Get hex value */
 		ch = getc(fd);
@@ -2398,9 +2431,9 @@ gdImageCreateFromXbm(FILE *fd)
 		}
 		h[1] = ch;
 		h[2] = '\0';
-		sscanf(h, "%x", &b);		
+		sscanf(h, "%x", &b);
 		for (bit = 1; (bit <= 128); (bit = bit << 1)) {
-			gdImageSetPixel(im, x++, y, (b & bit) ? 1 : 0);	
+			gdImageSetPixel(im, x++, y, (b & bit) ? 1 : 0);
 			if (x == im->sx) {
 				x = 0;
 				y++;
@@ -2436,53 +2469,54 @@ void gdImagePolygon(gdImagePtr im, gdPointPtr p, int n, int c)
 		lx = p->x;
 		ly = p->y;
 	}
-}	
-	
+}
+
 int gdCompareInt(const void *a, const void *b);
-	
+
+/* THANKS to Kirsten Schulz for the polygon fixes! */
+
+/* The intersection finding technique of this code could be improved  */
+/* by remembering the previous intertersection, and by using the slope.*/
+/* That could help to adjust intersections  to produce a nice */
+/* interior_extrema. */
+
 void gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c)
 {
 	int i;
 	int y;
-	int y1, y2;
+	int miny, maxy;
 	int ints;
+	int x1, y1;
+	int x2, y2;
+	int ind1, ind2;
 	if (!n) {
 		return;
 	}
 	if (!im->polyAllocated) {
 		im->polyInts = (int *) malloc(sizeof(int) * n);
 		im->polyAllocated = n;
-	}		
+	}
 	if (im->polyAllocated < n) {
 		while (im->polyAllocated < n) {
 			im->polyAllocated *= 2;
-		}	
+		}
 		im->polyInts = (int *) realloc(im->polyInts,
 			sizeof(int) * im->polyAllocated);
 	}
-	y1 = p[0].y;
-	y2 = p[0].y;
+	miny = p[0].y;
+	maxy = p[0].y;
 	for (i=1; (i < n); i++) {
-		if (p[i].y < y1) {
-			y1 = p[i].y;
+		if (p[i].y < miny) {
+			miny = p[i].y;
 		}
-		if (p[i].y > y2) {
-			y2 = p[i].y;
+		if (p[i].y > maxy) {
+			maxy = p[i].y;
 		}
 	}
-	/* Fix in 1.3: count a vertex only once */
-	for (y=y1; (y < y2); y++) {
-		int interLast = 0;
-		int dirLast = 0;
-		int interFirst = 1;
+	for (y=miny; (y < maxy); y++) {
 		ints = 0;
-		for (i=0; (i <= n); i++) {
-			int x1, x2;
-			int y1, y2;
-			int dir;
-			int ind1, ind2;
-			int lastInd1 = 0;
-			if ((i == n) || (!i)) {
+		for (i=0; (i < n); i++) {
+			if (!i) {
 				ind1 = n-1;
 				ind2 = 0;
 			} else {
@@ -2492,70 +2526,28 @@ void gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c)
 			y1 = p[ind1].y;
 			y2 = p[ind2].y;
 			if (y1 < y2) {
-				y1 = p[ind1].y;
-				y2 = p[ind2].y;
 				x1 = p[ind1].x;
 				x2 = p[ind2].x;
-				dir = -1;
 			} else if (y1 > y2) {
 				y2 = p[ind1].y;
 				y1 = p[ind2].y;
 				x2 = p[ind1].x;
 				x1 = p[ind2].x;
-				dir = 1;
 			} else {
-				/* Horizontal; just draw it */
-				gdImageLine(im, 
-					p[ind1].x, y1, 
-					p[ind2].x, y1,
-					c);
 				continue;
 			}
-			if ((y >= y1) && (y <= y2)) {
-				int inter = 
-					(y-y1) * (x2-x1) / (y2-y1) + x1;
-				/* Only count intersections once
-					except at maxima and minima. Also, 
-					if two consecutive intersections are
-					endpoints of the same horizontal line
-					that is not at a maxima or minima,	
-					discard the leftmost of the two. */
-				if (!interFirst) {
-					if ((p[ind1].y == p[lastInd1].y) &&
-						(p[ind1].x != p[lastInd1].x)) {
-						if (dir == dirLast) {
-							if (inter > interLast) {
-								/* Replace the old one */
-								im->polyInts[ints] = inter;
-							} else {
-								/* Discard this one */
-							}	
-							continue;
-						}
-					}
-					if (inter == interLast) {
-						if (dir == dirLast) {
-							continue;
-						}
-					}
-				} 
-				if (i > 0) {
-					im->polyInts[ints++] = inter;
-				}
-				lastInd1 = i;
-				dirLast = dir;
-				interLast = inter;
-				interFirst = 0;
+			if ((y >= y1) && (y < y2)) {
+			 	im->polyInts[ints++] = (y-y1) * (x2-x1) / (y2-y1) + x1;
 			}
 		}
 		qsort(im->polyInts, ints, sizeof(int), gdCompareInt);
-		for (i=0; (i < (ints-1)); i+=2) {
+		for (i=0; (i < (ints)); i+=2) {
 			gdImageLine(im, im->polyInts[i], y,
 				im->polyInts[i+1], y, c);
 		}
 	}
 }
-	
+
 int gdCompareInt(const void *a, const void *b)
 {
 	return (*(const int *)a) - (*(const int *)b);
@@ -2566,7 +2558,7 @@ void gdImageSetStyle(gdImagePtr im, int *style, int noOfPixels)
 	if (im->style) {
 		free(im->style);
 	}
-	im->style = (int *) 
+	im->style = (int *)
 		malloc(sizeof(int) * noOfPixels);
 	memcpy(im->style, style, sizeof(int) * noOfPixels);
 	im->styleLength = noOfPixels;
@@ -2579,7 +2571,7 @@ void gdImageSetBrush(gdImagePtr im, gdImagePtr brush)
 	im->brush = brush;
 	for (i=0; (i < gdImageColorsTotal(brush)); i++) {
 		int index;
-		index = gdImageColorExact(im, 
+		index = gdImageColorExact(im,
 			gdImageRed(brush, i),
 			gdImageGreen(brush, i),
 			gdImageBlue(brush, i));
@@ -2598,14 +2590,14 @@ void gdImageSetBrush(gdImagePtr im, gdImagePtr brush)
 		im->brushColorMap[i] = index;
 	}
 }
-	
+
 void gdImageSetTile(gdImagePtr im, gdImagePtr tile)
 {
 	int i;
 	im->tile = tile;
 	for (i=0; (i < gdImageColorsTotal(tile)); i++) {
 		int index;
-		index = gdImageColorExact(im, 
+		index = gdImageColorExact(im,
 			gdImageRed(tile, i),
 			gdImageGreen(tile, i),
 			gdImageBlue(tile, i));

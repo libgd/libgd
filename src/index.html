@@ -1,9 +1,9 @@
 <HTML>
 <HEAD>
-<TITLE>gd 1.3</TITLE>
+<TITLE>gd 1.4</TITLE>
 </HEAD>
 <BODY>
-<H1>gd 1.3</H1>
+<H1>gd 1.4</H1>
 <H2>A graphics library for fast GIF creation</H2>
 <H2>Follow this link to the 
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -11,7 +11,7 @@ of this document</A>.</H2>
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew1.3">What's new in version 1.3?</A>
+<LI><A HREF="#whatsnew1.4">What's new in version 1.4?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -115,12 +115,34 @@ text file from whatever scripting language you prefer to use, then
 invoke the interpreter.
 <p>
 These packages are based on gd 1.2 as of this writing but should
-be compatible with gd 1.3 with minimal tweaking. 
+be compatible with gd 1.3x with minimal tweaking. 
 <ul>
 <li><a href="http://s27w007.pswfs.gov/tgd/">tgd</a>, by Bradley K. Sherman
 <li><a href="http://www.unimelb.edu.au/fly/fly.html">fly</a>, by Martin Gleeson
 </ul>
-<P><A NAME="whatsnew1.2"><H3>What's new in version 1.3?</H3></A>
+<P><A NAME="whatsnew1.4"><H3>What's new in version 1.4?</H3></A>
+Version 1.4 features the following changes:
+<dl>
+<dt>Fixed polygon fill routine (again)
+<dd>Thanks to Kirsten Schulz, version 1.4 is able to fill
+numerous types of polygons that caused problems with
+previous releases, including version 1.3.
+<dt>Support for alternate data sources
+<dd>Programmers who wish to load a GIF from something other
+than a stdio FILE * stream can use the new 
+<a href="#gdImageCreateFromGifSource">gdImageCreateFromGifSource</a> function.
+<dt>Support for alternate data destinations
+<dd>Programmers who wish to write a GIF to something other
+than a stdio FILE * stream can use the new 
+<a href="#gdImageGifToSink">gdImageGifToSink</a> function.
+<dt>More tolerant when reading GIFs
+<dd>
+Version 1.4 does not crash when reading certain animated GIFs,
+although it still only reads the first frame. Version 1.4 also has
+overflow testing code to prevent crashes when reading
+damaged GIFs. 
+</dl>
+<P><A NAME="whatsnew1.3"><H3>What's new in version 1.3?</H3></A>
 Version 1.3 features the following changes:
 <dl>
 <dt>Non-LZW-based GIF compression code
@@ -187,13 +209,13 @@ your particular system.
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>By HTTP</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd1.3.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd13.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd1.4.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd14.zip">.ZIP File (Windows)</a>
 </ul>
 <h4>By FTP</h4>
 <ul>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd1.3.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd13.zip">.ZIP File (Windows)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd1.4.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd14.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -204,10 +226,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd1.3".
+Unpacking the archive will produce a directory called "gd1.4".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the gd1.3 directory and examine the Makefile, which 
+<code>cd</code> to the gd1.4 directory and examine the Makefile, which 
 you will probably need to change slightly depending on your operating
 system and your needs.
 <h4>For Windows, Mac, Et Cetera</h4>
@@ -424,6 +446,34 @@ A pointer to a <A HREF="#gdPoint">gdPoint</A> structure; passed
 as an argument to <A HREF="#gdImagePolygon">gdImagePolygon</A>
 and <A HREF="#gdImageFilledPolygon">gdImageFilledPolygon</A>.
 </DL>
+<DT><A NAME="gdSource">gdSource</A> <strong>(TYPE)</strong>
+<DD>
+<pre>
+typedef struct {
+        int (*source) (void *context, char *buffer, int len);
+        void *context;
+} gdSource, *gdSourcePtr;
+</pre>
+Represents a source from which a GIF can be read.
+Programmers who do not wish to read GIFs from a file can provide
+their own alternate input mechanism, using the
+<a href="#gdImageCreateFromGifSource">gdImageCreateFromGifSource</a> function.
+See the documentation of that function for an example of the
+proper use of this type.
+<DT><A NAME="gdSink">gdSink</A> <strong>(TYPE)</strong>
+<DD>
+<PRE>
+typedef struct {
+        int (*sink) (void *context, char *buffer, int len);
+        void *context;
+} gdSink, *gdSinkPtr;
+</PRE>
+Represents a "sink" (destination) to which a GIF can be written. 
+Programmers who do not wish to write GIFs to a file can provide
+their own alternate output mechanism, using the
+<a href="#gdImageGifToSink">gdImageGifToSink</a> function.
+See the documentation of that function for an example of the
+proper use of this type.
 <H3><A NAME="creating">Image creation, destruction, loading and saving</A></H3>
 <DL>
 <DT><A NAME="gdImageCreate">gdImageCreate(sx, sy)</A> 
@@ -465,6 +515,46 @@ fclose(in);
 /* ... Use the image ... */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImageCreateFromGifSource">gdImageCreateFromGifSource(gdSourcePtr in)</A> 
+<strong>(FUNCTION)</strong>
+<dd>
+gdImageCreateFromGifSource is called to load a GIF from
+a data source other than a file. Usage is very similar to
+the <a href="#gdImageCreateFromGif">gdImageCreateFromGif</a> function,
+except that the programmer provides a custom data source.
+<p>
+The programmer must write an input function which accepts
+a context pointer, a buffer, and a number of bytes to be
+read as arguments. This function must read the number of
+bytes requested, unless the end of the file has been reached,
+in which case the function should return zero, or an error
+has occurred, in which case the function should return 
+<code>-1</code>. The programmer then creates a 
+<a href="#gdSource">gdSource</a> structure and sets
+the <code>source</code> pointer to the input function and
+the context pointer to any value which is useful to the
+programmer.
+<p>
+The example below 
+implements <a href="#gdImageCreateFromGif">gdImageCreateFromGif</a>
+by creating a custom data source and invoking gdImageCreateFromGifSource.
+<pre>
+static int freadWrapper(void *context, char *buf, int len);
+
+gdImagePtr gdImageCreateFromGif(FILE *in)
+{
+        gdSource s;
+        s.source = freadWrapper;
+        s.context = in;
+        return gdImageCreateFromGifSource(&s);
+}
+
+static int freadWrapper(void *context, char *buf, int len)
+{
+        int got = fread(buf, 1, len, (FILE *) context);
+        return got;
+}
+</pre>
 <DT><A NAME="gdImageCreateFromGd">gdImageCreateFromGd(FILE *in)</A> 
 <strong>(FUNCTION)</strong>
 <DD>
@@ -532,9 +622,9 @@ void gdImageGif(gdImagePtr im, FILE *out)</A>
 <STRONG>(FUNCTION)</STRONG> 
 <DD>
 gdImageGif outputs the specified image to the specified
-file in GIF format. The file must be open for writing. Under MSDOS,
-it is important to use "wb" as opposed to simply "w"
-as the mode when opening the file, and under Unix there
+file in GIF format. The file must be open for writing. Under MSDOS
+and all versions of Windows, it is important to use "wb" as opposed 
+to simply "w" as the mode when opening the file, and under Unix there
 is no penalty for doing so. gdImageGif does <em>not</em>
 close the file; your code must do so.
 <PRE>
@@ -559,13 +649,50 @@ fclose(out);
 /* Destroy image */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImageGifToSink">gdImageGifToSink(gdImagePtr im, gdSinkPtr out)</A> 
+<strong>(FUNCTION)</strong>
+<dd>
+gdImageGifToSink is called to write a GIF to
+a data "sink" (destination) other than a file. Usage is very similar to
+the <a href="#gdImageGif">gdImageGif</a> function,
+except that the programmer provides a custom data sink.
+<p>
+The programmer must write an output function which accepts
+a context pointer, a buffer, and a number of bytes to be
+written as arguments. This function must write the number of
+bytes requested and return that number, unless an error
+has occurred, in which case the function should return 
+<code>-1</code>. The programmer then creates a 
+<a href="#gdSink">gdSink</a> structure and sets
+the <code>sink</code> pointer to the output function and
+the context pointer to any value which is useful to the
+programmer.
+<p>
+The example below 
+implements <a href="#gdImageGif">gdImageGif</a>
+by creating a custom data source and invoking gdImageGifFromSink.
+<pre>
+static int stdioSink(void *context, char *buffer, int len)
+{
+	return fwrite(buffer, 1, len, (FILE *) context);
+}
+
+void gdImageGif(gdImagePtr im, FILE *out)
+{
+	gdSink mySink;
+	mySink.context = (void *) out;
+	mySink.sink = stdioSink;
+	gdImageGifToSink(im, &mySink);
+}
+</pre>
 <DT><A NAME="gdImageGd">
 void gdImageGd(gdImagePtr im, FILE *out)</A>
 <STRONG>(FUNCTION)</STRONG> 
 <DD>
 gdImageGd outputs the specified image to the specified
 file in the <A HREF="#gdformat">gd image format</A>. The file must 
-be open for writing. Under MSDOS, it is important to use "wb" as 
+be open for writing. Under MSDOS and all versions of Windows, it is 
+important to use "wb" as 
 opposed to simply "w" as the mode when opening the file, and under 
 Unix there is no penalty for doing so. gdImageGif does <em>not</em>
 close the file; your code must do so.
@@ -827,8 +954,8 @@ Note that gdImageFillToBorder is recursive. It is not the most
 naive implementation possible, and the implementation is
 expected to improve, but there will always be degenerate
 cases in which the stack can become very deep. This can be
-a problem in MSDOS and MS Windows environments. (Of course,
-in a Unix or NT environment with a proper stack, this is
+a problem in MSDOS and MS Windows 3.1 environments. (Of course,
+in a Unix or Windows 95/98/NT environment with a proper stack, this is
 not a problem at all.)
 <PRE>
 ... inside a function ...
@@ -875,7 +1002,7 @@ naive implementation possible, and the implementation is
 expected to improve, but there will always be degenerate
 cases in which the stack can become very deep. This can be
 a problem in MSDOS and MS Windows environments. (Of course,
-in a Unix or NT environment with a proper stack, this is
+in a Unix or Windows 95/98/NT environment with a proper stack, this is
 not a problem at all.)
 <PRE>
 ... inside a function ...
@@ -1933,6 +2060,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageCreate">gdImageCreate</A> | 
 <A HREF="#gdImageCreateFromGd">gdImageCreateFromGd</A> | 
 <A HREF="#gdImageCreateFromGif">gdImageCreateFromGif</A> | 
+<A HREF="#gdImageCreateFromGifSource">gdImageCreateFromGifSource</A> | 
 <A HREF="#gdImageCreateFromXbm">gdImageCreateFromXbm</A> | 
 <A HREF="#gdImageDashedLine">gdImageDashedLine</A> | 
 <A HREF="#gdImageDestroy">gdImageDestroy</A> | 
@@ -1944,6 +2072,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageGetPixel">gdImageGetPixel</A> | 
 <A HREF="#gdImageGetTransparent">gdImageGetTransparent</A> |
 <A HREF="#gdImageGif">gdImageGif</A> | 
+<A HREF="#gdImageGifToSink">gdImageGifToSink</A> | 
 <A HREF="#gdImageGreen">gdImageGreen</A> |
 <A HREF="#gdImageInterlace">gdImageInterlace</A> |
 <A HREF="#gdImageLine">gdImageLine</A> | 

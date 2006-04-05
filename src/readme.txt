@@ -1,8 +1,10 @@
-SEE INDEX.HTML FOR AN EASILY BROWSED HYPERTEXT VERSION OF THIS MANUAL.
+   SEE index.html FOR A MUCH MORE USEFUL HYPERTEXT VERSION OF THIS DOCUMENT!
+   SEE index.html FOR A MUCH MORE USEFUL HYPERTEXT VERSION OF THIS DOCUMENT!
+   SEE index.html FOR A MUCH MORE USEFUL HYPERTEXT VERSION OF THIS DOCUMENT!
+   SEE index.html FOR A MUCH MORE USEFUL HYPERTEXT VERSION OF THIS DOCUMENT!
+   SEE index.html FOR A MUCH MORE USEFUL HYPERTEXT VERSION OF THIS DOCUMENT!
 
-* * *
-
-                                    gd 1.3
+                                    gd 1.4
                                        
 A graphics library for fast GIF creation
 
@@ -11,7 +13,7 @@ Follow this link to the latest version of this document.
   Table of Contents
   
      * Credits and license terms
-     * What's new in version 1.3?
+     * What's new in version 1.4?
      * What is gd?
      * What if I want to use another programming language?
      * What else do I need to use gd?
@@ -31,12 +33,12 @@ Follow this link to the latest version of this document.
   
    In order to resolve any possible confusion regarding the authorship of
    gd, the following copyright statement covers all of the authors who
-   have required such a statement. Although his LZW compression code no
+   have required such a statement. _Although his LZW compression code no
    longer appears in gd, the authors wish to thank David Rowley for the
    original LZW-based GIF compression code, which has been removed due to
-   patent concerns. If you are aware of any oversights in this copyright
-   notice, please contact Thomas Boutell who will be pleased to correct
-   them.
+   patent concerns._ _If you are aware of any oversights in this
+   copyright notice, please contact Thomas Boutell who will be pleased to
+   correct them._
 
 COPYRIGHT STATEMENT FOLLOWS THIS LINE
 
@@ -52,9 +54,9 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      Non-LZW-based GIF compression code copyright 1998, by Hutchison
      Avenue Software Corporation (http://www.hasc.com/, info@hasc.com).
      
-     Permission has been granted to copy and distribute gd in any
+     _Permission has been granted to copy and distribute gd in any
      context, including a commercial application, provided that this
-     notice is present in user-accessible supporting documentation.
+     notice is present in user-accessible supporting documentation._
      
      This does not affect your ownership of the derived work itself, and
      the intent is to assure proper credit for the authors of gd, not to
@@ -107,10 +109,34 @@ END OF COPYRIGHT STATEMENT
    invoke the interpreter.
    
    These packages are based on gd 1.2 as of this writing but should be
-   compatible with gd 1.3 with minimal tweaking.
+   compatible with gd 1.3x with minimal tweaking.
      * tgd, by Bradley K. Sherman
      * fly, by Martin Gleeson
        
+  What's new in version 1.4?
+  
+   Version 1.4 features the following changes:
+   
+   Fixed polygon fill routine (again)
+          Thanks to Kirsten Schulz, version 1.4 is able to fill numerous
+          types of polygons that caused problems with previous releases,
+          including version 1.3.
+          
+   Support for alternate data sources
+          Programmers who wish to load a GIF from something other than a
+          stdio FILE * stream can use the new gdImageCreateFromGifSource
+          function.
+          
+   Support for alternate data destinations
+          Programmers who wish to write a GIF to something other than a
+          stdio FILE * stream can use the new gdImageGifToSink function.
+          
+   More tolerant when reading GIFs
+          Version 1.4 does not crash when reading certain animated GIFs,
+          although it still only reads the first frame. Version 1.4 also
+          has overflow testing code to prevent crashes when reading
+          damaged GIFs.
+          
   What's new in version 1.3?
   
    Version 1.3 features the following changes:
@@ -119,13 +145,13 @@ END OF COPYRIGHT STATEMENT
           Version 1.3 contains GIF compression code that uses simple Run
           Length Encoding instead of LZW compression, while still
           retaining compatibility with normal LZW-based GIF decoders
-          (your browser will still like your GIFs). LZW compression is
+          (your browser will still like your GIFs). _LZW compression is
           patented by Unisys. This is why there have been no new versions
           of gd for a long time. THANKS to Hutchison Avenue Software
           Corporation for contributing this code. THE NEW CODE PRODUCES
           LARGER GIFS AND IS NOT WELL SUITED TO PHOTOGRAPHIC IMAGES. THIS
           IS A LEGAL ISSUE. IT IS NOT A QUESTION OF TECHNICAL SKILL.
-          PLEASE DON'T COMPLAIN ABOUT THE SIZE OF GIF OUTPUT. THANKS!
+          PLEASE DON'T COMPLAIN ABOUT THE SIZE OF GIF OUTPUT. THANKS!_
           
    8-bit fonts, and 8-bit font support
           This improves support for European languages. Thanks are due to
@@ -149,26 +175,26 @@ END OF COPYRIGHT STATEMENT
           A one-line patch for the infamous polygon fill bug, courtesy of
           Jim Mason. I believe this fix is sufficient. However, if you
           find a situation where polygon fills still fail to behave
-          properly, please send code that demonstrates the problem, and a
-          fix if you have one. Verifying the fix is important.
+          properly, please send code that demonstrates the problem, _and_
+          a fix if you have one. Verifying the fix is important.
           
    Row-major, not column-major
           Internally, gd now represents the array of pixels as an array
           of rows of pixels, rather than an array of columns of pixels.
           This improves the performance of compression and decompression
           routines slightly, because horizontally adjacent pixels are now
-          next to each other in memory. This should not affect properly
+          next to each other in memory. _This should not affect properly
           written gd applications, but applications that directly
-          manipulate the pixels array will require changes.
+          manipulate the pixels array will require changes._
           
   What else do I need to use gd?
   
-   To use gd, you will need an ANSI C compiler. All popular Windows 95
-   and NT C compilers are ANSI C compliant. Any full-ANSI-standard C
-   compiler should be adequate. The cc compiler released with SunOS 4.1.3
-   is not an ANSI C compiler. Most Unix users who do not already have gcc
-   should get it. gcc is free, ANSI compliant and a de facto industry
-   standard. Ask your ISP why it is missing.
+   To use gd, you will need an ANSI C compiler. _All popular Windows 95
+   and NT C compilers are ANSI C compliant._ Any full-ANSI-standard C
+   compiler should be adequate. _The cc compiler released with SunOS
+   4.1.3 is not an ANSI C compiler. Most Unix users who do not already
+   have gcc should get it. gcc is free, ANSI compliant and a de facto
+   industry standard. Ask your ISP why it is missing._
    
    You will also want a GIF viewer, if you do not already have one for
    your system, since you will need a good way to check the results of
@@ -196,11 +222,11 @@ END OF COPYRIGHT STATEMENT
    (Windows), please consult with an experienced user of your system.
    Sorry, we cannot answer questions about basic Internet skills.
    
-   Unpacking the archive will produce a directory called "gd1.3".
+   Unpacking the archive will produce a directory called "gd1.4".
    
     For Unix
     
-   cd to the gd1.3 directory and examine the Makefile, which you will
+   cd to the gd1.4 directory and examine the Makefile, which you will
    probably need to change slightly depending on your operating system
    and your needs.
    
@@ -249,9 +275,9 @@ END OF COPYRIGHT STATEMENT
    the source modules as well in your project. (They may be too large for
    16-bit memory models, that is, 16-bit DOS and Windows.)
    
-   Here is a short example program. (For a more advanced example, see
+   Here is a short example program. _(For a more advanced example, see
    gddemo.c, included in the distribution. gddemo.c is NOT the same
-   program; it demonstrates additional features!)
+   program; it demonstrates additional features!)_
    
 /* Bring in gd library functions */
 #include "gd.h"
@@ -333,7 +359,7 @@ Function and type reference
        
   Types
   
-   gdImage(TYPE)
+   gdImage_(TYPE)_
           The data structure in which gd stores images. gdImageCreate
           returns a pointer to this type, and the other functions expect
           to receive a pointer to this type as their first argument. You
@@ -358,11 +384,11 @@ typedef struct {
         int transparent;
 } gdImage;
 
-   gdImagePtr (TYPE)
+   gdImagePtr _(TYPE)_
           A pointer to an image structure. gdImageCreate returns this
           type, and the other functions expect it as the first argument.
           
-   gdFont (TYPE)
+   gdFont _(TYPE)_
           A font structure. Used to declare the characteristics of a
           font. Plese see the files gdfontl.c and gdfontl.h for an
           example of the proper declaration of this structure. You can
@@ -388,13 +414,13 @@ typedef struct {
         char *data;
 } gdFont;
 
-   gdFontPtr (TYPE)
+   gdFontPtr _(TYPE)_
           A pointer to a font structure. Text-output functions expect
           these as their second argument, following the gdImagePtr
           argument. Two such pointers are declared in the provided
           include files gdfonts.h and gdfontl.h.
           
-   gdPoint (TYPE)
+   gdPoint _(TYPE)_
           Represents a point in the coordinate space of the image; used
           by gdImagePolygon and gdImageFilledPolygon.
           
@@ -403,13 +429,39 @@ typedef struct {
         int x, y;
 } gdPoint, *gdPointPtr;
 
-   gdPointPtr (TYPE)
+   gdPointPtr _(TYPE)_
           A pointer to a gdPoint structure; passed as an argument to
           gdImagePolygon and gdImageFilledPolygon.
           
+   gdSource _(TYPE)_
+
+typedef struct {
+        int (*source) (void *context, char *buffer, int len);
+        void *context;
+} gdSource, *gdSourcePtr;
+
+   Represents a source from which a GIF can be read. Programmers who do
+   not wish to read GIFs from a file can provide their own alternate
+   input mechanism, using the gdImageCreateFromGifSource function. See
+   the documentation of that function for an example of the proper use of
+   this type.
+   
+   gdSink _(TYPE)_
+
+typedef struct {
+        int (*sink) (void *context, char *buffer, int len);
+        void *context;
+} gdSink, *gdSinkPtr;
+
+   Represents a "sink" (destination) to which a GIF can be written.
+   Programmers who do not wish to write GIFs to a file can provide their
+   own alternate output mechanism, using the gdImageGifToSink function.
+   See the documentation of that function for an example of the proper
+   use of this type.
+   
   Image creation, destruction, loading and saving
   
-   gdImageCreate(sx, sy) (FUNCTION)
+   gdImageCreate(sx, sy) _(FUNCTION)_
           gdImageCreate is called to create images. Invoke gdImageCreate
           with the x and y dimensions of the desired image. gdImageCreate
           returns a gdImagePtr to the new image, or NULL if unable to
@@ -423,14 +475,14 @@ im = gdImageCreate(64, 64);
 /* ... Use the image ... */
 gdImageDestroy(im);
 
-   gdImageCreateFromGif(FILE *in) (FUNCTION)
+   gdImageCreateFromGif(FILE *in) _(FUNCTION)_
           gdImageCreateFromGif is called to load images from GIF format
           files. Invoke gdImageCreateFromGif with an already opened
           pointer to a file containing the desired image.
           gdImageCreateFromGif returns a gdImagePtr to the new image, or
           NULL if unable to load the image (most often because the file
           is corrupt or does not contain a GIF image).
-          gdImageCreateFromGif does not close the file. You can inspect
+          gdImageCreateFromGif does _not_ close the file. You can inspect
           the sx and sy members of the image to determine its size. The
           image must eventually be destroyed using gdImageDestroy().
           
@@ -444,18 +496,55 @@ fclose(in);
 /* ... Use the image ... */
 gdImageDestroy(im);
 
-   gdImageCreateFromGd(FILE *in) (FUNCTION)
+   gdImageCreateFromGifSource(gdSourcePtr in) _(FUNCTION)_
+          gdImageCreateFromGifSource is called to load a GIF from a data
+          source other than a file. Usage is very similar to the
+          gdImageCreateFromGif function, except that the programmer
+          provides a custom data source.
+          
+          The programmer must write an input function which accepts a
+          context pointer, a buffer, and a number of bytes to be read as
+          arguments. This function must read the number of bytes
+          requested, unless the end of the file has been reached, in
+          which case the function should return zero, or an error has
+          occurred, in which case the function should return -1. The
+          programmer then creates a gdSource structure and sets the
+          source pointer to the input function and the context pointer to
+          any value which is useful to the programmer.
+          
+          The example below implements gdImageCreateFromGif by creating a
+          custom data source and invoking gdImageCreateFromGifSource.
+          
+
+static int freadWrapper(void *context, char *buf, int len);
+
+gdImagePtr gdImageCreateFromGif(FILE *in)
+{
+        gdSource s;
+        s.source = freadWrapper;
+        s.context = in;
+        return gdImageCreateFromGifSource(&s);
+}
+
+static int freadWrapper(void *context, char *buf, int len)
+{
+        int got = fread(buf, 1, len, (FILE *) context);
+        return got;
+}
+
+   gdImageCreateFromGd(FILE *in) _(FUNCTION)_
           gdImageCreateFromGd is called to load images from gd format
           files. Invoke gdImageCreateFromGd with an already opened
           pointer to a file containing the desired image in the gd file
           format, which is specific to gd and intended for very fast
-          loading. (It is not intended for compression; for compression,
-          use GIF.) gdImageCreateFromGd returns a gdImagePtr to the new
-          image, or NULL if unable to load the image (most often because
-          the file is corrupt or does not contain a gd format image).
-          gdImageCreateFromGd does not close the file. You can inspect
-          the sx and sy members of the image to determine its size. The
-          image must eventually be destroyed using gdImageDestroy().
+          loading. (It is _not_ intended for compression; for
+          compression, use GIF.) gdImageCreateFromGd returns a gdImagePtr
+          to the new image, or NULL if unable to load the image (most
+          often because the file is corrupt or does not contain a gd
+          format image). gdImageCreateFromGd does _not_ close the file.
+          You can inspect the sx and sy members of the image to determine
+          its size. The image must eventually be destroyed using
+          gdImageDestroy().
           
 
 ... inside a function ...
@@ -467,14 +556,14 @@ fclose(in);
 /* ... Use the image ... */
 gdImageDestroy(im);
 
-   gdImageCreateFromXbm(FILE *in) (FUNCTION)
+   gdImageCreateFromXbm(FILE *in) _(FUNCTION)_
           gdImageCreateFromXbm is called to load images from X bitmap
           format files. Invoke gdImageCreateFromXbm with an already
           opened pointer to a file containing the desired image.
           gdImageCreateFromXbm returns a gdImagePtr to the new image, or
           NULL if unable to load the image (most often because the file
           is corrupt or does not contain an X bitmap format image).
-          gdImageCreateFromXbm does not close the file. You can inspect
+          gdImageCreateFromXbm does _not_ close the file. You can inspect
           the sx and sy members of the image to determine its size. The
           image must eventually be destroyed using gdImageDestroy().
           
@@ -488,7 +577,7 @@ fclose(in);
 /* ... Use the image ... */
 gdImageDestroy(im);
 
-   gdImageDestroy(gdImagePtr im) (FUNCTION)
+   gdImageDestroy(gdImagePtr im) _(FUNCTION)_
           gdImageDestroy is used to free the memory associated with an
           image. It is important to invoke gdImageDestroy before exiting
           your program or assigning a new image to a gdImagePtr variable.
@@ -501,13 +590,13 @@ im = gdImageCreate(10, 10);
 /* Now destroy it */
 gdImageDestroy(im);
 
-   void gdImageGif(gdImagePtr im, FILE *out) (FUNCTION)
+   void gdImageGif(gdImagePtr im, FILE *out) _(FUNCTION)_
           gdImageGif outputs the specified image to the specified file in
-          GIF format. The file must be open for writing. Under MSDOS, it
-          is important to use "wb" as opposed to simply "w" as the mode
-          when opening the file, and under Unix there is no penalty for
-          doing so. gdImageGif does not close the file; your code must do
-          so.
+          GIF format. The file must be open for writing. Under MSDOS and
+          all versions of Windows, it is important to use "wb" as opposed
+          to simply "w" as the mode when opening the file, and under Unix
+          there is no penalty for doing so. gdImageGif does _not_ close
+          the file; your code must do so.
           
 
 ... inside a function ...
@@ -531,18 +620,50 @@ fclose(out);
 /* Destroy image */
 gdImageDestroy(im);
 
-   void gdImageGd(gdImagePtr im, FILE *out) (FUNCTION)
+   gdImageGifToSink(gdImagePtr im, gdSinkPtr out) _(FUNCTION)_
+          gdImageGifToSink is called to write a GIF to a data "sink"
+          (destination) other than a file. Usage is very similar to the
+          gdImageGif function, except that the programmer provides a
+          custom data sink.
+          
+          The programmer must write an output function which accepts a
+          context pointer, a buffer, and a number of bytes to be written
+          as arguments. This function must write the number of bytes
+          requested and return that number, unless an error has occurred,
+          in which case the function should return -1. The programmer
+          then creates a gdSink structure and sets the sink pointer to
+          the output function and the context pointer to any value which
+          is useful to the programmer.
+          
+          The example below implements gdImageGif by creating a custom
+          data source and invoking gdImageGifFromSink.
+          
+
+static int stdioSink(void *context, char *buffer, int len)
+{
+        return fwrite(buffer, 1, len, (FILE *) context);
+}
+
+void gdImageGif(gdImagePtr im, FILE *out)
+{
+        gdSink mySink;
+        mySink.context = (void *) out;
+        mySink.sink = stdioSink;
+        gdImageGifToSink(im, &mySink);
+}
+
+   void gdImageGd(gdImagePtr im, FILE *out) _(FUNCTION)_
           gdImageGd outputs the specified image to the specified file in
           the gd image format. The file must be open for writing. Under
-          MSDOS, it is important to use "wb" as opposed to simply "w" as
-          the mode when opening the file, and under Unix there is no
-          penalty for doing so. gdImageGif does not close the file; your
-          code must do so.
+          MSDOS and all versions of Windows, it is important to use "wb"
+          as opposed to simply "w" as the mode when opening the file, and
+          under Unix there is no penalty for doing so. gdImageGif does
+          _not_ close the file; your code must do so.
           
           The gd image format is intended for fast reads and writes of
           images your program will need frequently to build other images.
-          It is not a compressed format, and is not intended for general
-          use.
+          It is _not_ a compressed format, and is not intended for
+          general use.
           
 
 ... inside a function ...
@@ -569,7 +690,7 @@ gdImageDestroy(im);
   Drawing Functions
   
    void gdImageSetPixel(gdImagePtr im, int x, int y, int color)
-          (FUNCTION)
+          _(FUNCTION)_
           gdImageSetPixel sets a pixel to a particular color index.
           Always use this function or one of the other drawing functions
           to access pixels; do not access the pixels of the gdImage
@@ -592,7 +713,7 @@ gdImageSetPixel(im, 50, 50, white);
 gdImageDestroy(im);
 
    void gdImageLine(gdImagePtr im, int x1, int y1, int x2, int y2, int
-          color) (FUNCTION)
+          color) _(FUNCTION)_
           gdImageLine is used to draw a line between two endpoints (x1,y1
           and x2, y2). The line is drawn using the color index specified.
           Note that the color index can be an actual color returned by
@@ -616,9 +737,9 @@ gdImageLine(im, 0, 0, 99, 99, white);
 gdImageDestroy(im);
 
    void gdImageDashedLine(gdImagePtr im, int x1, int y1, int x2, int y2,
-          int color) (FUNCTION)
-          gdImageDashedLine is provided solely for backwards
-          compatibility with gd 1.0. New programs should draw dashed
+          int color) _(FUNCTION)_
+          gdImageDashedLine is provided _solely for backwards
+          compatibility _with gd 1.0. New programs should draw dashed
           lines using the normal gdImageLine function and the new
           gdImageSetStyle function.
           
@@ -644,7 +765,7 @@ gdImageDashedLine(im, 0, 0, 99, 99);
 gdImageDestroy(im);
 
    void gdImagePolygon(gdImagePtr im, gdPointPtr points, int pointsTotal,
-          int color) (FUNCTION)
+          int color) _(FUNCTION)_
           gdImagePolygon is used to draw a polygon with the verticies (at
           least 3) specified, using the color index specified. See also
           gdImageFilledPolygon.
@@ -674,7 +795,7 @@ gdImagePolygon(im, points, 3, white);
 gdImageDestroy(im);
 
    void gdImageRectangle(gdImagePtr im, int x1, int y1, int x2, int y2,
-          int color) (FUNCTION)
+          int color) _(FUNCTION)_
           gdImageRectangle is used to draw a rectangle with the two
           corners (upper left first, then lower right) specified, using
           the color index specified.
@@ -696,7 +817,7 @@ gdImageRectangle(im, 25, 25, 74, 74, white);
 gdImageDestroy(im);
 
    void gdImageFilledPolygon(gdImagePtr im, gdPointPtr points, int
-          pointsTotal, int color) (FUNCTION)
+          pointsTotal, int color) _(FUNCTION)_
           gdImageFilledPolygon is used to fill a polygon with the
           verticies (at least 3) specified, using the color index
           specified. See also gdImagePolygon.
@@ -732,7 +853,7 @@ gdImagePolygon(im, points, 3, red);
 gdImageDestroy(im);
 
    void gdImageFilledRectangle(gdImagePtr im, int x1, int y1, int x2, int
-          y2, int color) (FUNCTION)
+          y2, int color) _(FUNCTION)_
           gdImageFilledRectangle is used to draw a solid rectangle with
           the two corners (upper left first, then lower right) specified,
           using the color index specified.
@@ -754,7 +875,7 @@ gdImageFilledRectangle(im, 25, 25, 74, 74, white);
 gdImageDestroy(im);
 
    void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s,
-          int e, int color) (FUNCTION)
+          int e, int color) _(FUNCTION)_
           gdImageArc is used to draw a partial ellipse centered at the
           given point, with the specified width and height in pixels. The
           arc begins at the position in degrees specified by s and ends
@@ -781,22 +902,23 @@ gdImageArc(im, 50, 25, 98, 48, 0, 360, white);
 gdImageDestroy(im);
 
    void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int
-          color) (FUNCTION)
+          color) _(FUNCTION)_
           gdImageFillToBorder floods a portion of the image with the
           specified color, beginning at the specified point and stopping
           at the specified border color. For a way of flooding an area
           defined by the color of the starting point, see gdImageFill.
           
-          The border color cannot be a special color such as gdTiled; it
-          must be a proper solid color. The fill color can be, however.
+          The border color _cannot_ be a special color such as gdTiled;
+          it must be a proper solid color. The fill color can be,
+          however.
           
           Note that gdImageFillToBorder is recursive. It is not the most
           naive implementation possible, and the implementation is
           expected to improve, but there will always be degenerate cases
           in which the stack can become very deep. This can be a problem
-          in MSDOS and MS Windows environments. (Of course, in a Unix or
-          NT environment with a proper stack, this is not a problem at
-          all.)
+          in MSDOS and MS Windows 3.1 environments. (Of course, in a Unix
+          or Windows 95/98/NT environment with a proper stack, this is
+          not a problem at all.)
           
 
 ... inside a function ...
@@ -820,7 +942,7 @@ gdImageFillToBorder(im, 50, 50, white, red);
 /* Destroy it */
 gdImageDestroy(im);
 
-   void gdImageFill(gdImagePtr im, int x, int y, int color) (FUNCTION)
+   void gdImageFill(gdImagePtr im, int x, int y, int color) _(FUNCTION)_
           gdImageFill floods a portion of the image with the specified
           color, beginning at the specified point and flooding the
           surrounding region of the same color as the starting point. For
@@ -838,8 +960,9 @@ gdImageDestroy(im);
           implementation possible, and the implementation is expected to
           improve, but there will always be degenerate cases in which the
           stack can become very deep. This can be a problem in MSDOS and
-          MS Windows environments. (Of course, in a Unix or NT
-          environment with a proper stack, this is not a problem at all.)
+          MS Windows environments. (Of course, in a Unix or Windows
+          95/98/NT environment with a proper stack, this is not a problem
+          at all.)
           
 
 ... inside a function ...
@@ -863,10 +986,10 @@ gdImageFill(im, 50, 50, red);
 /* Destroy it */
 gdImageDestroy(im);
 
-   void gdImageSetBrush(gdImagePtr im, gdImagePtr brush) (FUNCTION)
+   void gdImageSetBrush(gdImagePtr im, gdImagePtr brush) _(FUNCTION)_
           A "brush" is an image used to draw wide, shaped strokes in
           another image. Just as a paintbrush is not a single point, a
-          brush image need not be a single pixel. Any gd image can be
+          brush image need not be a single pixel. _Any_ gd image can be
           used as a brush, and by setting the transparent color index of
           the brush image with gdImageColorTransparent, a brush of any
           shape can be created. All line-drawing functions, such as
@@ -916,10 +1039,10 @@ gdImageDestroy(im);
 /* Destroy the brush image */
 gdImageDestroy(brush);
 
-   void gdImageSetTile(gdImagePtr im, gdImagePtr tile) (FUNCTION)
+   void gdImageSetTile(gdImagePtr im, gdImagePtr tile) _(FUNCTION)_
           A "tile" is an image used to fill an area with a repeated
-          pattern. Any gd image can be used as a tile, and by setting the
-          transparent color index of the tile image with
+          pattern. _Any_ gd image can be used as a tile, and by setting
+          the transparent color index of the tile image with
           gdImageColorTransparent, a tile that allows certain parts of
           the underlying area to shine through can be created. All
           region-filling functions, such as gdImageFill and
@@ -968,7 +1091,7 @@ gdImageDestroy(im);
 gdImageDestroy(tile);
 
    void gdImageSetStyle(gdImagePtr im, int *style, int styleLength)
-          (FUNCTION)
+          _(FUNCTION)_
           It is often desirable to draw dashed lines, dotted lines, and
           other variations on a broken line. gdImageSetStyle can be used
           to set any desired series of colors, including a special color
@@ -1036,12 +1159,12 @@ gdImageDestroy(im);
 
   Query Functions
   
-        int gdImageBlue(gdImagePtr im, int color) (MACRO)
+        int gdImageBlue(gdImagePtr im, int color) _(MACRO)_
                 gdImageBlue is a macro which returns the blue component
                 of the specified color index. Use this macro rather than
                 accessing the structure members directly.
                 
-        int gdImageGetPixel(gdImagePtr im, int x, int y) (FUNCTION)
+        int gdImageGetPixel(gdImagePtr im, int x, int y) _(FUNCTION)_
                 gdImageGetPixel() retrieves the color index of a
                 particular pixel. Always use this function to query
                 pixels; do not access the pixels of the gdImage structure
@@ -1060,7 +1183,7 @@ printf("The value of the center pixel is %d; RGB values are %d,%d,%d\n",
         c, im->red[c], im->green[c], im->blue[c]);
 gdImageDestroy(im);
 
-        int gdImageBoundsSafe(gdImagePtr im, int x, int y) (FUNCTION)
+        int gdImageBoundsSafe(gdImagePtr im, int x, int y) _(FUNCTION)_
                 gdImageBoundsSafe returns true (1) if the specified point
                 is within the bounds of the image, false (0) if not. This
                 function is intended primarily for use by those who wish
@@ -1080,22 +1203,22 @@ if (gdImageBoundsSafe(im, 50, 50)) {
 }
 gdImageDestroy(im);
 
-        int gdImageGreen(gdImagePtr im, int color) (MACRO)
+        int gdImageGreen(gdImagePtr im, int color) _(MACRO)_
                 gdImageGreen is a macro which returns the green component
                 of the specified color index. Use this macro rather than
                 accessing the structure members directly.
                 
-        int gdImageRed(gdImagePtr im, int color) (MACRO)
+        int gdImageRed(gdImagePtr im, int color) _(MACRO)_
                 gdImageRed is a macro which returns the red component of
                 the specified color index. Use this macro rather than
                 accessing the structure members directly.
                 
-        int gdImageSX(gdImagePtr im) (MACRO)
+        int gdImageSX(gdImagePtr im) _(MACRO)_
                 gdImageSX is a macro which returns the width of the image
                 in pixels. Use this macro rather than accessing the
                 structure members directly.
                 
-        int gdImageSY(gdImagePtr im) (MACRO)
+        int gdImageSY(gdImagePtr im) _(MACRO)_
                 gdImageSY is a macro which returns the height of the
                 image in pixels. Use this macro rather than accessing the
                 structure members directly.
@@ -1103,7 +1226,7 @@ gdImageDestroy(im);
   Fonts and text-handling functions
   
         void gdImageChar(gdImagePtr im, gdFontPtr font, int x, int y, int
-                c, int color) (FUNCTION)
+                c, int color) _(FUNCTION)_
                 gdImageChar is used to draw single characters on the
                 image. (To draw multiple characters, use gdImageString or
                 gdImageString16.) The second argument is a pointer to a
@@ -1138,7 +1261,7 @@ gdImageChar(im, gdFontLarge, 0, 0, 'Q', white);
 gdImageDestroy(im);
 
         void gdImageCharUp(gdImagePtr im, gdFontPtr font, int x, int y,
-                int c, int color) (FUNCTION)
+                int c, int color) _(FUNCTION)_
                 gdImageCharUp is used to draw single characters on the
                 image, rotated 90 degrees. (To draw multiple characters,
                 use gdImageStringUp or gdImageStringUp16.) The second
@@ -1175,7 +1298,7 @@ gdImageCharUp(im, gdFontLarge,
 gdImageDestroy(im);
 
         void gdImageString(gdImagePtr im, gdFontPtr font, int x, int y,
-                unsigned char *s, int color) (FUNCTION)
+                unsigned char *s, int color) _(FUNCTION)_
                 gdImageString is used to draw multiple characters on the
                 image. (To draw single characters, use gdImageChar.) The
                 second argument is a pointer to a font definition
@@ -1216,7 +1339,7 @@ gdImageString(im, gdFontLarge,
 gdImageDestroy(im);
 
         void gdImageString16(gdImagePtr im, gdFontPtr font, int x, int y,
-                unsigned short *s, int color) (FUNCTION)
+                unsigned short *s, int color) _(FUNCTION)_
                 gdImageString is used to draw multiple 16-bit characters
                 on the image. (To draw single characters, use
                 gdImageChar.) The second argument is a pointer to a font
@@ -1239,7 +1362,7 @@ gdImageDestroy(im);
                 gdImageString.
                 
         void gdImageStringUp(gdImagePtr im, gdFontPtr font, int x, int y,
-                unsigned char *s, int color) (FUNCTION)
+                unsigned char *s, int color) _(FUNCTION)_
                 gdImageStringUp is used to draw multiple characters on
                 the image, rotated 90 degrees. (To draw single
                 characters, use gdImageCharUp.) The second argument is a
@@ -1282,7 +1405,7 @@ gdImageStringUp(im, gdFontLarge,
 gdImageDestroy(im);
 
         void gdImageStringUp16(gdImagePtr im, gdFontPtr font, int x, int
-                y, unsigned short *s, int color) (FUNCTION)
+                y, unsigned short *s, int color) _(FUNCTION)_
                 gdImageString is used to draw multiple 16-bit characters
                 vertically on the image. (To draw single characters, use
                 gdImageChar.) The second argument is a pointer to a font
@@ -1307,7 +1430,7 @@ gdImageDestroy(im);
   Color-handling functions
   
         int gdImageColorAllocate(gdImagePtr im, int r, int g, int b)
-                (FUNCTION)
+                _(FUNCTION)_
                 gdImageColorAllocate finds the first available color
                 index in the image specified, sets its RGB values to
                 those requested (255 is the maximum for each), and
@@ -1343,7 +1466,7 @@ gdImageDashedLine(im, 0, 0, 99, 99, red);
 gdImageDestroy(im);
 
         int gdImageColorClosest(gdImagePtr im, int r, int g, int b)
-                (FUNCTION)
+                _(FUNCTION)_
                 gdImageColorClosest searches the colors which have been
                 defined thus far in the image specified and returns the
                 index of the color with RGB values closest to those of
@@ -1376,7 +1499,7 @@ fclose(in);
 red = gdImageColorAllocate(im, 255, 0, 0);
 /* If we fail to allocate red... */
 if (red == (-1)) {
-        /* Find the closest color instead. */
+        /* Find the _closest_ color instead. */
         red = gdImageColorClosest(im, 255, 0, 0);
 }
 /* Draw a dashed line from the upper left corner to the lower right corner */
@@ -1386,7 +1509,7 @@ gdImageDashedLine(im, 0, 0, 99, 99, red);
 gdImageDestroy(im);
 
         int gdImageColorExact(gdImagePtr im, int r, int g, int b)
-                (FUNCTION)
+                _(FUNCTION)_
                 gdImageColorExact searches the colors which have been
                 defined thus far in the image specified and returns the
                 index of the first color with RGB values which exactly
@@ -1410,7 +1533,7 @@ red = gdImageColorExact(im, 255, 0, 0);
 if (red == (-1)) {
         /* Second best: try to allocate it directly. */
         red = gdImageColorAllocate(im, 255, 0, 0);
-        /* Out of colors, so find the closest color instead. */
+        /* Out of colors, so find the _closest_ color instead. */
         red = gdImageColorClosest(im, 255, 0, 0);
 }
 /* Draw a dashed line from the upper left corner to the lower right corner */
@@ -1419,45 +1542,46 @@ gdImageDashedLine(im, 0, 0, 99, 99, red);
 /* Destroy it */
 gdImageDestroy(im);
 
-        int gdImageColorsTotal(gdImagePtr im) (MACRO)
+        int gdImageColorsTotal(gdImagePtr im) _(MACRO)_
                 gdImageColorsTotal is a macro which returns the number of
                 colors currently allocated in the image. Use this macro
                 to obtain this information; do not access the structure
                 directly.
                 
-        int gdImageColorRed(gdImagePtr im, int c) (MACRO)
+        int gdImageColorRed(gdImagePtr im, int c) _(MACRO)_
                 gdImageColorRed is a macro which returns the red portion
                 of the specified color in the image. Use this macro to
                 obtain this information; do not access the structure
                 directly.
                 
-        int gdImageColorGreen(gdImagePtr im, int c) (MACRO)
+        int gdImageColorGreen(gdImagePtr im, int c) _(MACRO)_
                 gdImageColorGreen is a macro which returns the green
                 portion of the specified color in the image. Use this
                 macro to obtain this information; do not access the
                 structure directly.
                 
-        int gdImageColorBlue(gdImagePtr im, int c) (MACRO)
+        int gdImageColorBlue(gdImagePtr im, int c) _(MACRO)_
                 gdImageColorBlue is a macro which returns the green
                 portion of the specified color in the image. Use this
                 macro to obtain this information; do not access the
                 structure directly.
                 
-        int gdImageGetInterlaced(gdImagePtr im) (MACRO)
+        int gdImageGetInterlaced(gdImagePtr im) _(MACRO)_
                 gdImageGetInterlaced is a macro which returns true (1) if
                 the image is interlaced, false (0) if not. Use this macro
                 to obtain this information; do not access the structure
                 directly. See gdImageInterlace for a means of interlacing
                 images.
                 
-        int gdImageGetTransparent(gdImagePtr im) (MACRO)
+        int gdImageGetTransparent(gdImagePtr im) _(MACRO)_
                 gdImageGetTransparent is a macro which returns the
                 current transparent color index in the image. If there is
                 no transparent color, gdImageGetTransparent returns -1.
                 Use this macro to obtain this information; do not access
                 the structure directly.
                 
-        void gdImageColorDeallocate(gdImagePtr im, int color) (FUNCTION)
+        void gdImageColorDeallocate(gdImagePtr im, int color) _(FUNCTION)_
+                
                 gdImageColorDeallocate marks the specified color as being
                 available for reuse. It does not attempt to determine
                 whether the color index is still in use in the image.
@@ -1490,11 +1614,11 @@ if (red != (-1)) {
 /* Destroy it */
 gdImageDestroy(im);
 
-        void gdImageColorTransparent(gdImagePtr im, int color) (FUNCTION)
-                
+        void gdImageColorTransparent(gdImagePtr im, int color)
+                _(FUNCTION)_
                 gdImageColorTransparent sets the transparent color index
                 for the specified image to the specified index. To
-                indicate that there should be no transparent color,
+                indicate that there should be _no_ transparent color,
                 invoke gdImageColorTransparent with a color index of -1.
                 
                 The color index used should be an index allocated by
@@ -1504,8 +1628,8 @@ gdImageDestroy(im);
                 when viewed by users who do not have transparent
                 background capabilities, be sure to give reasonable RGB
                 values to the color you allocate for use as a transparent
-                color, even though it will be transparent on systems that
-                support transparency.
+                color, _even though it will be transparent on systems
+                that support transparency_.
                 
 
 ... inside a function ...
@@ -1532,7 +1656,7 @@ gdImageDestroy(im);
   Copying and resizing functions
   
         void gdImageCopy(gdImagePtr dst, gdImagePtr src, int dstX, int
-                dstY, int srcX, int srcY, int w, int h) (FUNCTION)
+                dstY, int srcX, int srcY, int w, int h) _(FUNCTION)_
                 gdImageCopy is used to copy a rectangular portion of one
                 image to another image. (For a way of stretching or
                 shrinking the image in the process, see
@@ -1552,10 +1676,10 @@ gdImageDestroy(im);
                 perform as expected unless the regions overlap, in which
                 case the result is unpredictable.
                 
-                Important note on copying between images: since different
-                images do not necessarily have the same color tables,
-                pixels are not simply set to the same color index values
-                to copy them. gdImageCopy will attempt to find an
+                _Important note on copying between images:_ since
+                different images do not necessarily have the same color
+                tables, pixels are not simply set to the same color index
+                values to copy them. gdImageCopy will attempt to find an
                 identical RGB value in the destination image for each
                 pixel in the copied portion of the source image by
                 invoking gdImageColorExact. If such a value is not found,
@@ -1595,7 +1719,7 @@ gdImageDestroy(im_out);
 
         void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX,
                 int dstY, int srcX, int srcY, int destW, int destH, int
-                srcW, int srcH) (FUNCTION)
+                srcW, int srcH) _(FUNCTION)_
                 gdImageCopyResized is used to copy a rectangular portion
                 of one image to another image. The X and Y dimensions of
                 the original region and the destination region can vary,
@@ -1622,8 +1746,8 @@ gdImageDestroy(im_out);
                 problem, create a scratch image in which to keep
                 intermediate results.
                 
-                Important note on copying between images: since images do
-                not necessarily have the same color tables, pixels are
+                _Important note on copying between images:_ since images
+                do not necessarily have the same color tables, pixels are
                 not simply set to the same color index values to copy
                 them. gdImageCopy will attempt to find an identical RGB
                 value in the destination image for each pixel in the
@@ -1660,7 +1784,8 @@ gdImageDestroy(im_out);
 
   Miscellaneous Functions
   
-              gdImageInterlace(gdImagePtr im, int interlace) (FUNCTION)
+              gdImageInterlace(gdImagePtr im, int interlace) _(FUNCTION)_
+                      
                       gdImageInterlace is used to determine whether an
                       image should be stored in a linear fashion, in
                       which lines will appear on the display from first
@@ -1678,7 +1803,7 @@ gdImageDestroy(im_out);
                       interlace will be set according to the setting in
                       the GIF file.
                       
-                      Note that many GIF viewers and web browsers do not
+                      Note that many GIF viewers and web browsers do _not_
                       support interlace. However, the interlaced GIF
                       should still display; it will simply appear all at
                       once, just as other images do.
@@ -1699,7 +1824,7 @@ gdImageDestroy(im);
 
   Constants
   
-              gdBrushed (CONSTANT)
+              gdBrushed _(CONSTANT)_
                       Used in place of a color when invoking a
                       line-drawing function such as gdImageLine or
                       gdImageRectangle. When gdBrushed is used as the
@@ -1710,13 +1835,13 @@ gdImageDestroy(im);
                       gdStyledBrushed for a way to draw broken lines with
                       a series of distinct copies of an image.
                       
-              gdMaxColors(CONSTANT)
+              gdMaxColors_(CONSTANT)_
                       The constant 256. This is the maximum number of
                       colors in a GIF file according to the GIF standard,
                       and is also the maximum number of colors in a gd
                       image.
                       
-              gdStyled (CONSTANT)
+              gdStyled _(CONSTANT)_
                       Used in place of a color when invoking a
                       line-drawing function such as gdImageLine or
                       gdImageRectangle. When gdStyled is used as the
@@ -1729,7 +1854,7 @@ gdImageDestroy(im);
                       gdImageColorTransparent gdImageColorTransparent for
                       that mechanism.) See also gdStyledBrushed.
                       
-              gdStyledBrushed (CONSTANT)
+              gdStyledBrushed _(CONSTANT)_
                       Used in place of a color when invoking a
                       line-drawing function such as gdImageLine or
                       gdImageRectangle. When gdStyledBrushed is used as
@@ -1746,7 +1871,7 @@ gdImageDestroy(im);
                       the style are used as actual pixel colors, except
                       for gdTransparent.
                       
-              gdDashSize (CONSTANT)
+              gdDashSize _(CONSTANT)_
                       The length of a dash in a dashed line. Defined to
                       be 4 for backwards compatibility with programs that
                       use gdImageDashedLine. New programs should use
@@ -1754,7 +1879,7 @@ gdImageDestroy(im);
                       function with the special "color" gdStyled or
                       gdStyledBrushed.
                       
-              gdTiled (CONSTANT)
+              gdTiled _(CONSTANT)_
                       Used in place of a normal color in
                       gdImageFilledRectangle, gdImageFilledPolygon,
                       gdImageFill, and gdImageFillToBorder. gdTiled
@@ -1765,10 +1890,10 @@ gdImageDestroy(im);
                       gdImageFillToBorder for special restrictions
                       regarding those functions.
                       
-              gdTransparent (CONSTANT)
+              gdTransparent _(CONSTANT)_
                       Used in place of a normal color in a style to be
-                      set with gdImageSetStyle. gdTransparent is not the
-                      transparent color index of the image; for that
+                      set with gdImageSetStyle. gdTransparent is _not_
+                      the transparent color index of the image; for that
                       functionality please see gdImageColorTransparent.
                       
   About the additional .gd image file format
@@ -1776,12 +1901,12 @@ gdImageDestroy(im);
                       In addition to reading and writing the GIF format
                       and reading the X Bitmap format, gd has the
                       capability to read and write its own ".gd" format.
-                      This format is not intended for general purpose use
-                      and should never be used to distribute images. It
-                      is not a compressed format. Its purpose is solely
-                      to allow very fast loading of images your program
-                      needs often in order to build other images for
-                      output. If you are experiencing performance
+                      This format is _not_ intended for general purpose
+                      use and should never be used to distribute images.
+                      It is not a compressed format. Its purpose is
+                      solely to allow very fast loading of images your
+                      program needs often in order to build other images
+                      for output. If you are experiencing performance
                       problems when loading large, fixed GIF images your
                       program needs to produce its output images, you may
                       wish to examine the functions gdImageCreateFromGd
@@ -1820,18 +1945,19 @@ gdImageDestroy(im);
                       gdImageColorTransparent | gdImageCopy |
                       gdImageCopyResized | gdImageCreate |
                       gdImageCreateFromGd | gdImageCreateFromGif |
-                      gdImageCreateFromXbm | gdImageDashedLine |
-                      gdImageDestroy | gdImageFill | gdImageFillToBorder
-                      | gdImageFilledRectangle | gdImageGd |
-                      gdImageGetInterlaced | gdImageGetPixel |
-                      gdImageGetTransparent | gdImageGif | gdImageGreen |
-                      gdImageInterlace | gdImageLine |
-                      gdImageFilledPolygon | gdImagePolygon | gdImagePtr
-                      | gdImageRectangle | gdImageRed | gdImageSetBrush |
-                      gdImageSetPixel | gdImageSetStyle | gdImageSetTile
-                      | gdImageString | gdImageString16 | gdImageStringUp
-                      | gdImageStringUp16 | gdMaxColors | gdPoint |
+                      gdImageCreateFromGifSource | gdImageCreateFromXbm |
+                      gdImageDashedLine | gdImageDestroy | gdImageFill |
+                      gdImageFillToBorder | gdImageFilledRectangle |
+                      gdImageGd | gdImageGetInterlaced | gdImageGetPixel
+                      | gdImageGetTransparent | gdImageGif |
+                      gdImageGifToSink | gdImageGreen | gdImageInterlace
+                      | gdImageLine | gdImageFilledPolygon |
+                      gdImagePolygon | gdImagePtr | gdImageRectangle |
+                      gdImageRed | gdImageSetBrush | gdImageSetPixel |
+                      gdImageSetStyle | gdImageSetTile | gdImageString |
+                      gdImageString16 | gdImageStringUp |
+                      gdImageStringUp16 | gdMaxColors | gdPoint |
                       gdStyled | gdStyledBrushed | gdTiled |
                       gdTransparent
                       
-                      Boutell.Com, Inc.
+                      _Boutell.Com, Inc._

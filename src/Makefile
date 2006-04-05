@@ -9,26 +9,24 @@
 
 CC=gcc 
 AR=ar
-ARFLAGS=rc
 CFLAGS=-O
-LIB=libgd.a
 LIBS=-L./ -lgd -lm
 
-all: $(LIB) gddemo giftogd webgif
+all: libgd.a gddemo giftogd webgif
 
-gddemo: gddemo.o $(LIB) gd.h gdfonts.h gdfontl.h
+gddemo: gddemo.o libgd.a gd.h gdfonts.h gdfontl.h
 	$(CC) gddemo.o -o gddemo	$(LIBS)
 
-giftogd: giftogd.o $(LIB) gd.h
+giftogd: giftogd.o libgd.a gd.h
 	$(CC) giftogd.o -o giftogd	$(LIBS) 
 
-$(LIB): gd.o gdfontt.o gdfonts.o gdfontmb.o gdfontl.o gdfontg.o \
+libgd.a: gd.o gdfontt.o gdfonts.o gdfontmb.o gdfontl.o gdfontg.o \
 	gd.h gdfontt.h gdfonts.h gdfontmb.h gdfontl.h gdfontg.h
-	rm -f $(LIB)
-	$(AR) $(ARFLAGS) $(LIB) gd.o gdfontt.o gdfonts.o gdfontmb.o \
+	rm -f libgd.a
+	$(AR) rc libgd.a gd.o gdfontt.o gdfonts.o gdfontmb.o \
 		gdfontl.o gdfontg.o
 
-webgif: webgif.o $(LIB) gd.h
+webgif: webgif.o libgd.a gd.h
 	$(CC) webgif.o -o webgif	$(LIBS)
 
 clean:

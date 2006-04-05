@@ -136,20 +136,22 @@ $info
 char ${gdname}Data[] = {
 EOF
 
-for my $i (0 .. 255)
+my($i);
+for $i (0 .. 255)
 	{
 	$data[$i] = '' unless defined $data[$i];
 	$data[$i] = '0' x ($width * $height - length $data[$i]) . $data[$i];
 	
 	print FILEC "/* Char $i */\n";
-	for my $line (0 .. $height - 1)
+	my($line);
+	for $line (0 .. $height - 1)
 		{ print FILEC join ',', split(//, substr($data[$i], $line * $width, $width)), "\n"; }
 
 	print FILEC "\n";
 
 	next;
-	
-	for my $line (0 .. $height - 1)
+	my($line);	
+	for $line (0 .. $height - 1)
 		{ print substr($data[$i], $line * $width, $width), "\n"; }
 	}
 

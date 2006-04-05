@@ -20,7 +20,7 @@
 
 /* Image type. See functions below; you will not need to change
 	the elements directly. Use the provided macros to
-	access sx, sy, the color table, and colorsTotal for 
+	access sx, sy, the color table, and colorsTotal for
 	read-only purposes. */
 
 typedef struct gdImageStruct {
@@ -30,13 +30,13 @@ typedef struct gdImageStruct {
 	int colorsTotal;
 	int red[gdMaxColors];
 	int green[gdMaxColors];
-	int blue[gdMaxColors]; 
+	int blue[gdMaxColors];
 	int open[gdMaxColors];
 	int transparent;
 	int *polyInts;
 	int polyAllocated;
 	struct gdImageStruct *brush;
-	struct gdImageStruct *tile;	
+	struct gdImageStruct *tile;
 	int brushColorMap[gdMaxColors];
 	int tileColorMap[gdMaxColors];
 	int styleLength;
@@ -86,6 +86,22 @@ gdImagePtr gdImageCreate(int sx, int sy);
 gdImagePtr gdImageCreateFromGif(FILE *fd);
 gdImagePtr gdImageCreateFromGd(FILE *in);
 gdImagePtr gdImageCreateFromXbm(FILE *fd);
+
+/* A custom data source. */
+
+/* The source function must return -1 on error, otherwise the number
+	of bytes fetched. 0 is EOF, not an error! */
+
+/* context will be passed to your source function. */
+
+typedef struct {
+	int (*source) (void *context, char *buffer, int len);
+	void *context;
+} gdSource, *gdSourcePtr;
+
+gdImagePtr gdImageCreateFromGifSource(
+	gdSourcePtr in);
+
 void gdImageDestroy(gdImagePtr im);
 void gdImageSetPixel(gdImagePtr im, int x, int y, int color);
 int gdImageGetPixel(gdImagePtr im, int x, int y);
@@ -120,7 +136,22 @@ int gdImageColorClosest(gdImagePtr im, int r, int g, int b);
 int gdImageColorExact(gdImagePtr im, int r, int g, int b);
 void gdImageColorDeallocate(gdImagePtr im, int color);
 void gdImageColorTransparent(gdImagePtr im, int color);
+
+/* A custom data sink. */
+
+/* The sink function must return -1 on error, otherwise the number
+	of bytes written, which must be equal to len. */
+
+/* context will be passed to your sink function. */
+
+typedef struct {
+	int (*sink) (void *context, char *buffer, int len);
+	void *context;
+} gdSink, *gdSinkPtr;
+
 void gdImageGif(gdImagePtr im, FILE *out);
+void gdImageGifToSink(gdImagePtr im, gdSinkPtr out);
+
 void gdImageGd(gdImagePtr im, FILE *out);
 void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color);
 void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color);
