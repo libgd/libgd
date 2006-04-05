@@ -6,6 +6,7 @@
 int
 main (void)
 {
+#ifdef HAVE_LIBPNG
   /* Input and output files */
   FILE *in;
   FILE *out;
@@ -118,5 +119,8 @@ main (void)
     {
       gdImageDestroy (im_in);
     }
+#else
+  fprintf(stderr,"No PNG library support.\n");
+#endif /* HAVE_LIBPNG */
   return 0;
 }

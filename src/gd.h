@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-/* default fontpath for unix systems */
-#define DEFAULT_FONTPATH "/usr/share/fonts/truetype"
+/* default fontpath for unix systems  - whatever happened to standards ! */
+#define DEFAULT_FONTPATH "/usr/X11R6/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/truetype:/usr/X11R6/lib/X11/fonts/TTF:/usr/share/fonts/TrueType:/usr/share/fonts/truetype:/usr/openwin/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/Type1"
 #define PATHSEPARATOR ":"
 
 /* gd.h: declarations file for the graphic-draw module.
@@ -242,6 +242,9 @@ void gdImageString(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s, i
 void gdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s, int color);
 void gdImageString16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
 void gdImageStringUp16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
+
+/* clean up after using fonts in gdImageStringFT() */
+void gdFreeFontCache();
 
 /* Calls gdImageStringFT. Provided for backwards compatibility only. */
 char *gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontlist,

@@ -59,6 +59,7 @@ extern int gdSinT[];
 
 static void gdImageBrushApply (gdImagePtr im, int x, int y);
 static void gdImageTileApply (gdImagePtr im, int x, int y);
+static int gdImageGetTrueColorPixel(gdImagePtr im, int x, int y);
 
 gdImagePtr
 gdImageCreate (int sx, int sy)
@@ -296,6 +297,7 @@ HWB_Diff (int r1, int g1, int b1, int r2, int g2, int b2)
 }
 
 
+#if 0
 /*
  * This is not actually used, but is here for completeness, in case someone wants to
  * use the HWB stuff for anything else...
@@ -340,6 +342,7 @@ HWB_to_RGB (HWBType HWB, RGBType * RGB)
   return RGB;
 
 }
+#endif
 
 int
 gdImageColorClosestHWB (gdImagePtr im, int r, int g, int b)
@@ -478,6 +481,12 @@ gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, int a)
 	{
 	  op = c;		/* Save open slot */
 	  continue;		/* Color not in use */
+	}
+      if (c == im->transparent)
+        {
+          /* don't ever resolve to the color that has
+           * been designated as the transparent color */
+          continue;
 	}
       rd = (long) (im->red[c] - r);
       gd = (long) (im->green[c] - g);
@@ -754,6 +763,7 @@ gdImageTileApply (gdImagePtr im, int x, int y)
     }
   else
     {
+      p = gdImageGetPixel(im->tile, srcx, srcy);
       /* Allow for transparency */
       if (p != gdImageGetTransparent (im->tile))
 	{
@@ -798,7 +808,7 @@ gdImageGetPixel (gdImagePtr im, int x, int y)
     }
 }
 
-int
+static int
 gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
 {
   int p = gdImageGetPixel (im, x, y);
@@ -973,7 +983,7 @@ gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
   int dashStep = 0;
   int on = 1;
   int wid;
-  int w, wstart, vert;
+  int vert;
   int thick = im->thick;
 
   dx = abs (x2 - x1);
@@ -1303,7 +1313,7 @@ gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int
   gdPoint pts[3];
   int i;
   int lx = 0, ly = 0;
-  int fx, fy;
+  int fx = 0, fy = 0;
   int w2, h2;
   w2 = w / 2;
   h2 = h / 2;
@@ -1883,7 +1893,7 @@ gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX
 	  tox = dstX;
 	  for (x = srcX; (x < (srcX + srcW)); x++)
 	    {
-	      int nc;
+	      int nc = 0;
 	      int mapTo;
 	      if (!stx[x - srcX])
 		{
@@ -1891,7 +1901,6 @@ gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX
 		}
 	      if (dst->trueColor)
 		{
-		  int d;
 		  mapTo = gdImageGetTrueColorPixel (src, x, y);
 		  /* Added 7/24/95: support transparent copies */
 		  if (gdImageGetTransparent (src) == mapTo)
@@ -1971,7 +1980,6 @@ gdImageCopyResampled (gdImagePtr dst,
 		      int srcW, int srcH)
 {
   int x, y;
-  float sx, sy;
   if (!dst->trueColor)
     {
       gdImageCopyResized (
@@ -1983,7 +1991,6 @@ gdImageCopyResampled (gdImagePtr dst,
     {
       for (x = dstX; (x < dstX + dstW); x++)
 	{
-	  int pd = gdImageGetPixel (dst, x, y);
 	  float sy1, sy2, sx1, sx2;
 	  float sx, sy;
 	  float spixels = 0;

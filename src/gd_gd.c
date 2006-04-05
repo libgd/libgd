@@ -147,7 +147,7 @@ gdImageCreateFromGd (FILE * inFile)
   in = gdNewFileCtx (inFile);
   im = gdImageCreateFromGdCtx (in);
 
-  in->free (in);
+  in->gd_free (in);
 
   return im;
 }
@@ -195,7 +195,6 @@ void
 _gdPutColors (gdImagePtr im, gdIOCtx * out)
 {
   int i;
-  int trans;
 
   gdPutC (im->trueColor, out);
   if (!im->trueColor)
@@ -257,7 +256,7 @@ gdImageGd (gdImagePtr im, FILE * outFile)
 {
   gdIOCtx *out = gdNewFileCtx (outFile);
   _gdImageGd (im, out);
-  out->free (out);
+  out->gd_free (out);
 }
 
 void *
@@ -267,6 +266,6 @@ gdImageGdPtr (gdImagePtr im, int *size)
   gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
   _gdImageGd (im, out);
   rv = gdDPExtractData (out, size);
-  out->free (out);
+  out->gd_free (out);
   return rv;
 }

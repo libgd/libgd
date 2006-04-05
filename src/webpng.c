@@ -58,7 +58,11 @@ main (int argc, char **argv)
       exit (1);
     }
   /* Now load the image. */
+#ifdef HAVE_LIBPNG
   im = gdImageCreateFromPng (in);
+#else
+  fprintf(stderr, "No PNG library support.\n");
+#endif
   fclose (in);
   /* If the load failed, it must not be a PNG file. */
   if (!im)
@@ -229,8 +233,11 @@ usage:
 	}
 
       /* Write the new PNG. */
+#ifdef HAVE_LIBPNG
       gdImagePng (im, out);
-
+#else
+      fprintf(stderr, "No PNG library support.\n");
+#endif
       if (!useStdinStdout)
 	{
 	  fclose (out);

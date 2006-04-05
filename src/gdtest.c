@@ -19,6 +19,7 @@ static int fwriteWrapper (void *context, const char *buffer, int len);
 int
 main (int argc, char **argv)
 {
+#ifdef HAVE_LIBPNG
   gdImagePtr im, ref, im2, im3;
   FILE *in, *out;
   void *iptr;
@@ -82,7 +83,7 @@ main (int argc, char **argv)
   CompareImages ("GD->PNG ptr->GD", ref, im2);
 
   gdImageDestroy (im2);
-  ctx->free (ctx);
+  ctx->gd_free (ctx);
 
 
   /* */
@@ -117,7 +118,7 @@ main (int argc, char **argv)
   CompareImages ("GD->GD2 ptr->GD", ref, im2);
 
   gdImageDestroy (im2);
-  ctx->free (ctx);
+  ctx->gd_free (ctx);
 
 
   /* */
@@ -152,7 +153,7 @@ main (int argc, char **argv)
   CompareImages ("GD->GD ptr->GD", ref, im2);
 
   gdImageDestroy (im2);
-  ctx->free (ctx);
+  ctx->gd_free (ctx);
 
   /*
      ** Test gdImageCreateFromPngSource'
@@ -270,7 +271,7 @@ main (int argc, char **argv)
   gdImageDestroy (im2);
   gdImageDestroy (im3);
 
-#ifdef HAVE_JPEG
+#ifdef HAVE_LIBJPEG
   out = fopen ("test/gdtest.jpg", "wb");
   if (!out)
     {
@@ -296,7 +297,7 @@ main (int argc, char **argv)
   printf ("Created test/gdtest.jpg successfully. Compare this image\n"
 	  "to the input image manually. Some difference must be\n"
 	  "expected as JPEG is a lossy file format.\n");
-#endif /* HAVE_JPEG */
+#endif /* HAVE_LIBJPEG */
   /* Assume the color closest to black is the foreground
      color for the B&W wbmp image. */
   fprintf (stderr, "NOTE: the WBMP output image will NOT match the original unless the original\n"
@@ -352,6 +353,9 @@ main (int argc, char **argv)
     }
   gdImageDestroy (im);
   gdImageDestroy (ref);
+#else
+  fprintf(stderr, "No PNG library support.\n");
+#endif /* HAVE_LIBPNG */
 
   return 0;
 }

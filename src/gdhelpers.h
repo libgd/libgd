@@ -1,6 +1,9 @@
 #ifndef GDHELPERS_H 
 #define GDHELPERS_H 1
 
+/* sys/types.h is needed for size_t on Sparc-SunOS-4.1 */
+#include <sys/types.h>
+
 /* TBB: strtok_r is not universal; provide an implementation of it. */
 
 extern char *gd_strtok_r(char *s, char *sep, char **state);

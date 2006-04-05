@@ -1,4 +1,3 @@
-
 #include "gd.h"
 #include <string.h>
 
@@ -139,7 +138,7 @@ main (int argc, char *argv[])
   out = fopen ("test/fttest.jpg", "wb");
   if (!out)
     {
-      fprintf (stderr, "Can't create test/fttest.png\n");
+      fprintf (stderr, "Can't create test/fttest.jpg\n");
       exit (1);
     }
   /* Fairly high JPEG quality setting */
@@ -150,5 +149,5 @@ main (int argc, char *argv[])
   gdImageDestroy (im);
 
   return 0;
-#endif /* HAVE_FREETYPE */
+#endif /* HAVE_LIBFREETYPE */
 }
