@@ -25,12 +25,15 @@
 /* 2.0.20: for actual storage of exported data, functions don't need this,
   currently needed only for font pointers */
 #ifdef BGDWIN32
+#define BGD_EXPORT_DATA_PROT __declspec(dllexport) extern
 #define BGD_EXPORT_DATA_IMPL __declspec(dllexport)
 #else
 #ifdef WIN32
-#define BGD_EXPORT_DATA_IMPL __declspec(dllimport)
+#define BGD_EXPORT_DATA_PROT __declspec(dllimport) extern
+#define BGD_EXPORT_DATA_IMPL __declspec(dllimport) 
 #else
-/* 2.0.20: should be nothing at all */
+/* 2.0.25: bring back extern */
+#define BGD_EXPORT_DATA_PROT extern
 #define BGD_EXPORT_DATA_IMPL
 #endif /* WIN32 */
 #endif /* BGDWIN32 */
