@@ -36,11 +36,13 @@ main (int argc, char *argv[])
 	gdImageStringFT (im, NULL, black, "Times", 18, 0, 50, 50, "Hello");
 
 	gdImageSaveAlpha (im, TRUE);
-
+#ifdef HAVE_LIBPNG
 	out = fopen ("testtr.png", "wb");
 	gdImagePng (im, out);
 	fclose (out);
-
+#else
+	fprintf(stderr, "Compiled without libpng support\n");
+#endif /* HAVE_LIBPNG */
 	gdImageDestroy (im);
 
 	return 0;

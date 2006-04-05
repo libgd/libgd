@@ -44,7 +44,7 @@ main (int argc, char *argv[])
 #ifdef JISX0208
   char *s = "Hello. ‚±‚ñ‚É‚¿‚Í Qyjpqg,";	/* String to draw. */
 #else
-  char *s = "Hello. Qyjpqg,";	/* String to draw. */
+  char *s = "Hello. äöü Qyjpqg,";	/* String to draw. */
 #endif
 
   double sz = 40.;
