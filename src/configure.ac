@@ -4,7 +4,7 @@
 #
 AC_PREREQ(2.54)
 
-AC_INIT([GD], [2.0.6], [gd@boutell.com])
+AC_INIT([GD], [2.0.7], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
@@ -32,10 +32,10 @@ AC_PROG_RANLIB
 dnl may be required for freetype and Xpm
 AC_PATH_X
 
-if test "x$x_includes" != x; then
+if test "x$x_includes" != xNONE ; then
   CPPFLAGS="$CPPFLAGS -I$x_includes"
 fi
-if test "x$x_libraries" != x; then
+if test "x$x_libraries" != xNONE ; then
   LDFLAGS="$LDFLAGS -L$x_libraries"
 fi
 
