@@ -173,7 +173,8 @@ main (int argc, char **argv)
 
   if (im2 == NULL)
     {
-      printf ("GD Source: ERROR Null returned by gdImageCreateFromPngSource\n");
+      printf
+	("GD Source: ERROR Null returned by gdImageCreateFromPngSource\n");
     }
   else
     {
@@ -195,7 +196,8 @@ main (int argc, char **argv)
   in = fopen (of, "rb");
   if (!in)
     {
-      fprintf (stderr, "GD Sink: ERROR - GD Sink Output file does not exist!\n");
+      fprintf (stderr,
+	       "GD Sink: ERROR - GD Sink Output file does not exist!\n");
     }
   else
     {
@@ -230,7 +232,8 @@ main (int argc, char **argv)
   im3 = gdImageCreateFromGd2Part (in, 200, 300, 150, 100);
   fclose (in);
 
-  CompareImages ("GD2Part (gdtest_200_300_150_100.png, gdtest.gd2(part))", im2, im3);
+  CompareImages ("GD2Part (gdtest_200_300_150_100.png, gdtest.gd2(part))",
+		 im2, im3);
 
   gdImageDestroy (im2);
   gdImageDestroy (im3);
@@ -305,7 +308,8 @@ main (int argc, char **argv)
 #endif /* HAVE_LIBJPEG */
   /* Assume the color closest to black is the foreground
      color for the B&W wbmp image. */
-  fprintf (stderr, "NOTE: the WBMP output image will NOT match the original unless the original\n"
+  fprintf (stderr,
+	   "NOTE: the WBMP output image will NOT match the original unless the original\n"
 	   "is also black and white. This is OK!\n");
   foreground = gdImageColorClosest (im, 0, 0, 0);
   fprintf (stderr, "Foreground index is %d\n", foreground);
@@ -336,8 +340,7 @@ main (int argc, char **argv)
 	{
 	  fprintf (stderr, "%02X%02X%02X\n",
 		   gdImageRed (im2, i),
-		   gdImageGreen (im2, i),
-		   gdImageBlue (im2, i));
+		   gdImageGreen (im2, i), gdImageBlue (im2, i));
 	}
       fclose (in);
       if (!im2)
@@ -349,7 +352,8 @@ main (int argc, char **argv)
       out = fopen ("test/gdtest_wbmp_to_png.png", "wb");
       if (!out)
 	{
-	  fprintf (stderr, "Can't create file test/gdtest_wbmp_to_png.png.\n");
+	  fprintf (stderr,
+		   "Can't create file test/gdtest_wbmp_to_png.png.\n");
 	  exit (1);
 	}
       gdImagePng (im2, out);
@@ -359,7 +363,7 @@ main (int argc, char **argv)
   gdImageDestroy (im);
   gdImageDestroy (ref);
 #else
-  fprintf(stderr, "No PNG library support.\n");
+  fprintf (stderr, "No PNG library support.\n");
 #endif /* HAVE_LIBPNG */
 
   return 0;
