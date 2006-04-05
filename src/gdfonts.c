@@ -1,5 +1,3 @@
-
-
 /*
    This is a header file for gd font, generated using
    bdftogd version 0.5 by Jan Pazdziora, adelton@fi.muni.cz
@@ -3866,7 +3864,7 @@ gdFont gdFontSmallRep = {
 
 BGD_EXPORT_DATA_IMPL gdFontPtr gdFontSmall = &gdFontSmallRep;
 
-gdFontPtr
+BGD_DECLARE(gdFontPtr)
 gdFontGetSmall (void)
 {
   return gdFontSmall;
