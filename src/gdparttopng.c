@@ -21,7 +21,8 @@ main (int argc, char **argv)
 
   if (argc != 7)
     {
-      fprintf (stderr, "Usage: gdparttopng filename.gd filename.png x y w h\n");
+      fprintf (stderr,
+	       "Usage: gdparttopng filename.gd filename.png x y w h\n");
       exit (1);
     }
   in = fopen (argv[1], "rb");
@@ -55,7 +56,7 @@ main (int argc, char **argv)
 #ifdef HAVE_LIBPNG
   gdImagePng (im, out);
 #else
-  fprintf(stderr, "No PNG library support.\n");
+  fprintf (stderr, "No PNG library support.\n");
 #endif
   fclose (out);
   gdImageDestroy (im);
