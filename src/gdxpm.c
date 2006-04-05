@@ -7,6 +7,7 @@ http://www.csn.ul.ie/~caolan
 #include <stdio.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gdhelpers.h"
 
 #ifndef HAVE_XPM
 gdImagePtr gdImageCreateFromXpm(char *filename)
@@ -40,7 +41,7 @@ gdImagePtr gdImageCreateFromXpm(char *filename)
 	    return 0;
 
 	number = image.ncolors;
-	colors = (int*)malloc(sizeof(int) * number);
+	colors = (int*)gdMalloc(sizeof(int) * number);
 	if (colors == NULL)
 		return(0);
 	for (i = 0; i < number; i++) 
@@ -123,7 +124,7 @@ gdImagePtr gdImageCreateFromXpm(char *filename)
 			fprintf(stderr,"ARRRGH\n");
 		}
 
-	apixel = (char *)malloc(image.cpp+1);
+	apixel = (char *)gdMalloc(image.cpp+1);
 	if (apixel == NULL)
 		return(0);
 	apixel[image.cpp] = '\0';
@@ -137,8 +138,8 @@ gdImagePtr gdImageCreateFromXpm(char *filename)
 			gdImageSetPixel(im,j,i,colors[k]);
 			}
 		}
-	free(apixel);
-	free(colors);
+	gdFree(apixel);
+	gdFree(colors);
 	return(im);
 	}
 #endif

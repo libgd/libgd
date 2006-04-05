@@ -10,37 +10,42 @@ COMPILER=gcc
 AR=ar
 
 #If you don't have FreeType, libjpeg and/or Xpm installed, including the
-#header files, uncomment this (default).
-CFLAGS=-O
+#header files, uncomment this (default). You really must install
+#libpng and zlib to get anywhere if you wish to create PNG images.
+CFLAGS=-O -DHAVE_LIBPNG -DHAVE_LIBJPEG
+
 #If you do have FreeType, libjpeg and/or Xpm fully installed, uncomment a
 #variation of this and comment out the line above. See also LIBS below.
-#CFLAGS=-O  -DHAVE_XPM -DHAVE_JPEG -DHAVE_LIBTTF
+#CFLAGS=-O -DHAVE_LIBXPM -DHAVE_LIBPNG -DHAVE_LIBJPEG \
+#	-DHAVE_LIBFREETYPE -DHAVE_LIBTTF 
 
-#If you don't have FreeType and/or Xpm fully installed, uncomment this
+#To use the old FreeType 1.x library, add this additional #define
+#to the line above
+#-DHAVE_LIBTTF 
+
+#If you don't have FreeType Xpm fully installed, uncomment this
 #(default).
 
 #PLEASE NOTE: YOU MAY HAVE TO JUGGLE THE ORDER OF THE LIBRARIES.
 #Some systems are very picky about link order. They don't all agree
 #on the right order, either.
 
-LIBS=-lm -lgd -lpng -lz
+LIBS=-lgd -lpng -lz -lm
 
 #If you do have FreeType, JPEG and/or Xpm fully installed, uncomment a 
 #variation of this and comment out the line above. Note that
 #Xpm requires X11. See also CFLAGS above.
 
-#PLEASE NOTE: YOU MAY HAVE TO JUGGLE THE ORDER OF THE LIBRARIES.
-#Some systems are very picky about link order. They don't all agree
-#on the right order, either.
+#LIBS=-lgd -lpng -lz -ljpeg -lfreetype -lm -lttf
 
-#LIBS=-lm -lgd -lpng -lz -ljpeg -lttf -lXpm -lX11
+#Note: for Freetype 1.x, use DHAVE_LIBTTF and -lttf instead.
 
-#Typical install locations for freetype, zlib, xpm, libjpeg and libpng header files.
-#If yours are somewhere else, change this. 
-#-I. is important to ensure that the version of gd you are installing
-#is used, and not an older release in your directory tree somewhere.
+#Typical install locations for freetype, zlib, xpm, libjpeg and libpng header 
+#files. If yours are somewhere else, change this. -I. is important to 
+#ensure that the version of gd you are installing is used, and not an 
+#older release in your directory tree somewhere.
 
-INCLUDEDIRS=-I. -I/usr/local/include -I/usr/include/X11 -I/usr/X11R6/include/X11
+INCLUDEDIRS=-I. -I/usr/include/freetype2 -I/usr/include/X11 -I/usr/X11R6/include/X11 -I/usr/local/include 
 
 #Typical install locations for freetype, zlib, xpm and libpng libraries.
 #If yours are somewhere else, other than a standard location
@@ -48,6 +53,8 @@ INCLUDEDIRS=-I. -I/usr/local/include -I/usr/include/X11 -I/usr/X11R6/include/X11
 #-L. as this allows the gd library itself to be found.
 #Put -L. first so that old versions of the gd library elsewhere
 #on your system can't cause conflicts while building a new one.
+#This line shouldn't hurt if you don't actually have some of the
+#optional libraries and directories.
 LIBDIRS=-L. -L/usr/local/lib -L/usr/lib/X11 -L/usr/X11R6/lib
 
 #Location where libgd.a should be installed by "make install".
@@ -65,7 +72,7 @@ INSTALL_BIN=/usr/local/bin
 #
 #
 
-VERSION=1.8.1
+VERSION=1.8.4
 
 CC=$(COMPILER) $(INCLUDEDIRS)
 LINK=$(CC) $(LIBDIRS) $(LIBS)
@@ -73,7 +80,7 @@ LINK=$(CC) $(LIBDIRS) $(LIBS)
 PROGRAMS=$(BIN_PROGRAMS) $(TEST_PROGRAMS)
 
 BIN_PROGRAMS=pngtogd pngtogd2 gdtopng gd2topng gd2copypal gdparttopng webpng
-TEST_PROGRAMS=gdtest gddemo gd2time gdtestttf
+TEST_PROGRAMS=gdtest gddemo gd2time gdtestft gdtestttf
 
 all: libgd.a $(PROGRAMS)
 
@@ -126,18 +133,22 @@ gdtest: gdtest.o libgd.a
 gd2time: gd2time.o libgd.a
 	$(CC) gd2time.o -o gd2time	$(LIBDIRS) $(LIBS)
 
+gdtestft: gdtestft.o libgd.a
+	$(CC) --verbose gdtestft.o -o gdtestft $(LIBDIRS) $(LIBS)
 gdtestttf: gdtestttf.o libgd.a
-	$(CC) gdtestttf.o -o gdtestttf	$(LIBDIRS) $(LIBS)
+	$(CC) --verbose gdtestttf.o -o gdtestttf $(LIBDIRS) $(LIBS)
 
 libgd.a: gd.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o gd_io_file.o gd_ss.o \
 	gd_io_ss.o gd_png.o gd_jpeg.o gdxpm.o gdfontt.o gdfonts.o gdfontmb.o gdfontl.o \
-	gdfontg.o gdtables.o gdttf.o gdcache.o gdkanji.o  wbmp.o gd_wbmp.o \
-	gd.h gdfontt.h gdfonts.h gdfontmb.h gdfontl.h gdfontg.h
+	gdfontg.o gdtables.o gdft.o gdttf.o gdcache.o gdkanji.o wbmp.o \
+	gd_wbmp.o gdhelpers.o gd.h gdfontt.h gdfonts.h gdfontmb.h gdfontl.h \
+	gdfontg.h gdhelpers.h
 	rm -f libgd.a
 	$(AR) rc libgd.a gd.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o \
 		gd_io_file.o gd_ss.o gd_io_ss.o gd_png.o gd_jpeg.o gdxpm.o \
 		gdfontt.o gdfonts.o gdfontmb.o gdfontl.o gdfontg.o \
-		gdtables.o gdttf.o gdcache.o gdkanji.o wbmp.o gd_wbmp.o
+		gdtables.o gdft.o gdttf.o gdcache.o gdkanji.o wbmp.o \
+		gd_wbmp.o gdhelpers.o
 	-ranlib libgd.a
 
 clean:

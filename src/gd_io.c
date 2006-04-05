@@ -141,7 +141,7 @@ int gdGetBuf(void *buf, int size, gdIOCtx* ctx)
 }
 
 
-int gdSeek(gdIOCtx *ctx, int pos)
+int gdSeek(gdIOCtx *ctx, const int pos)
 {
 	IO_DBG(printf("Seeking...\n"));
 	return ((ctx->seek)(ctx, pos));

@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <zlib.h>
 #include "gd.h"
+#include "gdhelpers.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -128,7 +129,7 @@ int _gd2GetHeader(gdIOCtxPtr in, int *sx, int *sy,
 		nc = (*ncx) * (*ncy);
                 GD2_DBG(printf("Reading %d chunk index entries\n", nc));
 		sidx = sizeof(t_chunk_info) * nc;
-		cidx = calloc(sidx,1);
+		cidx = gdCalloc(sidx,1);
 		for (i = 0; i < nc; i++) {
 			if (gdGetInt(&cidx[i].offset, in) != 1) {
 				goto fail1;
@@ -230,14 +231,14 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
         int ncx, ncy, nc, cs, cx, cy;
         int x, y, ylo, yhi, xlo, xhi;
 	int ch, vers, fmt;
-	t_chunk_info *chunkIdx = NULL; /* So we can free it with impunity. */
-	char	*chunkBuf = NULL; /* So we can free it with impunity. */
+	t_chunk_info *chunkIdx = NULL; /* So we can gdFree it with impunity. */
+	char	*chunkBuf = NULL; /* So we can gdFree it with impunity. */
 	int	chunkNum = 0;
 	int	chunkMax;
 	uLongf 	chunkLen;
 	int	chunkPos;
 	int 	compMax;
-	char	*compBuf = NULL; /* So we can free it with impunity. */
+	char	*compBuf = NULL; /* So we can gdFree it with impunity. */
 
         gdImagePtr im;
 
@@ -262,8 +263,8 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
 
 		/* Allocate buffers */
 		chunkMax = cs * cs;
-		chunkBuf = calloc(chunkMax,1);
-		compBuf = calloc(compMax,1);
+		chunkBuf = gdCalloc(chunkMax,1);
+		compBuf = gdCalloc(compMax,1);
 		GD2_DBG(printf("Largest compressed chunk is %d bytes\n",compMax));
 	};
 
@@ -333,9 +334,9 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
 
 	GD2_DBG(printf("Freeing memory\n"));
 
-	free(chunkBuf);
-	free(compBuf);
-	free(chunkIdx);
+	gdFree(chunkBuf);
+	gdFree(compBuf);
+	gdFree(chunkIdx);
 
 	GD2_DBG(printf("Done\n"));
 
@@ -343,9 +344,9 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
 
 fail2:
         gdImageDestroy(im);
-        free(chunkBuf);
-        free(compBuf);
-	free(chunkIdx);
+        gdFree(chunkBuf);
+        gdFree(compBuf);
+	gdFree(chunkIdx);
         return 0;
 
 }
@@ -417,8 +418,8 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
                 compMax++;
 
                 chunkMax = cs * cs;
-                chunkBuf = calloc(chunkMax,1);
-                compBuf = calloc(compMax,1);
+                chunkBuf = gdCalloc(chunkMax,1);
+                compBuf = gdCalloc(compMax,1);
         };
 
 /*	Don't bother with this... */
@@ -515,18 +516,18 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
                 };
         };
 
-        free(chunkBuf);
-        free(compBuf);
-	free(chunkIdx);
+        gdFree(chunkBuf);
+        gdFree(compBuf);
+	gdFree(chunkIdx);
 
         return im;
 
 fail2:
         gdImageDestroy(im);
 fail1:
-        free(chunkBuf);
-        free(compBuf);
-	free(chunkIdx);
+        gdFree(chunkBuf);
+        gdFree(compBuf);
+	gdFree(chunkIdx);
 
         return 0;
 
@@ -561,8 +562,8 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
         int x, y, ylo, yhi, xlo, xhi;
         int     chunkLen;
         int     chunkNum = 0;
-        char    *chunkData = NULL; /* So we can free it with impunity. */
-        char    *compData = NULL; /* So we can free it with impunity. */
+        char    *chunkData = NULL; /* So we can gdFree it with impunity. */
+        char    *compData = NULL; /* So we can gdFree it with impunity. */
         uLongf  compLen;
         int     idxPos;
         int     idxSize;
@@ -613,8 +614,8 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 		/* */
 		/* Allocate the buffers.  */
 		/* */
-		chunkData = calloc(cs*cs,1);
-		compData = calloc(compMax,1);
+		chunkData = gdCalloc(cs*cs,1);
+		compData = gdCalloc(compMax,1);
 
 		/* */
         	/* Save the file position of chunk index, and allocate enough space for */
@@ -625,7 +626,7 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 		GD2_DBG(printf("Index size is %d\n", idxSize));
         	gdSeek(out,idxPos+idxSize);
 
-        	chunkIdx = calloc(idxSize * sizeof(t_chunk_info),1);
+        	chunkIdx = gdCalloc(idxSize * sizeof(t_chunk_info),1);
 	};
 
 	_gdPutColors(im, out);
@@ -704,9 +705,9 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 	};
 
         GD2_DBG(printf("Freeing memory\n"));
-	free(chunkData);
-	free(compData);
-	free(chunkIdx);
+	gdFree(chunkData);
+	gdFree(compData);
+	gdFree(chunkIdx);
         GD2_DBG(printf("Done\n"));
 
 	/*printf("Memory block size is %d\n",gdTell(out)); */

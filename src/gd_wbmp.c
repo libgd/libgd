@@ -51,12 +51,12 @@
    	----------------------------------------------------------------------------
 */
 
+#include <gd.h>
 #include <gdfonts.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 
-#include "gd.h"
 #include "wbmp.h"
 
 
@@ -65,7 +65,7 @@
 ** Wrapper around gdPutC for use with writewbmp
 **
 */
-int gd_putout( int i, void * out )
+void gd_putout( int i, void * out )
 {
     gdPutC( i , (gdIOCtx *) out );
 }   
@@ -118,7 +118,7 @@ void gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out) {
 	/* write the WBMP to a gd file descriptor */		
 	if ( writewbmp( wbmp, &gd_putout, out ) )
 		fprintf(stderr, "Could not save WBMP\n");
-	/* des submitted this bugfix: free the memory. */
+	/* des submitted this bugfix: gdFree the memory. */
 	freewbmp(wbmp);
 }
 
@@ -129,7 +129,7 @@ void gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out) {
 */
 gdImagePtr	gdImageCreateFromWBMPCtx( gdIOCtx *infile )
 {
-	FILE *wbmp_file;
+	/* FILE *wbmp_file; */
 	Wbmp *wbmp;
     gdImagePtr im = NULL; 
 	int black, white;

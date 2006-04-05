@@ -35,12 +35,12 @@ typedef struct Wbmp_
 ** -------
 **
 */
-int		putmbi( int i, int (*putout)(int c, void *out), void *out); 
+void		putmbi( int i, void (*putout)(int c, void *out), void *out); 
 int 	getmbi ( int (*getin)(void *in), void *in );
 int     skipheader( int (*getin)(void *in), void *in );
 Wbmp   *createwbmp( int width, int height, int color );
 int     readwbmp( int (*getin)(void *in), void *in, Wbmp **wbmp );
-int		writewbmp( Wbmp *wbmp, int (*putout)( int c, void *out), void *out);
+int		writewbmp( Wbmp *wbmp, void (*putout)( int c, void *out), void *out);
 void    freewbmp( Wbmp *wbmp );
 void    printwbmp( Wbmp *wbmp );  
 

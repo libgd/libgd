@@ -3,10 +3,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gdhelpers.h"
 #include "png.h"    /* includes zlib.h and setjmp.h */
 
 #define TRUE 1
 #define FALSE 0
+
+#ifdef HAVE_LIBPNG
 
 /*---------------------------------------------------------------------------
 
@@ -28,6 +31,7 @@
 
   ---------------------------------------------------------------------------*/
 
+#ifndef PNG_SETJMP_NOT_SUPPORTED
 typedef struct _jmpbuf_wrapper {
   jmp_buf jmpbuf;
 } jmpbuf_wrapper;
@@ -60,7 +64,7 @@ static void gdPngErrorHandler(png_structp png_ptr, png_const_charp msg)
 
   longjmp(jmpbuf_ptr->jmpbuf, 1);
 }
-
+#endif
 
 static void gdPngReadData(png_structp png_ptr,
 	png_bytep data, png_size_t length)
@@ -121,8 +125,12 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
     if (!png_check_sig(sig, 8))
         return NULL;   /* bad signature */
 
+#ifndef PNG_SETJMP_NOT_SUPPORTED
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, &gdPngJmpbufStruct,
       gdPngErrorHandler, NULL);
+#else
+    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+#endif
     if (png_ptr == NULL) {
         fprintf(stderr, "gd-png error: cannot allocate libpng main struct\n");
         return NULL;
@@ -141,11 +149,13 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
 
     /* setjmp() must be called in every non-callback function that calls a
      * PNG-reading libpng function */
+#ifndef PNG_SETJMP_NOT_SUPPORTED
     if (setjmp(gdPngJmpbufStruct.jmpbuf)) {
         fprintf(stderr, "gd-png error: setjmp returns error condition\n");
         png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
         return NULL;
     }
+#endif
 
     png_set_sig_bytes(png_ptr, 8);  /* we already read the 8 signature bytes */
 
@@ -203,7 +213,7 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
         case PNG_COLOR_TYPE_GRAY:
         case PNG_COLOR_TYPE_GRAY_ALPHA:
             /* create a fake palette and check for single-shade transparency */
-            if ((palette = (png_colorp)malloc(256*sizeof(png_color))) == NULL) {
+            if ((palette = (png_colorp)gdMalloc(256*sizeof(png_color))) == NULL) {
                 fprintf(stderr, "gd-png error: cannot allocate gray palette\n");
                 png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
                 return NULL;
@@ -238,7 +248,7 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
                  * transparent pixels will be mapped into the transparent entry.
                  * There is no particularly good way around this in the case
                  * that all 256 8-bit shades are used, but one could write some
-                 * custom 16-bit code to handle the case where there are free
+                 * custom 16-bit code to handle the case where there are gdFree
                  * palette entries.  This error will be extremely rare in
                  * general, though.  (Quite possibly there is only one such
                  * image in existence.) */
@@ -248,7 +258,7 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
         case PNG_COLOR_TYPE_RGB:
         case PNG_COLOR_TYPE_RGB_ALPHA:
             /* allocate a palette and check for single-shade transparency */
-            if ((palette = (png_colorp)malloc(256*sizeof(png_color))) == NULL) {
+            if ((palette = (png_colorp)gdMalloc(256*sizeof(png_color))) == NULL) {
                 fprintf(stderr, "gd-png error: cannot allocate RGB palette\n");
                 png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
                 return NULL;
@@ -332,15 +342,15 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
 
     /* allocate space for the PNG image data */
     rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-    if ((image_data = (png_bytep)malloc(rowbytes*height)) == NULL) {
+    if ((image_data = (png_bytep)gdMalloc(rowbytes*height)) == NULL) {
         fprintf(stderr, "gd-png error: cannot allocate image data\n");
         png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
         return NULL;
     }
-    if ((row_pointers = (png_bytepp)malloc(height*sizeof(png_bytep))) == NULL) {
+    if ((row_pointers = (png_bytepp)gdMalloc(height*sizeof(png_bytep))) == NULL) {
         fprintf(stderr, "gd-png error: cannot allocate row pointers\n");
         png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-        free(image_data);
+        gdFree(image_data);
         return NULL;
     }
 
@@ -355,8 +365,8 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
     if ((im = gdImageCreate((int)width, (int)height)) == NULL) {
         fprintf(stderr, "gd-png error: cannot allocate gdImage struct\n");
         png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-        free(image_data);
-        free(row_pointers);
+        gdFree(image_data);
+        gdFree(row_pointers);
         return NULL;
     }
 
@@ -399,9 +409,9 @@ gdImagePtr gdImageCreateFromPngCtx(gdIOCtx *infile)
 #endif
 
     if (palette_allocated)
-        free(palette);
-    free(image_data);
-    free(row_pointers);
+        gdFree(palette);
+    gdFree(image_data);
+    gdFree(row_pointers);
 
     return im;
 }
@@ -444,8 +454,12 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
     volatile int remap = FALSE;
 
 
+#ifndef PNG_SETJMP_NOT_SUPPORTED
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
       &gdPngJmpbufStruct, gdPngErrorHandler, NULL);
+#else
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+#endif
     if (png_ptr == NULL) {
         fprintf(stderr, "gd-png error: cannot allocate libpng main struct\n");
         return;
@@ -458,11 +472,13 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
         return;
     }
 
+#ifndef PNG_SETJMP_NOT_SUPPORTED
     if (setjmp(gdPngJmpbufStruct.jmpbuf)) {
         fprintf(stderr, "gd-png error: setjmp returns error condition\n");
         png_destroy_write_struct(&png_ptr, &info_ptr);
         return;
     }
+#endif
 
     png_set_write_fn(png_ptr, (void *)outfile, gdPngWriteData, gdPngFlushData);
 
@@ -561,15 +577,15 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
      * interlaced images, but interlacing causes some serious complications. */
     if (remap) {
         png_bytep *row_pointers;
-	row_pointers = malloc(sizeof(png_bytep) * height);
+	row_pointers = gdMalloc(sizeof(png_bytep) * height);
         if (row_pointers == NULL) {
             fprintf(stderr, "gd-png error: unable to allocate row_pointers\n");
         }
         for (j = 0;  j < height;  ++j) {
-            if ((row_pointers[j] = (png_bytep)malloc(width)) == NULL) {
+            if ((row_pointers[j] = (png_bytep)gdMalloc(width)) == NULL) {
                 fprintf(stderr, "gd-png error: unable to allocate rows\n");
                 for (i = 0;  i < j;  ++i)
-                    free(row_pointers[i]);
+                    gdFree(row_pointers[i]);
                 return;
             }
             for (i = 0;  i < width;  ++i)
@@ -580,8 +596,8 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
         png_write_end(png_ptr, info_ptr);
 
         for (j = 0;  j < height;  ++j)
-            free(row_pointers[j]);
-	free(row_pointers);
+            gdFree(row_pointers[j]);
+	gdFree(row_pointers);
     } else {
         png_write_image(png_ptr, im->pixels);
         png_write_end(png_ptr, info_ptr);
@@ -591,3 +607,4 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
 }
 
 
+#endif /* HAVE_LIBPNG */

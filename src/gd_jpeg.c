@@ -17,8 +17,6 @@
  * major CGI brain damage
  */
 
-#ifdef HAVE_JPEG
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
@@ -28,8 +26,11 @@
 #include "jpeglib.h"
 #include "jerror.h"
 #include "gd.h"
+#include "gdhelpers.h"
 
-static const char * const GD_JPEG_VERSION = "1.0";
+#ifdef HAVE_LIBJPEG
+
+static const char * const GD_JPEG_VERSION = "2.0";
 
 typedef struct _jmpbuf_wrapper {
     jmp_buf jmpbuf;
@@ -94,7 +95,7 @@ gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
     int i, j, jidx;
-    /* volatile so we can free it on return from longjmp */
+    /* volatile so we can gdFree it on return from longjmp */
     volatile JSAMPROW row = 0;
     JSAMPROW rowptr[1];
     jmpbuf_wrapper jmpbufw;
@@ -121,7 +122,7 @@ gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
     if (setjmp(jmpbufw.jmpbuf) != 0) {
 	/* we're here courtesy of longjmp */
 	if (row)
-	    free(row);
+	    gdFree(row);
 	return;
     }
 
@@ -148,11 +149,11 @@ gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
     jpeg_gdIOCtx_dest(&cinfo, outfile);
 
-    row = (JSAMPROW)calloc(1, cinfo.image_width * cinfo.input_components
+    row = (JSAMPROW)gdCalloc(1, cinfo.image_width * cinfo.input_components
 			   * sizeof(JSAMPLE));
     if (row == 0) {
 	fprintf(stderr, "gd-jpeg: error: unable to allocate JPEG row "
-		"structure: calloc returns NULL\n");
+		"structure: gdCalloc returns NULL\n");
 	jpeg_destroy_compress(&cinfo);
 	return;
     }
@@ -201,7 +202,7 @@ gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
     jpeg_finish_compress(&cinfo);
     jpeg_destroy_compress(&cinfo);
-    free(row);
+    gdFree(row);
 }
 
 gdImagePtr gdImageCreateFromJpeg(FILE *inFile)
@@ -227,7 +228,7 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr jerr;
     jmpbuf_wrapper jmpbufw;
-    /* volatile so we can free them after longjmp */
+    /* volatile so we can gdFree them after longjmp */
     volatile JSAMPROW row = 0;
     volatile gdImagePtr im = 0;
     JSAMPROW rowptr[1];
@@ -248,7 +249,7 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
     if (setjmp(jmpbufw.jmpbuf) != 0) {
 	/* we're here courtesy of longjmp */
 	if (row)
-	    free(row);
+	    gdFree(row);
 	if (im)
 	    gdImageDestroy(im);
 	return 0;
@@ -373,10 +374,10 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
 #endif
     }
 
-    row = calloc(cinfo.output_width, sizeof(JSAMPLE));
+    row = gdCalloc(cinfo.output_width, sizeof(JSAMPLE));
     if (row == 0) {
 	fprintf(stderr, "gd-jpeg: error: unable to allocate row for"
-		" JPEG scanline: calloc returns NULL\n");
+		" JPEG scanline: gdCalloc returns NULL\n");
 	goto error;
     }
     rowptr[0] = row;
@@ -399,13 +400,13 @@ gdImageCreateFromJpegCtx(gdIOCtx *infile)
 
 
     jpeg_destroy_decompress(&cinfo);
-    free(row);
+    gdFree(row);
     return im;
 
 error:
     jpeg_destroy_decompress(&cinfo);
     if (row)
-	free(row);
+	gdFree(row);
     if (im)
 	gdImageDestroy(im);
     return 0;
@@ -503,8 +504,8 @@ fill_input_buffer (j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
   size_t nbytes = 0;
-  size_t got;
-  char *s;
+  /* size_t got; */
+  /* char *s; */
   memset(src->buffer, 0, INPUT_BUF_SIZE);
   while (nbytes < INPUT_BUF_SIZE) {
 	  int got = gdGetBuf(src->buffer + nbytes, 
@@ -593,7 +594,10 @@ skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 void
 term_source (j_decompress_ptr cinfo)
 {
+#if 0
+/* never used */
 	my_src_ptr src = (my_src_ptr) cinfo->src;
+#endif
 }
 
 

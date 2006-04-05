@@ -24,6 +24,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gdhelpers.h"
 
 /* this is used for creating images in main memory*/
 
@@ -41,13 +42,13 @@ static int sourceGetbuf( gdIOCtx*, void *, int );
 static int sourceGetchar( gdIOCtx* ctx);
 static int sinkPutbuf( gdIOCtx* ctx, const void *buf, int size );
 static void sinkPutchar( gdIOCtx* ctx, int a );
-static void freeSsCtx(gdIOCtx *ctx);
+static void gdFreeSsCtx(gdIOCtx *ctx);
 
 /* return data as a dynamic pointer */
 gdIOCtx* gdNewSSCtx (gdSourcePtr src, gdSinkPtr snk) {
   ssIOCtxPtr 	ctx;
 
-  ctx = (ssIOCtxPtr) malloc(sizeof(ssIOCtx));
+  ctx = (ssIOCtxPtr) gdMalloc(sizeof(ssIOCtx));
   if (ctx == NULL) {
     return NULL;
   }
@@ -64,15 +65,15 @@ gdIOCtx* gdNewSSCtx (gdSourcePtr src, gdSinkPtr snk) {
   ctx->ctx.tell = NULL;
   ctx->ctx.seek = NULL;
 
-  ctx->ctx.free = freeSsCtx;
+  ctx->ctx.free = gdFreeSsCtx;
 
   return (gdIOCtx*)ctx;
 }
 
 static
-void freeSsCtx(gdIOCtx *ctx)
+void gdFreeSsCtx(gdIOCtx *ctx)
 {
-  free(ctx);
+  gdFree(ctx);
 }
 
 

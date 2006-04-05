@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "gd.h"
+#include "gdhelpers.h"
+
 #ifdef HAVE_STDARG_H
 #include <stdarg.h>
 #endif
@@ -285,6 +288,9 @@ int *p1, *p2;
 	if (handaku && *p2 >= 110 && *p2 <= 122) (*p2) += 2;
 }
 
+/* Recast strcpy to handle unsigned chars used below. */
+#define ustrcpy(A,B) (strcpy((char*)(A),(const char*)(B)))
+
 #ifdef __STDC__
 static void do_convert(unsigned char *to, unsigned char *from, const char *code)
 #else
@@ -387,7 +393,7 @@ char *code;
 
 	if (j >= BUFSIZ) {
 		error("output buffer overflow at do_convert()");
-		strcpy(to, from);
+		ustrcpy(to, from);
 	} else
 		to[j] = '\0';
 #endif /* HAVE_ICONV */
@@ -420,12 +426,12 @@ unsigned char *to, *from;
 		case NEC:
 			debug("Kanji code is NEC Kanji.");
 			error("cannot convert NEC Kanji.");
-			strcpy(tmp, from);
+			ustrcpy(tmp, from);
 			kanji = FALSE;
 			break;
 		case EUC:
 			debug("Kanji code is EUC.");
-			strcpy(tmp, from);
+			ustrcpy(tmp, from);
 			break;
 		case SJIS:
 			debug("Kanji code is SJIS.");
@@ -433,17 +439,17 @@ unsigned char *to, *from;
 			break;
 		case EUCORSJIS:
 			debug("Kanji code is EUC or SJIS.");
-			strcpy(tmp, from);
+			ustrcpy(tmp, from);
 			kanji = FALSE;
 			break;
 		case ASCII:
 			debug("This is ASCII string.");
-			strcpy(tmp, from);
+			ustrcpy(tmp, from);
 			kanji = FALSE;
 			break;
 		default:
 			debug("This string includes unknown code.");
-			strcpy(tmp, from);
+			ustrcpy(tmp, from);
 			kanji = FALSE;
 			break;
 	}
@@ -469,11 +475,11 @@ unsigned char *to, *from;
 
 		if (j >= BUFSIZ) {
 			error("output buffer overflow at Hankaku --> Zenkaku");
-			strcpy(to, tmp);
+			ustrcpy(to, tmp);
 		} else
 			to[j] = '\0';
 	} else
-		strcpy(to, tmp);
+		ustrcpy(to, tmp);
 
 	return kanji;
 }
@@ -500,10 +506,10 @@ unsigned int dest_max;
 	ret = do_check_and_conv(tmp_dest, src);
 	if (strlen((const char *)tmp_dest) >= dest_max) {
 		error("output buffer overflow");
-		strcpy(dest, src);
+		ustrcpy(dest, src);
 		return -1;
 	}
-	strcpy(dest, tmp_dest);
+	ustrcpy(dest, tmp_dest);
 	return ret;
 }
 
@@ -518,10 +524,10 @@ unsigned char *s;
 	unsigned char *t;
 	unsigned int i;
 
-	t = (unsigned char *)malloc(BUFSIZ);
+	t = (unsigned char *)gdMalloc(BUFSIZ);
 	any2eucjp(t, s, BUFSIZ);
 	i = strlen(t);
-	free(t);
+	gdFree(t);
 	return i;
 }
 #endif
@@ -540,12 +546,12 @@ int main()
 	printf("input : %d bytes\n", strlen(input));
 	printf("output: %d bytes\n", strwidth(input));
 
-	output = (unsigned char *)malloc(BUFSIZ);
+	output = (unsigned char *)gdMalloc(BUFSIZ);
 	any2eucjp(output, input, BUFSIZ);
 	str = output;
 	while(*str != '\0') putchar(*(str++));
 	putchar('\n');
-	free(output);
+	gdFree(output);
 
 	return 0;
 }

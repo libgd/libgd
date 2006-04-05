@@ -1,12 +1,10 @@
-#ifndef _OSD_POSIX	/* _OSD_POSIX defines *alloc() in stdlib.h */
-#include <malloc.h>
-#endif /*_OSD_POSIX*/
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #include <zlib.h>
 #include "gd.h"
+#include "gdhelpers.h"
 
 #ifdef _OSD_POSIX	/* BS2000 uses the EBCDIC char set instead of ASCII */
 #define CHARSET_EBCDIC
@@ -53,8 +51,8 @@ static const unsigned char gd_toascii[256] = {
 };
 #endif /*CHARSET_EBCDIC*/
 
-extern int gdCosT[1024];
-extern int gdSinT[1024];
+extern int gdCosT[];
+extern int gdSinT[];
 
 static void gdImageBrushApply(gdImagePtr im, int x, int y);
 static void gdImageTileApply(gdImagePtr im, int x, int y);
@@ -63,9 +61,9 @@ gdImagePtr gdImageCreate(int sx, int sy)
 {
 	int i;
 	gdImagePtr im;
-	im = (gdImage *) malloc(sizeof(gdImage));
+	im = (gdImage *) gdMalloc(sizeof(gdImage));
 	/* NOW ROW-MAJOR IN GD 1.3 */
-	im->pixels = (unsigned char **) malloc(sizeof(unsigned char *) * sy);
+	im->pixels = (unsigned char **) gdMalloc(sizeof(unsigned char *) * sy);
 	im->polyInts = 0;
 	im->polyAllocated = 0;
 	im->brush = 0;
@@ -73,7 +71,7 @@ gdImagePtr gdImageCreate(int sx, int sy)
 	im->style = 0;
 	for (i=0; (i<sy); i++) {
 		/* NOW ROW-MAJOR IN GD 1.3 */
-		im->pixels[i] = (unsigned char *) calloc(
+		im->pixels[i] = (unsigned char *) gdCalloc(
 			sx, sizeof(unsigned char));
 	}	
 	im->sx = sx;
@@ -96,16 +94,16 @@ void gdImageDestroy(gdImagePtr im)
 {
 	int i;
 	for (i=0; (i<im->sy); i++) {
-		free(im->pixels[i]);
+		gdFree(im->pixels[i]);
 	}	
-	free(im->pixels);
+	gdFree(im->pixels);
 	if (im->polyInts) {
-			free(im->polyInts);
+			gdFree(im->polyInts);
 	}
 	if (im->style) {
-		free(im->style);
+		gdFree(im->style);
 	}
-	free(im);
+	gdFree(im);
 }
 
 int gdImageColorClosest(gdImagePtr im, int r, int g, int b)
@@ -238,12 +236,14 @@ static RGBType* HWB_to_RGB( HWBType HWB, RGBType* RGB ) {
 		case 5: RETURN_RGB(v, w, n);  
 	}  
 
+    return RGB;
+
 }
 
 int gdImageColorClosestHWB(gdImagePtr im, int r, int g, int b)
 {
 	int i;
-	long rd, gd, bd;
+	/* long rd, gd, bd; */
 	int ct = (-1);
 	int first = 1;
 	float mindist = 0;
@@ -1111,12 +1111,14 @@ void gdImageCopyMerge(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int sr
         int c, dc;
         int x, y;
         int tox, toy;
-        int i;
 	int ncR, ncG, ncB;
+#if 0
+        int i;
         int colorMap[gdMaxColors];
         for (i=0; (i<gdMaxColors); i++) {
                 colorMap[i] = (-1);
         }
+#endif
         toy = dstY;
         for (y=srcY; (y < (srcY + h)); y++) {
                 tox = dstX;
@@ -1170,14 +1172,16 @@ void gdImageCopyMergeGray(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, in
         int c, dc;
         int x, y;
         int tox, toy;
-        int i;
 	int ncR, ncG, ncB;
-        int colorMap[gdMaxColors];
 	float g;
+#if 0
+        int i;
+        int colorMap[gdMaxColors];
 
         for (i=0; (i<gdMaxColors); i++) {
                 colorMap[i] = (-1);
         }
+#endif
         toy = dstY;
         for (y=srcY; (y < (srcY + h)); y++) {
                 tox = dstX;
@@ -1236,8 +1240,8 @@ void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int 
 	/* We only need to use floating point to determine the correct
 		stretch vector for one line's worth. */
 	double accum;
-	stx = (int *) malloc(sizeof(int) * srcW);
-	sty = (int *) malloc(sizeof(int) * srcH);
+	stx = (int *) gdMalloc(sizeof(int) * srcW);
+	sty = (int *) gdMalloc(sizeof(int) * srcH);
 	accum = 0;
 	for (i=0; (i < srcW); i++) {
 		int got;
@@ -1306,8 +1310,8 @@ void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int 
 			toy++;
 		}
 	}
-	free(stx);
-	free(sty);
+	gdFree(stx);
+	gdFree(sty);
 }
 
 gdImagePtr
@@ -1458,14 +1462,14 @@ void gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c)
 		return;
 	}
 	if (!im->polyAllocated) {
-		im->polyInts = (int *) malloc(sizeof(int) * n);
+		im->polyInts = (int *) gdMalloc(sizeof(int) * n);
 		im->polyAllocated = n;
 	}		
 	if (im->polyAllocated < n) {
 		while (im->polyAllocated < n) {
 			im->polyAllocated *= 2;
 		}	
-		im->polyInts = (int *) realloc(im->polyInts,
+		im->polyInts = (int *) gdRealloc(im->polyInts,
 			sizeof(int) * im->polyAllocated);
 	}
 	miny = p[0].y;
@@ -1528,10 +1532,10 @@ int gdCompareInt(const void *a, const void *b)
 void gdImageSetStyle(gdImagePtr im, int *style, int noOfPixels)
 {
 	if (im->style) {
-		free(im->style);
+		gdFree(im->style);
 	}
 	im->style = (int *) 
-		malloc(sizeof(int) * noOfPixels);
+		gdMalloc(sizeof(int) * noOfPixels);
 	memcpy(im->style, style, sizeof(int) * noOfPixels);
 	im->styleLength = noOfPixels;
 	im->stylePos = 0;
@@ -1609,22 +1613,18 @@ int gdImageCompare(gdImagePtr im1, gdImagePtr im2)
 		cmpStatus |= GD_CMP_TRANSPARENT;
 	}
 
+	sx = im1->sx;
 	if (im1->sx != im2->sx) {
 		cmpStatus |= GD_CMP_SIZE_X + GD_CMP_IMAGE;
-		if (im1->sx < im2->sx) {
-			sx = im1->sx;
-		} else {
+		if (im2->sx < im1->sx) {
 			sx = im2->sx;
 		}
-	} else {
-		sx = im1->sx;
 	}
 
+	sy = im1->sy;
 	if (im1->sy != im2->sy) {
 		cmpStatus |= GD_CMP_SIZE_Y + GD_CMP_IMAGE;
-		if (im1->sy < im2->sy) {
-			sy = im1->sy;
-		} else {
+		if (im2->sy < im1->sy) {
 			sy = im2->sy;
 		}
 	}
@@ -1633,8 +1633,8 @@ int gdImageCompare(gdImagePtr im1, gdImagePtr im2)
 		cmpStatus |= GD_CMP_NUM_COLORS;
 	}
 
-	for ( y = 0 ; (y<im1->sy) ; y++ ) {
-		for ( x = 0 ; (x < im1->sx) ; x++ ) {
+	for ( y = 0 ; (y < sy) ; y++ ) {
+		for ( x = 0 ; (x < sx) ; x++ ) {
 			p1 = im1->pixels[y][x];
 			p2 = im2->pixels[y][x];
 

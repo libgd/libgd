@@ -1,4 +1,15 @@
+#include "gd.h"
+#include "gdhelpers.h"
+
 #ifdef HAVE_LIBTTF
+#define NEED_CACHE 1
+#else
+#ifdef HAVE_LIBFREETYPE
+#define NEED_CACHE 1
+#endif
+#endif
+
+#ifdef NEED_CACHE
 
 /* 
  * gdcache.c
@@ -55,7 +66,7 @@ gdCacheCreate(
 {
 	gdCache_head_t *head; 
 
-	head = (gdCache_head_t *)malloc(sizeof(gdCache_head_t));
+	head = (gdCache_head_t *)gdMalloc(sizeof(gdCache_head_t));
 	head->mru = NULL;
 	head->size = size;
 	head->gdCacheTest = gdCacheTest;
@@ -74,9 +85,9 @@ gdCacheDelete( gdCache_head_t *head )
 		(*(head->gdCacheRelease))(elem->userdata);
 		prev = elem;
 		elem = elem->next;
-		free((char *)prev);
+		gdFree((char *)prev);
 	}
-	free((char *)head);
+	gdFree((char *)head);
 }
 
 void *
@@ -108,7 +119,7 @@ gdCacheGet( gdCache_head_t *head, void *keydata )
 		return NULL;
 	}
 	if (i < head->size) {  /* cache still growing - add new elem */
-		elem = (gdCache_element_t *)malloc(sizeof(gdCache_element_t));
+		elem = (gdCache_element_t *)gdMalloc(sizeof(gdCache_element_t));
 	}
 	else { /* cache full - replace least-recently-used */
 		/* preveprev becomes new end of list */
@@ -150,7 +161,7 @@ cacheFetch( char **error, void *key )
 {
 	key_value_t *map;
 
-	map = (key_value_t *)malloc(sizeof(key_value_t));
+	map = (key_value_t *)gdMalloc(sizeof(key_value_t));
 	map->key = *(int *)key;
 	map->value = 3;
 
@@ -161,7 +172,7 @@ cacheFetch( char **error, void *key )
 static void
 cacheRelease( void *map)
 {
-	free( (char *)map );
+	gdFree( (char *)map );
 }
 
 int

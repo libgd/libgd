@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<TITLE>gd 1.8.3</TITLE>
+<TITLE>gd 1.8.4</TITLE>
 </HEAD>
 <BODY>
 <!-- BANNER HERE -->
-<H1>gd 1.8.3</H1>
+<H1>gd 1.8.4</H1>
 <H2>A graphics library for fast image creation</H2>
 <H2>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
 of this document</A>.</H2>
 <blockquote>
 <strong>HEY! READ THIS!</strong>
-gd 1.8.3 creates PNG, JPEG and WBMP images, not GIF images. This is a good
-thing.  PNG is a more compact format, and full compression is
+gd 1.8.4 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works well with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
 intended for wireless devices (not regular web browsers). Existing
@@ -22,22 +22,24 @@ version of GD.</strong> Unisys holds a patent on the LZW compression
 algorithm, which is used in fully compressed GIF images. The best
 solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
+
 <p>
-gd 1.8.3 <strong>requires</strong> that the following libraries 
+gd 1.8.4 <strong>requires</strong> that the following libraries 
 also be installed:
 <p>
-libpng
+libpng (see the <a href="http://www.libpng.org/pub/png/">libpng home page</a>)
 <p>
-jpeg-6b or later
-<p>
+zlib (see the <a href="http://www.info-zip.org/pub/infozip/zlib/">info-zip home page</a>)
 zlib
 <p>
+jpeg-6b or later, if desired (see the <a href="http://www.ijg.org/">Independent JPEG Group home page</a>)
+<p>
 If you want to use the TrueType font support, you must also
-install the <strong>Freetype library</strong>, including
-the <strong><code>freetype.h</code> header file</strong>.
-See the <a href="http://www.freetype.org/">Freetype Home Page</a>.
-No, I cannot explain why that site is down on a particular day,
-and no, I can't send you a copy.
+install the <strong>FreeType 2.x library</strong>, including
+the header files. See the <a href="http://www.freetype.org/">Freetype 
+Home Page</a>, or <a href="http://freetype.sourceforge.net/">SourceForge</a>. 
+No, I cannot explain why that site is down on a particular day, and no, I 
+can't send you a copy.
 <p>
 If you want to use the Xpm color bitmap loading support, you must also
 have the X Window System and the Xpm library installed (Xpm is often
@@ -51,18 +53,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew1.8.3">What's new in version 1.8.3?</A>
-<LI><A HREF="#whatsnew1.8.2">What's new in version 1.8.2?</A>
-<LI><A HREF="#whatsnew1.8.1">What's new in version 1.8.1?</A>
-<LI><A HREF="#whatsnew1.8">What's new in version 1.8?</A>
-<LI><A HREF="#whatsnew1.7.3">What's new in version 1.7.3?</A>
-<LI><A HREF="#whatsnew1.7.2">What's new in version 1.7.2?</A>
-<LI><A HREF="#whatsnew1.7.1">What's new in version 1.7.1?</A>
-<LI><A HREF="#whatsnew1.7">What's new in version 1.7?</A>
-<LI><A HREF="#whatsnew1.6.3">What's new in version 1.6.3?</A>
-<LI><A HREF="#whatsnew1.6.2">What's new in version 1.6.2?</A>
-<LI><A HREF="#whatsnew1.6.1">What's new in version 1.6.1?</A>
-<LI><A HREF="#whatsnew1.6">What's new in version 1.6?</A>
+<LI><A HREF="#whatsnew1.8.4">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -127,7 +118,7 @@ including but not limited to implied warranties of merchantability and
 fitness for a particular purpose, with respect to this code and accompanying
 documentation.
 <p>
-Although their code does not appear in gd 1.8.3, the authors wish to 
+Although their code does not appear in gd 1.8.4, the authors wish to 
 thank David Koblas, David Rowley, and Hutchison Avenue Software 
 Corporation for their prior contributions.
 </blockquote>
@@ -175,16 +166,32 @@ Pascal enthusiasts should look into Michael Bradbury's
 A new gd interface is now available for
 <a href="http://www.numeric-quest.com/haskell/gd/index.html">Haskell
 programmers</a>.
+<h4>REXX</h4>
+A 
+<a href="http://www.lightlink.com/hessling/RexxGd/index.html">gd interface 
+for the REXX language</a> is available.
 <h4>Any Language</h4>
 There are, at the moment, at least three simple interpreters that
 perform gd operations. You can output the desired commands to a simple
 text file from whatever scripting language you prefer to use, then
 invoke the interpreter.
 <p>
-These packages have not been updated to gd 1.6 and up as of this writing.
+
 <ul>
 <li><a href="http://s27w007.pswfs.gov/tgd/">tgd</a>, by Bradley K. Sherman
 <li><a href="http://www.unimelb.edu.au/fly/fly.html">fly</a>, by Martin Gleeson
+</ul>
+<P><A NAME="whatsnew1.8.4"><H3>What's new in version 1.8.4?</H3></A>
+<ul>
+<li>Add support for FreeType2  (John Ellson  ellson@lucent.com)
+<li>Add support for finding in fonts in a builtin DEFAULT_FONTPATH,
+or in a path from the GDFONTPATH environment variable.
+<li>remove some unused symbols to reduce compiler warnings
+<li>bugfix in size comparisons in gdImageCompare
+<li>REXX now mentioned
+<li>All memory allocation functions are now wrapped within the
+library; gdFree is exported and recommended for freeing memory
+returned by the gdImage(Something)Ptr family of functions.
 </ul>
 <P><A NAME="whatsnew1.8.3"><H3>What's new in version 1.8.3?</H3></A>
 <ul>
@@ -367,7 +374,7 @@ Version 1.5 featured the following changes:
 <br>gdImageGd2, gdImageCreateFromGd2 - Support for new format
 <br>gdImageCopyMerge - Merges two images (useful to highlight part of an image)
 <br>gdImageCopyMergeGray - Similar to gdImageCopyMerge, but tries to preserve source image hue.
-<br>gdImagePngPtr, gdImageJpegPtr, gdImageWBMPPtr, gdImageGdPtr, gdImageGd2Ptr - return memort blocks for each type of image.
+<br>gdImagePngPtr, gdImageJpegPtr, gdImageWBMPPtr, gdImageGdPtr, gdImageGd2Ptr - return memory blocks for each type of image.
 <br>gdImageCreateFromPngCtx, gdImageCreateFromGdCtx, gdImageCreateFromGd2Ctx, gdImageCreateFromGd2PartCtx - Support for new I/O context.
 
 </dl>
@@ -475,13 +482,13 @@ newsgroups relevant to your particular system.
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>By HTTP</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-1.8.3.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-1.8.3.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-1.8.4.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-1.8.4.zip">.ZIP File (Windows)</a>
 </ul>
 <h4>By FTP</h4>
 <ul>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.8.3.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.8.3.zip">.ZIP File (Windows)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.8.4.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.8.4.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -492,10 +499,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-1.8.3".
+Unpacking the archive will produce a directory called "gd-1.8.4".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 1.8.3 directory. Edit the Makefile with
+<code>cd</code> to the 1.8.4 directory. Edit the Makefile with
 your preferred text editor and make any necessary changes to the
 settings at the top, especially if you want Xpm or TrueType support.
 Next, type "make". If you are the system administrator, and you
@@ -542,8 +549,8 @@ operating systems you will add gd.c to your own project.
 <P>
 If you want to use the provided fonts, include
 gdfontt.h, gdfonts.h, gdfontmb.h, gdfontl.h and/or gdfontg.h. For
-more impressive results, install libttf and use the new 
-<a href="#gdImageStringTTF">gdImageStringTTF</a>
+more impressive results, install FreeType 2.x and use the new 
+<a href="#gdImageStringFT">gdImageStringFT</a>
 function. If you are not using the provided Makefile and/or a 
 library-based approach, be sure to include the source modules as well in your
 project. (They may be too large for 16-bit memory models,
@@ -1052,7 +1059,10 @@ void* gdImageJpegPtr(gdImagePtr im, int *size)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>Identical to gdImageJpeg except that it returns a pointer to a memory
 area with the JPEG data. This memory must be freed by the caller when it is
-no longer needed. The 'size' parameter receives the total size of the block
+no longer needed. <strong>The caller must invoke gdFree(), not free(), 
+unless the caller is absolutely certain that the same implementations of
+malloc, free, etc. are used both at library build time and at application
+build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
 <DT><A NAME="gdImagePng">
 void gdImagePng(gdImagePtr im, FILE *out)</A>
@@ -1092,7 +1102,10 @@ void* gdImagePngPtr(gdImagePtr im, int *size)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>Identical to gdImagePng except that it returns a pointer to a memory
 area with the PNG data. This memory must be freed by the caller when it is
-no longer needed. The 'size' parameter receives the total size of the block
+no longer needed. <strong>The caller must invoke gdFree(), not free(), 
+unless the caller is absolutely certain that the same implementations of
+malloc, free, etc. are used both at library build time and at application
+build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
 
 <DT><A NAME="gdImagePngToSink">gdImagePngToSink(gdImagePtr im, gdSinkPtr out)</A>
@@ -1174,7 +1187,10 @@ void* gdImageWBMPPtr(gdImagePtr im, int *size)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>Identical to gdImageWBMP except that it returns a pointer to a memory
 area with the WBMP data. This memory must be freed by the caller when it is
-no longer needed. The 'size' parameter receives the total size of the block
+no longer needed. <strong>The caller must invoke gdFree(), not free(), 
+unless the caller is absolutely certain that the same implementations of
+malloc, free, etc. are used both at library build time and at application
+build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
 <DT><A NAME="gdImageGd">
 void gdImageGd(gdImagePtr im, FILE *out)</A>
@@ -1220,7 +1236,10 @@ void* gdImageGdPtr(gdImagePtr im, int *size)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>Identical to gdImageGd except that it returns a pointer to a memory
 area with the GD data. This memory must be freed by the caller when it is
-no longer needed. The 'size' parameter receives the total size of the block
+no longer needed. <strong>The caller must invoke gdFree(), not free(), 
+unless the caller is absolutely certain that the same implementations of
+malloc, free, etc. are used both at library build time and at application
+build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
 
 <DT><A NAME="gdImageGd2">
@@ -1277,7 +1296,10 @@ void* gdImageGd2Ptr(gdImagePtr im, int chunkSize, int fmt, int *size)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>Identical to gdImageGd2 except that it returns a pointer to a memory
 area with the GD2 data. This memory must be freed by the caller when it is
-no longer needed. The 'size' parameter receives the total size of the block
+no longer needed. <strong>The caller must invoke gdFree(), not free(), 
+unless the caller is absolutely certain that the same implementations of
+malloc, free, etc. are used both at library build time and at application
+build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
 
 </DL>
@@ -1857,7 +1879,8 @@ gdImageChar is used to draw single characters on the image.
 (To draw multiple characters, use <A HREF="#gdImageString">
 gdImageString</A> or <A HREF="#gdImageString16">
 gdImageString16</A>.
-See also <A HREF="#gdImageStringTTF">gdImageStringTTF</A>, new with gd-1.6.2.)
+See also <A HREF="#gdImageStringFT">gdImageStringFT</A> for a high quality
+solution.)
 The second argument is a pointer to a font definition structure; five fonts are
 provided with gd, gdFontTiny, gdFontSmall, gdFontMediumBold,
 gdFontLarge, and gdFontGiant. You must
@@ -1948,7 +1971,8 @@ The null-terminated C string specified
 by the fifth argument is drawn from left to right in the specified
 color.  (See <A HREF="#gdImageStringUp">gdImageStringUp</A> for a way
 of drawing vertical text.
-See also <A HREF="#gdImageStringTTF">gdImageStringTTF</A>, new with gd-1.6.2.)
+See also <A HREF="#gdImageStringFT">gdImageStringFT</A> for a high
+quality solution.)
 Pixels not set by a particular character retain their previous color.
 <PRE>
 #include "gd.h"
@@ -2070,20 +2094,123 @@ set by a particular character retain their previous color.
 This function was added in gd1.3 to provide a means of rendering
 fonts with more than 256 characters for those who have them. A
 more frequently used routine is <a href="#gdImageStringUp">gdImageStringUp</a>.
+<DT><A NAME="gdImageStringFT">
+char *gdImageStringFT(gdImagePtr im, int *brect,
+	int fg, char *fontname, double ptsize, double angle,
+	int x, int y, char *string)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+<strong>RECOMMENDED. New in 1.8.4.</strong> gdImageStringFT draws text using the
+FreeType 2.x library.
+<p>
+gdImageStringFT draws a string of anti-aliased characters on the image using 
+the <A HREF=http://www.freetype.org/>FreeType</A>
+library to render user-supplied TrueType fonts. <strong>We do not provide 
+TrueType fonts (.ttf and .ttc files). Obtaining them is entirely up to 
+you.</strong> The string is anti-aliased, meaning that there should be 
+fewer "jaggies" visible. The fontname is the full pathname to a TrueType 
+font file, or a font face name if the GDFONTPATH environment variable
+or FreeType's DEFAULT_FONTPATH variable have been set intelligently. 
+The string may be arbitrarily scaled (ptsize) and rotated (angle in radians).
+<p>
+The user-supplied int brect[8] array is filled on return from gdImageStringFT
+with the 8 elements representing the 4 corner coordinates of the
+bounding rectangle.
+<TABLE BORDER="1">
+<TR><TD ALIGN="LEFT" VALIGN="TOP" >0</TD><TD ALIGN="LEFT" VALIGN="TOP">
+lower left corner, X position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP >1</TD><TD ALIGN="LEFT" VALIGN="TOP">
+lower left corner, Y position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP >2</TD><TD ALIGN="LEFT" VALIGN="TOP">
+lower right corner, X position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP">3</TD><TD ALIGN="LEFT" VALIGN="TOP">
+lower right corner, Y position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP">4</TD><TD ALIGN="LEFT" VALIGN="TOP">
+upper right corner, X position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP">5</TD><TD ALIGN="LEFT" VALIGN="TOP">
+upper right corner, Y position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP">6</TD><TD ALIGN="LEFT" VALIGN="TOP">
+upper left corner, X position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP">7</TD><TD ALIGN="LEFT" VALIGN="TOP">
+upper left corner, Y position</TD></TR>
+</TABLE>
+<p>
+The points are relative to the text regardless of the angle, so "upper left"
+means in the top left-hand corner seeing the text horizontally.
+<p>
+Use a NULL gdImagePtr to get the bounding rectangle without rendering.
+This is a relatively cheap operation if followed by a rendering of the same
+string, because of the caching of the partial rendering during bounding
+rectangle calculation.
+<p>
+The string is rendered in the color indicated by the gf color index.
+<strong>Use the negative of the desired color index to 
+disable anti-aliasing.</strong>
+<p>
+The string may contain UTF-8 sequences like: "&amp;#192;"
+<p>
+gdImageStringFT will return a null char* on success, or an error
+string on failure.
+<PRE>
+#include "gd.h"
+#include &lt;string.h&gt;
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int black;
+int white;
+int brect[8];
+int x, y;
+char *err;
+
+char *s = "Hello."; /* String to draw. */
+double sz = 40.;
+char *f = "/usr/local/share/ttf/Times.ttf";  /* User supplied font */
+
+/* obtain brect so that we can size the image */
+err = <A HREF="#gdImageStringFT">gdImageStringFT</A>(NULL,&brect[0],0,f,sz,0.,0,0,s);
+if (err) {fprintf(stderr,err); return 1;}
+
+/* create an image big enough for the string plus a little whitespace */
+x = brect[2]-brect[6] + 6;
+y = brect[3]-brect[7] + 6;
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(x,y);
+
+/* Background color (first allocated) */
+white = <A HREF="#gdImageColorResolve">gdImageColorResolve</A>(im, 255, 255, 255);
+black = <A HREF="#gdImageColorResolve">gdImageColorResolve</A>(im, 0, 0, 0);
+
+/* render the string, offset origin to center string*/
+/* note that we use top-left coordinate for adjustment
+ * since gd origin is in top-left with y increasing downwards. */
+x = 3 - brect[6];
+y = 3 - brect[7];
+err = <A HREF="#gdImageStringFT">gdImageStringFT</A>(im,&brect[0],black,f,sz,0.0,x,y,s);
+if (err) {fprintf(stderr,err); return 1;}
+
+/* Write img to stdout */
+<A HREF="#gdImagePng">gdImagePng</A>(im, stdout);
+
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
 <DT><A NAME="gdImageStringTTF">
 char *gdImageStringTTF(gdImagePtr im, int *brect,
 	int fg, char *fontname, double ptsize, double angle,
 	int x, int y, char *string)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
-gdImageStringTTF is draws a string of anti-aliased characters on the image
-using the 
-<A HREF=http://www.freetype.org/>FreeType</A>
-library to print from user-supplied TrueType fonts.
-<strong>We do not provide TrueType fonts. Obtaining them
-is entirely up to you.</strong>
-The string is anti-aliased, meaning that there should be less "jaggies."
-The fontname is the full pathname to a TrueType font file.
+<strong>DEPRECATED.</strong> gdImageStringTTF draws text using the
+FreeType 1.x library. For better results, use 
+<a href="#gdImageStringFT">gdImageStringFT</a> and FreeType 2.x. 
+<p>
+gdImageStringTTF draws a string of anti-aliased characters on the image using 
+the <A HREF=http://www.freetype.org/>FreeType</A>
+library to render user-supplied TrueType fonts. <strong>We do not provide 
+TrueType fonts (.ttf and .ttc files). Obtaining them is entirely up to 
+you.</strong> The string is anti-aliased, meaning that there should be 
+fewer "jaggies" visible. The fontname is the full pathname to a TrueType 
+font file, or a font face name if the GDFONTPATH environment variable
+or FreeType's DEFAULT_FONTPATH variable have been set intelligently. 
 The string may be arbitrarily scaled (ptsize) and rotated (angle in radians).
 <p>
 The user-supplied int brect[8] array is filled on return from gdImageStringTTF
@@ -2117,7 +2244,8 @@ string, because of the caching of the partial rendering during bounding
 rectangle calculation.
 <p>
 The string is rendered in the color indicated by the gf color index.
-Use the negative of the desired color index to disable anti-aliasing.
+<strong>Use the negative of the desired color index to 
+disable anti-aliasing.</strong>
 <p>
 The string may contain UTF-8 sequences like: "&amp;#192;"
 <p>
@@ -2165,6 +2293,7 @@ if (err) {fprintf(stderr,err); return 1;}
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+
 </DL>
 <H3><A NAME="colors">Color-handling functions</A></H3>
 <DL>
@@ -2718,6 +2847,14 @@ out = fopen("test.png", "wb");
 fclose(out);
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdFree">gdFree(void *ptr)</A> <strong>(FUNCTION)</strong>
+<DD>
+gdFree provides a reliable way to free memory allocated by functions
+such as <a href="#gdImagePngPtr">gdImagePngPtr</a> which return
+blocks of memory. Use of this function guarantees that the
+version of <code>free()</code> that is ultimately called will
+be intended for use with the version of <code>malloc()</code> that
+originally allocated the block. 
 </DL>
 <H3><A NAME="constants">Constants</A></H3>
 <DL>
@@ -2906,6 +3043,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdDashSize">gdDashSize</A> |
 <A HREF="#gdFont">gdFont</A> |
 <A HREF="#gdFontPtr">gdFontPtr</A> |
+<A HREF="#gdFree">gdFree</A> |
 <A HREF="#gdImage">gdImage</A> |
 <A HREF="#gdImageArc">gdImageArc</A> |
 <A HREF="#gdImageBlue">gdImageBlue</A> |
@@ -2958,6 +3096,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageSetTile">gdImageSetTile</A> |
 <A HREF="#gdImageString">gdImageString</A> |
 <A HREF="#gdImageString16">gdImageString16</A> |
+<A HREF="#gdImageStringFT">gdImageStringFT</A> |
 <A HREF="#gdImageStringTTF">gdImageStringTTF</A> |
 <A HREF="#gdImageStringUp">gdImageStringUp</A> |
 <A HREF="#gdImageStringUp">gdImageStringUp16</A> |

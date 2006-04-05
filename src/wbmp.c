@@ -15,11 +15,15 @@
 #include <string.h>
 
 #include "wbmp.h"
+#include "gd.h"
+#include "gdhelpers.h"
 
-//#define __TEST			/* Compile with main function */
-//#define __DEBUG  		/* Extra verbose when with __TEST */
-//#define __WRITE 		/* readwbmp and writewbmp(stdout) */
-//#define __VIEW			/* view the wbmp on stdout */
+#ifdef NOTDEF
+#define __TEST			/* Compile with main function */
+#define __DEBUG  		/* Extra verbose when with __TEST */
+#define __WRITE 		/* readwbmp and writewbmp(stdout) */
+#define __VIEW			/* view the wbmp on stdout */
+#endif
 
 /* getmbi
 ** ------
@@ -52,7 +56,7 @@ int getmbi ( int (*getin)(void *in), void *in )
 ** mbi integers it spits out.
 **
 */
-int putmbi ( int i, int (*putout)(int c, void *out), void *out )
+void putmbi ( int i, void (*putout)(int c, void *out), void *out )
 {
     int cnt, l, accu;
  
@@ -101,12 +105,12 @@ Wbmp *createwbmp(int width, int height, int color)
 	int	i;
 
 	Wbmp *wbmp;
-    if ( (wbmp = (Wbmp *) malloc( sizeof(Wbmp) )) == NULL)
+    if ( (wbmp = (Wbmp *) gdMalloc( sizeof(Wbmp) )) == NULL)
         return (NULL);
 
-    if ( (wbmp->bitmap = (int *) malloc( sizeof(int)*width*height )) == NULL)
+    if ( (wbmp->bitmap = (int *) gdMalloc( sizeof(int)*width*height )) == NULL)
     {
-        free( wbmp );
+        gdFree( wbmp );
         return (NULL);
     }   
 
@@ -131,13 +135,13 @@ int readwbmp ( int (*getin)(void *in), void *in, Wbmp **return_wbmp )
 	int row, col, byte, pel, pos;
 	Wbmp *wbmp;
 	 
-    if ( (wbmp = (Wbmp *) malloc( sizeof(Wbmp) )) == NULL)
+    if ( (wbmp = (Wbmp *) gdMalloc( sizeof(Wbmp) )) == NULL)
     	return (-1);    
 
 	wbmp->type = getin( in );
 	if ( wbmp->type != 0 )
 	{
-		free( wbmp ); 
+		gdFree( wbmp ); 
 		return (-1);
 	}
 
@@ -148,14 +152,14 @@ int readwbmp ( int (*getin)(void *in), void *in, Wbmp **return_wbmp )
 	wbmp->width = getmbi ( getin, in );
 	if ( wbmp->width == -1 )
 	{
-		free( wbmp );
+		gdFree( wbmp );
 		return (-1);
 	}
 
 	wbmp->height = getmbi ( getin, in );
 	if ( wbmp->height == -1 )
 	{
-		free( wbmp );
+		gdFree( wbmp );
 		return (-1);
 	}	
 	
@@ -163,9 +167,9 @@ int readwbmp ( int (*getin)(void *in), void *in, Wbmp **return_wbmp )
 	printf("W: %d, H: %d\n", wbmp->width, wbmp->height);	
 	#endif
 
-	if ( (wbmp->bitmap = (int *) malloc( sizeof(int)*wbmp->width*wbmp->height )) == NULL)
+	if ( (wbmp->bitmap = (int *) gdMalloc( sizeof(int)*wbmp->width*wbmp->height )) == NULL)
 	{
-		free( wbmp );
+		gdFree( wbmp );
 		return (-1);
 	}
 
@@ -215,7 +219,7 @@ int readwbmp ( int (*getin)(void *in), void *in, Wbmp **return_wbmp )
 ** a logic(?) decision ...
 **
 */
-int writewbmp( Wbmp *wbmp, int (*putout)(int c, void *out), void *out )
+int writewbmp( Wbmp *wbmp, void (*putout)(int c, void *out), void *out )
 {
 	int row, col;
 	int bitpos, octet;
@@ -257,13 +261,13 @@ int writewbmp( Wbmp *wbmp, int (*putout)(int c, void *out), void *out )
 
 /* freewbmp
 ** --------
-** frees up memory occupied by a WBMP structure
+** gdFrees up memory occupied by a WBMP structure
 **
 */
 void freewbmp( Wbmp *wbmp )
 {
-	free( wbmp->bitmap );
-	free( wbmp );
+	gdFree( wbmp->bitmap );
+	gdFree( wbmp );
 }
 
 
@@ -320,7 +324,7 @@ int main ( int argc, char *argv[] )
 	FILE *wbmp_file;
 	Wbmp *wbmp;
 
-    wbmp_file = fopen(argv[1], "r");
+    wbmp_file = fopen(argv[1], "rb");
     if ( wbmp_file ) 
 	{
 		readwbmp( &getin, wbmp_file, &wbmp );

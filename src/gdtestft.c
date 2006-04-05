@@ -19,8 +19,8 @@
 
 int main(int argc, char *argv[])
 {
-#ifndef HAVE_LIBTTF
-	fprintf(stderr, "gd was not compiled with HAVE_LIBTTF defined.\n");
+#ifndef HAVE_LIBFREETYPE
+	fprintf(stderr, "gd was not compiled with HAVE_LIBFREETYPE defined.\n");
 	fprintf(stderr, "Install the FreeType library, including the\n");
 	fprintf(stderr, "header files. Then edit the gd Makefile, type\n");
 	fprintf(stderr, "make clean, and type make again.\n");
@@ -38,28 +38,34 @@ int main(int argc, char *argv[])
 #else
 	char *s = "Hello. Qyjpqg,"; /* String to draw. */
 #endif
+
 	double sz = 40.;
+
+#if 0
+	double angle = 0.;
+#else
 	double angle = DEG2RAD(-90);
+#endif
+
 #ifdef JISX0208
 	char *f = "/usr/openwin/lib/locale/ja/X11/fonts/TT/HG-MinchoL.ttf"; /* UNICODE */
 	/* char *f = "/usr/local/lib/fonts/truetype/DynaFont/dfpop1.ttf"; */ /* SJIS */
 #else
-	char *f = "/usr/local/lib/fonts/truetype/misc/times.ttf"; /* TrueType font */
+	char *f = "times"; /* TrueType font */
 #endif
 	
-	fprintf(stderr, "HEY! THIS IS FOR THE FREETYPE 1.x LIBRARY.\n\n");
-	fprintf(stderr, "For better results, look at 'gdtestft' and the\n");
-	fprintf(stderr, "new gdImageStringFT function, which uses\n");
-	fprintf(stderr, "the new FreeType 2.x library.\n\n");
-
 	/* obtain brect so that we can size the image */
-	err = gdImageStringTTF((gdImagePtr)NULL,&brect[0],0,f,sz,angle,0,0,s);
+	err = gdImageStringFT((gdImagePtr)NULL,&brect[0],0,f,sz,angle,0,0,s);
 	if (err) {fprintf(stderr,err); return 1;}
 
 	/* create an image just big enough for the string */
 	x = MAXX(brect) - MINX(brect) + 6;
 	y = MAXY(brect) - MINY(brect) + 6;
+#if 0
+	im = gdImageCreate(500,500);
+#else
 	im = gdImageCreate(x,y);
+#endif
 
 	/* Background color (first allocated) */
 	white = gdImageColorResolve(im, 255, 255, 255);
@@ -68,23 +74,21 @@ int main(int argc, char *argv[])
 	/* render the string, offset origin to center string*/
 	x = 0 - MINX(brect) + 3;
 	y = 0 - MINY(brect) + 3;
-	err = gdImageStringTTF(im,&brect[0],black,f,sz,angle,x,y,s);
-	if (err) {fprintf(stderr,err); return 1;}
 
+	err = gdImageStringFT(im,NULL,black,f,sz,angle,x,y,s);
+	if (err) {fprintf(stderr,err); return 1;}
 	/* TBB: Write img to test/fttest.png */
 	out = fopen("test/fttest.png", "wb");
 	if (!out) {
 		fprintf(stderr, "Can't create test/fttest.png\n");
 		exit(1);
 	}
-	/* Write img to file */
 	gdImagePng(im, out);
-
 	fclose(out);
-
+	fprintf(stderr, "Test image written to test/fttest.png\n");
 	/* Destroy it */
 	gdImageDestroy(im);
 
 	return 0;
-#endif /* HAVE_TTF */
+#endif /* HAVE_FREETYPE */
 }	

@@ -1,6 +1,8 @@
 /********************************************/
 /* gd interface to freetype library         */
 /*                                          */
+/* DEPRECATED -- backwards compatibility    */
+/*                                          */
 /* John Ellson   ellson@lucent.com          */
 /********************************************/
 
@@ -706,7 +708,8 @@ gdttfchar(gdImage *im, int fg, font_t *font,
 		(*next)++;
 		if (ch >= 161                /* first code of JIS-8 pair */
 		 && **next) {				 /* don't advance past '\0' */
-			ch = (ch * 256) + **next;
+			/* TBB: fix from Kwok Wah On: & 255 needed */
+			ch = (ch * 256) + ((**next) & 255);
 			(*next)++;
 	    }
 	}

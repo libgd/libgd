@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gdhelpers.h"
 
 /* this is used for creating images in main memory*/
 
@@ -42,13 +43,13 @@ static int fileGetchar( gdIOCtx* ctx);
 
 static int fileSeek(struct gdIOCtx*, const int);
 static long fileTell(struct gdIOCtx*);
-static void freeFileCtx(gdIOCtx *ctx);
+static void gdFreeFileCtx(gdIOCtx *ctx);
 
 /* return data as a dynamic pointer */
 gdIOCtx* gdNewFileCtx (FILE *f) {
   fileIOCtx 	*ctx;
 
-  ctx = (fileIOCtx*) malloc(sizeof(fileIOCtx));
+  ctx = (fileIOCtx*) gdMalloc(sizeof(fileIOCtx));
   if (ctx == NULL) {
     return NULL;
   }
@@ -64,15 +65,15 @@ gdIOCtx* gdNewFileCtx (FILE *f) {
   ctx->ctx.tell = fileTell;
   ctx->ctx.seek = fileSeek;
 
-  ctx->ctx.free = freeFileCtx;
+  ctx->ctx.free = gdFreeFileCtx;
 
   return (gdIOCtx*)ctx;
 }
 
 static 
-void freeFileCtx(gdIOCtx *ctx)
+void gdFreeFileCtx(gdIOCtx *ctx)
 {
-  free(ctx);
+  gdFree(ctx);
 }
 
 

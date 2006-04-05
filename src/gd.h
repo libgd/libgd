@@ -5,6 +5,10 @@
 extern "C" {
 #endif
 
+/* default fontpath for unix systems */
+#define DEFAULT_FONTPATH "/usr/share/fonts/truetype"
+#define PATHSEPARATOR ":"
+
 /* gd.h: declarations file for the graphic-draw module.
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted, provided
@@ -91,6 +95,10 @@ typedef gdFont *gdFontPtr;
 gdImagePtr gdImageCreate(int sx, int sy);
 gdImagePtr gdImageCreateFromPng(FILE *fd);
 gdImagePtr gdImageCreateFromPngCtx(gdIOCtxPtr in);
+gdImagePtr gdImageCreateFromWBMP(FILE *inFile);
+gdImagePtr gdImageCreateFromWBMPCtx(gdIOCtx *infile); 
+gdImagePtr gdImageCreateFromJpeg(FILE *infile);
+gdImagePtr gdImageCreateFromJpegCtx(gdIOCtx *infile);
 
 /* A custom data source. */
 /* The source function must return -1 on error, otherwise the number
@@ -135,11 +143,15 @@ void gdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s,
 void gdImageString16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
 void gdImageStringUp16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
 
-char *gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontname,
+/* FreeType 1.x text output (DEPRECATED) */
+char *gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontlist,
+                double ptsize, double angle, int x, int y, char *string);
+
+/* FreeType 2 text output (NIFTY) */
+char *gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
                 double ptsize, double angle, int x, int y, char *string);
 
 /* Point type for use in polygon drawing. */
-
 typedef struct {
 	int x, y;
 } gdPoint, *gdPointPtr;
@@ -159,16 +171,19 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *out);
 
 void gdImageWBMP(gdImagePtr image, int fg, FILE *out);
 void gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out);
-void *gdImageWBMPPtr(gdImagePtr im, int *size, int fg);
-gdImagePtr gdImageCreateFromWBMP(FILE *inFile);
-gdImagePtr gdImageCreateFromWBMPCtx(gdIOCtx *infile); 
 
+/* Guaranteed to correctly free memory returned
+	by the gdImage*Ptr functions */
+void gdFree(void *m);
+
+/* Best to free this memory with gdFree(), not free() */
+void *gdImageWBMPPtr(gdImagePtr im, int *size, int fg);
 
 void gdImageJpeg(gdImagePtr im, FILE *out, int quality);
 void gdImageJpegCtx(gdImagePtr im, gdIOCtx *out, int quality);
+
+/* Best to free this memory with gdFree(), not free() */
 void *gdImageJpegPtr(gdImagePtr im, int *size, int quality);
-gdImagePtr gdImageCreateFromJpeg(FILE *infile);
-gdImagePtr gdImageCreateFromJpegCtx(gdIOCtx *infile);
 
 /* A custom data sink. For backwards compatibility. Use
 	gdIOCtx instead. */
@@ -184,9 +199,16 @@ void gdImagePngToSink(gdImagePtr im, gdSinkPtr out);
 
 void gdImageGd(gdImagePtr im, FILE *out);
 void gdImageGd2(gdImagePtr im, FILE *out, int cs, int fmt);
+
+/* Best to free this memory with gdFree(), not free() */
 void* gdImagePngPtr(gdImagePtr im, int *size);
+
+/* Best to free this memory with gdFree(), not free() */
 void* gdImageGdPtr(gdImagePtr im, int *size);
+
+/* Best to free this memory with gdFree(), not free() */
 void* gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
+
 void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color);
 void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color);
 void gdImageFill(gdImagePtr im, int x, int y, int color);
@@ -222,7 +244,6 @@ gdIOCtx* gdNewDynamicCtx(int, void*);
 gdIOCtx* gdNewSSCtx(gdSourcePtr in, gdSinkPtr out);
 void* gdDPExtractData(struct gdIOCtx* ctx, int *size);
 
-
 #define GD2_CHUNKSIZE           128 
 #define GD2_CHUNKSIZE_MIN	64
 #define GD2_CHUNKSIZE_MAX       4096
@@ -243,6 +264,9 @@ int gdImageCompare(gdImagePtr im1, gdImagePtr im2);
 #define GD_CMP_TRANSPARENT	32	/* Transparent colour */
 #define GD_CMP_BACKGROUND	64	/* Background colour */
 #define GD_CMP_INTERLACE	128	/* Interlaced setting */
+
+/* resolution affects ttf font rendering, particularly hinting */
+#define GD_RESOLUTION           96      /* pixels per inch */
 
 #ifdef __cplusplus
 }
