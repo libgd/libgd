@@ -1,11 +1,11 @@
 
-                                   gd 1.7.1
+                                   gd 1.7.2
                                        
 A graphics library for fast image creation
 
 Follow this link to the latest version of this document.
 
-     _HEY! READ THIS!_ gd 1.7.1 creates PNG images, not GIF images. This
+     _HEY! READ THIS!_ gd 1.7.2 creates PNG images, not GIF images. This
      is a good thing. PNG is a more compact format, and full compression
      is available. Existing code will need modification to call
      gdImagePng instead of gdImageGif. _Please do not ask us to send you
@@ -14,7 +14,7 @@ Follow this link to the latest version of this document.
      images. We are still investigating the legal issues surrounding
      various alternative means of producing a valid GIF file.
      
-     gd 1.7.1 _requires_ that the following libraries also be installed:
+     gd 1.7.2 _requires_ that the following libraries also be installed:
      
      libpng
      
@@ -36,6 +36,7 @@ Follow this link to the latest version of this document.
   Table of Contents
   
      * Credits and license terms
+     * What's new in version 1.7.2?
      * What's new in version 1.7.1?
      * What's new in version 1.7?
      * What's new in version 1.6.3?
@@ -97,7 +98,7 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      particular purpose, with respect to this code and accompanying
      documentation.
      
-     Although their code does not appear in gd 1.7.1, the authors wish
+     Although their code does not appear in gd 1.7.2, the authors wish
      to thank David Koblas, David Rowley, and Hutchison Avenue Software
      Corporation for their prior contributions.
      
@@ -118,7 +119,7 @@ END OF COPYRIGHT STATEMENT
    
    gd does not provide for every possible desirable graphics operation.
    It is not necessary or desirable for gd to become a kitchen-sink
-   graphics package, but version 1.7.1 incorporates most of the commonly
+   graphics package, but version 1.7.2 incorporates most of the commonly
    requested features for an 8-bit 2D package. Support for truecolor
    images, JPEG and truecolor PNG is planned for version 2.0.
    
@@ -148,6 +149,17 @@ END OF COPYRIGHT STATEMENT
      * tgd, by Bradley K. Sherman
      * fly, by Martin Gleeson
        
+  What's new in version 1.7.2?
+  
+   An uninitialized-pointer bug in gdtestttf.c was corrected. This bug
+   caused crashes at the end of each call to gdImageStringTTF on some
+   platforms. Thanks to Wolfgang Haefelinger.
+   
+   Documentation fixes. Thanks to Dohn Arms.
+   
+   Makefile fixes to permit linking with all libraries required on
+   platforms with order- dependent linkers.
+   
   What's new in version 1.7.1?
   
    A minor buglet in the Makefile was corrected, as well as an inaccurate
@@ -401,11 +413,11 @@ END OF COPYRIGHT STATEMENT
    (Windows), please consult with an experienced user of your system.
    Sorry, we cannot answer questions about basic Internet skills.
    
-   Unpacking the archive will produce a directory called "gd-1.7.1".
+   Unpacking the archive will produce a directory called "gd-1.7.2".
    
     For Unix
     
-   cd to the 1.7.1 directory. Edit the Makefile with your preferred text
+   cd to the 1.7.2 directory. Edit the Makefile with your preferred text
    editor and make any necessary changes to the settings at the top,
    especially if you want Xpm or TrueType support. Next, type "make". If
    you are the system administrator, and you wish to make the gd library

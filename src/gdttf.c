@@ -783,7 +783,8 @@ char * gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontname,
 	font_t *font;
 	fontkey_t fontkey;
 	char *error, *next;
-	char *tmpstr;
+	/* 1.7.2: initialize this variable. */
+	char *tmpstr = 0;
 
 	/****** initialize font engine on first call ************/
 	static gdCache_head_t	*fontCache;
