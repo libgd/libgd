@@ -13,6 +13,16 @@
 
 /* stdio is needed for file I/O. */
 #include <stdio.h>
+#include "io.h"
+
+/* Uncomment this line if you are licensed to use LZW compression.
+	Licensing LZW is strictly between you and the Unisys corporation.
+	The authors of GD can provide NO INFORMATION WHATSOEVER
+	regarding licensing of LZW compression. 
+*/
+
+/* #define LZW_LICENCED */
+
 
 /* This can't be changed, it's part of the GIF specification. */
 
@@ -20,7 +30,7 @@
 
 /* Image type. See functions below; you will not need to change
 	the elements directly. Use the provided macros to
-	access sx, sy, the color table, and colorsTotal for
+	access sx, sy, the color table, and colorsTotal for 
 	read-only purposes. */
 
 typedef struct gdImageStruct {
@@ -30,13 +40,13 @@ typedef struct gdImageStruct {
 	int colorsTotal;
 	int red[gdMaxColors];
 	int green[gdMaxColors];
-	int blue[gdMaxColors];
+	int blue[gdMaxColors]; 
 	int open[gdMaxColors];
 	int transparent;
 	int *polyInts;
 	int polyAllocated;
 	struct gdImageStruct *brush;
-	struct gdImageStruct *tile;
+	struct gdImageStruct *tile;	
 	int brushColorMap[gdMaxColors];
 	int tileColorMap[gdMaxColors];
 	int styleLength;
@@ -84,23 +94,30 @@ typedef gdFont *gdFontPtr;
 
 gdImagePtr gdImageCreate(int sx, int sy);
 gdImagePtr gdImageCreateFromGif(FILE *fd);
-gdImagePtr gdImageCreateFromGd(FILE *in);
-gdImagePtr gdImageCreateFromXbm(FILE *fd);
+gdImagePtr gdImageCreateFromGifCtx(gdIOCtxPtr in);
 
 /* A custom data source. */
-
 /* The source function must return -1 on error, otherwise the number
-	of bytes fetched. 0 is EOF, not an error! */
-
+        of bytes fetched. 0 is EOF, not an error! */
 /* context will be passed to your source function. */
 
 typedef struct {
-	int (*source) (void *context, char *buffer, int len);
-	void *context;
+        int (*source) (void *context, char *buffer, int len);
+        void *context;
 } gdSource, *gdSourcePtr;
 
-gdImagePtr gdImageCreateFromGifSource(
-	gdSourcePtr in);
+gdImagePtr gdImageCreateFromGifSource(gdSourcePtr in);
+
+gdImagePtr gdImageCreateFromGd(FILE *in);
+gdImagePtr gdImageCreateFromGdCtx(gdIOCtxPtr in);
+
+gdImagePtr gdImageCreateFromGd2(FILE *in);
+gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in);
+
+gdImagePtr gdImageCreateFromGd2Part(FILE *in, int srcx, int srcy, int w, int h);
+gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtxPtr in, int srcx, int srcy, int w, int h);
+
+gdImagePtr gdImageCreateFromXbm(FILE *fd);
 
 void gdImageDestroy(gdImagePtr im);
 void gdImageSetPixel(gdImagePtr im, int x, int y, int color);
@@ -136,27 +153,36 @@ int gdImageColorClosest(gdImagePtr im, int r, int g, int b);
 int gdImageColorExact(gdImagePtr im, int r, int g, int b);
 void gdImageColorDeallocate(gdImagePtr im, int color);
 void gdImageColorTransparent(gdImagePtr im, int color);
+void gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src);
+void gdImageGif(gdImagePtr im, FILE *out);
 
 /* A custom data sink. */
-
 /* The sink function must return -1 on error, otherwise the number
-	of bytes written, which must be equal to len. */
-
+        of bytes written, which must be equal to len. */
 /* context will be passed to your sink function. */
-
 typedef struct {
-	int (*sink) (void *context, char *buffer, int len);
-	void *context;
+        int (*sink) (void *context, const char *buffer, int len);
+        void *context;
 } gdSink, *gdSinkPtr;
 
-void gdImageGif(gdImagePtr im, FILE *out);
 void gdImageGifToSink(gdImagePtr im, gdSinkPtr out);
 
 void gdImageGd(gdImagePtr im, FILE *out);
+void gdImageGd2(gdImagePtr im, FILE *out, int cs, int fmt);
+void* gdImageGifPtr(gdImagePtr im, int *size);
+void gdImageLzw(gdImagePtr im, FILE *out);
+void* gdImageLzwPtr(gdImagePtr im, int *size);
+void* gdImageGdPtr(gdImagePtr im, int *size);
+void* gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
 void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color);
 void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color);
 void gdImageFill(gdImagePtr im, int x, int y, int color);
 void gdImageCopy(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int w, int h);
+void gdImageCopyMerge(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, 
+			int srcX, int srcY, int w, int h, int pct);
+void gdImageCopyMergeGray(gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
+                        int srcX, int srcY, int w, int h, int pct);
+
 /* Stretches or shrinks to fit, as needed */
 void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH);
 void gdImageSetBrush(gdImagePtr im, gdImagePtr brush);
@@ -175,4 +201,14 @@ void gdImageInterlace(gdImagePtr im, int interlaceArg);
 #define gdImageBlue(im, c) ((im)->blue[(c)])
 #define gdImageGetTransparent(im) ((im)->transparent)
 #define gdImageGetInterlaced(im) ((im)->interlace)
+
+#define GD2_CHUNKSIZE           128 
+#define GD2_CHUNKSIZE_MIN	64
+#define GD2_CHUNKSIZE_MAX       4096
+
+#define GD2_VERS                1
+#define GD2_ID                  "gd2"
+#define GD2_FMT_RAW             1
+#define GD2_FMT_COMPRESSED      2
+
 #endif

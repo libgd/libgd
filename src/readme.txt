@@ -4,7 +4,7 @@
    SEE index.html FOR A MUCH MORE USEFUL HYPERTEXT VERSION OF THIS DOCUMENT!
    SEE index.html FOR A MUCH MORE USEFUL HYPERTEXT VERSION OF THIS DOCUMENT!
 
-                                    gd 1.4
+                                    gd 1.5
                                        
 A graphics library for fast GIF creation
 
@@ -13,7 +13,7 @@ Follow this link to the latest version of this document.
   Table of Contents
   
      * Credits and license terms
-     * What's new in version 1.4?
+     * What's new in version 1.5?
      * What is gd?
      * What if I want to use another programming language?
      * What else do I need to use gd?
@@ -33,12 +33,9 @@ Follow this link to the latest version of this document.
   
    In order to resolve any possible confusion regarding the authorship of
    gd, the following copyright statement covers all of the authors who
-   have required such a statement. _Although his LZW compression code no
-   longer appears in gd, the authors wish to thank David Rowley for the
-   original LZW-based GIF compression code, which has been removed due to
-   patent concerns._ _If you are aware of any oversights in this
-   copyright notice, please contact Thomas Boutell who will be pleased to
-   correct them._
+   have required such a statement. _If you are aware of any oversights in
+   this copyright notice, please contact Thomas Boutell who will be
+   pleased to correct them._
 
 COPYRIGHT STATEMENT FOLLOWS THIS LINE
 
@@ -53,6 +50,14 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      
      Non-LZW-based GIF compression code copyright 1998, by Hutchison
      Avenue Software Corporation (http://www.hasc.com/, info@hasc.com).
+     
+     LZW-based GIF compression code David Rowley. This code is compiled
+     only if the compiler macro LZW_LICENCED is defined when gd is
+     built. Obtaining a license for the Unisys LZW compression patent is
+     entirely between the user and Unisys. The authors of gd can provide
+     NO assistance in this matter.
+     
+     Portions relating to GD2 format copyright 1999 Philip Warner.
      
      _Permission has been granted to copy and distribute gd in any
      context, including a commercial application, provided that this
@@ -113,6 +118,65 @@ END OF COPYRIGHT STATEMENT
      * tgd, by Bradley K. Sherman
      * fly, by Martin Gleeson
        
+  What's new in version 1.5?
+  
+   Version 1.5 features the following changes:
+   
+   _New GD2 format_
+          An improvement over the GD format, the GD2 format uses the zlib
+          compression library to compress the image in chunks. This
+          results in file sizes comparable to GIFs, with the ability to
+          access parts of large images without having to read the entire
+          image into memory.
+          
+          This format also supports version numbers and rudimentary
+          validity checks, so it should be more 'supportable' than the
+          previous GD format.
+          
+   _Re-arranged source files_
+          gd.c has been broken into constituant parts: io, gif, gd, gd2
+          and graphics functions are now in separate files.
+          
+   _Extended I/O capabilities._
+          The source/sink feature has been extended to support GD2 file
+          formats (which require seek/tell functions), and to allow more
+          general non-file I/O.
+          
+   _Better support for Lincoln Stein's Perl Module_
+          The new gdImage*Ptr function returns the chosen format stored
+          in a block of memory. This can be directly used by the GD perl
+          module.
+          
+   _LZW-based GIF compression code available for Unisys licensees_
+          Parties holding a legitimate license to use the patented LZW
+          compression algorithm can produce smaller GIFs if the compiler
+          macro LZW_LICENCED is defined when gd is built. Obtaining a
+          license for the Unisys LZW compression patent is entirely
+          between the user and Unisys. The authors of gd can provide NO
+          assistance in this matter.
+          
+   _Added functions_
+          gdImageCreateFromGd2Part - allows retrieval of part of an image
+          (good for huge images, like maps),
+          gdImagePaletteCopy - Copies a palette from one image to
+          another, doing it's best to match the colors in the target
+          image to the colors in the source palette.
+          gdImageGd2, gdImageCreateFromGd2 - Support for new format
+          gdImageLzw - Optional support for LZW (for those who have a
+          licence). Disabled by default.
+          gdImageCopyMerge - Merges two images (useful to highlight part
+          of an image)
+          gdImageCopyMergeGray - Similar to gdImageCopyMerge, but tries
+          to preserve source image hue.
+          gdImageGifPtr, gdImageLzwPtr, gdImageGdPtr, gdImageGd2Ptr -
+          return memort blocks for each type of image.
+          gdImageCreateFromGifCtx, gdImageCreateFromGdCtx,
+          gdImageCreateFromGd2Ctx, gdImageCreateFromGd2PartCtx - Support
+          for new I/O context.
+          
+   _NOTE:_ In fairness to Thomas Boutell, any bug/problems with any of
+   the above features should probably be reported to Philip Warner.
+   
   What's new in version 1.4?
   
    Version 1.4 features the following changes:
@@ -196,6 +260,9 @@ END OF COPYRIGHT STATEMENT
    have gcc should get it. gcc is free, ANSI compliant and a de facto
    industry standard. Ask your ISP why it is missing._
    
+   As of version 1.5, you also need the zlib compression library. It is
+   available for a variety of platforms from the zlib web site.
+   
    You will also want a GIF viewer, if you do not already have one for
    your system, since you will need a good way to check the results of
    your work. Any web browser will work, but you might be happier with a
@@ -222,11 +289,11 @@ END OF COPYRIGHT STATEMENT
    (Windows), please consult with an experienced user of your system.
    Sorry, we cannot answer questions about basic Internet skills.
    
-   Unpacking the archive will produce a directory called "gd1.4".
+   Unpacking the archive will produce a directory called "gd1.5".
    
     For Unix
     
-   cd to the gd1.4 directory and examine the Makefile, which you will
+   cd to the gd1.5 directory and examine the Makefile, which you will
    probably need to change slightly depending on your operating system
    and your needs.
    
@@ -476,6 +543,9 @@ im = gdImageCreate(64, 64);
 gdImageDestroy(im);
 
    gdImageCreateFromGif(FILE *in) _(FUNCTION)_
+          gdImageCreateFromGifCtx(gdIOCtx *in) _(FUNCTION)_
+          
+          
           gdImageCreateFromGif is called to load images from GIF format
           files. Invoke gdImageCreateFromGif with an already opened
           pointer to a file containing the desired image.
@@ -533,6 +603,9 @@ static int freadWrapper(void *context, char *buf, int len)
 }
 
    gdImageCreateFromGd(FILE *in) _(FUNCTION)_
+          gdImageCreateFromGdCtx(gdIOCtx *in) _(FUNCTION)_
+          
+          
           gdImageCreateFromGd is called to load images from gd format
           files. Invoke gdImageCreateFromGd with an already opened
           pointer to a file containing the desired image in the gd file
@@ -556,6 +629,46 @@ fclose(in);
 /* ... Use the image ... */
 gdImageDestroy(im);
 
+   gdImageCreateFromGd2(FILE *in) _(FUNCTION)_
+          gdImageCreateFromGd2Ctx(gdIOCtx *in) _(FUNCTION)_
+          
+          
+          gdImageCreateFromGd2 is called to load images from gd2 format
+          files. Invoke gdImageCreateFromGd2 with an already opened
+          pointer to a file containing the desired image in the gd2 file
+          format, which is specific to gd2 and intended for fast loading
+          of parts of large images. (It is a compressed format, but
+          generally not as good a LZW compression). gdImageCreateFromGd
+          returns a gdImagePtr to the new image, or NULL if unable to
+          load the image (most often because the file is corrupt or does
+          not contain a gd format image). gdImageCreateFromGd2 does _not_
+          close the file. You can inspect the sx and sy members of the
+          image to determine its size. The image must eventually be
+          destroyed using gdImageDestroy().
+          
+
+... inside a function ...
+gdImagePtr im;
+FILE *in;
+in = fopen("mygd.gd2", "rb");
+im = gdImageCreateFromGd2(in);
+fclose(in);
+/* ... Use the image ... */
+gdImageDestroy(im);
+
+   gdImageCreateFromGd2Part(FILE *in, int srcX, int srcY, int w, int h)
+          _(FUNCTION)_
+          gdImageCreateFromGd2PartCtx(gdIOCtx *in) _(FUNCTION)_
+          
+          
+          gdImageCreateFromGd2Part is called to load parts of images from
+          gd2 format files. Invoked in the same way as
+          gdImageCreateFromGd2, but with extra parameters indicating the
+          source (x, y) and width/height of the desired image.
+          gdImageCreateFromGd2Part returns a gdImagePtr to the new image,
+          or NULL if unable to load the image. The image must eventually
+          be destroyed using gdImageDestroy().
+          
    gdImageCreateFromXbm(FILE *in) _(FUNCTION)_
           gdImageCreateFromXbm is called to load images from X bitmap
           format files. Invoke gdImageCreateFromXbm with an already
@@ -620,6 +733,12 @@ fclose(out);
 /* Destroy image */
 gdImageDestroy(im);
 
+   void* gdImageGifPtr(gdImagePtr im, int *size) _(FUNCTION)_
+          Identical to gdImageGif except that it returns a pointer to a
+          memory area with the GIF data. This memory must be freed by the
+          caller when it is no longer needed. The 'size' parameter
+          received the total size of the block of memory.
+          
    gdImageGifToSink(gdImagePtr im, gdSinkPtr out) _(FUNCTION)_
           gdImageGifToSink is called to write a GIF to a data "sink"
           (destination) other than a file. Usage is very similar to the
@@ -687,6 +806,64 @@ fclose(out);
 /* Destroy image */
 gdImageDestroy(im);
 
+   void* gdImageGdPtr(gdImagePtr im, int *size) _(FUNCTION)_
+          Identical to gdImageGd except that it returns a pointer to a
+          memory area with the GD data. This memory must be freed by the
+          caller when it is no longer needed. The 'size' parameter
+          received the total size of the block of memory.
+          
+   void gdImageGd2(gdImagePtr im, FILE *out, int chunkSize, int fmt)
+          _(FUNCTION)_
+          gdImageGd2 outputs the specified image to the specified file in
+          the gd2 image format. The file must be open for writing. Under
+          MSDOS and all versions of Windows, it is important to use "wb"
+          as opposed to simply "w" as the mode when opening the file, and
+          under Unix there is no penalty for doing so. gdImageGd2 does
+          _not_ close the file; your code must do so.
+          
+          The gd2 image format is intended for fast reads and writes of
+          parts of images. It is a compressed format, and well suited to
+          retrieving smll sections of much larger images. The third and
+          fourth parameters are the 'chunk size' and format
+          resposectively.
+          
+          The file is stored as a series of compressed subimages, and the
+          _Chunk Size_ determines the sub-image size - a value of zero
+          causes the GD library to use the default.
+          
+          It is also possible to store GD2 files in an uncompressed
+          format, in which case the fourth parameter should be
+          GD2_FMT_RAW.
+          
+
+... inside a function ...
+gdImagePtr im;
+int black, white;
+FILE *out;
+/* Create the image */
+im = gdImageCreate(100, 100);
+/* Allocate background */
+white = gdImageColorAllocate(im, 255, 255, 255);
+/* Allocate drawing color */
+black = gdImageColorAllocate(im, 0, 0, 0);
+/* Draw rectangle */
+gdImageRectangle(im, 0, 0, 99, 99, black);
+/* Open output file in binary mode */
+out = fopen("rect.gd", "wb");
+/* Write gd2 format file */
+gdImageGd2(im, out, 0, GD2_FMT_COMPRESSED);
+/* Close file */
+fclose(out);
+/* Destroy image */
+gdImageDestroy(im);
+
+   void* gdImageGd2Ptr(gdImagePtr im, int chunkSize, int fmt, int *size)
+          _(FUNCTION)_
+          Identical to gdImageGd2 except that it returns a pointer to a
+          memory area with the GD2 data. This memory must be freed by the
+          caller when it is no longer needed. The 'size' parameter
+          received the total size of the block of memory.
+          
   Drawing Functions
   
    void gdImageSetPixel(gdImagePtr im, int x, int y, int color)
@@ -1782,6 +1959,45 @@ fclose(out);
 gdImageDestroy(im_in);
 gdImageDestroy(im_out);
 
+        void gdImageCopyMerge(gdImagePtr dst, gdImagePtr src, int dstX,
+                int dstY, int srcX, int srcY, int w, int h, int pct)
+                _(FUNCTION)_
+                gdImageCopyMerge is almost identical to gdImageCopy,
+                except that it 'merges' the two images by an amount
+                specified in the last parameter. If the last parameter is
+                100, then it will function identically to gdImageCopy -
+                the source image replaces the pixels in the destination.
+                
+                If, however, the _pct_ parameter is less than 100, then
+                the two images are merged. With pct = 0, no action is
+                taken.
+                
+                This feature is most useful to 'highlight' sections of an
+                image by merging a solid color with pct = 50:
+                
+
+... Inside a function ...
+gdImageCopyMerge(im_out, im_in, 100, 200, 0, 0, 30, 50, 50);
+
+        void gdImageCopyMergeGray(gdImagePtr dst, gdImagePtr src, int
+                dstX, int dstY, int srcX, int srcY, int w, int h, int
+                pct) _(FUNCTION)_
+                gdImageCopyMergeGray is almost identical to
+                gdImageCopyMerge, except that when merging images it
+                preserves the hue of the source by converting the
+                destination pixels to grey scale before the copy
+                operation.
+                
+
+... Inside a function ...
+gdImageCopyMergeGray(im_out, im_in, 100, 200, 0, 0, 30, 50, 50);
+
+        void gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src)
+                _(FUNCTION)_
+                Copies a palette from one image to another, doing it's
+                best to match the colors in the target image to the
+                colors in the source palette.
+                
   Miscellaneous Functions
   
               gdImageInterlace(gdImagePtr im, int interlace) _(FUNCTION)_
@@ -1919,6 +2135,74 @@ gdImageDestroy(im);
                       unless you have a need for high-speed loading of a
                       few frequently-used images in your program.
                       
+  About the .gd2 image file format
+  
+                      In addition to reading and writing the GIF format
+                      and reading the X Bitmap format, gd has the
+                      capability to read and write its own ".gd2" format.
+                      This format is _not_ intended for general purpose
+                      use and should never be used to distribute images.
+                      It is a compressed format allowing pseudo-random
+                      access to large image files. Its purpose is solely
+                      to allow very fast loading of _parts_ of images If
+                      you are experiencing performance problems when
+                      loading large, fixed GIF images your program needs
+                      to produce its output images, you may wish to
+                      examine the functions gdImageCreateFromGd2,
+                      gdImageCreateFromGd2Part and gdImageGd2, which read
+                      and write .gd2 format images.
+                      
+                      The program "giftogd2.c" is provided as a simple
+                      way of converting .gif files to .gd2 format.
+                      
+  About the gdIOCtx structure
+  
+                      Version 1.5 of GD incorporates a new style of I/O
+                      based on an IOCtx structure (the most up-to-date
+                      version can be found in io.h):
+                      
+
+typedef struct gdIOCtx {
+        int     (*getC)(struct gdIOCtx*);
+        int     (*getBuf)(struct gdIOCtx*, void*, int);
+
+        void     (*putC)(struct gdIOCtx*, int);
+        int     (*putBuf)(struct gdIOCtx*, const void*, int);
+
+        int     (*seek)(struct gdIOCtx*, const int);
+        long    (*tell)(struct gdIOCtx*);
+
+        void    (*free)(struct gdIOCtx*);
+
+} gdIOCtx;
+
+              Most functions that accepted files in previous versions now
+                      also have a counterpart that accepts an I/O
+                      context. These functions have a 'Ctx' suffix.
+                      
+                      The Ctx routines use the function pointers in the
+                      I/O context pointed to by gdIOCtx to perform all
+                      I/O. Examples of how to implement an I/O context
+                      can be found in io_file.c (which provides a wrapper
+                      for file routines), and io_dp.c (which implements
+                      in-memory storage).
+                      
+                      It is not necessary to implement all functions in
+                      an I/O context if you know that it will only be
+                      used in limited cirsumstances. At the time of
+                      writing (Version 1.5, June 1999), the known
+                      requirements are:
+                      
+                      All   Must have 'free',
+                      Anything that reads from the context Must have
+                      'getC' and 'getBuf',
+                      Anything that writes to the context Must have
+                      'putC' and 'putBuf'.
+                      If gdCreateFromGd2Part is called Must also have
+                      'seek' and 'tell'.
+                      If gdImageGd2 is called Must also have 'seek' and
+                      'tell'.
+                      
   Please tell us you're using gd!
   
                       When you contact us and let us know you are using
@@ -1932,8 +2216,11 @@ gdImageDestroy(im);
   If you have problems
   
                       If you have any difficulties with gd, feel free to
-                      contact the author, Thomas Boutell. Be sure to read
-                      this manual carefully first.
+                      contact the author, Thomas Boutell. Problems
+                      relating to the gd2 format should be addressed to
+                      Philip Warner.
+                      
+                      _Be sure to read this manual carefully first. _
                       
   Alphabetical quick index
   
@@ -1944,14 +2231,16 @@ gdImageDestroy(im);
                       gdImageColorDeallocate | gdImageColorExact |
                       gdImageColorTransparent | gdImageCopy |
                       gdImageCopyResized | gdImageCreate |
-                      gdImageCreateFromGd | gdImageCreateFromGif |
+                      gdImageCreateFromGd | gdImageCreateFromGd2 |
+                      gdImageCreateFromGd2Part | gdImageCreateFromGif |
                       gdImageCreateFromGifSource | gdImageCreateFromXbm |
                       gdImageDashedLine | gdImageDestroy | gdImageFill |
                       gdImageFillToBorder | gdImageFilledRectangle |
-                      gdImageGd | gdImageGetInterlaced | gdImageGetPixel
-                      | gdImageGetTransparent | gdImageGif |
-                      gdImageGifToSink | gdImageGreen | gdImageInterlace
-                      | gdImageLine | gdImageFilledPolygon |
+                      gdImageGd | gdImageGd2 | gdImageGetInterlaced |
+                      gdImageGetPixel | gdImageGetTransparent |
+                      gdImageGif | gdImageGifToSink | gdImageGreen |
+                      gdImageInterlace | gdImageLine |
+                      gdImageFilledPolygon | gdImagePaletteCopy |
                       gdImagePolygon | gdImagePtr | gdImageRectangle |
                       gdImageRed | gdImageSetBrush | gdImageSetPixel |
                       gdImageSetStyle | gdImageSetTile | gdImageString |
