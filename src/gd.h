@@ -1,30 +1,22 @@
 #ifndef GD_H
 #define GD_H 1
 
-/* gd.h: declarations file for the gifdraw module.
-
-	Written by Tom Boutell, 5/94.
-	Copyright 1994, Cold Spring Harbor Labs.
-	Permission granted to use this code in any fashion provided
-	that this notice is retained and any alterations are
-	labeled as such. It is requested, but not required, that
-	you share extensions to this module with us so that we
-	can incorporate them into new versions. */
+/* gd.h: declarations file for the graphic-draw module.
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose and without fee is hereby granted, provided
+ * that the above copyright notice appear in all copies and that both that
+ * copyright notice and this permission notice appear in supporting
+ * documentation.  This software is provided "AS IS." Thomas Boutell and
+ * Boutell.Com, Inc. disclaim all warranties, either express or implied, 
+ * including but not limited to implied warranties of merchantability and 
+ * fitness for a particular purpose, with respect to this code and accompanying
+ * documentation. */
 
 /* stdio is needed for file I/O. */
 #include <stdio.h>
-#include "io.h"
+#include "gd_io.h"
 
-/* Uncomment this line if you are licensed to use LZW compression.
-	Licensing LZW is strictly between you and the Unisys corporation.
-	The authors of GD can provide NO INFORMATION WHATSOEVER
-	regarding licensing of LZW compression. 
-*/
-
-/* #define LZW_LICENCED */
-
-
-/* This can't be changed, it's part of the GIF specification. */
+/* This can't be changed in the current palette-only version of gd. */
 
 #define gdMaxColors 256
 
@@ -93,8 +85,8 @@ typedef gdFont *gdFontPtr;
 /* Functions to manipulate images. */
 
 gdImagePtr gdImageCreate(int sx, int sy);
-gdImagePtr gdImageCreateFromGif(FILE *fd);
-gdImagePtr gdImageCreateFromGifCtx(gdIOCtxPtr in);
+gdImagePtr gdImageCreateFromPng(FILE *fd);
+gdImagePtr gdImageCreateFromPngCtx(gdIOCtxPtr in);
 
 /* A custom data source. */
 /* The source function must return -1 on error, otherwise the number
@@ -106,7 +98,7 @@ typedef struct {
         void *context;
 } gdSource, *gdSourcePtr;
 
-gdImagePtr gdImageCreateFromGifSource(gdSourcePtr in);
+gdImagePtr gdImageCreateFromPngSource(gdSourcePtr in);
 
 gdImagePtr gdImageCreateFromGd(FILE *in);
 gdImagePtr gdImageCreateFromGdCtx(gdIOCtxPtr in);
@@ -154,7 +146,7 @@ int gdImageColorExact(gdImagePtr im, int r, int g, int b);
 void gdImageColorDeallocate(gdImagePtr im, int color);
 void gdImageColorTransparent(gdImagePtr im, int color);
 void gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src);
-void gdImageGif(gdImagePtr im, FILE *out);
+void gdImagePng(gdImagePtr im, FILE *out);
 
 /* A custom data sink. */
 /* The sink function must return -1 on error, otherwise the number
@@ -165,13 +157,11 @@ typedef struct {
         void *context;
 } gdSink, *gdSinkPtr;
 
-void gdImageGifToSink(gdImagePtr im, gdSinkPtr out);
+void gdImagePngToSink(gdImagePtr im, gdSinkPtr out);
 
 void gdImageGd(gdImagePtr im, FILE *out);
 void gdImageGd2(gdImagePtr im, FILE *out, int cs, int fmt);
-void* gdImageGifPtr(gdImagePtr im, int *size);
-void gdImageLzw(gdImagePtr im, FILE *out);
-void* gdImageLzwPtr(gdImagePtr im, int *size);
+void* gdImagePngPtr(gdImagePtr im, int *size);
 void* gdImageGdPtr(gdImagePtr im, int *size);
 void* gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
 void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color);
@@ -201,6 +191,14 @@ void gdImageInterlace(gdImagePtr im, int interlaceArg);
 #define gdImageBlue(im, c) ((im)->blue[(c)])
 #define gdImageGetTransparent(im) ((im)->transparent)
 #define gdImageGetInterlaced(im) ((im)->interlace)
+
+/* I/O Support routines. */
+
+gdIOCtx* gdNewFileCtx(FILE*);
+gdIOCtx* gdNewDynamicCtx(int, void*);
+gdIOCtx* gdNewSSCtx(gdSourcePtr in, gdSinkPtr out);
+void* gdDPExtractData(struct gdIOCtx* ctx, int *size);
+
 
 #define GD2_CHUNKSIZE           128 
 #define GD2_CHUNKSIZE_MIN	64

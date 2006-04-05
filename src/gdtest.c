@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include "gd.h"
 
-/* A short program which converts a .gif file into a .gd file, for
+/* A short program which converts a .png file into a .gd file, for
 	your convenience in creating images on the fly from a
 	basis image that must be loaded quickly. The .gd format
 	is not intended to be a general-purpose format. */
 
 void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2);
 
+static int freadWrapper(void *context, char *buf, int len);
+static int fwriteWrapper(void *context, const char *buffer, int len);
 
 int main(int argc, char **argv)
 {
@@ -20,10 +22,11 @@ int main(int argc, char **argv)
 	char		of[256];
 	int		colRed, colBlu;
 	int		idx;
-
+	gdSource	imgsrc;
+	gdSink		imgsnk;
 
 	if (argc != 2) {
-		fprintf(stderr, "Usage: gdtest filename.gif\n");
+		fprintf(stderr, "Usage: gdtest filename.png\n");
 		exit(1);
 	}
 	in = fopen(argv[1], "rb");
@@ -31,10 +34,10 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Input file does not exist!\n");
 		exit(1);
 	}
-	im = gdImageCreateFromGif(in);
+	im = gdImageCreateFromPng(in);
 
 	rewind(in);
-	ref = gdImageCreateFromGif(in);
+	ref = gdImageCreateFromPng(in);
 
 	fclose(in);
 
@@ -44,31 +47,31 @@ int main(int argc, char **argv)
 
 
         /* */
-        /* Send to GIF File then Ptr */
+        /* Send to PNG File then Ptr */
         /* */
-        sprintf(of, "%s.gif", argv[1]);
+        sprintf(of, "%s.png", argv[1]);
         out = fopen(of, "wb");
-        gdImageGif(im, out);
+        gdImagePng(im, out);
         fclose(out);
 
         in = fopen(of, "rb");
         if (!in) {
-                fprintf(stderr, "GIF Output file does not exist!\n");
+                fprintf(stderr, "PNG Output file does not exist!\n");
                 exit(1);
         }
-        im2 = gdImageCreateFromGif(in);
+        im2 = gdImageCreateFromPng(in);
         fclose(in);
 
-        CompareImages("GD->GIF File->GD", ref, im2);
+        CompareImages("GD->PNG File->GD", ref, im2);
 
         unlink(of);
         gdImageDestroy(im2);
 
-	iptr = gdImageGifPtr(im,&sz);
+	iptr = gdImagePngPtr(im,&sz);
 	ctx = gdNewDynamicCtx(sz,iptr);
-	im2 = gdImageCreateFromGifCtx(ctx);
+	im2 = gdImageCreateFromPngCtx(ctx);
 
-        CompareImages("GD->GIF ptr->GD", ref, im2);
+        CompareImages("GD->PNG ptr->GD", ref, im2);
 
 	gdImageDestroy(im2);
 	ctx->free(ctx);
@@ -141,50 +144,57 @@ int main(int argc, char **argv)
         gdImageDestroy(im2);
         ctx->free(ctx);
 
-#ifdef LZW_LICENCED
-        /* */
-        /* Send to LZW File then Ptr */
-        /* */
-        sprintf(of, "%s.lzw", argv[1]);
-        out = fopen(of, "wb");
-        gdImageLzw(im, out);
-        fclose(out);
+	/*
+	** Test gdImageCreateFromPngSource'
+	**/
 
+	in = fopen(argv[1], "rb");
+
+	imgsrc.source = freadWrapper;
+	imgsrc.context = in;
+	im2 = gdImageCreateFromPngSource(&imgsrc);
+	fclose(in);
+
+	if (im2 == NULL) {
+		printf("GD Source: ERROR Null returned by gdImageCreateFromPngSource\n");
+	} else {
+		CompareImages("GD Source", ref, im2);
+		gdImageDestroy(im2);
+	};
+
+
+	/*
+	** Test gdImagePngToSink'
+	**/
+
+        sprintf(of, "%s.snk", argv[1]);
+        out = fopen(of, "wb");
+ 	imgsnk.sink = fwriteWrapper;
+	imgsnk.context = out;
+	gdImagePngToSink(im, &imgsnk);
+        fclose(out);
         in = fopen(of, "rb");
         if (!in) {
-                fprintf(stderr, "LZW Output file does not exist!\n");
-                exit(1);
-        }
-        im2 = gdImageCreateFromGif(in);
-        fclose(in);
+                fprintf(stderr, "GD Sink: ERROR - GD Sink Output file does not exist!\n");
+        } else {
+        	im2 = gdImageCreateFromPng(in);
+		fclose(in);
 
-        CompareImages("GD->LZW File->GD", ref, im2);
+        	CompareImages("GD Sink", ref, im2);
+		gdImageDestroy(im2);
+	};
 
-        unlink(of);
-        gdImageDestroy(im2);
-
-        iptr = gdImageLzwPtr(im,&sz);
-        /*printf("Got ptr %d (size %d)\n",iptr, sz); */
-        ctx = gdNewDynamicCtx(sz,iptr);
-        /*printf("Got ctx %d\n",ctx); */
-        im2 = gdImageCreateFromGifCtx(ctx);
-        /*printf("Got img2 %d\n",im2); */
-
-        CompareImages("GD->LZW ptr->GD", ref, im2);
-
-        gdImageDestroy(im2);
-        ctx->free(ctx);
-#endif
+	unlink(of);
 
 	/* */
 	/*  Test Extraction */
 	/* */
-	in = fopen("test/gdtest_200_300_150_100.gif", "rb");
+	in = fopen("test/gdtest_200_300_150_100.png", "rb");
         if (!in) {
-                fprintf(stderr, "gdtest_200_300_150_100.gif does not exist!\n");
+                fprintf(stderr, "gdtest_200_300_150_100.png does not exist!\n");
                 exit(1);
         }
-        im2 = gdImageCreateFromGif(in);
+        im2 = gdImageCreateFromPng(in);
         fclose(in);
 
 
@@ -196,7 +206,7 @@ int main(int argc, char **argv)
         im3 = gdImageCreateFromGd2Part(in, 200, 300, 150, 100);
         fclose(in);
 
-        CompareImages("GD2Part (gdtest.gd2, gdtest_200_300_150_100.gif)", im2, im3);
+        CompareImages("GD2Part (gdtest.gd2, gdtest_200_300_150_100.png)", im2, im3);
 
 	gdImageDestroy(im2);
 	gdImageDestroy(im3);
@@ -204,12 +214,12 @@ int main(int argc, char **argv)
 	/* */
 	/*  Copy Blend */
 	/* */
-        in = fopen("test/gdtest.gif", "rb");
+        in = fopen("test/gdtest.png", "rb");
         if (!in) {
-                fprintf(stderr, "gdtest.gif does not exist!\n");
+                fprintf(stderr, "gdtest.png does not exist!\n");
                 exit(1);
         }
-        im2 = gdImageCreateFromGif(in);
+        im2 = gdImageCreateFromPng(in);
         fclose(in);
 
 	im3 = gdImageCreate(100, 60);
@@ -226,18 +236,18 @@ int main(int argc, char **argv)
 
 	gdImageDestroy(im3);
 
-        in = fopen("test/gdtest_merge.gif", "rb");
+        in = fopen("test/gdtest_merge.png", "rb");
         if (!in) {
                 fprintf(stderr, "gdtest.gd2 does not exist!\n");
                 exit(1);
         }
-        im3 = gdImageCreateFromGif(in);
+        im3 = gdImageCreateFromPng(in);
         fclose(in);
 
 	printf("[Merged Image has %d colours]\n",im2->colorsTotal);
-	CompareImages("Merged (gdtest.gif, gdtest_merge.gif)", im2, im3);
+	CompareImages("Merged (gdtest.png, gdtest_merge.png)", im2, im3);
 
-        /*out = fopen("gdtest_merge.gif", "wb"); */
+        /*out = fopen("gdtest_merge.png", "wb"); */
         /*gdImageLzw(im2, out); */
         /*fclose(out); */
 
@@ -257,7 +267,7 @@ void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2)
 
 	bad = (1==0);
 	if (im1->sx != im2->sx) {
-		printf("%s: image x-size differs\n",msg);
+		printf("%s: ERROR image x-size differs\n",msg);
 		bad = (1==1);
 	}
 
@@ -276,20 +286,20 @@ void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2)
 				p2 = im2->pixels[y][x];
 
 				if (im1->red[p1] != im2->red[p2]) {
-					printf("%s: image colours differ\n",msg);
+					printf("%s: ERROR image colours differ\n",msg);
 					bad = (1==1);
 					break;
 				}
 
 				if (im1->green[p1] != im2->green[p2]) {
-					printf("%s: image colours differ\n",msg);
+					printf("%s: ERROR image colours differ\n",msg);
 					bad = (1==1);
 					break;
 				}
 
 
 				if (im1->blue[p1] != im2->blue[p2]) {
-					printf("%s: image colours differ\n",msg);
+					printf("%s: ERROR image colours differ\n",msg);
 					bad = (1==1);
 					break;
 				}
@@ -302,5 +312,17 @@ void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2)
 	if (!bad) {
 		printf("%s: OK\n",msg);
 	}
+}
+
+
+static int freadWrapper(void *context, char *buf, int len)
+{
+	int got = fread(buf, 1, len, (FILE *) context);
+	return got;
+}
+
+static int fwriteWrapper(void *context, const char *buffer, int len)
+{
+        return fwrite(buffer, 1, len, (FILE *) context);
 }
 

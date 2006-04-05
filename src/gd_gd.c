@@ -3,23 +3,22 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
-#include "io.h"
 
 #define TRUE 1
 #define FALSE 0
 
-/* Exported functions: */
+/* Exported functions: */
 extern void gdImageGd(gdImagePtr im, FILE *out);
 
 
-/* Use this for commenting out debug-print statements. */
-/* Just use the first '#define' to allow all the prints... */
-/*#define GD2_DBG(s) (s) */
+/* Use this for commenting out debug-print statements. */
+/* Just use the first '#define' to allow all the prints... */
+/*#define GD2_DBG(s) (s) */
 #define GD2_DBG(s)
 
-/* */
-/* Shared code to read color tables from gd file. */
-/* */
+/* */
+/* Shared code to read color tables from gd file. */
+/* */
 int _gdGetColors(gdIOCtx *in, gdImagePtr im)
 {
         int i;
@@ -57,10 +56,10 @@ fail1:
         return FALSE;
 }
 
-/* */
-/* Use the common basic header info to make the image object. */
-/* This is also called from _gd2CreateFromFile */
-/* */
+/* */
+/* Use the common basic header info to make the image object. */
+/* This is also called from _gd2CreateFromFile */
+/* */
 static
 gdImagePtr _gdCreateFromFile(gdIOCtx *in, int *sx, int *sy)
 {
@@ -110,14 +109,14 @@ gdImagePtr gdImageCreateFromGdCtx(gdIOCtxPtr in)
 	int i;
         gdImagePtr im;
 
-	/* Read the header */
+	/* Read the header */
 	im = _gdCreateFromFile(in, &sx, &sy);
 
 	if (im == NULL) {
 		goto fail1;
 	};
 
-	/* Then the data... */
+	/* Then the data... */
 	for (y=0; (y<sy); y++) {
 		for (x=0; (x<sx); x++) {	
 			int ch;

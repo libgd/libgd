@@ -17,14 +17,13 @@
 #include <stdlib.h>
 #include <zlib.h>
 #include "gd.h"
-#include "io.h"
 
 #define TRUE 1
 #define FALSE 0
 
-/* Use this for commenting out debug-print statements. */
-/* Just use the first '#define' to allow all the prints... */
-/*#define GD2_DBG(s) (s) */
+/* Use this for commenting out debug-print statements. */
+/* Just use the first '#define' to allow all the prints... */
+/*#define GD2_DBG(s) (s) */
 #define GD2_DBG(s) 
 
 typedef struct {
@@ -32,9 +31,9 @@ typedef struct {
 	int	size;
 	} t_chunk_info;
 
-/* */
-/* Read the extra info in the gd2 header. */
-/* */
+/* */
+/* Read the extra info in the gd2 header. */
+/* */
 static 
 int _gd2GetHeader(gdIOCtxPtr in, int *sx, int *sy, 
 			int *cs, int *vers, int *fmt, int *ncx, int *ncy, t_chunk_info **chunkIdx)
@@ -59,13 +58,13 @@ int _gd2GetHeader(gdIOCtxPtr in, int *sx, int *sy,
 
 	GD2_DBG(printf("Got file code: %s\n", id));
 
-	/* Equiv. of 'magick'.  */
+	/* Equiv. of 'magick'.  */
         if (strcmp(id,GD2_ID) != 0) {
                 GD2_DBG(printf("Not a valid gd2 file\n"));
                 goto fail1;
         };
 
-	/* Version */
+	/* Version */
         if (gdGetWord(vers, in) != 1) {
                 goto fail1;
         };
@@ -76,7 +75,7 @@ int _gd2GetHeader(gdIOCtxPtr in, int *sx, int *sy,
 		goto fail1;
 	};
 
-	/* Image Size */
+	/* Image Size */
         if (!gdGetWord(sx, in)) {
 		GD2_DBG(printf("Could not get x-size\n"));
                 goto fail1;
@@ -87,7 +86,7 @@ int _gd2GetHeader(gdIOCtxPtr in, int *sx, int *sy,
 	}
 	GD2_DBG(printf("Image is %dx%d\n", *sx, *sy));
 
-        /* Chunk Size */
+        /* Chunk Size */
         if (gdGetWord(cs, in) != 1) {
                 goto fail1;
         };
@@ -98,7 +97,7 @@ int _gd2GetHeader(gdIOCtxPtr in, int *sx, int *sy,
 		goto fail1;
 	};
 
-	/* Data Format */
+	/* Data Format */
         if (gdGetWord(fmt, in) != 1) {
                 goto fail1;
         };
@@ -110,13 +109,13 @@ int _gd2GetHeader(gdIOCtxPtr in, int *sx, int *sy,
 	};
 
 
-        /* # of chunks wide */
+        /* # of chunks wide */
         if (gdGetWord(ncx, in) != 1) {
                 goto fail1;
         };
 	GD2_DBG(printf("%d Chunks Wide\n", *ncx));
 
-        /* # of chunks high */
+        /* # of chunks high */
         if (gdGetWord(ncy, in) != 1) {
                 goto fail1;
         };
@@ -193,7 +192,7 @@ int _gd2ReadChunk(int offset, char *compBuf, int compSize, char *chunkBuf, uLong
 		GD2_DBG(printf("Already Positioned in file to %d\n",offset));
 	};
 
-	/* Read and uncompress an entire chunk. */
+	/* Read and uncompress an entire chunk. */
 	GD2_DBG(printf("Reading file\n"));
         if (gdGetBuf(compBuf, compSize, in) != compSize) {
 		return FALSE;
@@ -227,18 +226,18 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
         int ncx, ncy, nc, cs, cx, cy;
         int x, y, ylo, yhi, xlo, xhi;
 	int ch, vers, fmt;
-	t_chunk_info *chunkIdx = NULL; /* So we can free it with impunity. */
-	char	*chunkBuf = NULL; /* So we can free it with impunity. */
+	t_chunk_info *chunkIdx = NULL; /* So we can free it with impunity. */
+	char	*chunkBuf = NULL; /* So we can free it with impunity. */
 	int	chunkNum = 0;
 	int	chunkMax;
 	uLongf 	chunkLen;
 	int	chunkPos;
 	int 	compMax;
-	char	*compBuf = NULL; /* So we can free it with impunity. */
+	char	*compBuf = NULL; /* So we can free it with impunity. */
 
         gdImagePtr im;
 
-	/* Get the header */
+	/* Get the header */
         im = _gd2CreateFromFile(in, &sx, &sy, &cs, &vers, &fmt, &ncx, &ncy, &chunkIdx);
 
         if (im == NULL) {
@@ -248,7 +247,7 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
 	nc = ncx * ncy;
 
 	if (fmt == GD2_FMT_COMPRESSED) {
-		/* Find the maximum compressed chunk size. */
+		/* Find the maximum compressed chunk size. */
 	        compMax = 0;
 	        for (i=0; (i < nc) ; i++) {
 			if ( chunkIdx[i].size > compMax) {
@@ -257,18 +256,18 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
 		};
 		compMax++;
 
-		/* Allocate buffers */
+		/* Allocate buffers */
 		chunkMax = cs * cs;
 		chunkBuf = calloc(chunkMax,1);
 		compBuf = calloc(compMax,1);
 		GD2_DBG(printf("Largest compressed chunk is %d bytes\n",compMax));
 	};
 
-/*	if ( (ncx != sx / cs) || (ncy != sy / cs)) { */
-/*		goto fail2; */
-/*	}; */
+/*	if ( (ncx != sx / cs) || (ncy != sy / cs)) { */
+/*		goto fail2; */
+/*	}; */
 
-	/* Read the data... */
+	/* Read the data... */
         for (cy=0; (cy < ncy); cy++) {
                 for (cx=0; (cx < ncx); cx++) {
 
@@ -303,18 +302,18 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
                                 if (xhi > im->sx) {
                                         xhi = im->sx;
                                 };
-				/*GD2_DBG(printf("y=%d: ",y)); */
+				/*GD2_DBG(printf("y=%d: ",y)); */
 				if (fmt == GD2_FMT_RAW) {
                                 	for (x= xlo ; x < xhi; x++) {
 
 						ch = gdGetC(in);
 						if (ch == EOF) {
 							ch = 0;
-							/*printf("EOF while reading\n"); */
-							/*gdImageDestroy(im); */
-							/*return 0; */
+							/*printf("EOF while reading\n"); */
+							/*gdImageDestroy(im); */
+							/*return 0; */
 						}
-						/*GD2_DBG(printf(" (%d, %d)", x, y)); */
+						/*GD2_DBG(printf(" (%d, %d)", x, y)); */
 						im->pixels[y][x] = ch;
 					}
 				} else {
@@ -322,7 +321,7 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
                                                 im->pixels[y][x] = chunkBuf[chunkPos++];
                                         };
                                 };
-				/*GD2_DBG(printf("\n")); */
+				/*GD2_DBG(printf("\n")); */
                         };
 			chunkNum++;
                 };
@@ -379,18 +378,18 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
 
         gdImagePtr im;
 
-	/* */
-	/* The next few lines are basically copied from gd2CreateFromFile */
-	/* - we change the file size, so don't want to use the code directly. */
-	/*   but we do need to know the file size. */
-	/* */
+	/* */
+	/* The next few lines are basically copied from gd2CreateFromFile */
+	/* - we change the file size, so don't want to use the code directly. */
+	/*   but we do need to know the file size. */
+	/* */
 	if (_gd2GetHeader(in, &fsx, &fsy, &cs, &vers, &fmt, &ncx, &ncy, &chunkIdx) != 1) {
 		goto fail1;
 	}
 
 	GD2_DBG(printf("File size is %dx%d\n", fsx, fsy));
 
-	/* This is the difference - make a file based on size of chunks. */
+	/* This is the difference - make a file based on size of chunks. */
         im = gdImageCreate(w, h);
         if (im == NULL) {
                 goto fail1;
@@ -400,11 +399,11 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
 		goto fail2;
 	}
 
-	/* Process the header info */
+	/* Process the header info */
         nc = ncx * ncy;
 
         if (fmt == GD2_FMT_COMPRESSED) {
-                /* Find the maximum compressed chunk size. */
+                /* Find the maximum compressed chunk size. */
                 compMax = 0;
                 for (i=0; (i < nc) ; i++) {
                         if ( chunkIdx[i].size > compMax) {
@@ -418,13 +417,13 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
                 compBuf = calloc(compMax,1);
         };
 
-/*	Don't bother with this... */
-/*      if ( (ncx != sx / cs) || (ncy != sy / cs)) { */
-/*              goto fail2; */
-/*      }; */
+/*	Don't bother with this... */
+/*      if ( (ncx != sx / cs) || (ncy != sy / cs)) { */
+/*              goto fail2; */
+/*      }; */
 
 
-        /* Work out start/end chunks */
+        /* Work out start/end chunks */
         scx = srcx / cs;
         scy = srcy / cs;
 	if (scx < 0) { scx = 0;};
@@ -435,11 +434,11 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
 	if (ecx >= ncx) { ecx = ncx - 1;};
         if (ecy >= ncy) { ecy = ncy - 1;};
 
-	/* Remember file position of image data. */
+	/* Remember file position of image data. */
 	dstart = gdTell(in);
 	GD2_DBG(printf("Data starts at %d\n",dstart));
 
-	/* Loop through the chunks. */
+	/* Loop through the chunks. */
         for (cy=scy ; (cy <= ecy); cy++) {
 
                 ylo = cy * cs;
@@ -493,14 +492,14 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
                                         	ch = gdGetC(in);
                                         	if (ch == EOF) {
                                                 	ch = 0;
-                                                	/*printf("EOF while reading file\n"); */
-                                                	/*goto fail2; */
+                                                	/*printf("EOF while reading file\n"); */
+                                                	/*goto fail2; */
                                         	};
 					} else {
 						ch = chunkBuf[chunkPos++];
 					};
 
-					/* Only use a point that is in the image. */
+					/* Only use a point that is in the image. */
 					if ( (x >= srcx) && (x < (srcx + w)) && (x < fsx) && (x >= 0) 
 					     && (y >= srcy)  && (y < (srcy + h)) && (y < fsy) && (y >= 0)
 					   )
@@ -534,14 +533,14 @@ void _gd2PutHeader(gdImagePtr im, gdIOCtx *out, int cs, int fmt, int cx, int cy)
 {
 	int i;
 
-        /* Send the gd2 id, to verify file format. */
+        /* Send the gd2 id, to verify file format. */
         for (i = 0; i < 4; i++) {
                 gdPutC((unsigned char)(GD2_ID[i]), out);
         };
 
-	/* */
-	/* We put the version info first, so future versions can easily change header info. */
-	/* */
+	/* */
+	/* We put the version info first, so future versions can easily change header info. */
+	/* */
 	gdPutWord(GD2_VERS, out);
 	gdPutWord(im->sx, out);
 	gdPutWord(im->sy, out);
@@ -559,8 +558,8 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
         int i;
         int     chunkLen;
         int     chunkNum = 0;
-        char    *chunkData = NULL; /* So we can free it with impunity. */
-        char    *compData = NULL; /* So we can free it with impunity. */
+        char    *chunkData = NULL; /* So we can free it with impunity. */
+        char    *compData = NULL; /* So we can free it with impunity. */
         uLongf  compLen;
         int     idxPos;
         int     idxSize;
@@ -568,21 +567,21 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
         int     posSave;
 	int	compMax;
 
-        /*printf("Trying to write GD2 file\n"); */
+        /*printf("Trying to write GD2 file\n"); */
 
-	/* */
-	/* Force fmt to a valid value since we don't return anything. */
-	/* */
+	/* */
+	/* Force fmt to a valid value since we don't return anything. */
+	/* */
 	if ( (fmt == 0) || ( (fmt != GD2_FMT_RAW) && (fmt != GD2_FMT_COMPRESSED) ) ) {
 		fmt == GD2_FMT_COMPRESSED;
 	};
 
-	/* */
-	/* Make sure chunk size is valid. These are arbitrary values; 64 because it seems */
-	/* a little silly to expect performance improvements on a 64x64 bit scale, and  */
-	/* 4096 because we buffer one chunk, and a 16MB buffer seems a little largei - it may be */
-	/* OK for one user, but for another to read it, they require the buffer. */
-	/* */
+	/* */
+	/* Make sure chunk size is valid. These are arbitrary values; 64 because it seems */
+	/* a little silly to expect performance improvements on a 64x64 bit scale, and  */
+	/* 4096 because we buffer one chunk, and a 16MB buffer seems a little largei - it may be */
+	/* OK for one user, but for another to read it, they require the buffer. */
+	/* */
 	if (cs == 0) {
 		cs = GD2_CHUNKSIZE;
 	} else if (cs < GD2_CHUNKSIZE_MIN) {
@@ -591,33 +590,33 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 		cs = GD2_CHUNKSIZE_MAX;
 	};
 
-	/* Work out number of chunks. */
+	/* Work out number of chunks. */
         ncx = im->sx / cs + 1;
         ncy = im->sy / cs + 1;
 
-        /* Write the standard header. */
+        /* Write the standard header. */
         _gd2PutHeader(im, out, cs, fmt, ncx, ncy);
 
 	if (fmt == GD2_FMT_COMPRESSED) {
-        	/* */
-        	/* Work out size of buffer for compressed data, If CHUNKSIZE is large, */
-        	/* then these will be large! */
-		/* */
-		/* The zlib notes say output buffer size should be (input size) * 1.01 * 12 */
-		/* - we'll use 1.02 to be paranoid. */
-		/* */
+        	/* */
+        	/* Work out size of buffer for compressed data, If CHUNKSIZE is large, */
+        	/* then these will be large! */
+		/* */
+		/* The zlib notes say output buffer size should be (input size) * 1.01 * 12 */
+		/* - we'll use 1.02 to be paranoid. */
+		/* */
         	compMax = cs * cs * 1.02 + 12;
 
-		/* */
-		/* Allocate the buffers.  */
-		/* */
+		/* */
+		/* Allocate the buffers.  */
+		/* */
 		chunkData = calloc(cs*cs,1);
 		compData = calloc(compMax,1);
 
-		/* */
-        	/* Save the file position of chunk index, and allocate enough space for */
-        	/* each chunk_info block . */
-        	/* */
+		/* */
+        	/* Save the file position of chunk index, and allocate enough space for */
+        	/* each chunk_info block . */
+        	/* */
 		idxPos = gdTell(out);
         	idxSize = ncx * ncy * sizeof(t_chunk_info);
 		GD2_DBG(printf("Index size is %d\n", idxSize));
@@ -644,7 +643,7 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
                         chunkLen = 0;
                         for (y= ylo ; (y < yhi); y++) {
 
-                                /*GD2_DBG(printf("y=%d: ",y)); */
+                                /*GD2_DBG(printf("y=%d: ",y)); */
 
                                 xlo = cx * cs;
                                 xhi = xlo + cs;
@@ -654,16 +653,16 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 
 				if (fmt == GD2_FMT_COMPRESSED) {
 	                                for (x= xlo ; x < xhi; x++) {
-                                         	/*GD2_DBG(printf("%d...",x)); */
+                                         	/*GD2_DBG(printf("%d...",x)); */
                                         	chunkData[chunkLen++] = im->pixels[y][x];
 					};
 				} else {
                                 	for (x= xlo ; x < xhi; x++) {
-                                                /*GD2_DBG(printf("%d, ",x)); */
+                                                /*GD2_DBG(printf("%d, ",x)); */
 						gdPutC((unsigned char)im->pixels[y][x], out);
 					};
 				};
-				/*GD2_DBG(printf("y=%d done.\n",y)); */
+				/*GD2_DBG(printf("y=%d done.\n",y)); */
                         };
 			if (fmt == GD2_FMT_COMPRESSED) {
                         	compLen = compMax;
@@ -675,7 +674,7 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
                                 	GD2_DBG(printf("Chunk %d size %d offset %d\n",chunkNum, chunkIdx[chunkNum-1].size, chunkIdx[chunkNum-1].offset));
 
 					if (gdPutBuf(compData, compLen, out) <= 0) {
-						/* Any alternate suggestions for handling this? */
+						/* Any alternate suggestions for handling this? */
                                         	printf("Error %d on write\n", errno);
                                 	};
 				};
@@ -683,7 +682,7 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
                 };
         };
 	if (fmt == GD2_FMT_COMPRESSED) {
-		/* Save the position, write the index, restore position (paranoia). */
+		/* Save the position, write the index, restore position (paranoia). */
 		GD2_DBG(printf("Seeking %d to write index\n",idxPos));
         	posSave = gdTell(out);
         	gdSeek(out,idxPos);
@@ -693,8 +692,8 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 			gdPutInt(chunkIdx[x].offset, out);
                         gdPutInt(chunkIdx[x].size, out);
 		};
-		/* We don't use fwrite for *endian reasons. */
-        	/*fwrite(chunkIdx, sizeof(int)*2, chunkNum, out); */
+		/* We don't use fwrite for *endian reasons. */
+        	/*fwrite(chunkIdx, sizeof(int)*2, chunkNum, out); */
         	gdSeek(out, posSave);
 	};
 
@@ -704,7 +703,7 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 	free(chunkIdx);
         GD2_DBG(printf("Done\n"));
 
-	/*printf("Memory block size is %d\n",gdTell(out)); */
+	/*printf("Memory block size is %d\n",gdTell(out)); */
 
 }
 

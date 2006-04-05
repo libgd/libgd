@@ -63,6 +63,7 @@ int gdImageColorClosest(gdImagePtr im, int r, int g, int b)
 	int i;
 	long rd, gd, bd;
 	int ct = (-1);
+	int first = 1;
 	long mindist = 0;
 	for (i=0; (i<(im->colorsTotal)); i++) {
 		long dist;
@@ -73,9 +74,10 @@ int gdImageColorClosest(gdImagePtr im, int r, int g, int b)
 		gd = (im->green[i] - g);
 		bd = (im->blue[i] - b);
 		dist = rd * rd + gd * gd + bd * bd;
-		if ((i == 0) || (dist < mindist)) {
+		if (first || (dist < mindist)) {
 			mindist = dist;	
 			ct = i;
+			first = 0;
 		}
 	}
 	return ct;
@@ -147,16 +149,16 @@ void gdImagePaletteCopy(gdImagePtr to, gdImagePtr from)
 			p = gdImageGetPixel(to, x, y);
 			if (xlate[p] == -1) {
 				xlate[p] = gdImageColorClosest(from, to->red[p], to->green[p], to->blue[p]);
-				/*printf("Mapping %d (%d, %d, %d) to %d (%d, %d, %d)\n", */
-				/*	p,  to->red[p], to->green[p], to->blue[p], */
-				/*	xlate[p], from->red[xlate[p]], from->green[xlate[p]], from->blue[xlate[p]]); */
+				/*printf("Mapping %d (%d, %d, %d) to %d (%d, %d, %d)\n", */
+				/*	p,  to->red[p], to->green[p], to->blue[p], */
+				/*	xlate[p], from->red[xlate[p]], from->green[xlate[p]], from->blue[xlate[p]]); */
 			};
 			gdImageSetPixel(to, x, y, xlate[p]);
 		};
 	};
 
         for (i=0; (i < (from->colorsTotal) ) ; i++) {
-		/*printf("Copying color %d (%d, %d, %d)\n", i, from->red[i], from->blue[i], from->green[i]); */
+		/*printf("Copying color %d (%d, %d, %d)\n", i, from->red[i], from->blue[i], from->green[i]); */
 		to->red[i] = from->red[i];
                 to->blue[i] = from->blue[i];
                 to->green[i] = from->green[i];
@@ -890,7 +892,7 @@ void gdImageCopyMerge(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int sr
                                 continue;
                         }
                         /* Have we established a mapping for this color? */
-                        /*if (colorMap[c] == (-1)) { */
+                        /*if (colorMap[c] == (-1)) { */
                                 /* If it's the same image, mapping is trivial */
                                 if (dst == src) {
                                         nc = c;
@@ -916,8 +918,8 @@ void gdImageCopyMerge(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int sr
                                         	}
 					}
                                 }
-                                /*colorMap[c] = nc; */
-                        /*} */
+                                /*colorMap[c] = nc; */
+                        /*} */
                         gdImageSetPixel(dst, tox, toy, nc);
                         tox++;
                 }
@@ -1241,9 +1243,9 @@ void gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c)
 	}
 	/* Fix in 1.3: count a vertex only once */
 	for (y=miny; (y < maxy); y++) {
-/*1.4		int interLast = 0; */
-/*		int dirLast = 0; */
-/*		int interFirst = 1; */
+/*1.4		int interLast = 0; */
+/*		int dirLast = 0; */
+/*		int interFirst = 1; */
 		ints = 0;
 		for (i=0; (i < n); i++) {
 			if (!i) {

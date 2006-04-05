@@ -33,17 +33,17 @@ int main(void)
 	/* Set transparent color. */
 	gdImageColorTransparent(im_out, white);
 
-	/* Try to load demoin.gif and paste part of it into the
+	/* Try to load demoin.png and paste part of it into the
 		output image. */
 
-	in = fopen("demoin.gif", "rb");
+	in = fopen("demoin.png", "rb");
 	if (!in) {
 		fprintf(stderr, "Can't load source image; this demo\n");
-		fprintf(stderr, "is much more impressive if demoin.gif\n");
+		fprintf(stderr, "is much more impressive if demoin.png\n");
 		fprintf(stderr, "is available.\n");
 		im_in = 0;
 	} else {
-		im_in = gdImageCreateFromGif(in);
+		im_in = gdImageCreateFromPng(in);
 		fclose(in);
 		/* Now copy, and magnify as we do so */
 		gdImageCopyResized(im_out, im_in, 
@@ -100,9 +100,9 @@ int main(void)
 	/* Make output image interlaced (allows "fade in" in some viewers,
 		and in the latest web browsers) */
 	gdImageInterlace(im_out, 1);
-	out = fopen("demoout.gif", "wb");
-	/* Write GIF */
-	gdImageGif(im_out, out);
+	out = fopen("demoout.png", "wb");
+	/* Write PNG */
+	gdImagePng(im_out, out);
 	fclose(out);
 	gdImageDestroy(im_out);
 	if (im_in) {
