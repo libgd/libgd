@@ -9,29 +9,38 @@ COMPILER=gcc
 #for your system. 
 AR=ar
 
-#If the install command is not in your path, provide
-#an explicit path for it here, or install manually.
-INSTALL=install
-
 #If you don't have FreeType, libjpeg and/or Xpm installed, including the
 #header files, uncomment this (default).
 CFLAGS=-O
 #If you do have FreeType, libjpeg and/or Xpm fully installed, uncomment a
 #variation of this and comment out the line above. See also LIBS below.
-#CFLAGS=-O -DHAVE_XPM -DHAVE_JPEG -DHAVE_LIBTTF
+#CFLAGS=-O  -DHAVE_XPM -DHAVE_JPEG -DHAVE_LIBTTF
 
 #If you don't have FreeType and/or Xpm fully installed, uncomment this
 #(default).
+
+#PLEASE NOTE: YOU MAY HAVE TO JUGGLE THE ORDER OF THE LIBRARIES.
+#Some systems are very picky about link order. They don't all agree
+#on the right order, either.
+
 LIBS=-lm -lgd -lpng -lz
 
 #If you do have FreeType, JPEG and/or Xpm fully installed, uncomment a 
 #variation of this and comment out the line above. Note that
 #Xpm requires X11. See also CFLAGS above.
+
+#PLEASE NOTE: YOU MAY HAVE TO JUGGLE THE ORDER OF THE LIBRARIES.
+#Some systems are very picky about link order. They don't all agree
+#on the right order, either.
+
 #LIBS=-lm -lgd -lpng -lz -ljpeg -lttf -lXpm -lX11
 
 #Typical install locations for freetype, zlib, xpm, libjpeg and libpng header files.
 #If yours are somewhere else, change this. 
-INCLUDEDIRS=-I/usr/local/include -I/usr/include/X11 -I/usr/X11R6/include/X11
+#-I. is important to ensure that the version of gd you are installing
+#is used, and not an older release in your directory tree somewhere.
+
+INCLUDEDIRS=-I. -I/usr/local/include -I/usr/include/X11 -I/usr/X11R6/include/X11
 
 #Typical install locations for freetype, zlib, xpm and libpng libraries.
 #If yours are somewhere else, other than a standard location
@@ -56,7 +65,7 @@ INSTALL_BIN=/usr/local/bin
 #
 #
 
-VERSION=1.7
+VERSION=1.8.1
 
 CC=$(COMPILER) $(INCLUDEDIRS)
 LINK=$(CC) $(LIBDIRS) $(LIBS)
@@ -69,23 +78,23 @@ TEST_PROGRAMS=gdtest gddemo gd2time gdtestttf
 all: libgd.a $(PROGRAMS)
 
 install: libgd.a $(BIN_PROGRAMS)
-	$(INSTALL) -m 644 libgd.a $(INSTALL_LIB)/libgd.a
-	$(INSTALL) -m 755 pngtogd $(INSTALL_BIN)/pngtogd
-	$(INSTALL) -m 755 pngtogd2 $(INSTALL_BIN)/pngtogd2
-	$(INSTALL) -m 755 gdtopng $(INSTALL_BIN)/gdtopng
-	$(INSTALL) -m 755 gd2topng $(INSTALL_BIN)/gd2topng
-	$(INSTALL) -m 755 gd2copypal $(INSTALL_BIN)/gd2copypal
-	$(INSTALL) -m 755 gdparttopng $(INSTALL_BIN)/gdparttopng
-	$(INSTALL) -m 755 webpng $(INSTALL_BIN)/webpng
-	$(INSTALL) -m 755 bdftogd $(INSTALL_BIN)/bdftogd
-	$(INSTALL) -m 644 gd.h $(INSTALL_INCLUDE)/gd.h
-	$(INSTALL) -m 644 gdcache.h $(INSTALL_INCLUDE)/gdcache.h
-	$(INSTALL) -m 644 gd_io.h $(INSTALL_INCLUDE)/gd_io.h
-	$(INSTALL) -m 644 gdfontg.h $(INSTALL_INCLUDE)/gdfontg.h
-	$(INSTALL) -m 644 gdfontl.h $(INSTALL_INCLUDE)/gdfontl.h
-	$(INSTALL) -m 644 gdfontmb.h $(INSTALL_INCLUDE)/gdfontmb.h
-	$(INSTALL) -m 644 gdfonts.h $(INSTALL_INCLUDE)/gdfonts.h
-	$(INSTALL) -m 644 gdfontt.h $(INSTALL_INCLUDE)/gdfontt.h
+	sh ./install-item 644 libgd.a $(INSTALL_LIB)/libgd.a
+	sh ./install-item 755 pngtogd $(INSTALL_BIN)/pngtogd
+	sh ./install-item 755 pngtogd2 $(INSTALL_BIN)/pngtogd2
+	sh ./install-item 755 gdtopng $(INSTALL_BIN)/gdtopng
+	sh ./install-item 755 gd2topng $(INSTALL_BIN)/gd2topng
+	sh ./install-item 755 gd2copypal $(INSTALL_BIN)/gd2copypal
+	sh ./install-item 755 gdparttopng $(INSTALL_BIN)/gdparttopng
+	sh ./install-item 755 webpng $(INSTALL_BIN)/webpng
+	sh ./install-item 755 bdftogd $(INSTALL_BIN)/bdftogd
+	sh ./install-item 644 gd.h $(INSTALL_INCLUDE)/gd.h
+	sh ./install-item 644 gdcache.h $(INSTALL_INCLUDE)/gdcache.h
+	sh ./install-item 644 gd_io.h $(INSTALL_INCLUDE)/gd_io.h
+	sh ./install-item 644 gdfontg.h $(INSTALL_INCLUDE)/gdfontg.h
+	sh ./install-item 644 gdfontl.h $(INSTALL_INCLUDE)/gdfontl.h
+	sh ./install-item 644 gdfontmb.h $(INSTALL_INCLUDE)/gdfontmb.h
+	sh ./install-item 644 gdfonts.h $(INSTALL_INCLUDE)/gdfonts.h
+	sh ./install-item 644 gdfontt.h $(INSTALL_INCLUDE)/gdfontt.h
 
 gddemo: gddemo.o libgd.a
 	$(CC) gddemo.o -o gddemo	$(LIBDIRS) $(LIBS)
@@ -122,15 +131,15 @@ gdtestttf: gdtestttf.o libgd.a
 
 libgd.a: gd.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o gd_io_file.o gd_ss.o \
 	gd_io_ss.o gd_png.o gd_jpeg.o gdxpm.o gdfontt.o gdfonts.o gdfontmb.o gdfontl.o \
-	gdfontg.o gdtables.o gdttf.o gdcache.o gdkanji.o \
+	gdfontg.o gdtables.o gdttf.o gdcache.o gdkanji.o  wbmp.o gd_wbmp.o \
 	gd.h gdfontt.h gdfonts.h gdfontmb.h gdfontl.h gdfontg.h
 	rm -f libgd.a
 	$(AR) rc libgd.a gd.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o \
 		gd_io_file.o gd_ss.o gd_io_ss.o gd_png.o gd_jpeg.o gdxpm.o \
 		gdfontt.o gdfonts.o gdfontmb.o gdfontl.o gdfontg.o \
-		gdtables.o gdttf.o gdcache.o gdkanji.o
+		gdtables.o gdttf.o gdcache.o gdkanji.o wbmp.o gd_wbmp.o
 	-ranlib libgd.a
 
 clean:
-	rm -f *.o *.a ${PROGRAMS}
+	rm -f *.o *.a ${PROGRAMS} test/gdtest.jpg test/gdtest.wbmp
 
