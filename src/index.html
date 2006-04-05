@@ -1,10 +1,10 @@
 <!-- REMEMBER TO EDIT index.html.source -->
 <head>
-<TITLE>gd 2.0.25</TITLE>
+<TITLE>gd 2.0.26</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<H2>gd 2.0.25</H2>
+<H2>gd 2.0.26</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -20,7 +20,7 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.25 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.26 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -33,7 +33,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-When building from soruce, gd 2.0.25 <strong>requires</strong> that the 
+When building from soruce, gd 2.0.26 <strong>requires</strong> that the 
 following libraries also be installed, in order to produce the related 
 image formats. The win32 binary release (bgd) already contains the
 appropriate libraries.
@@ -66,7 +66,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.25">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.26">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -165,10 +165,10 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.25.
+with 2.0.26.
 <h4>PHP</h4>
 A variant of gd 2.x is included in PHP 4.3.0. It is also possible
-to patch PHP 4.2.3 for use with gd 2.0.25; see the
+to patch PHP 4.2.3 for use with gd 2.0.26; see the
 <a href="http://www.boutell.com/gd/">gd home page</a> for a link to
 that information. It would be a Good Idea to merge all of the things
 that are better in mainstream gd and all of the things that are
@@ -202,6 +202,70 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<P>
+<A NAME="whatsnew2.0.26"><H3>What's new in version 2.0.26?</H3></A>
+<P>
+The following enhancements and fixes:
+<ul>
+<li>Drastically faster, less memory-intensive antialiased drawing, thanks to
+Pierre-Alain Joye. This code was imported from the PHP "fork"
+of gd. The API for antialiased drawing has not changed, however the
+implementation has been completely replaced.
+Antialiased line drawing does not support widths other
+than 1, however this did not work properly with the other
+implementation of antialiasing either. Support has been included
+for the "non-blending color" option introduced by the previous
+implementation of antialiased drawing.
+<li><code>gdlib-config</code>, which has been installed by 
+<code>make install</code> for some time now, has gained
+a <code>--features</code> option. This option produces a space-separated
+list of optional features with which the gd library was compiled.
+Typical usage looks like this:
+<pre>
+% gdlib-config --features
+GD_XPM GD_JPEG GD_FREETYPE GD_PNG
+</pre>
+Other <code>configure</code> scripts can conveniently define
+preprocessor symbols based on this list in order to conditionally
+compile code. For instance, if
+GD_PNG is not reported by --features, then gdImagePng is not
+included in the library.
+<p>
+Thanks to Lars Hecking and Lincoln Stein for their advice on
+implementing this feature. Any blame for the actual implementation
+is entirely due to me (TBB).
+<li>Fixes to the behavior of the bounding rectangle returned by
+gdImageStringFT and relatives when the string is rotated.
+See fontwheeltest.c. Thanks to John Ellson.
+<li>Previously, gdImageStringFT and friends accepted either 
+a full path to a font file, or the name of a font with no
+extension, in which case the GDFONTPATH environment variable
+and then the compiled-in DEFAULT_FONTPATH was searched. In addition,
+a font filename with an extension but no full path can now be
+automatically searched for in the same fashion. Thanks to John Ellson.
+
+<li>Fixes to freetype antialiased text against a transparent 
+background. See testtr.c. Thanks to John Ellson.
+
+<li>Support for named entities like &amp;amp; and hex-coded 
+entities such as &amp;#x6C34; in text 
+strings passed to gdImageStringFT and relatives, adding to the 
+previous support for decimal-coded entities like &amp;#197;. 
+These were extracted from entities.html (from the W3C) via
+the script entities.tcl, which is included for the curious and
+those with other entities they need support for.  Thanks to John Ellson.
+
+<li>Optimization: gdImageSetPixel no longer calls gdImageAlphaBlend 
+when either the source or the destination pixel is 100% transparent. 
+Thanks to John Ellson.
+
+<li>Optimization: gdImageLine is potentially faster now in the most 
+common cases.
+Thanks to John Ellson.
+<li>Documentation of the entities feature of gdImageStringFT.
+<li>autoconf/configure fixes. Thanks to many who pointed out an oversight
+in handling libpng flags.
 </ul>
 <P>
 <A NAME="whatsnew2.0.25"><H3>What's new in version 2.0.25?</H3></A>
@@ -1076,8 +1140,8 @@ saving of alpha channel information to the file instead.
 </ul>
 <h4>Source Code:</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.25.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.25.zip">.ZIP File of SOURCE CODE (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.26.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.26.zip">.ZIP File of SOURCE CODE (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -1099,10 +1163,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.25".
+Unpacking the archive will produce a directory called "gd-2.0.26".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.25 directory and type:
+<code>cd</code> to the 2.0.26 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -3494,7 +3558,15 @@ TrueType fonts (.ttf and .ttc files). Obtaining them is entirely up to
 you.</strong> The string is anti-aliased, meaning that there should be 
 fewer "jaggies" visible. The fontname is the full pathname to a TrueType 
 font file, or a font face name if the GDFONTPATH environment variable
-or FreeType's DEFAULT_FONTPATH variable have been set intelligently. 
+or the compiled-in DEFAULT_FONTPATH macro of gdft.c have been set intelligently. In the absence of a full path, the font face name may be presented with or without extension (2.0.26).
+<p>
+The null-terminated <b>string</b> argument is considered to be encoded via the UTF_8
+standard; also, HTML entities are supported, including decimal,
+hexadecimal, and named entities (2.0.26). Those who are passing 
+ordinary ASCII strings may have difficulty with the &amp; 
+character unless encoded correctly as &amp; but should have no 
+other difficulties.
+<p>
 The string may be arbitrarily scaled (ptsize) and rotated (angle in radians).
 The direction of rotation is counter-clockwise, with 0 radians (0 degrees)
 at 3 o'clock and PI/2 radians (90 degrees) at 12 o'clock. 
@@ -3502,7 +3574,9 @@ at 3 o'clock and PI/2 radians (90 degrees) at 12 o'clock.
 <p>
 The user-supplied int brect[8] array is filled on return from gdImageStringFT
 with the 8 elements representing the 4 corner coordinates of the
-bounding rectangle.
+bounding rectangle (the smallest rectangle that completely surrounds the 
+rendered string and does not intersect any pixel of the rendered string).
+
 <TABLE BORDER="1">
 <TR><TD ALIGN="LEFT" VALIGN="TOP">0</TD><TD ALIGN="LEFT" VALIGN="TOP">
 lower left corner, X position</TD></TR>

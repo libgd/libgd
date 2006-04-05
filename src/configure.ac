@@ -5,14 +5,17 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the vesion number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.0.25], [gd@boutell.com])
+AC_INIT([GD], [2.0.26], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=0
-GDLIB_REVISION=25
+GDLIB_REVISION=26
 GDLIBNAME=gd
+#Expanded by tests later in this file. TBB 2.0.26
+FEATURES=
+AC_SUBST(FEATURES)
 
 AC_SUBST(GDLIB_MAJOR)
 AC_SUBST(GDLIB_MINOR)
@@ -299,18 +302,28 @@ if test "$withval" != no; then
        [CPPFLAGS="$CPPFLAGS $libpng_CPPFLAGS/libpng"],
        [CPPFLAGS="$_cppflags"])])
 
+  _ldflags="$LDFLAGS"
+  LDFLAGS="$libpng_LDFLAGS $LDFLAGS"
+
   if test -n "$LIBPNG12_CONFIG"; then
     AC_CHECK_LIB(png12,png_create_read_struct,
       [LIBS="-lpng12 $LIBS"
+       FEATURES="GD_PNG $FEATURES"
        AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
       [LDFLAGS="$_ldflags"  
        AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
   elif test -n "$LIBPNG_CONFIG"; then
-    AC_CHECK_LIB(png,png_create_read_struct,,
+    AC_CHECK_LIB(png,png_create_read_struct,
+      [LIBS="-lpng $LIBS" 
+       FEATURES="GD_PNG $FEATURES"
+       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
       [LDFLAGS="$_ldflags"  
        AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
   else
-    AC_CHECK_LIB(png,png_create_read_struct,,
+    AC_CHECK_LIB(png,png_create_read_struct,
+      [LIBS="-lpng $LIBS" 
+       FEATURES="GD_PNG $FEATURES"
+       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
       [LDFLAGS="$_ldflags"  
        AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
   fi
@@ -364,20 +377,21 @@ if test "$withval" != no; then
   _ldflags="$LDFLAGS"
   CPPFLAGS="$libft_INCLUDES $CPPFLAGS"
   LDFLAGS="$libft_LDFLAGS $LDFLAGS"
-
-  AC_CHECK_LIB(freetype,FT_Init_FreeType,,
+  SAVE_FEATURES=$FEATURES
+  AC_CHECK_LIB(freetype,FT_Init_FreeType,
+    [LIBS="-lfreetype $LIBS" 
+     FEATURES="GD_FREETYPE $FEATURES"
+     AC_DEFINE(HAVE_LIBFREETYPE, 1, [ Define if you have the freetype library. ])],
     [LDFLAGS="$_ldflags"
-     AC_MSG_WARN([not found - disabling freetype support])])
+     AC_MSG_WARN([not found - disabling freetype support])
+     FEATURES=$SAVE_FEATURES])
 
-  AC_CHECK_HEADERS(freetype/freetype.h,
-    [AC_MSG_CHECKING([whether it's freetype 2])
-     AC_EGREP_HEADER(FT_Library,freetype/freetype.h,
-       [AC_MSG_RESULT([yes])
-       ],
-       [AC_MSG_RESULT([no])
-        CPPFLAGS="$_cppflags"
-       ])
-    ])
+  #TBB: 2.0.26: newer gd versions require ft2build.h
+  AC_CHECK_HEADERS(ft2build.h,,
+      [AC_MSG_RESULT([no])
+      FEATURES=$SAVE_FEATURES
+      ac_cv_lib_freetype_FT_Init_FreeType=no
+      CPPFLAGS="$_cppflags"])
 
 else
   ac_cv_lib_freetype_FT_Init_FreeType=no
@@ -393,7 +407,10 @@ AC_ARG_WITH(jpeg,dnl
   withval=yes)
 
 if test "$withval" != no; then
-  AC_CHECK_LIB(jpeg,jpeg_set_defaults)
+  AC_CHECK_LIB(jpeg,jpeg_set_defaults,
+    [LIBS="-ljpeg $LIBS" 
+     FEATURES="GD_JPEG $FEATURES"
+     AC_DEFINE(HAVE_LIBJPEG, 1, [ Define if you have the freetype library. ])])
 else
   ac_cv_lib_jpeg_jpeg_set_defaults=no
 fi
@@ -410,6 +427,7 @@ AC_ARG_WITH(xpm,dnl
 if test "$withval" != no; then
   AC_CHECK_LIB(Xpm,XpmReadFileToXpmImage,
     [LIBS="-lXpm -lX11 $LIBS"
+     FEATURES="GD_XPM $FEATURES"
      AC_DEFINE(HAVE_LIBXPM, 1, [ Define if you have the Xpm library. ])],,
     [-lX11])
 else

@@ -7,13 +7,13 @@ SUBDIRS = config test
 
 bin_PROGRAMS = annotate gdparttopng gdtopng gd2copypal gd2topng pngtogd pngtogd2 webpng
 
-bin_SCRIPTS = bdftogd
+bin_SCRIPTS = bdftogd config/gdlib-config
 
-noinst_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac circletexttest
+noinst_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac circletexttest testtr
 
-EXTRA_DIST = README-JPEG.TXT README.TXT configure.pl bdftogd demoin.png err.out index.html install-item makefile.sample readme.jpn
+EXTRA_DIST = README-JPEG.TXT README.TXT configure.pl bdftogd demoin.png err.out index.html install-item makefile.sample readme.jpn entities.html entities.tcl
 
-include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h
+include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h entities.h
 
 lib_LTLIBRARIES = libgd.la
 

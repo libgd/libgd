@@ -6,8 +6,8 @@
 /* Define to 1 if you have the <errno.h> header file. */
 #undef HAVE_ERRNO_H
 
-/* Define to 1 if you have the <freetype/freetype.h> header file. */
-#undef HAVE_FREETYPE_FREETYPE_H
+/* Define to 1 if you have the <ft2build.h> header file. */
+#undef HAVE_FT2BUILD_H
 
 /* Define if you have the iconv() function. */
 #undef HAVE_ICONV
@@ -21,16 +21,16 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `freetype' library (-lfreetype). */
+/* Define if you have the freetype library. */
 #undef HAVE_LIBFREETYPE
 
-/* Define to 1 if you have the `jpeg' library (-ljpeg). */
+/* Define if you have the freetype library. */
 #undef HAVE_LIBJPEG
 
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
-/* Define to 1 if you have the `png' library (-lpng). */
+/* Define if you have the png library. */
 #undef HAVE_LIBPNG
 
 /* Define to 1 if you have the <libpng/png.h> header file. */
