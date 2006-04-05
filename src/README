@@ -1,26 +1,24 @@
-         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
-         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
-         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
-         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
+                    THERE IS A BETTER MANUAL IN index.html.
+                    THERE IS A BETTER MANUAL IN index.html.
+                    THERE IS A BETTER MANUAL IN index.html.
+                    THERE IS A BETTER MANUAL IN index.html.
 
-                                   gd 1.6.2
+                                   gd 1.6.3
                                        
 A graphics library for fast image creation
 
 Follow this link to the latest version of this document.
 
-     _HEY! READ THIS!_
-
-     gd 1.6.2 creates PNG images, not GIF images. This is a good thing.
-     PNG is a more compact format, and full compression is available. 
-     Existing code will need modification to call gdImagePng instead
-     of gdImageGif. <strong>Please do not ask us to send you the old GIF
-     version of GD.</strong> Unisys holds a patent on the LZW compression
-     algorithm, which is used in fully compressed GIF images. We are 
-     still investigating the legal issues surrounding various 
-     alternative means of producing a valid GIF file.
-
-     gd 1.6.2 _requires_ that the following libraries also be installed:
+     _HEY! READ THIS!_ gd 1.6.3 creates PNG images, not GIF images. This
+     is a good thing. PNG is a more compact format, and full compression
+     is available. Existing code will need modification to call
+     gdImagePng instead of gdImageGif. _Please do not ask us to send you
+     the old GIF version of GD._ Unisys holds a patent on the LZW
+     compression algorithm, which is used in fully compressed GIF
+     images. We are still investigating the legal issues surrounding
+     various alternative means of producing a valid GIF file.
+     
+     gd 1.6.3 _requires_ that the following libraries also be installed:
      
      libpng
      
@@ -33,6 +31,7 @@ Follow this link to the latest version of this document.
   Table of Contents
   
      * Credits and license terms
+     * What's new in version 1.6.3?
      * What's new in version 1.6.2?
      * What's new in version 1.6.1?
      * What's new in version 1.6?
@@ -75,8 +74,9 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      (ellson@lucent.com).
      
      _Permission has been granted to copy and distribute gd in any
-     context, including a commercial application, provided that this
-     notice is present in user-accessible supporting documentation._
+     context without fee, including a commercial application, provided
+     that this notice is present in user-accessible supporting
+     documentation._
      
      This does not affect your ownership of the derived work itself, and
      the intent is to assure proper credit for the authors of gd, not to
@@ -84,26 +84,15 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      ask. "Derived works" includes all programs that utilize the
      library. Credit must be given in user-accessible documentation.
      
-     Permission to use, copy, modify, and distribute this software and
-     its documentation for any purpose and without fee is hereby
-     granted, provided that the above copyright notice appear in all
-     copies and that both that copyright notice and this permission
-     notice appear in supporting documentation. This software is
-     provided "as is" without express or implied warranty.
+     _This software is provided "AS IS."_ The copyright holders disclaim
+     all warranties, either express or implied, including but not
+     limited to implied warranties of merchantability and fitness for a
+     particular purpose, with respect to this code and accompanying
+     documentation.
      
-     Although their code does not appear in gd 1.6.2, the authors wish
+     Although their code does not appear in gd 1.6.3, the authors wish
      to thank David Koblas, David Rowley, and Hutchison Avenue Software
      Corporation for their prior contributions.
-     
-     Permission to use, copy, modify, and distribute this software and
-     its documentation for any purpose and without fee is hereby
-     granted, provided that the above copyright notice appear in all
-     copies and that both that copyright notice and this permission
-     notice appear in supporting documentation. _This software is
-     provided "AS IS."_ The copyright holders disclaim all warranties,
-     either express or implied, including but not limited to implied
-     warranties of merchantability and fitness for a particular purpose,
-     with respect to this code and accompanying documentation.
      
 END OF COPYRIGHT STATEMENT
 
@@ -122,7 +111,7 @@ END OF COPYRIGHT STATEMENT
    
    gd does not provide for every possible desirable graphics operation.
    It is not necessary or desirable for gd to become a kitchen-sink
-   graphics package, but version 1.6.2 incorporates most of the commonly
+   graphics package, but version 1.6.3 incorporates most of the commonly
    requested features for an 8-bit 2D package. Support for scalable
    fonts, and truecolor images, JPEG and truecolor PNG is planned for
    version 2.0.
@@ -133,7 +122,13 @@ END OF COPYRIGHT STATEMENT
     
    gd can also be used from Perl, courtesy of Lincoln Stein's GD.pm
    library, which uses gd as the basis for a set of Perl 5.x classes. Not
-   yet updated for gd 1.6.2.
+   yet updated for gd 1.6.3.
+   
+    Tcl
+    
+   gd can be used from Tcl with John Ellson's Gdtclft dynamically loaded
+   extension package. (Gdtclft2.0 or later is needed for gd-1.6.3 with
+   PNG output.)
    
     Any Language
     
@@ -142,10 +137,16 @@ END OF COPYRIGHT STATEMENT
    text file from whatever scripting language you prefer to use, then
    invoke the interpreter.
    
-   These packages have not been updated to gd 1.6.2 as of this writing.
+   These packages have not been updated to gd 1.6.3 as of this writing.
      * tgd, by Bradley K. Sherman
      * fly, by Martin Gleeson
        
+  What's new in version 1.6.3?
+  
+   Version 1.6.3 corrects a memory leak in gd_png.c. This leak caused a
+   significant amount of memory to be allocated and not freed when
+   writing a PNG image.
+   
   What's new in version 1.6.2?
   
    Version 1.6.2 from John Ellson adds two new functions:
@@ -358,11 +359,11 @@ END OF COPYRIGHT STATEMENT
    (Windows), please consult with an experienced user of your system.
    Sorry, we cannot answer questions about basic Internet skills.
    
-   Unpacking the archive will produce a directory called "gd1.6.2".
+   Unpacking the archive will produce a directory called "gd-1.6.3".
    
     For Unix
     
-   cd to the gd1.6.2 directory and type "./configure", followed by
+   cd to the gd-1.6.3 directory and type "./configure", followed by
    "make". If you are the system administrator, and you wish to make the
    gd library available to other programs, you may also wish to type
    "make install".
@@ -1472,7 +1473,7 @@ gdImageDestroy(im);
                 gdImageChar is used to draw single characters on the
                 image. (To draw multiple characters, use gdImageString or
                 gdImageString16. See also gdImageStringTTF, new with
-                gd1.6.2.) The second argument is a pointer to a font
+                gd-1.6.2.) The second argument is a pointer to a font
                 definition structure; five fonts are provided with gd,
                 gdFontTiny, gdFontSmall, gdFontMediumBold, gdFontLarge,
                 and gdFontGiant. You must include the files "gdfontt.h",
@@ -1555,7 +1556,7 @@ gdImageDestroy(im);
                 the fifth argument is drawn from left to right in the
                 specified color. (See gdImageStringUp for a way of
                 drawing vertical text. See also gdImageStringTTF, new
-                with gd1.6.2.) Pixels not set by a particular character
+                with gd-1.6.2.) Pixels not set by a particular character
                 retain their previous color.
                 
 
@@ -1778,7 +1779,7 @@ gdImageDestroy(im);
                 gdImageColorExact and gdImageColorClosest for ways to
                 locate existing colors that approximate the color desired
                 in situations where a new color is not available. Also
-                see gdImageColorResolve, new in gd1.6.2.
+                see gdImageColorResolve, new in gd-1.6.2.
                 
 
 ... inside a function ...

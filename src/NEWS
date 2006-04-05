@@ -1,3 +1,6 @@
+990729 Thomas Boutell (TBB)
+	- It would probably be a good idea to free the 
+	  png_write_struct, wouldn't it.
 990727 Thomas Boutell (TBB)
 	- Sorted out -lm problem that prevented PNG library
 	  from being correctly detected or flagged as absent

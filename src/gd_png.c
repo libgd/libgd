@@ -569,4 +569,8 @@ void gdImagePngCtx(gdImagePtr im, gdIOCtx *outfile)
         png_write_image(png_ptr, im->pixels);
         png_write_end(png_ptr, info_ptr);
     }
+    /* 1.6.3: maybe we should give that memory BACK! TBB */
+        png_destroy_write_struct(&png_ptr, &info_ptr);
 }
+
+

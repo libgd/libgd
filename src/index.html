@@ -1,16 +1,16 @@
 <HTML>
 <HEAD>
-<TITLE>gd 1.6.2</TITLE>
+<TITLE>gd 1.6.3</TITLE>
 </HEAD>
 <BODY>
-<H1>gd 1.6.2</H1>
+<H1>gd 1.6.3</H1>
 <H2>A graphics library for fast image creation</H2>
 <H2>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
 of this document</A>.</H2>
 <blockquote>
 <strong>HEY! READ THIS!</strong>
-gd 1.6.2 creates PNG images, not GIF images. This is a good thing.
+gd 1.6.3 creates PNG images, not GIF images. This is a good thing.
 PNG is a more compact format, and full compression is available.
 Existing code will need modification to call gdImagePng instead
 of gdImageGif. <strong>Please do not ask us to send you the old GIF
@@ -19,7 +19,7 @@ algorithm, which is used in fully compressed GIF images. We are
 still investigating the legal issues surrounding various
 alternative means of producing a valid GIF file.
 <p>
-gd 1.6.2 <strong>requires</strong> that the following libraries 
+gd 1.6.3 <strong>requires</strong> that the following libraries 
 also be installed:
 <p>
 libpng
@@ -34,6 +34,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
+<LI><A HREF="#whatsnew1.6.3">What's new in version 1.6.3?</A>
 <LI><A HREF="#whatsnew1.6.2">What's new in version 1.6.2?</A>
 <LI><A HREF="#whatsnew1.6.1">What's new in version 1.6.1?</A>
 <LI><A HREF="#whatsnew1.6">What's new in version 1.6?</A>
@@ -79,7 +80,7 @@ Portions relating to PNG copyright 1999, Greg Roelofs.
 Portions relating to libttf copyright 1999, John Ellson (ellson@lucent.com).
 <p>
 <strong>Permission has been granted to copy and distribute gd in any
-context, including a commercial application, provided that this notice
+context without fee, including a commercial application, provided that this notice
 is present in user-accessible supporting documentation.</strong>
 <p>
 This does not affect your ownership of the derived work itself, and the intent
@@ -88,26 +89,15 @@ with your productive use of gd. If you have questions, ask.
 "Derived works" includes all programs that utilize the library.
 Credit must be given in user-accessible documentation.
 <p>
-Permission to use, copy, modify, and distribute this software and its
-documentation for any purpose and without fee is hereby granted, provided
-that the above copyright notice appear in all copies and that both that
-copyright notice and this permission notice appear in supporting
-documentation.  This software is provided "as is" without express or
-implied warranty.
-<p>
-Although their code does not appear in gd 1.6.2, the authors wish to 
-thank David Koblas, David Rowley, and Hutchison Avenue Software 
-Corporation for their prior contributions.
-<p>
-Permission to use, copy, modify, and distribute this software and its
-documentation for any purpose and without fee is hereby granted, provided
-that the above copyright notice appear in all copies and that both that
-copyright notice and this permission notice appear in supporting
-documentation. <strong>This software is provided "AS IS."</strong>
+<strong>This software is provided "AS IS."</strong>
 The copyright holders disclaim all warranties, either express or implied,
 including but not limited to implied warranties of merchantability and
 fitness for a particular purpose, with respect to this code and accompanying
 documentation.
+<p>
+Although their code does not appear in gd 1.6.3, the authors wish to 
+thank David Koblas, David Rowley, and Hutchison Avenue Software 
+Corporation for their prior contributions.
 </blockquote>
 <pre>
 END OF COPYRIGHT STATEMENT
@@ -128,7 +118,7 @@ in the wrong place.
 <P>
 gd does not provide for every possible desirable graphics
 operation. It is not necessary or desirable for gd to become
-a kitchen-sink graphics package, but version 1.6.2 incorporates
+a kitchen-sink graphics package, but version 1.6.3 incorporates
 most of the commonly requested features for an 8-bit 2D package.
 Support for scalable fonts, and truecolor images, JPEG and 
 truecolor PNG is planned for version 2.0.
@@ -140,23 +130,27 @@ gd can also be used from Perl, courtesy of
 Lincoln Stein's
 <a href="http://www-genome.wi.mit.edu/ftp/pub/software/WWW/GD.html">
 GD.pm</a> library, which uses gd as the basis for a set of
-Perl 5.x classes. Not yet updated for gd 1.6.2.
+Perl 5.x classes. Not yet updated for gd 1.6.3.
 <h4>Tcl</h4>
 gd can be used from Tcl with John Ellson's
 <a href=http://www.tcltk.com/ftp/ellson/>Gdtclft</a>
 dynamically loaded extension package.
-(Gdtclft2.0 or later is needed for gd-1.6.2 with PNG output.)
+(Gdtclft2.0 or later is needed for gd-1.6.3 with PNG output.)
 <h4>Any Language</h4>
 There are, at the moment, at least three simple interpreters that
 perform gd operations. You can output the desired commands to a simple
 text file from whatever scripting language you prefer to use, then
 invoke the interpreter.
 <p>
-These packages have not been updated to gd 1.6.2 as of this writing.
+These packages have not been updated to gd 1.6.3 as of this writing.
 <ul>
 <li><a href="http://s27w007.pswfs.gov/tgd/">tgd</a>, by Bradley K. Sherman
 <li><a href="http://www.unimelb.edu.au/fly/fly.html">fly</a>, by Martin Gleeson
 </ul>
+<P><A NAME="whatsnew1.6.3"><H3>What's new in version 1.6.3?</H3></A>
+Version 1.6.3 corrects a memory leak in gd_png.c. This leak caused
+a significant amount of memory to be allocated and not freed when
+writing a PNG image. 
 <P><A NAME="whatsnew1.6.2"><H3>What's new in version 1.6.2?</H3></A>
 Version 1.6.2 from John Ellson <ellson@lucent.com> adds two new functions:
 <ul>
@@ -345,13 +339,13 @@ newsgroups relevant to your particular system.
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>By HTTP</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-1.6.2.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd162.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-1.6.3.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd163.zip">.ZIP File (Windows)</a>
 </ul>
 <h4>By FTP</h4>
 <ul>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.6.2.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd162.zip">.ZIP File (Windows)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.6.3.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd163.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -362,10 +356,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-1.6.2".
+Unpacking the archive will produce a directory called "gd-1.6.3".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the gd-1.6.2 directory and type "./configure",
+<code>cd</code> to the gd-1.6.3 directory and type "./configure",
 followed by "make". If you are the system administrator, and you
 wish to make the gd library available to other programs, you may 
 also wish to type "make install".
