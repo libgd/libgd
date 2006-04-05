@@ -9,7 +9,7 @@
 	of the original has been remapped to rho (distance from center).
 	This is known as a "polar coordinate transform." */
 
- BGD_EXPORT gdImagePtr gdImageSquareToCircle(gdImagePtr im, int radius);
+ BGD_DECLARE(gdImagePtr) gdImageSquareToCircle(gdImagePtr im, int radius);
 
 /* Draws the text 'top' and 'bottom' on 'im', curved along the
 	edge of a circle of radius 'radius', with its
@@ -34,7 +34,7 @@
 
 	Returns 0 on success, or an error string. */	
 
-BGD_EXPORT char *gdImageStringFTCircle(
+BGD_DECLARE(char *) gdImageStringFTCircle(
 	gdImagePtr im,
 	int cx,
 	int cy,
@@ -59,7 +59,7 @@ BGD_EXPORT char *gdImageStringFTCircle(
   * Leaves transparency/alpha-channel untouched
   */
 
- BGD_EXPORT void gdImageSharpen (gdImagePtr im, int pct);
+ BGD_DECLARE(void) gdImageSharpen (gdImagePtr im, int pct);
 
 #endif /* GDFX_H */
 

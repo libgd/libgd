@@ -27,8 +27,7 @@
 /* number of antialised colors for indexed bitmaps */
 #define NUMCOLORS 8
 
-char *
-gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
+BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
 		  double ptsize, double angle, int x, int y, char *string)
 {
   /* 2.0.6: valid return */
@@ -37,16 +36,14 @@ gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
 }
 
 #ifndef HAVE_LIBFREETYPE
-char *
-gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
+BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 		   double ptsize, double angle, int x, int y, char *string,
 		   gdFTStringExtraPtr strex)
 {
   return "libgd was not built with FreeType font support\n";
 }
 
-char *
-gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
+BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
 		 double ptsize, double angle, int x, int y, char *string)
 {
   return "libgd was not built with FreeType font support\n";
@@ -813,14 +810,12 @@ gdMutexDeclare (gdFontCacheMutex);
 static gdCache_head_t *fontCache;
 static FT_Library library;
 
-void
-gdFreeFontCache ()
+BGD_DECLARE(void) gdFreeFontCache ()
 {
   gdFontCacheShutdown ();
 }
 
-void
-gdFontCacheShutdown ()
+BGD_DECLARE(void) gdFontCacheShutdown ()
 {
   if (fontCache)
     {
@@ -835,16 +830,14 @@ gdFontCacheShutdown ()
 /********************************************************************/
 /* gdImageStringFT -  render a utf8 string onto a gd image          */
 
-char *
-gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
+BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
 		 double ptsize, double angle, int x, int y, char *string)
 {
   return gdImageStringFTEx (im, brect, fg, fontlist,
 			    ptsize, angle, x, y, string, 0);
 }
 
-int
-gdFontCacheSetup (void)
+BGD_DECLARE(int) gdFontCacheSetup (void)
 {
   if (fontCache)
     {
@@ -862,8 +855,7 @@ gdFontCacheSetup (void)
 }
 
 
-char *
-gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
+BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 		   double ptsize, double angle, int x, int y, char *string,
 		   gdFTStringExtraPtr strex)
 {
@@ -1070,7 +1062,10 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 	}
 
 /* EAM DEBUG */
-#if (defined(FREETYPE_MAJOR) && (FREETYPE_MAJOR >=2 ) && (FREETYPE_MINOR >= 1))
+/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
+/* 2.0.24: David R. Morrison: use the more complete ifdef here. */
+
+#if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
       if (font->face->charmap->encoding == FT_ENCODING_MS_SYMBOL)
 	{
 	  /* I do not know the significance of the constant 0xf000. */

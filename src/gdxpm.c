@@ -17,8 +17,7 @@
 #include "gdhelpers.h"
 
 #ifndef HAVE_LIBXPM
-gdImagePtr
-gdImageCreateFromXpm (char *filename)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm (char *filename)
 {
   fprintf (stderr, "libgd was not built with xpm support\n");
   return (NULL);
@@ -28,8 +27,7 @@ gdImageCreateFromXpm (char *filename)
 
 #include <X11/xpm.h>
 
-gdImagePtr
-gdImageCreateFromXpm (char *filename)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm (char *filename)
 {
   XpmInfo info;
   XpmImage image;

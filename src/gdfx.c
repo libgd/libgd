@@ -20,7 +20,7 @@
 #define MAXY(x) MAX4(x[1],x[3],x[5],x[7])
 #define MINY(x) MIN4(x[1],x[3],x[5],x[7])
 
-char *
+BGD_DECLARE(char *)
 gdImageStringFTCircle (gdImagePtr im,
 		       int cx,
 		       int cy,
@@ -275,7 +275,7 @@ main (int argc, char *argv[])
 #define SUPERBITS1 1
 #define SUPERBITS2 2
 
-gdImagePtr
+BGD_DECLARE(gdImagePtr)
 gdImageSquareToCircle (gdImagePtr im, int radius)
 {
   int x, y;
@@ -422,7 +422,7 @@ gdImageSubSharpen (int pc, int c, int nc, float inner_coeff, float
   * Silently does nothing for pct<0, as not a useful blurring function
   * Leaves transparency/alpha-channel untouched
   */
-void
+BGD_DECLARE(void)
 gdImageSharpen (gdImagePtr im, int pct)
 {
   int x, y;

@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -94,8 +93,7 @@ gdRealloc (void *ptr, size_t size)
   return realloc (ptr, size);
 }
 
-void
-gdFree (void *ptr)
+BGD_DECLARE(void) gdFree (void *ptr)
 {
   free (ptr);
 }

@@ -20,8 +20,8 @@ extern "C"
 
 #include "gd.h"
 
-   BGD_EXPORT  gdFontPtr gdFontTiny;
-   BGD_EXPORT  gdFontPtr gdFontGetTiny(void);
+   BGD_EXPORT_DATA_IMPL  gdFontPtr gdFontTiny;
+   BGD_DECLARE(gdFontPtr) gdFontGetTiny(void);
 
 #ifdef __cplusplus
 }

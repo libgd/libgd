@@ -1,4 +1,3 @@
-
 /* gdkanji.c (Kanji code converter)                            */
 /*                 written by Masahito Yamaga (ma@yama-ga.com) */
 
