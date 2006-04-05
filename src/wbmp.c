@@ -119,7 +119,8 @@ createwbmp (int width, int height, int color)
   if ((wbmp = (Wbmp *) gdMalloc (sizeof (Wbmp))) == NULL)
     return (NULL);
 
-  if ((wbmp->bitmap = (int *) gdMalloc (sizeof (int) * width * height)) == NULL)
+  if ((wbmp->bitmap =
+       (int *) gdMalloc (sizeof (int) * width * height)) == NULL)
     {
       gdFree (wbmp);
       return (NULL);
@@ -179,7 +180,8 @@ readwbmp (int (*getin) (void *in), void *in, Wbmp ** return_wbmp)
   printf ("W: %d, H: %d\n", wbmp->width, wbmp->height);
 #endif
 
-  if ((wbmp->bitmap = (int *) gdMalloc (sizeof (int) * wbmp->width * wbmp->height)) == NULL)
+  if ((wbmp->bitmap =
+       (int *) gdMalloc (sizeof (int) * wbmp->width * wbmp->height)) == NULL)
     {
       gdFree (wbmp);
       return (-1);
@@ -255,7 +257,9 @@ writewbmp (Wbmp * wbmp, void (*putout) (int c, void *out), void *out)
       octet = 0;
       for (col = 0; col < wbmp->width; col++)
 	{
-	  octet |= ((wbmp->bitmap[row * wbmp->width + col] == 1) ? WBMP_WHITE : WBMP_BLACK) << --bitpos;
+	  octet |=
+	    ((wbmp->bitmap[row * wbmp->width + col] ==
+	      1) ? WBMP_WHITE : WBMP_BLACK) << --bitpos;
 	  if (bitpos == 0)
 	    {
 	      bitpos = 8;

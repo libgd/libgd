@@ -58,15 +58,14 @@ main (int argc, char **argv)
     }
   if (!in)
     {
-      fprintf (stderr,
-	       "Error: can't open file %s.\n", argv[argc - 1]);
+      fprintf (stderr, "Error: can't open file %s.\n", argv[argc - 1]);
       exit (1);
     }
   /* Now load the image. */
 #ifdef HAVE_LIBPNG
   im = gdImageCreateFromPng (in);
 #else
-  fprintf(stderr, "No PNG library support.\n");
+  fprintf (stderr, "No PNG library support.\n");
 #endif
   fclose (in);
   /* If the load failed, it must not be a PNG file. */
@@ -90,8 +89,7 @@ main (int argc, char **argv)
 	{
 	  if (i == (argc - 2))
 	    {
-	      fprintf (stderr,
-		       "Error: -i specified without y or n.\n");
+	      fprintf (stderr, "Error: -i specified without y or n.\n");
 	      no = 1;
 	      goto usage;
 	    }
@@ -107,8 +105,7 @@ main (int argc, char **argv)
 	    }
 	  else
 	    {
-	      fprintf (stderr,
-		       "Error: -i specified without y or n.\n");
+	      fprintf (stderr, "Error: -i specified without y or n.\n");
 	      no = 1;
 	      goto usage;
 	    }
@@ -157,8 +154,7 @@ main (int argc, char **argv)
 			  j,
 			  gdImageRed (im, j),
 			  gdImageGreen (im, j),
-			  gdImageBlue (im, j),
-			  gdImageAlpha (im, j));
+			  gdImageBlue (im, j), gdImageAlpha (im, j));
 		}
 	    }
 	  else
@@ -172,8 +168,7 @@ main (int argc, char **argv)
 	  /* Output dimensions, etc. */
 	  int t;
 	  printf ("Width: %d Height: %d Colors: %d\n",
-		  gdImageSX (im), gdImageSY (im),
-		  gdImageColorsTotal (im));
+		  gdImageSX (im), gdImageSY (im), gdImageColorsTotal (im));
 	  t = gdImageGetTransparent (im);
 	  if (t != (-1))
 	    {
@@ -193,40 +188,44 @@ main (int argc, char **argv)
 	      printf ("Interlaced: no\n");
 	    }
 	  no = 0;
-	} else if (!strcmp(argv[i], "-a"))
+	}
+      else if (!strcmp (argv[i], "-a"))
 	{
-                /* Alpha channel info -- thanks to Wez Furlong */
-		int maxx, maxy, x, y, alpha, pix, nalpha = 0;
+	  /* Alpha channel info -- thanks to Wez Furlong */
+	  int maxx, maxy, x, y, alpha, pix, nalpha = 0;
 
-		maxx = gdImageSX(im);
-		maxy = gdImageSY(im);
+	  maxx = gdImageSX (im);
+	  maxy = gdImageSY (im);
 
-		printf("alpha channel information:\n");
-	
-		if (im->trueColor)	{
-			for (y = 0; y < maxy; y++)	{
-				for (x = 0; x < maxx; x++)	{
-					pix = gdImageGetPixel(im, x, y);
-					alpha = gdTrueColorGetAlpha(pix);
+	  printf ("alpha channel information:\n");
 
-					if (alpha > gdAlphaOpaque)	{
-						/* Use access macros to learn colors. */
-						printf ("%d	%d	%d	%d\n",
-								gdTrueColorGetRed(pix),
-								gdTrueColorGetGreen(pix),
-								gdTrueColorGetBlue(pix),
-								alpha);
-						nalpha++;
-					}
+	  if (im->trueColor)
+	    {
+	      for (y = 0; y < maxy; y++)
+		{
+		  for (x = 0; x < maxx; x++)
+		    {
+		      pix = gdImageGetPixel (im, x, y);
+		      alpha = gdTrueColorGetAlpha (pix);
 
-				}
+		      if (alpha > gdAlphaOpaque)
+			{
+			  /* Use access macros to learn colors. */
+			  printf ("%d	%d	%d	%d\n",
+				  gdTrueColorGetRed (pix),
+				  gdTrueColorGetGreen (pix),
+				  gdTrueColorGetBlue (pix), alpha);
+			  nalpha++;
 			}
+
+		    }
 		}
-		else
-			printf("NOT a true color image\n");
-		no = 0;	
-		printf("%d alpha channels\n", nalpha);
-		
+	    }
+	  else
+	    printf ("NOT a true color image\n");
+	  no = 0;
+	  printf ("%d alpha channels\n", nalpha);
+
 	}
       else
 	{
@@ -239,16 +238,14 @@ usage:
     {
       /* If the command failed, output an explanation. */
       fprintf (stderr,
-	  "Usage: webpng [-i y|n ] [-l] [-t index|none ] [-d] pngname.png\n"
-
+	       "Usage: webpng [-i y|n ] [-l] [-t index|none ] [-d] pngname.png\n"
 	       "  -i [y|n]   Turns on/off interlace\n"
 	       "  -l         Prints the table of color indexes\n"
 	       "  -t [index] Set the transparent color to the specified index (0-255 or \"none\")\n"
 	       "  -d         Reports the dimensions and other characteristics of the image.\n"
-               "  -a         Prints all alpha channels that are not 100%% opaque.\n"
+	       "  -a         Prints all alpha channels that are not 100%% opaque.\n"
 	       "\n"
-	       "If you specify '-' as the input file, stdin/stdout will be used input/output.\n"
-	);
+	       "If you specify '-' as the input file, stdin/stdout will be used input/output.\n");
     }
   if (write)
     {
@@ -266,8 +263,7 @@ usage:
 
 	  if (!out)
 	    {
-	      fprintf (stderr,
-		       "Unable to write to %s -- exiting\n", outFn);
+	      fprintf (stderr, "Unable to write to %s -- exiting\n", outFn);
 	      exit (1);
 	    }
 	}
@@ -276,7 +272,7 @@ usage:
 #ifdef HAVE_LIBPNG
       gdImagePng (im, out);
 #else
-      fprintf(stderr, "No PNG library support.\n");
+      fprintf (stderr, "No PNG library support.\n");
 #endif
       if (!useStdinStdout)
 	{
