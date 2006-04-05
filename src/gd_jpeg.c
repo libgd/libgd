@@ -20,7 +20,7 @@
 #include <setjmp.h>
 #include <limits.h>
 #include <string.h>
-#include "jinclude.h"
+/* 1.8.1: remove dependency on jinclude.h */
 #include "jpeglib.h"
 #include "jerror.h"
 #include "gd.h"
@@ -164,7 +164,7 @@ gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 		quality);
     else
 	strcat(comment + strlen(comment), " default quality\n");
-    jpeg_write_marker(&cinfo, JPEG_COM, (JOCTET *)comment,
+    jpeg_write_marker(&cinfo, JPEG_COM, (unsigned char *)comment,
 		      (unsigned int)strlen(comment));
 
     for (i = 0; i < im->sy; i++) {
@@ -433,7 +433,7 @@ typedef struct {
   struct jpeg_source_mgr pub;	/* public fields */
 
   gdIOCtx *infile;		/* source stream */
-  JOCTET * buffer;		/* start of buffer */
+  unsigned char * buffer;		/* start of buffer */
   safeboolean start_of_file;	/* have we gotten any data yet? */
 } my_source_mgr;
 
@@ -521,8 +521,8 @@ fill_input_buffer (j_decompress_ptr cinfo)
       ERREXIT(cinfo, JERR_INPUT_EMPTY);
     WARNMS(cinfo, JWRN_JPEG_EOF);
     /* Insert a fake EOI marker */
-    src->buffer[0] = (JOCTET) 0xFF;
-    src->buffer[1] = (JOCTET) JPEG_EOI;
+    src->buffer[0] = (unsigned char) 0xFF;
+    src->buffer[1] = (unsigned char) JPEG_EOI;
     nbytes = 2;
   }
 
@@ -615,11 +615,11 @@ jpeg_gdIOCtx_src (j_decompress_ptr cinfo,
   if (cinfo->src == NULL) {	/* first time for this JPEG object? */
     cinfo->src = (struct jpeg_source_mgr *)
       (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-				  SIZEOF(my_source_mgr));
+				  sizeof(my_source_mgr));
     src = (my_src_ptr) cinfo->src;
-    src->buffer = (JOCTET *)
+    src->buffer = (unsigned char *)
       (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-				  INPUT_BUF_SIZE * SIZEOF(JOCTET));
+				  INPUT_BUF_SIZE * sizeof(unsigned char));
   }
 
   src = (my_src_ptr) cinfo->src;
@@ -638,7 +638,7 @@ jpeg_gdIOCtx_src (j_decompress_ptr cinfo,
 typedef struct {
   struct jpeg_destination_mgr pub; /* public fields */
   gdIOCtx * outfile;		/* target stream */
-  JOCTET * buffer;		/* start of buffer */
+  unsigned char * buffer;		/* start of buffer */
 } my_destination_mgr;
 
 typedef my_destination_mgr * my_dest_ptr;
@@ -655,9 +655,9 @@ void init_destination (j_compress_ptr cinfo)
   my_dest_ptr dest = (my_dest_ptr) cinfo->dest;
 
   /* Allocate the output buffer --- it will be released when done with image */
-  dest->buffer = (JOCTET *)
+  dest->buffer = (unsigned char *)
       (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
-				  OUTPUT_BUF_SIZE * SIZEOF(JOCTET));
+				  OUTPUT_BUF_SIZE * sizeof(unsigned char));
 
   dest->pub.next_output_byte = dest->buffer;
   dest->pub.free_in_buffer = OUTPUT_BUF_SIZE;
@@ -743,7 +743,7 @@ void jpeg_gdIOCtx_dest (j_compress_ptr cinfo, gdIOCtx * outfile)
   if (cinfo->dest == NULL) {	/* first time for this JPEG object? */
     cinfo->dest = (struct jpeg_destination_mgr *)
       (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
-				  SIZEOF(my_destination_mgr));
+				  sizeof(my_destination_mgr));
   }
 
   dest = (my_dest_ptr) cinfo->dest;

@@ -5,8 +5,15 @@
 #include <stdio.h>
 #include <stdlib.h>   /* for atoi() */
 #include <string.h>
-#include <unistd.h>   /* for getpid(), unlink() */
 
+#ifdef _WIN32
+#include <process.h>
+int getpid() { 
+	return _getpid();
+}
+#else 
+#include <unistd.h>   /* for getpid(), unlink() */
+#endif
 int main(int argc, char **argv)
 {
 	FILE *in;

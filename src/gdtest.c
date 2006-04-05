@@ -1,5 +1,12 @@
 #include <stdio.h>
-#include <unistd.h> /* For unlink function */
+#ifdef _WIN32
+#include <process.h>
+int unlink(const char * filename) { 
+	return _unlink(filename);
+}
+#else 
+#include <unistd.h>   /* for getpid(), unlink() */
+#endif
 #include "gd.h"
 
 /* A short program which converts a .png file into a .gd file, for
@@ -249,6 +256,7 @@ int main(int argc, char **argv)
 	gdImageDestroy(im2);
         gdImageDestroy(im3);
 
+#ifdef HAVE_JPEG
 	out = fopen("test/gdtest.jpg", "wb");
 	if (!out) {
 		fprintf(stderr, "Can't create file test/gdtest.jpg.\n");
@@ -271,6 +279,7 @@ int main(int argc, char **argv)
 	printf("Created test/gdtest.jpg successfully. Compare this image\n"
 		"to the input image manually. Some difference must be\n"
 		"expected as JPEG is a lossy file format.\n");
+#endif /* HAVE_JPEG */
 	gdImageDestroy(im);
 	gdImageDestroy(ref);
 
