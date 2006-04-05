@@ -1,16 +1,40 @@
 <HTML>
 <HEAD>
-<TITLE>gd 1.6.1</TITLE>
+<TITLE>gd 1.6.2</TITLE>
 </HEAD>
 <BODY>
-<H1>gd 1.6.1</H1>
+<H1>gd 1.6.2</H1>
 <H2>A graphics library for fast image creation</H2>
 <H2>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
 of this document</A>.</H2>
+<blockquote>
+<strong>HEY! READ THIS!</strong>
+gd 1.6.2 creates PNG images, not GIF images. This is a good thing.
+PNG is a more compact format, and full compression is available.
+Existing code will need modification to call gdImagePng instead
+of gdImageGif. <strong>Please do not ask us to send you the old GIF
+version of GD.</strong> Unisys holds a patent on the LZW compression
+algorithm, which is used in fully compressed GIF images. We are
+still investigating the legal issues surrounding various
+alternative means of producing a valid GIF file.
+<p>
+gd 1.6.2 <strong>requires</strong> that the following libraries 
+also be installed:
+<p>
+libpng
+<p>
+zlib
+<p>
+Please read the documentation and install the required libraries.
+Do not send email asking why <code>png.h</code> is not found. 
+See the <a href="#required">requirements section</a> for more
+information. Thank you!
+</blockquote>
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
+<LI><A HREF="#whatsnew1.6.2">What's new in version 1.6.2?</A>
 <LI><A HREF="#whatsnew1.6.1">What's new in version 1.6.1?</A>
 <LI><A HREF="#whatsnew1.6">What's new in version 1.6?</A>
 <LI><A HREF="#whatis">What is gd?</A>
@@ -19,7 +43,7 @@ of this document</A>.</H2>
 <LI><A HREF="#getgd">How do I get gd?</A>
 <LI><A HREF="#buildgd">How do I build gd?</A>
 <LI><A HREF="#basics">gd basics: using gd in your program</A>
-<LI><A HREF="#webgif">webgif: a useful example</A>
+<LI><A HREF="#webpng">webpng: a useful example</A>
 <LI><A HREF="#reference">Function and type reference by category</A>
 <LI><A HREF="#gdformat">About the additional .gd image file format</A>
 <LI><A HREF="#informing"><strong>Please</strong>
@@ -52,6 +76,8 @@ Portions relating to GD2 format copyright 1999 Philip Warner.
 <p>
 Portions relating to PNG copyright 1999, Greg Roelofs.
 <p>
+Portions relating to libttf copyright 1999, John Ellson (ellson@lucent.com).
+<p>
 <strong>Permission has been granted to copy and distribute gd in any
 context, including a commercial application, provided that this notice
 is present in user-accessible supporting documentation.</strong>
@@ -69,7 +95,7 @@ copyright notice and this permission notice appear in supporting
 documentation.  This software is provided "as is" without express or
 implied warranty.
 <p>
-Although their code does not appear in gd 1.6.1, the authors wish to 
+Although their code does not appear in gd 1.6.2, the authors wish to 
 thank David Koblas, David Rowley, and Hutchison Avenue Software 
 Corporation for their prior contributions.
 <p>
@@ -102,7 +128,7 @@ in the wrong place.
 <P>
 gd does not provide for every possible desirable graphics
 operation. It is not necessary or desirable for gd to become
-a kitchen-sink graphics package, but version 1.6.1 incorporates
+a kitchen-sink graphics package, but version 1.6.2 incorporates
 most of the commonly requested features for an 8-bit 2D package.
 Support for scalable fonts, and truecolor images, JPEG and 
 truecolor PNG is planned for version 2.0.
@@ -114,18 +140,43 @@ gd can also be used from Perl, courtesy of
 Lincoln Stein's
 <a href="http://www-genome.wi.mit.edu/ftp/pub/software/WWW/GD.html">
 GD.pm</a> library, which uses gd as the basis for a set of
-Perl 5.x classes. Not yet updated for gd 1.6.1.
+Perl 5.x classes. Not yet updated for gd 1.6.2.
+<h4>Tcl</h4>
+gd can be used from Tcl with John Ellson's
+<a href=http://www.tcltk.com/ftp/ellson/>Gdtclft</a>
+dynamically loaded extension package.
+(Gdtclft2.0 or later is needed for gd-1.6.2 with PNG output.)
 <h4>Any Language</h4>
 There are, at the moment, at least three simple interpreters that
 perform gd operations. You can output the desired commands to a simple
 text file from whatever scripting language you prefer to use, then
 invoke the interpreter.
 <p>
-These packages have not been updated to gd 1.6.1 as of this writing.
+These packages have not been updated to gd 1.6.2 as of this writing.
 <ul>
 <li><a href="http://s27w007.pswfs.gov/tgd/">tgd</a>, by Bradley K. Sherman
 <li><a href="http://www.unimelb.edu.au/fly/fly.html">fly</a>, by Martin Gleeson
 </ul>
+<P><A NAME="whatsnew1.6.2"><H3>What's new in version 1.6.2?</H3></A>
+Version 1.6.2 from John Ellson <ellson@lucent.com> adds two new functions:
+<ul>
+<li>gdImageStringTTF - scalable, rotatable, anti-aliased, TrueType strings using
+the FreeType library, but only if libttf is found by configure.
+<strong>We do not provide TrueType fonts. Obtaining them
+is entirely up to you.</strong>
+<li>gdImageColorResolve - an efficient alternative for the
+common code fragment:
+<pre>
+
+      if ((color=gdImageColorExact(im,R,G,B)) < 0)
+          if ((color=gdImageColorAllocate(im,R,G,B)) < 0)
+              color=gdImageColorClosest(im,R,G,B);
+</pre>
+</ul>
+<p>
+Also in this release the build process has been converted to
+GNU autoconf/automake/libtool conventions so that both (or either)
+static and shared libraries can be built.
 <P><A NAME="whatsnew1.6.1"><H3>What's new in version 1.6.1?</H3></A>
 Version 1.6.1 incorporates superior PNG reading and writing code
 from Greg Roelofs, with minor modifications by Tom Boutell. 
@@ -241,8 +292,8 @@ to gd fonts.
 <dd>Although no such fonts are provided in the distribution,
 fonts containing more than 256 characters should work if the
 gdImageString16 and gdImageStringUp16 routines are used.
-<dt>Improvements to the "webgif" example/utility
-<dd>The "webgif" utility is now a slightly more useful application. Thanks to
+<dt>Improvements to the "webpng" example/utility
+<dd>The "webpng" utility is now a slightly more useful application. Thanks to
 Brian Dowling for this code.
 <dt>Corrections to the color resolution field of GIF output
 <dd>Thanks to Bruno Aureli.
@@ -273,11 +324,14 @@ gcc is free, ANSI compliant and a de facto industry standard.
 Ask your ISP why it is missing.</strong>
 <P>
 As of version 1.6, you also need the zlib compression library,
-and the libpng library. 
+and the libpng library. As of version 1.6.2, you can draw text
+using antialiased TrueType fonts if you also have the libttf
+library installed, but this is not mandatory.
 zlib is available for a variety of platforms from
 <a href="http://www.cdrom.com/pub/infozip/zlib/">the zlib web site</a>.
 libpng is available for a variety of platforms from
 <a href="http://www.cdrom.com/pub/png/">the PNG web site</a>.
+
 <P>
 You will also want a PNG viewer, if you do not already have
 one for your system, since you will need a good way to check the
@@ -291,13 +345,13 @@ newsgroups relevant to your particular system.
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>By HTTP</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd1.6.1.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd161.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-1.6.2.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd162.zip">.ZIP File (Windows)</a>
 </ul>
 <h4>By FTP</h4>
 <ul>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd1.6.1.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd161.zip">.ZIP File (Windows)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-1.6.2.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd162.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -308,29 +362,22 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd1.6.1".
+Unpacking the archive will produce a directory called "gd-1.6.2".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the gd1.6.1 directory and examine the Makefile, which
-you will probably need to change slightly depending on your operating
-system and your needs.
+<code>cd</code> to the gd-1.6.2 directory and type "./configure",
+followed by "make". If you are the system administrator, and you
+wish to make the gd library available to other programs, you may 
+also wish to type "make install".
 <h4>For Windows, Mac, Et Cetera</h4>
 Create a project using your favorite programming environment.
 Copy all of the gd files to the project directory. Add <code>gd.c</code>
 to your project. Add other source files as appropriate. Learning the
 basic skills of creating projects with your chosen C environment
-is up to you.
+is up to you. 
 <P>
-Now, to build the demonstration program, just type "make gddemo"
-if you are working in a command-line environment, or build a project
-that includes gddemo.c if you are using a graphical environment. If all
-goes well, the program "gddemo" will be compiled and linked without incident.
-Depending on your system you may need to edit the Makefile.
-Understanding the basic techniques of compiling and linking
-programs on your system is up to you.
-<P>
-You have now built a demonstration program which shows off
-the capabilities of gd. To see it in action, type
+You have now built both the gd library and a demonstration program which 
+shows off the capabilities of gd. To see it in action, type
 "gddemo".
 <P>
 gddemo should execute without incident, creating the file
@@ -355,9 +402,11 @@ library produced by "make libgd.a", under Unix. Under other
 operating systems you will add gd.c to your own project.
 <P>
 If you want to use the provided fonts, include
-gdfontt.h, gdfonts.h, gdfontmb.h, gdfontl.h and/or gdfontg.h. If you
-are not using the provided Makefile and/or a library-based approach, be
-sure to include the source modules as well in your
+gdfontt.h, gdfonts.h, gdfontmb.h, gdfontl.h and/or gdfontg.h. For
+more impressive results, install libttf and use the new 
+<a href="#gdImageStringTTF">gdImageStringTTF</a>
+function. If you are not using the provided Makefile and/or a 
+library-based approach, be sure to include the source modules as well in your
 project. (They may be too large for 16-bit memory models,
 that is, 16-bit DOS and Windows.)
 <P>
@@ -1509,8 +1558,9 @@ void gdImageChar(gdImagePtr im, gdFontPtr font, int x, int y,
 gdImageChar is used to draw single characters on the image.
 (To draw multiple characters, use <A HREF="#gdImageString">
 gdImageString</A> or <A HREF="#gdImageString16">
-gdImageString16</A>.) The second argument is a
-pointer to a font definition structure; five fonts are
+gdImageString16</A>.
+See also <A HREF="#gdImageStringTTF">gdImageStringTTF</A>, new with gd-1.6.2.)
+The second argument is a pointer to a font definition structure; five fonts are
 provided with gd, gdFontTiny, gdFontSmall, gdFontMediumBold,
 gdFontLarge, and gdFontGiant. You must
 include the files "gdfontt.h", "gdfonts.h", "gdfontmb.h",
@@ -1599,8 +1649,9 @@ corresponding .c files to use the provided fonts.
 The null-terminated C string specified
 by the fifth argument is drawn from left to right in the specified
 color.  (See <A HREF="#gdImageStringUp">gdImageStringUp</A> for a way
-of drawing vertical text.)  Pixels not
-set by a particular character retain their previous color.
+of drawing vertical text.
+See also <A HREF="#gdImageStringTTF">gdImageStringTTF</A>, new with gd-1.6.2.)
+Pixels not set by a particular character retain their previous color.
 <PRE>
 #include "gd.h"
 #include "gdfontl.h"
@@ -1720,7 +1771,103 @@ set by a particular character retain their previous color.
 <p>
 This function was added in gd1.3 to provide a means of rendering
 fonts with more than 256 characters for those who have them. A
-more frequently used routine is <a href="#gdImageStringUp">gdImageStringUp</a>.</DL>
+more frequently used routine is <a href="#gdImageStringUp">gdImageStringUp</a>.
+<DT><A NAME="gdImageStringTTF">
+char *gdImageStringTTF(gdImagePtr im, int *brect,
+	int fg, char *fontname, double ptsize, double angle,
+	int x, int y, char *string)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+gdImageStringTTF is draws a string of anti-aliased characters on the image
+using the 
+<A HREF=http://www.freetype.org/>FreeType</A>
+library to print from user-supplied TrueType fonts.
+<strong>We do not provide TrueType fonts. Obtaining them
+is entirely up to you.</strong>
+The string is anti-aliased, meaning that there should be less "jaggies."
+The fontname is the full pathname to a TrueType font file.
+The string may be arbitrarily scaled (ptsize) and rotated (angle in radians).
+<p>
+The user-supplied int brect[8] array is filled on return from gdImageStringTTF
+with the 8 elements representing the 4 corner coordinates of the
+bounding rectangle.
+<TABLE BORDER="1">
+<TR><TD ALIGN="LEFT" VALIGN="TOP" >0</TD><TD ALIGN="LEFT" VALIGN="TOP">
+lower left corner, X position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP >1</T ><TD ALIGN="LEFT" VALIGN="TOP">
+lower left corner, Y position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP >2</T ><TD ALIGN="LEFT" VALIGN="TOP">
+lower right corner, X position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP">3</TD><TD ALIGN="LEFT" VALIGN="TOP">
+lower right corner, Y position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP">4</TD><TD ALIGN="LEFT" VALIGN="TOP">
+upper right corner, X position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP">5</TD><TD ALIGN="LEFT" VALIGN="TOP">
+upper right corner, Y position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP">6</TD><TD ALIGN="LEFT" VALIGN="TOP">
+upper left corner, X position</TD></TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP">7</TD><TD ALIGN="LEFT" VALIGN="TOP">
+upper left corner, Y position</TD></TR>
+</TABLE>
+<p>
+The points are relative to the text regardless of the angle, so "upper left"
+means in the top left-hand corner seeing the text horizontally.
+<p>
+Use a NULL gdImagePtr to get the bounding rectangle without rendering.
+This is a relatively cheap operation if followed by a rendering of the same
+string, because of the caching of the partial rendering during bounding
+rectangle calculation.
+<p>
+The string is rendered in the color indicated by the gf color index.
+Use the negative of the desired color index to disable anti-aliasing.
+<p>
+The string may contain UTF-8 sequences like: "&amp;#192;"
+<p>
+gdImageStringTTF will return a null char* on success, or an error
+string on failure.
+<PRE>
+#include "gd.h"
+#include &lt;string.h&gt;
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int black;
+int white;
+int brect[8];
+int x, y;
+char *err;
+
+char *s = "Hello."; /* String to draw. */
+double sz = 40.;
+char *f = "/usr/local/share/ttf/Times.ttf";  /* User supplied font */
+
+/* obtain brect so that we can size the image */
+err = <A HREF="#gdImageStringTTF">gdImageStringTTF</A>(NULL,&brect[0],0,f,sz,0.,0,0,s);
+if (err) {fprintf(stderr,err); return 1;}
+
+/* create an image big enough for the string plus a little whitespace */
+x = brect[2]-brect[6] + 6;
+y = brect[3]-brect[7] + 6;
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(x,y);
+
+/* Background color (first allocated) */
+white = <A HREF="#gdImageColorResolve">gdImageColorResolve</A>(im, 255, 255, 255);
+black = <A HREF="#gdImageColorResolve">gdImageColorResolve</A>(im, 0, 0, 0);
+
+/* render the string, offset origin to center string*/
+/* note that we use top-left coordinate for adjustment
+ * since gd origin is in top-left with y increasing downwards. */
+x = 3 - brect[6];
+y = 3 - brect[7];
+err = <A HREF="#gdImageStringTTF">gdImageStringTTF</A>(im,&brect[0],black,f,sz,0.0,x,y,s);
+if (err) {fprintf(stderr,err); return 1;}
+
+/* Write img to stdout */
+<A HREF="#gdImagePng">gdImagePng</A>(im, stdout);
+
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
+</DL>
 <H3><A NAME="colors">Color-handling functions</A></H3>
 <DL>
 <DT><A NAME="gdImageColorAllocate">
@@ -1744,6 +1891,8 @@ see <A HREF="#gdImageColorExact">gdImageColorExact</A>
 and <A HREF="#gdImageColorClosest">gdImageColorClosest</A>
 for ways to locate existing colors that approximate the
 color desired in situations where a new color is not available.
+Also see <A HREF="#gdImageColorResolve">gdImageColorResolve</A>,
+new in gd-1.6.2.
 <PRE>
 ... inside a function ...
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
@@ -1833,6 +1982,35 @@ if (red == (-1)) {
 	/* Out of colors, so find the <em>closest</em> color instead. */
 	red = gdImageColorClosest(im, 255, 0, 0);
 }
+/* Draw a dashed line from the upper left corner to the lower right corner */
+gdImageDashedLine(im, 0, 0, 99, 99, red);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
+<DT><A NAME="gdImageColorResolve">
+int gdImageColorResolve(gdImagePtr im, int r, int g, int b)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+gdImageColorResolve searches the colors which have been
+defined thus far in the image specified and returns the
+index of the first color with RGB values which exactly
+match those of the request. If no allocated color matches the
+request precisely, then gdImageColorResolve tries to allocate the
+exact color.  If there is no space left in the color table then
+gdImageColorResolve returns the closest color (as in gdImageColorClosest).
+This function always returns an index of a color.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int red;
+in = fopen("photo.png", "rb");
+im = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
+fclose(in);
+/* The image may already contain red; if it does, we'll save a slot
+	in the color table by using that color. */
+/* Get index of red, or color closest to red */
+red = gdImageColorResolve(im, 255, 0, 0);
 /* Draw a dashed line from the upper left corner to the lower right corner */
 gdImageDashedLine(im, 0, 0, 99, 99, red);
 /* ... Do something with the image, such as saving it to a file... */
@@ -2140,6 +2318,20 @@ in the source palette.
 </DL>
 <H3><A NAME="misc">Miscellaneous Functions</A></H3>
 <DL>
+
+<DT><A NAME="gdImageCompare">int gdImageCompare(gdImagePtr im1, gdImagePtr im2)
+<STRONG> (FUNCTION)</STRONG>
+<DD>
+gdImageCompare returns a bitmap indicating if the two images are different. The members of the 
+bitmap are defined in gd.h, but the most important is GD_CMP_IMAGE, which indicated that the images
+will actually appear different when displayed. Other, less important, differences relate to pallette
+entries. Any difference in the transparent colour is assumed to make images display differently,
+even if the transparent colour is not used.
+<PRE>
+... Inside a function ...
+cmpMask = gdImageCompare(im1, im2);
+</PRE>
+
 <DT><A NAME="gdImageInterlace">gdImageInterlace(gdImagePtr im, int interlace)</A> <strong>(FUNCTION)</strong>
 <DD>
 gdImageInterlace is used to determine whether an image should be stored
@@ -2372,6 +2564,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageColorClosest">gdImageColorClosest</A> |
 <A HREF="#gdImageColorDeallocate">gdImageColorDeallocate</A> |
 <A HREF="#gdImageColorExact">gdImageColorExact</A> |
+<A HREF="#gdImageColorResolve">gdImageColorResolve</A> |
 <A HREF="#gdImageColorTransparent">gdImageColorTransparent</A> |
 <A HREF="#gdImageCopy">gdImageCopy</A> |
 <A HREF="#gdImageCopyResized">gdImageCopyResized</A> |
@@ -2409,6 +2602,7 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageSetTile">gdImageSetTile</A> |
 <A HREF="#gdImageString">gdImageString</A> |
 <A HREF="#gdImageString16">gdImageString16</A> |
+<A HREF="#gdImageStringTTF">gdImageStringTTF</A> |
 <A HREF="#gdImageStringUp">gdImageStringUp</A> |
 <A HREF="#gdImageStringUp">gdImageStringUp16</A> |
 <A HREF="#gdMaxColors">gdMaxColors</A> |

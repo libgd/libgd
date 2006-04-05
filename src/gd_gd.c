@@ -63,8 +63,6 @@ fail1:
 static
 gdImagePtr _gdCreateFromFile(gdIOCtx *in, int *sx, int *sy)
 {
-        int x, y;
-        int i;
         gdImagePtr im;
 
         if (!gdGetWord(sx, in)) {
@@ -106,7 +104,6 @@ gdImagePtr gdImageCreateFromGdCtx(gdIOCtxPtr in)
 {
 	int sx, sy;
 	int x, y;
-	int i;
         gdImagePtr im;
 
 	/* Read the header */
@@ -139,7 +136,6 @@ fail1:
 
 void _gdPutColors(gdImagePtr im, gdIOCtx *out)
 {
-        int x, y;
         int i;
         int trans;
 

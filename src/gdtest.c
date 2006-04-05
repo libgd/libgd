@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h> /* For unlink function */
 #include "gd.h"
 
 /* A short program which converts a .png file into a .gd file, for
@@ -15,13 +16,11 @@ int main(int argc, char **argv)
 {
 	gdImagePtr 	im, ref, im2, im3;
 	FILE 		*in, *out;
-	int		cs, fmt;
 	void		*iptr;
 	int		sz;
 	gdIOCtxPtr	ctx;
 	char		of[256];
 	int		colRed, colBlu;
-	int		idx;
 	gdSource	imgsrc;
 	gdSink		imgsnk;
 
@@ -206,7 +205,7 @@ int main(int argc, char **argv)
         im3 = gdImageCreateFromGd2Part(in, 200, 300, 150, 100);
         fclose(in);
 
-        CompareImages("GD2Part (gdtest.gd2, gdtest_200_300_150_100.png)", im2, im3);
+        CompareImages("GD2Part (gdtest_200_300_150_100.png, gdtest.gd2(part))", im2, im3);
 
 	gdImageDestroy(im2);
 	gdImageDestroy(im3);
@@ -257,60 +256,35 @@ int main(int argc, char **argv)
 	gdImageDestroy(im);
 	gdImageDestroy(ref);
 
+	return 0;
 }
 
 void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2)
 {
-	int	x, y;
-	int	bad;
-	int	p1, p2;
+	int cmpRes;
 
-	bad = (1==0);
-	if (im1->sx != im2->sx) {
-		printf("%s: ERROR image x-size differs\n",msg);
-		bad = (1==1);
+	cmpRes = gdImageCompare(im1, im2);
+
+	if (cmpRes & GD_CMP_IMAGE) {
+		printf("%%%s: ERROR images differ: BAD\n",msg);
+	} else if (cmpRes != 0) {
+		printf("%%%s: WARNING images differ: WARNING - Probably OK\n",msg);
+	} else {
+		printf("%%%s: OK\n",msg);
+		return;
 	}
 
-	if (im1->sy != im2->sy) {
-		printf("%s: image y-size differs\n",msg);
-		bad = (1==1);
+	if (cmpRes & (GD_CMP_SIZE_X + GD_CMP_SIZE_Y)) {
+		printf("-%s: INFO image sizes differ\n",msg);
 	}
 
-	if (!bad) {
-		if (im1->colorsTotal != im2->colorsTotal) {
-			printf("Mismatch in number of colours: %d Vs. %d\n",im1->colorsTotal, im2->colorsTotal);
-		}
-		for ( y = 0 ; (y<im1->sy) ; y++ ) {
-			for ( x = 0 ; (x < im1->sx) ; x++ ) {
-				p1 = im1->pixels[y][x];
-				p2 = im2->pixels[y][x];
-
-				if (im1->red[p1] != im2->red[p2]) {
-					printf("%s: ERROR image colours differ\n",msg);
-					bad = (1==1);
-					break;
-				}
-
-				if (im1->green[p1] != im2->green[p2]) {
-					printf("%s: ERROR image colours differ\n",msg);
-					bad = (1==1);
-					break;
-				}
-
-
-				if (im1->blue[p1] != im2->blue[p2]) {
-					printf("%s: ERROR image colours differ\n",msg);
-					bad = (1==1);
-					break;
-				}
-
-			}
-			if (bad) { break; };
-		}
+	if (cmpRes & GD_CMP_NUM_COLORS) {
+		printf("-%s: INFO number of pallette entries differ %d Vs. %d\n",msg,
+			im1->colorsTotal, im2->colorsTotal);
 	}
 
-	if (!bad) {
-		printf("%s: OK\n",msg);
+	if (cmpRes & GD_CMP_COLOR) {
+		printf("-%s: INFO actual colours of pixels differ\n",msg);
 	}
 }
 

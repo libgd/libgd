@@ -51,5 +51,7 @@ int main(int argc, char **argv)
 	fclose(out);
         gdImageDestroy(pal);
 	gdImageDestroy(im);
+
+	return 0;
 }
 

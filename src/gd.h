@@ -131,6 +131,9 @@ void gdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s,
 void gdImageString16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
 void gdImageStringUp16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
 
+char *gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontname,
+                double ptsize, double angle, int x, int y, char *string);
+
 /* Point type for use in polygon drawing. */
 
 typedef struct {
@@ -143,6 +146,7 @@ void gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c);
 int gdImageColorAllocate(gdImagePtr im, int r, int g, int b);
 int gdImageColorClosest(gdImagePtr im, int r, int g, int b);
 int gdImageColorExact(gdImagePtr im, int r, int g, int b);
+int gdImageColorResolve(gdImagePtr im, int r, int g, int b);
 void gdImageColorDeallocate(gdImagePtr im, int color);
 void gdImageColorTransparent(gdImagePtr im, int color);
 void gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src);
@@ -210,4 +214,15 @@ void* gdDPExtractData(struct gdIOCtx* ctx, int *size);
 #define GD2_FMT_RAW             1
 #define GD2_FMT_COMPRESSED      2
 
+/* Image comparison definitions */
+int gdImageCompare(gdImagePtr im1, gdImagePtr im2);
+
+#define GD_CMP_IMAGE		1	/* Actual image IS different */
+#define GD_CMP_NUM_COLORS	2	/* Number of Colours in pallette differ */
+#define GD_CMP_COLOR		4	/* Image colours differ */
+#define GD_CMP_SIZE_X		8	/* Image width differs */
+#define GD_CMP_SIZE_Y		16	/* Image heights differ */
+#define GD_CMP_TRANSPARENT	32	/* Transparent colour */
+#define GD_CMP_BACKGROUND	64	/* Background colour */
+#define GD_CMP_INTERLACE	128	/* Interlaced setting */
 #endif

@@ -3,7 +3,9 @@
 
 /* Bring in standard I/O and string manipulation functions */
 #include <stdio.h>
+#include <stdlib.h>   /* for atoi() */
 #include <string.h>
+#include <unistd.h>   /* for getpid(), unlink() */
 
 int main(int argc, char **argv)
 {
@@ -46,7 +48,7 @@ int main(int argc, char **argv)
 	/* If the load failed, it must not be a PNG file. */
 	if (!im) {
 		fprintf(stderr,
-			"Error: %s is not a valid png file.\n", argv[argc-1]);
+			"Error: %s is not a valid PNG file.\n", argv[argc-1]);
 		exit(1);	
 	}
 	/* Consider each argument in turn. */
@@ -140,11 +142,11 @@ usage:
 	if (no) {
 		/* If the command failed, output an explanation. */
 		fprintf(stderr, 
-"Usage: webpng [-i y|n ] [-l] [-t index|off ] [-d] pngname.png\n"
+"Usage: webpng [-i y|n ] [-l] [-t index|none ] [-d] pngname.png\n"
 
 "  -i [y|n]   Turns on/off interlace\n"
 "  -l         Prints the table of color indexes\n"
-"  -t [index] Set the transparent color to the specified index (0-255 or none)\n"
+"  -t [index] Set the transparent color to the specified index (0-255 or \"none\")\n"
 "  -d         Reports the dimensions and other characteristics of the image.\n"
 "\n"
 "If you specify '-' as the input file, stdin/stdout will be used input/output.\n"
@@ -167,12 +169,12 @@ usage:
 	    }
 	  }
 
-	  /* Write the new png. */
+	  /* Write the new PNG. */
 	  gdImagePng(im, out);
 
 	  if (!useStdinStdout) {
 	    fclose(out);
-	    /* Erase the old png. */
+	    /* Erase the old PNG. */
 	    unlink(argv[argc-1]);
 	    /* Rename the new to the old. */
 	    if (rename(outFn, argv[argc-1])!=0) {

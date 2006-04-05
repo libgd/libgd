@@ -34,5 +34,7 @@ int main(int argc, char **argv)
 	gdImagePng(im, out);
 	fclose(out);
 	gdImageDestroy(im);
+
+	return 0;
 }
 

@@ -31,6 +31,9 @@ typedef struct {
 	int	size;
 	} t_chunk_info;
 
+extern int _gdGetColors(gdIOCtx *in, gdImagePtr im);
+extern void _gdPutColors(gdImagePtr im, gdIOCtx *out);
+
 /* */
 /* Read the extra info in the gd2 header. */
 /* */
@@ -43,7 +46,7 @@ int _gd2GetHeader(gdIOCtxPtr in, int *sx, int *sy,
         char    id[5];
 	t_chunk_info	*cidx;
 	int	sidx;
-	int	nc, csz;
+	int	nc;
 
 	GD2_DBG(printf("Reading gd2 header info\n"));
 
@@ -167,7 +170,7 @@ gdImagePtr _gd2CreateFromFile(gdIOCtxPtr in, int *sx, int *sy,
 		GD2_DBG(printf("Could not read color palette\n"));
 		goto fail2;
 	}
-	GD2_DBG(printf("Image palette completed\n"));
+	GD2_DBG(printf("Image palette completed: %d colours\n", im->colorsTotal));
 
 	return im;
 
@@ -339,7 +342,6 @@ gdImagePtr gdImageCreateFromGd2Ctx(gdIOCtxPtr in)
 
 fail2:
         gdImageDestroy(im);
-fail1:
         free(chunkBuf);
         free(compBuf);
 	free(chunkIdx);
@@ -361,7 +363,7 @@ gdImagePtr gdImageCreateFromGd2Part(FILE *inFile, int srcx, int srcy, int w, int
 
 gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, int h)
 {
-        int sx, sy, scx, scy, ecx, ecy, fsx, fsy;
+        int scx, scy, ecx, ecy, fsx, fsy;
         int nc, ncx, ncy, cs, cx, cy;
         int x, y, ylo, yhi, xlo, xhi;
 	int dstart, dpos;
@@ -398,6 +400,7 @@ gdImagePtr gdImageCreateFromGd2PartCtx(gdIOCtx *in, int srcx, int srcy, int w, i
 	if (!_gdGetColors(in, im)) {
 		goto fail2;
 	}
+        GD2_DBG(printf("Image palette completed: %d colours\n", im->colorsTotal));
 
 	/* Process the header info */
         nc = ncx * ncy;
@@ -555,7 +558,6 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 {
         int ncx, ncy, cx, cy;
         int x, y, ylo, yhi, xlo, xhi;
-        int i;
         int     chunkLen;
         int     chunkNum = 0;
         char    *chunkData = NULL; /* So we can free it with impunity. */
@@ -573,7 +575,7 @@ static void _gdImageGd2(gdImagePtr im, gdIOCtx *out, int cs, int fmt)
 	/* Force fmt to a valid value since we don't return anything. */
 	/* */
 	if ( (fmt == 0) || ( (fmt != GD2_FMT_RAW) && (fmt != GD2_FMT_COMPRESSED) ) ) {
-		fmt == GD2_FMT_COMPRESSED;
+		fmt = GD2_FMT_COMPRESSED;
 	};
 
 	/* */

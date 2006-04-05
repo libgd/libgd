@@ -46,7 +46,6 @@ static int allocDynamic (dynamicPtr* dp,int initialSize, void *data);
 static int appendDynamic (dynamicPtr* dp, const void* src, int size);
 static int reallocDynamic (dynamicPtr* dp, int required);
 static int trimDynamic (dynamicPtr* dp);
-static void freeDynamic (dynamicPtr* dp);
 static void freeDynamicCtx(struct gdIOCtx* ctx);
 static dynamicPtr* newDynamic(int initialSize, void *data);
 
@@ -134,9 +133,14 @@ void freeDynamicCtx(struct gdIOCtx* ctx)
   /* clean up the data block and return it */
   if (dp->data != NULL) {
     free(dp->data);
+    dp->data = NULL;
   }
 
+  dp->realSize=0;
+  dp->logicalSize=0;
+
   free(dp);
+
 }
 
 static long dynamicTell(struct gdIOCtx* ctx)
@@ -150,7 +154,6 @@ static long dynamicTell(struct gdIOCtx* ctx)
 static int dynamicSeek(struct gdIOCtx* ctx, const int pos)
 {
   int 			bytesNeeded;
-  char* 		tmp;
   dynamicPtr		*dp;
   dpIOCtx  		*dctx;
 
@@ -244,7 +247,7 @@ dynamicGetbuf( gdIOCtxPtr ctx, void *buf, int len)
 		rlen = remain;
 	}
 
-	memcpy(buf, (void*)((int)dp->data + dp->pos), rlen);
+	memcpy(buf, (void*)((char*)dp->data + dp->pos), rlen);
 	dp->pos += rlen;
 
 	return rlen;
@@ -335,7 +338,7 @@ reallocDynamic (dynamicPtr* dp, int required) {
 
   /* First try realloc().  If that doesn't work, make a new
      memory block and copy. */
-  if (newPtr = realloc(dp->data,required)) {
+  if ( (newPtr = realloc(dp->data,required)) ) {
     dp->realSize = required;
     dp->data = newPtr;
     return TRUE;
@@ -363,13 +366,3 @@ trimDynamic (dynamicPtr* dp) {
   return reallocDynamic(dp,dp->logicalSize);
 }
 
-/* dispose of the dynamic pointer */
-static void
-freeDynamic (dynamicPtr* dp) {
-  if (dp->data != NULL) {
-    free(dp->data);
-    dp->data = NULL;
-  }
-  dp->realSize=0;
-  dp->logicalSize=0;
-}

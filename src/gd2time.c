@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h> /* for atoi */
+#include <time.h> /* For time */
 #include "gd.h"
 
 /* A short program which converts a .png file into a .gd file, for
@@ -9,7 +11,7 @@
 int main(int argc, char **argv)
 {
 	gdImagePtr im;
-	FILE *in, *out;
+	FILE *in;
 	int x, y, w, h;
 	int c;
 	int i;
@@ -47,5 +49,7 @@ int main(int argc, char **argv)
 	};
 	t0 = time(0) - t0;
 	printf("%d seconds to extract (& destroy) %d times\n",t0, c);
+
+	return 0;
 }
 
