@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* WBMP
 ** ----
 ** WBMP Level 0: B/W, Uncompressed
@@ -45,4 +49,8 @@ int writewbmp (Wbmp * wbmp, void (*putout) (int c, void *out), void *out);
 void freewbmp (Wbmp * wbmp);
 void printwbmp (Wbmp * wbmp);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
