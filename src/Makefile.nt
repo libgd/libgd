@@ -1,6 +1,6 @@
 #NMAKE makefile for Windows 95/98/NT developers.
 #Produces a static library (libgd.lib). Thanks to Joe Gregorio.
-#This is out of date.
+#THIS IS OUT OF DATE.
 
 COMPILER=cl
 
