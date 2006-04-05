@@ -95,7 +95,7 @@ BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fon
 #else
 
 #ifndef HAVE_LIBFONTCONFIG
-BGD_DECLARE(char *) font_pattern(char **fontpath, char *fontpattern)
+static char * font_pattern(char **fontpath, char *fontpattern)
 {
   return "libgd was not built with FontConfig support\n";
 }
