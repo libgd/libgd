@@ -370,8 +370,10 @@ han2zen (int *p1, int *p2)
 #define ustrcpy(A,B) (strcpy((char*)(A),(const char*)(B)))
 
 static void
-do_convert (unsigned char *to, unsigned char *from, const char *code)
+do_convert (unsigned char **to_p, unsigned char **from_p, const char *code)
 {
+unsigned char *to = *to_p;
+unsigned char *from = *from_p;
 #ifdef HAVE_ICONV
   iconv_t cd;
   size_t from_len, to_len;
@@ -383,14 +385,14 @@ do_convert (unsigned char *to, unsigned char *from, const char *code)
       if (errno == EINVAL)
 	error ("invalid code specification: \"%s\" or \"%s\"", EUCSTR, code);
 #endif
-      strcpy ((char *) to, (const char *) from);
+      ustrcpy (to, from);
       return;
     }
 
-  from_len = strlen ((const char *) from) + 1;
+  from_len = strlen ((const char *)from) + 1;
   to_len = BUFSIZ;
 
-  if ((int) (iconv (cd, (char **) &from, &from_len, (char **) &to, &to_len))
+  if ((int) (iconv (cd, (char **)from_p, &from_len, (char **)to_p, &to_len))
       == -1)
     {
 #ifdef HAVE_ERRNO_H
@@ -403,7 +405,7 @@ do_convert (unsigned char *to, unsigned char *from, const char *code)
       else
 #endif
 	error ("something happen");
-      strcpy ((char *) to, (const char *) from);
+      ustrcpy (to, from);
       return;
     }
 
@@ -495,6 +497,7 @@ static int
 do_check_and_conv (unsigned char *to, unsigned char *from)
 {
   static unsigned char tmp[BUFSIZ];
+  unsigned char *tmp_p = &tmp[0];
   int p1, p2, i, j;
   int kanji = TRUE;
 
@@ -502,16 +505,16 @@ do_check_and_conv (unsigned char *to, unsigned char *from)
     {
     case NEW:
       debug ("Kanji code is New JIS.");
-      do_convert (tmp, from, NEWJISSTR);
+      do_convert (&tmp_p, &from, NEWJISSTR);
       break;
     case OLD:
       debug ("Kanji code is Old JIS.");
-      do_convert (tmp, from, OLDJISSTR);
+      do_convert (&tmp_p, &from, OLDJISSTR);
       break;
     case ESCI:
       debug
 	("This string includes Hankaku-Kana (jisx0201) escape sequence [ESC] + ( + I.");
-      do_convert (tmp, from, NEWJISSTR);
+      do_convert (&tmp_p, &from, NEWJISSTR);
       break;
     case NEC:
       debug ("Kanji code is NEC Kanji.");
@@ -525,7 +528,7 @@ do_check_and_conv (unsigned char *to, unsigned char *from)
       break;
     case SJIS:
       debug ("Kanji code is SJIS.");
-      do_convert (tmp, from, SJISSTR);
+      do_convert (&tmp_p, &from, SJISSTR);
       break;
     case EUCORSJIS:
       debug ("Kanji code is EUC or SJIS.");
