@@ -480,7 +480,7 @@ fontFetch (char **error, void *key)
       encoding = charmap->encoding_id;
 
 /* EAM DEBUG - Newer versions of libfree2 make it easier by defining encodings */
-#ifdef FT_ENCODING_MS_SYMBOL
+#if (defined(FREETYPE_MAJOR) && (FREETYPE_MAJOR >=2 ) && (FREETYPE_MINOR >= 1))
       if (charmap->encoding == FT_ENCODING_MS_SYMBOL
       ||  charmap->encoding == FT_ENCODING_ADOBE_CUSTOM
       ||  charmap->encoding == FT_ENCODING_ADOBE_STANDARD) {
@@ -489,7 +489,7 @@ fontFetch (char **error, void *key)
 	a->face->charmap = charmap;
 	return (void *)a;
       }
-#endif /* FT_ENCODING_MS_SYMBOL */
+#endif /* Freetype 2.1 or better */
 /* EAM DEBUG */
 
       if ((platform == 3 && encoding == 1)	/* Windows Unicode */
@@ -1048,7 +1048,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 	}
 
 /* EAM DEBUG */
-#ifdef FT_ENCODING_MS_SYMBOL
+#if (defined(FREETYPE_MAJOR) && (FREETYPE_MAJOR >=2 ) && (FREETYPE_MINOR >= 1))
       if (font->face->charmap->encoding == FT_ENCODING_MS_SYMBOL)
 	{
          /* I do not know the significance of the constant 0xf000. */
@@ -1058,7 +1058,7 @@ gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
            ch |= 0xf000;
            next += len;
 	} else
-#endif /* FT_ENCODING_MS_SYMBOL */
+#endif /* Freetype 2.1 or better */
 /* EAM DEBUG */
 	
       switch (m)

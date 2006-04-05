@@ -30,7 +30,6 @@ main (int argc, char **argv)
   FILE *in, *out;
   void *iptr;
   int sz;
-  gdIOCtxPtr ctx;
   char of[256];
   int colRed, colBlu;
   gdSource imgsrc;
@@ -82,15 +81,13 @@ main (int argc, char **argv)
   unlink (of);
   gdImageDestroy (im2);
 
+  /* 2.0.21: use the new From*Ptr functions */
   iptr = gdImagePngPtr (im, &sz);
-  ctx = gdNewDynamicCtx (sz, iptr);
-  im2 = gdImageCreateFromPngCtx (ctx);
-
+  im2 = gdImageCreateFromPngPtr (sz, iptr);
+  gdFree(iptr);
   CompareImages ("GD->PNG ptr->GD", ref, im2);
 
   gdImageDestroy (im2);
-  ctx->gd_free (ctx);
-
 
   /* */
   /* Send to GD2 File then Ptr */
@@ -116,16 +113,13 @@ main (int argc, char **argv)
 
   iptr = gdImageGd2Ptr (im, 128, 2, &sz);
   /*printf("Got ptr %d (size %d)\n",iptr, sz); */
-  ctx = gdNewDynamicCtx (sz, iptr);
-  /*printf("Got ctx %d\n",ctx); */
-  im2 = gdImageCreateFromGd2Ctx (ctx);
+  im2 = gdImageCreateFromGd2Ptr (sz, iptr);
+  gdFree(iptr);
   /*printf("Got img2 %d\n",im2); */
 
   CompareImages ("GD->GD2 ptr->GD", ref, im2);
 
   gdImageDestroy (im2);
-  ctx->gd_free (ctx);
-
 
   /* */
   /* Send to GD File then Ptr */
@@ -151,15 +145,13 @@ main (int argc, char **argv)
 
   iptr = gdImageGdPtr (im, &sz);
   /*printf("Got ptr %d (size %d)\n",iptr, sz); */
-  ctx = gdNewDynamicCtx (sz, iptr);
-  /*printf("Got ctx %d\n",ctx); */
-  im2 = gdImageCreateFromGdCtx (ctx);
+  im2 = gdImageCreateFromGdPtr (sz, iptr);
+  gdFree(iptr);
   /*printf("Got img2 %d\n",im2); */
 
   CompareImages ("GD->GD ptr->GD", ref, im2);
 
   gdImageDestroy (im2);
-  ctx->gd_free (ctx);
 
   /*
      ** Test gdImageCreateFromPngSource'

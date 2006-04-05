@@ -181,6 +181,16 @@ gdImageCreateFromGd (FILE * inFile)
 }
 
 gdImagePtr
+gdImageCreateFromGdPtr (int size, void *data)
+{
+  gdImagePtr im;
+  gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
+  im = gdImageCreateFromGdCtx (in);
+  in->gd_free (in);
+  return im;
+}
+
+gdImagePtr
 gdImageCreateFromGdCtx (gdIOCtxPtr in)
 {
   int sx, sy;

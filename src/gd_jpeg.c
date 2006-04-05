@@ -269,6 +269,16 @@ gdImageCreateFromJpeg (FILE * inFile)
   return im;
 }
 
+gdImagePtr
+gdImageCreateFromJpegPtr (int size, void *data)
+{
+  gdImagePtr im;
+  gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
+  im = gdImageCreateFromJpegCtx (in);
+  in->gd_free (in);
+  return im;
+}
+
 void jpeg_gdIOCtx_src (j_decompress_ptr cinfo, gdIOCtx * infile);
 
 /* 

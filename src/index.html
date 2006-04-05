@@ -1,10 +1,10 @@
 <!-- REMEMBER TO EDIT index.html.source -->
 <head>
-<TITLE>gd 2.0.20</TITLE>
+<TITLE>gd 2.0.21</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<H2>gd 2.0.20</H2>
+<H2>gd 2.0.21</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -20,7 +20,7 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.20 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.21 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -33,7 +33,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-When building from soruce, gd 2.0.20 <strong>requires</strong> that the 
+When building from soruce, gd 2.0.21 <strong>requires</strong> that the 
 following libraries also be installed, in order to produce the related 
 image formats. The win32 binary release (bgd) already contains the
 appropriate libraries.
@@ -66,7 +66,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.20">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.21">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -165,10 +165,10 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.20.
+with 2.0.21.
 <h4>PHP</h4>
 A variant of gd 2.x is included in PHP 4.3.0. It is also possible
-to patch PHP 4.2.3 for use with gd 2.0.20; see the
+to patch PHP 4.2.3 for use with gd 2.0.21; see the
 <a href="http://www.boutell.com/gd/">gd home page</a> for a link to
 that information. It would be a Good Idea to merge all of the things
 that are better in mainstream gd and all of the things that are
@@ -201,6 +201,33 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<P>
+<A NAME="whatsnew2.0.21"><H3>What's new in version 2.0.21?</H3></A>
+<P>
+<ul>
+<li>Version 2.0.21 adds a <code>gdImageCreateFrom*Ptr</code> family
+of functions which make it convenient to load an image in any
+GD-supported format directly from memory.
+<li>The new <code>gdNewDynamicCtxEx</code> function was added to
+support the easy implementation of the above functions and to
+correct a design problem which made life unpleasant for those passing
+in memory not originally allocated by gd to the 
+<code>gdNewDynamicCtx</code> function by provoding a way to specify
+that gd should never free or reallocate a particular block of memory.
+The <code>gdNewDynamicCtx</code> function and its relatives, although
+still exported for ABI compatibility, are now <b>deprecated</b> except 
+for internal use, in favor of <a href="#gdImageCreateFromPngPtr"><code>gdImageCreateFromPngPtr</code></a>
+and its relatives.
+<li>Version 2.0.21 includes a new patch from Ethan A. Merritt to
+correct a bug in the conditional compilation of support for
+symbol fonts in gdft.c. Symbol fonts should now work correctly.
+Thanks to Mr. Merritt.
+<li>Version 2.0.20 restores the <code>gdFreeFontCache</code> function,
+an undocumented function added in an earlier release which now simply
+calls <code>gdFontCacheShutdown</code> for backwards compatibility.
+This repairs build problems when compiling PHP against the latest gd.
+<li>Documentation improvements.
 </ul>
 <P>
 <A NAME="whatsnew2.0.20"><H3>What's new in version 2.0.20?</H3></A>
@@ -995,8 +1022,8 @@ saving of alpha channel information to the file instead.
 </ul>
 <h4>Source Code:</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.20.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.20.zip">.ZIP File of SOURCE CODE (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.21.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.21.zip">.ZIP File of SOURCE CODE (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -1018,10 +1045,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.20".
+Unpacking the archive will produce a directory called "gd-2.0.21".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.20 directory and type:
+<code>cd</code> to the 2.0.21 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -1481,6 +1508,9 @@ im = gdImageCreateTrueColor(64, 64);
 <DT><A NAME="gdImageCreateFromJpeg">gdImageCreateFromJpeg(FILE *in)</A>
 <strong>(FUNCTION)</strong>
 <br>
+<A NAME="gdImageCreateFromJpegPtr">gdImageCreateFromJpegPtr(int size, void *data)</A>
+<strong>(FUNCTION)</strong>
+<br>
 <A NAME="gdImageCreateFromJpegCtx">gdImageCreateFromJpegCtx(gdIOCtx *in)</A>
 <strong>(FUNCTION)</strong>
 <p>
@@ -1497,6 +1527,12 @@ close the file. You can inspect the sx and sy members of the
 image to determine its size. The image must eventually be destroyed
 using <A HREF="#gdImageDestroy">gdImageDestroy()</A>. <strong>The
 returned image is always a truecolor image.</strong> 
+<p>
+If you already have the
+image file in memory, pass the size of the file and a pointer to the
+file's data to gdImageCreateFromJpegPtr, which is otherwise identical
+to gdImageCreateFromJpeg.
+<p>
 <PRE>
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
 ... inside a function ...
@@ -1508,6 +1544,8 @@ fclose(in);
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
 <DT><A NAME="gdImageCreateFromPng">gdImageCreateFromPng(FILE *in)</A>
+<strong>(FUNCTION)</strong>
+<BR><A NAME="gdImageCreateFromPngPtr">gdImageCreateFromPngPtr(int size, void *data)</A>
 <strong>(FUNCTION)</strong>
 <BR><A NAME="gdImageCreateFromPngCtx">gdImageCreateFromPngCtx(<a href=#gdioctx>gdIOCtx</a> *in)</A>
 <strong>(FUNCTION)</strong>
@@ -1523,6 +1561,11 @@ does not contain a PNG image). gdImageCreateFromPng does <em>not</em>
 close the file. You can inspect the sx and sy members of the
 image to determine its size. The image must eventually be destroyed
 using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
+<p>
+If you already have the
+image file in memory, pass the size of the file and a pointer to the
+file's data to gdImageCreateFromPngPtr, which is otherwise identical
+to gdImageCreateFromPng.
 <p>
 If the PNG image being loaded is a truecolor image, the resulting
 gdImagePtr will refer to a truecolor image. If the PNG image
@@ -1548,6 +1591,10 @@ fclose(in);
 <DT><A NAME="gdImageCreateFromPngSource">gdImageCreateFromPngSource(gdSourcePtr in)</A>
 <strong>(FUNCTION)</strong>
 <dd>
+<b>Deprecated</b> in favor of
+<a href="#gdImageCreateFromPngCtx">gdImageCreateFromPngCtx</a>. Should
+not be used in new applications.
+<p>
 gdImageCreateFromPngSource is called to load a PNG from
 a data source other than a file. Usage is very similar to
 the <a href="#gdImageCreateFromPng">gdImageCreateFromPng</a> function,
@@ -1587,6 +1634,8 @@ static int freadWrapper(void *context, char *buf, int len)
 </pre>
 <DT><A NAME="gdImageCreateFromGd">gdImageCreateFromGd(FILE *in)</A>
 <strong>(FUNCTION)</strong>
+<br><DT><A NAME="gdImageCreateFromGdPtr">gdImageCreateFromGdPtr(int size, void *data)</A>
+<strong>(FUNCTION)</strong>
 <BR><A NAME="gdImageCreateFromGdCtx">gdImageCreateFromGdCtx(<a href=#gdioctx>gdIOCtx</a> *in)</A>
 <strong>(FUNCTION)</strong>
 <p>
@@ -1597,6 +1646,12 @@ with an already opened pointer to a file containing the desired image
 in the <A HREF="#gdformat">gd file format</A>, which is specific to
 gd and intended for very fast loading. (It is <em>not</em> intended for
 compression; for compression, use PNG or JPEG.)
+<p>
+If you already have the
+image file in memory, pass the size of the file and a pointer to the
+file's data to gdImageCreateFromGdPtr, which is otherwise identical
+to gdImageCreateFromGd.
+<p>
 gdImageCreateFromGd
 returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or NULL
 if unable to load the image (most often because the file is corrupt or
@@ -1617,6 +1672,8 @@ fclose(in);
 
 <DT><A NAME="gdImageCreateFromGd2">gdImageCreateFromGd2(FILE *in)</A>
 <strong>(FUNCTION)</strong>
+<br><A NAME="gdImageCreateFromGd2Ptr">gdImageCreateFromGd2Ptr(int size, void *data)</A>
+<strong>(FUNCTION)</strong>
 <BR><A NAME="gdImageCreateFromGd2Ctx">gdImageCreateFromGd2Ctx(<a href=#gdioctx>gdIOCtx</a> *in)</A>
 <strong>(FUNCTION)</strong>
 <p>
@@ -1626,10 +1683,16 @@ gdImageCreateFromGd2 is called to load images from gd2 format files.
 Invoke gdImageCreateFromGd2
 with an already opened pointer to a file containing the desired image
 in the <A HREF="#gdformat">gd2 file format</A>, which is specific to
-gd2 and intended for fast loading of parts of large images.
+gd2 and intended for fast loading of parts of large images. 
 (It is a compressed format, but generally not as good as maximum
-compression of the entire image would be.)
-gdImageCreateFromGd
+compression of the entire image would be.) 
+<p>
+If you already have the
+image file in memory, pass the size of the file and a pointer to the
+file's data to gdImageCreateFromGd2Ptr, which is otherwise identical
+to gdImageCreateFromGd2.
+<p>
+gdImageCreateFromGd2
 returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or NULL
 if unable to load the image (most often because the file is corrupt or
 does not contain a gd format image). gdImageCreateFromGd2 does <em>not</em>
@@ -1649,6 +1712,8 @@ fclose(in);
 
 <DT><A NAME="gdImageCreateFromGd2Part">gdImageCreateFromGd2Part(FILE *in, int srcX, int srcY, int w, int h)</A>
 <strong>(FUNCTION)</strong>
+<br><A NAME="gdImageCreateFromGd2PartPtr">gdImageCreateFromGd2PartPtr(int size, void *data, int srcX, int srcY, int w, int h)</A>
+<strong>(FUNCTION)</strong>
 <BR><A NAME="gdImageCreateFromGd2PartCtx">gdImageCreateFromGd2PartCtx(<a href=#gdioctx>gdIOCtx</a> *in)</A>
 <strong>(FUNCTION)</strong>
 <p>
@@ -1661,6 +1726,45 @@ indicating the source (x, y) and width/height of the desired image.
 gdImageCreateFromGd2Part returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the
 new image, or NULL if unable to load the image.
 The image must eventually be destroyed using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
+<p>
+If you already have the image file in memory, you may use
+gdImageCreateFromGd2PartPtr. Pass the size of the image file,
+in bytes, as the first argument and the pointer to the image file data
+as the second argument.
+<p>
+<DT><A NAME="gdImageCreateFromWBMP">gdImageCreateFromWBMP(FILE *in)</A>
+<strong>(FUNCTION)</strong>
+<BR><A NAME="gdImageCreateFromWBMPPtr">gdImageCreateFromWBMPPtr(int size, void *data)</A>
+<strong>(FUNCTION)</strong>
+<BR><A NAME="gdImageCreateFromWBMPCtx">gdImageCreateFromWBMPCtx(<a href=#gdioctx>gdIOCtx</a> *in)</A>
+<strong>(FUNCTION)</strong>
+<p>
+<DD>
+gdImageCreateFromWBMP is called to load images from WBMP format files.
+Invoke gdImageCreateFromWBMP with an already opened pointer to a file
+containing the desired image.
+gdImageCreateFromWBMP
+returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or NULL
+if unable to load the image (most often because the file is corrupt or
+does not contain a PNG image). gdImageCreateFromWBMP does <em>not</em>
+close the file. You can inspect the sx and sy members of the
+image to determine its size. The image must eventually be destroyed
+using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
+<p>
+If you already have the
+image file in memory, pass the size of the file and a pointer to the
+file's data to gdImageCreateFromWBMPPtr, which is otherwise identical
+to gdImageCreateFromWBMP.
+<PRE>
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+... inside a function ...
+FILE *in;
+in = fopen("mywbmp.wbmp", "rb");
+im = gdImageCreateFromWBMP(in);
+fclose(in);
+/* ... Use the image ... */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
 <p>
 <DT><A NAME="gdImageCreateFromXbm">gdImageCreateFromXbm(FILE *in)</A>
 <strong>(FUNCTION)</strong>
@@ -4534,15 +4638,24 @@ purchase gd support at the hourly rate above.
 <A HREF="#gdImageCreate">gdImageCreatePalette</A> |
 <A HREF="#gdImageCreate">gdImageCreateTrueColor</A> |
 <A HREF="#gdImageCreateFromGd">gdImageCreateFromGd</A> |
+<A HREF="#gdImageCreateFromGdCtx">gdImageCreateFromGdCtx</A> |
+<A HREF="#gdImageCreateFromGdPtr">gdImageCreateFromGdPtr</A> |
 <A HREF="#gdImageCreateFromGd2">gdImageCreateFromGd2</A> |
 <A HREF="#gdImageCreateFromGd2Ctx">gdImageCreateFromGd2Ctx</A> |
+<A HREF="#gdImageCreateFromGd2Ptr">gdImageCreateFromGd2Ptr</A> |
 <A HREF="#gdImageCreateFromGd2Part">gdImageCreateFromGd2Part</A> |
 <A HREF="#gdImageCreateFromGd2PartCtx">gdImageCreateFromGd2PartCtx</A> |
+<A HREF="#gdImageCreateFromGd2PartPtr">gdImageCreateFromGd2PartPtr</A> |
 <A HREF="#gdImageCreateFromJpeg">gdImageCreateFromJpeg</A> |
 <A HREF="#gdImageCreateFromJpegCtx">gdImageCreateFromJpegCtx</A> |
+<A HREF="#gdImageCreateFromJpegPtr">gdImageCreateFromJpegPtr</A> |
 <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A> |
 <A HREF="#gdImageCreateFromPngCtx">gdImageCreateFromPngCtx</A> |
+<A HREF="#gdImageCreateFromPngPtr">gdImageCreateFromPngPtr</A> |
 <A HREF="#gdImageCreateFromPngSource">gdImageCreateFromPngSource</A> |
+<A HREF="#gdImageCreateFromWBMP">gdImageCreateFromWBMP</A> |
+<A HREF="#gdImageCreateFromWBMPCtx">gdImageCreateFromWBMPCtx</A> |
+<A HREF="#gdImageCreateFromWBMPPtr">gdImageCreateFromWBMPPtr</A> |
 <A HREF="#gdImageCreateFromXbm">gdImageCreateFromXbm</A> |
 <A HREF="#gdImageCreateFromXpm">gdImageCreateFromXpm</A> |
 <A HREF="#gdImageDashedLine">gdImageDashedLine</A> |

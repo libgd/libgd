@@ -250,10 +250,13 @@ extern "C"
 	JPEG is always truecolor. */
    BGD_EXPORT gdImagePtr gdImageCreateFromPng (FILE * fd);
    BGD_EXPORT gdImagePtr gdImageCreateFromPngCtx (gdIOCtxPtr in);
+   BGD_EXPORT gdImagePtr gdImageCreateFromPngPtr (int size, void *data);
    BGD_EXPORT gdImagePtr gdImageCreateFromWBMP (FILE * inFile);
    BGD_EXPORT gdImagePtr gdImageCreateFromWBMPCtx (gdIOCtx * infile);
+   BGD_EXPORT gdImagePtr gdImageCreateFromWBMPPtr (int size, void *data);
    BGD_EXPORT gdImagePtr gdImageCreateFromJpeg (FILE * infile);
    BGD_EXPORT gdImagePtr gdImageCreateFromJpegCtx (gdIOCtx * infile);
+   BGD_EXPORT gdImagePtr gdImageCreateFromJpegPtr (int size, void *data);
 
 /* A custom data source. */
 /* The source function must return -1 on error, otherwise the number
@@ -267,21 +270,28 @@ extern "C"
   }
   gdSource, *gdSourcePtr;
 
+   /* Deprecated in favor of gdImageCreateFromPngCtx */
    BGD_EXPORT gdImagePtr gdImageCreateFromPngSource (gdSourcePtr in);
 
    BGD_EXPORT gdImagePtr gdImageCreateFromGd (FILE * in);
    BGD_EXPORT gdImagePtr gdImageCreateFromGdCtx (gdIOCtxPtr in);
+   BGD_EXPORT gdImagePtr gdImageCreateFromGdPtr (int size, void *data);
 
    BGD_EXPORT gdImagePtr gdImageCreateFromGd2 (FILE * in);
    BGD_EXPORT gdImagePtr gdImageCreateFromGd2Ctx (gdIOCtxPtr in);
+   BGD_EXPORT gdImagePtr gdImageCreateFromGd2Ptr (int size, void *data);
 
    BGD_EXPORT gdImagePtr gdImageCreateFromGd2Part (FILE * in, int srcx, int srcy, int w,
 				       int h);
    BGD_EXPORT gdImagePtr gdImageCreateFromGd2PartCtx (gdIOCtxPtr in, int srcx, int srcy,
 					  int w, int h);
+   BGD_EXPORT gdImagePtr gdImageCreateFromGd2PartPtr (int size, void *data, int srcx, int srcy,
+					  int w, int h);
   /* 2.0.10: prototype was missing */
-   BGD_EXPORT gdImagePtr gdImageCreateFromXpm (char *filename);
    BGD_EXPORT gdImagePtr gdImageCreateFromXbm (FILE * in);
+
+  /* NOTE: filename, not FILE */
+   BGD_EXPORT gdImagePtr gdImageCreateFromXpm (char *filename);
 
    BGD_EXPORT void gdImageDestroy (gdImagePtr im);
 
@@ -630,7 +640,22 @@ extern "C"
 /* I/O Support routines. */
 
   BGD_EXPORT gdIOCtx *gdNewFileCtx (FILE *);
-  BGD_EXPORT gdIOCtx *gdNewDynamicCtx (int, void *);
+  /* If data is null, size is ignored and an initial data buffer is
+    allocated automatically. NOTE: this function assumes gd has the right 
+    to free or reallocate "data" at will! Also note that gd will free 
+    "data" when the IO context is freed. If data is not null, it must point
+    to memory allocated with gdMalloc, or by a call to gdImage[something]Ptr.
+    If not, see gdNewDynamicCtxEx for an alternative. */
+  BGD_EXPORT gdIOCtx *gdNewDynamicCtx (int size, void *data);
+  /* 2.0.21: if freeFlag is nonzero, gd will free and/or reallocate "data" as
+    needed as described above. If freeFlag is zero, gd will never free 
+    or reallocate "data," which means that the context should only be used
+    for *reading* an image from a memory buffer, or writing an image to a
+    memory buffer which is already large enough. If the memory buffer is
+    not large enough and an image write is attempted, the write operation
+    will fail. Those wishing to write an image to a buffer in memory have
+    a much simpler alternative in the gdImage[something]Ptr functions. */
+  BGD_EXPORT gdIOCtx *gdNewDynamicCtxEx (int size, void *data, int freeFlag);
   BGD_EXPORT gdIOCtx *gdNewSSCtx (gdSourcePtr in, gdSinkPtr out);
   BGD_EXPORT void *gdDPExtractData (struct gdIOCtx *ctx, int *size);
 

@@ -107,6 +107,15 @@ gdImageCreateFromPng (FILE * inFile)
   return im;
 }
 
+gdImagePtr
+gdImageCreateFromPngPtr (int size, void *data)
+{
+  gdImagePtr im;
+  gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
+  im = gdImageCreateFromPngCtx (in);
+  in->gd_free (in);
+  return im;
+}
 
 /* This routine is based in part on the Chapter 13 demo code in "PNG: The
  *  Definitive Guide" (http://www.cdrom.com/pub/png/pngbook.html).

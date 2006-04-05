@@ -2280,7 +2280,8 @@ gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 		      mapTo = gdImageGetTrueColorPixel (src, x, y);
 		      if (gdImageGetTransparent (src) == tmp)
 			{
-			  tox++;
+                          /* 2.0.21, TK: not tox++ */
+                          tox += stx[x - srcX];
 			  continue;
 			}
 		    }
@@ -2291,7 +2292,8 @@ gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 		      /* Added 7/24/95: support transparent copies */
 		      if (gdImageGetTransparent (src) == mapTo)
 			{
-			  tox++;
+                          /* 2.0.21, TK: not tox++ */
+                          tox += stx[x - srcX];
 			  continue;
 			}
 		    }
