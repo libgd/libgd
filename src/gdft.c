@@ -135,8 +135,6 @@ typedef struct
   char *fontpath;
   FT_Library *library;
   FT_Face face;
-  FT_Bool have_char_map_unicode, have_char_map_big5, have_char_map_sjis,
-    have_char_map_apple_roman;
 }
 font_t;
 
@@ -435,12 +433,8 @@ fontFetch (char **error, void *key)
 {
   font_t *a;
   fontkey_t *b = (fontkey_t *) key;
-  int n;
-  unsigned short platform, encoding;
   char *suffix;
   FT_Error err;
-  FT_CharMap found = 0;
-  FT_CharMap charmap;
 
   *error = NULL;
 
@@ -498,84 +492,6 @@ fprintf(stderr,"fontpathname=%s\n",fullname);
       return NULL;
     }
 
-/* FIXME - This mapping stuff is imcomplete - where is the spec? */
-/* EAM   - It's worse than that. It's pointless to match character encodings here. */
-/*         As currently written, the stored a->face->charmap only matches one of   */
-/*         the actual charmaps and we cannot know at this stage if it is the right */
-/*         one. We should just skip all this stuff, and check in gdImageStringFTEx */
-/*         if some particular charmap is preferred and if so whether it is held in */
-/*         one of the a->face->charmaps[0..num_charmaps].                          */
-/*         And why is it so bad not to find any recognized charmap?  The user may  */
-/*         still know what mapping to use, even if we do not.  In that case we can */
-/*         just use the map in a->face->charmaps[num_charmaps] and be done with it.*/
-
-  a->have_char_map_unicode = 0;
-  a->have_char_map_big5 = 0;
-  a->have_char_map_sjis = 0;
-  a->have_char_map_apple_roman = 0;
-  for (n = 0; n < a->face->num_charmaps; n++)
-    {
-      charmap = a->face->charmaps[n];
-      platform = charmap->platform_id;
-      encoding = charmap->encoding_id;
-
-/* EAM DEBUG - Newer versions of libfree2 make it easier 
-	by defining encodings */
-/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
-
-#if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
-      if (charmap->encoding == FT_ENCODING_MS_SYMBOL
-         || charmap->encoding == FT_ENCODING_UNICODE
-	  || charmap->encoding == FT_ENCODING_ADOBE_CUSTOM
-	  || charmap->encoding == FT_ENCODING_ADOBE_STANDARD)
-	{
-	  a->have_char_map_unicode = 1;
-	  found = charmap;
-         FT_Set_Charmap(a->face, found);
-	  return (void *) a;
-	}
-#endif /* Freetype 2.1 or better */
-/* EAM DEBUG */
-
-      if ((platform == 3 && encoding == 1)	/* Windows Unicode */
-	  || (platform == 3 && encoding == 0)	/* Windows Symbol */
-	  || (platform == 2 && encoding == 1)	/* ISO Unicode */
-	  || (platform == 0))
-	{			/* Apple Unicode */
-	  a->have_char_map_unicode = 1;
-	  found = charmap;
-	  break;
-	}
-      else if (platform == 3 && encoding == 4)
-	{			/* Windows Big5 */
-	  a->have_char_map_big5 = 1;
-	  found = charmap;
-	  break;
-	}
-      else if (platform == 3 && encoding == 2)
-	{			/* Windows Sjis */
-	  a->have_char_map_sjis = 1;
-	  found = charmap;
-	  break;
-	}
-      else if ((platform == 1 && encoding == 0)	/* Apple Roman */
-	       || (platform == 2 && encoding == 0))
-	{			/* ISO ASCII */
-	  a->have_char_map_apple_roman = 1;
-	  found = charmap;
-	  break;
-	}
-    }
-  if (!found)
-    {
-      *error = "Unable to find a CharMap that I can handle";
-      /* 2.0.12: TBB: free these. Thanks to Frank Faubert. */
-      free (a->fontlist);
-      gdFree (a);
-      return NULL;
-    }
-  /* 2.0.5: we should actually return this */
-  FT_Set_Charmap(a->face, found);
   return (void *) a;
 }
 
@@ -916,6 +832,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
   FT_Matrix matrix;
   FT_Vector penf, oldpenf, delta, total_min = {0,0}, total_max = {0,0}, glyph_min, glyph_max;
   FT_Face face;
+  FT_CharMap charmap;
   FT_Glyph image;
   FT_GlyphSlot slot;
   FT_Error err;
@@ -1052,39 +969,75 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
   if (fg < 0)
       render_mode |= FT_LOAD_MONOCHROME;
 
-  /* Try all three types of maps, but start with the specified one */
+  /* find requested charmap */
   encodingfound = 0;
-  for (i = 0; (i < 3); i++)
+  for (i = 0; i < face->num_charmaps; i++)
     {
-      switch (encoding)
+      charmap = face->charmaps[i];
+
+#if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
+      if (encoding == gdFTEX_Unicode)
 	{
-	case gdFTEX_Unicode:
-	  if (font->have_char_map_unicode)
+	  if (charmap->encoding == FT_ENCODING_MS_SYMBOL
+	      || charmap->encoding == FT_ENCODING_UNICODE
+	      || charmap->encoding == FT_ENCODING_ADOBE_CUSTOM
+	      || charmap->encoding == FT_ENCODING_ADOBE_STANDARD)
 	    {
-	      encodingfound = 1;
+	      encodingfound++;
+	      break;
 	    }
-	  break;
-	case gdFTEX_Shift_JIS:
-	  if (font->have_char_map_sjis)
-	    {
-	      encodingfound = 1;
-	    }
-	  break;
-	case gdFTEX_Big5:
-	  {
-	    /* This was the 'else' case, we can't really 'detect' it */
-	    encodingfound = 1;
-	  }
-	  break;
 	}
-      if (encodingfound)
+      else if (encoding == gdFTEX_Big5)
 	{
-	  break;
+	  if (charmap->encoding == FT_ENCODING_BIG5)
+	    {
+	      encodingfound++;
+	      break;
+	    }
 	}
-      encoding++;
-      encoding %= 3;
+      else if (encoding == gdFTEX_Shift_JIS)
+	{
+	  if (charmap->encoding == FT_ENCODING_SJIS)
+	    {
+	      encodingfound++;
+	      break;
+	    }
+	}
+#else
+      if (encoding == gdFTEX_Unicode)
+	{
+	  if ((charmap->platform = 3 && charmap->encoding == 1)     /* Windows Unicode */
+	      || (charmap->platform == 3 && charmap->encoding == 0) /* Windows Symbol */
+	      || (charmap->platform == 2 && charmap->encoding == 1) /* ISO Unicode */
+	      || (charmap->platform == 0))                          /* Apple Unicode */
+	    {
+	      encodingfound++;
+	      break;
+	    }
+	}
+      else if (encoding == gdFTEX_Big5)
+	{
+          if (charmap->platform == 3 && charmap->encoding == 4)     /* Windows Big5 */
+	    {
+	      encodingfound++;
+	      break;
+	    }
+	}
+      else if (encoding == gdFTEX_Shift_JIS)
+	{
+          if (charmap->platform == 3 && charmap->encoding == 2)     /* Windows Sjis */
+	    {
+	      encodingfound++;
+	      break;
+	    }
+	}
+#endif
     }
-  if (!encodingfound)
+  if (encodingfound)
+    {
+      FT_Set_Charmap(face, charmap);
+    }
+  else
     {
       /* No character set found! */
       gdMutexUnlock (gdFontCacheMutex);
@@ -1092,7 +1045,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
     }
 
 #ifndef JISX0208
-  if (font->have_char_map_sjis)
+  if (encoding == gdFTEX_Shift_JIS)
     {
 #endif
       if ((tmpstr = (char *) gdMalloc (BUFSIZ)))
@@ -1145,67 +1098,63 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 	  continue;
 	}
 
+
+        switch (encoding)
+	  {
+	  case gdFTEX_Unicode:
+	    {
+	      /* use UTF-8 mapping from ASCII */
+	      len = gdTcl_UtfToUniChar (next, &ch);
 /* EAM DEBUG */
 /* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
 /* 2.0.24: David R. Morrison: use the more complete ifdef here. */
-
 #if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
-      if (face->charmap->encoding == FT_ENCODING_MS_SYMBOL)
-	{
-	  /* I do not know the significance of the constant 0xf000. */
-	  /* It was determined by inspection of the character codes */
-	  /* stored in Microsoft font symbol.ttf                    */
-	  len = gdTcl_UtfToUniChar (next, &ch);
-	  ch |= 0xf000;
-	  next += len;
-	}
-      else
+      	      if (charmap->encoding == FT_ENCODING_MS_SYMBOL)
+#else
+	      if (charmap->platform == 3 && charmap->encoding == 0)
 #endif /* Freetype 2.1 or better */
+		{
+		  /* I do not know the significance of the constant 0xf000. */
+		  /* It was determined by inspection of the character codes */
+		  /* stored in Microsoft font symbol.ttf                    */
+		  ch |= 0xf000;
+		}
 /* EAM DEBUG */
-
-      switch (encoding)
-	  {
-	  case gdFTEX_Unicode:
-	    if (font->have_char_map_unicode)
-	      {
-		/* use UTF-8 mapping from ASCII */
-		len = gdTcl_UtfToUniChar (next, &ch);
-		next += len;
-	      }
+	      next += len;
+	    }
 	    break;
 	  case gdFTEX_Shift_JIS:
-	    if (font->have_char_map_sjis)
-	      {
-		unsigned char c;
-		int jiscode;
-		c = *next;
-		if (0xA1 <= c && c <= 0xFE)
-		  {
-		    next++;
-		    jiscode = 0x100 * (c & 0x7F) + ((*next) & 0x7F);
+	    {
+	      unsigned char c;
+	      int jiscode;
+	      c = *next;
+	      if (0xA1 <= c && c <= 0xFE)
+	        {
+	          next++;
+	          jiscode = 0x100 * (c & 0x7F) + ((*next) & 0x7F);
+      
+		  ch = (jiscode >> 8) & 0xFF;
+		  jiscode &= 0xFF;
 
-		    ch = (jiscode >> 8) & 0xFF;
-		    jiscode &= 0xFF;
+		  if (ch & 1)
+		    jiscode += 0x40 - 0x21;
+		  else
+		    jiscode += 0x9E - 0x21;
 
-		    if (ch & 1)
-		      jiscode += 0x40 - 0x21;
-		    else
-		      jiscode += 0x9E - 0x21;
+		  if (jiscode >= 0x7F)
+		    jiscode++;
+		  ch = (ch - 0x21) / 2 + 0x81;
+		  if (ch >= 0xA0)
+		    ch += 0x40;
 
-		    if (jiscode >= 0x7F)
-		      jiscode++;
-		    ch = (ch - 0x21) / 2 + 0x81;
-		    if (ch >= 0xA0)
-		      ch += 0x40;
-
-		    ch = (ch << 8) + jiscode;
-		  }
-		else
-		  {
-		    ch = c & 0xFF;	/* don't extend sign */
-		  }
-		next++;
-	      }
+		  ch = (ch << 8) + jiscode;
+		}
+	      else
+		{
+		  ch = c & 0xFF;	/* don't extend sign */
+		}
+	      next++;
+	    }
 	    break;
 	  case gdFTEX_Big5:
 	    {

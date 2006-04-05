@@ -59,12 +59,14 @@ static struct {
 } GifScreen;
 #endif
 
+#if 0
 static struct {
        int     transparent;
        int     delayTime;
        int     inputFlag;
        int     disposal;
 } Gif89 = { -1, -1, -1, 0 };
+#endif
 
 static int ReadColorMap (gdIOCtx *fd, int number, unsigned char (*buffer)[256]);
 static int DoExtension (gdIOCtx *fd, int label, int *Transparent, int *ZeroDataBlockP);
@@ -98,9 +100,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifPtr (int size, void *data)
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 {
        int BitPixel;
+#if 0
        int ColorResolution;
        int Background;
        int AspectRatio;
+#endif
        int Transparent = (-1);
        unsigned char   buf[16];
        unsigned char   c;
@@ -132,9 +136,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 		return 0;
 	}
        BitPixel        = 2<<(buf[4]&0x07);
+#if 0
        ColorResolution = (int) (((buf[4]&0x70)>>3)+1);
        Background      = buf[5];
        AspectRatio     = buf[6];
+#endif
 
        if (BitSet(buf[4], LOCALCOLORMAP)) {    /* Global Colormap */
                if (ReadColorMap(fd, BitPixel, ColorMap)) {
@@ -240,9 +246,11 @@ DoExtension(gdIOCtx *fd, int label, int *Transparent, int *ZeroDataBlockP)
        switch (label) {
        case 0xf9:              /* Graphic Control Extension */
                (void) GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP);
+#if 0
                Gif89.disposal    = (buf[0] >> 2) & 0x7;
                Gif89.inputFlag   = (buf[0] >> 1) & 0x1;
                Gif89.delayTime   = LM_to_uint(buf[1],buf[2]);
+#endif
                if ((buf[0] & 0x1) != 0)
                        *Transparent = buf[3];
 

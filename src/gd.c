@@ -2702,8 +2702,10 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
       }
       for (i = 0; (i < (ints)); i += 2)
 	{
+#if 0
           int minx = im->polyInts[i];
           int maxx = im->polyInts[i + 1];
+#endif
           /* 2.0.29: back to gdImageLine to prevent segfaults when
             performing a pattern fill */
           gdImageLine (im, im->polyInts[i], y, im->polyInts[i + 1], y,
