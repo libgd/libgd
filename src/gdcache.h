@@ -80,6 +80,6 @@ gdCache_head_t *gdCacheCreate (int size,
 			       gdCacheFetchFn_t gdCacheFetch,
 			       gdCacheReleaseFn_t gdCacheRelease);
 
-void gdCacheDelete (gdCache_head_t * head);
+ BGD_EXPORT void gdCacheDelete (gdCache_head_t * head);
 
 void *gdCacheGet (gdCache_head_t * head, void *keydata);

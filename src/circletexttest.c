@@ -4,13 +4,15 @@
 int
 main (int argc, char *argv[])
 {
-	FILE *in;
+	FILE *in = 0;
 	FILE *out;
 	gdImagePtr im;
 	int radius;
 	/* Create an image of text on a circle, with an
 		alpha channel so that we can copy it onto a
 		background */
+	/* TBB: 2.0.18: shouldn't depend on JPEG */
+#ifdef HAVE_LIBJPEG
 	in = fopen("eleanor.jpg", "rb");
 	if (!in) {
 		im = gdImageCreateTrueColor(300, 300);
@@ -18,6 +20,9 @@ main (int argc, char *argv[])
 		im = gdImageCreateFromJpeg(in);
 		fclose(in);
 	}
+#else
+	im = gdImageCreateTrueColor(300, 300);
+#endif /* HAVE_LIBJPEG */	
 	if (gdImageSX(im) < gdImageSY(im)) {
 		radius = gdImageSX(im) / 2;
 	} else {

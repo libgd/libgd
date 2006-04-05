@@ -3864,6 +3864,6 @@ gdFont gdFontSmallRep = {
   gdFontSmallData
 };
 
-gdFontPtr gdFontSmall = &gdFontSmallRep;
+BGD_EXPORT gdFontPtr gdFontSmall = &gdFontSmallRep;
 
 /* This file has not been truncated. */

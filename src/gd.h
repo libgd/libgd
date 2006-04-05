@@ -1,6 +1,20 @@
 #ifndef GD_H
 #define GD_H 1
 
+/* Do the DLL dance: dllexport when building the DLL,
+	dllimport when importing from it, nothing when
+	not on Silly Silly Windows (tm Aardman Productions). */
+
+#ifdef BGDWIN32
+#define BGD_EXPORT __declspec(dllexport)
+#else
+#ifdef WIN32
+#define BGD_EXPORT __declspec(dllimport)
+#else
+#define BGD_EXPORT
+#endif /* WIN32 */
+#endif /* BGDWIN32 */
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -73,7 +87,7 @@ extern "C"
 	based on the alpha channel value of the source color.
 	The resulting color is opaque. */
 
-  int gdAlphaBlend (int dest, int src);
+   BGD_EXPORT int gdAlphaBlend (int dest, int src);
 
   typedef struct gdImageStruct
   {
@@ -206,25 +220,25 @@ extern "C"
 /* Functions to manipulate images. */
 
 /* Creates a palette-based image (up to 256 colors). */
-  gdImagePtr gdImageCreate (int sx, int sy);
+   BGD_EXPORT gdImagePtr gdImageCreate (int sx, int sy);
 
 /* An alternate name for the above (2.0). */
 #define gdImageCreatePalette gdImageCreate
 
 /* Creates a truecolor image (millions of colors). */
-  gdImagePtr gdImageCreateTrueColor (int sx, int sy);
+   BGD_EXPORT gdImagePtr gdImageCreateTrueColor (int sx, int sy);
 
 /* Creates an image from various file types. These functions
 	return a palette or truecolor image based on the
 	nature of the file being loaded. Truecolor PNG
 	stays truecolor; palette PNG stays palette-based;
 	JPEG is always truecolor. */
-  gdImagePtr gdImageCreateFromPng (FILE * fd);
-  gdImagePtr gdImageCreateFromPngCtx (gdIOCtxPtr in);
-  gdImagePtr gdImageCreateFromWBMP (FILE * inFile);
-  gdImagePtr gdImageCreateFromWBMPCtx (gdIOCtx * infile);
-  gdImagePtr gdImageCreateFromJpeg (FILE * infile);
-  gdImagePtr gdImageCreateFromJpegCtx (gdIOCtx * infile);
+   BGD_EXPORT gdImagePtr gdImageCreateFromPng (FILE * fd);
+   BGD_EXPORT gdImagePtr gdImageCreateFromPngCtx (gdIOCtxPtr in);
+   BGD_EXPORT gdImagePtr gdImageCreateFromWBMP (FILE * inFile);
+   BGD_EXPORT gdImagePtr gdImageCreateFromWBMPCtx (gdIOCtx * infile);
+   BGD_EXPORT gdImagePtr gdImageCreateFromJpeg (FILE * infile);
+   BGD_EXPORT gdImagePtr gdImageCreateFromJpegCtx (gdIOCtx * infile);
 
 /* A custom data source. */
 /* The source function must return -1 on error, otherwise the number
@@ -238,23 +252,23 @@ extern "C"
   }
   gdSource, *gdSourcePtr;
 
-  gdImagePtr gdImageCreateFromPngSource (gdSourcePtr in);
+   BGD_EXPORT gdImagePtr gdImageCreateFromPngSource (gdSourcePtr in);
 
-  gdImagePtr gdImageCreateFromGd (FILE * in);
-  gdImagePtr gdImageCreateFromGdCtx (gdIOCtxPtr in);
+   BGD_EXPORT gdImagePtr gdImageCreateFromGd (FILE * in);
+   BGD_EXPORT gdImagePtr gdImageCreateFromGdCtx (gdIOCtxPtr in);
 
-  gdImagePtr gdImageCreateFromGd2 (FILE * in);
-  gdImagePtr gdImageCreateFromGd2Ctx (gdIOCtxPtr in);
+   BGD_EXPORT gdImagePtr gdImageCreateFromGd2 (FILE * in);
+   BGD_EXPORT gdImagePtr gdImageCreateFromGd2Ctx (gdIOCtxPtr in);
 
-  gdImagePtr gdImageCreateFromGd2Part (FILE * in, int srcx, int srcy, int w,
+   BGD_EXPORT gdImagePtr gdImageCreateFromGd2Part (FILE * in, int srcx, int srcy, int w,
 				       int h);
-  gdImagePtr gdImageCreateFromGd2PartCtx (gdIOCtxPtr in, int srcx, int srcy,
+   BGD_EXPORT gdImagePtr gdImageCreateFromGd2PartCtx (gdIOCtxPtr in, int srcx, int srcy,
 					  int w, int h);
   /* 2.0.10: prototype was missing */
-  gdImagePtr gdImageCreateFromXpm (char *filename);
-  gdImagePtr gdImageCreateFromXbm (FILE * in);
+   BGD_EXPORT gdImagePtr gdImageCreateFromXpm (char *filename);
+   BGD_EXPORT gdImagePtr gdImageCreateFromXbm (FILE * in);
 
-  void gdImageDestroy (gdImagePtr im);
+   BGD_EXPORT void gdImageDestroy (gdImagePtr im);
 
 /* Replaces or blends with the background depending on the
 	most recent call to gdImageAlphaBlending and the
@@ -263,39 +277,39 @@ extern "C"
 	here. All other gd drawing functions pass through this call, 
 	allowing for many useful effects. */
 
-  void gdImageSetPixel (gdImagePtr im, int x, int y, int color);
+   BGD_EXPORT void gdImageSetPixel (gdImagePtr im, int x, int y, int color);
 
-  int gdImageGetPixel (gdImagePtr im, int x, int y);
+   BGD_EXPORT int gdImageGetPixel (gdImagePtr im, int x, int y);
 
-  void gdImageAABlend (gdImagePtr im);
+   BGD_EXPORT void gdImageAABlend (gdImagePtr im);
 
-  void gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color);
+   BGD_EXPORT void gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color);
 
 /* For backwards compatibility only. Use gdImageSetStyle()
 	for much more flexible line drawing. */
-  void gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2,
+   BGD_EXPORT void gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2,
 			  int color);
 /* Corners specified (not width and height). Upper left first, lower right
  	second. */
-  void gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
+   BGD_EXPORT void gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
 			 int color);
 /* Solid bar. Upper left corner first, lower right corner second. */
-  void gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
+   BGD_EXPORT void gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
 			       int color);
-  void gdImageSetClip(gdImagePtr im, int x1, int y1, int x2, int y2);
-  void gdImageGetClip(gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P);
-  int gdImageBoundsSafe (gdImagePtr im, int x, int y);
-  void gdImageChar (gdImagePtr im, gdFontPtr f, int x, int y, int c,
+   BGD_EXPORT void gdImageSetClip(gdImagePtr im, int x1, int y1, int x2, int y2);
+   BGD_EXPORT void gdImageGetClip(gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P);
+   BGD_EXPORT int gdImageBoundsSafe (gdImagePtr im, int x, int y);
+   BGD_EXPORT void gdImageChar (gdImagePtr im, gdFontPtr f, int x, int y, int c,
 		    int color);
-  void gdImageCharUp (gdImagePtr im, gdFontPtr f, int x, int y, int c,
+   BGD_EXPORT void gdImageCharUp (gdImagePtr im, gdFontPtr f, int x, int y, int c,
 		      int color);
-  void gdImageString (gdImagePtr im, gdFontPtr f, int x, int y,
+   BGD_EXPORT void gdImageString (gdImagePtr im, gdFontPtr f, int x, int y,
 		      unsigned char *s, int color);
-  void gdImageStringUp (gdImagePtr im, gdFontPtr f, int x, int y,
+   BGD_EXPORT void gdImageStringUp (gdImagePtr im, gdFontPtr f, int x, int y,
 			unsigned char *s, int color);
-  void gdImageString16 (gdImagePtr im, gdFontPtr f, int x, int y,
+   BGD_EXPORT void gdImageString16 (gdImagePtr im, gdFontPtr f, int x, int y,
 			unsigned short *s, int color);
-  void gdImageStringUp16 (gdImagePtr im, gdFontPtr f, int x, int y,
+   BGD_EXPORT void gdImageStringUp16 (gdImagePtr im, gdFontPtr f, int x, int y,
 			  unsigned short *s, int color);
 
 /* 2.0.16: for thread-safe use of gdImageStringFT and friends,
@@ -303,19 +317,19 @@ extern "C"
   Otherwise it is invoked by the first thread to invoke
   gdImageStringFT, with a very small but real risk of a race condition. 
   Return 0 on success, nonzero on failure to initialize freetype. */
-int gdFontCacheSetup (void);
+ BGD_EXPORT int gdFontCacheSetup (void);
 
 /* Optional: clean up after application is done using fonts in 
-  gdImageStringFT(). */
-void gdFontCacheShutdown (void);
+ BGD_EXPORT   gdImageStringFT(). */
+ BGD_EXPORT void gdFontCacheShutdown (void);
 
 /* Calls gdImageStringFT. Provided for backwards compatibility only. */
-  char *gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
+  BGD_EXPORT char *gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
 			  double ptsize, double angle, int x, int y,
 			  char *string);
 
 /* FreeType 2 text output */
-  char *gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
+  BGD_EXPORT char *gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
 			 double ptsize, double angle, int x, int y,
 			 char *string);
 
@@ -342,7 +356,7 @@ void gdFontCacheShutdown (void);
 #define gdFTEX_Shift_JIS 1
 #define gdFTEX_Big5 2
 
-  char *gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
+  BGD_EXPORT char *gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
 			   double ptsize, double angle, int x, int y,
 			   char *string, gdFTStringExtraPtr strex);
 
@@ -353,31 +367,31 @@ void gdFontCacheShutdown (void);
   }
   gdPoint, *gdPointPtr;
 
-  void gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c);
-  void gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c);
+   BGD_EXPORT void gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c);
+   BGD_EXPORT void gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c);
 
 /* These functions still work with truecolor images, 
 	for which they never return error. */
-  int gdImageColorAllocate (gdImagePtr im, int r, int g, int b);
+   BGD_EXPORT int gdImageColorAllocate (gdImagePtr im, int r, int g, int b);
 /* gd 2.0: palette entries with non-opaque transparency are permitted. */
-  int gdImageColorAllocateAlpha (gdImagePtr im, int r, int g, int b, int a);
+   BGD_EXPORT int gdImageColorAllocateAlpha (gdImagePtr im, int r, int g, int b, int a);
 /* Assumes opaque is the preferred alpha channel value */
-  int gdImageColorClosest (gdImagePtr im, int r, int g, int b);
+   BGD_EXPORT int gdImageColorClosest (gdImagePtr im, int r, int g, int b);
 /* Closest match taking all four parameters into account.
 	A slightly different color with the same transparency
 	beats the exact same color with radically different
 	transparency */
-  int gdImageColorClosestAlpha (gdImagePtr im, int r, int g, int b, int a);
+   BGD_EXPORT int gdImageColorClosestAlpha (gdImagePtr im, int r, int g, int b, int a);
 /* An alternate method */
-  int gdImageColorClosestHWB (gdImagePtr im, int r, int g, int b);
+   BGD_EXPORT int gdImageColorClosestHWB (gdImagePtr im, int r, int g, int b);
 /* Returns exact, 100% opaque matches only */
-  int gdImageColorExact (gdImagePtr im, int r, int g, int b);
+   BGD_EXPORT int gdImageColorExact (gdImagePtr im, int r, int g, int b);
 /* Returns an exact match only, including alpha */
-  int gdImageColorExactAlpha (gdImagePtr im, int r, int g, int b, int a);
+   BGD_EXPORT int gdImageColorExactAlpha (gdImagePtr im, int r, int g, int b, int a);
 /* Opaque only */
-  int gdImageColorResolve (gdImagePtr im, int r, int g, int b);
+   BGD_EXPORT int gdImageColorResolve (gdImagePtr im, int r, int g, int b);
 /* Based on gdImageColorExactAlpha and gdImageColorClosestAlpha */
-  int gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, int a);
+   BGD_EXPORT int gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, int a);
 
 /* A simpler way to obtain an opaque truecolor value for drawing on a
 	truecolor image. Not for use with palette images! */
@@ -395,7 +409,7 @@ void gdFontCacheShutdown (void);
 	((g) << 8) + \
 	(b))
 
-  void gdImageColorDeallocate (gdImagePtr im, int color);
+   BGD_EXPORT void gdImageColorDeallocate (gdImagePtr im, int color);
 
 /* Converts a truecolor image to a palette-based image,
 	using a high-quality two-pass quantization routine
@@ -413,7 +427,7 @@ void gdFontCacheShutdown (void);
         conversion to palette is not great (for small images
         it can be negative) and the quality loss is ugly. */
 
-  void gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
+   BGD_EXPORT void gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
 				  int colorsWanted);
 
 /* Specifies a color index (if a palette image) or an
@@ -425,35 +439,35 @@ void gdFontCacheShutdown (void);
 	a truecolor image. Note that gdImageColorTransparent
 	is usually compatible with older browsers that
 	do not understand full alpha channels well. TBB */
-  void gdImageColorTransparent (gdImagePtr im, int color);
+   BGD_EXPORT void gdImageColorTransparent (gdImagePtr im, int color);
 
-  void gdImagePaletteCopy (gdImagePtr dst, gdImagePtr src);
-  void gdImagePng (gdImagePtr im, FILE * out);
-  void gdImagePngCtx (gdImagePtr im, gdIOCtx * out);
+   BGD_EXPORT void gdImagePaletteCopy (gdImagePtr dst, gdImagePtr src);
+   BGD_EXPORT void gdImagePng (gdImagePtr im, FILE * out);
+   BGD_EXPORT void gdImagePngCtx (gdImagePtr im, gdIOCtx * out);
   /* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
      1 is FASTEST but produces larger files, 9 provides the best
      compression (smallest files) but takes a long time to compress, and
      -1 selects the default compiled into the zlib library. */
-  void gdImagePngEx (gdImagePtr im, FILE * out, int level);
-  void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * out, int level);
+   BGD_EXPORT void gdImagePngEx (gdImagePtr im, FILE * out, int level);
+   BGD_EXPORT void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * out, int level);
 
-  void gdImageWBMP (gdImagePtr image, int fg, FILE * out);
-  void gdImageWBMPCtx (gdImagePtr image, int fg, gdIOCtx * out);
+   BGD_EXPORT void gdImageWBMP (gdImagePtr image, int fg, FILE * out);
+   BGD_EXPORT void gdImageWBMPCtx (gdImagePtr image, int fg, gdIOCtx * out);
 
 /* Guaranteed to correctly free memory returned
 	by the gdImage*Ptr functions */
-  void gdFree (void *m);
+   BGD_EXPORT void gdFree (void *m);
 
 /* Best to free this memory with gdFree(), not free() */
   void *gdImageWBMPPtr (gdImagePtr im, int *size, int fg);
 
 /* 100 is highest quality (there is always a little loss with JPEG).
 	0 is lowest. 10 is about the lowest useful setting. */
-  void gdImageJpeg (gdImagePtr im, FILE * out, int quality);
-  void gdImageJpegCtx (gdImagePtr im, gdIOCtx * out, int quality);
+   BGD_EXPORT void gdImageJpeg (gdImagePtr im, FILE * out, int quality);
+   BGD_EXPORT void gdImageJpegCtx (gdImagePtr im, gdIOCtx * out, int quality);
 
 /* Best to free this memory with gdFree(), not free() */
-  void *gdImageJpegPtr (gdImagePtr im, int *size, int quality);
+  BGD_EXPORT void *gdImageJpegPtr (gdImagePtr im, int *size, int quality);
 
 /* A custom data sink. For backwards compatibility. Use
 	gdIOCtx instead. */
@@ -467,22 +481,22 @@ void gdFontCacheShutdown (void);
   }
   gdSink, *gdSinkPtr;
 
-  void gdImagePngToSink (gdImagePtr im, gdSinkPtr out);
+   BGD_EXPORT void gdImagePngToSink (gdImagePtr im, gdSinkPtr out);
 
-  void gdImageGd (gdImagePtr im, FILE * out);
-  void gdImageGd2 (gdImagePtr im, FILE * out, int cs, int fmt);
-
-/* Best to free this memory with gdFree(), not free() */
-  void *gdImagePngPtr (gdImagePtr im, int *size);
-  void *gdImagePngPtrEx (gdImagePtr im, int *size, int level);
+   BGD_EXPORT void gdImageGd (gdImagePtr im, FILE * out);
+   BGD_EXPORT void gdImageGd2 (gdImagePtr im, FILE * out, int cs, int fmt);
 
 /* Best to free this memory with gdFree(), not free() */
-  void *gdImageGdPtr (gdImagePtr im, int *size);
+  BGD_EXPORT void *gdImagePngPtr (gdImagePtr im, int *size);
+  BGD_EXPORT void *gdImagePngPtrEx (gdImagePtr im, int *size, int level);
 
 /* Best to free this memory with gdFree(), not free() */
-  void *gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size);
+  BGD_EXPORT void *gdImageGdPtr (gdImagePtr im, int *size);
 
-  void gdImageEllipse (gdImagePtr im, int cx, int cy, int w, int h,
+/* Best to free this memory with gdFree(), not free() */
+  BGD_EXPORT void *gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size);
+
+   BGD_EXPORT void gdImageEllipse (gdImagePtr im, int cx, int cy, int w, int h,
 		       int color);
 
 /* Style is a bitwise OR ( | operator ) of these.
@@ -502,27 +516,27 @@ void gdFontCacheShutdown (void);
 #define gdNoFill 2
 #define gdEdged 4
 
-  void gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s,
+   BGD_EXPORT void gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s,
 			 int e, int color, int style);
-  void gdImageArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
+   BGD_EXPORT void gdImageArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
 		   int color);
-  void gdImageFilledEllipse (gdImagePtr im, int cx, int cy, int w, int h,
+   BGD_EXPORT void gdImageFilledEllipse (gdImagePtr im, int cx, int cy, int w, int h,
 			     int color);
-  void gdImageFillToBorder (gdImagePtr im, int x, int y, int border,
+   BGD_EXPORT void gdImageFillToBorder (gdImagePtr im, int x, int y, int border,
 			    int color);
-  void gdImageFill (gdImagePtr im, int x, int y, int color);
-  void gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
+   BGD_EXPORT void gdImageFill (gdImagePtr im, int x, int y, int color);
+   BGD_EXPORT void gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 		    int srcX, int srcY, int w, int h);
-  void gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
+   BGD_EXPORT void gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 			 int srcX, int srcY, int w, int h, int pct);
-  void gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX,
+   BGD_EXPORT void gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX,
 			     int dstY, int srcX, int srcY, int w, int h,
 			     int pct);
 
 /* Stretches or shrinks to fit, as needed. Does NOT attempt
 	to average the entire set of source pixels that scale down onto the
 	destination pixel. */
-  void gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
+   BGD_EXPORT void gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 			   int srcX, int srcY, int dstW, int dstH, int srcW,
 			   int srcH);
 
@@ -535,7 +549,7 @@ void gdFontCacheShutdown (void);
 	on modern hardware, except for some embedded devices. If the 
 	destination is a palette image, gdImageCopyResized is 
 	substituted automatically. */
-  void gdImageCopyResampled (gdImagePtr dst, gdImagePtr src, int dstX,
+   BGD_EXPORT void gdImageCopyResampled (gdImagePtr dst, gdImagePtr src, int dstX,
 			     int dstY, int srcX, int srcY, int dstW, int dstH,
 			     int srcW, int srcH);
 
@@ -546,24 +560,24 @@ void gdFontCacheShutdown (void);
         gdImageArc. Floating point destination center
         coordinates allow accurate rotation of
         objects of odd-numbered width or height. */
-  void gdImageCopyRotated (gdImagePtr dst,
+   BGD_EXPORT void gdImageCopyRotated (gdImagePtr dst,
 			   gdImagePtr src,
 			   double dstX, double dstY,
 			   int srcX, int srcY,
 			   int srcWidth, int srcHeight, int angle);
 
-  void gdImageSetBrush (gdImagePtr im, gdImagePtr brush);
-  void gdImageSetTile (gdImagePtr im, gdImagePtr tile);
-  void gdImageSetAntiAliased (gdImagePtr im, int c);
-  void gdImageSetAntiAliasedDontBlend (gdImagePtr im, int c, int dont_blend);
-  void gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels);
+   BGD_EXPORT void gdImageSetBrush (gdImagePtr im, gdImagePtr brush);
+   BGD_EXPORT void gdImageSetTile (gdImagePtr im, gdImagePtr tile);
+   BGD_EXPORT void gdImageSetAntiAliased (gdImagePtr im, int c);
+   BGD_EXPORT void gdImageSetAntiAliasedDontBlend (gdImagePtr im, int c, int dont_blend);
+   BGD_EXPORT void gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels);
 /* Line thickness (defaults to 1). Affects lines, ellipses, 
 	rectangles, polygons and so forth. */
-  void gdImageSetThickness (gdImagePtr im, int thickness);
+   BGD_EXPORT void gdImageSetThickness (gdImagePtr im, int thickness);
 /* On or off (1 or 0) for all three of these. */
-  void gdImageInterlace (gdImagePtr im, int interlaceArg);
-  void gdImageAlphaBlending (gdImagePtr im, int alphaBlendingArg);
-  void gdImageSaveAlpha (gdImagePtr im, int saveAlphaArg);
+   BGD_EXPORT void gdImageInterlace (gdImagePtr im, int interlaceArg);
+   BGD_EXPORT void gdImageAlphaBlending (gdImagePtr im, int alphaBlendingArg);
+   BGD_EXPORT void gdImageSaveAlpha (gdImagePtr im, int saveAlphaArg);
 
 /* Macros to access information about images. */
 
@@ -596,10 +610,10 @@ void gdFontCacheShutdown (void);
 
 /* I/O Support routines. */
 
-  gdIOCtx *gdNewFileCtx (FILE *);
-  gdIOCtx *gdNewDynamicCtx (int, void *);
-  gdIOCtx *gdNewSSCtx (gdSourcePtr in, gdSinkPtr out);
-  void *gdDPExtractData (struct gdIOCtx *ctx, int *size);
+  BGD_EXPORT gdIOCtx *gdNewFileCtx (FILE *);
+  BGD_EXPORT gdIOCtx *gdNewDynamicCtx (int, void *);
+  BGD_EXPORT gdIOCtx *gdNewSSCtx (gdSourcePtr in, gdSinkPtr out);
+  BGD_EXPORT void *gdDPExtractData (struct gdIOCtx *ctx, int *size);
 
 #define GD2_CHUNKSIZE           128
 #define GD2_CHUNKSIZE_MIN	64
@@ -612,7 +626,7 @@ void gdFontCacheShutdown (void);
 #define GD2_FMT_COMPRESSED      2
 
 /* Image comparison definitions */
-  int gdImageCompare (gdImagePtr im1, gdImagePtr im2);
+   BGD_EXPORT int gdImageCompare (gdImagePtr im1, gdImagePtr im2);
 
 #define GD_CMP_IMAGE		1	/* Actual image IS different */
 #define GD_CMP_NUM_COLORS	2	/* Number of Colours in pallette differ */

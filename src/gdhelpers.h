@@ -6,7 +6,7 @@
 
 /* TBB: strtok_r is not universal; provide an implementation of it. */
 
-extern char *gd_strtok_r (char *s, char *sep, char **state);
+ BGD_EXPORT  char *gd_strtok_r (char *s, char *sep, char **state);
 
 /* These functions wrap memory management. gdFree is
 	in gd.h, where callers can utilize it to correctly
@@ -19,6 +19,8 @@ void *gdRealloc (void *ptr, size_t size);
 /* 2.0.16: portable mutex support for thread safety. */
 
 #ifdef WIN32
+/* 2.0.18: must include windows.h to get CRITICAL_SECTION. */
+#include <windows.h>
 #define gdMutexDeclare(x) CRITICAL_SECTION x
 #define gdMutexSetup(x) InitializeCriticalSection(&x)
 #define gdMutexShutdown(x) DeleteCriticalSection(&x)

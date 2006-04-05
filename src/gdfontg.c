@@ -4377,6 +4377,6 @@ gdFont gdFontGiantRep = {
   gdFontGiantData
 };
 
-gdFontPtr gdFontGiant = &gdFontGiantRep;
+BGD_EXPORT gdFontPtr gdFontGiant = &gdFontGiantRep;
 
 /* This file has not been truncated. */
