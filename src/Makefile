@@ -10,28 +10,18 @@ COMPILER=gcc
 #for your system. 
 AR=ar
 
-#If you don't have FreeType, libjpeg and/or Xpm installed, including the
-#header files, uncomment this (default). You really must install
-#libpng and zlib to get anywhere if you wish to create PNG images.
-#CFLAGS=-O -DHAVE_LIBPNG
+#Typical configuration: support for PNG images, JPEG images, and FreeType text.
+#Remove -DHAVE_LIBFREETYPE if you can live without FreeType text.
+#Add -DHAVE_XPM if you have X and xpm installed and you want that feature.
 
-#If you do have FreeType 2.x, libjpeg and/or Xpm fully installed, uncomment a
-#variation of this and comment out the line above. See also LIBS below.
-CFLAGS=-g -DHAVE_LIBXPM -DHAVE_LIBPNG -DHAVE_LIBJPEG \
-	-DHAVE_LIBFREETYPE
-
-#If you don't have FreeType Xpm fully installed, uncomment this
-#(default).
+CFLAGS=-g -DHAVE_LIBPNG -DHAVE_LIBJPEG -DHAVE_LIBFREETYPE
 
 #PLEASE NOTE: YOU MAY HAVE TO JUGGLE THE ORDER OF THE LIBRARIES.
 #Some systems are very picky about link order. They don't all agree
 #on the right order, either. 
-
-#LIBS=-lgd -lpng -lz -lm
-
-#If you do have FreeType, JPEG and/or Xpm fully installed, uncomment a 
-#variation of this and comment out the line above. Note that
-#Xpm requires X11. See also CFLAGS above.
+#
+#Best for most users. If you don't have FreeType, remove -lfreetype.
+#Add -lxpm if you need XPM support.
 
 LIBS=-lgd -lpng -lz -ljpeg -lfreetype -lm
 
@@ -78,7 +68,7 @@ LINK=$(CC) $(LIBDIRS) $(LIBS)
 PROGRAMS=$(BIN_PROGRAMS) $(TEST_PROGRAMS)
 
 BIN_PROGRAMS=pngtogd pngtogd2 gdtopng gd2topng gd2copypal gdparttopng webpng
-TEST_PROGRAMS=gdtest gddemo gd2time gdtestft gdtestttf testac
+TEST_PROGRAMS=gdtest gddemo gd2time gdtestft testac
 
 default: instructions
 
@@ -150,14 +140,12 @@ gd2time: gd2time.o
 
 gdtestft: gdtestft.o
 	$(CC) --verbose gdtestft.o -o gdtestft $(LIBDIRS) $(LIBS)
-gdtestttf: gdtestttf.o
-	$(CC) --verbose gdtestttf.o -o gdtestttf $(LIBDIRS) $(LIBS)
 
 LIBOBJS=gd.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o \
 		gd_io_file.o gd_ss.o gd_io_ss.o gd_png.o gd_jpeg.o gdxpm.o \
 		gdfontt.o gdfonts.o gdfontmb.o gdfontl.o gdfontg.o \
 		gdtables.o gdft.o gdcache.o gdkanji.o wbmp.o \
-		gd_wbmp.o gdhelpers.o gd_topal.o gd_arc_f.o
+		gd_wbmp.o gdhelpers.o gd_topal.o 
 
 #Shared library. This should work fine on any ELF platform (Linux, etc.) with
 #GNU ld or something similarly intelligent. To avoid the chicken-and-egg
@@ -179,7 +167,7 @@ libgd.so.${VERSION}: ${LIBOBJS}
 #Static library, if you really need one for some reason.
 libgd.a: ${LIBOBJS}
 	rm -f libgd.a
-	$(AR) rc ${LIBOBJS}
+	$(AR) rc libgd.a ${LIBOBJS}
 	-ranlib libgd.a
 
 clean:

@@ -1,24 +1,24 @@
 <HTML>
 <HEAD>
-<TITLE>gd 2.0.0</TITLE>
+<TITLE>gd 2.0.1</TITLE>
 </HEAD>
 <BODY>
 <!-- BANNER HERE -->
-<h1>This is gd 2.0.0 BETA.</h1>
+<h1>This is gd 2.0.1 BETA.</h1>
 <strong>If you have problems, report them
 in detail, and consider using gd 1.8.4 until gd 2.0 final is out.</strong>
 <p>
 The gd 2.0 documentation update is not complete, but most new features
 are documented to some degree and the what's new section is reasonably
 complete. Enjoy!
-<H2>gd 2.0.0</H2>
+<H2>gd 2.0.1</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
 of this document</A>.</H3>
 <blockquote>
 <strong>HEY! READ THIS!</strong>
-gd 2.0.0 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.1 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works well with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -31,7 +31,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-gd 2.0.0 <strong>requires</strong> that the following libraries 
+gd 2.0.1 <strong>requires</strong> that the following libraries 
 also be installed:
 <p>
 libpng (see the <a href="http://www.libpng.org/pub/png/">libpng home page</a>)
@@ -61,7 +61,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.1">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -127,7 +127,7 @@ including but not limited to implied warranties of merchantability and
 fitness for a particular purpose, with respect to this code and accompanying
 documentation.
 <p>
-Although their code does not appear in gd 2.0.0, the authors wish to 
+Although their code does not appear in gd 2.0.1, the authors wish to 
 thank David Koblas, David Rowley, and Hutchison Avenue Software 
 Corporation for their prior contributions.
 </blockquote>
@@ -159,7 +159,7 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.0.
+with 2.0.1.
 <h4>Perl</h4>
 gd can also be used from Perl, courtesy of
 Lincoln Stein's
@@ -192,6 +192,42 @@ invoke the interpreter.
 <ul>
 <li><a href="http://s27w007.pswfs.gov/tgd/">tgd</a>, by Bradley K. Sherman
 <li><a href="http://www.unimelb.edu.au/fly/fly.html">fly</a>, by Martin Gleeson
+</ul>
+<P><A NAME="whatsnew2.0.1"><H3>What's new in version 2.0.1?</H3></A>
+<ul>
+<li>Workaround for a bug in gcc, apparently found in gcc 2.7.2 and up.
+I reproduced and fixed it while using gcc 2.9.5.2. The bug occurred only
+when the -g option was in use. This problem caused gcc to spew
+internal error messages unrelated to the correctness of the code
+in gd_gd2.c. Howard Jones was first to report it.
+<li><a href="#gdImageFilledEllipse">gdImageFilledEllipse</a> documented
+and altered; no longer requires a superfluous style argument. Thanks to
+Francis James Franklin.
+<li>The Makefile now offers the correct syntax for
+optionally creating a static library. Thanks to Jean-Lous Regez,
+among others.
+<li>A nested comment, an attempt to return the value of a void function,
+and a potentially significant error in gdImageCopyResampled were fixed
+thanks to Joseph Shirley.
+<li>A bug preventing proper truecolor text rendering was fixed,
+thanks to Jason Gallagher.
+<li><a href="#gdImageStringFT">gdImageStringFT</a> (FreeType) should 
+now work better against a transparent or semitransparent background,
+and should act in a manner consistent with the most recent
+<a href="#gdImageAlphaBlending">gdImageAlphaBlending</a> setting.
+Antialiasing is now done via the alpha channel mechanism if the
+image is a truecolor image. 
+<li>Bugs in the output of gdImageArc and gdImageFilledArc were reported
+by Bruce Verderaime. A simple and correct but inefficient implementation
+has been substituted until fixes are contributed for the faster code,
+which is in gd_arc_f_buggy.c along with the test program that reproduces
+the bug(s).
+<li><a href="#gdImageFilledArc">gdImageFilledArc</a> now offers additional
+style options, which can be combined to produce various effects.  
+<li>Masahito Yamaga (ma@yama-ga.com) sent a patch to improve
+support for Japanese output via <a href="#gdImageStringFT">gdImageStringFT</a>. 
+He also added a new <code>readme.jpn</code> file.
+<li>Zillions of documentation fixes.
 </ul>
 <P><A NAME="whatsnew2.0"><H3>What's new in version 2.0?</H3></A>
 <ul>
@@ -576,13 +612,13 @@ newsgroups relevant to your particular system.
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>By HTTP</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.0.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.0.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.1.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.1.zip">.ZIP File (Windows)</a>
 </ul>
 <h4>By FTP</h4>
 <ul>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-2.0.0.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-2.0.0.zip">.ZIP File (Windows)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-2.0.1.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd-2.0.1.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -593,10 +629,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.0".
+Unpacking the archive will produce a directory called "gd-2.0.1".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.0 directory. Edit the Makefile with
+<code>cd</code> to the 2.0.1 directory. Edit the Makefile with
 your preferred text editor and make any necessary changes to the
 settings at the top, especially if you want Xpm or TrueType support.
 Next, type "make install". Because gd 2.0 and above installs
@@ -939,16 +975,18 @@ im = gdImageCreate(64, 64);
 <strong>(FUNCTION)</strong>
 <DD>
 gdImageCreateTrueColor is called to create truecolor images, with 
-an essentially unlimited number of colors. Invoke gdImageCreate
-with the x and y dimensions of the desired image. gdImageCreate
+an essentially unlimited number of colors. Invoke gdImageCreateTrueColor
+with the x and y dimensions of the desired image. gdImageCreateTrueColor
 returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or
 NULL if unable to
 allocate the image. The image must eventually be destroyed
 using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
+<p>
+Truecolor images are always filled with black at creation time.
 <PRE>
 ... inside a function ...
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
-im = gdImageCreate(64, 64);
+im = gdImageCreateTrueColor(64, 64);
 /* ... Use the image ... */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
@@ -1714,17 +1752,33 @@ gdImageArc(im, 50, 25, 98, 48, 0, 360, white);
 <DT><A NAME="gdImageFilledArc">void gdImageFilledArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color, int style)</A>
 <STRONG> (FUNCTION)</STRONG>
 <DD>
-gdImageArc is used to draw a partial ellipse centered at the given point,
+gdImageFilledArc is used to draw a partial ellipse centered at the given point,
 with the specified width and height in pixels. The arc begins at
 the position in degrees specified by <code>s</code> and ends at
 the position specified by <code>e</code>. The arc is filled in
 the color specified by the second to last argument. A circle can be drawn
 by beginning from 0 degrees and ending at 360 degrees, with
 width and height being equal. e must be greater than s. Values greater
-than 360 are interpreted modulo 360. The last argument specifies
-whether the function should draw a triangular chord 
-(<code>gdImageChord</code>) or the more frequently desired pie slice
-(<code>gdImagePie</code>).
+than 360 are interpreted modulo 360. The last argument is a bitwise
+OR of the following possibilities:
+<ul>
+<li>gdArc
+<li>gdChord
+<li>gdPie (synonym for gdChord)
+<li>gdNoFill
+<li>gdEdged
+</ul>
+gdArc and gdChord are mutually exclusive;
+gdChord just connects the starting and ending
+angles with a straight line, while gdArc produces
+a rounded edge. gdPie is a synonym for gdArc.
+gdNoFill indicates that the arc or chord should be
+outlined, not filled. gdEdged, used together with
+gdNoFill, indicates that the beginning and ending
+angles should be connected to the center; this is
+a good way to outline (rather than fill) a
+'pie slice'.
+
 <PRE>
 ... inside a function ...
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
@@ -1736,11 +1790,37 @@ black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
 white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);	
 /* Inscribe a filled pie slice in the image. */
-gdImageFilledArc(im, 50, 25, 98, 48, 0, 45, white, gdPie);
+gdImageFilledArc(im, 50, 25, 98, 48, 0, 45, white, gdArc);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
-</PRE><DT><A NAME="gdImageFillToBorder">void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color)
+</PRE>
+<DT><A NAME="gdImageFilledEllipse">void gdImageFilledEllipse(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color)</A>
+<STRONG> (FUNCTION)</STRONG>
+<DD>
+gdImageFilledEllipse is used to draw an ellipse centered at the given point,
+with the specified width and height in pixels. The ellipse is filled in
+the color specified by the last argument. A circle can be drawn
+by beginning from 0 degrees and ending at 360 degrees, with
+width and height being equal. e must be greater than s. Values greater
+than 360 are interpreted modulo 360.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int black;
+int white;
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(100, 50);
+/* Background color (first allocated) */
+black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);	
+/* Allocate the color white (red, green and blue all maximum). */
+white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);	
+/* Inscribe a filled ellipse in the image. */
+gdImageFilledEllipse(im, 50, 25, 98, 48, white);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
+<DT><A NAME="gdImageFillToBorder">void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color)
 <STRONG> (FUNCTION)</STRONG>
 <DD>
 gdImageFillToBorder floods a portion of the image with the specified
@@ -2031,13 +2111,13 @@ Blending mode is not available when drawing on palette images.
 int red, blue;
 im = <A HREF="#gdImageCreate">gdImageCreateTrueColor</A>(100, 100);
 /* Background color */
-red = <A HREF="#gdTrueColor">gdTrueColor</A>(im, 255, 0, 0);	
+red = <A HREF="#gdTrueColor">gdTrueColor</A>(255, 0, 0);	
 gdImageFilledRectangle(im, 0, 0, 100, 100, red);
 /* Drawing color. Full transparency would be an alpha channel value
 	of 127 (gd has a 7 bit alpha chnanel). 0 is opaque,
 	127 is transparent. So cut gdAlphaTransparent in half to get
 	50% blending. */
-blue = <A HREF="#gdTrueColor">gdTrueColorAlpha</A>(im, 0, 0, 255, gdAlphaTransparent / 2);	
+blue = <A HREF="#gdTrueColor">gdTrueColorAlpha</A>(0, 0, 255, gdAlphaTransparent / 2);	
 /* Draw with blending. Result will be 50% red, 50% blue: yellow 
 	(emitted light, remember, not reflected light. What you learned 
 	in Kindergarten is wrong here). */
@@ -2484,9 +2564,11 @@ int gdImageColorAllocate(gdImagePtr im, int r, int g, int b)</A>
 gdImageColorAllocate finds the first available color index in
 the image specified, sets its RGB values to those requested
 (255 is the maximum for each),
-and returns the index of the new color table entry. When
-creating a new image, the first time you invoke this function,
-you are setting the background color for that image.
+and returns the index of the new color table entry, or an RGBA
+value in the case of a truecolor image; in either case you can
+then use the returned value as a parameter to drawing functions. When
+creating a new palette-based image, the first time you invoke this function,
+you are setting the background color for that image. 
 <P>
 In the event that all <A HREF="#gdMaxColors">gdMaxColors</A> colors
 (256) have already been allocated, gdImageColorAllocate will
@@ -2496,7 +2578,7 @@ Note that gdImageColorAllocate
 does not check for existing colors that match your request;
 see <A HREF="#gdImageColorExact">gdImageColorExact</A>,
 <A HREF="#gdImageColorClosest">gdImageColorClosest</A> and
-<A HREF="#gdImageColorClosest">gdImageColorClosestHWB</A>
+<A HREF="#gdImageColorClosestHWB">gdImageColorClosestHWB</A>
 for ways to locate existing colors that approximate the
 color desired in situations where a new color is not available.
 Also see <A HREF="#gdImageColorResolve">gdImageColorResolve</A>,
@@ -2517,6 +2599,47 @@ gdImageDashedLine(im, 0, 0, 99, 99, red);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImageColorAllocateAlpha">
+int gdImageColorAllocateAlpha(gdImagePtr im, int r, int g, int b, int a)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+gdImageColorAllocateAlpha finds the first available color index in
+the image specified, sets its RGBA values to those requested
+(255 is the maximum for red, green and blue, and 127 represents
+full transparency for alpha),
+and returns the index of the new color table entry, or an RGBA
+value in the case of a truecolor image; in either case you can
+then use the returned value as a parameter to drawing functions. When
+creating a new palette-based image, the first time you invoke this function,
+you are setting the background color for that image. 
+<P>
+In the event that all <A HREF="#gdMaxColors">gdMaxColors</A> colors
+(256) have already been allocated, gdImageColorAllocate will
+return -1 to indicate failure. (This is not uncommon when
+working with existing palette-based PNG files that already use 256 colors.)
+Note that gdImageColorAllocateAlpha
+does not check for existing colors that match your request;
+see <A HREF="#gdImageColorExactAlpha">gdImageColorExactAlpha</A> and
+<A HREF="#gdImageColorClosestAlpha">gdImageColorClosestAlpha</A>
+for ways to locate existing colors that approximate the
+color desired in situations where a new color is not available.
+Also see <A HREF="#gdImageColorResolveAlpha">gdImageColorResolveAlpha</A>.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int black;
+int red;
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(100, 100);
+/* Background color (first allocated) */
+black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);	
+/* Allocate the color red, 50% transparent. */
+red = <A HREF="#gdImageColorAllocateAlpha">gdImageColorAllocateAlpha</A>(im, 255, 0, 0, 64);	
+/* Draw a dashed line from the upper left corner to the lower right corner. */
+gdImageDashedLine(im, 0, 0, 99, 99, red);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
 <DT><A NAME="gdImageColorClosest">
 int gdImageColorClosest(gdImagePtr im, int r, int g, int b)</A>
 <STRONG>(FUNCTION)</STRONG>
@@ -2530,6 +2653,9 @@ space between colors.)
 <P>
 If no colors have yet been allocated in the image,
 gdImageColorClosest returns -1.
+<p>
+When applied to a truecolor image, this function always
+succeeds in returning the desired color.
 <P>
 This function is most useful as a backup method for choosing
 a drawing color when an image already contains
@@ -2561,6 +2687,53 @@ gdImageDashedLine(im, 0, 0, 99, 99, red);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImageColorClosestAlpha">
+int gdImageColorClosestAlpha(gdImagePtr im, int r, int g, int b, int a)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+gdImageColorClosest searches the colors which have been
+defined thus far in the image specified and returns the
+index of the color with RGBA values closest to those of the
+request. (Closeness is determined by Euclidian distance,
+which is used to determine the distance in four-dimensional color/alpha
+space between colors.)
+<P>
+If no colors have yet been allocated in the image,
+gdImageColorClosestAlpha returns -1.
+<p>
+When applied to a truecolor image, this function always
+succeeds in returning the desired color.
+<P>
+This function is most useful as a backup method for choosing
+a drawing color when a palette-based image already contains
+<A HREF="#gdMaxColors">gdMaxColors</A> (256) colors and
+no more can be allocated. (This is not uncommon when
+working with existing palette-based PNG files that already use many colors.)
+See <A HREF="#gdImageColorExactAlpha">gdImageColorExactAlpha</A>
+for a method of locating exact matches only.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+FILE *in;
+int red;
+/* Let's suppose that photo.png is a scanned photograph with
+	many colors. */
+in = fopen("photo.png", "rb");
+im = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
+fclose(in);
+/* Try to allocate red, 50% transparent, directly */
+red = <A HREF="#gdImageColorAllocateAlpha">gdImageColorAllocateAlpha</A>(im, 255, 0, 0, 64);	
+/* If we fail to allocate red... */
+if (red == (-1)) {
+	/* Find the <em>closest</em> color instead. */
+	red = gdImageColorClosestAlpha(im, 255, 0, 0, 64);
+}
+/* Draw a dashed line from the upper left corner to the lower right corner */
+gdImageDashedLine(im, 0, 0, 99, 99, red);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
 <DT><A NAME="gdImageColorClosestHWB">
 int gdImageColorClosestHWB(gdImagePtr im, int r, int g, int b)</A>
 <STRONG>(FUNCTION)</STRONG>
@@ -2574,6 +2747,9 @@ Euclidian distance scheme used by
 <P>
 If no colors have yet been allocated in the image,
 gdImageColorClosestHWB returns -1.
+<p>
+When applied to a truecolor image, this function always
+succeeds in returning the desired color.
 <P>
 This function is most useful as a backup method for choosing
 a drawing color when an image already contains
@@ -2604,7 +2780,8 @@ gdImageDashedLine(im, 0, 0, 99, 99, red);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
-</PRE><DT><A NAME="gdImageColorExact">
+</PRE>
+<DT><A NAME="gdImageColorExact">
 int gdImageColorExact(gdImagePtr im, int r, int g, int b)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
@@ -2615,6 +2792,9 @@ match those of the request. If no allocated color matches the
 request precisely, gdImageColorExact returns -1.
 See <A HREF="#gdImageColorClosest">gdImageColorClosest</A>
 for a way to find the color closest to the color requested.
+<p>
+When applied to a truecolor image, this function always
+succeeds in returning the desired color.
 <PRE>
 ... inside a function ...
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
@@ -2651,6 +2831,9 @@ request precisely, then gdImageColorResolve tries to allocate the
 exact color.  If there is no space left in the color table then
 gdImageColorResolve returns the closest color (as in gdImageColorClosest).
 This function always returns an index of a color.
+<p>
+When applied to a truecolor image, this function always
+succeeds in returning the desired color.
 <PRE>
 ... inside a function ...
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
@@ -2668,38 +2851,67 @@ gdImageDashedLine(im, 0, 0, 99, 99, red);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImageColorResolveAlpha">
+int gdImageColorResolveAlpha(gdImagePtr im, int r, int g, int b, int a)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+gdImageColorResolveAlpha searches the colors which have been
+defined thus far in the image specified and returns the
+index of the first color with RGBA values which exactly
+match those of the request. If no allocated color matches the
+request precisely, then gdImageColorResolveAlpha tries to allocate the
+exact color. If there is no space left in the color table then
+gdImageColorResolveAlpha returns the closest color (as in gdImageColorClosestAlpha).
+This function always returns an index of a color.
+<p>
+When applied to a truecolor image, this function always
+succeeds in returning the desired color.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int red;
+in = fopen("photo.png", "rb");
+im = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
+fclose(in);
+/* The image may already contain red; if it does, we'll save a slot
+	in the color table by using that color. */
+/* Get index of red, 50% transparent, or the next best thing */
+red = gdImageColorResolveAlpha(im, 255, 0, 0, 64);
+/* Draw a dashed line from the upper left corner to the lower right corner */
+gdImageDashedLine(im, 0, 0, 99, 99, red);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
 <DT><A NAME="gdImageColorsTotal">
 int gdImageColorsTotal(gdImagePtr im)</A>
 <STRONG>(MACRO)</STRONG>
 <DD>
 gdImageColorsTotal is a macro which returns the number of
-colors currently allocated in the image. Use this macro
-to obtain this information; do not access the structure
-directly.
+colors currently allocated in a palette image. For truecolor
+images, the result of this call is undefined and should not
+be used.
 <DT><A NAME="gdImageColorRed">
 int gdImageColorRed(gdImagePtr im, int c)</A>
 <STRONG>(MACRO)</STRONG>
 <DD>
 gdImageColorRed is a macro which returns the red portion
-of the specified color in the image. Use this macro
-to obtain this information; do not access the structure
-directly.
+of the specified color in the image. This macro works
+for both palette and truecolor images.
 <DT><A NAME="gdImageColorGreen">
 int gdImageColorGreen(gdImagePtr im, int c)</A>
 <STRONG>(MACRO)</STRONG>
 <DD>
 gdImageColorGreen is a macro which returns the green portion
-of the specified color in the image. Use this macro
-to obtain this information; do not access the structure
-directly.
+of the specified color in the image.  This macro works
+for both palette and truecolor images.
 <DT><A NAME="gdImageColorBlue">
 int gdImageColorBlue(gdImagePtr im, int c)</A>
 <STRONG>(MACRO)</STRONG>
 <DD>
 gdImageColorBlue is a macro which returns the green portion
-of the specified color in the image. Use this macro
-to obtain this information; do not access the structure
-directly.
+of the specified color in the image.  This macro works
+for both palette and truecolor images.
 <DT><A NAME="gdImageGetInterlaced">
 int gdImageGetInterlaced(gdImagePtr im)</A>
 <STRONG>(MACRO)</STRONG>
@@ -2799,7 +3011,28 @@ fclose(out);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
-</DL>
+<DT><A NAME="gdImageTrueColor">
+void gdImageTrueColor(int red, int green, int blue)</A>
+<STRONG>(MACRO)</STRONG>
+<DD>
+gdImageTrueColor returns an RGBA color value for use when
+drawing on a truecolor image. Red, green, and blue are all
+in the range between 0 (off) and 255 (maximum). This macro should 
+not be used with palette-based images. If you need to write
+code which is compatible with both palette-based and
+truecolor images, use <a href="#gdImageColorResolve">gdImageColorResolve</a>.
+<DT><A NAME="gdImageTrueColorAlpha">
+void gdImageTrueColorAlpha(int red, int green, int blue, int alpha)</A>
+<STRONG>(MACRO)</STRONG>
+<DD>
+gdImageTrueColorAlpha returns an RGBA color value for use when
+drawing on a truecolor image with alpha channel transparency. Red, 
+green, and blue are all
+in the range between 0 (off) and 255 (maximum). Alpha is in the
+range between 0 (opaque) and 127 (fully transparent). This macro should 
+not be used with palette-based images. If you need to write
+code which is compatible with both palette-based and
+truecolor images, use <a href="#gdImageColorResolveAlpha">gdImageColorResolveAlpha</a>.</DL>
 <H3><A NAME="copying">Copying and resizing functions</A></H3>
 <DL>
 
@@ -3299,10 +3532,14 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageChar">gdImageChar</A> |
 <A HREF="#gdImageCharUp">gdImageCharUp</A> |
 <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A> |
+<A HREF="#gdImageColorAllocateAlpha">gdImageColorAllocateAlpha</A> |
 <A HREF="#gdImageColorClosest">gdImageColorClosest</A> |
+<A HREF="#gdImageColorClosestAlpha">gdImageColorClosestAlpha</A> |
 <A HREF="#gdImageColorDeallocate">gdImageColorDeallocate</A> |
 <A HREF="#gdImageColorExact">gdImageColorExact</A> |
+<A HREF="#gdImageColorExactAlpha">gdImageColorExactAlpha</A> |
 <A HREF="#gdImageColorResolve">gdImageColorResolve</A> |
+<A HREF="#gdImageColorResolveAlpha">gdImageColorResolveAlpha</A> |
 <A HREF="#gdImageColorTransparent">gdImageColorTransparent</A> |
 <A HREF="#gdImageCopy">gdImageCopy</A> |
 <A HREF="#gdImageCopyMerge">gdImageCopyMerge</A> |
@@ -3323,7 +3560,8 @@ Be sure to read this manual carefully first.
 <A HREF="#gdImageDashedLine">gdImageDashedLine</A> |
 <A HREF="#gdImageDestroy">gdImageDestroy</A> |
 <A HREF="#gdImageFill">gdImageFill</A> |
-<A HREF="#gdImageArc">gdImageFilledArc</A> |
+<A HREF="#gdImageFilledArc">gdImageFilledArc</A> |
+<A HREF="#gdImageFilledEllipse">gdImageFilledEllipse</A> |
 <A HREF="#gdImageFillToBorder">gdImageFillToBorder</A> |
 <A HREF="#gdImageFilledRectangle">gdImageFilledRectangle</A> |
 <A HREF="#gdImageGd">gdImageGd</A> |
