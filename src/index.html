@@ -1,19 +1,19 @@
 <html>
 <head>
-<TITLE>gd 2.0.15</TITLE>
+<TITLE>gd 2.0.17</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<h1>This is gd 2.0.15.</h1>
+<h1>This is gd 2.0.17.</h1>
 <p>
-<H2>gd 2.0.15</H2>
+<H2>gd 2.0.17</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
 of this document</A>.</H3>
 <blockquote>
 <strong>UPGRADING USERS: READ THIS FIRST!</strong>
-gd 2.0.5 and above install by default to /usr/local/lib and
+Modern versions of gd install by default to /usr/local/lib and
 /usr/local/include. If you already have an older version of gd
 in /usr/lib and /usr/include, you may wish to use:
 <pre>
@@ -22,20 +22,20 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.15 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.17 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
 intended for wireless devices (not regular web browsers). Old
 code will need modification to call gdImagePng or gdImageJpeg instead
 of gdImageGif. <strong>Please do not ask us to send you the old GIF
-version of GD.</strong> Unisys holds a patent on the LZW compression
-algorithm, which is used in fully compressed GIF images. The best
+version of GD.</strong> Yes, Unisys still holds a patent on the LZW compression
+algorithm in some countries. The best
 solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-gd 2.0.15 <strong>requires</strong> that the following libraries 
+gd 2.0.17 <strong>requires</strong> that the following libraries 
 also be installed, in order to produce the related image formats.
 You may skip libraries associated with formats you do not use:
 <p>
@@ -66,7 +66,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.15">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.17">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -89,7 +89,7 @@ In order to resolve any possible confusion regarding the authorship
 of gd, the following copyright statement covers all of the authors
 who have required such a statement. <strong>If you are aware of any oversights
 in this copyright notice, please contact
-<a href="mailto:boutell@boutell.com">Thomas Boutell</a> who will be
+<a href="http://www.boutell.com/contact">Thomas Boutell</a> who will be
 pleased to correct them.</strong>
 <pre>
 COPYRIGHT STATEMENT FOLLOWS THIS LINE
@@ -165,10 +165,10 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.15.
+with 2.0.17.
 <h4>PHP</h4>
 A variant of gd 2.x is included in PHP 4.3.0. It is also possible
-to patch PHP 4.2.3 for use with gd 2.0.15; see the
+to patch PHP 4.2.3 for use with gd 2.0.17; see the
 <a href="http://www.boutell.com/gd/">gd home page</a> for a link to
 that information. It would be a Good Idea to merge all of the things
 that are better in mainstream gd and all of the things that are
@@ -179,6 +179,9 @@ Lincoln Stein's
 <a href="http://stein.cshl.org/WWW/software/GD/">
 GD.pm</a> library, which uses gd as the basis for a set of
 Perl 5.x classes. Highly recommended.
+<h4>OCaml</h4>
+gd can be used from OCaml, thanks to
+<a href="http://gd4o.sourceforge.net/">Matt Gushee's GD4O project</a>.
 <h4>Tcl</h4>
 gd can be used from Tcl with John Ellson's
 <a href=http://www.graphviz.org/pub/>Gdtclft</a>
@@ -198,6 +201,51 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<P>
+<A NAME="whatsnew2.0.17"><H3>What's new in version 2.0.17?</H3></A>
+<P>
+Minor compilation and packaging problems with 2.0.16 were corrected.
+If 2.0.16 compiled without errors for you, then you don't need
+to upgrade to 2.0.17.
+<P>
+<A NAME="whatsnew2.0.16"><H3>What's new in version 2.0.16?</H3></A>
+<P>
+<ul>
+<li>Thread safety for freetype text output. Background: all gd functions
+were already thread safe, as long as only one thread manipulates each
+image -- except for gdImageStringFT and gdImageStringFTEx. This is because
+of a shared freetype font cache. Sharing the cache between images
+is worthwhile, so "configure" now detects pthreads and uses it to
+wrap freetype text output in a critical section if available. There is
+also critical section support under WIN32. Those who wish to be
+strictly thread-safe should call the new function
+<a href="#gdFontCacheSetup">gdFontCacheSetup</a> before allowing any
+thread to use freetype text calls. Otherwise this function is automatically
+invoked on the first use of freetype, with a very small but real chance
+of a race condition.
+<li><a href="#gdImageSquareToCircle">gdImageSquareToCircle</a> performs
+a "polar coordinate transform," returning a new image in which the
+X axis of the original has been remapped to theta (angle) and the
+Y axis of the original has been remapped to rho (distance from center).
+<li><a href="#gdImageStringFTCircle">gdImageStringFTCircle</a> wraps
+text in a circle around a specified center point. This function 
+takes advantage of <a href="#gdImageSquareToCircle">gdImageSquareToCircle</a>.
+The result is very smooth, although it takes some time to compute.
+Thanks to Steve Bassi for sponsoring this work.
+<li><a href="#gdImageSharpen">gdImageSharpen</a>, contributed by
+Paul Troughton. Thank you.
+<li>Christophe Thomas corrected gdft.c to include freetype header
+files in the way that is now mandatory in freetype 2.1.6 and above.
+<li>Gustavo Scotti fixed a memory leak in gdft.c.
+<li>Clipping rectangle respected in freetype text output. Thanks to Matt
+McNabb.
+<li>Paul den Dulk found a degenerate case that crashes
+gdImageToPalette. Fixed.
+<li>Optimization by Ilia Chipitsine to avoid wasting time with
+offscreen scanlines during polygon rasterization.
+<li>Optimized PNG saving by Phong Tran. Speeds up saves a 
+little bit. 
 </ul>
 <P>
 <A NAME="whatsnew2.0.15"><H3>What's new in version 2.0.15?</H3></A>
@@ -911,8 +959,8 @@ saving of alpha channel information to the file instead.
 <P>
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.15.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.15.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.17.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.17.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -923,10 +971,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.15".
+Unpacking the archive will produce a directory called "gd-2.0.17".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.15 directory and type:
+<code>cd</code> to the 2.0.17 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -1104,7 +1152,8 @@ filling functions</A></LI>
 <LI><A HREF="#query">Query functions (not color-related)</A></LI>
 <LI><A HREF="#fonts">Font and text-handling functions</A></LI>
 <LI><A HREF="#colors">Color handling functions</A></LI>
-<LI><A HREF="#copying">Copying, resizing and rotating functions</A></LI>
+<LI><A HREF="#copying">Copying, resizing, rotating, deformation and filter
+functions</A></LI>
 <LI><A HREF="#misc">Miscellaneous Functions</A></LI>
 <LI><A HREF="#constants">Constants</A></LI>
 </UL>
@@ -1208,10 +1257,10 @@ argument.
 <DT><A NAME="gdIoCtx">gdIOCtx</a> <strong>(TYPE)</strong>
 <DD>
 Most of the gd functions that read and write files, such as
-<a href="#gdImagePng">gdImagePng</a> and <a href="#gdImageCreateFromJpeg</a>,
+<a href="#gdImagePng">gdImagePng</a> and <a href="#gdImageCreateFromJpeg"></a>,
 also have variants that accept a gdIOCtx structure; see
 <a href="#gdImagePngCtx">gdImagePngCtx</a> and 
-<a href="#gdImageCreateFromJpegCtx</a>. Those who wish to provide
+<a href="#gdImageCreateFromJpegCtx">gdImageCreateFromJpegCtx</a>. Those who wish to provide
 their own custom routines to read and write images can populate a
 gdIOCtx structure with functions of their own devising to 
 to read and write data. For image reading, the only mandatory
@@ -1382,12 +1431,7 @@ im = gdImageCreateTrueColor(64, 64);
 <DT><A NAME="gdImageCreateFromJpeg">gdImageCreateFromJpeg(FILE *in)</A>
 <strong>(FUNCTION)</strong>
 <br>
-<A NAME="gdImageCreateFromJpegCtx">gdImageCreateFromJpegCtx(FILE *in)</A>
-<strong>(FUNCTION)</strong>
-<p><DT><A NAME="gdImageCreateFromJpeg">gdImageCreateFromJpeg(FILE *in)</A>
-<strong>(FUNCTION)</strong>
-<br>
-<A NAME="gdImageCreateFromJpegCtx">gdImageCreateFromJpegCtx(FILE *in)</A>
+<A NAME="gdImageCreateFromJpegCtx">gdImageCreateFromJpegCtx(gdIOCtx *in)</A>
 <strong>(FUNCTION)</strong>
 <p>
 <DD>
@@ -2242,15 +2286,12 @@ gdImageFilledArc(im, 50, 25, 98, 48, 0, 45, white, gdArc);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
-<DT><A NAME="gdImageFilledEllipse">void gdImageFilledEllipse(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color)</A>
+<DT><A NAME="gdImageFilledEllipse">void gdImageFilledEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color)</A>
 <STRONG> (FUNCTION)</STRONG>
 <DD>
 gdImageFilledEllipse is used to draw an ellipse centered at the given point,
 with the specified width and height in pixels. The ellipse is filled in
-the color specified by the last argument. A circle can be drawn
-by beginning from 0 degrees and ending at 360 degrees, with
-width and height being equal. e must be greater than s. Values greater
-than 360 are interpreted modulo 360.
+the color specified by the last argument. 
 <PRE>
 ... inside a function ...
 <A HREF="#gdImagePtr">gdImagePtr</A> im;
@@ -2965,8 +3006,8 @@ black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);
 white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);	
 /* Draw a centered string. */
 gdImageString(im, gdFontLarge,
-	im->w / 2 - (strlen(s) * gdFontLarge->w / 2),
-	im->h / 2 - gdFontLarge->h / 2,
+	im->sx / 2 - (strlen(s) * gdFontLarge->w / 2),
+	im->sy / 2 - gdFontLarge->h / 2,
 	s, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
@@ -3094,11 +3135,11 @@ The user-supplied int brect[8] array is filled on return from gdImageStringFT
 with the 8 elements representing the 4 corner coordinates of the
 bounding rectangle.
 <TABLE BORDER="1">
-<TR><TD ALIGN="LEFT" VALIGN="TOP" >0</TD><TD ALIGN="LEFT" VALIGN="TOP">
+<TR><TD ALIGN="LEFT" VALIGN="TOP">0</TD><TD ALIGN="LEFT" VALIGN="TOP">
 lower left corner, X position</TD></TR>
-<TR><TD ALIGN="LEFT" VALIGN="TOP >1</TD><TD ALIGN="LEFT" VALIGN="TOP">
+<TR><TD ALIGN="LEFT" VALIGN="TOP">1</TD><TD ALIGN="LEFT" VALIGN="TOP">
 lower left corner, Y position</TD></TR>
-<TR><TD ALIGN="LEFT" VALIGN="TOP >2</TD><TD ALIGN="LEFT" VALIGN="TOP">
+<TR><TD ALIGN="LEFT" VALIGN="TOP">2</TD><TD ALIGN="LEFT" VALIGN="TOP">
 lower right corner, X position</TD></TR>
 <TR><TD ALIGN="LEFT" VALIGN="TOP">3</TD><TD ALIGN="LEFT" VALIGN="TOP">
 lower right corner, Y position</TD></TR>
@@ -3223,6 +3264,97 @@ character mapping is not found in the font, other character mappings
 are attempted.
 <p>
 For more information, see <a href="#gdImageStringFT">gdImageStringFT</a>.
+<DT><A NAME="gdImageStringFTCircle">
+char *gdImageStringFTCircle(gdImagePtr im,
+        int cx,
+        int cy,
+        double radius,
+        double textRadius,
+        double fillPortion,
+        char *font,
+        double points,
+        char *top,
+        char *bottom,
+        int fgcolor)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+Draws the text strings specified by <code>top</code> and <code>bottom</code> 
+on <code>im</code>, curved along the edge of a circle of radius 
+<code>radius</code>, with its center at <code>cx</code> and <code>cy</code>. 
+<code>top</code> is written clockwise
+along the top; <code>bottom</code> is written counterclockwise
+along the bottom. <code>textRadius</code> determines the "height"
+of each character; if <code>textRadius</code> is 1/2 of 
+<code>radius</code>,
+characters extend halfway from the edge to the center.
+<code>fillPortion</code> varies from 0 to 1.0, with useful values
+from about 0.4 to 0.9, and determines how much of the
+180 degrees of arc assigned to each section of text
+is actually occupied by text; 0.9 looks better than
+1.0 which is rather crowded. <code>font</code> is a freetype
+font; see gdImageStringFT. <code>points</code> is passed to the
+freetype engine and has an effect on hinting; although
+the size of the text is determined by <code>radius</code>, 
+<code>textRadius</code>, and <code>fillPortion</code>, you should 
+pass a point size that
+"hints" appropriately -- if you know the text will be
+large, pass a large point size such as 24.0 to get the
+best results. <code>fgcolor</code> can be any color, and may have
+an alpha component, do blending, etc.
+<p>
+Returns 0 on success, or an error string otherwise.
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;gd.h&gt;
+
+int main (int argc, char *argv[])
+{
+        FILE *in;
+        FILE *out;
+        gdImagePtr im;
+        int radius;
+        /* Create an image of text on a circle, with an
+                alpha channel so that we can copy it onto a
+                background */
+        in = fopen("mypicture.jpg", "rb");
+        if (!in) {
+                im = gdImageCreateTrueColor(300, 300);
+        } else {
+                im = gdImageCreateFromJpeg(in);
+                fclose(in);
+        }
+        if (gdImageSX(im) &lt; gdImageSY(im)) {
+                radius = gdImageSX(im) / 2;
+        } else {
+                radius = gdImageSY(im) / 2;
+        }
+        gdStringFTCircle(
+                im,
+                gdImageSX(im) / 2,
+                gdImageSY(im) / 2,
+                radius,
+                radius / 2,
+                0.8,
+                "arial",
+                24,
+                "top text",
+                "bottom text",
+                gdTrueColorAlpha(240, 240, 255, 32));
+        out = fopen("gdfx.png", "wb");
+        if (!out) {
+                fprintf(stderr, "Can't create gdfx.png\n");
+                return 1;
+        }
+        gdImagePng(im, out);
+        fclose(out);
+        gdImageDestroy(im);
+        return 0;
+}
+</pre>
+
+<p>
+For more information, see <a href="#gdImageStringFTEx">gdImageStringFTEx</a>
+and <a href="#gdImageSquareToCircle">gdImageSquareToCircle</a>.
 <DT><A NAME="gdImageStringTTF">
 char *gdImageStringTTF(gdImagePtr im, int *brect,
 	int fg, char *fontname, double ptsize, double angle,
@@ -3232,6 +3364,25 @@ char *gdImageStringTTF(gdImagePtr im, int *brect,
 <strong>DEPRECATED.</strong> This function simply invokes
 <a href="#gdImageStringFT">gdImageStringFT</a> for backwards
 compatibility with old code that was written with FreeType 1.x.
+<DT><A NAME="gdFontCacheSetup">
+int gdFontCacheSetup(void)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+This function initializes the font cache for freetype text output
+functions such as <a href="#gdImageStringFTEx">gdImageStringFTEx</a>.
+If this function is not called by the programmer, it is invoked
+automatically on the first truetype text output call, which is
+perfectly safe <b>unless</b> the application is multithreaded.
+Multithreaded applications should directly invoke this function before
+allowing any thread to use freetype text output. Returns 0 on success,
+nonzero if the freetype library fails to initialize.
+<DT><A NAME="gdFontCacheShutdown">
+void gdFontCacheShutdown(void)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+This function releases the memory used by the freetype font cache
+and the text output mutex. Applications that use gd for their
+entire lifetime, then exit, need not call this function.
 </DL>
 <H3><A NAME="colors">Color-handling functions</A></H3>
 <DL>
@@ -3699,11 +3850,11 @@ in the range between 0 (off) and 255 (maximum). This macro should
 not be used with palette-based images. If you need to write
 code which is compatible with both palette-based and
 truecolor images, use <a href="#gdImageColorResolve">gdImageColorResolve</a>.
-<DT><A NAME="gdImageTrueColorAlpha">
-void gdImageTrueColorAlpha(int red, int green, int blue, int alpha)</A>
+<DT><A NAME="gdTrueColorAlpha">
+void gdTrueColorAlpha(int red, int green, int blue, int alpha)</A>
 <STRONG>(MACRO)</STRONG>
 <DD>
-gdImageTrueColorAlpha returns an RGBA color value for use when
+gdTrueColorAlpha returns an RGBA color value for use when
 drawing on a truecolor image with alpha channel transparency. Red, 
 green, and blue are all
 in the range between 0 (off) and 255 (maximum). Alpha is in the
@@ -3963,6 +4114,7 @@ for (a = 0; (a < 360); a += 45) {
                 gdImageSX(im_in),
                 gdImageSY(im_in),
                 a); 
+}
 out = fopen("large.png", "wb");
 <A HREF="#gdImagePng">gdImagePng</A>(im_out, out);
 fclose(out);
@@ -4005,6 +4157,23 @@ gdImageCopyMergeGray(im_out, im_in, 100, 200, 0, 0, 30, 50, 50);
 Copies a palette from one image to another, attempting to match the colors in the target image
 to the colors
 in the source palette.
+<DT><A NAME="gdImageSquareToCircle">void gdImageSquareToCircle(gdImagePtr im, int radius)</a>
+<STRONG> (FUNCTION)</STRONG>
+<DD>
+<b>im MUST be square, but can have any size.</b> Returns a new image
+of width and height radius * 2, in which the X axis of
+the original has been remapped to theta (angle) and the Y axis
+of the original has been remapped to rho (distance from center).
+This is known as a "polar coordinate transform."
+See also <a href="#gdImageStringFTCircle">gdImageStringFTCircle</a>, which
+uses this function internally.
+<DT><A NAME="gdImageSharpen">void gdImageSharpen(gdImagePtr im, int pct)</a>
+<STRONG> (FUNCTION)</STRONG>
+<DD>
+Sharpens the specified image. pct is a sharpening percentage, and
+can be greater than 100. Silently does nothing to non-truecolor images.
+Silently does nothing for pct<0. Transparency/alpha channel are not
+altered.    
 </DL>
 <H3><A NAME="misc">Miscellaneous Functions</A></H3>
 <DL>
@@ -4261,7 +4430,7 @@ as welcome.
 <h4>Free Support</h4>
 
 Anyone can mail questions about the gd library to
-<a href="mailto:boutell@boutell.com">boutell@boutell.com</a>. However, 
+<a href="http://www.boutell.com/contact">Thomas Boutell</a>. However, 
 I receive a very large volume of email on
 many subjects, and while I do my best to respond to all queries this can
 take some time. Sometimes the response must take the form of an eventual
@@ -4274,7 +4443,7 @@ from the author, Thomas Boutell, at the rate of $50/hr, billed
 directly by credit card. Purchase orders are also accepted from
 Fortune 500 corporations and institutions in good standing.
 To make arrangements, contact 
-<a href="mailto:support@boutell.com">support@boutell.com</a>. To avoid delay
+<a href="http://www.boutell.com/contact">Boutell.Com support</a>. To avoid delay
 and/or confusion, be sure to specifically mention that you wish to
 purchase gd support at the hourly rate above.
 
@@ -4283,6 +4452,8 @@ purchase gd support at the hourly rate above.
 <A HREF="#gdBrushed">gdBrushed</A> |
 <A HREF="#gdDashSize">gdDashSize</A> |
 <A HREF="#gdFont">gdFont</A> |
+<A HREF="#gdFontCacheSetup">gdFontCacheSetup</A> |
+<A HREF="#gdFontCacheShutdown">gdFontCacheShutdown</A> |
 <A HREF="#gdFontPtr">gdFontPtr</A> |
 <A HREF="#gdFree">gdFree</A> |
 <A HREF="#gdImage">gdImage</A> |
@@ -4364,9 +4535,12 @@ purchase gd support at the hourly rate above.
 <A HREF="#gdImageSetStyle">gdImageSetStyle</A> |
 <A HREF="#gdImageSetThickness">gdImageSetThickness</A> |
 <A HREF="#gdImageSetTile">gdImageSetTile</A> |
+<A HREF="#gdImageSharpen">gdImageSharpen</A> |
+<A HREF="#gdImageSquareToCircle">gdImageSquareToCircle</A> |
 <A HREF="#gdImageString">gdImageString</A> |
 <A HREF="#gdImageString16">gdImageString16</A> |
 <A HREF="#gdImageStringFT">gdImageStringFT</A> |
+<A HREF="#gdImageStringFTCircle">gdImageStringFTCircle</A> |
 <A HREF="#gdImageStringFTEx">gdImageStringFTEx</A> |
 <A HREF="#gdImageStringTTF">gdImageStringTTF</A> |
 <A HREF="#gdImageStringUp">gdImageStringUp</A> |

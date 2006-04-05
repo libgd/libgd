@@ -85,6 +85,9 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PTHREAD_CC = @PTHREAD_CC@
+PTHREAD_CFLAGS = @PTHREAD_CFLAGS@
+PTHREAD_LIBS = @PTHREAD_LIBS@
 RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -134,15 +137,15 @@ bin_PROGRAMS = annotate gdparttopng gdtopng gd2copypal gd2topng pngtogd pngtogd2
 
 bin_SCRIPTS = bdftogd
 
-noinst_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac
+noinst_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac circletexttest
 
 EXTRA_DIST = README-JPEG.TXT README.TXT configure.pl bdftogd demoin.png err.out index.html install-item makefile.sample readme.jpn
 
-include_HEADERS = gd.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h
+include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h
 
 lib_LTLIBRARIES = libgd.la
 
-libgd_la_SOURCES = gd.c gd_gd.c gd_gd2.c gd_io.c gd_io_dp.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c gdfonts.c gdfontt.c gdft.c gdhelpers.c gdhelpers.h gdkanji.c gdtables.c gdxpm.c jisx0208.h wbmp.c wbmp.h
+libgd_la_SOURCES = gd.c gdfx.c gd_gd.c gd_gd2.c gd_io.c gd_io_dp.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c gdfonts.c gdfontt.c gdft.c gdhelpers.c gdhelpers.h gdkanji.c gdtables.c gdxpm.c jisx0208.h wbmp.c wbmp.h
 
 libgd_la_LDFLAGS = -version-info 2:0:0
 
@@ -155,18 +158,18 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(lib_LTLIBRARIES)
 
 libgd_la_LIBADD =
-am_libgd_la_OBJECTS = gd.lo gd_gd.lo gd_gd2.lo gd_io.lo gd_io_dp.lo \
-	gd_io_file.lo gd_io_ss.lo gd_jpeg.lo gd_png.lo gd_ss.lo \
-	gd_topal.lo gd_wbmp.lo gdcache.lo gdfontg.lo gdfontl.lo \
-	gdfontmb.lo gdfonts.lo gdfontt.lo gdft.lo gdhelpers.lo \
-	gdkanji.lo gdtables.lo gdxpm.lo wbmp.lo
+am_libgd_la_OBJECTS = gd.lo gdfx.lo gd_gd.lo gd_gd2.lo gd_io.lo \
+	gd_io_dp.lo gd_io_file.lo gd_io_ss.lo gd_jpeg.lo gd_png.lo \
+	gd_ss.lo gd_topal.lo gd_wbmp.lo gdcache.lo gdfontg.lo \
+	gdfontl.lo gdfontmb.lo gdfonts.lo gdfontt.lo gdft.lo \
+	gdhelpers.lo gdkanji.lo gdtables.lo gdxpm.lo wbmp.lo
 libgd_la_OBJECTS = $(am_libgd_la_OBJECTS)
 bin_PROGRAMS = annotate$(EXEEXT) gdparttopng$(EXEEXT) gdtopng$(EXEEXT) \
 	gd2copypal$(EXEEXT) gd2topng$(EXEEXT) pngtogd$(EXEEXT) \
 	pngtogd2$(EXEEXT) webpng$(EXEEXT)
 noinst_PROGRAMS = fontsizetest$(EXEEXT) fontwheeltest$(EXEEXT) \
 	gdtest$(EXEEXT) gddemo$(EXEEXT) gd2time$(EXEEXT) \
-	gdtestft$(EXEEXT) testac$(EXEEXT)
+	gdtestft$(EXEEXT) testac$(EXEEXT) circletexttest$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 
 annotate_SOURCES = annotate.c
@@ -174,6 +177,11 @@ annotate_OBJECTS = annotate.$(OBJEXT)
 annotate_LDADD = $(LDADD)
 annotate_DEPENDENCIES = ./libgd.la
 annotate_LDFLAGS =
+circletexttest_SOURCES = circletexttest.c
+circletexttest_OBJECTS = circletexttest.$(OBJEXT)
+circletexttest_LDADD = $(LDADD)
+circletexttest_DEPENDENCIES = ./libgd.la
+circletexttest_LDFLAGS =
 fontsizetest_SOURCES = fontsizetest.c
 fontsizetest_OBJECTS = fontsizetest.$(OBJEXT)
 fontsizetest_LDADD = $(LDADD)
@@ -251,6 +259,7 @@ DEFAULT_INCLUDES =  -I. -I$(srcdir) -I.
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/annotate.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/circletexttest.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/fontsizetest.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/fontwheeltest.Po ./$(DEPDIR)/gd.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gd2copypal.Po ./$(DEPDIR)/gd2time.Po \
@@ -264,13 +273,13 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/gdfontg.Plo ./$(DEPDIR)/gdfontl.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gdfontmb.Plo ./$(DEPDIR)/gdfonts.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gdfontt.Plo ./$(DEPDIR)/gdft.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/gdhelpers.Plo ./$(DEPDIR)/gdkanji.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/gdparttopng.Po ./$(DEPDIR)/gdtables.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/gdtest.Po ./$(DEPDIR)/gdtestft.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/gdtopng.Po ./$(DEPDIR)/gdxpm.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/pngtogd.Po ./$(DEPDIR)/pngtogd2.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/testac.Po ./$(DEPDIR)/wbmp.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/webpng.Po
+@AMDEP_TRUE@	./$(DEPDIR)/gdfx.Plo ./$(DEPDIR)/gdhelpers.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/gdkanji.Plo ./$(DEPDIR)/gdparttopng.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/gdtables.Plo ./$(DEPDIR)/gdtest.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/gdtestft.Po ./$(DEPDIR)/gdtopng.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/gdxpm.Plo ./$(DEPDIR)/pngtogd.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/pngtogd2.Po ./$(DEPDIR)/testac.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/wbmp.Plo ./$(DEPDIR)/webpng.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
@@ -278,10 +287,10 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(libgd_la_SOURCES) annotate.c fontsizetest.c \
-	fontwheeltest.c gd2copypal.c gd2time.c gd2topng.c gddemo.c \
-	gdparttopng.c gdtest.c gdtestft.c gdtopng.c pngtogd.c \
-	pngtogd2.c testac.c webpng.c
+DIST_SOURCES = $(libgd_la_SOURCES) annotate.c circletexttest.c \
+	fontsizetest.c fontwheeltest.c gd2copypal.c gd2time.c \
+	gd2topng.c gddemo.c gdparttopng.c gdtest.c gdtestft.c gdtopng.c \
+	pngtogd.c pngtogd2.c testac.c webpng.c
 HEADERS = $(include_HEADERS)
 
 
@@ -294,7 +303,7 @@ DIST_COMMON = $(include_HEADERS) COPYING INSTALL Makefile.am \
 	Makefile.in aclocal.m4 config.hin configure configure.ac \
 	depcomp install-sh missing mkinstalldirs
 DIST_SUBDIRS = $(SUBDIRS)
-SOURCES = $(libgd_la_SOURCES) annotate.c fontsizetest.c fontwheeltest.c gd2copypal.c gd2time.c gd2topng.c gddemo.c gdparttopng.c gdtest.c gdtestft.c gdtopng.c pngtogd.c pngtogd2.c testac.c webpng.c
+SOURCES = $(libgd_la_SOURCES) annotate.c circletexttest.c fontsizetest.c fontwheeltest.c gd2copypal.c gd2time.c gd2topng.c gddemo.c gdparttopng.c gdtest.c gdtestft.c gdtopng.c pngtogd.c pngtogd2.c testac.c webpng.c
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -403,6 +412,9 @@ clean-noinstPROGRAMS:
 annotate$(EXEEXT): $(annotate_OBJECTS) $(annotate_DEPENDENCIES) 
 	@rm -f annotate$(EXEEXT)
 	$(LINK) $(annotate_LDFLAGS) $(annotate_OBJECTS) $(annotate_LDADD) $(LIBS)
+circletexttest$(EXEEXT): $(circletexttest_OBJECTS) $(circletexttest_DEPENDENCIES) 
+	@rm -f circletexttest$(EXEEXT)
+	$(LINK) $(circletexttest_LDFLAGS) $(circletexttest_OBJECTS) $(circletexttest_LDADD) $(LIBS)
 fontsizetest$(EXEEXT): $(fontsizetest_OBJECTS) $(fontsizetest_DEPENDENCIES) 
 	@rm -f fontsizetest$(EXEEXT)
 	$(LINK) $(fontsizetest_LDFLAGS) $(fontsizetest_OBJECTS) $(fontsizetest_LDADD) $(LIBS)
@@ -473,6 +485,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/annotate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/circletexttest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontsizetest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontwheeltest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd.Plo@am__quote@
@@ -498,6 +511,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfonts.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfontt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdft.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfx.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdhelpers.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdkanji.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdparttopng.Po@am__quote@

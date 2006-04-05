@@ -298,8 +298,16 @@ extern "C"
   void gdImageStringUp16 (gdImagePtr im, gdFontPtr f, int x, int y,
 			  unsigned short *s, int color);
 
-/* clean up after using fonts in gdImageStringFT() */
-  void gdFreeFontCache ();
+/* 2.0.16: for thread-safe use of gdImageStringFT and friends,
+  call this before allowing any thread to call gdImageStringFT. 
+  Otherwise it is invoked by the first thread to invoke
+  gdImageStringFT, with a very small but real risk of a race condition. 
+  Return 0 on success, nonzero on failure to initialize freetype. */
+int gdFontCacheSetup (void);
+
+/* Optional: clean up after application is done using fonts in 
+  gdImageStringFT(). */
+void gdFontCacheShutdown (void);
 
 /* Calls gdImageStringFT. Provided for backwards compatibility only. */
   char *gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
@@ -618,6 +626,9 @@ extern "C"
 
 /* resolution affects ttf font rendering, particularly hinting */
 #define GD_RESOLUTION           96	/* pixels per inch */
+
+/* newfangled special effects */
+#include "gdfx.h"
 
 #ifdef __cplusplus
 }

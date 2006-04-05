@@ -67,7 +67,7 @@ extern int gdSinT[];
 static void gdImageBrushApply (gdImagePtr im, int x, int y);
 static void gdImageTileApply (gdImagePtr im, int x, int y);
 static void gdImageAntiAliasedApply (gdImagePtr im, int x, int y);
-static int gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
+int gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 
 gdImagePtr
 gdImageCreate (int sx, int sy)
@@ -227,7 +227,9 @@ gdImageColorClosestAlpha (gdImagePtr im, int r, int g, int b, int a)
       gd = (im->green[i] - g);
       bd = (im->blue[i] - b);
       /* gd 2.02: whoops, was - b (thanks to David Marwood) */
-      ad = (im->blue[i] - a);
+      /* gd 2.16: was blue rather than alpha! Geez! Thanks to 
+		Artur Jakub Jerzak */
+      ad = (im->alpha[i] - a);
       dist = rd * rd + gd * gd + bd * bd + ad * ad;
       if (first || (dist < mindist))
 	{
@@ -1018,7 +1020,7 @@ gdImageGetPixel (gdImagePtr im, int x, int y)
     }
 }
 
-static int
+int
 gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
 {
   int p = gdImageGetPixel (im, x, y);
@@ -2241,22 +2243,14 @@ gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
   stx = (int *) gdMalloc (sizeof (int) * srcW);
   sty = (int *) gdMalloc (sizeof (int) * srcH);
   accum = 0;
+  /* Fixed by Mao Morimoto 2.0.16 */
   for (i = 0; (i < srcW); i++)
     {
-      int got;
-      accum += (double) dstW / (double) srcW;
-      got = (int) floor (accum);
-      stx[i] = got;
-      accum -= got;
+      stx[i] = dstW * (i+1) / srcW - dstW * i / srcW ;
     }
-  accum = 0;
   for (i = 0; (i < srcH); i++)
     {
-      int got;
-      accum += (double) dstH / (double) srcH;
-      got = (int) floor (accum);
-      sty[i] = got;
-      accum -= got;
+      sty[i] = dstH * (i+1) / srcH - dstH * i / srcH ;
     }
   for (i = 0; (i < gdMaxColors); i++)
     {
@@ -2790,6 +2784,13 @@ gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 	  maxy = p[i].y;
 	}
     }
+  /* 2.0.16: Optimization by Ilia Chipitsine -- don't waste time offscreen */
+  if (miny < 0) {
+    miny = 0;
+  }
+  if (maxy >= gdImageSY(im)) {
+    maxy = gdImageSY(im) - 1;
+  } 
   /* Fix in 1.3: count a vertex only once */
   for (y = miny; (y <= maxy); y++)
     {
@@ -3111,4 +3112,5 @@ gdImageGetClip (gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P)
   *x2P = im->cx2;
   *y2P = im->cy2;
 }
+
 

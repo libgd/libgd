@@ -681,7 +681,7 @@ gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 		      else
 			{
 			  ch = gdGetC (in);
-			  if (ch == EOF)
+			  if ((int)ch == EOF)
 			    {
 			      ch = 0;
 			      /*printf("EOF while reading file\n"); */
