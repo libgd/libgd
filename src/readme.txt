@@ -1,12 +1,12 @@
 
-                                    gd 1.8
+                                   gd 1.8.1
                                        
 A graphics library for fast image creation
 
 Follow this link to the latest version of this document.
 
-     _HEY! READ THIS!_ gd 1.8 creates PNG, JPEG and WBMP images, not GIF
-     images. This is a good thing. PNG is a more compact format, and
+     _HEY! READ THIS!_ gd 1.8.1 creates PNG, JPEG and WBMP images, not
+     GIF images. This is a good thing. PNG is a more compact format, and
      full compression is available. JPEG works well with photographic
      images, and is still more compatible with the major Web browsers
      than even PNG is. WBMP is intended for wireless devices (not
@@ -18,7 +18,7 @@ Follow this link to the latest version of this document.
      well-compressed, modern image formats such as PNG and JPEG as soon
      as possible.
      
-     gd 1.8 _requires_ that the following libraries also be installed:
+     gd 1.8.1 _requires_ that the following libraries also be installed:
      
      libpng
      
@@ -42,6 +42,7 @@ Follow this link to the latest version of this document.
   Table of Contents
   
      * Credits and license terms
+     * What's new in version 1.8.1?
      * What's new in version 1.8?
      * What's new in version 1.7.3?
      * What's new in version 1.7.2?
@@ -113,8 +114,8 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      particular purpose, with respect to this code and accompanying
      documentation.
      
-     Although their code does not appear in gd 1.8, the authors wish to
-     thank David Koblas, David Rowley, and Hutchison Avenue Software
+     Although their code does not appear in gd 1.8.1, the authors wish
+     to thank David Koblas, David Rowley, and Hutchison Avenue Software
      Corporation for their prior contributions.
      
 END OF COPYRIGHT STATEMENT
@@ -167,6 +168,14 @@ END OF COPYRIGHT STATEMENT
    writing.
      * tgd, by Bradley K. Sherman
      * fly, by Martin Gleeson
+       
+  What's new in version 1.8.1?
+  
+     * Optional components no longer built by default (following the
+       documentation)
+     * JPEG code no longer requires inappropriate header files
+     * Win32 patches from Joe Gregorio
+     * 16-bit font support for bdftogd, from Honza Pazdziora
        
   What's new in version 1.8?
   
@@ -457,11 +466,11 @@ END OF COPYRIGHT STATEMENT
    (Windows), please consult with an experienced user of your system.
    Sorry, we cannot answer questions about basic Internet skills.
    
-   Unpacking the archive will produce a directory called "gd-1.8".
+   Unpacking the archive will produce a directory called "gd-1.8.1".
    
     For Unix
     
-   cd to the 1.8 directory. Edit the Makefile with your preferred text
+   cd to the 1.8.1 directory. Edit the Makefile with your preferred text
    editor and make any necessary changes to the settings at the top,
    especially if you want Xpm or TrueType support. Next, type "make". If
    you are the system administrator, and you wish to make the gd library

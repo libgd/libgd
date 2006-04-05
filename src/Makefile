@@ -15,19 +15,19 @@ INSTALL=install
 
 #If you don't have FreeType, libjpeg and/or Xpm installed, including the
 #header files, uncomment this (default).
-#CFLAGS=-O
+CFLAGS=-O
 #If you do have FreeType, libjpeg and/or Xpm fully installed, uncomment a
 #variation of this and comment out the line above. See also LIBS below.
-CFLAGS=-O -DHAVE_XPM -DHAVE_JPEG -DHAVE_LIBTTF
+#CFLAGS=-O -DHAVE_XPM -DHAVE_JPEG -DHAVE_LIBTTF
 
 #If you don't have FreeType and/or Xpm fully installed, uncomment this
 #(default).
-#LIBS=-lm -lgd -lpng -lz
+LIBS=-lm -lgd -lpng -lz
 
 #If you do have FreeType, JPEG and/or Xpm fully installed, uncomment a 
 #variation of this and comment out the line above. Note that
 #Xpm requires X11. See also CFLAGS above.
-LIBS=-lm -lgd -lpng -lz -ljpeg -lttf -lXpm -lX11
+#LIBS=-lm -lgd -lpng -lz -ljpeg -lttf -lXpm -lX11
 
 #Typical install locations for freetype, zlib, xpm, libjpeg and libpng header files.
 #If yours are somewhere else, change this. 
