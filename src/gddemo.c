@@ -177,7 +177,11 @@ main (void)
   /* Write PNG */
   gdImagePng (im_out, out);
   fclose (out);
-  /* 2.0.12: also write a paletteized version */
+  out = fopen ("demoout.gif", "wb");
+  /* Write GIF (2.0.28) */
+  gdImageGif (im_out, out);
+  fclose (out);
+  /* 2.0.12: also write a paletteized png comparable to the gif */
   out = fopen ("demooutp.png", "wb");
   gdImageTrueColorToPalette (im_out, 0, 256);
   gdImagePng (im_out, out);
