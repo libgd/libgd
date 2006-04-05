@@ -84,7 +84,7 @@ main (int argc, char **argv)
   /* 2.0.21: use the new From*Ptr functions */
   iptr = gdImagePngPtr (im, &sz);
   im2 = gdImageCreateFromPngPtr (sz, iptr);
-  gdFree(iptr);
+  gdFree (iptr);
   CompareImages ("GD->PNG ptr->GD", ref, im2);
 
   gdImageDestroy (im2);
@@ -114,7 +114,7 @@ main (int argc, char **argv)
   iptr = gdImageGd2Ptr (im, 128, 2, &sz);
   /*printf("Got ptr %d (size %d)\n",iptr, sz); */
   im2 = gdImageCreateFromGd2Ptr (sz, iptr);
-  gdFree(iptr);
+  gdFree (iptr);
   /*printf("Got img2 %d\n",im2); */
 
   CompareImages ("GD->GD2 ptr->GD", ref, im2);
@@ -146,7 +146,7 @@ main (int argc, char **argv)
   iptr = gdImageGdPtr (im, &sz);
   /*printf("Got ptr %d (size %d)\n",iptr, sz); */
   im2 = gdImageCreateFromGdPtr (sz, iptr);
-  gdFree(iptr);
+  gdFree (iptr);
   /*printf("Got img2 %d\n",im2); */
 
   CompareImages ("GD->GD ptr->GD", ref, im2);
