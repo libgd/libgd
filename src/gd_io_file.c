@@ -39,8 +39,6 @@ typedef struct fileIOCtx
 }
 fileIOCtx;
 
-struct fileIOCtx *fileIOCtxPtr;
-
 gdIOCtx *newFileCtx (FILE * f);
 
 static int fileGetbuf (gdIOCtx *, void *, int);
