@@ -5,13 +5,13 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the vesion number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.0.14], [gd@boutell.com])
+AC_INIT([GD], [2.0.15], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=0
-GDLIB_REVISION=14
+GDLIB_REVISION=15
 GDLIBNAME=gd
 
 AC_SUBST(GDLIB_MAJOR)

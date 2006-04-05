@@ -939,12 +939,7 @@ gdImageAntiAliasedApply (gdImagePtr im, int px, int py)
 {
   float p_dist, p_alpha;
   unsigned char opacity;
-  /* 2.0.13: bounds check! AA_opacity is just as capable of
-    overflowing as the main pixel array. Arne Jorgensen. */
-  if (!gdImageBoundsSafeMacro (im, px, py))
-  {
-    return;
-  }
+
   /* 
    * Find the perpendicular distance from point C (px, py) to the line 
    * segment AB that is being drawn.  (Adapted from an algorithm from the
@@ -958,7 +953,14 @@ gdImageAntiAliasedApply (gdImagePtr im, int px, int py)
 
   int Bx_Cx = im->AAL_x2 - px;
   int By_Cy = im->AAL_y2 - py;
-
+  /* 2.0.13: bounds check! AA_opacity is just as capable of
+    overflowing as the main pixel array. Arne Jorgensen. 
+    2.0.14: typo fixed. 2.0.15: moved down below declarations
+    to satisfy non-C++ compilers. */
+  if (!gdImageBoundsSafeMacro (im, px, py))
+  {
+    return;
+  }
   /* Get the squares of the lengths of the segemnts AC and BC. */
   LAC_2 = (Ax_Cx * Ax_Cx) + (Ay_Cy * Ay_Cy);
   LBC_2 = (Bx_Cx * Bx_Cx) + (By_Cy * By_Cy);
