@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #ifdef _WIN32
 #include <process.h>

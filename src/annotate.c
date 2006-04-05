@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -48,7 +53,11 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Couldn't open %s\n", iin);
 		exit(2);
 	}
+#ifdef HAVE_LIBJPEG
 	im = gdImageCreateFromJpeg(in);
+#else
+	fprintf(stderr, "No JPEG library support available.\n");
+#endif
 	fclose(in);
 	if (!im) {
 		fprintf(stderr, "%s did not load properly\n", iin);
@@ -145,7 +154,11 @@ badLine:
 		fprintf(stderr, "Cannot create %s\n", iout);
 		exit(5);
 	}
+#ifdef HAVE_LIBJPEG
 	gdImageJpeg(im, out, 95);
+#else
+	fprintf(stderr, "No JPEG library support available.\n");
+#endif
 	gdImageDestroy(im);
 	fclose(out);
 	return 0;

@@ -1,19 +1,28 @@
 <HTML>
 <HEAD>
-<TITLE>gd 2.0.4</TITLE>
+<TITLE>gd 2.0.5</TITLE>
 </HEAD>
 <BODY>
 <!-- BANNER HERE -->
-<h1>This is gd 2.0.4.</h1>
+<h1>This is gd 2.0.5.</h1>
 <p>
-<H2>gd 2.0.4</H2>
+<H2>gd 2.0.5</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
 of this document</A>.</H3>
 <blockquote>
-<strong>HEY! READ THIS!</strong>
-gd 2.0.4 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+<strong>UPGRADING USERS: READ THIS FIRST!</strong>
+gd 2.0.5 and above install by default to /usr/local/lib and
+/usr/local/include. If you already have an older version of gd
+in /usr/lib and /usr/include, you may wish to use:
+<pre>
+./configure --prefix=/usr</pre> 
+To ensure that your
+new installation overwrites the old.
+<p>
+<strong>ABOUT GD AND GIF:</strong>
+gd 2.0.5 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -26,7 +35,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-gd 2.0.4 <strong>requires</strong> that the following libraries 
+gd 2.0.5 <strong>requires</strong> that the following libraries 
 also be installed, in order to produce the related image formats:
 <p>
 libpng (see the <a href="http://www.libpng.org/pub/png/">libpng home page</a>), if you want PNG
@@ -56,7 +65,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.4">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.5">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -155,7 +164,7 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.4.
+with 2.0.5.
 <h4>Perl</h4>
 gd can also be used from Perl, courtesy of
 Lincoln Stein's
@@ -181,6 +190,31 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<P>
+<A NAME="whatsnew2.0.5"><H3>What's new in version 2.0.5?</H3></A>
+<ul>
+<li>libgd 2.0.5 INSTALLS IN /usr/local/lib BY DEFAULT. IF YOU WANT
+IT TO INSTALL IN /usr/lib, YOU MUST SPECIFY THIS at
+<code>configure</code> time using this syntax:
+<p>
+<code>./configure --prefix=/usr</code> 
+<li>gd now uses GNU autoconf. This means that the provided
+<code>configure</code> script should be compatible with all standard
+GNU configure options and will figure out the correct settings for a
+much wider range of operating systems. Many, many thanks to
+Lars Hecking for taking care of this.
+<li>The <a href="#gdImageStringFTEx">gdImageStringFTEx</a> function
+is now included, thanks to Wez Furlong. My apologies to Wez for the
+unreasonable amount of time this patch has sat in my queue.
+<li>Additional fixes from Wez Furlong.
+<li>Arithmetic cleanup by Doug Claar.
+<li>Corrections to loading and saving of alpha channel
+information in PNG files, by Andrew Hull.
+<li>gdImageTrueColorToPalette does not contain
+unneeded test code.
+<li>gdImageCopyResized works properly again when copying
+from a non-truecolor source.
 </ul>
 <P>
 <A NAME="whatsnew2.0.4"><H3>What's new in version 2.0.4?</H3></A>
@@ -666,8 +700,8 @@ saving of alpha channel information to the file instead.
 <P>
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.4.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.4.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.5.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.5.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -678,12 +712,24 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.4".
+Unpacking the archive will produce a directory called "gd-2.0.5".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.4 directory and type:
+<code>cd</code> to the 2.0.5 directory and type:
 <p>
 <code>./configure</code>
+<P>
+<blockquote>
+<STRONG>NOTE: BY DEFAULT, THE LIBRARY IS INSTALLED IN 
+<code>/usr/local/lib</code></strong> and the include files are
+installed in <code>/usr/local/include</code>. IF YOU ARE
+UPGRADING, you may wish to use:
+<pre>
+./configure --prefix=/usr
+</pre>
+Rather than just <code>./configure</code>, before typing
+<code>make</code> and <code>make install</code>.
+</blockquote>
 <p>
 If all goes well, this will create a Makefile. If all does not go well --
 for instance, if neither the the JPEG nor the PNG and ZLIB libraries
@@ -691,18 +737,18 @@ are found -- you will need to install those libraries, then come back
 and run <code>configure</code> again. 
 <p>
 If necessary, make changes to the resulting Makefile. Then, 
-type "make install". Because gd 2.0 and above installs
-as a shared library, it is necessary to install the library properly
-before running gd-based programs.
+type "make". If there are no errors, follow this with "make install". 
+Because gd 2.0 and above installs as a shared library, it is necessary to 
+install the library properly before running gd-based programs.
 <p>
-If you get errors, edit the Makefile again or customize 'configure', 
-paying special attention to the INCLUDEDIRS and LIBDIRS settings.
-<p>
-IF YOU GET LINKER ERRORS, TRY JUGGLING THE ORDER OF THE -l DIRECTIVES
-IN THE MAKEFILE. Some platforms may prefer that the libraries be listed
-in the opposite order. <strong>If you find such a platform where
-linking does not work properly, plese send the correct linking
-commands to gd@boutell.com</strong>.
+If you get errors, type <code>./configure --help</code> for more
+information about the available options. In the unlikely event
+that the GNU autoconf-produced configure script does not work well
+for you, you may wish to try <code>configure.pl</code>, a
+simple Perl script with similar but less complete capabilities.
+If all else fails, try renaming <code>makefile.sample</code>
+to <code>Makefile</code>. However, <code>./configure</code> is
+almost always your best bet.
 <blockquote>
 <h4>For Windows</h4>
 Create a project using your favorite programming environment.
@@ -996,6 +1042,20 @@ A pointer to a <A HREF="#gdPoint">gdPoint</A> structure; passed
 as an argument to <A HREF="#gdImagePolygon">gdImagePolygon</A>
 and <A HREF="#gdImageFilledPolygon">gdImageFilledPolygon</A>.
 </DL>
+<DT><A NAME="gdFTStringExtra">gdFTStringExtra</a> <strong>(TYPE)</strong>
+<DD>
+A structure used to pass additional parameters to the
+<a href="#gdImageStringFTEx">gdImageStringFTEx</a> function. See
+<a href="#gdImageStringFTEx">gdImageStringFTEx</a> for the
+structure definition.
+</DD>
+<DT><A NAME="gdFTStringExtraPtr">gdFTStringExtraPtr</a> <strong>(TYPE)</strong>
+<DD>
+A pointer to a structure used to pass additional parameters to the
+<a href="#gdImageStringFTEx">gdImageStringFTEx</a> function. See
+<a href="#gdImageStringFTEx">gdImageStringFTEx</a> for the
+structure definition.
+</DD>
 <DT><A NAME="gdSource">gdSource</A> <strong>(TYPE)</strong>
 <DD>
 <pre>
@@ -2569,6 +2629,9 @@ fewer "jaggies" visible. The fontname is the full pathname to a TrueType
 font file, or a font face name if the GDFONTPATH environment variable
 or FreeType's DEFAULT_FONTPATH variable have been set intelligently. 
 The string may be arbitrarily scaled (ptsize) and rotated (angle in radians).
+The direction of rotation is counter-clockwise, with 0 radians (0 degrees)
+at 3 o'clock and PI/2 radians (90 degrees) at 12 o'clock. 
+
 <p>
 The user-supplied int brect[8] array is filled on return from gdImageStringFT
 with the 8 elements representing the 4 corner coordinates of the
@@ -2650,6 +2713,39 @@ if (err) {fprintf(stderr,err); return 1;}
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImageStringFTEx">
+char *gdImageStringFTEx(gdImagePtr im, int *brect,
+	int fg, char *fontname, double ptsize, double angle,
+	int x, int y, gdFTStringExtraPtr strex)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+<strong>New in 2.0.5,</strong> also found in common third-party versions
+of gd. gdImageStringFTEx extends the capabilities of 
+<a href="#gdImageStringFT">gdImageStringFT</a> by providing a 
+way to pass additional parameters. 
+<p>
+If the <code>strex</code> parameter is not null, it must point to a
+<code>gdFTStringExtra</code> structure. As of gd 2.0.5, this structure
+is defined as follows:
+<pre>
+typedef struct {
+       /* logical OR of gdFTEX_ values */
+       int flags; 
+       /* fine tune line spacing for '\n' */
+       double linespacing; 
+} gdFTStringExtra, *gdFTStringExtraPtr;
+</pre>
+To output multiline text with a specific line spacing, set 
+<code>flags</code> to <code>gdFTEX_LINESPACE</code>, and set
+<code>linespacing</code> to the desired spacing, expressed as a
+multiple of the font height. Thus a line spacing of 1.0 is the
+minimum to guarantee that lines of text do not collide.
+<p>
+If <code>gdFTEX_LINESPACE</code> is not present, or 
+<code>strex</code> is null, or <a href="#gdImageStringFT">gdImageStringFT</a>
+is called, <code>linespacing</code> defaults to 1.05.
+<p>
+For more information, see <a href="#gdImageStringFT">gdImageStringFT</a>.
 <DT><A NAME="gdImageStringTTF">
 char *gdImageStringTTF(gdImagePtr im, int *brect,
 	int fg, char *fontname, double ptsize, double angle,
@@ -2659,7 +2755,7 @@ char *gdImageStringTTF(gdImagePtr im, int *brect,
 <strong>DEPRECATED.</strong> THis function simply invokes
 <a href="#gdImageStringFT">gdImageStringFT</a> for backwards
 compatibility with old code that was written with FreeType 1.x.
-/DL>
+</DL>
 <H3><A NAME="colors">Color-handling functions</A></H3>
 <DL>
 <DT><A NAME="gdImageColorAllocate">
@@ -3652,6 +3748,7 @@ purchase gd support at the hourly rate above.
 <A HREF="#gdImageColorAllocateAlpha">gdImageColorAllocateAlpha</A> |
 <A HREF="#gdImageColorClosest">gdImageColorClosest</A> |
 <A HREF="#gdImageColorClosestAlpha">gdImageColorClosestAlpha</A> |
+<A HREF="#gdImageColorClosestHWB">gdImageColorClosestHWB</A> |
 <A HREF="#gdImageColorDeallocate">gdImageColorDeallocate</A> |
 <A HREF="#gdImageColorExact">gdImageColorExact</A> |
 <A HREF="#gdImageColorExactAlpha">gdImageColorExactAlpha</A> |
@@ -3707,6 +3804,7 @@ purchase gd support at the hourly rate above.
 <A HREF="#gdImageString">gdImageString</A> |
 <A HREF="#gdImageString16">gdImageString16</A> |
 <A HREF="#gdImageStringFT">gdImageStringFT</A> |
+<A HREF="#gdImageStringFTEx">gdImageStringFTEx</A> |
 <A HREF="#gdImageStringTTF">gdImageStringTTF</A> |
 <A HREF="#gdImageStringUp">gdImageStringUp</A> |
 <A HREF="#gdImageStringUp">gdImageStringUp16</A> |

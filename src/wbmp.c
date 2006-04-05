@@ -9,6 +9,9 @@
    ** (c) 2000 Johan Van den Brande <johan@vandenbrande.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <stdio.h>
 #include <stddef.h>

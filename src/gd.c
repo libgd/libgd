@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -837,10 +842,15 @@ gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
   if (dy <= dx)
     {
       /* More-or-less horizontal. use wid for vertical stroke */
-      wid = thick * cos (atan2 (dy, dx));
-      if (wid == 0)
-	wid = 1;
-
+      /* Doug Claar: watch out for NaN in atan2 (2.0.5) */
+      if ((dx == 0) && (dy == 0)) {
+        wid = 1;
+      } else {
+        wid = thick * cos (atan2 (dy, dx));
+        if (wid == 0) {
+          wid = 1;
+        }
+      }
       d = 2 * dy - dx;
       incr1 = 2 * dy;
       incr2 = 2 * (dy - dx);
@@ -1695,6 +1705,7 @@ gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int s
       for (x = srcX; (x < (srcX + w)); x++)
 	{
 	  int nc;
+          int mapTo;
 	  c = gdImageGetPixel (src, x, y);
 	  /* Added 7/24/95: support transparent copies */
 	  if (gdImageGetTransparent (src) == c)
@@ -1703,7 +1714,19 @@ gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int s
 	      continue;
 	    }
 	  /* Have we established a mapping for this color? */
-	  if (colorMap[c] == (-1))
+	  if (src->trueColor)
+	    {
+	      /* 2.05: remap to the palette available in the
+	         destination image. This is slow and
+	         works badly, but it beats crashing! Thanks 
+                 to Padhrig McCarthy. */
+	      mapTo = gdImageColorResolveAlpha (dst,
+					      gdTrueColorGetRed (c),
+					    gdTrueColorGetGreen (c),
+					     gdTrueColorGetBlue (c),
+					   gdTrueColorGetAlpha (c));
+	    }
+	  else if (colorMap[c] == (-1))
 	    {
 	      /* If it's the same image, mapping is trivial */
 	      if (dst == src)
@@ -1720,8 +1743,13 @@ gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int s
 					       src->blue[c], src->alpha[c]);
 		}
 	      colorMap[c] = nc;
+              mapTo = colorMap[c];  
 	    }
-	  gdImageSetPixel (dst, tox, toy, colorMap[c]);
+          else
+            {
+              mapTo = colorMap[c];  
+            }
+	  gdImageSetPixel (dst, tox, toy, mapTo);
 	  tox++;
 	}
       toy++;
@@ -1942,11 +1970,12 @@ gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX
 			  else
 			    {
 			      /* Find or create the best match */
-			      mapTo = gdImageColorResolveAlpha (dst,
-						      gdTrueColorGetRed (c),
-						    gdTrueColorGetGreen (c),
-						     gdTrueColorGetBlue (c),
-						   gdTrueColorGetAlpha (c));
+                  /* 2.0.5: can't use gdTrueColorGetRed, etc with palette */
+			      nc = gdImageColorResolveAlpha (dst,
+						      gdImageRed (src, c),
+						    gdImageGreen (src, c),
+						     gdImageBlue (src, c),
+						   gdImageAlpha (src, c));
 			    }
 			  colorMap[c] = nc;
 			}

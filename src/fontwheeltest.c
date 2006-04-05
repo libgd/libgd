@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <math.h>
 #include "gd.h"
 #define DEGTORAD(x) ( (x) * (2.0 * 3.14159265) / 360.0 )

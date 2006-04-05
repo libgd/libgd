@@ -1,4 +1,8 @@
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "gd.h"
@@ -28,7 +32,11 @@ main (int argc, char **argv)
       fprintf (stderr, "Input file does not exist!\n");
       exit (1);
     }
+#ifdef HAVE_LIBPNG
   im = gdImageCreateFromPng (in);
+#else
+  fprintf(stderr, "No PNG library support available.\n");
+#endif
   fclose (in);
   if (!im)
     {

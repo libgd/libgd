@@ -5,6 +5,11 @@
    Caolan.McNamara@ul.ie 
    http://www.csn.ul.ie/~caolan
  */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "gd.h"
@@ -20,7 +25,7 @@ gdImageCreateFromXpm (char *filename)
 
 #else
 
-#include "xpm.h"
+#include <X11/xpm.h>
 
 gdImagePtr
 gdImageCreateFromXpm (char *filename)

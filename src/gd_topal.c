@@ -24,6 +24,10 @@
  * may not have done a great job of either. It's not Thomas G. Lane's fault.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <string.h>
 #include "gd.h"
 #include "gdhelpers.h"
@@ -1560,27 +1564,8 @@ gdImageTrueColorToPalette (gdImagePtr im, int dither, int colorsWanted)
   /* Do the work! */
   zeroHistogram (cquantize->histogram);
   prescan_quantize (im, cquantize);
-  select_colors (im, cquantize, 256);
-  /* TBB HACK REMOVE */
-  {
-    FILE *out = fopen ("palettemap.png", "wb");
-    int i;
-    gdImagePtr im2 = gdImageCreateTrueColor (256, 256);
-    for (i = 0; (i < 256); i++)
-      {
-	gdImageFilledRectangle (im2, (i % 16) * 16, (i / 16) * 16,
-				(i % 16) * 16 + 15, (i / 16) * 16 + 15,
-				gdTrueColorAlpha (im->red[i], im->green[i],
-						im->blue[i], im->alpha[i]));
-      }
-#ifdef HAVE_LIBPNG
-    gdImagePng (im2, out);
-#else
-    fprintf(stderr, "No PNG library support.\n");
-#endif
-    fclose (out);
-    gdImageDestroy (im2);
-  }
+  /* TBB 2.0.5: pass colorsWanted, not 256! */
+  select_colors (im, cquantize, colorsWanted);
   zeroHistogram (cquantize->histogram);
   if (dither)
     {

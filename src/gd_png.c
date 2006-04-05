@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -226,7 +231,8 @@ gdImageCreateFromPngCtx (gdIOCtx * infile)
 	      im->alpha[i] = gdAlphaMax - (trans[i] >> 1);
 	      if ((trans[i] == 0) && (firstZero))
 		{
-		  im->transparent = i;
+                  /* 2.0.5: long-forgotten patch from Wez Furlong */
+		  transparent = i;
 		  firstZero = 0;
 		}
 	    }
@@ -595,7 +601,7 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 	    {
 	      trans_values[i] = 255 -
 		((im->alpha[i] << 1) +
-		 (im->alpha[i] >> 7));
+		 (im->alpha[i] >> 6));
 	    }
 	  png_set_tRNS (png_ptr, info_ptr, trans_values, 256, NULL);
 #endif
@@ -614,9 +620,10 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 		{
 		  if (im->alpha[i] != gdAlphaOpaque)
 		    {
+                      /* Andrew Hull: >> 6, not >> 7! (gd 2.0.5) */ 
 		      trans_values[j] = 255 -
 			((im->alpha[i] << 1) +
-			 (im->alpha[i] >> 7));
+			 (im->alpha[i] >> 6));
 		      mapping[i] = j++;
 		    }
 		  else
@@ -697,7 +704,8 @@ gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 		     127 maps to 255. We also have to invert to match
 		     PNG's convention in which 255 is opaque. */
 		  a = gdTrueColorGetAlpha (im->tpixels[j][i]);
-		  row_pointers[j][bo++] = 255 - ((a << 1) + (a >> 7));
+                  /* Andrew Hull: >> 6, not >> 7! (gd 2.0.5) */ 
+		  row_pointers[j][bo++] = 255 - ((a << 1) + (a >> 6));
 		}
 	    }
 	}

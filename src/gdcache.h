@@ -40,10 +40,11 @@
 /* header                                                */
 /*********************************************************/
 
-#include <stdlib.h>
-#ifdef HAVE_MALLOC_H
-#include <malloc.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
 #endif
+
+#include <stdlib.h>
 #ifndef NULL
 #define NULL (void *)0
 #endif

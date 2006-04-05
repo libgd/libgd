@@ -254,6 +254,20 @@ char *gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontlist,
 char *gdImageStringFT(gdImage *im, int *brect, int fg, char *fontlist,
                 double ptsize, double angle, int x, int y, char *string);
 
+/* 2.0.5: provides an extensible way to pass additional parameters.
+	Thanks to Wez Furlong, sorry for the delay. */
+
+typedef struct {
+       int flags; /* for future expansion logical OR of gdFTEX_ values */
+       double linespacing; /* fine tune line spacing for '\n' */
+} gdFTStringExtra, *gdFTStringExtraPtr;
+
+#define gdFTEX_LINESPACE 1
+
+char *gdImageStringFTEx(gdImage *im, int *brect, int fg, char *fontlist,
+                double ptsize, double angle, int x, int y, char *string,
+		gdFTStringExtraPtr strex);
+
 /* Point type for use in polygon drawing. */
 typedef struct {
 	int x, y;
@@ -274,6 +288,8 @@ int gdImageColorClosest(gdImagePtr im, int r, int g, int b);
 	beats the exact same color with radically different
 	transparency */
 int gdImageColorClosestAlpha(gdImagePtr im, int r, int g, int b, int a);
+/* An alternate method */
+int gdImageColorClosestHWB(gdImagePtr im, int r, int g, int b);
 /* Returns exact, 100% opaque matches only */
 int gdImageColorExact(gdImagePtr im, int r, int g, int b);
 /* Returns an exact match only, including alpha */

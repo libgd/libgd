@@ -13,6 +13,10 @@
    *
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 /* For platforms with incomplete ANSI defines. Fortunately,
    SEEK_SET is defined to be zero by the standard. */
 

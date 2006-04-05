@@ -1,9 +1,11 @@
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "gd.h"
 #include "gdhelpers.h"
 #include <stdlib.h>
-#ifdef HAVE_MALLOC_H
-#include <malloc.h>
-#endif
 #include <string.h>
 
 /* TBB: gd_strtok_r is not portable; provide an implementation */

@@ -53,6 +53,10 @@
    ----------------------------------------------------------------------------
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <gd.h>
 #include <gdfonts.h>
 #include <stdio.h>

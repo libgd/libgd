@@ -1,3 +1,8 @@
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "gd.h"
 #include <string.h>
 
@@ -27,7 +32,7 @@ main (int argc, char *argv[])
   fprintf (stderr, "make clean, and type make again.\n");
   return 1;
 #else
-  gdImagePtr im, im2;
+  gdImagePtr im;
   int blue;
   int blueAlpha;
   int white;
@@ -46,7 +51,7 @@ main (int argc, char *argv[])
 #if 0
   double angle = 0.;
 #else
-  double angle = DEG2RAD (-90);
+  double angle = DEG2RAD (90);
 #endif
   char *f;
   if (argc == 2) {
@@ -70,7 +75,7 @@ main (int argc, char *argv[])
   /* create an image just big enough for the string (x3) */
   sx = MAXX (brect) - MINX (brect) + 6;
   sy = MAXY (brect) - MINY (brect) + 6;
-#if 0
+#if 1
   /* Would be palette color 8-bit (which of course is still allowed,
     but not impressive when used with a JPEG background and antialiasing
     and alpha channel and so on!) */	
@@ -89,11 +94,24 @@ main (int argc, char *argv[])
     FILE *in = fopen("eleanor.jpg", "rb");
     gdImagePtr imb; 
     if (in) {
+#ifdef HAVE_LIBJPEG
       imb = gdImageCreateFromJpeg(in);
+#else
+      fprintf(stderr, "No JPEG library support.\n");
+#endif
       if (!imb) {
         fprintf(stderr, "gdImageCreateFromJpeg failed\n");
         exit(1);
       }
+      if (!im->trueColor) {
+        /* If destination is not truecolor, convert the JPEG to a
+          reasonably high-quality palette version. This is not as good
+          as creating a truecolor output file, of course. Leave many
+          colors for text smoothing. */
+#if 1
+        gdImageTrueColorToPalette(imb, 0, 128);
+#endif
+      } 
       /* Resample background image to cover new image exactly */
       gdImageCopyResampled(im, imb, 0, 0, 0, 0, sx * 3, sy, 
         gdImageSX(imb), gdImageSY(imb));
@@ -127,24 +145,44 @@ main (int argc, char *argv[])
       fprintf (stderr, err);
       return 1;
     }
-  /* With antialiasing, and 50% alpha blending */
+  /* With antialiasing, and 50% alpha blending (truecolor only) */
   err = gdImageStringFT (im, NULL, blueAlpha, f, sz, angle, sx * 2 + x, y, s);
   if (err)
     {
       fprintf (stderr, err);
       return 1;
     }
-  /* TBB: Write img to test/fttest.jpg */
-  out = fopen ("test/fttest.jpg", "wb");
-  if (!out)
+  /* TBB: Write img to test/fttest.jpg or test/fttest.png */
+  if (im->trueColor) {
+    out = fopen ("test/fttest.jpg", "wb");
+    if (!out)
     {
       fprintf (stderr, "Can't create test/fttest.jpg\n");
       exit (1);
     }
-  /* Fairly high JPEG quality setting */
-  gdImageJpeg (im, out, 90);
-  fclose (out);
-  fprintf (stderr, "Test image written to test/fttest.jpg\n");
+    /* Fairly high JPEG quality setting */
+#ifdef HAVE_LIBJPEG
+    gdImageJpeg (im, out, 90);
+#else
+    fprintf(stderr, "No JPEG library support.\n");
+#endif
+    fclose (out);
+    fprintf (stderr, "Test image written to test/fttest.jpg\n");
+  } else {
+    out = fopen ("test/fttest.png", "wb");
+    if (!out)
+    {
+      fprintf (stderr, "Can't create test/fttest.png\n");
+      exit (1);
+    }
+#ifdef HAVE_LIBJPEG
+    gdImagePng (im, out);
+#else
+    fprintf(stderr, "No PNG library support.\n");
+#endif
+    fclose (out);
+    fprintf (stderr, "Test image written to test/fttest.png\n");
+  }
   /* Destroy it */
   gdImageDestroy (im);
 
