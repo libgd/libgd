@@ -9,8 +9,8 @@ Generic configuration instructions are in the file INSTALL.
 
 The following 3rd-party libraries will be used by gd if found by configure.
 While gd will compile and install even without these, we suggest that at
-least zlib and libpng are installed, and recommend that freetype, jpeg, and
-xpm are installed as well:
+least zlib and libpng are installed, and recommend that freetype and jpeg
+are installed as well:
 
 1. zlib, available from http://www.gzip.org/zlib/
    Data compression library

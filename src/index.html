@@ -1,12 +1,12 @@
-<HTML>
-<HEAD>
-<TITLE>gd 2.0.5</TITLE>
-</HEAD>
-<BODY>
+<html>
+<head>
+<TITLE>gd 2.0.6</TITLE>
+</head>
+<body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<h1>This is gd 2.0.5.</h1>
+<h1>This is gd 2.0.6.</h1>
 <p>
-<H2>gd 2.0.5</H2>
+<H2>gd 2.0.6</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -22,7 +22,7 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.5 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.6 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -35,7 +35,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-gd 2.0.5 <strong>requires</strong> that the following libraries 
+gd 2.0.6 <strong>requires</strong> that the following libraries 
 also be installed, in order to produce the related image formats:
 <p>
 libpng (see the <a href="http://www.libpng.org/pub/png/">libpng home page</a>), if you want PNG
@@ -65,7 +65,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.5">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.6">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -164,7 +164,7 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.5.
+with 2.0.6.
 <h4>Perl</h4>
 gd can also be used from Perl, courtesy of
 Lincoln Stein's
@@ -192,6 +192,18 @@ invoke the interpreter.
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
 </ul>
 <P>
+<A NAME="whatsnew2.0.6"><H3>What's new in version 2.0.6?</H3></A>
+<P>
+<ul>
+<li>
+Fixed a compilation problem with gdft.c. A declaration appeared
+after executable code, and gcc let it slide by, so it made it
+out the door. My apologies!
+<li>As penance, I have seen to it that the entire library
+now compiles cleanly with the <code>-Wall</code>, <code>-ansi</code>
+and <code>-pedantic</code> options enabled.
+</ul>
+<p>
 <A NAME="whatsnew2.0.5"><H3>What's new in version 2.0.5?</H3></A>
 <ul>
 <li>libgd 2.0.5 INSTALLS IN /usr/local/lib BY DEFAULT. IF YOU WANT
@@ -3819,5 +3831,6 @@ purchase gd support at the hourly rate above.
 <P>
 <em><A HREF="http://www.boutell.com/">
 Boutell.Com, Inc.</A></em>
-</BODY>
-</HTML>
+</body>
+</html>
+

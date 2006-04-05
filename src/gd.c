@@ -2199,7 +2199,7 @@ gdImageCreateFromXbm (FILE * fd)
   for (i = 0; (i < bytes); i++)
     {
       char h[3];
-      int b;
+      unsigned int b;
       /* Skip spaces, commas, CRs, 0x */
       while (1)
 	{
