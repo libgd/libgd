@@ -793,6 +793,11 @@ select_colors (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize, int d
   boxlist = (boxptr) (*cinfo->mem->alloc_small)
     ((j_common_ptr) cinfo, JPOOL_IMAGE, desired_colors * SIZEOF (box));
 #else
+  /* This can't happen because we clamp desired_colors at gdMaxColors, 
+    but anyway */
+  if (overflow2(desired_colors, sizeof (box))) {
+    return;
+   }
   boxlist = (boxptr) gdMalloc (desired_colors * sizeof (box));
 #endif
   /* Initialize one box containing whole space */
