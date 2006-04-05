@@ -75,7 +75,7 @@ typedef struct gdImageStruct {
 	int sx;
 	int sy;
 	/* These are valid in palette images only. See also
-	/* 'alpha', which appears later in the structure to
+		'alpha', which appears later in the structure to
 		preserve binary backwards compatibility */
 	int colorsTotal;
 	int red[gdMaxColors];
@@ -372,13 +372,27 @@ void* gdImageGdPtr(gdImagePtr im, int *size);
 void* gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
 
 void gdImageEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
-void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color);
 
-#define gdPie   0
+/* Style is a bitwise OR ( | operator ) of these.
+	gdArc and gdChord are mutually exclusive;
+	gdChord just connects the starting and ending
+	angles with a straight line, while gdArc produces
+	a rounded edge. gdPie is a synonym for gdArc. 
+	gdNoFill indicates that the arc or chord should be
+	outlined, not filled. gdEdged, used together with
+	gdNoFill, indicates that the beginning and ending
+	angles should be connected to the center; this is
+	a good way to outline (rather than fill) a
+	'pie slice'. */
+#define gdArc   0
+#define gdPie   gdArc
 #define gdChord 1
+#define gdNoFill 2
+#define gdEdged 4
 
-void gdImageFilledEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color, int style);
 void gdImageFilledArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color, int style);
+void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color);
+void gdImageFilledEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
 void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color);
 void gdImageFill(gdImagePtr im, int x, int y, int color);
 void gdImageCopy(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int w, int h);

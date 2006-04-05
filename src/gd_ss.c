@@ -8,31 +8,31 @@
 #define FALSE 0
 
 /* Exported functions: */
-extern void gdImagePngToSink(gdImagePtr im, gdSinkPtr out);
-extern gdImagePtr gdImageCreateFromPngSource(gdSourcePtr inSource);
+extern void gdImagePngToSink (gdImagePtr im, gdSinkPtr out);
+extern gdImagePtr gdImageCreateFromPngSource (gdSourcePtr inSource);
 
 /* Use this for commenting out debug-print statements. */
 /* Just use the first '#define' to allow all the prints... */
 /*#define GD_SS_DBG(s) (s) */
 #define GD_SS_DBG(s)
 
-void gdImagePngToSink(gdImagePtr im, gdSinkPtr outSink)
+void
+gdImagePngToSink (gdImagePtr im, gdSinkPtr outSink)
 {
-        gdIOCtx   *out = gdNewSSCtx(NULL,outSink);
-        gdImagePngCtx(im, out);
-        out->free(out);
+  gdIOCtx *out = gdNewSSCtx (NULL, outSink);
+  gdImagePngCtx (im, out);
+  out->free (out);
 }
 
-gdImagePtr gdImageCreateFromPngSource(gdSourcePtr inSource)
+gdImagePtr
+gdImageCreateFromPngSource (gdSourcePtr inSource)
 {
-        gdIOCtx         *in = gdNewSSCtx(inSource, NULL);
-        gdImagePtr      im;
+  gdIOCtx *in = gdNewSSCtx (inSource, NULL);
+  gdImagePtr im;
 
-        im = gdImageCreateFromPngCtx(in);
+  im = gdImageCreateFromPngCtx (in);
 
-        in->free(in);
+  in->free (in);
 
-        return im;
+  return im;
 }
-
-
