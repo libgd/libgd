@@ -69,15 +69,13 @@ static int dynamicSeek (struct gdIOCtx *, const int);
 static long dynamicTell (struct gdIOCtx *);
 
 /* return data as a dynamic pointer */
-gdIOCtx *
-gdNewDynamicCtx (int initialSize, void *data)
+BGD_DECLARE(gdIOCtx *) gdNewDynamicCtx (int initialSize, void *data)
 {
   /* 2.0.23: Phil Moore: 'return' keyword was missing! */
   return gdNewDynamicCtxEx (initialSize, data, 1);
 }
 
-gdIOCtx *
-gdNewDynamicCtxEx (int initialSize, void *data, int freeOKFlag)
+BGD_DECLARE(gdIOCtx *) gdNewDynamicCtxEx (int initialSize, void *data, int freeOKFlag)
 {
   dpIOCtx *ctx;
   dynamicPtr *dp;
@@ -111,8 +109,7 @@ gdNewDynamicCtxEx (int initialSize, void *data, int freeOKFlag)
   return (gdIOCtx *) ctx;
 }
 
-void *
-gdDPExtractData (struct gdIOCtx *ctx, int *size)
+BGD_DECLARE(void *) gdDPExtractData (struct gdIOCtx *ctx, int *size)
 {
   dynamicPtr *dp;
   dpIOCtx *dctx;
