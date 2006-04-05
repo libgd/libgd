@@ -1,3 +1,7 @@
+990718 Thomas Boutell (TBB)
+
+Incorporated Greg Roelofs' superior PNG read and write routines.
+
 990715 Thomas Boutell (TBB)
 
 Removed all GIF capability in favor of PNG

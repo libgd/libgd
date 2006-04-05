@@ -1,40 +1,40 @@
+         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
+         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
+         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
+         A MUCH BETTER MANUAL IS IN THE HYPERTEXT DOCUMENT index.html!
 
-   SEE index.html FOR A MUCH MORE USEFUL HYPERTEXT VERSION OF THIS DOCUMENT.
-   SEE index.html FOR A MUCH MORE USEFUL HYPERTEXT VERSION OF THIS DOCUMENT.
-   SEE index.html FOR A MUCH MORE USEFUL HYPERTEXT VERSION OF THIS DOCUMENT.
-
-
-                                    gd 1.6
+                                   gd 1.6.1
                                        
 A graphics library for fast image creation
 
-Follow this link to the [1]latest version of this document.
+Follow this link to the latest version of this document.
 
   Table of Contents
   
-     * [2]Credits and license terms
-     * [3]What's new in version 1.6?
-     * [4]What is gd?
-     * [5]What if I want to use another programming language?
-     * [6]What else do I need to use gd?
-     * [7]How do I get gd?
-     * [8]How do I build gd?
-     * [9]gd basics: using gd in your program
-     * [10]webgif: a useful example
-     * [11]Function and type reference by category
-     * [12]About the additional .gd image file format
-     * [13]Please tell us you're using gd!
-     * [14]If you have problems
-     * [15]Alphabetical quick index
+     * Credits and license terms
+     * What's new in version 1.6.1?
+     * What's new in version 1.6?
+     * What is gd?
+     * What if I want to use another programming language?
+     * What else do I need to use gd?
+     * How do I get gd?
+     * How do I build gd?
+     * gd basics: using gd in your program
+     * webgif: a useful example
+     * Function and type reference by category
+     * About the additional .gd image file format
+     * Please tell us you're using gd!
+     * If you have problems
+     * Alphabetical quick index
        
-   [16]Up to the Boutell.Com, Inc. Home Page
+   Up to the Boutell.Com, Inc. Home Page
    
   Credits and license terms
   
    In order to resolve any possible confusion regarding the authorship of
    gd, the following copyright statement covers all of the authors who
    have required such a statement. _If you are aware of any oversights in
-   this copyright notice, please contact [17]Thomas Boutell who will be
+   this copyright notice, please contact Thomas Boutell who will be
    pleased to correct them._
 
 COPYRIGHT STATEMENT FOLLOWS THIS LINE
@@ -46,6 +46,8 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      Portions copyright 1996, 1997, 1998, 1999, by Boutell.Com, Inc.
      
      Portions relating to GD2 format copyright 1999 Philip Warner.
+     
+     Portions relating to PNG copyright 1999, Greg Roelofs.
      
      _Permission has been granted to copy and distribute gd in any
      context, including a commercial application, provided that this
@@ -64,8 +66,8 @@ COPYRIGHT STATEMENT FOLLOWS THIS LINE
      notice appear in supporting documentation. This software is
      provided "as is" without express or implied warranty.
      
-     Although their code does not appear in gd 1.6, the authors wish to
-     thank David Koblas, David Rowley, and Hutchison Avenue Software
+     Although their code does not appear in gd 1.6.1, the authors wish
+     to thank David Koblas, David Rowley, and Hutchison Avenue Software
      Corporation for their prior contributions.
      
      Permission to use, copy, modify, and distribute this software and
@@ -95,7 +97,7 @@ END OF COPYRIGHT STATEMENT
    
    gd does not provide for every possible desirable graphics operation.
    It is not necessary or desirable for gd to become a kitchen-sink
-   graphics package, but version 1.6 incorporates most of the commonly
+   graphics package, but version 1.6.1 incorporates most of the commonly
    requested features for an 8-bit 2D package. Support for scalable
    fonts, and truecolor images, JPEG and truecolor PNG is planned for
    version 2.0.
@@ -104,9 +106,9 @@ END OF COPYRIGHT STATEMENT
   
     Perl
     
-   gd can also be used from Perl, courtesy of Lincoln Stein's [18]GD.pm
+   gd can also be used from Perl, courtesy of Lincoln Stein's GD.pm
    library, which uses gd as the basis for a set of Perl 5.x classes. Not
-   yet updated for gd 1.6. be compatible.
+   yet updated for gd 1.6.1.
    
     Any Language
     
@@ -115,10 +117,25 @@ END OF COPYRIGHT STATEMENT
    text file from whatever scripting language you prefer to use, then
    invoke the interpreter.
    
-   These packages have not been updated to gd 1.6 as of this writing.
-     * [19]tgd, by Bradley K. Sherman
-     * [20]fly, by Martin Gleeson
+   These packages have not been updated to gd 1.6.1 as of this writing.
+     * tgd, by Bradley K. Sherman
+     * fly, by Martin Gleeson
        
+  What's new in version 1.6.1?
+  
+   Version 1.6.1 incorporates superior PNG reading and writing code from
+   Greg Roelofs, with minor modifications by Tom Boutell. Specifically, I
+   altered his code to read non-palette images (converting them to
+   palette images badly, by dithering them), and to tolerate palette
+   images with types of transparency that gd doesn't actually support (it
+   just ignores the advanced transparency features). Any bugs in this
+   area are therefore my fault, not Greg's.
+   
+   Unlike gd 1.6, users should have no trouble linking with gd 1.6.1 if
+   they follow the instructions and install all of the pieces. However,
+   _If you get undefined symbol errors, be sure to check for older
+   versions of libpng in your library directories!_
+   
   What's new in version 1.6?
   
    Version 1.6 features the following changes:
@@ -179,7 +196,7 @@ END OF COPYRIGHT STATEMENT
           for new I/O context.
           
    _NOTE:_ In fairness to Thomas Boutell, any bug/problems with any of
-   the above features should probably be reported to [21]Philip Warner.
+   the above features should probably be reported to Philip Warner.
    
   What's new in version 1.4?
   
@@ -192,13 +209,12 @@ END OF COPYRIGHT STATEMENT
           
    Support for alternate data sources
           Programmers who wish to load a GIF from something other than a
-          stdio FILE * stream can use the new
-          [22]gdImageCreateFromPngSource function.
+          stdio FILE * stream can use the new gdImageCreateFromPngSource
+          function.
           
    Support for alternate data destinations
           Programmers who wish to write a GIF to something other than a
-          stdio FILE * stream can use the new [23]gdImagePngToSink
-          function.
+          stdio FILE * stream can use the new gdImagePngToSink function.
           
    More tolerant when reading GIFs
           Version 1.4 does not crash when reading certain animated GIFs,
@@ -265,9 +281,9 @@ END OF COPYRIGHT STATEMENT
    industry standard. Ask your ISP why it is missing._
    
    As of version 1.6, you also need the zlib compression library, and the
-   libpng library. zlib is available for a variety of platforms from
-   [24]the zlib web site. libpng is available for a variety of platforms
-   from [25]the PNG web site.
+   libpng library. zlib is available for a variety of platforms from the
+   zlib web site. libpng is available for a variety of platforms from the
+   PNG web site.
    
    You will also want a PNG viewer, if you do not already have one for
    your system, since you will need a good way to check the results of
@@ -281,13 +297,13 @@ END OF COPYRIGHT STATEMENT
   
     By HTTP
     
-     * [26]Gzipped Tar File (Unix)
-     * [27].ZIP File (Windows)
+     * Gzipped Tar File (Unix)
+     * .ZIP File (Windows)
        
     By FTP
     
-     * [28]Gzipped Tar File (Unix)
-     * [29].ZIP File (Windows)
+     * Gzipped Tar File (Unix)
+     * .ZIP File (Windows)
        
   How do I build gd?
   
@@ -296,11 +312,11 @@ END OF COPYRIGHT STATEMENT
    (Windows), please consult with an experienced user of your system.
    Sorry, we cannot answer questions about basic Internet skills.
    
-   Unpacking the archive will produce a directory called "gd1.6".
+   Unpacking the archive will produce a directory called "gd1.6.1".
    
     For Unix
     
-   cd to the gd1.6 directory and examine the Makefile, which you will
+   cd to the gd1.6.1 directory and examine the Makefile, which you will
    probably need to change slightly depending on your operating system
    and your needs.
    
@@ -361,7 +377,7 @@ END OF COPYRIGHT STATEMENT
 
 int main() {
         /* Declare the image */
-        [30]gdImagePtr im;
+        gdImagePtr im;
         /* Declare an output file */
         FILE *out;
         /* Declare color indexes */
@@ -369,32 +385,32 @@ int main() {
         int white;
 
         /* Allocate the image: 64 pixels across by 64 pixels tall */
-        im = [31]gdImageCreate(64, 64);
+        im = gdImageCreate(64, 64);
 
         /* Allocate the color black (red, green and blue all minimum).
                 Since this is the first color in a new image, it will
                 be the background color. */
-        black = [32]gdImageColorAllocate(im, 0, 0, 0);
+        black = gdImageColorAllocate(im, 0, 0, 0);
 
         /* Allocate the color white (red, green and blue all maximum). */
-        white = [33]gdImageColorAllocate(im, 255, 255, 255);
+        white = gdImageColorAllocate(im, 255, 255, 255);
         
         /* Draw a line from the upper left to the lower right,
                 using white color index. */
-        [34]gdImageLine(im, 0, 0, 63, 63, white);
+        gdImageLine(im, 0, 0, 63, 63, white);
 
         /* Open a file for writing. "wb" means "write binary", important
                 under MSDOS, harmless under Unix. */
         out = fopen("test.png", "wb");
 
         /* Output the image to the disk file. */
-        [35]gdImagePng(im, out);
+        gdImagePng(im, out);
 
         /* Close the file. */
         fclose(out);
 
         /* Destroy the image in memory. */
-        [36]gdImageDestroy(im);
+        gdImageDestroy(im);
 }
 
    When executed, this program creates an image, allocates two colors
@@ -405,7 +421,7 @@ int main() {
    The above example program should give you an idea of how the package
    works. gd provides many additional functions, which are listed in the
    following reference chapters, complete with code snippets
-   demonstrating each. There is also an [37]alphabetical index.
+   demonstrating each. There is also an alphabetical index.
    
   Webpng: a more powerful gd example
   
@@ -421,20 +437,20 @@ int main() {
    
 Function and type reference
 
-     * [38]Types
-     * [39]Image creation, destruction, loading and saving
-     * [40]Drawing, styling, brushing, tiling and filling functions
-     * [41]Query functions (not color-related)
-     * [42]Font and text-handling functions
-     * [43]Color handling functions
-     * [44]Copying and resizing functions
-     * [45]Miscellaneous Functions
-     * [46]Constants
+     * Types
+     * Image creation, destruction, loading and saving
+     * Drawing, styling, brushing, tiling and filling functions
+     * Query functions (not color-related)
+     * Font and text-handling functions
+     * Color handling functions
+     * Copying and resizing functions
+     * Miscellaneous Functions
+     * Constants
        
   Types
   
    gdImage_(TYPE)_
-          The data structure in which gd stores images. [47]gdImageCreate
+          The data structure in which gd stores images. gdImageCreate
           returns a pointer to this type, and the other functions expect
           to receive a pointer to this type as their first argument. You
           may read the members sx (size on X axis), sy (size on Y axis),
@@ -459,7 +475,7 @@ typedef struct {
 } gdImage;
 
    gdImagePtr _(TYPE)_
-          A pointer to an image structure. [48]gdImageCreate returns this
+          A pointer to an image structure. gdImageCreate returns this
           type, and the other functions expect it as the first argument.
           
    gdFont _(TYPE)_
@@ -490,13 +506,13 @@ typedef struct {
 
    gdFontPtr _(TYPE)_
           A pointer to a font structure. Text-output functions expect
-          these as their second argument, following the [49]gdImagePtr
+          these as their second argument, following the gdImagePtr
           argument. Two such pointers are declared in the provided
           include files gdfonts.h and gdfontl.h.
           
    gdPoint _(TYPE)_
           Represents a point in the coordinate space of the image; used
-          by [50]gdImagePolygon and [51]gdImageFilledPolygon.
+          by gdImagePolygon and gdImageFilledPolygon.
           
 
 typedef struct {
@@ -504,8 +520,8 @@ typedef struct {
 } gdPoint, *gdPointPtr;
 
    gdPointPtr _(TYPE)_
-          A pointer to a [52]gdPoint structure; passed as an argument to
-          [53]gdImagePolygon and [54]gdImageFilledPolygon.
+          A pointer to a gdPoint structure; passed as an argument to
+          gdImagePolygon and gdImageFilledPolygon.
           
    gdSource _(TYPE)_
 
@@ -516,9 +532,9 @@ typedef struct {
 
    Represents a source from which a PNG can be read. Programmers who do
    not wish to read PNGs from a file can provide their own alternate
-   input mechanism, using the [55]gdImageCreateFromPngSource function.
-   See the documentation of that function for an example of the proper
-   use of this type.
+   input mechanism, using the gdImageCreateFromPngSource function. See
+   the documentation of that function for an example of the proper use of
+   this type.
    
    gdSink _(TYPE)_
 
@@ -529,54 +545,54 @@ typedef struct {
 
    Represents a "sink" (destination) to which a PNG can be written.
    Programmers who do not wish to write PNGs to a file can provide their
-   own alternate output mechanism, using the [56]gdImagePngToSink
-   function. See the documentation of that function for an example of the
-   proper use of this type.
+   own alternate output mechanism, using the gdImagePngToSink function.
+   See the documentation of that function for an example of the proper
+   use of this type.
    
   Image creation, destruction, loading and saving
   
    gdImageCreate(sx, sy) _(FUNCTION)_
           gdImageCreate is called to create images. Invoke gdImageCreate
           with the x and y dimensions of the desired image. gdImageCreate
-          returns a [57]gdImagePtr to the new image, or NULL if unable to
+          returns a gdImagePtr to the new image, or NULL if unable to
           allocate the image. The image must eventually be destroyed
-          using [58]gdImageDestroy().
+          using gdImageDestroy().
           
 
 ... inside a function ...
-[59]gdImagePtr im;
+gdImagePtr im;
 im = gdImageCreate(64, 64);
 /* ... Use the image ... */
-[60]gdImageDestroy(im);
+gdImageDestroy(im);
 
    gdImageCreateFromPng(FILE *in) _(FUNCTION)_
-          gdImageCreateFromPngCtx([61]gdIOCtx *in) _(FUNCTION)_
+          gdImageCreateFromPngCtx(gdIOCtx *in) _(FUNCTION)_
           
           
           gdImageCreateFromPng is called to load images from PNG format
           files. Invoke gdImageCreateFromPng with an already opened
           pointer to a file containing the desired image.
-          gdImageCreateFromPng returns a [62]gdImagePtr to the new image,
-          or NULL if unable to load the image (most often because the
-          file is corrupt or does not contain a PNG image).
+          gdImageCreateFromPng returns a gdImagePtr to the new image, or
+          NULL if unable to load the image (most often because the file
+          is corrupt or does not contain a PNG image).
           gdImageCreateFromPng does _not_ close the file. You can inspect
           the sx and sy members of the image to determine its size. The
-          image must eventually be destroyed using [63]gdImageDestroy().
+          image must eventually be destroyed using gdImageDestroy().
           
 
-[64]gdImagePtr im;
+gdImagePtr im;
 ... inside a function ...
 FILE *in;
 in = fopen("mypng.png", "rb");
 im = gdImageCreateFromPng(in);
 fclose(in);
 /* ... Use the image ... */
-[65]gdImageDestroy(im);
+gdImageDestroy(im);
 
    gdImageCreateFromPngSource(gdSourcePtr in) _(FUNCTION)_
           gdImageCreateFromPngSource is called to load a PNG from a data
           source other than a file. Usage is very similar to the
-          [66]gdImageCreateFromPng function, except that the programmer
+          gdImageCreateFromPng function, except that the programmer
           provides a custom data source.
           
           The programmer must write an input function which accepts a
@@ -585,13 +601,12 @@ fclose(in);
           requested, unless the end of the file has been reached, in
           which case the function should return zero, or an error has
           occurred, in which case the function should return -1. The
-          programmer then creates a [67]gdSource structure and sets the
+          programmer then creates a gdSource structure and sets the
           source pointer to the input function and the context pointer to
           any value which is useful to the programmer.
           
-          The example below implements [68]gdImageCreateFromPng by
-          creating a custom data source and invoking
-          gdImageCreateFromPngSource.
+          The example below implements gdImageCreateFromPng by creating a
+          custom data source and invoking gdImageCreateFromPngSource.
           
 
 static int freadWrapper(void *context, char *buf, int len);
@@ -611,106 +626,105 @@ static int freadWrapper(void *context, char *buf, int len)
 }
 
    gdImageCreateFromGd(FILE *in) _(FUNCTION)_
-          gdImageCreateFromGdCtx([69]gdIOCtx *in) _(FUNCTION)_
+          gdImageCreateFromGdCtx(gdIOCtx *in) _(FUNCTION)_
           
           
           gdImageCreateFromGd is called to load images from gd format
           files. Invoke gdImageCreateFromGd with an already opened
-          pointer to a file containing the desired image in the [70]gd
-          file format, which is specific to gd and intended for very fast
+          pointer to a file containing the desired image in the gd file
+          format, which is specific to gd and intended for very fast
           loading. (It is _not_ intended for compression; for
-          compression, use PNG.) gdImageCreateFromGd returns a
-          [71]gdImagePtr to the new image, or NULL if unable to load the
-          image (most often because the file is corrupt or does not
-          contain a gd format image). gdImageCreateFromGd does _not_
-          close the file. You can inspect the sx and sy members of the
-          image to determine its size. The image must eventually be
-          destroyed using [72]gdImageDestroy().
+          compression, use PNG.) gdImageCreateFromGd returns a gdImagePtr
+          to the new image, or NULL if unable to load the image (most
+          often because the file is corrupt or does not contain a gd
+          format image). gdImageCreateFromGd does _not_ close the file.
+          You can inspect the sx and sy members of the image to determine
+          its size. The image must eventually be destroyed using
+          gdImageDestroy().
           
 
 ... inside a function ...
-[73]gdImagePtr im;
+gdImagePtr im;
 FILE *in;
 in = fopen("mygd.gd", "rb");
 im = gdImageCreateFromGd(in);
 fclose(in);
 /* ... Use the image ... */
-[74]gdImageDestroy(im);
+gdImageDestroy(im);
 
    gdImageCreateFromGd2(FILE *in) _(FUNCTION)_
-          gdImageCreateFromGd2Ctx([75]gdIOCtx *in) _(FUNCTION)_
+          gdImageCreateFromGd2Ctx(gdIOCtx *in) _(FUNCTION)_
           
           
           gdImageCreateFromGd2 is called to load images from gd2 format
           files. Invoke gdImageCreateFromGd2 with an already opened
-          pointer to a file containing the desired image in the [76]gd2
-          file format, which is specific to gd2 and intended for fast
-          loading of parts of large images. (It is a compressed format,
-          but generally not as good a LZW compression).
-          gdImageCreateFromGd returns a [77]gdImagePtr to the new image,
-          or NULL if unable to load the image (most often because the
-          file is corrupt or does not contain a gd format image).
-          gdImageCreateFromGd2 does _not_ close the file. You can inspect
-          the sx and sy members of the image to determine its size. The
-          image must eventually be destroyed using [78]gdImageDestroy().
+          pointer to a file containing the desired image in the gd2 file
+          format, which is specific to gd2 and intended for fast loading
+          of parts of large images. (It is a compressed format, but
+          generally not as good a LZW compression). gdImageCreateFromGd
+          returns a gdImagePtr to the new image, or NULL if unable to
+          load the image (most often because the file is corrupt or does
+          not contain a gd format image). gdImageCreateFromGd2 does _not_
+          close the file. You can inspect the sx and sy members of the
+          image to determine its size. The image must eventually be
+          destroyed using gdImageDestroy().
           
 
 ... inside a function ...
-[79]gdImagePtr im;
+gdImagePtr im;
 FILE *in;
 in = fopen("mygd.gd2", "rb");
 im = gdImageCreateFromGd2(in);
 fclose(in);
 /* ... Use the image ... */
-[80]gdImageDestroy(im);
+gdImageDestroy(im);
 
    gdImageCreateFromGd2Part(FILE *in, int srcX, int srcY, int w, int h)
           _(FUNCTION)_
-          gdImageCreateFromGd2PartCtx([81]gdIOCtx *in) _(FUNCTION)_
+          gdImageCreateFromGd2PartCtx(gdIOCtx *in) _(FUNCTION)_
           
           
           gdImageCreateFromGd2Part is called to load parts of images from
-          [82]gd2 format files. Invoked in the same way as
-          [83]gdImageCreateFromGd2, but with extra parameters indicating
-          the source (x, y) and width/height of the desired image.
-          gdImageCreateFromGd2Part returns a [84]gdImagePtr to the new
-          image, or NULL if unable to load the image. The image must
-          eventually be destroyed using [85]gdImageDestroy().
+          gd2 format files. Invoked in the same way as
+          gdImageCreateFromGd2, but with extra parameters indicating the
+          source (x, y) and width/height of the desired image.
+          gdImageCreateFromGd2Part returns a gdImagePtr to the new image,
+          or NULL if unable to load the image. The image must eventually
+          be destroyed using gdImageDestroy().
           
    gdImageCreateFromXbm(FILE *in) _(FUNCTION)_
           gdImageCreateFromXbm is called to load images from X bitmap
           format files. Invoke gdImageCreateFromXbm with an already
           opened pointer to a file containing the desired image.
-          gdImageCreateFromXbm returns a [86]gdImagePtr to the new image,
-          or NULL if unable to load the image (most often because the
-          file is corrupt or does not contain an X bitmap format image).
+          gdImageCreateFromXbm returns a gdImagePtr to the new image, or
+          NULL if unable to load the image (most often because the file
+          is corrupt or does not contain an X bitmap format image).
           gdImageCreateFromXbm does _not_ close the file. You can inspect
           the sx and sy members of the image to determine its size. The
-          image must eventually be destroyed using [87]gdImageDestroy().
+          image must eventually be destroyed using gdImageDestroy().
           
 
 ... inside a function ...
-[88]gdImagePtr im;
+gdImagePtr im;
 FILE *in;
 in = fopen("myxbm.xbm", "rb");
 im = gdImageCreateFromXbm(in);
 fclose(in);
 /* ... Use the image ... */
-[89]gdImageDestroy(im);
+gdImageDestroy(im);
 
    gdImageDestroy(gdImagePtr im) _(FUNCTION)_
           gdImageDestroy is used to free the memory associated with an
           image. It is important to invoke gdImageDestroy before exiting
-          your program or assigning a new image to a [90]gdImagePtr
-          variable.
+          your program or assigning a new image to a gdImagePtr variable.
           
 
 ... inside a function ...
-[91]gdImagePtr im;
-im = [92]gdImageCreate(10, 10);
+gdImagePtr im;
+im = gdImageCreate(10, 10);
 /* ... Use the image ... */
 /* Now destroy it */
-[93]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImagePng(gdImagePtr im, FILE *out) _(FUNCTION)_
           gdImagePng outputs the specified image to the specified file in
@@ -722,17 +736,17 @@ im = [92]gdImageCreate(10, 10);
           
 
 ... inside a function ...
-[94]gdImagePtr im;
+gdImagePtr im;
 int black, white;
 FILE *out;
 /* Create the image */
-im = [95]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Allocate background */
-white = [96]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Allocate drawing color */
-black = [97]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Draw rectangle */
-[98]gdImageRectangle(im, 0, 0, 99, 99, black);
+gdImageRectangle(im, 0, 0, 99, 99, black);
 /* Open output file in binary mode */
 out = fopen("rect.png", "wb");
 /* Write PNG */
@@ -740,7 +754,7 @@ gdImagePng(im, out);
 /* Close file */
 fclose(out);
 /* Destroy image */
-[99]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void* gdImagePngPtr(gdImagePtr im, int *size) _(FUNCTION)_
           Identical to gdImagePng except that it returns a pointer to a
@@ -751,7 +765,7 @@ fclose(out);
    gdImagePngToSink(gdImagePtr im, gdSinkPtr out) _(FUNCTION)_
           gdImagePngToSink is called to write a PNG to a data "sink"
           (destination) other than a file. Usage is very similar to the
-          [100]gdImagePng function, except that the programmer provides a
+          gdImagePng function, except that the programmer provides a
           custom data sink.
           
           The programmer must write an output function which accepts a
@@ -759,12 +773,12 @@ fclose(out);
           as arguments. This function must write the number of bytes
           requested and return that number, unless an error has occurred,
           in which case the function should return -1. The programmer
-          then creates a [101]gdSink structure and sets the sink pointer
-          to the output function and the context pointer to any value
-          which is useful to the programmer.
+          then creates a gdSink structure and sets the sink pointer to
+          the output function and the context pointer to any value which
+          is useful to the programmer.
           
-          The example below implements [102]gdImagePng by creating a
-          custom data source and invoking gdImagePngFromSink.
+          The example below implements gdImagePng by creating a custom
+          data source and invoking gdImagePngFromSink.
           
 
 static int stdioSink(void *context, char *buffer, int len)
@@ -782,11 +796,11 @@ void gdImagePng(gdImagePtr im, FILE *out)
 
    void gdImageGd(gdImagePtr im, FILE *out) _(FUNCTION)_
           gdImageGd outputs the specified image to the specified file in
-          the [103]gd image format. The file must be open for writing.
-          Under MSDOS and all versions of Windows, it is important to use
-          "wb" as opposed to simply "w" as the mode when opening the
-          file, and under Unix there is no penalty for doing so.
-          gdImagePng does _not_ close the file; your code must do so.
+          the gd image format. The file must be open for writing. Under
+          MSDOS and all versions of Windows, it is important to use "wb"
+          as opposed to simply "w" as the mode when opening the file, and
+          under Unix there is no penalty for doing so. gdImagePng does
+          _not_ close the file; your code must do so.
           
           The gd image format is intended for fast reads and writes of
           images your program will need frequently to build other images.
@@ -795,17 +809,17 @@ void gdImagePng(gdImagePtr im, FILE *out)
           
 
 ... inside a function ...
-[104]gdImagePtr im;
+gdImagePtr im;
 int black, white;
 FILE *out;
 /* Create the image */
-im = [105]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Allocate background */
-white = [106]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Allocate drawing color */
-black = [107]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Draw rectangle */
-[108]gdImageRectangle(im, 0, 0, 99, 99, black);
+gdImageRectangle(im, 0, 0, 99, 99, black);
 /* Open output file in binary mode */
 out = fopen("rect.gd", "wb");
 /* Write gd format file */
@@ -813,7 +827,7 @@ gdImageGd(im, out);
 /* Close file */
 fclose(out);
 /* Destroy image */
-[109]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void* gdImageGdPtr(gdImagePtr im, int *size) _(FUNCTION)_
           Identical to gdImageGd except that it returns a pointer to a
@@ -824,11 +838,11 @@ fclose(out);
    void gdImageGd2(gdImagePtr im, FILE *out, int chunkSize, int fmt)
           _(FUNCTION)_
           gdImageGd2 outputs the specified image to the specified file in
-          the [110]gd2 image format. The file must be open for writing.
-          Under MSDOS and all versions of Windows, it is important to use
-          "wb" as opposed to simply "w" as the mode when opening the
-          file, and under Unix there is no penalty for doing so.
-          gdImageGd2 does _not_ close the file; your code must do so.
+          the gd2 image format. The file must be open for writing. Under
+          MSDOS and all versions of Windows, it is important to use "wb"
+          as opposed to simply "w" as the mode when opening the file, and
+          under Unix there is no penalty for doing so. gdImageGd2 does
+          _not_ close the file; your code must do so.
           
           The gd2 image format is intended for fast reads and writes of
           parts of images. It is a compressed format, and well suited to
@@ -846,17 +860,17 @@ fclose(out);
           
 
 ... inside a function ...
-[111]gdImagePtr im;
+gdImagePtr im;
 int black, white;
 FILE *out;
 /* Create the image */
-im = [112]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Allocate background */
-white = [113]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Allocate drawing color */
-black = [114]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Draw rectangle */
-[115]gdImageRectangle(im, 0, 0, 99, 99, black);
+gdImageRectangle(im, 0, 0, 99, 99, black);
 /* Open output file in binary mode */
 out = fopen("rect.gd", "wb");
 /* Write gd2 format file */
@@ -864,7 +878,7 @@ gdImageGd2(im, out, 0, GD2_FMT_COMPRESSED);
 /* Close file */
 fclose(out);
 /* Destroy image */
-[116]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void* gdImageGd2Ptr(gdImagePtr im, int chunkSize, int fmt, int *size)
           _(FUNCTION)_
@@ -879,55 +893,55 @@ fclose(out);
           _(FUNCTION)_
           gdImageSetPixel sets a pixel to a particular color index.
           Always use this function or one of the other drawing functions
-          to access pixels; do not access the pixels of the [117]gdImage
+          to access pixels; do not access the pixels of the gdImage
           structure directly.
           
 
 ... inside a function ...
-[118]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
-im = [119]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [120]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [121]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Set a pixel near the center. */
 gdImageSetPixel(im, 50, 50, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[122]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImageLine(gdImagePtr im, int x1, int y1, int x2, int y2, int
           color) _(FUNCTION)_
           gdImageLine is used to draw a line between two endpoints (x1,y1
           and x2, y2). The line is drawn using the color index specified.
           Note that the color index can be an actual color returned by
-          [123]gdImageColorAllocate or one of [124]gdStyled,
-          [125]gdBrushed or [126]gdStyledBrushed.
+          gdImageColorAllocate or one of gdStyled, gdBrushed or
+          gdStyledBrushed.
           
 
 ... inside a function ...
-[127]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
-im = [128]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [129]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [130]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Draw a line from the upper left corner to the lower right corner. */
 gdImageLine(im, 0, 0, 99, 99, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[131]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImageDashedLine(gdImagePtr im, int x1, int y1, int x2, int y2,
           int color) _(FUNCTION)_
           gdImageDashedLine is provided _solely for backwards
           compatibility _with gd 1.0. New programs should draw dashed
-          lines using the normal [132]gdImageLine function and the new
-          [133]gdImageSetStyle function.
+          lines using the normal gdImageLine function and the new
+          gdImageSetStyle function.
           
           gdImageDashedLine is used to draw a dashed line between two
           endpoints (x1,y1 and x2, y2). The line is drawn using the color
@@ -936,38 +950,38 @@ gdImageLine(im, 0, 0, 99, 99, white);
           
 
 ... inside a function ...
-[134]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
-im = [135]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [136]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [137]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Draw a dashed line from the upper left corner to the lower right corner. */
 gdImageDashedLine(im, 0, 0, 99, 99);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[138]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImagePolygon(gdImagePtr im, gdPointPtr points, int pointsTotal,
           int color) _(FUNCTION)_
           gdImagePolygon is used to draw a polygon with the verticies (at
           least 3) specified, using the color index specified. See also
-          [139]gdImageFilledPolygon.
+          gdImageFilledPolygon.
           
 
 ... inside a function ...
-[140]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
 /* Points of polygon */
-[141]gdPoint points[3];
-im = [142]gdImageCreate(100, 100);
+gdPoint points[3];
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [143]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [144]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Draw a triangle. */
 points[0].x = 50;
 points[0].y = 0;
@@ -978,7 +992,7 @@ points[2].y = 99;
 gdImagePolygon(im, points, 3, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[145]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImageRectangle(gdImagePtr im, int x1, int y1, int x2, int y2,
           int color) _(FUNCTION)_
@@ -988,41 +1002,41 @@ gdImagePolygon(im, points, 3, white);
           
 
 ... inside a function ...
-[146]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
-im = [147]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [148]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [149]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Draw a rectangle occupying the central area. */
 gdImageRectangle(im, 25, 25, 74, 74, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[150]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImageFilledPolygon(gdImagePtr im, gdPointPtr points, int
           pointsTotal, int color) _(FUNCTION)_
           gdImageFilledPolygon is used to fill a polygon with the
           verticies (at least 3) specified, using the color index
-          specified. See also [151]gdImagePolygon.
+          specified. See also gdImagePolygon.
           
 
 ... inside a function ...
-[152]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
 int red;
 /* Points of polygon */
-[153]gdPoint points[3];
-im = [154]gdImageCreate(100, 100);
+gdPoint points[3];
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [155]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [156]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Allocate the color red. */
-red = [157]gdImageColorAllocate(im, 255, 0, 0);
+red = gdImageColorAllocate(im, 255, 0, 0);
 /* Draw a triangle. */
 points[0].x = 50;
 points[0].y = 0;
@@ -1033,10 +1047,10 @@ points[2].y = 99;
 /* Paint it in white */
 gdImageFilledPolygon(im, points, 3, white);
 /* Outline it in red; must be done second */
-[158]gdImagePolygon(im, points, 3, red);
+gdImagePolygon(im, points, 3, red);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[159]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImageFilledRectangle(gdImagePtr im, int x1, int y1, int x2, int
           y2, int color) _(FUNCTION)_
@@ -1046,19 +1060,19 @@ gdImageFilledPolygon(im, points, 3, white);
           
 
 ... inside a function ...
-[160]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
-im = [161]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [162]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [163]int gdImageColorAllocate(im, 255, 255, 255);
+white = int gdImageColorAllocate(im, 255, 255, 255);
 /* Draw a filled rectangle occupying the central area. */
 gdImageFilledRectangle(im, 25, 25, 74, 74, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[164]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s,
           int e, int color) _(FUNCTION)_
@@ -1073,31 +1087,30 @@ gdImageFilledRectangle(im, 25, 25, 74, 74, white);
           
 
 ... inside a function ...
-[165]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
-im = [166]gdImageCreate(100, 50);
+im = gdImageCreate(100, 50);
 /* Background color (first allocated) */
-black = [167]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [168]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Inscribe an ellipse in the image. */
 gdImageArc(im, 50, 25, 98, 48, 0, 360, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[169]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int
           color) _(FUNCTION)_
           gdImageFillToBorder floods a portion of the image with the
           specified color, beginning at the specified point and stopping
           at the specified border color. For a way of flooding an area
-          defined by the color of the starting point, see
-          [170]gdImageFill.
+          defined by the color of the starting point, see gdImageFill.
           
-          The border color _cannot_ be a special color such as
-          [171]gdTiled; it must be a proper solid color. The fill color
-          can be, however.
+          The border color _cannot_ be a special color such as gdTiled;
+          it must be a proper solid color. The fill color can be,
+          however.
           
           Note that gdImageFillToBorder is recursive. It is not the most
           naive implementation possible, and the implementation is
@@ -1109,17 +1122,17 @@ gdImageArc(im, 50, 25, 98, 48, 0, 360, white);
           
 
 ... inside a function ...
-[172]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
 int red;
-im = [173]gdImageCreate(100, 50);
+im = gdImageCreate(100, 50);
 /* Background color (first allocated) */
-black = [174]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [175]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Allocate the color red. */
-red = [176]gdImageColorAllocate(im, 255, 0, 0);
+red = gdImageColorAllocate(im, 255, 0, 0);
 /* Inscribe an ellipse in the image. */
 gdImageArc(im, 50, 25, 98, 48, 0, 360, white);
 /* Flood-fill the ellipse. Fill color is red, border color is
@@ -1127,22 +1140,21 @@ gdImageArc(im, 50, 25, 98, 48, 0, 360, white);
 gdImageFillToBorder(im, 50, 50, white, red);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[177]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImageFill(gdImagePtr im, int x, int y, int color) _(FUNCTION)_
           gdImageFill floods a portion of the image with the specified
           color, beginning at the specified point and flooding the
           surrounding region of the same color as the starting point. For
           a way of flooding a region defined by a specific border color
-          rather than by its interior color, see
-          [178]gdImageFillToBorder.
+          rather than by its interior color, see gdImageFillToBorder.
           
-          The fill color can be [179]gdTiled, resulting in a tile fill
-          using another image as the tile. However, the tile image cannot
-          be transparent. If the image you wish to fill with has a
-          transparent color index, call [180]gdImageTransparent on the
-          tile image and set the transparent color index to -1 to turn
-          off its transparency.
+          The fill color can be gdTiled, resulting in a tile fill using
+          another image as the tile. However, the tile image cannot be
+          transparent. If the image you wish to fill with has a
+          transparent color index, call gdImageTransparent on the tile
+          image and set the transparent color index to -1 to turn off its
+          transparency.
           
           Note that gdImageFill is recursive. It is not the most naive
           implementation possible, and the implementation is expected to
@@ -1154,17 +1166,17 @@ gdImageFillToBorder(im, 50, 50, white, red);
           
 
 ... inside a function ...
-[181]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
 int red;
-im = [182]gdImageCreate(100, 50);
+im = gdImageCreate(100, 50);
 /* Background color (first allocated) */
-black = [183]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [184]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Allocate the color red. */
-red = [185]gdImageColorAllocate(im, 255, 0, 0);
+red = gdImageColorAllocate(im, 255, 0, 0);
 /* Inscribe an ellipse in the image. */
 gdImageArc(im, 50, 25, 98, 48, 0, 360, white);
 /* Flood-fill the ellipse. Fill color is red, and will replace the
@@ -1172,18 +1184,18 @@ gdImageArc(im, 50, 25, 98, 48, 0, 360, white);
 gdImageFill(im, 50, 50, red);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[186]gdImageDestroy(im);
+gdImageDestroy(im);
 
    void gdImageSetBrush(gdImagePtr im, gdImagePtr brush) _(FUNCTION)_
           A "brush" is an image used to draw wide, shaped strokes in
           another image. Just as a paintbrush is not a single point, a
           brush image need not be a single pixel. _Any_ gd image can be
           used as a brush, and by setting the transparent color index of
-          the brush image with [187]gdImageColorTransparent, a brush of
-          any shape can be created. All line-drawing functions, such as
-          [188]gdImageLine and [189]gdImagePolygon, will use the current
-          brush if the special "color" [190]gdBrushed or
-          [191]gdStyledBrushed is used when calling them.
+          the brush image with gdImageColorTransparent, a brush of any
+          shape can be created. All line-drawing functions, such as
+          gdImageLine and gdImagePolygon, will use the current brush if
+          the special "color" gdBrushed or gdStyledBrushed is used when
+          calling them.
           
           gdImageSetBrush is used to specify the brush to be used in a
           particular image. You can set any image to be the brush. If the
@@ -1200,42 +1212,42 @@ gdImageFill(im, 50, 50, red);
           You need not take any special action when you are finished with
           a brush. As for any other image, if you will not be using the
           brush image for any further purpose, you should call
-          [192]gdImageDestroy. You must not use the color [193]gdBrushed
-          if the current brush has been destroyed; you can of course set
-          a new brush to replace it.
+          gdImageDestroy. You must not use the color gdBrushed if the
+          current brush has been destroyed; you can of course set a new
+          brush to replace it.
           
 
 ... inside a function ...
-[194]gdImagePtr im, brush;
+gdImagePtr im, brush;
 FILE *in;
 int black;
-im = [195]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Open the brush PNG. For best results, portions of the
         brush that should be transparent (ie, not part of the
         brush shape) should have the transparent color index. */
 in = fopen("star.png", "rb");
-brush = [196]gdImageCreateFromPng(in);
+brush = gdImageCreateFromPng(in);
 /* Background color (first allocated) */
-black = [197]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 gdImageSetBrush(im, brush);
 /* Draw a line from the upper left corner to the lower right corner
         using the brush. */
-[198]gdImageLine(im, 0, 0, 99, 99, [199]gdBrushed);
+gdImageLine(im, 0, 0, 99, 99, gdBrushed);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[200]gdImageDestroy(im);
+gdImageDestroy(im);
 /* Destroy the brush image */
-[201]gdImageDestroy(brush);
+gdImageDestroy(brush);
 
    void gdImageSetTile(gdImagePtr im, gdImagePtr tile) _(FUNCTION)_
           A "tile" is an image used to fill an area with a repeated
           pattern. _Any_ gd image can be used as a tile, and by setting
           the transparent color index of the tile image with
-          [202]gdImageColorTransparent, a tile that allows certain parts
-          of the underlying area to shine through can be created. All
-          region-filling functions, such as [203]gdImageFill and
-          [204]gdImageFilledPolygon, will use the current tile if the
-          special "color" [205]gdTiled is used when calling them.
+          gdImageColorTransparent, a tile that allows certain parts of
+          the underlying area to shine through can be created. All
+          region-filling functions, such as gdImageFill and
+          gdImageFilledPolygon, will use the current tile if the special
+          "color" gdTiled is used when calling them.
           
           gdImageSetTile is used to specify the tile to be used in a
           particular image. You can set any image to be the tile. If the
@@ -1251,32 +1263,32 @@ gdImageSetBrush(im, brush);
           You need not take any special action when you are finished with
           a tile. As for any other image, if you will not be using the
           tile image for any further purpose, you should call
-          [206]gdImageDestroy. You must not use the color [207]gdTiled if
-          the current tile has been destroyed; you can of course set a
-          new tile to replace it.
+          gdImageDestroy. You must not use the color gdTiled if the
+          current tile has been destroyed; you can of course set a new
+          tile to replace it.
           
 
 ... inside a function ...
-[208]gdImagePtr im, tile;
+gdImagePtr im, tile;
 FILE *in;
 int black;
-im = [209]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Open the tile PNG. For best results, portions of the
         tile that should be transparent (ie, allowing the
         background to shine through) should have the transparent
         color index. */
 in = fopen("star.png", "rb");
-tile = [210]gdImageCreateFromPng(in);
+tile = gdImageCreateFromPng(in);
 /* Background color (first allocated) */
-black = [211]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 gdImageSetTile(im, tile);
 /* Fill an area using the tile. */
-[212]gdImageFilledRectangle(im, 25, 25, 75, 75, [213]gdTiled);
+gdImageFilledRectangle(im, 25, 25, 75, 75, gdTiled);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[214]gdImageDestroy(im);
+gdImageDestroy(im);
 /* Destroy the tile image */
-[215]gdImageDestroy(tile);
+gdImageDestroy(tile);
 
    void gdImageSetStyle(gdImagePtr im, int *style, int styleLength)
           _(FUNCTION)_
@@ -1288,19 +1300,18 @@ gdImageSetTile(im, tile);
           
           To use gdImageSetStyle, create an array of integers and assign
           them the desired series of color values to be repeated. You can
-          assign the special color value [216]gdTransparent to indicate
-          that the existing color should be left unchanged for that
-          particular pixel (allowing a dashed line to be attractively
-          drawn over an existing image).
+          assign the special color value gdTransparent to indicate that
+          the existing color should be left unchanged for that particular
+          pixel (allowing a dashed line to be attractively drawn over an
+          existing image).
           
           Then, to draw a line using the style, use the normal
-          [217]gdImageLine function with the special color value
-          [218]gdStyled.
+          gdImageLine function with the special color value gdStyled.
           
-          As of [219]version 1.1.1, the style array is copied when you
-          set the style, so you need not be concerned with keeping the
-          array around indefinitely. This should not break existing code
-          that assumes styles are not copied.
+          As of version 1.1.1, the style array is copied when you set the
+          style, so you need not be concerned with keeping the array
+          around indefinitely. This should not break existing code that
+          assumes styles are not copied.
           
           You can also combine styles and brushes to draw the brush image
           at intervals instead of in a continuous stroke. When creating a
@@ -1308,20 +1319,20 @@ gdImageSetTile(im, tile);
           differently: zero (0) indicates pixels at which the brush
           should not be drawn, while one (1) indicates pixels at which
           the brush should be drawn. To draw a styled, brushed line, you
-          must use the special color value [220]gdStyledBrushed. For an
+          must use the special color value gdStyledBrushed. For an
           example of this feature in use, see gddemo.c (provided in the
           distribution).
           
 
-[221]gdImagePtr im;
+gdImagePtr im;
 int styleDotted[2], styleDashed[6];
 FILE *in;
 int black;
 int red;
-im = [222]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [223]gdImageColorAllocate(im, 0, 0, 0);
-red = [224]gdImageColorAllocate(im, 255, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
+red = gdImageColorAllocate(im, 255, 0, 0);
 /* Set up dotted style. Leave every other pixel alone. */
 styleDotted[0] = red;
 styleDotted[1] = gdTransparent;
@@ -1336,15 +1347,15 @@ styleDashed[5] = gdTransparent;
         in the style! */
 gdImageSetStyle(im, styleDotted, 2);
 /* Draw a line from the upper left corner to the lower right corner. */
-[225]gdImageLine(im, 0, 0, 99, 99, [226]gdStyled);
+gdImageLine(im, 0, 0, 99, 99, gdStyled);
 /* Now the dashed line. */
 gdImageSetStyle(im, styleDashed, 6);
-[227]gdImageLine(im, 0, 99, 0, 99, [228]gdStyled);
+gdImageLine(im, 0, 99, 0, 99, gdStyled);
 
 /* ... Do something with the image, such as saving it to a file ... */
 
 /* Destroy it */
-[229]gdImageDestroy(im);
+gdImageDestroy(im);
 
   Query Functions
   
@@ -1356,8 +1367,8 @@ gdImageSetStyle(im, styleDashed, 6);
         int gdImageGetPixel(gdImagePtr im, int x, int y) _(FUNCTION)_
                 gdImageGetPixel() retrieves the color index of a
                 particular pixel. Always use this function to query
-                pixels; do not access the pixels of the [230]gdImage
-                structure directly.
+                pixels; do not access the pixels of the gdImage structure
+                directly.
                 
 
 ... inside a function ...
@@ -1365,12 +1376,12 @@ FILE *in;
 gdImagePtr im;
 int c;
 in = fopen("mypng.png", "rb");
-im = [231]gdImageCreateFromPng(in);
+im = gdImageCreateFromPng(in);
 fclose(in);
 c = gdImageGetPixel(im, gdImageSX(im) / 2, gdImageSY(im) / 2);
 printf("The value of the center pixel is %d; RGB values are %d,%d,%d\n",
         c, im->red[c], im->green[c], im->blue[c]);
-[232]gdImageDestroy(im);
+gdImageDestroy(im);
 
         int gdImageBoundsSafe(gdImagePtr im, int x, int y) _(FUNCTION)_
                 gdImageBoundsSafe returns true (1) if the specified point
@@ -1381,16 +1392,16 @@ printf("The value of the center pixel is %d; RGB values are %d,%d,%d\n",
                 
 
 ... inside a function ...
-[233]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
-im = [234]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 if (gdImageBoundsSafe(im, 50, 50)) {
         printf("50, 50 is within the image bounds\n");
 } else {
         printf("50, 50 is outside the image bounds\n");
 }
-[235]gdImageDestroy(im);
+gdImageDestroy(im);
 
         int gdImageGreen(gdImagePtr im, int color) _(MACRO)_
                 gdImageGreen is a macro which returns the green component
@@ -1417,8 +1428,43 @@ if (gdImageBoundsSafe(im, 50, 50)) {
         void gdImageChar(gdImagePtr im, gdFontPtr font, int x, int y, int
                 c, int color) _(FUNCTION)_
                 gdImageChar is used to draw single characters on the
-                image. (To draw multiple characters, use
-                [236]gdImageString or [237]gdImageString16.) The second
+                image. (To draw multiple characters, use gdImageString or
+                gdImageString16.) The second argument is a pointer to a
+                font definition structure; five fonts are provided with
+                gd, gdFontTiny, gdFontSmall, gdFontMediumBold,
+                gdFontLarge, and gdFontGiant. You must include the files
+                "gdfontt.h", "gdfonts.h", "gdfontmb.h", "gdfontl.h" and
+                "gdfontg.h" respectively and (if you are not using a
+                library-based approach) link with the corresponding .c
+                files to use the provided fonts. The character specified
+                by the fifth argument is drawn from left to right in the
+                specified color. (See gdImageCharUp for a way of drawing
+                vertical text.) Pixels not set by a particular character
+                retain their previous color.
+                
+
+#include "gd.h"
+#include "gdfontl.h"
+... inside a function ...
+gdImagePtr im;
+int black;
+int white;
+im = gdImageCreate(100, 100);
+/* Background color (first allocated) */
+black = gdImageColorAllocate(im, 0, 0, 0);
+/* Allocate the color white (red, green and blue all maximum). */
+white = gdImageColorAllocate(im, 255, 255, 255);
+/* Draw a character. */
+gdImageChar(im, gdFontLarge, 0, 0, 'Q', white);
+/* ... Do something with the image, such as saving it to a file... */
+/* Destroy it */
+gdImageDestroy(im);
+
+        void gdImageCharUp(gdImagePtr im, gdFontPtr font, int x, int y,
+                int c, int color) _(FUNCTION)_
+                gdImageCharUp is used to draw single characters on the
+                image, rotated 90 degrees. (To draw multiple characters,
+                use gdImageStringUp or gdImageStringUp16.) The second
                 argument is a pointer to a font definition structure;
                 five fonts are provided with gd, gdFontTiny, gdFontSmall,
                 gdFontMediumBold, gdFontLarge, and gdFontGiant. You must
@@ -1427,72 +1473,35 @@ if (gdImageBoundsSafe(im, 50, 50)) {
                 not using a library-based approach) link with the
                 corresponding .c files to use the provided fonts. The
                 character specified by the fifth argument is drawn from
-                left to right in the specified color. (See
-                [238]gdImageCharUp for a way of drawing vertical text.)
-                Pixels not set by a particular character retain their
-                previous color.
+                bottom to top, rotated at a 90-degree angle, in the
+                specified color. (See gdImageChar for a way of drawing
+                horizontal text.) Pixels not set by a particular
+                character retain their previous color.
                 
 
 #include "gd.h"
 #include "gdfontl.h"
 ... inside a function ...
-[239]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
-im = [240]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [241]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [242]gdImageColorAllocate(im, 255, 255, 255);
-/* Draw a character. */
-gdImageChar(im, gdFontLarge, 0, 0, 'Q', white);
-/* ... Do something with the image, such as saving it to a file... */
-/* Destroy it */
-[243]gdImageDestroy(im);
-
-        void gdImageCharUp(gdImagePtr im, gdFontPtr font, int x, int y,
-                int c, int color) _(FUNCTION)_
-                gdImageCharUp is used to draw single characters on the
-                image, rotated 90 degrees. (To draw multiple characters,
-                use [244]gdImageStringUp or [245]gdImageStringUp16.) The
-                second argument is a pointer to a font definition
-                structure; five fonts are provided with gd, gdFontTiny,
-                gdFontSmall, gdFontMediumBold, gdFontLarge, and
-                gdFontGiant. You must include the files "gdfontt.h",
-                "gdfonts.h", "gdfontmb.h", "gdfontl.h" and "gdfontg.h"
-                respectively and (if you are not using a library-based
-                approach) link with the corresponding .c files to use the
-                provided fonts. The character specified by the fifth
-                argument is drawn from bottom to top, rotated at a
-                90-degree angle, in the specified color. (See
-                [246]gdImageChar for a way of drawing horizontal text.)
-                Pixels not set by a particular character retain their
-                previous color.
-                
-
-#include "gd.h"
-#include "gdfontl.h"
-... inside a function ...
-[247]gdImagePtr im;
-int black;
-int white;
-im = [248]gdImageCreate(100, 100);
-/* Background color (first allocated) */
-black = [249]gdImageColorAllocate(im, 0, 0, 0);
-/* Allocate the color white (red, green and blue all maximum). */
-white = [250]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Draw a character upwards so it rests against the top of the image. */
 gdImageCharUp(im, gdFontLarge,
         0, gdFontLarge->h, 'Q', white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[251]gdImageDestroy(im);
+gdImageDestroy(im);
 
         void gdImageString(gdImagePtr im, gdFontPtr font, int x, int y,
                 unsigned char *s, int color) _(FUNCTION)_
                 gdImageString is used to draw multiple characters on the
-                image. (To draw single characters, use [252]gdImageChar.)
-                The second argument is a pointer to a font definition
+                image. (To draw single characters, use gdImageChar.) The
+                second argument is a pointer to a font definition
                 structure; five fonts are provided with gd, gdFontTiny,
                 gdFontSmall, gdFontMediumBold, gdFontLarge, and
                 gdFontGiant. You must include the files "gdfontt.h",
@@ -1501,7 +1510,7 @@ gdImageCharUp(im, gdFontLarge,
                 approach) link with the corresponding .c files to use the
                 provided fonts. The null-terminated C string specified by
                 the fifth argument is drawn from left to right in the
-                specified color. (See [253]gdImageStringUp for a way of
+                specified color. (See gdImageStringUp for a way of
                 drawing vertical text.) Pixels not set by a particular
                 character retain their previous color.
                 
@@ -1510,16 +1519,16 @@ gdImageCharUp(im, gdFontLarge,
 #include "gdfontl.h"
 #include <string.h>
 ... inside a function ...
-[254]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
 /* String to draw. */
 char *s = "Hello.";
-im = [255]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [256]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [257]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Draw a centered string. */
 gdImageString(im, gdFontLarge,
         im->w / 2 - (strlen(s) * gdFontLarge->w / 2),
@@ -1527,39 +1536,38 @@ gdImageString(im, gdFontLarge,
         s, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[258]gdImageDestroy(im);
+gdImageDestroy(im);
 
         void gdImageString16(gdImagePtr im, gdFontPtr font, int x, int y,
                 unsigned short *s, int color) _(FUNCTION)_
                 gdImageString is used to draw multiple 16-bit characters
                 on the image. (To draw single characters, use
-                [259]gdImageChar.) The second argument is a pointer to a
-                font definition structure; five fonts are provided with
-                gd, gdFontTiny, gdFontSmall, gdFontMediumBold,
-                gdFontLarge, and gdFontGiant. You must include the files
-                "gdfontt.h", "gdfonts.h", "gdfontmb.h", "gdfontl.h" and
-                "gdfontg.h" respectively and (if you are not using a
-                library-based approach) link with the corresponding .c
-                files to use the provided fonts. The null-terminated
-                string of characters represented as 16-bit unsigned short
-                integers specified by the fifth argument is drawn from
-                left to right in the specified color. (See
-                [260]gdImageStringUp16 for a way of drawing vertical
-                text.) Pixels not set by a particular character retain
-                their previous color.
+                gdImageChar.) The second argument is a pointer to a font
+                definition structure; five fonts are provided with gd,
+                gdFontTiny, gdFontSmall, gdFontMediumBold, gdFontLarge,
+                and gdFontGiant. You must include the files "gdfontt.h",
+                "gdfonts.h", "gdfontmb.h", "gdfontl.h" and "gdfontg.h"
+                respectively and (if you are not using a library-based
+                approach) link with the corresponding .c files to use the
+                provided fonts. The null-terminated string of characters
+                represented as 16-bit unsigned short integers specified
+                by the fifth argument is drawn from left to right in the
+                specified color. (See gdImageStringUp16 for a way of
+                drawing vertical text.) Pixels not set by a particular
+                character retain their previous color.
                 
                 This function was added in gd1.3 to provide a means of
                 rendering fonts with more than 256 characters for those
                 who have them. A more frequently used routine is
-                [261]gdImageString.
+                gdImageString.
                 
         void gdImageStringUp(gdImagePtr im, gdFontPtr font, int x, int y,
                 unsigned char *s, int color) _(FUNCTION)_
                 gdImageStringUp is used to draw multiple characters on
                 the image, rotated 90 degrees. (To draw single
-                characters, use [262]gdImageCharUp.) The second argument
-                is a pointer to a font definition structure; five fonts
-                are provided with gd, gdFontTiny, gdFontSmall,
+                characters, use gdImageCharUp.) The second argument is a
+                pointer to a font definition structure; five fonts are
+                provided with gd, gdFontTiny, gdFontSmall,
                 gdFontMediumBold, gdFontLarge, and gdFontGiant. You must
                 include the files "gdfontt.h", "gdfonts.h", "gdfontmb.h",
                 "gdfontl.h" and "gdfontg.h" respectively and (if you are
@@ -1567,8 +1575,8 @@ gdImageString(im, gdFontLarge,
                 corresponding .c files to use the provided fonts.The
                 null-terminated C string specified by the fifth argument
                 is drawn from bottom to top (rotated 90 degrees) in the
-                specified color. (See [263]gdImageString for a way of
-                drawing horizontal text.) Pixels not set by a particular
+                specified color. (See gdImageString for a way of drawing
+                horizontal text.) Pixels not set by a particular
                 character retain their previous color.
                 
 
@@ -1576,16 +1584,16 @@ gdImageString(im, gdFontLarge,
 #include "gdfontl.h"
 #include <string.h>
 ... inside a function ...
-[264]gdImagePtr im;
+gdImagePtr im;
 int black;
 int white;
 /* String to draw. */
 char *s = "Hello.";
-im = [265]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [266]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color white (red, green and blue all maximum). */
-white = [267]gdImageColorAllocate(im, 255, 255, 255);
+white = gdImageColorAllocate(im, 255, 255, 255);
 /* Draw a centered string going upwards. Axes are reversed,
         and Y axis is decreasing as the string is drawn. */
 gdImageStringUp(im, gdFontLarge,
@@ -1594,31 +1602,30 @@ gdImageStringUp(im, gdFontLarge,
         s, white);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[268]gdImageDestroy(im);
+gdImageDestroy(im);
 
         void gdImageStringUp16(gdImagePtr im, gdFontPtr font, int x, int
                 y, unsigned short *s, int color) _(FUNCTION)_
                 gdImageString is used to draw multiple 16-bit characters
                 vertically on the image. (To draw single characters, use
-                [269]gdImageChar.) The second argument is a pointer to a
-                font definition structure; five fonts are provided with
-                gd, gdFontTiny, gdFontSmall, gdFontMediumBold,
-                gdFontLarge, and gdFontGiant. You must include the files
-                "gdfontt.h", "gdfonts.h", "gdfontmb.h", "gdfontl.h" and
-                "gdfontg.h" respectively and (if you are not using a
-                library-based approach) link with the corresponding .c
-                files to use the provided fonts. The null-terminated
-                string of characters represented as 16-bit unsigned short
-                integers specified by the fifth argument is drawn from
-                bottom to top in the specified color. (See
-                [270]gdImageStringUp16 for a way of drawing horizontal
-                text.) Pixels not set by a particular character retain
-                their previous color.
+                gdImageChar.) The second argument is a pointer to a font
+                definition structure; five fonts are provided with gd,
+                gdFontTiny, gdFontSmall, gdFontMediumBold, gdFontLarge,
+                and gdFontGiant. You must include the files "gdfontt.h",
+                "gdfonts.h", "gdfontmb.h", "gdfontl.h" and "gdfontg.h"
+                respectively and (if you are not using a library-based
+                approach) link with the corresponding .c files to use the
+                provided fonts. The null-terminated string of characters
+                represented as 16-bit unsigned short integers specified
+                by the fifth argument is drawn from bottom to top in the
+                specified color. (See gdImageStringUp16 for a way of
+                drawing horizontal text.) Pixels not set by a particular
+                character retain their previous color.
                 
                 This function was added in gd1.3 to provide a means of
                 rendering fonts with more than 256 characters for those
                 who have them. A more frequently used routine is
-                [271]gdImageStringUp.
+                gdImageStringUp.
                 
   Color-handling functions
   
@@ -1632,31 +1639,31 @@ gdImageStringUp(im, gdFontLarge,
                 function, you are setting the background color for that
                 image.
                 
-                In the event that all [272]gdMaxColors colors (256) have
+                In the event that all gdMaxColors colors (256) have
                 already been allocated, gdImageColorAllocate will return
                 -1 to indicate failure. (This is not uncommon when
                 working with existing PNG files that already use 256
                 colors.) Note that gdImageColorAllocate does not check
                 for existing colors that match your request; see
-                [273]gdImageColorExact and [274]gdImageColorClosest for
-                ways to locate existing colors that approximate the color
-                desired in situations where a new color is not available.
+                gdImageColorExact and gdImageColorClosest for ways to
+                locate existing colors that approximate the color desired
+                in situations where a new color is not available.
                 
 
 ... inside a function ...
-[275]gdImagePtr im;
+gdImagePtr im;
 int black;
 int red;
-im = [276]gdImageCreate(100, 100);
+im = gdImageCreate(100, 100);
 /* Background color (first allocated) */
-black = [277]gdImageColorAllocate(im, 0, 0, 0);
+black = gdImageColorAllocate(im, 0, 0, 0);
 /* Allocate the color red. */
-red = [278]gdImageColorAllocate(im, 255, 0, 0);
+red = gdImageColorAllocate(im, 255, 0, 0);
 /* Draw a dashed line from the upper left corner to the lower right corner. */
 gdImageDashedLine(im, 0, 0, 99, 99, red);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[279]gdImageDestroy(im);
+gdImageDestroy(im);
 
         int gdImageColorClosest(gdImagePtr im, int r, int g, int b)
                 _(FUNCTION)_
@@ -1672,24 +1679,24 @@ gdImageDashedLine(im, 0, 0, 99, 99, red);
                 
                 This function is most useful as a backup method for
                 choosing a drawing color when an image already contains
-                [280]gdMaxColors (256) colors and no more can be
-                allocated. (This is not uncommon when working with
-                existing PNG files that already use many colors.) See
-                [281]gdImageColorExact for a method of locating exact
-                matches only.
+                gdMaxColors (256) colors and no more can be allocated.
+                (This is not uncommon when working with existing PNG
+                files that already use many colors.) See
+                gdImageColorExact for a method of locating exact matches
+                only.
                 
 
 ... inside a function ...
-[282]gdImagePtr im;
+gdImagePtr im;
 FILE *in;
 int red;
 /* Let's suppose that photo.png is a scanned photograph with
         many colors. */
 in = fopen("photo.png", "rb");
-im = [283]gdImageCreateFromPng(in);
+im = gdImageCreateFromPng(in);
 fclose(in);
 /* Try to allocate red directly */
-red = [284]gdImageColorAllocate(im, 255, 0, 0);
+red = gdImageColorAllocate(im, 255, 0, 0);
 /* If we fail to allocate red... */
 if (red == (-1)) {
         /* Find the _closest_ color instead. */
@@ -1699,7 +1706,7 @@ if (red == (-1)) {
 gdImageDashedLine(im, 0, 0, 99, 99, red);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[285]gdImageDestroy(im);
+gdImageDestroy(im);
 
         int gdImageColorExact(gdImagePtr im, int r, int g, int b)
                 _(FUNCTION)_
@@ -1708,15 +1715,15 @@ gdImageDashedLine(im, 0, 0, 99, 99, red);
                 index of the first color with RGB values which exactly
                 match those of the request. If no allocated color matches
                 the request precisely, gdImageColorExact returns -1. See
-                [286]gdImageColorClosest for a way to find the color
-                closest to the color requested.
+                gdImageColorClosest for a way to find the color closest
+                to the color requested.
                 
 
 ... inside a function ...
-[287]gdImagePtr im;
+gdImagePtr im;
 int red;
 in = fopen("photo.png", "rb");
-im = [288]gdImageCreateFromPng(in);
+im = gdImageCreateFromPng(in);
 fclose(in);
 /* The image may already contain red; if it does, we'll save a slot
         in the color table by using that color. */
@@ -1725,7 +1732,7 @@ red = gdImageColorExact(im, 255, 0, 0);
 /* If red isn't already present... */
 if (red == (-1)) {
         /* Second best: try to allocate it directly. */
-        red = [289]gdImageColorAllocate(im, 255, 0, 0);
+        red = gdImageColorAllocate(im, 255, 0, 0);
         /* Out of colors, so find the _closest_ color instead. */
         red = gdImageColorClosest(im, 255, 0, 0);
 }
@@ -1733,7 +1740,7 @@ if (red == (-1)) {
 gdImageDashedLine(im, 0, 0, 99, 99, red);
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[290]gdImageDestroy(im);
+gdImageDestroy(im);
 
         int gdImageColorsTotal(gdImagePtr im) _(MACRO)_
                 gdImageColorsTotal is a macro which returns the number of
@@ -1779,19 +1786,19 @@ gdImageDashedLine(im, 0, 0, 99, 99, red);
                 available for reuse. It does not attempt to determine
                 whether the color index is still in use in the image.
                 After a call to this function, the next call to
-                [291]gdImageColorAllocate for the same image will set new
-                RGB values for that color index, changing the color of
-                any pixels which have that index as a result. If multiple
+                gdImageColorAllocate for the same image will set new RGB
+                values for that color index, changing the color of any
+                pixels which have that index as a result. If multiple
                 calls to gdImageColorDeallocate are made consecutively,
                 the lowest-numbered index among them will be reused by
-                the next [292]gdImageColorAllocate call.
+                the next gdImageColorAllocate call.
                 
 
 ... inside a function ...
-[293]gdImagePtr im;
+gdImagePtr im;
 int red, blue;
 in = fopen("photo.png", "rb");
-im = [294]gdImageCreateFromPng(in);
+im = gdImageCreateFromPng(in);
 fclose(in);
 /* Look for red in the color table. */
 red = gdImageColorExact(im, 255, 0, 0);
@@ -1805,7 +1812,7 @@ if (red != (-1)) {
 }
 /* ... Do something with the image, such as saving it to a file... */
 /* Destroy it */
-[295]gdImageDestroy(im);
+gdImageDestroy(im);
 
         void gdImageColorTransparent(gdImagePtr im, int color)
                 _(FUNCTION)_
@@ -1815,25 +1822,25 @@ if (red != (-1)) {
                 invoke gdImageColorTransparent with a color index of -1.
                 
                 The color index used should be an index allocated by
-                [296]gdImageColorAllocate, whether explicitly invoked by
-                your code or implicitly invoked by loading an image. In
-                order to ensure that your image has a reasonable
-                appearance when viewed by users who do not have
-                transparent background capabilities, be sure to give
-                reasonable RGB values to the color you allocate for use
-                as a transparent color, _even though it will be
-                transparent on systems that support transparency_.
+                gdImageColorAllocate, whether explicitly invoked by your
+                code or implicitly invoked by loading an image. In order
+                to ensure that your image has a reasonable appearance
+                when viewed by users who do not have transparent
+                background capabilities, be sure to give reasonable RGB
+                values to the color you allocate for use as a transparent
+                color, _even though it will be transparent on systems
+                that support transparency_.
                 
 
 ... inside a function ...
-[297]gdImagePtr im;
+gdImagePtr im;
 int black;
 FILE *in, *out;
 in = fopen("photo.png", "rb");
-im = [298]gdImageCreateFromPng(in);
+im = gdImageCreateFromPng(in);
 fclose(in);
 /* Look for black in the color table and make it transparent. */
-black = [299]gdImageColorExact(im, 0, 0, 0);
+black = gdImageColorExact(im, 0, 0, 0);
 /* If black is present... */
 if (black != (-1)) {
         /* Make it transparent */
@@ -1841,10 +1848,10 @@ if (black != (-1)) {
 }
 /* Save the newly-transparent image back to the file */
 out = fopen("photo.png", "wb");
-[300]gdImagePng(im, out);
+gdImagePng(im, out);
 fclose(out);
 /* Destroy it */
-[301]gdImageDestroy(im);
+gdImageDestroy(im);
 
   Copying and resizing functions
   
@@ -1853,7 +1860,7 @@ fclose(out);
                 gdImageCopy is used to copy a rectangular portion of one
                 image to another image. (For a way of stretching or
                 shrinking the image in the process, see
-                [302]gdImageCopyResized.)
+                gdImageCopyResized.)
                 
                 The dst argument is the destination image to which the
                 region will be copied. The src argument is the source
@@ -1875,27 +1882,26 @@ fclose(out);
                 values to copy them. gdImageCopy will attempt to find an
                 identical RGB value in the destination image for each
                 pixel in the copied portion of the source image by
-                invoking [303]gdImageColorExact. If such a value is not
-                found, gdImageCopy will attempt to allocate colors as
-                needed using [304]gdImageColorAllocate. If both of these
-                methods fail, gdImageCopy will invoke
-                [305]gdImageColorClosest to find the color in the
-                destination image which most closely approximates the
-                color of the pixel being copied.
+                invoking gdImageColorExact. If such a value is not found,
+                gdImageCopy will attempt to allocate colors as needed
+                using gdImageColorAllocate. If both of these methods
+                fail, gdImageCopy will invoke gdImageColorClosest to find
+                the color in the destination image which most closely
+                approximates the color of the pixel being copied.
                 
 
 ... Inside a function ...
-[306]gdImagePtr im_in;
-[307]gdImagePtr im_out;
+gdImagePtr im_in;
+gdImagePtr im_out;
 int x, y;
 FILE *in;
 FILE *out;
 /* Load a small png to tile the larger one with */
 in = fopen("small.png", "rb");
-im_in = [308]gdImageCreateFromPng(in);
+im_in = gdImageCreateFromPng(in);
 fclose(in);
 /* Make the output image four times as large on both axes */
-im_out = [309]gdImageCreate(im_in->sx * 4, im_in->sy * 4);
+im_out = gdImageCreate(im_in->sx * 4, im_in->sy * 4);
 /* Now tile the larger image using the smaller one */
 for (y = 0; (y < 4); y++) {
         for (x = 0; (x < 4); x++) {
@@ -1906,10 +1912,10 @@ for (y = 0; (y < 4); y++) {
         }
 }
 out = fopen("tiled.png", "wb");
-[310]gdImagePng(im_out, out);
+gdImagePng(im_out, out);
 fclose(out);
-[311]gdImageDestroy(im_in);
-[312]gdImageDestroy(im_out);
+gdImageDestroy(im_in);
+gdImageDestroy(im_out);
 
         void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX,
                 int dstY, int srcX, int srcY, int destW, int destH, int
@@ -1919,7 +1925,7 @@ fclose(out);
                 the original region and the destination region can vary,
                 resulting in stretching or shrinking of the region as
                 appropriate. (For a simpler version of this function
-                which does not deal with resizing, see [313]gdImageCopy.)
+                which does not deal with resizing, see gdImageCopy.)
                 
                 The dst argument is the destination image to which the
                 region will be copied. The src argument is the source
@@ -1946,40 +1952,40 @@ fclose(out);
                 them. gdImageCopy will attempt to find an identical RGB
                 value in the destination image for each pixel in the
                 copied portion of the source image by invoking
-                [314]gdImageColorExact. If such a value is not found,
+                gdImageColorExact. If such a value is not found,
                 gdImageCopy will attempt to allocate colors as needed
-                using [315]gdImageColorAllocate. If both of these methods
-                fail, gdImageCopy will invoke [316]gdImageColorClosest to
-                find the color in the destination image which most
-                closely approximates the color of the pixel being copied.
+                using gdImageColorAllocate. If both of these methods
+                fail, gdImageCopy will invoke gdImageColorClosest to find
+                the color in the destination image which most closely
+                approximates the color of the pixel being copied.
                 
 
 ... Inside a function ...
-[317]gdImagePtr im_in;
-[318]gdImagePtr im_out;
+gdImagePtr im_in;
+gdImagePtr im_out;
 int x, y;
 FILE *in;
 FILE *out;
 /* Load a small png to expand in the larger one */
 in = fopen("small.png", "rb");
-im_in = [319]gdImageCreateFromPng(in);
+im_in = gdImageCreateFromPng(in);
 fclose(in);
 /* Make the output image four times as large on both axes */
-im_out = [320]gdImageCreate(im_in->sx * 4, im_in->sy * 4);
+im_out = gdImageCreate(im_in->sx * 4, im_in->sy * 4);
 /* Now copy the smaller image, but four times larger */
 gdImageCopyResized(im_out, im_in, 0, 0, 0, 0,
         im_out->sx, im_out->sy,
         im_in->sx, im_in->sy);
 out = fopen("large.png", "wb");
-[321]gdImagePng(im_out, out);
+gdImagePng(im_out, out);
 fclose(out);
-[322]gdImageDestroy(im_in);
-[323]gdImageDestroy(im_out);
+gdImageDestroy(im_in);
+gdImageDestroy(im_out);
 
         void gdImageCopyMerge(gdImagePtr dst, gdImagePtr src, int dstX,
                 int dstY, int srcX, int srcY, int w, int h, int pct)
                 _(FUNCTION)_
-                gdImageCopyMerge is almost identical to [324]gdImageCopy,
+                gdImageCopyMerge is almost identical to gdImageCopy,
                 except that it 'merges' the two images by an amount
                 specified in the last parameter. If the last parameter is
                 100, then it will function identically to gdImageCopy -
@@ -2000,7 +2006,7 @@ gdImageCopyMerge(im_out, im_in, 100, 200, 0, 0, 30, 50, 50);
                 dstX, int dstY, int srcX, int srcY, int w, int h, int
                 pct) _(FUNCTION)_
                 gdImageCopyMergeGray is almost identical to
-                [325]gdImageCopyMerge, except that when merging images it
+                gdImageCopyMerge, except that when merging images it
                 preserves the hue of the source by converting the
                 destination pixels to grey scale before the copy
                 operation.
@@ -2032,8 +2038,8 @@ gdImageCopyMergeGray(im_out, im_in, 100, 200, 0, 0, 30, 50, 50);
                       no meaning unless you save the image in PNG format;
                       the gd and xbm formats do not support interlace.
                       
-                      When a PNG is loaded with [326]gdImageCreateFromPng
-                      , interlace will be set according to the setting in
+                      When a PNG is loaded with gdImageCreateFromPng ,
+                      interlace will be set according to the setting in
                       the PNG file.
                       
                       Note that many PNG viewers and web browsers do _not_
@@ -2051,23 +2057,22 @@ gdImageInterlace(im, 1);
 /* And open an output file */
 out = fopen("test.png", "wb");
 /* And save the image */
-[327]gdImagePng(im, out);
+gdImagePng(im, out);
 fclose(out);
-[328]gdImageDestroy(im);
+gdImageDestroy(im);
 
   Constants
   
               gdBrushed _(CONSTANT)_
                       Used in place of a color when invoking a
-                      line-drawing function such as [329]gdImageLine or
-                      [330]gdImageRectangle. When gdBrushed is used as
-                      the color, the brush image set with
-                      [331]gdImageSetBrush is drawn in place of each
-                      pixel of the line (the brush is usually larger than
-                      one pixel, creating the effect of a wide
-                      paintbrush). See also [332]gdStyledBrushed for a
-                      way to draw broken lines with a series of distinct
-                      copies of an image.
+                      line-drawing function such as gdImageLine or
+                      gdImageRectangle. When gdBrushed is used as the
+                      color, the brush image set with gdImageSetBrush is
+                      drawn in place of each pixel of the line (the brush
+                      is usually larger than one pixel, creating the
+                      effect of a wide paintbrush). See also
+                      gdStyledBrushed for a way to draw broken lines with
+                      a series of distinct copies of an image.
                       
               gdMaxColors_(CONSTANT)_
                       The constant 256. This is the maximum number of
@@ -2077,35 +2082,33 @@ fclose(out);
                       
               gdStyled _(CONSTANT)_
                       Used in place of a color when invoking a
-                      line-drawing function such as [333]gdImageLine or
-                      [334]gdImageRectangle. When gdStyled is used as the
+                      line-drawing function such as gdImageLine or
+                      gdImageRectangle. When gdStyled is used as the
                       color, the colors of the pixels are drawn
                       successively from the style that has been set with
-                      [335]gdImageSetStyle. If the color of a pixel is
-                      equal to [336]gdTransparent, that pixel is not
-                      altered. (This mechanism is completely unrelated to
-                      the "transparent color" of the image itself; see
-                      [337]gdImageColorTransparent
-                      gdImageColorTransparent for that mechanism.) See
-                      also gdStyledBrushed.
+                      gdImageSetStyle. If the color of a pixel is equal
+                      to gdTransparent, that pixel is not altered. (This
+                      mechanism is completely unrelated to the
+                      "transparent color" of the image itself; see
+                      gdImageColorTransparent gdImageColorTransparent for
+                      that mechanism.) See also gdStyledBrushed.
                       
               gdStyledBrushed _(CONSTANT)_
                       Used in place of a color when invoking a
-                      line-drawing function such as [338]gdImageLine or
-                      [339]gdImageRectangle. When gdStyledBrushed is used
-                      as the color, the brush image set with
-                      [340]gdImageSetBrush is drawn at each pixel of the
-                      line, providing that the style set with
-                      [341]gdImageSetStyle contains a nonzero value (OR
-                      gdTransparent, which does not equal zero but is
-                      supported for consistency) for the current pixel.
-                      (Pixels are drawn successively from the style as
-                      the line is drawn, returning to the beginning when
-                      the available pixels in the style are exhausted.)
-                      Note that this differs from the behavior of
-                      [342]gdStyled, in which the values in the style are
-                      used as actual pixel colors, except for
-                      gdTransparent.
+                      line-drawing function such as gdImageLine or
+                      gdImageRectangle. When gdStyledBrushed is used as
+                      the color, the brush image set with gdImageSetBrush
+                      is drawn at each pixel of the line, providing that
+                      the style set with gdImageSetStyle contains a
+                      nonzero value (OR gdTransparent, which does not
+                      equal zero but is supported for consistency) for
+                      the current pixel. (Pixels are drawn successively
+                      from the style as the line is drawn, returning to
+                      the beginning when the available pixels in the
+                      style are exhausted.) Note that this differs from
+                      the behavior of gdStyled, in which the values in
+                      the style are used as actual pixel colors, except
+                      for gdTransparent.
                       
               gdDashSize _(CONSTANT)_
                       The length of a dash in a dashed line. Defined to
@@ -2117,22 +2120,20 @@ fclose(out);
                       
               gdTiled _(CONSTANT)_
                       Used in place of a normal color in
-                      [343]gdImageFilledRectangle,
-                      [344]gdImageFilledPolygon, [345]gdImageFill, and
-                      [346]gdImageFillToBorder. gdTiled selects a pixel
-                      from the tile image set with [347]gdImageSetTile in
-                      such a way as to ensure that the filled area will
-                      be tiled with copies of the tile image. See the
-                      discussions of [348]gdImageFill and
-                      [349]gdImageFillToBorder for special restrictions
+                      gdImageFilledRectangle, gdImageFilledPolygon,
+                      gdImageFill, and gdImageFillToBorder. gdTiled
+                      selects a pixel from the tile image set with
+                      gdImageSetTile in such a way as to ensure that the
+                      filled area will be tiled with copies of the tile
+                      image. See the discussions of gdImageFill and
+                      gdImageFillToBorder for special restrictions
                       regarding those functions.
                       
               gdTransparent _(CONSTANT)_
                       Used in place of a normal color in a style to be
-                      set with [350]gdImageSetStyle. gdTransparent is
-                      _not_ the transparent color index of the image; for
-                      that functionality please see
-                      [351]gdImageColorTransparent.
+                      set with gdImageSetStyle. gdTransparent is _not_
+                      the transparent color index of the image; for that
+                      functionality please see gdImageColorTransparent.
                       
   About the additional .gd image file format
   
@@ -2147,9 +2148,9 @@ fclose(out);
                       for output. If you are experiencing performance
                       problems when loading large, fixed PNG images your
                       program needs to produce its output images, you may
-                      wish to examine the functions
-                      [352]gdImageCreateFromGd and [353]gdImageGd, which
-                      read and write .gd format images.
+                      wish to examine the functions gdImageCreateFromGd
+                      and gdImageGd, which read and write .gd format
+                      images.
                       
                       The program "pngtogd.c" is provided as a simple way
                       of converting .png files to .gd format. I emphasize
@@ -2170,9 +2171,9 @@ fclose(out);
                       you are experiencing performance problems when
                       loading large, fixed PNG images your program needs
                       to produce its output images, you may wish to
-                      examine the functions [354]gdImageCreateFromGd2,
-                      [355]gdImageCreateFromGd2Part and [356]gdImageGd2,
-                      which read and write .gd2 format images.
+                      examine the functions gdImageCreateFromGd2,
+                      gdImageCreateFromGd2Part and gdImageGd2, which read
+                      and write .gd2 format images.
                       
                       The program "pngtogd2.c" is provided as a simple
                       way of converting .png files to .gd2 format.
@@ -2212,7 +2213,7 @@ typedef struct gdIOCtx {
                       It is not necessary to implement all functions in
                       an I/O context if you know that it will only be
                       used in limited cirsumstances. At the time of
-                      writing (Version 1.6, June 1999), the known
+                      writing (Version 1.6.1, July 1999), the known
                       requirements are:
                       
                       All   Must have 'free',
@@ -2238,467 +2239,36 @@ typedef struct gdIOCtx {
   If you have problems
   
                       If you have any difficulties with gd, feel free to
-                      contact the author, [357]Thomas Boutell. Problems
+                      contact the author, Thomas Boutell. Problems
                       relating to the gd2 format should be addressed to
-                      [358]Philip Warner.
+                      Philip Warner.
                       
                       _Be sure to read this manual carefully first. _
                       
   Alphabetical quick index
   
-                      [359]gdBrushed | [360]gdDashSize | [361]gdFont |
-                      [362]gdFontPtr | [363]gdImage | [364]gdImageArc |
-                      [365]gdImageBlue | [366]gdImageBoundsSafe |
-                      [367]gdImageChar | [368]gdImageCharUp |
-                      [369]gdImageColorAllocate |
-                      [370]gdImageColorClosest |
-                      [371]gdImageColorDeallocate |
-                      [372]gdImageColorExact |
-                      [373]gdImageColorTransparent | [374]gdImageCopy |
-                      [375]gdImageCopyResized | [376]gdImageCreate |
-                      [377]gdImageCreateFromGd |
-                      [378]gdImageCreateFromGd2 |
-                      [379]gdImageCreateFromGd2Part |
-                      [380]gdImageCreateFromPng |
-                      [381]gdImageCreateFromPngSource |
-                      [382]gdImageCreateFromXbm | [383]gdImageDashedLine
-                      | [384]gdImageDestroy | [385]gdImageFill |
-                      [386]gdImageFillToBorder |
-                      [387]gdImageFilledRectangle | [388]gdImageGd |
-                      [389]gdImageGd2 | [390]gdImageGetInterlaced |
-                      [391]gdImageGetPixel | [392]gdImageGetTransparent |
-                      [393]gdImageGreen | [394]gdImageInterlace |
-                      [395]gdImageLine | [396]gdImageFilledPolygon |
-                      [397]gdImagePaletteCopy | [398]gdImagePng |
-                      [399]gdImagePngToSink | [400]gdImagePolygon |
-                      [401]gdImagePtr | [402]gdImageRectangle |
-                      [403]gdImageRed | [404]gdImageSetBrush |
-                      [405]gdImageSetPixel | [406]gdImageSetStyle |
-                      [407]gdImageSetTile | [408]gdImageString |
-                      [409]gdImageString16 | [410]gdImageStringUp |
-                      [411]gdImageStringUp16 | [412]gdMaxColors |
-                      [413]gdPoint | [414]gdStyled | [415]gdStyledBrushed
-                      | [416]gdTiled | [417]gdTransparent
+                      gdBrushed | gdDashSize | gdFont | gdFontPtr |
+                      gdImage | gdImageArc | gdImageBlue |
+                      gdImageBoundsSafe | gdImageChar | gdImageCharUp |
+                      gdImageColorAllocate | gdImageColorClosest |
+                      gdImageColorDeallocate | gdImageColorExact |
+                      gdImageColorTransparent | gdImageCopy |
+                      gdImageCopyResized | gdImageCreate |
+                      gdImageCreateFromGd | gdImageCreateFromGd2 |
+                      gdImageCreateFromGd2Part | gdImageCreateFromPng |
+                      gdImageCreateFromPngSource | gdImageCreateFromXbm |
+                      gdImageDashedLine | gdImageDestroy | gdImageFill |
+                      gdImageFillToBorder | gdImageFilledRectangle |
+                      gdImageGd | gdImageGd2 | gdImageGetInterlaced |
+                      gdImageGetPixel | gdImageGetTransparent |
+                      gdImageGreen | gdImageInterlace | gdImageLine |
+                      gdImageFilledPolygon | gdImagePaletteCopy |
+                      gdImagePng | gdImagePngToSink | gdImagePolygon |
+                      gdImagePtr | gdImageRectangle | gdImageRed |
+                      gdImageSetBrush | gdImageSetPixel | gdImageSetStyle
+                      | gdImageSetTile | gdImageString | gdImageString16
+                      | gdImageStringUp | gdImageStringUp16 | gdMaxColors
+                      | gdPoint | gdStyled | gdStyledBrushed | gdTiled |
+                      gdTransparent
                       
-                      _[418]Boutell.Com, Inc._
-
-References
-
-   1. http://www.boutell.com/gd/
-   2. file://localhost/mnt/hdb/boutell/gd1.5/index.html#notice
-   3. file://localhost/mnt/hdb/boutell/gd1.5/index.html#whatsnew1.6
-   4. file://localhost/mnt/hdb/boutell/gd1.5/index.html#whatis
-   5. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdother
-   6. file://localhost/mnt/hdb/boutell/gd1.5/index.html#required
-   7. file://localhost/mnt/hdb/boutell/gd1.5/index.html#getgd
-   8. file://localhost/mnt/hdb/boutell/gd1.5/index.html#buildgd
-   9. file://localhost/mnt/hdb/boutell/gd1.5/index.html#basics
-  10. file://localhost/mnt/hdb/boutell/gd1.5/index.html#webgif
-  11. file://localhost/mnt/hdb/boutell/gd1.5/index.html#reference
-  12. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdformat
-  13. file://localhost/mnt/hdb/boutell/gd1.5/index.html#informing
-  14. file://localhost/mnt/hdb/boutell/gd1.5/index.html#problems
-  15. file://localhost/mnt/hdb/boutell/gd1.5/index.html#index
-  16. http://www.boutell.com/
-  17. mailto:boutell@boutell.com
-  18. http://www-genome.wi.mit.edu/ftp/pub/software/WWW/GD.html
-  19. http://s27w007.pswfs.gov/tgd/
-  20. http://www.unimelb.edu.au/fly/fly.html
-  21. mailto:pjw@rhyme.com.au
-  22. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPngSource
-  23. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePngToSink
-  24. http://www.cdrom.com/pub/infozip/zlib/
-  25. http://www.cdrom.com/pub/png/
-  26. http://www.boutell.com/gd/http/gd1.6.tar.gz
-  27. http://www.boutell.com/gd/http/gd16.zip
-  28. ftp://ftp.boutell.com/pub/boutell/gd/gd1.6.tar.gz
-  29. ftp://ftp.boutell.com/pub/boutell/gd/gd16.zip
-  30. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  31. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
-  32. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
-  33. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
-  34. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
-  35. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePng
-  36. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  37. file://localhost/mnt/hdb/boutell/gd1.5/index.html#index
-  38. file://localhost/mnt/hdb/boutell/gd1.5/index.html#types
-  39. file://localhost/mnt/hdb/boutell/gd1.5/index.html#creating
-  40. file://localhost/mnt/hdb/boutell/gd1.5/index.html#drawing
-  41. file://localhost/mnt/hdb/boutell/gd1.5/index.html#query
-  42. file://localhost/mnt/hdb/boutell/gd1.5/index.html#fonts
-  43. file://localhost/mnt/hdb/boutell/gd1.5/index.html#colors
-  44. file://localhost/mnt/hdb/boutell/gd1.5/index.html#copying
-  45. file://localhost/mnt/hdb/boutell/gd1.5/index.html#misc
-  46. file://localhost/mnt/hdb/boutell/gd1.5/index.html#constants
-  47. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
-  48. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
-  49. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  50. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePolygon
-  51. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFilledPolygon
-  52. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdPoint
-  53. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePolygon
-  54. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFilledPolygon
-  55. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPngSource
-  56. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePngToSink
-  57. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  58. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  59. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  60. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  61. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdioctx
-  62. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  63. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  64. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  65. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  66. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
-  67. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdSource
-  68. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
-  69. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdioctx
-  70. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdformat
-  71. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  72. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  73. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  74. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  75. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdioctx
-  76. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdformat
-  77. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  78. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  79. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  80. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  81. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdioctx
-  82. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdformat
-  83. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromGd2
-  84. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  85. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  86. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  87. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  88. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  89. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  90. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  91. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  92. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
-  93. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
-  94. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
-  95. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
-  96. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
-  97. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
-  98. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageRectangle
-  99. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 100. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePng
- 101. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdSink
- 102. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePng
- 103. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdformat
- 104. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 105. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 106. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 107. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 108. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageRectangle
- 109. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 110. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gd2format
- 111. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 112. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 113. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 114. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 115. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageRectangle
- 116. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 117. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImage
- 118. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 119. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 120. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 121. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 122. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 123. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 124. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyled
- 125. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdBrushed
- 126. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyledBrushed
- 127. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 128. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 129. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 130. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 131. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 132. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
- 133. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetStyle
- 134. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 135. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 136. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 137. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 138. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 139. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFilledPolygon
- 140. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 141. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdPoint
- 142. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 143. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 144. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 145. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 146. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 147. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 148. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 149. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 150. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 151. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFilledPolygon
- 152. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 153. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdPoint
- 154. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 155. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 156. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 157. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 158. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePolygon
- 159. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 160. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 161. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 162. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 163. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 164. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 165. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 166. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 167. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 168. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 169. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 170. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFill
- 171. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdTiled
- 172. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 173. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 174. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 175. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 176. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 177. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 178. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFillToBorder
- 179. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdTiled
- 180. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageTransparent
- 181. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 182. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 183. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 184. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 185. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 186. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 187. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorTransparent
- 188. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
- 189. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePolygon
- 190. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdBrushed
- 191. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyledBrushed
- 192. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 193. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdBrushed
- 194. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 195. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 196. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 197. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 198. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
- 199. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdBrushed
- 200. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 201. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 202. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorTransparent
- 203. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFill
- 204. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFilledPolygon
- 205. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdTiled
- 206. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 207. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdBrushed
- 208. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 209. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 210. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 211. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 212. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFilledRectangle
- 213. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdTiled
- 214. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 215. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 216. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdTransparent
- 217. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
- 218. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyled
- 219. file://localhost/mnt/hdb/boutell/gd1.5/index.html#whatsnew1.1.1
- 220. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyledBrushed
- 221. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 222. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 223. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 224. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 225. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
- 226. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyled
- 227. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
- 228. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyled
- 229. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 230. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImage
- 231. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 232. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 233. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 234. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 235. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 236. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageString
- 237. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageString16
- 238. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCharUp
- 239. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 240. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 241. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 242. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 243. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 244. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageStringUp
- 245. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageStringUp16
- 246. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageChar
- 247. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 248. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 249. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 250. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 251. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 252. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageChar
- 253. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageStringUp
- 254. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 255. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 256. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 257. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 258. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 259. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageChar
- 260. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageStringUp16
- 261. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageString
- 262. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCharUp
- 263. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageString
- 264. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 265. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 266. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 267. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 268. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 269. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageChar
- 270. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageStringUp16
- 271. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageStringUp
- 272. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdMaxColors
- 273. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorExact
- 274. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorClosest
- 275. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 276. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 277. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 278. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 279. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 280. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdMaxColors
- 281. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorExact
- 282. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 283. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 284. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 285. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 286. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorClosest
- 287. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 288. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 289. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 290. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 291. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 292. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 293. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 294. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 295. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 296. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 297. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 298. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 299. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorExact
- 300. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePng
- 301. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 302. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCopyResized
- 303. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorExact
- 304. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 305. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorClosest
- 306. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 307. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 308. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 309. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 310. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePng
- 311. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 312. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 313. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCopy
- 314. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorExact
- 315. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 316. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorClosest
- 317. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 318. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 319. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 320. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 321. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePng
- 322. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 323. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 324. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCopy
- 325. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCopyMerge
- 326. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 327. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePng
- 328. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 329. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
- 330. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageRectangle
- 331. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetBrush
- 332. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyledBrushed
- 333. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
- 334. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageRectangle
- 335. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetStyle
- 336. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdTransparent
- 337. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorTransparent
- 338. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
- 339. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageRectangle
- 340. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetBrush
- 341. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetStyle
- 342. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyled
- 343. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFilledRectangle
- 344. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFilledPolygon
- 345. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFill
- 346. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFillToBorder
- 347. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetTile
- 348. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFill
- 349. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFillToBorder
- 350. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetStyle
- 351. file://localhost/mnt/hdb/boutell/gd1.5/gdImageColorTransparent
- 352. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromGd
- 353. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageGd
- 354. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromGd2
- 355. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromGd2Part
- 356. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageGd2
- 357. http://www.boutell.com/boutell/
- 358. mailto:pjw@thyme.com.au
- 359. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdBrushed
- 360. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdDashSize
- 361. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdFont
- 362. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdFontPtr
- 363. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImage
- 364. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageArc
- 365. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageBlue
- 366. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageBoundsSafe
- 367. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageChar
- 368. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCharUp
- 369. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorAllocate
- 370. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorClosest
- 371. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorDeallocate
- 372. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorExact
- 373. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageColorTransparent
- 374. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCopy
- 375. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCopyResized
- 376. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreate
- 377. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromGd
- 378. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromGd2
- 379. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromGd2Part
- 380. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPng
- 381. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromPngSource
- 382. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageCreateFromXbm
- 383. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDashedLine
- 384. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageDestroy
- 385. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFill
- 386. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFillToBorder
- 387. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFilledRectangle
- 388. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageGd
- 389. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageGd
- 390. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageGetInterlaced
- 391. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageGetPixel
- 392. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageGetTransparent
- 393. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageGreen
- 394. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageInterlace
- 395. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageLine
- 396. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageFilledPolygon
- 397. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePaletteCopy
- 398. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePng
- 399. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePngToSink
- 400. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePolygon
- 401. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImagePtr
- 402. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageRectangle
- 403. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageRed
- 404. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetBrush
- 405. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetPixel
- 406. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetStyle
- 407. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageSetTile
- 408. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageString
- 409. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageString16
- 410. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageStringUp
- 411. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdImageStringUp
- 412. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdMaxColors
- 413. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdPoint
- 414. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyled
- 415. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdStyledBrushed
- 416. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdTiled
- 417. file://localhost/mnt/hdb/boutell/gd1.5/index.html#gdTransparent
- 418. http://www.boutell.com/
+                      _Boutell.Com, Inc._

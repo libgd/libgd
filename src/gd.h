@@ -147,6 +147,7 @@ void gdImageColorDeallocate(gdImagePtr im, int color);
 void gdImageColorTransparent(gdImagePtr im, int color);
 void gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src);
 void gdImagePng(gdImagePtr im, FILE *out);
+void gdImagePngCtx(gdImagePtr im, gdIOCtx *out);
 
 /* A custom data sink. */
 /* The sink function must return -1 on error, otherwise the number

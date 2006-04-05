@@ -1,9 +1,9 @@
 <HTML>
 <HEAD>
-<TITLE>gd 1.6</TITLE>
+<TITLE>gd 1.6.1</TITLE>
 </HEAD>
 <BODY>
-<H1>gd 1.6</H1>
+<H1>gd 1.6.1</H1>
 <H2>A graphics library for fast image creation</H2>
 <H2>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -11,6 +11,7 @@ of this document</A>.</H2>
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
+<LI><A HREF="#whatsnew1.6.1">What's new in version 1.6.1?</A>
 <LI><A HREF="#whatsnew1.6">What's new in version 1.6?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
@@ -49,6 +50,8 @@ Portions copyright 1996, 1997, 1998, 1999, by Boutell.Com, Inc.
 <p>
 Portions relating to GD2 format copyright 1999 Philip Warner.
 <p>
+Portions relating to PNG copyright 1999, Greg Roelofs.
+<p>
 <strong>Permission has been granted to copy and distribute gd in any
 context, including a commercial application, provided that this notice
 is present in user-accessible supporting documentation.</strong>
@@ -66,7 +69,7 @@ copyright notice and this permission notice appear in supporting
 documentation.  This software is provided "as is" without express or
 implied warranty.
 <p>
-Although their code does not appear in gd 1.6, the authors wish to 
+Although their code does not appear in gd 1.6.1, the authors wish to 
 thank David Koblas, David Rowley, and Hutchison Avenue Software 
 Corporation for their prior contributions.
 <p>
@@ -99,7 +102,7 @@ in the wrong place.
 <P>
 gd does not provide for every possible desirable graphics
 operation. It is not necessary or desirable for gd to become
-a kitchen-sink graphics package, but version 1.6 incorporates
+a kitchen-sink graphics package, but version 1.6.1 incorporates
 most of the commonly requested features for an 8-bit 2D package.
 Support for scalable fonts, and truecolor images, JPEG and 
 truecolor PNG is planned for version 2.0.
@@ -111,19 +114,33 @@ gd can also be used from Perl, courtesy of
 Lincoln Stein's
 <a href="http://www-genome.wi.mit.edu/ftp/pub/software/WWW/GD.html">
 GD.pm</a> library, which uses gd as the basis for a set of
-Perl 5.x classes. Not yet updated for gd 1.6.
-be compatible.
+Perl 5.x classes. Not yet updated for gd 1.6.1.
 <h4>Any Language</h4>
 There are, at the moment, at least three simple interpreters that
 perform gd operations. You can output the desired commands to a simple
 text file from whatever scripting language you prefer to use, then
 invoke the interpreter.
 <p>
-These packages have not been updated to gd 1.6 as of this writing.
+These packages have not been updated to gd 1.6.1 as of this writing.
 <ul>
 <li><a href="http://s27w007.pswfs.gov/tgd/">tgd</a>, by Bradley K. Sherman
 <li><a href="http://www.unimelb.edu.au/fly/fly.html">fly</a>, by Martin Gleeson
 </ul>
+<P><A NAME="whatsnew1.6.1"><H3>What's new in version 1.6.1?</H3></A>
+Version 1.6.1 incorporates superior PNG reading and writing code
+from Greg Roelofs, with minor modifications by Tom Boutell. 
+Specifically, I altered his code to read non-palette images
+(converting them to palette images badly, by dithering them),
+and to tolerate palette images with types of transparency that
+gd doesn't actually support (it just ignores the advanced
+transparency features). Any bugs in this area are therefore my 
+fault, not Greg's.
+<p>
+Unlike gd 1.6, users should have no trouble linking with
+gd 1.6.1 if they follow the instructions and install all of
+the pieces. However, <strong>If you get undefined symbol errors,
+be sure to check for older versions of libpng in your
+library directories!</strong>
 <P><A NAME="whatsnew1.6"><H3>What's new in version 1.6?</H3></A>
 Version 1.6 features the following changes:
 <p>
@@ -274,13 +291,13 @@ newsgroups relevant to your particular system.
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <h4>By HTTP</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd1.6.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd16.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd1.6.1.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd161.zip">.ZIP File (Windows)</a>
 </ul>
 <h4>By FTP</h4>
 <ul>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd1.6.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd16.zip">.ZIP File (Windows)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd1.6.1.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="ftp://ftp.boutell.com/pub/boutell/gd/gd161.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -291,10 +308,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd1.6".
+Unpacking the archive will produce a directory called "gd1.6.1".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the gd1.6 directory and examine the Makefile, which
+<code>cd</code> to the gd1.6.1 directory and examine the Makefile, which
 you will probably need to change slightly depending on your operating
 system and your needs.
 <h4>For Windows, Mac, Et Cetera</h4>
@@ -2311,7 +2328,7 @@ io_dp.c (which implements in-memory storage).
 <p>
 It is not necessary to implement all functions in an I/O context if you know
 that it will only be used in limited cirsumstances. At the time of writing
-(Version 1.6, June 1999), the known requirements are:
+(Version 1.6.1, July 1999), the known requirements are:
 <p>
 <Table>
 <TR><TD>All</TD><td width=20>&nbsp;</td><TD>Must have 'free',</td></tr>
