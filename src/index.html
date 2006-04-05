@@ -1,10 +1,10 @@
 <!-- REMEMBER TO EDIT index.html.source -->
 <head>
-<TITLE>gd 2.0.27</TITLE>
+<TITLE>gd 2.0.28</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<H2>gd 2.0.27</H2>
+<H2>gd 2.0.28</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -19,21 +19,15 @@ in /usr/lib and /usr/include, you may wish to use:
 To ensure that your
 new installation overwrites the old.
 <p>
-<strong>ABOUT GD AND GIF:</strong>
-gd 2.0.27 creates PNG, JPEG and WBMP images, not GIF images. This is a 
-good thing.  PNG is a more compact format, and full compression is
-available.  JPEG works best with photographic images, and is still
-more compatible with the major Web browsers than even PNG is. WBMP is
-intended for wireless devices (not regular web browsers). Old
-code will need modification to call gdImagePng or gdImageJpeg instead
-of gdImageGif. <strong>Please do not ask us to send you the old GIF
-version of GD.</strong> Yes, Unisys still holds a patent on the LZW compression
-algorithm in some countries. The best
-solution is to move to legally unencumbered, well-compressed,
-modern image formats such as PNG and JPEG as soon as possible.
-
+<strong>GIF support has been restored in gd 2.0.28.</strong>
+The well-known patents on LZW compression held by Unisys
+have expired in all countries. British Telecom and IBM may hold related
+patents but have never chosen to require royalties for GIF applications,
+to the best of my knowledge. I am not a lawyer and cannot give
+legal advice regarding this issue. PNG remains a superior format especially
+if lossless truecolor images are needed.
 <p>
-When building from soruce, gd 2.0.27 <strong>requires</strong> that the 
+When building from soruce, gd 2.0.28 <strong>requires</strong> that the 
 following libraries also be installed, in order to produce the related 
 image formats. The win32 binary release (bgd) already contains the
 appropriate libraries.
@@ -66,7 +60,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.27">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.28">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -114,6 +108,14 @@ Portions relating to JPEG and to color quantization copyright 2000, 2001, 2002, 
 in part on the work of the Independent JPEG Group. See the file
 README-JPEG.TXT for more information.
 <p>
+Portions relating to GIF compression copyright 1989 by Jef
+Poskanzer and David Rowley, with modifications for thread safety
+by Thomas Boutell.
+<p>
+Portions relating to GIF decompression copyright 1990, 1991, 1993 
+by David Koblas, with modifications for thread safety by
+Thomas Boutell.
+<p>
 Portions relating to WBMP copyright 2000, 2001, 2002, 2003, 2004 Maurice Szmurlo and Johan Van 
 den Brande.
 <p>
@@ -133,9 +135,9 @@ including but not limited to implied warranties of merchantability and
 fitness for a particular purpose, with respect to this code and accompanying
 documentation.
 <p>
-Although their code does not appear in gd 2.0.4, the authors wish to 
-thank David Koblas, David Rowley, and Hutchison Avenue Software 
-Corporation for their prior contributions.
+Although their code does not appear in the current release, the authors
+also wish to thank Hutchison Avenue Software Corporation for their
+prior contributions.
 </blockquote>
 <pre>
 END OF COPYRIGHT STATEMENT
@@ -165,10 +167,10 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.27.
+with 2.0.28.
 <h4>PHP</h4>
 A variant of gd 2.x is included in PHP 4.3.0. It is also possible
-to patch PHP 4.2.3 for use with gd 2.0.27; see the
+to patch PHP 4.2.3 for use with gd 2.0.28; see the
 <a href="http://www.boutell.com/gd/">gd home page</a> for a link to
 that information. It would be a Good Idea to merge all of the things
 that are better in mainstream gd and all of the things that are
@@ -204,6 +206,21 @@ invoke the interpreter.
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
 </ul>
 <P>
+<A NAME="whatsnew2.0.28"><H3>What's new in version 2.0.28?</H3></A>
+<P>
+<ul>
+<li>GIF support has been restored. See
+<a href="#gdImageGif">gdImageGif</a>, 
+<a href="#gdImageGifCtx">gdImageGifCtx</a>, 
+<a href="#gdImageGifPtr">gdImageGifPtr</a>, 
+<a href="#gdImageCreateFromGif">gdImageCreateFromGif</a>, 
+<a href="#gdImageCreateFromGifCtx">gdImageCreateFromGifCtx</a>, 
+and <a href="#gdImageCreateFromGifPtr">gdImageCreateFromGifPtr</a>.
+These functions are now thread-safe, similar to the PNG and JPEG
+manipulation functions.
+<li>The new <a href="#gdImageCreatePaletteFromTrueColor">gdImageCreatePaletteFromTrueColor</a> function is identical to <a href="#gdImageTrueColorToPalette">gdImageTrueColorToPalette</a>, except that it returns a new image rather than permanently modifying the original.
+</ul>
+<P>
 <A NAME="whatsnew2.0.27"><H3>What's new in version 2.0.27?</H3></A>
 <P>
 <ul>
@@ -236,7 +253,7 @@ list of optional features with which the gd library was compiled.
 Typical usage looks like this:
 <pre>
 % gdlib-config --features
-GD_XPM GD_JPEG GD_FREETYPE GD_PNG
+GD_XPM GD_JPEG GD_FREETYPE GD_PNG GD_GIF
 </pre>
 Other <code>configure</code> scripts can conveniently define
 preprocessor symbols based on this list in order to conditionally
@@ -1152,8 +1169,8 @@ saving of alpha channel information to the file instead.
 </ul>
 <h4>Source Code:</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.27.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.27.zip">.ZIP File of SOURCE CODE (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.28.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.28.zip">.ZIP File of SOURCE CODE (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -1175,10 +1192,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.27".
+Unpacking the archive will produce a directory called "gd-2.0.28".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.27 directory and type:
+<code>cd</code> to the 2.0.28 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -1762,6 +1779,39 @@ static int freadWrapper(void *context, char *buf, int len)
         return got;
 }
 </pre>
+<DT><A NAME="gdImageCreateFromGif">gdImageCreateFromGif(FILE *in)</A>
+<strong>(FUNCTION)</strong>
+<BR><A NAME="gdImageCreateFromGifPtr">gdImageCreateFromGifPtr(int size, void *data)</A>
+<strong>(FUNCTION)</strong>
+<BR><A NAME="gdImageCreateFromGifCtx">gdImageCreateFromGifCtx(<a href=#gdioctx>gdIOCtx</a> *in)</A>
+<strong>(FUNCTION)</strong>
+<p>
+<DD>
+gdImageCreateFromGif is called to load images from GIF format files.
+Invoke gdImageCreateFromGif with an already opened pointer to a file
+containing the desired image.
+gdImageCreateFromGif
+returns a <A HREF="#gdImagePtr">gdImagePtr</A> to the new image, or NULL
+if unable to load the image (most often because the file is corrupt or
+does not contain a GIF image). gdImageCreateFromGif does <em>not</em>
+close the file. You can inspect the sx and sy members of the
+image to determine its size. The image must eventually be destroyed
+using <A HREF="#gdImageDestroy">gdImageDestroy()</A>.
+<p>
+If you already have the
+image file in memory, pass the size of the file and a pointer to the
+file's data to gdImageCreateFromGifPtr, which is otherwise identical
+to gdImageCreateFromGif.
+<PRE>
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+... inside a function ...
+FILE *in;
+in = fopen("mygif.gif", "rb");
+im = gdImageCreateFromGif(in);
+fclose(in);
+/* ... Use the image ... */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
 <DT><A NAME="gdImageCreateFromGd">gdImageCreateFromGd(FILE *in)</A>
 <strong>(FUNCTION)</strong>
 <br><DT><A NAME="gdImageCreateFromGdPtr">gdImageCreateFromGdPtr(int size, void *data)</A>
@@ -2009,6 +2059,63 @@ void* gdImageJpegPtr(gdImagePtr im, int *size, int quality)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>Identical to gdImageJpeg except that it returns a pointer to a memory
 area with the JPEG data. This memory must be freed by the caller when it is
+no longer needed. <strong>The caller must invoke gdFree(), not free(), 
+unless the caller is absolutely certain that the same implementations of
+malloc, free, etc. are used both at library build time and at application
+build time.</strong> The 'size' parameter receives the total size of the block
+of memory.
+<DT><A NAME="gdImageGif">
+void gdImageGif(gdImagePtr im, FILE *out)</A>
+<br>
+<A NAME="gdImageGifCtx">
+void gdImageGifCtx(gdImagePtr im, gdIOCtx *out)</A>
+
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+gdImageGif outputs the specified image to the specified
+file in PNG format. The file must be open for writing. Under MSDOS
+and all versions of Windows, it is important to use "wb" as opposed
+to simply "w" as the mode when opening the file, and under Unix there
+is no penalty for doing so. gdImageGif does <em>not</em>
+close the file; your code must do so.
+<p>
+GIF does not support true color; GIF images can contain a maximum
+of 256 colors. If the image to be written is a 
+truecolor image, such as those created with 
+<a href="#gdImageCreateTrueColor">gdImageCreateTrueColor</a> or loaded 
+from a JPEG or a truecolor PNG image file, a palette-based
+temporary image will automatically be created internally using the 
+<a href="#gdImageCreatePaletteFromTrueColor">gdImageCreatePaletteFromTrueColor</a> function. The original image pixels are not modified. This conversion
+produces high quality palettes but does require some CPU time. If you are
+regularly converting truecolor to palette in this way, you should consider
+creating your image as a palette-based image in the first place.
+<PRE>
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int black, white;
+FILE *out;
+/* Create the image */
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(100, 100);
+/* Allocate background */
+white = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 255, 255, 255);
+/* Allocate drawing color */
+black = <A HREF="#gdImageColorAllocate">gdImageColorAllocate</A>(im, 0, 0, 0);
+/* Draw rectangle */
+<A HREF="#gdImageRectangle">gdImageRectangle</A>(im, 0, 0, 99, 99, black);
+/* Open output file in binary mode */
+out = fopen("rect.gif", "wb");
+/* Write GIF */
+gdImageGif(im, out);
+/* Close file */
+fclose(out);
+/* Destroy image */
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
+</PRE>
+<DT><A NAME="gdImageGifPtr">
+void* gdImageGifPtr(gdImagePtr im, int *size)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>Identical to gdImageGif except that it returns a pointer to a memory
+area with the GIF data. This memory must be freed by the caller when it is
 no longer needed. <strong>The caller must invoke gdFree(), not free(), 
 unless the caller is absolutely certain that the same implementations of
 malloc, free, etc. are used both at library build time and at application
@@ -2290,8 +2397,19 @@ build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
 <DT><A NAME="gdImageTrueColorToPalette">
 void gdImageTrueColorToPalette(gdImagePtr im, int ditherFlag, int colorsWanted)</A>
+<br>
+<A NAME="gdImageCreatePaletteFromTrueColor">
+gdImagePtr gdImageCreatePaletteFromTrueColor(gdImagePtr im, int ditherFlag, int colorsWanted)</A>
+
 <STRONG>(FUNCTION)</STRONG>
-<DD>Converts a truecolor image to a palette-based image,
+<DD>
+<blockquote>
+gdImageCreatePaletteFromTrueColor returns a <b>new</b> 
+image. gdImageTrueColorToPalette permanently converts the
+<b>existing</b> image. The two functions are otherwise identical.
+</blockquote>
+<p>
+The function converts a truecolor image to a palette-based image,
 using a high-quality two-pass quantization routine.
 If ditherFlag is set, the image will be
 dithered to approximate colors better, at the expense

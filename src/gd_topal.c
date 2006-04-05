@@ -1,3 +1,6 @@
+/* TODO: oim and nim in the lower level functions;
+  correct use of stub (sigh). */
+
 /* 2.0.12: a new adaptation from the same original, this time
 	by Barend Gehrels. My attempt to incorporate alpha channel
 	into the result worked poorly and degraded the quality of
@@ -124,8 +127,8 @@
 #endif
 
 
-#define input_buf (im->tpixels)
-#define output_buf (im->pixels)
+#define input_buf (oim->tpixels)
+#define output_buf (nim->pixels)
 
 #endif
 
@@ -338,7 +341,7 @@ typedef my_cquantizer *my_cquantize_ptr;
 
 METHODDEF (void)
 #ifndef ORIGINAL_LIB_JPEG
-prescan_quantize (gdImagePtr im, my_cquantize_ptr cquantize)
+prescan_quantize (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize)
 {
 #else
 prescan_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
@@ -354,8 +357,8 @@ prescan_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 #ifdef ORIGINAL_LIB_JPEG
   JDIMENSION width = cinfo->output_width;
 #else
-  int width = im->sx;
-  int num_rows = im->sy;
+  int width = oim->sx;
+  int num_rows = oim->sy;
 #endif
 
   for (row = 0; row < num_rows; row++)
@@ -373,7 +376,7 @@ prescan_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 	  int b = gdTrueColorGetBlue (*ptr) >> C2_SHIFT;
 	  /* 2.0.12: Steven Brown: support a single totally transparent
 	     color in the original. */
-	  if ((im->transparent >= 0) && (*ptr == im->transparent))
+	  if ((oim->transparent >= 0) && (*ptr == oim->transparent))
 	    {
 	      ptr++;
 	      continue;
@@ -461,7 +464,7 @@ LOCAL (boxptr) find_biggest_volume (boxptr boxlist, int numboxes)
 
 LOCAL (void)
 #ifndef ORIGINAL_LIB_JPEG
-  update_box (gdImagePtr im, my_cquantize_ptr cquantize, boxptr boxp)
+  update_box (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize, boxptr boxp)
 {
 #else
   update_box (j_decompress_ptr cinfo, boxptr boxp)
@@ -597,7 +600,7 @@ LOCAL (int)
 median_cut (j_decompress_ptr cinfo, boxptr boxlist, int numboxes,
 	    int desired_colors)
 #else
-median_cut (gdImagePtr im, my_cquantize_ptr cquantize,
+median_cut (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize,
 	    boxptr boxlist, int numboxes, int desired_colors)
 #endif
 /* Repeatedly select and split the largest box until we have enough boxes */
@@ -693,8 +696,8 @@ median_cut (gdImagePtr im, my_cquantize_ptr cquantize,
       update_box (cinfo, b1);
       update_box (cinfo, b2);
 #else
-      update_box (im, cquantize, b1);
-      update_box (im, cquantize, b2);
+      update_box (oim, nim, cquantize, b1);
+      update_box (oim, nim, cquantize, b2);
 #endif
       numboxes++;
     }
@@ -704,7 +707,7 @@ median_cut (gdImagePtr im, my_cquantize_ptr cquantize,
 
 LOCAL (void)
 #ifndef ORIGINAL_LIB_JPEG
-  compute_color (gdImagePtr im, my_cquantize_ptr cquantize,
+  compute_color (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize,
 	       boxptr boxp, int icolor)
 {
 #else
@@ -719,7 +722,7 @@ LOCAL (void)
   histptr histp;
   int c0, c1, c2;
   int c0min, c0max, c1min, c1max, c2min, c2max;
-  long count;
+  long count = 0; /* 2.0.28: = 0 */
   long total = 0;
   long c0total = 0;
   long c1total = 0;
@@ -759,15 +762,15 @@ LOCAL (void)
   /* 2.0.16: Paul den Dulk found an occasion where total can be 0 */
   if (count)
     {
-      im->red[icolor] = (int) ((c0total + (total >> 1)) / total);
-      im->green[icolor] = (int) ((c1total + (total >> 1)) / total);
-      im->blue[icolor] = (int) ((c2total + (total >> 1)) / total);
+      nim->red[icolor] = (int) ((c0total + (total >> 1)) / total);
+      nim->green[icolor] = (int) ((c1total + (total >> 1)) / total);
+      nim->blue[icolor] = (int) ((c2total + (total >> 1)) / total);
     }
   else
     {
-      im->red[icolor] = 255;
-      im->green[icolor] = 255;
-      im->blue[icolor] = 255;
+      nim->red[icolor] = 255;
+      nim->green[icolor] = 255;
+      nim->blue[icolor] = 255;
     }
 #endif
 }
@@ -777,7 +780,7 @@ LOCAL (void)
 #ifdef ORIGINAL_LIB_JPEG
 select_colors (j_decompress_ptr cinfo, int desired_colors)
 #else
-select_colors (gdImagePtr im, my_cquantize_ptr cquantize, int desired_colors)
+select_colors (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize, int desired_colors)
 #endif
 /* Master routine for color selection */
 {
@@ -812,26 +815,26 @@ select_colors (gdImagePtr im, my_cquantize_ptr cquantize, int desired_colors)
   TRACEMS1 (cinfo, 1, JTRC_QUANT_SELECTED, numboxes);
 #else
   /* Shrink it to actually-used volume and set its statistics */
-  update_box (im, cquantize, &boxlist[0]);
+  update_box (oim, nim, cquantize, &boxlist[0]);
   /* Perform median-cut to produce final box list */
-  numboxes = median_cut (im, cquantize, boxlist, numboxes, desired_colors);
+  numboxes = median_cut (oim, nim, cquantize, boxlist, numboxes, desired_colors);
   /* Compute the representative color for each box, fill colormap */
   for (i = 0; i < numboxes; i++)
-    compute_color (im, cquantize, &boxlist[i], i);
-  im->colorsTotal = numboxes;
+    compute_color (oim, nim, cquantize, &boxlist[i], i);
+  nim->colorsTotal = numboxes;
 
   /* If we had a pure transparency color, add it as the last palette entry.
    * Skip incrementing the color count so that the dither / matching phase
    * won't use it on pixels that shouldn't have been transparent.  We'll
    * increment it after all that finishes. */
-  if (im->transparent >= 0)
+  if (oim->transparent >= 0)
     {
       /* Save the transparent color. */
-      im->red[im->colorsTotal] = gdTrueColorGetRed (im->transparent);
-      im->green[im->colorsTotal] = gdTrueColorGetGreen (im->transparent);
-      im->blue[im->colorsTotal] = gdTrueColorGetBlue (im->transparent);
-      im->alpha[im->colorsTotal] = gdAlphaTransparent;
-      im->open[im->colorsTotal] = 0;
+      nim->red[nim->colorsTotal] = gdTrueColorGetRed (oim->transparent);
+      nim->green[nim->colorsTotal] = gdTrueColorGetGreen (oim->transparent);
+      nim->blue[nim->colorsTotal] = gdTrueColorGetBlue (oim->transparent);
+      nim->alpha[nim->colorsTotal] = gdAlphaTransparent;
+      nim->open[nim->colorsTotal] = 0;
     }
 
   gdFree (boxlist);
@@ -920,7 +923,7 @@ find_nearby_colors (
 #ifdef ORIGINAL_LIB_JPEG
 		     j_decompress_ptr cinfo,
 #else
-		     gdImagePtr im, my_cquantize_ptr cquantize,
+		     gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize,
 #endif
 		     int minc0, int minc1, int minc2, JSAMPLE colorlist[])
 /* Locate the colormap entries close enough to an update box to be candidates
@@ -935,7 +938,7 @@ find_nearby_colors (
 #ifdef ORIGINAL_LIB_JPEG
   int numcolors = cinfo->actual_number_of_colors;
 #else
-  int numcolors = im->colorsTotal;
+  int numcolors = nim->colorsTotal;
 #endif
   int maxc0, maxc1, maxc2;
   int centerc0, centerc1, centerc2;
@@ -972,7 +975,7 @@ find_nearby_colors (
 #ifdef ORIGINAL_LIB_JPEG
       x = GETJSAMPLE (cinfo->colormap[0][i]);
 #else
-      x = im->red[i];
+      x = nim->red[i];
 #endif
       if (x < minc0)
 	{
@@ -1007,7 +1010,7 @@ find_nearby_colors (
 #ifdef ORIGINAL_LIB_JPEG
       x = GETJSAMPLE (cinfo->colormap[1][i]);
 #else
-      x = im->green[i];
+      x = nim->green[i];
 #endif
       if (x < minc1)
 	{
@@ -1041,7 +1044,7 @@ find_nearby_colors (
 #ifdef ORIGINAL_LIB_JPEG
       x = GETJSAMPLE (cinfo->colormap[2][i]);
 #else
-      x = im->blue[i];
+      x = nim->blue[i];
 #endif
       if (x < minc2)
 	{
@@ -1095,7 +1098,7 @@ LOCAL (void) find_best_colors (
 #ifdef ORIGINAL_LIB_JPEG
 				j_decompress_ptr cinfo,
 #else
-				gdImagePtr im, my_cquantize_ptr cquantize,
+				gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize,
 #endif
 				int minc0, int minc1, int minc2,
 				int numcolors, JSAMPLE colorlist[],
@@ -1145,9 +1148,9 @@ LOCAL (void) find_best_colors (
       b = GETJSAMPLE (cinfo->colormap[2][icolor]);
 #else
       icolor = colorlist[i];
-      r = im->red[icolor];
-      g = im->green[icolor];
-      b = im->blue[icolor];
+      r = nim->red[icolor];
+      g = nim->green[icolor];
+      b = nim->blue[icolor];
 #endif
 
       /* Compute (square of) distance from minc0/c1/c2 to this color */
@@ -1200,7 +1203,7 @@ fill_inverse_cmap (
 #ifdef ORIGINAL_LIB_JPEG
 		    j_decompress_ptr cinfo,
 #else
-		    gdImagePtr im, my_cquantize_ptr cquantize,
+		    gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize,
 #endif
 		    int c0, int c1, int c2)
 /* Fill the inverse-colormap entries in the update box that contains */
@@ -1245,8 +1248,8 @@ fill_inverse_cmap (
 		    bestcolor);
 #else
   numcolors =
-    find_nearby_colors (im, cquantize, minc0, minc1, minc2, colorlist);
-  find_best_colors (im, cquantize, minc0, minc1, minc2, numcolors,
+    find_nearby_colors (oim, nim, cquantize, minc0, minc1, minc2, colorlist);
+  find_best_colors (oim, nim, cquantize, minc0, minc1, minc2, numcolors,
 		    colorlist, bestcolor);
 #endif
 
@@ -1279,12 +1282,12 @@ fill_inverse_cmap (
 
 METHODDEF (void)
 #ifndef ORIGINAL_LIB_JPEG
-pass2_no_dither (gdImagePtr im, my_cquantize_ptr cquantize)
+pass2_no_dither (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize)
 {
   register int *inptr;
   register unsigned char *outptr;
-  int width = im->sx;
-  int num_rows = im->sy;
+  int width = oim->sx;
+  int num_rows = oim->sy;
 #else
 pass2_no_dither (j_decompress_ptr cinfo,
 		 JSAMPARRAY input_buf, JSAMPARRAY output_buf, int num_rows)
@@ -1325,9 +1328,9 @@ pass2_no_dither (j_decompress_ptr cinfo,
 	  /* If the pixel is transparent, we assign it the palette index that
 	   * will later be added at the end of the palette as the transparent
 	   * index. */
-	  if ((im->transparent >= 0) && (im->transparent == *inptr))
+	  if ((oim->transparent >= 0) && (oim->transparent == *inptr))
 	    {
-	      *outptr++ = im->colorsTotal;
+	      *outptr++ = nim->colorsTotal;
 	      inptr++;
 	      continue;
 	    }
@@ -1343,7 +1346,7 @@ pass2_no_dither (j_decompress_ptr cinfo,
 #ifdef ORIGINAL_LIB_JPEG
 	    fill_inverse_cmap (cinfo, c0, c1, c2);
 #else
-	    fill_inverse_cmap (im, cquantize, c0, c1, c2);
+	    fill_inverse_cmap (oim, nim, cquantize, c0, c1, c2);
 #endif
 	  /* Now emit the colormap index for this cell */
 #ifdef ORIGINAL_LIB_JPEG
@@ -1358,7 +1361,7 @@ pass2_no_dither (j_decompress_ptr cinfo,
 
 METHODDEF (void)
 #ifndef ORIGINAL_LIB_JPEG
-pass2_fs_dither (gdImagePtr im, my_cquantize_ptr cquantize)
+pass2_fs_dither (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize)
 {
 #else
 pass2_fs_dither (j_decompress_ptr cinfo,
@@ -1388,11 +1391,11 @@ pass2_fs_dither (j_decompress_ptr cinfo,
 #else
   int *inptr;			/* => current input pixel */
   unsigned char *outptr;	/* => current output pixel */
-  int width = im->sx;
-  int num_rows = im->sy;
-  int *colormap0 = im->red;
-  int *colormap1 = im->green;
-  int *colormap2 = im->blue;
+  int width = oim->sx;
+  int num_rows = oim->sy;
+  int *colormap0 = nim->red;
+  int *colormap1 = nim->green;
+  int *colormap2 = nim->blue;
 #endif
   int *error_limit = cquantize->error_limiter;
 
@@ -1435,9 +1438,9 @@ pass2_fs_dither (j_decompress_ptr cinfo,
 	  /* If this pixel is transparent, we want to assign it to the special
 	   * transparency color index past the end of the palette rather than
 	   * go through matching / dithering. */
-	  if ((im->transparent >= 0) && (*inptr == im->transparent))
+	  if ((oim->transparent >= 0) && (*inptr == oim->transparent))
 	    {
-	      *outptr = im->colorsTotal;
+	      *outptr = nim->colorsTotal;
 	      errorptr[0] = 0;
 	      errorptr[1] = 0;
 	      errorptr[2] = 0;
@@ -1494,7 +1497,7 @@ pass2_fs_dither (j_decompress_ptr cinfo,
 	    fill_inverse_cmap (cinfo, cur0 >> C0_SHIFT, cur1 >> C1_SHIFT,
 			       cur2 >> C2_SHIFT);
 #else
-	    fill_inverse_cmap (im, cquantize, cur0 >> C0_SHIFT,
+	    fill_inverse_cmap (oim, nim, cquantize, cur0 >> C0_SHIFT,
 			       cur1 >> C1_SHIFT, cur2 >> C2_SHIFT);
 #endif
 	  /* Now emit the colormap index for this cell */
@@ -1584,7 +1587,7 @@ LOCAL (void)
 #ifdef ORIGINAL_LIB_JPEG
 init_error_limit (j_decompress_ptr cinfo)
 #else
-init_error_limit (gdImagePtr im, my_cquantize_ptr cquantize)
+init_error_limit (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize)
 #endif
 /* Allocate and fill in the error_limiter table */
 {
@@ -1750,6 +1753,20 @@ zeroHistogram (hist3d histogram)
 }
 #endif
 
+static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colorsWanted, gdImagePtr *cimP);
+
+BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int dither, int colorsWanted)
+{
+	gdImagePtr nim;
+	gdImageTrueColorToPaletteBody(im, dither, colorsWanted, &nim);
+	return nim;
+}
+
+BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colorsWanted)
+{
+	gdImageTrueColorToPaletteBody(im, dither, colorsWanted, 0);
+}
+
 /*
  * Module initialization routine for 2-pass color quantization.
  */
@@ -1758,7 +1775,7 @@ zeroHistogram (hist3d histogram)
 GLOBAL (void)
 jinit_2pass_quantizer (j_decompress_ptr cinfo)
 #else
-BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colorsWanted)
+static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colorsWanted, gdImagePtr *cimP)
 #endif
 {
   my_cquantize_ptr cquantize = NULL;
@@ -1768,15 +1785,29 @@ BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colo
   /* Allocate the JPEG palette-storage */
   size_t arraysize;
   int maxColors = gdMaxColors;
-  if (!im->trueColor)
+  gdImagePtr nim;
+  if (cimP) {
+    nim = gdImageCreate(oim->sx, oim->sy);
+    *cimP = nim;
+    if (!nim) {
+      return;
+    }
+  } else {
+    nim = oim;
+  }     
+  if (!oim->trueColor)
     {
-      /* Nothing to do! */
+      /* (Almost) nothing to do! */
+      if (cimP) {
+        gdImageCopy(nim, oim, 0, 0, 0, 0, oim->sx, oim->sy);
+        *cimP = nim;
+      }
       return;
     }
 
   /* If we have a transparent color (the alphaless mode of transparency), we
    * must reserve a palette entry for it at the end of the palette. */
-  if (im->transparent >= 0)
+  if (oim->transparent >= 0)
     {
       maxColors--;
     }
@@ -1784,20 +1815,22 @@ BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colo
     {
       colorsWanted = maxColors;
     }
-  im->pixels = gdCalloc (sizeof (unsigned char *), im->sy);
-  if (!im->pixels)
-    {
-      /* No can do */
-      goto outOfMemory;
-    }
-  for (i = 0; (i < im->sy); i++)
-    {
-      im->pixels[i] = gdCalloc (sizeof (unsigned char *), im->sx);
-      if (!im->pixels[i])
-	{
-	  goto outOfMemory;
-	}
-    }
+  if (!cimP) {
+    nim->pixels = gdCalloc (sizeof (unsigned char *), oim->sy);
+    if (!nim->pixels)
+      {
+        /* No can do */
+        goto outOfMemory;
+      }
+    for (i = 0; (i < nim->sy); i++)
+      {
+        nim->pixels[i] = gdCalloc (sizeof (unsigned char *), oim->sx);
+        if (!nim->pixels[i])
+  	{
+  	  goto outOfMemory;
+  	}
+      }
+  }
 #endif
 
 #ifdef ORIGINAL_LIB_JPEG
@@ -1890,8 +1923,8 @@ BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colo
 #else
 
   cquantize->fserrors = (FSERRPTR) gdMalloc (3 * sizeof (FSERROR));
-  init_error_limit (im, cquantize);
-  arraysize = (size_t) ((im->sx + 2) * (3 * sizeof (FSERROR)));
+  init_error_limit (oim, nim, cquantize);
+  arraysize = (size_t) ((nim->sx + 2) * (3 * sizeof (FSERROR)));
   /* Allocate Floyd-Steinberg workspace. */
   cquantize->fserrors = gdCalloc (arraysize, 1);
   if (!cquantize->fserrors)
@@ -1902,17 +1935,17 @@ BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colo
 
   /* Do the work! */
   zeroHistogram (cquantize->histogram);
-  prescan_quantize (im, cquantize);
+  prescan_quantize (oim, nim, cquantize);
   /* TBB 2.0.5: pass colorsWanted, not 256! */
-  select_colors (im, cquantize, colorsWanted);
+  select_colors (oim, nim, cquantize, colorsWanted);
   zeroHistogram (cquantize->histogram);
   if (dither)
     {
-      pass2_fs_dither (im, cquantize);
+      pass2_fs_dither (oim, nim, cquantize);
     }
   else
     {
-      pass2_no_dither (im, cquantize);
+      pass2_no_dither (oim, nim, cquantize);
     }
 #if 0				/* 2.0.12; we no longer attempt full alpha in palettes */
   if (cquantize->transparentIsPresent)
@@ -1962,39 +1995,48 @@ BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colo
    * an index rather than a color (Its data already exists and transparent
    * pixels have already been mapped to it by this point, it is done late as to
    * avoid color matching / dithering with it). */
-  if (im->transparent >= 0)
+  if (oim->transparent >= 0)
     {
-      im->transparent = im->colorsTotal;
-      im->colorsTotal++;
+      nim->transparent = nim->colorsTotal;
+      nim->colorsTotal++;
     }
 
   /* Success! Get rid of the truecolor image data. */
-  im->trueColor = 0;
-  /* Junk the truecolor pixels */
-  for (i = 0; i < im->sy; i++)
-    {
-      gdFree (im->tpixels[i]);
-    }
-  gdFree (im->tpixels);
-  im->tpixels = 0;
+  if (!cimP) { 
+    oim->trueColor = 0;
+    /* Junk the truecolor pixels */
+    for (i = 0; i < oim->sy; i++)
+      {
+        gdFree (oim->tpixels[i]);
+      }
+    gdFree (oim->tpixels);
+    oim->tpixels = 0;
+  }
+  goto success;
   /* Tediously free stuff. */
 outOfMemory:
-  if (im->trueColor)
+  if (oim->trueColor)
     {
-      /* On failure only */
-      for (i = 0; i < im->sy; i++)
-	{
-	  if (im->pixels[i])
-	    {
-	      gdFree (im->pixels[i]);
-	    }
-	}
-      if (im->pixels)
-	{
-	  gdFree (im->pixels);
-	}
-      im->pixels = 0;
+      if (!cimP) {
+        /* On failure only */
+        for (i = 0; i < nim->sy; i++)
+  	{
+  	  if (nim->pixels[i])
+  	    {
+  	      gdFree (nim->pixels[i]);
+  	    }
+  	}
+        if (nim->pixels)
+  	{
+  	  gdFree (nim->pixels);
+  	}
+        nim->pixels = 0;
+      } else {
+        gdImageDestroy(nim);
+        *cimP = 0;
+      }
     }
+success:
   for (i = 0; i < HIST_C0_ELEMS; i++)
     {
       if (cquantize->histogram[i])

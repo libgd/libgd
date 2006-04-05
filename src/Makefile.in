@@ -147,7 +147,7 @@ include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h g
 
 lib_LTLIBRARIES = libgd.la
 
-libgd_la_SOURCES = gd.c gdfx.c gd_gd.c gd_gd2.c gd_io.c gd_io_dp.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c gdfonts.c gdfontt.c gdft.c gdhelpers.c gdhelpers.h gdkanji.c gdtables.c gdxpm.c jisx0208.h wbmp.c wbmp.h
+libgd_la_SOURCES = gd.c gdfx.c gd_gd.c gd_gd2.c gd_io.c gd_io_dp.c gd_gif_in.c gd_gif_out.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c gdfonts.c gdfontt.c gdft.c gdhelpers.c gdhelpers.h gdkanji.c gdtables.c gdxpm.c jisx0208.h wbmp.c wbmp.h
 
 libgd_la_LDFLAGS = -version-info 2:0:0
 
@@ -161,10 +161,11 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 
 libgd_la_LIBADD =
 am_libgd_la_OBJECTS = gd.lo gdfx.lo gd_gd.lo gd_gd2.lo gd_io.lo \
-	gd_io_dp.lo gd_io_file.lo gd_io_ss.lo gd_jpeg.lo gd_png.lo \
-	gd_ss.lo gd_topal.lo gd_wbmp.lo gdcache.lo gdfontg.lo \
-	gdfontl.lo gdfontmb.lo gdfonts.lo gdfontt.lo gdft.lo \
-	gdhelpers.lo gdkanji.lo gdtables.lo gdxpm.lo wbmp.lo
+	gd_io_dp.lo gd_gif_in.lo gd_gif_out.lo gd_io_file.lo \
+	gd_io_ss.lo gd_jpeg.lo gd_png.lo gd_ss.lo gd_topal.lo \
+	gd_wbmp.lo gdcache.lo gdfontg.lo gdfontl.lo gdfontmb.lo \
+	gdfonts.lo gdfontt.lo gdft.lo gdhelpers.lo gdkanji.lo \
+	gdtables.lo gdxpm.lo wbmp.lo
 libgd_la_OBJECTS = $(am_libgd_la_OBJECTS)
 bin_PROGRAMS = annotate$(EXEEXT) gdparttopng$(EXEEXT) gdtopng$(EXEEXT) \
 	gd2copypal$(EXEEXT) gd2topng$(EXEEXT) pngtogd$(EXEEXT) \
@@ -272,7 +273,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/fontwheeltest.Po ./$(DEPDIR)/gd.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gd2copypal.Po ./$(DEPDIR)/gd2time.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/gd2topng.Po ./$(DEPDIR)/gd_gd.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/gd_gd2.Plo ./$(DEPDIR)/gd_io.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/gd_gd2.Plo ./$(DEPDIR)/gd_gif_in.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/gd_gif_out.Plo ./$(DEPDIR)/gd_io.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gd_io_dp.Plo ./$(DEPDIR)/gd_io_file.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gd_io_ss.Plo ./$(DEPDIR)/gd_jpeg.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gd_png.Plo ./$(DEPDIR)/gd_ss.Plo \
@@ -506,6 +508,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd2topng.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_gd.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_gd2.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_gif_in.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_gif_out.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_io.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_io_dp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_io_file.Plo@am__quote@

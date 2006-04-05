@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
-#include "io.h"
 
 /* Used only when debugging GIF compression code */
 /* #define DEBUGGING_ENVARS */
@@ -68,32 +67,36 @@ static struct {
 } Gif89 = { -1, -1, -1, 0 };
 
 static int ReadColorMap (gdIOCtx *fd, int number, unsigned char (*buffer)[256]);
-static int DoExtension (gdIOCtx *fd, int label, int *Transparent);
-static int GetDataBlock (gdIOCtx *fd, unsigned char *buf);
-static int GetCode (gdIOCtx *fd, int code_size, int flag);
-static int LWZReadByte (gdIOCtx *fd, int flag, int input_code_size);
+static int DoExtension (gdIOCtx *fd, int label, int *Transparent, int *ZeroDataBlockP);
+static int GetDataBlock (gdIOCtx *fd, unsigned char *buf, int *ZeroDataBlockP);
+static int GetCode (gdIOCtx *fd, int code_size, int flag, int *ZeroDataBlockP);
+static int LWZReadByte (gdIOCtx *fd, int flag, int input_code_size, int *ZeroDataBlockP);
 
-static void ReadImage (gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)[256], int interlace); /*1.4//, int ignore); */
+static void ReadImage (gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)[256], int interlace, int *ZeroDataBlockP); /*1.4//, int ignore); */
 
-int ZeroDataBlock;
-
-gdImagePtr
-gdImageCreateFromGif(FILE *fdFile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGif(FILE *fdFile)
 {
         gdIOCtx		*fd = gdNewFileCtx(fdFile);
         gdImagePtr    	im = 0;
 
         im = gdImageCreateFromGifCtx(fd);
 
-        fd->free(fd);
+        fd->gd_free(fd);
 
         return im;
 }
 
-gdImagePtr
-gdImageCreateFromGifCtx(gdIOCtxPtr fd)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGifPtr (int size, void *data)
 {
-       int imageNumber;
+  gdImagePtr im;
+  gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
+  im = gdImageCreateFromGifCtx (in);
+  in->gd_free (in);
+  return im;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
+{
        int BitPixel;
        int ColorResolution;
        int Background;
@@ -109,11 +112,10 @@ gdImageCreateFromGifCtx(gdIOCtxPtr fd)
        int	       i;
        /*1.4//int             imageCount = 0; */
        char            version[4];
+       /* 2.0.28: threadsafe storage */
+       int ZeroDataBlock = FALSE;
 
        gdImagePtr im = 0;
-       ZeroDataBlock = FALSE;
-
-       /*1.4//imageNumber = 1; */
        if (! ReadOK(fd,buf,6)) {
 		return 0;
 	}
@@ -151,7 +153,7 @@ gdImageCreateFromGifCtx(gdIOCtxPtr fd)
                        if (! ReadOK(fd,&c,1)) {
                                return 0;
                        }
-                       DoExtension(fd, c, &Transparent);
+                       DoExtension(fd, c, &Transparent, &ZeroDataBlock);
                        continue;
                }
 
@@ -180,13 +182,11 @@ gdImageCreateFromGifCtx(gdIOCtxPtr fd)
                                  return 0;
                        }
                        ReadImage(im, fd, imw, imh, localColorMap, 
-                                 BitSet(buf[8], INTERLACE)); 
-                                 /*1.4//imageCount != imageNumber); */
+                                 BitSet(buf[8], INTERLACE), &ZeroDataBlock); 
                } else {
                        ReadImage(im, fd, imw, imh,
                                  ColorMap, 
-                                 BitSet(buf[8], INTERLACE));
-                                 /*1.4//imageCount != imageNumber); */
+                                 BitSet(buf[8], INTERLACE), &ZeroDataBlock);
                }
                if (Transparent != (-1)) {
                        gdImageColorTransparent(im, Transparent);
@@ -233,33 +233,33 @@ ReadColorMap(gdIOCtx *fd, int number, unsigned char (*buffer)[256])
 }
 
 static int
-DoExtension(gdIOCtx *fd, int label, int *Transparent)
+DoExtension(gdIOCtx *fd, int label, int *Transparent, int *ZeroDataBlockP)
 {
        static unsigned char     buf[256];
 
        switch (label) {
        case 0xf9:              /* Graphic Control Extension */
-               (void) GetDataBlock(fd, (unsigned char*) buf);
+               (void) GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP);
                Gif89.disposal    = (buf[0] >> 2) & 0x7;
                Gif89.inputFlag   = (buf[0] >> 1) & 0x1;
                Gif89.delayTime   = LM_to_uint(buf[1],buf[2]);
                if ((buf[0] & 0x1) != 0)
                        *Transparent = buf[3];
 
-               while (GetDataBlock(fd, (unsigned char*) buf) != 0)
+               while (GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP) != 0)
                        ;
                return FALSE;
        default:
                break;
        }
-       while (GetDataBlock(fd, (unsigned char*) buf) != 0)
+       while (GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP) != 0)
                ;
 
        return FALSE;
 }
 
 static int
-GetDataBlock_(gdIOCtx *fd, unsigned char *buf)
+GetDataBlock_(gdIOCtx *fd, unsigned char *buf, int *ZeroDataBlockP)
 {
        unsigned char   count;
 
@@ -267,7 +267,7 @@ GetDataBlock_(gdIOCtx *fd, unsigned char *buf)
                return -1;
        }
 
-       ZeroDataBlock = count == 0;
+       *ZeroDataBlockP = count == 0;
 
        if ((count != 0) && (! ReadOK(fd, buf, count))) {
                return -1;
@@ -277,12 +277,12 @@ GetDataBlock_(gdIOCtx *fd, unsigned char *buf)
 }
 
 static int
-GetDataBlock(gdIOCtx *fd, unsigned char *buf)
+GetDataBlock(gdIOCtx *fd, unsigned char *buf, int *ZeroDataBlockP)
 {
  int rv;
  int i;
 
- rv = GetDataBlock_(fd,buf);
+ rv = GetDataBlock_(fd,buf, ZeroDataBlockP);
  if (VERBOSE)
   { printf("[GetDataBlock returning %d",rv);
     if (rv > 0)
@@ -295,7 +295,7 @@ GetDataBlock(gdIOCtx *fd, unsigned char *buf)
 }
 
 static int
-GetCode_(gdIOCtx *fd, int code_size, int flag)
+GetCode_(gdIOCtx *fd, int code_size, int flag, int *ZeroDataBlockP)
 {
        static unsigned char    buf[280];
        static int              curbit, lastbit, done, last_byte;
@@ -319,7 +319,7 @@ GetCode_(gdIOCtx *fd, int code_size, int flag)
                buf[0] = buf[last_byte-2];
                buf[1] = buf[last_byte-1];
 
-               if ((count = GetDataBlock(fd, &buf[2])) == 0)
+               if ((count = GetDataBlock(fd, &buf[2], ZeroDataBlockP)) == 0)
                        done = TRUE;
 
                last_byte = 2 + count;
@@ -336,18 +336,18 @@ GetCode_(gdIOCtx *fd, int code_size, int flag)
 }
 
 static int
-GetCode(gdIOCtx *fd, int code_size, int flag)
+GetCode(gdIOCtx *fd, int code_size, int flag, int *ZeroDataBlockP)
 {
  int rv;
 
- rv = GetCode_(fd,code_size,flag);
+ rv = GetCode_(fd,code_size,flag, ZeroDataBlockP);
  if (VERBOSE) printf("[GetCode(,%d,%d) returning %d]\n",code_size,flag,rv);
  return(rv);
 }
 
 #define STACK_SIZE ((1<<(MAX_LWZ_BITS))*2)
 static int
-LWZReadByte_(gdIOCtx *fd, int flag, int input_code_size)
+LWZReadByte_(gdIOCtx *fd, int flag, int input_code_size, int *ZeroDataBlockP)
 {
        static int      fresh = FALSE;
        int             code, incode;
@@ -367,7 +367,7 @@ LWZReadByte_(gdIOCtx *fd, int flag, int input_code_size)
                max_code_size = 2*clear_code;
                max_code = clear_code+2;
 
-               GetCode(fd, 0, TRUE);
+               GetCode(fd, 0, TRUE, ZeroDataBlockP);
                
                fresh = TRUE;
 
@@ -385,7 +385,7 @@ LWZReadByte_(gdIOCtx *fd, int flag, int input_code_size)
                fresh = FALSE;
                do {
                        firstcode = oldcode =
-                               GetCode(fd, code_size, FALSE);
+                               GetCode(fd, code_size, FALSE, ZeroDataBlockP);
                } while (firstcode == clear_code);
                return firstcode;
        }
@@ -393,7 +393,7 @@ LWZReadByte_(gdIOCtx *fd, int flag, int input_code_size)
        if (sp > stack)
                return *--sp;
 
-       while ((code = GetCode(fd, code_size, FALSE)) >= 0) {
+       while ((code = GetCode(fd, code_size, FALSE, ZeroDataBlockP)) >= 0) {
                if (code == clear_code) {
                        for (i = 0; i < clear_code; ++i) {
                                table[0][i] = 0;
@@ -406,16 +406,16 @@ LWZReadByte_(gdIOCtx *fd, int flag, int input_code_size)
                        max_code = clear_code+2;
                        sp = stack;
                        firstcode = oldcode =
-                                       GetCode(fd, code_size, FALSE);
+                                       GetCode(fd, code_size, FALSE, ZeroDataBlockP);
                        return firstcode;
                } else if (code == end_code) {
                        int             count;
                        unsigned char   buf[260];
 
-                       if (ZeroDataBlock)
+                       if (*ZeroDataBlockP)
                                return -2;
 
-                       while ((count = GetDataBlock(fd, buf)) > 0)
+                       while ((count = GetDataBlock(fd, buf, ZeroDataBlockP)) > 0)
                                ;
 
                        if (count != 0)
@@ -468,17 +468,17 @@ LWZReadByte_(gdIOCtx *fd, int flag, int input_code_size)
 }
 
 static int
-LWZReadByte(gdIOCtx *fd, int flag, int input_code_size)
+LWZReadByte(gdIOCtx *fd, int flag, int input_code_size, int *ZeroDataBlockP)
 {
  int rv;
 
- rv = LWZReadByte_(fd,flag,input_code_size);
+ rv = LWZReadByte_(fd,flag,input_code_size, ZeroDataBlockP);
  if (VERBOSE) printf("[LWZReadByte(,%d,%d) returning %d]\n",flag,input_code_size,rv);
  return(rv);
 }
 
 static void
-ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)[256], int interlace) /*1.4//, int ignore) */
+ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)[256], int interlace, int *ZeroDataBlockP) /*1.4//, int ignore) */
 {
        unsigned char   c;      
        int             v;
@@ -499,7 +499,7 @@ ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)
        if (! ReadOK(fd,&c,1)) {
                return; 
        }
-       if (LWZReadByte(fd, TRUE, c) < 0) {
+       if (LWZReadByte(fd, TRUE, c, ZeroDataBlockP) < 0) {
                return;
        }
 
@@ -513,7 +513,7 @@ ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)
        /*        return; */
        /*} */
 
-       while ((v = LWZReadByte(fd,FALSE,c)) >= 0 ) {
+       while ((v = LWZReadByte(fd,FALSE,c, ZeroDataBlockP)) >= 0 ) {
                /* This how we recognize which colors are actually used. */
                if (im->open[v]) {
                        im->open[v] = 0;
@@ -555,8 +555,9 @@ ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)
        }
 
 fini:
-       if (LWZReadByte(fd,FALSE,c)>=0) {
+       if (LWZReadByte(fd,FALSE,c, ZeroDataBlockP)>=0) {
                /* Ignore extra */
        }
 }
+
 

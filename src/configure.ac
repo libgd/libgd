@@ -5,16 +5,18 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the vesion number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.0.27], [gd@boutell.com])
+AC_INIT([GD], [2.0.28], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=0
-GDLIB_REVISION=27
+GDLIB_REVISION=28
 GDLIBNAME=gd
 #Expanded by tests later in this file. TBB 2.0.26
-FEATURES=
+#2.0.28: GIF is standard now. Doesn't depend on anything else,
+#so we always build it.
+FEATURES=GD_GIF
 AC_SUBST(FEATURES)
 
 AC_SUBST(GDLIB_MAJOR)

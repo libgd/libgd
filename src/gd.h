@@ -253,6 +253,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGif (FILE * fd);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx (gdIOCtxPtr in);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGifPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx (gdIOCtx * infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr (int size, void *data);
@@ -458,10 +461,17 @@ BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color);
 	includes photographic information or anything that
 	came out of a JPEG, 256 is strongly recommended.
 
-	Better yet, don't use this function -- write real
+	Better yet, don't use these function -- write real
 	truecolor PNGs and JPEGs. The disk space gain of
         conversion to palette is not great (for small images
-        it can be negative) and the quality loss is ugly. */
+        it can be negative) and the quality loss is ugly. 
+
+	DIFFERENCES: gdImageCreatePaletteFromTrueColor creates and
+	returns a new image. gdImageTrueColorToPalette modifies 
+	an existing image, and the truecolor pixels are discarded. */
+
+BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int ditherFlag,
+				  int colorsWanted);
 
 BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
 				  int colorsWanted);
@@ -478,8 +488,10 @@ BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
 BGD_DECLARE(void) gdImageColorTransparent (gdImagePtr im, int color);
 
 BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr dst, gdImagePtr src);
+BGD_DECLARE(void) gdImageGif (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * out);
+BGD_DECLARE(void) gdImageGifCtx (gdImagePtr im, gdIOCtx * out);
   /* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
      1 is FASTEST but produces larger files, 9 provides the best
      compression (smallest files) but takes a long time to compress, and
@@ -521,6 +533,9 @@ BGD_DECLARE(void) gdImagePngToSink (gdImagePtr im, gdSinkPtr out);
 
 BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImageGd2 (gdImagePtr im, FILE * out, int cs, int fmt);
+
+/* Best to free this memory with gdFree(), not free() */
+BGD_DECLARE(void *) gdImageGifPtr (gdImagePtr im, int *size);
 
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size);
