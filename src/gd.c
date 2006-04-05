@@ -70,8 +70,7 @@ static void gdImageTileApply (gdImagePtr im, int x, int y);
 static void gdImageAntiAliasedApply (gdImagePtr im, int x, int y);
 int gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 
-gdImagePtr
-gdImageCreate (int sx, int sy)
+BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 {
   int i;
   gdImagePtr im;
@@ -117,8 +116,7 @@ gdImageCreate (int sx, int sy)
   return im;
 }
 
-gdImagePtr
-gdImageCreateTrueColor (int sx, int sy)
+BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 {
   int i;
   gdImagePtr im;
@@ -160,8 +158,7 @@ gdImageCreateTrueColor (int sx, int sy)
   return im;
 }
 
-void
-gdImageDestroy (gdImagePtr im)
+BGD_DECLARE(void) gdImageDestroy (gdImagePtr im)
 {
   int i;
   if (im->pixels)
@@ -199,14 +196,12 @@ gdImageDestroy (gdImagePtr im)
   gdFree (im);
 }
 
-int
-gdImageColorClosest (gdImagePtr im, int r, int g, int b)
+BGD_DECLARE(int) gdImageColorClosest (gdImagePtr im, int r, int g, int b)
 {
   return gdImageColorClosestAlpha (im, r, g, b, gdAlphaOpaque);
 }
 
-int
-gdImageColorClosestAlpha (gdImagePtr im, int r, int g, int b, int a)
+BGD_DECLARE(int) gdImageColorClosestAlpha (gdImagePtr im, int r, int g, int b, int a)
 {
   int i;
   long rd, gd, bd, ad;
@@ -384,8 +379,7 @@ HWB_to_RGB (HWBType HWB, RGBType * RGB)
 }
 #endif
 
-int
-gdImageColorClosestHWB (gdImagePtr im, int r, int g, int b)
+BGD_DECLARE(int) gdImageColorClosestHWB (gdImagePtr im, int r, int g, int b)
 {
   int i;
   /* long rd, gd, bd; */
@@ -414,14 +408,12 @@ gdImageColorClosestHWB (gdImagePtr im, int r, int g, int b)
   return ct;
 }
 
-int
-gdImageColorExact (gdImagePtr im, int r, int g, int b)
+BGD_DECLARE(int) gdImageColorExact (gdImagePtr im, int r, int g, int b)
 {
   return gdImageColorExactAlpha (im, r, g, b, gdAlphaOpaque);
 }
 
-int
-gdImageColorExactAlpha (gdImagePtr im, int r, int g, int b, int a)
+BGD_DECLARE(int) gdImageColorExactAlpha (gdImagePtr im, int r, int g, int b, int a)
 {
   int i;
   if (im->trueColor)
@@ -443,14 +435,12 @@ gdImageColorExactAlpha (gdImagePtr im, int r, int g, int b, int a)
   return -1;
 }
 
-int
-gdImageColorAllocate (gdImagePtr im, int r, int g, int b)
+BGD_DECLARE(int) gdImageColorAllocate (gdImagePtr im, int r, int g, int b)
 {
   return gdImageColorAllocateAlpha (im, r, g, b, gdAlphaOpaque);
 }
 
-int
-gdImageColorAllocateAlpha (gdImagePtr im, int r, int g, int b, int a)
+BGD_DECLARE(int) gdImageColorAllocateAlpha (gdImagePtr im, int r, int g, int b, int a)
 {
   int i;
   int ct = (-1);
@@ -494,14 +484,12 @@ gdImageColorAllocateAlpha (gdImagePtr im, int r, int g, int b, int a)
  * return a color index in one search over the color table.
  */
 
-int
-gdImageColorResolve (gdImagePtr im, int r, int g, int b)
+BGD_DECLARE(int) gdImageColorResolve (gdImagePtr im, int r, int g, int b)
 {
   return gdImageColorResolveAlpha (im, r, g, b, gdAlphaOpaque);
 }
 
-int
-gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, int a)
+BGD_DECLARE(int) gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, int a)
 {
   int c;
   int ct = -1;
@@ -559,8 +547,7 @@ gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, int a)
   return op;			/* Return newly allocated color */
 }
 
-void
-gdImageColorDeallocate (gdImagePtr im, int color)
+BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color)
 {
   if (im->trueColor)
     {
@@ -570,8 +557,7 @@ gdImageColorDeallocate (gdImagePtr im, int color)
   im->open[color] = 1;
 }
 
-void
-gdImageColorTransparent (gdImagePtr im, int color)
+BGD_DECLARE(void) gdImageColorTransparent (gdImagePtr im, int color)
 {
   if (!im->trueColor)
     {
@@ -587,8 +573,7 @@ gdImageColorTransparent (gdImagePtr im, int color)
   im->transparent = color;
 }
 
-void
-gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
+BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
 {
   int i;
   int x, y, p;
@@ -723,8 +708,7 @@ clip_1d (int *x0, int *y0, int *x1, int *y1, int maxdim)
 
 /* end of line clipping code */
 
-void
-gdImageSetPixel (gdImagePtr im, int x, int y, int color)
+BGD_DECLARE(void) gdImageSetPixel (gdImagePtr im, int x, int y, int color)
 {
   int p;
   switch (color)
@@ -1001,8 +985,7 @@ gdImageAntiAliasedApply (gdImagePtr im, int px, int py)
     }
 }
 
-int
-gdImageGetPixel (gdImagePtr im, int x, int y)
+BGD_DECLARE(int) gdImageGetPixel (gdImagePtr im, int x, int y)
 {
   if (gdImageBoundsSafeMacro (im, x, y))
     {
@@ -1037,8 +1020,7 @@ gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
     }
 }
 
-void
-gdImageAABlend (gdImagePtr im)
+BGD_DECLARE(void) gdImageAABlend (gdImagePtr im)
 {
   float p_alpha, old_alpha;
   int color = im->AA_color, color_red, color_green, color_blue;
@@ -1095,8 +1077,7 @@ gdImageAABlend (gdImagePtr im)
 }
 
 /* Bresenham as presented in Foley & Van Dam */
-void
-gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
+BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
   int dx, dy, incr1, incr2, d, x, y, xend, yend, xdirflag, ydirflag;
   int wid;
@@ -1308,8 +1289,7 @@ gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 static void dashedSet (gdImagePtr im, int x, int y, int color,
 		       int *onP, int *dashStepP, int wid, int vert);
 
-void
-gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
+BGD_DECLARE(void) gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
   int dx, dy, incr1, incr2, d, x, y, xend, yend, xdirflag, ydirflag;
   int dashStep = 0;
@@ -1492,14 +1472,12 @@ dashedSet (gdImagePtr im, int x, int y, int color,
   *onP = on;
 }
 
-int
-gdImageBoundsSafe (gdImagePtr im, int x, int y)
+BGD_DECLARE(int) gdImageBoundsSafe (gdImagePtr im, int x, int y)
 {
   return gdImageBoundsSafeMacro (im, x, y);
 }
 
-void
-gdImageChar (gdImagePtr im, gdFontPtr f, int x, int y, int c, int color)
+BGD_DECLARE(void) gdImageChar (gdImagePtr im, gdFontPtr f, int x, int y, int c, int color)
 {
   int cx, cy;
   int px, py;
@@ -1529,8 +1507,7 @@ gdImageChar (gdImagePtr im, gdFontPtr f, int x, int y, int c, int color)
     }
 }
 
-void
-gdImageCharUp (gdImagePtr im, gdFontPtr f, int x, int y, int c, int color)
+BGD_DECLARE(void) gdImageCharUp (gdImagePtr im, gdFontPtr f, int x, int y, int c, int color)
 {
   int cx, cy;
   int px, py;
@@ -1560,8 +1537,7 @@ gdImageCharUp (gdImagePtr im, gdFontPtr f, int x, int y, int c, int color)
     }
 }
 
-void
-gdImageString (gdImagePtr im, gdFontPtr f,
+BGD_DECLARE(void) gdImageString (gdImagePtr im, gdFontPtr f,
 	       int x, int y, unsigned char *s, int color)
 {
   int i;
@@ -1574,8 +1550,7 @@ gdImageString (gdImagePtr im, gdFontPtr f,
     }
 }
 
-void
-gdImageStringUp (gdImagePtr im, gdFontPtr f,
+BGD_DECLARE(void) gdImageStringUp (gdImagePtr im, gdFontPtr f,
 		 int x, int y, unsigned char *s, int color)
 {
   int i;
@@ -1590,8 +1565,7 @@ gdImageStringUp (gdImagePtr im, gdFontPtr f,
 
 static int strlen16 (unsigned short *s);
 
-void
-gdImageString16 (gdImagePtr im, gdFontPtr f,
+BGD_DECLARE(void) gdImageString16 (gdImagePtr im, gdFontPtr f,
 		 int x, int y, unsigned short *s, int color)
 {
   int i;
@@ -1604,8 +1578,7 @@ gdImageString16 (gdImagePtr im, gdFontPtr f,
     }
 }
 
-void
-gdImageStringUp16 (gdImagePtr im, gdFontPtr f,
+BGD_DECLARE(void) gdImageStringUp16 (gdImagePtr im, gdFontPtr f,
 		   int x, int y, unsigned short *s, int color)
 {
   int i;
@@ -1649,15 +1622,13 @@ lsqrt (long n)
    See gd_arc_f_buggy.c for a better version that doesn't 
    seem to be bug-free yet. */
 
-void
-gdImageArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
+BGD_DECLARE(void) gdImageArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
 	    int color)
 {
   gdImageFilledArc (im, cx, cy, w, h, s, e, color, gdNoFill);
 }
 
-void
-gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
+BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
 		  int color, int style)
 {
   gdPoint pts[3];
@@ -1737,14 +1708,12 @@ gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
     }
 }
 
-void
-gdImageFilledEllipse (gdImagePtr im, int cx, int cy, int w, int h, int color)
+BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int cx, int cy, int w, int h, int color)
 {
   gdImageFilledArc (im, cx, cy, w, h, 0, 360, color, gdPie);
 }
 
-void
-gdImageFillToBorder (gdImagePtr im, int x, int y, int border, int color)
+BGD_DECLARE(void) gdImageFillToBorder (gdImagePtr im, int x, int y, int border, int color)
 {
   int lastBorder;
   /* Seek left */
@@ -1827,8 +1796,7 @@ gdImageFillToBorder (gdImagePtr im, int x, int y, int border, int color)
     }
 }
 
-void
-gdImageFill (gdImagePtr im, int x, int y, int color)
+BGD_DECLARE(void) gdImageFill (gdImagePtr im, int x, int y, int color)
 {
   int lastBorder;
   int old;
@@ -1959,8 +1927,7 @@ gdImageFill (gdImagePtr im, int x, int y, int color)
     }
 }
 
-void
-gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
+BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
   int x1h = x1, x1v = x1, y1h = y1, y1v = y1, x2h = x2, x2v = x2, y2h = y2,
     y2v = y2;
@@ -1988,8 +1955,7 @@ gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
   gdImageLine (im, x2v, y1v, x2v, y2v, color);
 }
 
-void
-gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
+BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
 			int color)
 {
   int x, y;
@@ -2014,8 +1980,7 @@ gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
     }
 }
 
-void
-gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
+BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
 	     int srcY, int w, int h)
 {
   int c;
@@ -2106,8 +2071,7 @@ gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
 
 /* This function is a substitute for real alpha channel operations,
    so it doesn't pay attention to the alpha channel. */
-void
-gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
+BGD_DECLARE(void) gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 		  int srcX, int srcY, int w, int h, int pct)
 {
 
@@ -2157,8 +2121,7 @@ gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 
 /* This function is a substitute for real alpha channel operations,
    so it doesn't pay attention to the alpha channel. */
-void
-gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
+BGD_DECLARE(void) gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 		      int srcX, int srcY, int w, int h, int pct)
 {
 
@@ -2224,8 +2187,7 @@ gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
     }
 }
 
-void
-gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
+BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 		    int srcX, int srcY, int dstW, int dstH, int srcW,
 		    int srcH)
 {
@@ -2372,8 +2334,7 @@ gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 	coordinates allow accurate rotation of 
 	objects of odd-numbered width or height. */
 
-void
-gdImageCopyRotated (gdImagePtr dst,
+BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
 		    gdImagePtr src,
 		    double dstX, double dstY,
 		    int srcX, int srcY,
@@ -2450,8 +2411,7 @@ gdImageCopyRotated (gdImagePtr dst,
 #define floor2(exp) ((long) exp)
 /*#define floor2(exp) floor(exp)*/
 
-void
-gdImageCopyResampled (gdImagePtr dst,
+BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
 		      gdImagePtr src,
 		      int dstX, int dstY,
 		      int srcX, int srcY,
@@ -2571,8 +2531,7 @@ gdImageCopyResampled (gdImagePtr dst,
     }
 }
 
-gdImagePtr
-gdImageCreateFromXbm (FILE * fd)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm (FILE * fd)
 {
   gdImagePtr im;
   int bit;
@@ -2697,8 +2656,7 @@ fail:
   return 0;
 }
 
-void
-gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
+BGD_DECLARE(void) gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 {
   int i;
   int lx, ly;
@@ -2739,8 +2697,7 @@ int gdCompareInt (const void *a, const void *b);
 /* That could help to adjust intersections  to produce a nice */
 /* interior_extrema. */
 
-void
-gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
+BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 {
   int i;
   int y;
@@ -2868,8 +2825,7 @@ gdCompareInt (const void *a, const void *b)
   return (*(const int *) a) - (*(const int *) b);
 }
 
-void
-gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels)
+BGD_DECLARE(void) gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels)
 {
   if (im->style)
     {
@@ -2881,14 +2837,12 @@ gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels)
   im->stylePos = 0;
 }
 
-void
-gdImageSetThickness (gdImagePtr im, int thickness)
+BGD_DECLARE(void) gdImageSetThickness (gdImagePtr im, int thickness)
 {
   im->thick = thickness;
 }
 
-void
-gdImageSetBrush (gdImagePtr im, gdImagePtr brush)
+BGD_DECLARE(void) gdImageSetBrush (gdImagePtr im, gdImagePtr brush)
 {
   int i;
   im->brush = brush;
@@ -2907,8 +2861,7 @@ gdImageSetBrush (gdImagePtr im, gdImagePtr brush)
     }
 }
 
-void
-gdImageSetTile (gdImagePtr im, gdImagePtr tile)
+BGD_DECLARE(void) gdImageSetTile (gdImagePtr im, gdImagePtr tile)
 {
   int i;
   im->tile = tile;
@@ -2927,30 +2880,26 @@ gdImageSetTile (gdImagePtr im, gdImagePtr tile)
     }
 }
 
-void
-gdImageSetAntiAliased (gdImagePtr im, int c)
+BGD_DECLARE(void) gdImageSetAntiAliased (gdImagePtr im, int c)
 {
   im->AA = 1;
   im->AA_color = c;
   im->AA_dont_blend = -1;
 }
 
-void
-gdImageSetAntiAliasedDontBlend (gdImagePtr im, int c, int dont_blend)
+BGD_DECLARE(void) gdImageSetAntiAliasedDontBlend (gdImagePtr im, int c, int dont_blend)
 {
   im->AA = 1;
   im->AA_color = c;
   im->AA_dont_blend = dont_blend;
 }
 
-void
-gdImageInterlace (gdImagePtr im, int interlaceArg)
+BGD_DECLARE(void) gdImageInterlace (gdImagePtr im, int interlaceArg)
 {
   im->interlace = interlaceArg;
 }
 
-int
-gdImageCompare (gdImagePtr im1, gdImagePtr im2)
+BGD_DECLARE(int) gdImageCompare (gdImagePtr im1, gdImagePtr im2)
 {
   int x, y;
   int p1, p2;
@@ -3042,8 +2991,7 @@ gdImageCompare (gdImagePtr im1, gdImagePtr im2)
   return cmpStatus;
 }
 
-int
-gdAlphaBlend (int dst, int src)
+BGD_DECLARE(int) gdAlphaBlend (int dst, int src)
 {
   /* 2.0.12: TBB: alpha in the destination should be a 
      component of the result. Thanks to Frank Warmerdam for
@@ -3064,20 +3012,17 @@ gdAlphaBlend (int dst, int src)
 	    gdTrueColorGetBlue (dst)) / gdAlphaMax));
 }
 
-void
-gdImageAlphaBlending (gdImagePtr im, int alphaBlendingArg)
+BGD_DECLARE(void) gdImageAlphaBlending (gdImagePtr im, int alphaBlendingArg)
 {
   im->alphaBlendingFlag = alphaBlendingArg;
 }
 
-void
-gdImageSaveAlpha (gdImagePtr im, int saveAlphaArg)
+BGD_DECLARE(void) gdImageSaveAlpha (gdImagePtr im, int saveAlphaArg)
 {
   im->saveAlphaFlag = saveAlphaArg;
 }
 
-void
-gdImageSetClip (gdImagePtr im, int x1, int y1, int x2, int y2)
+BGD_DECLARE(void) gdImageSetClip (gdImagePtr im, int x1, int y1, int x2, int y2)
 {
   if (x1 < 0)
     {
@@ -3117,8 +3062,7 @@ gdImageSetClip (gdImagePtr im, int x1, int y1, int x2, int y2)
   im->cy2 = y2;
 }
 
-void
-gdImageGetClip (gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P)
+BGD_DECLARE(void) gdImageGetClip (gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P)
 {
   *x1P = im->cx1;
   *y1P = im->cy1;
