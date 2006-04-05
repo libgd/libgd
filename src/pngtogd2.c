@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include "gd.h"
 
-/* A short program which converts a .png file into a .gd file, for
+/* A short program which converts a .png file into a .gd2 file, for
    your convenience in creating images on the fly from a
-   basis image that must be loaded quickly. The .gd format
+   basis image that must be loaded quickly. The .gd2 format
    is not intended to be a general-purpose format. */
 
 int
