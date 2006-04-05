@@ -135,11 +135,11 @@ ACLOCAL_AMFLAGS = -I config
 
 SUBDIRS = config test
 
-bin_PROGRAMS = annotate gdparttopng gdtopng gd2copypal gd2topng pngtogd pngtogd2 webpng
+bin_PROGRAMS = annotate gdparttopng gdtopng gd2copypal gd2topng pngtogd pngtogd2 webpng gd2togif gdcmpgif giftogd2
 
 bin_SCRIPTS = bdftogd config/gdlib-config
 
-noinst_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac circletexttest testtr
+noinst_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac circletexttest testtr fontconfigtest gifanimtest
 
 EXTRA_DIST = README-JPEG.TXT README.TXT configure.pl bdftogd demoin.png err.out index.html install-item makefile.sample readme.jpn entities.html entities.tcl
 
@@ -147,7 +147,7 @@ include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h g
 
 lib_LTLIBRARIES = libgd.la
 
-libgd_la_SOURCES = gd.c gdfx.c gd_gd.c gd_gd2.c gd_io.c gd_io_dp.c gd_gif_in.c gd_gif_out.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c gdfonts.c gdfontt.c gdft.c gdhelpers.c gdhelpers.h gdkanji.c gdtables.c gdxpm.c jisx0208.h wbmp.c wbmp.h
+libgd_la_SOURCES = gd.c gdfx.c gd_security.c gd_gd.c gd_gd2.c gd_io.c gd_io_dp.c gd_gif_in.c gd_gif_out.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c gdfonts.c gdfontt.c gdft.c gdhelpers.c gdhelpers.h gdkanji.c gdtables.c gdxpm.c jisx0208.h wbmp.c wbmp.h
 
 libgd_la_LDFLAGS = -version-info 2:0:0
 
@@ -160,8 +160,8 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(lib_LTLIBRARIES)
 
 libgd_la_LIBADD =
-am_libgd_la_OBJECTS = gd.lo gdfx.lo gd_gd.lo gd_gd2.lo gd_io.lo \
-	gd_io_dp.lo gd_gif_in.lo gd_gif_out.lo gd_io_file.lo \
+am_libgd_la_OBJECTS = gd.lo gdfx.lo gd_security.lo gd_gd.lo gd_gd2.lo \
+	gd_io.lo gd_io_dp.lo gd_gif_in.lo gd_gif_out.lo gd_io_file.lo \
 	gd_io_ss.lo gd_jpeg.lo gd_png.lo gd_ss.lo gd_topal.lo \
 	gd_wbmp.lo gdcache.lo gdfontg.lo gdfontl.lo gdfontmb.lo \
 	gdfonts.lo gdfontt.lo gdft.lo gdhelpers.lo gdkanji.lo \
@@ -169,11 +169,12 @@ am_libgd_la_OBJECTS = gd.lo gdfx.lo gd_gd.lo gd_gd2.lo gd_io.lo \
 libgd_la_OBJECTS = $(am_libgd_la_OBJECTS)
 bin_PROGRAMS = annotate$(EXEEXT) gdparttopng$(EXEEXT) gdtopng$(EXEEXT) \
 	gd2copypal$(EXEEXT) gd2topng$(EXEEXT) pngtogd$(EXEEXT) \
-	pngtogd2$(EXEEXT) webpng$(EXEEXT)
+	pngtogd2$(EXEEXT) webpng$(EXEEXT) gd2togif$(EXEEXT) \
+	gdcmpgif$(EXEEXT) giftogd2$(EXEEXT)
 noinst_PROGRAMS = fontsizetest$(EXEEXT) fontwheeltest$(EXEEXT) \
 	gdtest$(EXEEXT) gddemo$(EXEEXT) gd2time$(EXEEXT) \
 	gdtestft$(EXEEXT) testac$(EXEEXT) circletexttest$(EXEEXT) \
-	testtr$(EXEEXT)
+	testtr$(EXEEXT) fontconfigtest$(EXEEXT) gifanimtest$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 
 annotate_SOURCES = annotate.c
@@ -186,6 +187,11 @@ circletexttest_OBJECTS = circletexttest.$(OBJEXT)
 circletexttest_LDADD = $(LDADD)
 circletexttest_DEPENDENCIES = ./libgd.la
 circletexttest_LDFLAGS =
+fontconfigtest_SOURCES = fontconfigtest.c
+fontconfigtest_OBJECTS = fontconfigtest.$(OBJEXT)
+fontconfigtest_LDADD = $(LDADD)
+fontconfigtest_DEPENDENCIES = ./libgd.la
+fontconfigtest_LDFLAGS =
 fontsizetest_SOURCES = fontsizetest.c
 fontsizetest_OBJECTS = fontsizetest.$(OBJEXT)
 fontsizetest_LDADD = $(LDADD)
@@ -206,11 +212,21 @@ gd2time_OBJECTS = gd2time.$(OBJEXT)
 gd2time_LDADD = $(LDADD)
 gd2time_DEPENDENCIES = ./libgd.la
 gd2time_LDFLAGS =
+gd2togif_SOURCES = gd2togif.c
+gd2togif_OBJECTS = gd2togif.$(OBJEXT)
+gd2togif_LDADD = $(LDADD)
+gd2togif_DEPENDENCIES = ./libgd.la
+gd2togif_LDFLAGS =
 gd2topng_SOURCES = gd2topng.c
 gd2topng_OBJECTS = gd2topng.$(OBJEXT)
 gd2topng_LDADD = $(LDADD)
 gd2topng_DEPENDENCIES = ./libgd.la
 gd2topng_LDFLAGS =
+gdcmpgif_SOURCES = gdcmpgif.c
+gdcmpgif_OBJECTS = gdcmpgif.$(OBJEXT)
+gdcmpgif_LDADD = $(LDADD)
+gdcmpgif_DEPENDENCIES = ./libgd.la
+gdcmpgif_LDFLAGS =
 gddemo_SOURCES = gddemo.c
 gddemo_OBJECTS = gddemo.$(OBJEXT)
 gddemo_LDADD = $(LDADD)
@@ -236,6 +252,16 @@ gdtopng_OBJECTS = gdtopng.$(OBJEXT)
 gdtopng_LDADD = $(LDADD)
 gdtopng_DEPENDENCIES = ./libgd.la
 gdtopng_LDFLAGS =
+gifanimtest_SOURCES = gifanimtest.c
+gifanimtest_OBJECTS = gifanimtest.$(OBJEXT)
+gifanimtest_LDADD = $(LDADD)
+gifanimtest_DEPENDENCIES = ./libgd.la
+gifanimtest_LDFLAGS =
+giftogd2_SOURCES = giftogd2.c
+giftogd2_OBJECTS = giftogd2.$(OBJEXT)
+giftogd2_LDADD = $(LDADD)
+giftogd2_DEPENDENCIES = ./libgd.la
+giftogd2_LDFLAGS =
 pngtogd_SOURCES = pngtogd.c
 pngtogd_OBJECTS = pngtogd.$(OBJEXT)
 pngtogd_LDADD = $(LDADD)
@@ -269,17 +295,20 @@ depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/annotate.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/circletexttest.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/fontconfigtest.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/fontsizetest.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/fontwheeltest.Po ./$(DEPDIR)/gd.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gd2copypal.Po ./$(DEPDIR)/gd2time.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/gd2topng.Po ./$(DEPDIR)/gd_gd.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/gd_gd2.Plo ./$(DEPDIR)/gd_gif_in.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/gd2togif.Po ./$(DEPDIR)/gd2topng.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/gd_gd.Plo ./$(DEPDIR)/gd_gd2.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/gd_gif_in.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gd_gif_out.Plo ./$(DEPDIR)/gd_io.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gd_io_dp.Plo ./$(DEPDIR)/gd_io_file.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gd_io_ss.Plo ./$(DEPDIR)/gd_jpeg.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/gd_png.Plo ./$(DEPDIR)/gd_ss.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/gd_topal.Plo ./$(DEPDIR)/gd_wbmp.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/gdcache.Plo ./$(DEPDIR)/gddemo.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/gd_png.Plo ./$(DEPDIR)/gd_security.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/gd_ss.Plo ./$(DEPDIR)/gd_topal.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/gd_wbmp.Plo ./$(DEPDIR)/gdcache.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/gdcmpgif.Po ./$(DEPDIR)/gddemo.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/gdfontg.Plo ./$(DEPDIR)/gdfontl.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gdfontmb.Plo ./$(DEPDIR)/gdfonts.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/gdfontt.Plo ./$(DEPDIR)/gdft.Plo \
@@ -287,7 +316,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/gdkanji.Plo ./$(DEPDIR)/gdparttopng.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/gdtables.Plo ./$(DEPDIR)/gdtest.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/gdtestft.Po ./$(DEPDIR)/gdtopng.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/gdxpm.Plo ./$(DEPDIR)/pngtogd.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/gdxpm.Plo ./$(DEPDIR)/gifanimtest.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/giftogd2.Po ./$(DEPDIR)/pngtogd.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/pngtogd2.Po ./$(DEPDIR)/testac.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/testtr.Po ./$(DEPDIR)/wbmp.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/webpng.Po
@@ -299,9 +329,10 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(libgd_la_SOURCES) annotate.c circletexttest.c \
-	fontsizetest.c fontwheeltest.c gd2copypal.c gd2time.c \
-	gd2topng.c gddemo.c gdparttopng.c gdtest.c gdtestft.c gdtopng.c \
-	pngtogd.c pngtogd2.c testac.c testtr.c webpng.c
+	fontconfigtest.c fontsizetest.c fontwheeltest.c gd2copypal.c \
+	gd2time.c gd2togif.c gd2topng.c gdcmpgif.c gddemo.c \
+	gdparttopng.c gdtest.c gdtestft.c gdtopng.c gifanimtest.c \
+	giftogd2.c pngtogd.c pngtogd2.c testac.c testtr.c webpng.c
 HEADERS = $(include_HEADERS)
 
 
@@ -314,7 +345,7 @@ DIST_COMMON = $(include_HEADERS) COPYING INSTALL Makefile.am \
 	Makefile.in aclocal.m4 config.hin configure configure.ac \
 	depcomp install-sh missing mkinstalldirs
 DIST_SUBDIRS = $(SUBDIRS)
-SOURCES = $(libgd_la_SOURCES) annotate.c circletexttest.c fontsizetest.c fontwheeltest.c gd2copypal.c gd2time.c gd2topng.c gddemo.c gdparttopng.c gdtest.c gdtestft.c gdtopng.c pngtogd.c pngtogd2.c testac.c testtr.c webpng.c
+SOURCES = $(libgd_la_SOURCES) annotate.c circletexttest.c fontconfigtest.c fontsizetest.c fontwheeltest.c gd2copypal.c gd2time.c gd2togif.c gd2topng.c gdcmpgif.c gddemo.c gdparttopng.c gdtest.c gdtestft.c gdtopng.c gifanimtest.c giftogd2.c pngtogd.c pngtogd2.c testac.c testtr.c webpng.c
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -426,6 +457,9 @@ annotate$(EXEEXT): $(annotate_OBJECTS) $(annotate_DEPENDENCIES)
 circletexttest$(EXEEXT): $(circletexttest_OBJECTS) $(circletexttest_DEPENDENCIES) 
 	@rm -f circletexttest$(EXEEXT)
 	$(LINK) $(circletexttest_LDFLAGS) $(circletexttest_OBJECTS) $(circletexttest_LDADD) $(LIBS)
+fontconfigtest$(EXEEXT): $(fontconfigtest_OBJECTS) $(fontconfigtest_DEPENDENCIES) 
+	@rm -f fontconfigtest$(EXEEXT)
+	$(LINK) $(fontconfigtest_LDFLAGS) $(fontconfigtest_OBJECTS) $(fontconfigtest_LDADD) $(LIBS)
 fontsizetest$(EXEEXT): $(fontsizetest_OBJECTS) $(fontsizetest_DEPENDENCIES) 
 	@rm -f fontsizetest$(EXEEXT)
 	$(LINK) $(fontsizetest_LDFLAGS) $(fontsizetest_OBJECTS) $(fontsizetest_LDADD) $(LIBS)
@@ -438,9 +472,15 @@ gd2copypal$(EXEEXT): $(gd2copypal_OBJECTS) $(gd2copypal_DEPENDENCIES)
 gd2time$(EXEEXT): $(gd2time_OBJECTS) $(gd2time_DEPENDENCIES) 
 	@rm -f gd2time$(EXEEXT)
 	$(LINK) $(gd2time_LDFLAGS) $(gd2time_OBJECTS) $(gd2time_LDADD) $(LIBS)
+gd2togif$(EXEEXT): $(gd2togif_OBJECTS) $(gd2togif_DEPENDENCIES) 
+	@rm -f gd2togif$(EXEEXT)
+	$(LINK) $(gd2togif_LDFLAGS) $(gd2togif_OBJECTS) $(gd2togif_LDADD) $(LIBS)
 gd2topng$(EXEEXT): $(gd2topng_OBJECTS) $(gd2topng_DEPENDENCIES) 
 	@rm -f gd2topng$(EXEEXT)
 	$(LINK) $(gd2topng_LDFLAGS) $(gd2topng_OBJECTS) $(gd2topng_LDADD) $(LIBS)
+gdcmpgif$(EXEEXT): $(gdcmpgif_OBJECTS) $(gdcmpgif_DEPENDENCIES) 
+	@rm -f gdcmpgif$(EXEEXT)
+	$(LINK) $(gdcmpgif_LDFLAGS) $(gdcmpgif_OBJECTS) $(gdcmpgif_LDADD) $(LIBS)
 gddemo$(EXEEXT): $(gddemo_OBJECTS) $(gddemo_DEPENDENCIES) 
 	@rm -f gddemo$(EXEEXT)
 	$(LINK) $(gddemo_LDFLAGS) $(gddemo_OBJECTS) $(gddemo_LDADD) $(LIBS)
@@ -456,6 +496,12 @@ gdtestft$(EXEEXT): $(gdtestft_OBJECTS) $(gdtestft_DEPENDENCIES)
 gdtopng$(EXEEXT): $(gdtopng_OBJECTS) $(gdtopng_DEPENDENCIES) 
 	@rm -f gdtopng$(EXEEXT)
 	$(LINK) $(gdtopng_LDFLAGS) $(gdtopng_OBJECTS) $(gdtopng_LDADD) $(LIBS)
+gifanimtest$(EXEEXT): $(gifanimtest_OBJECTS) $(gifanimtest_DEPENDENCIES) 
+	@rm -f gifanimtest$(EXEEXT)
+	$(LINK) $(gifanimtest_LDFLAGS) $(gifanimtest_OBJECTS) $(gifanimtest_LDADD) $(LIBS)
+giftogd2$(EXEEXT): $(giftogd2_OBJECTS) $(giftogd2_DEPENDENCIES) 
+	@rm -f giftogd2$(EXEEXT)
+	$(LINK) $(giftogd2_LDFLAGS) $(giftogd2_OBJECTS) $(giftogd2_LDADD) $(LIBS)
 pngtogd$(EXEEXT): $(pngtogd_OBJECTS) $(pngtogd_DEPENDENCIES) 
 	@rm -f pngtogd$(EXEEXT)
 	$(LINK) $(pngtogd_LDFLAGS) $(pngtogd_OBJECTS) $(pngtogd_LDADD) $(LIBS)
@@ -500,11 +546,13 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/annotate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/circletexttest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontconfigtest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontsizetest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontwheeltest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd2copypal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd2time.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd2togif.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd2topng.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_gd.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_gd2.Plo@am__quote@
@@ -516,10 +564,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_io_ss.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_jpeg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_png.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_security.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_ss.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_topal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gd_wbmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdcache.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdcmpgif.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gddemo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfontg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdfontl.Plo@am__quote@
@@ -536,6 +586,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdtestft.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdtopng.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdxpm.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gifanimtest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/giftogd2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngtogd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pngtogd2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testac.Po@am__quote@

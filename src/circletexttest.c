@@ -12,6 +12,7 @@ main (int argc, char *argv[])
   fprintf (stderr, "Requires PNG support, gd was compiled without it\n");
   exit (0);
 #else
+  char *error;
   FILE *in = 0;
   FILE *out;
   gdImagePtr im;
@@ -42,7 +43,7 @@ main (int argc, char *argv[])
     {
       radius = gdImageSY (im) / 2;
     }
-  gdImageStringFTCircle (im,
+  error = gdImageStringFTCircle (im,
 			 gdImageSX (im) / 2,
 			 gdImageSY (im) / 2,
 			 radius,
@@ -51,7 +52,12 @@ main (int argc, char *argv[])
 			 "arial",
 			 24,
 			 "top text",
-			 "bottom text", gdTrueColorAlpha (192, 100, 255, 32));
+			 "bottom text",
+			 gdTrueColorAlpha (192, 100, 255, 32));
+  if (error) 
+    {
+      fprintf(stderr, "gdImageStringFTEx error: %s\n", error);
+    }
   out = fopen ("gdfx.png", "wb");
   if (!out)
     {

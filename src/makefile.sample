@@ -40,7 +40,7 @@ LINK=$(CC) $(LIBDIRS) $(LIBS)
 
 PROGRAMS=$(BIN_PROGRAMS) $(TEST_PROGRAMS)
 
-BIN_PROGRAMS=pngtogd pngtogd2 gdtopng gd2topng gd2copypal gdparttopng webpng
+BIN_PROGRAMS=pngtogd pngtogd2 gdtopng gd2topng gd2copypal gdparttopng webpng gd2togif gdcmpgif giftogd2
 TEST_PROGRAMS=gdtest gddemo gd2time gdtestft testac fontsizetest fontwheeltest
 
 default: instructions
@@ -74,6 +74,9 @@ install: libgd.so.${VERSION} $(BIN_PROGRAMS)
 	sh ./install-item 755 gd2copypal $(INSTALL_BIN)/gd2copypal
 	sh ./install-item 755 gdparttopng $(INSTALL_BIN)/gdparttopng
 	sh ./install-item 755 webpng $(INSTALL_BIN)/webpng
+	sh ./install-item 755 gd2togif $(INSTALL_BIN)/gd2togif
+	sh ./install-item 755 gdcmpgif $(INSTALL_BIN)/gdcmpgif
+	sh ./install-item 755 giftogd2 $(INSTALL_BIN)/giftogd2
 	sh ./install-item 755 bdftogd $(INSTALL_BIN)/bdftogd
 	sh ./install-item 644 gd.h $(INSTALL_INCLUDE)/gd.h
 	sh ./install-item 644 gdcache.h $(INSTALL_INCLUDE)/gdcache.h
@@ -104,6 +107,15 @@ gdtopng: gdtopng.o
 
 gd2topng: gd2topng.o
 	$(CC) gd2topng.o -o gd2topng	$(LIBDIRS) $(LIBS)
+
+gd2togif: gd2togif.o
+	$(CC) gd2togif.o -o gd2togif    $(LIBDIRS) $(LIBS)
+
+gdcmpgif: gdcmpgif.o
+	$(CC) gdcmpgif.o -o gdcmpgif    $(LIBDIRS) $(LIBS)
+
+giftogd2: giftogd2.o
+	$(CC) giftogd2.o -o giftogd2      $(LIBDIRS) $(LIBS)
 
 gd2copypal: gd2copypal.o
 	$(CC) gd2copypal.o -o gd2copypal	$(LIBDIRS) $(LIBS)

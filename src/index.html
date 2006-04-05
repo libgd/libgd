@@ -1,10 +1,10 @@
 <!-- REMEMBER TO EDIT index.html.source -->
 <head>
-<TITLE>gd 2.0.28</TITLE>
+<TITLE>gd 2.0.29</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<H2>gd 2.0.28</H2>
+<H2>gd 2.0.29</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -19,7 +19,7 @@ in /usr/lib and /usr/include, you may wish to use:
 To ensure that your
 new installation overwrites the old.
 <p>
-<strong>GIF support has been restored in gd 2.0.28.</strong>
+<strong>GIF support has been restored in gd 2.0.28 and above.</strong>
 The well-known patents on LZW compression held by Unisys
 have expired in all countries. British Telecom and IBM may hold related
 patents but have never chosen to require royalties for GIF applications,
@@ -27,7 +27,7 @@ to the best of my knowledge. I am not a lawyer and cannot give
 legal advice regarding this issue. PNG remains a superior format especially
 if lossless truecolor images are needed.
 <p>
-When building from soruce, gd 2.0.28 <strong>requires</strong> that the 
+When building from soruce, gd 2.0.29 <strong>requires</strong> that the 
 following libraries also be installed, in order to produce the related 
 image formats. The win32 binary release (bgd) already contains the
 appropriate libraries.
@@ -60,7 +60,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.28">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.29">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -119,6 +119,8 @@ Thomas Boutell.
 Portions relating to WBMP copyright 2000, 2001, 2002, 2003, 2004 Maurice Szmurlo and Johan Van 
 den Brande.
 <p>
+Portions relating to GIF animations copyright 2004 Jaakko Hyv&auml;tti (jaakko.hyvatti@iki.fi)
+<p>
 <strong>Permission has been granted to copy, distribute and modify gd in any
 context without fee, including a commercial application, provided that this notice
 is present in user-accessible supporting documentation.</strong>
@@ -167,10 +169,10 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.28.
+with 2.0.29.
 <h4>PHP</h4>
 A variant of gd 2.x is included in PHP 4.3.0. It is also possible
-to patch PHP 4.2.3 for use with gd 2.0.28; see the
+to patch PHP 4.2.3 for use with gd 2.0.29; see the
 <a href="http://www.boutell.com/gd/">gd home page</a> for a link to
 that information. It would be a Good Idea to merge all of the things
 that are better in mainstream gd and all of the things that are
@@ -204,6 +206,70 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<p>
+<A NAME="whatsnew2.0.29"><h3>What's new in version 2.0.29?</h3></a>
+<p>
+<ul>
+<li>A 32-bit multiplication overflow vulnerability reported on
+the Bugtraq mailing list has been corrected, along with a number
+of similar issues. These bugs come into play only when attempting
+to deal with images with <i>extremely large</i> dimensions.
+The relevant functions now fail gracefully when such extreme
+parameters are specified. The code in question is also 
+correct for systems with larger bit depths. Thanks to Phil Knirsch,
+Alan Cox and infamous41md.
+Since exploits are theoretically possible, upgrading is recommended.
+<li>Support for the fontconfig library, when available. 
+When fontconfig is available and gdFTUseFontConfig(1) has been invoked
+or the gdFTEX_FONTCONFIG flag has been set for a particular call, fontconfig
+patterns can be used to fetch the best available font. 
+For instance, "arial:bold:italic" does the right thing (or as close as
+the available fonts permit). Also, standard 
+PostScript font names can be mapped to an appropriate font by 
+gdImageStringFTEx and relatives. 
+When fontconfig is available <tt>gdlib-config --features</tt> will list
+the GD_FONTCONFIG feature. For more information about fontconfig, see the
+<a href="http://freedesktop.org/software/fontconfig">fontconfig pages</a>.
+<p>
+The actual resolved font filename can be returned in the gdFTStringExtra
+structure as the fontpath element if the gdFTEX_RETURNFONTPATHNAME flag
+is set. Also, a 
+vector of character position advances can be retrieved if gdFTEX_XSHOW is set 
+in the flags element. .afm files (font metrics) are now used to adjust size 
+calculations
+when available. When fontconfig is not available, gd falls back to its
+usual behavior and requires a specific font file name. One can
+still fetch fonts by filename when gdFTUseFontConfig(1) is in effect, by
+setting the gdFTEX_FONTPATHNAME flag
+in the flag element of the gdFTStringExtra structure. Thanks to
+Dag Lem and John Ellson.
+<li>Additional freetype fixes: fixed width fonts are now the right
+size, horizontal advance calculations now better match the
+PostScript equivalent, and various compiler warning fixes. Also,
+a fix to the encoding table selection in the was made, addressing a problem
+with latin1 font encodings. Thanks to Dag Lem and John Ellson. 
+<li>Improved tolerance when reading JPEG files containing some garbage as well
+as valid image data.
+<li>Easier compilation on Windows: no errno.h in gd_gd2.c.
+<li>Support for creating optimized GIF animations has been added
+ by Jaakko Hyv&auml;tti.  See
+ <A HREF="#gdImageGifAnimAdd">gdImageGifAnimAdd</A>,
+ <A HREF="#gdImageGifAnimAddCtx">gdImageGifAnimAddCtx</A>,
+ <A HREF="#gdImageGifAnimAddPtr">gdImageGifAnimAddPtr</A>,
+ <A HREF="#gdImageGifAnimBegin">gdImageGifAnimBegin</A>,
+ <A HREF="#gdImageGifAnimBeginCtx">gdImageGifAnimBeginCtx</A>,
+ <A HREF="#gdImageGifAnimBeginPtr">gdImageGifAnimBeginPtr</A>,
+ <A HREF="#gdImageGifAnimEnd">gdImageGifAnimEnd</A>,
+ <A HREF="#gdImageGifAnimEndCtx">gdImageGifAnimEndCtx</A>, and
+ <A HREF="#gdImageGifAnimEndPtr">gdImageGifAnimEndPtr</A>.
+<li><A HREF="#gdImageOpenPolygon">gdImageOpenPolygon</A> has been
+ added to allow consecutive line segments to be drawn without
+ connecting the end points to form a closed polygon. Thanks to
+Jaakko Hyv&auml;tti.
+<li>Better alpha channel blending when the destination color
+contains an alpha channel. Also, quicker handling of the
+most common cases. Thanks to Frank Warmerdam.
 </ul>
 <P>
 <A NAME="whatsnew2.0.28"><H3>What's new in version 2.0.28?</H3></A>
@@ -1169,8 +1235,8 @@ saving of alpha channel information to the file instead.
 </ul>
 <h4>Source Code:</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.28.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.28.zip">.ZIP File of SOURCE CODE (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.29.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.29.zip">.ZIP File of SOURCE CODE (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -1192,10 +1258,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.28".
+Unpacking the archive will produce a directory called "gd-2.0.29".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.28 directory and type:
+<code>cd</code> to the 2.0.29 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -1558,7 +1624,8 @@ provided include files gdfonts.h and gdfontl.h.
 <DT><A NAME="gdPoint">gdPoint</A> <strong>(TYPE)</strong>
 <DD>
 Represents a point in the coordinate space of the image; used
-by <A HREF="#gdImagePolygon">gdImagePolygon</A> and
+by <A HREF="#gdImagePolygon">gdImagePolygon</A>,
+<A HREF="#gdImageOpenPolygon">gdImageOpenPolygon</A> and
 <A HREF="#gdImageFilledPolygon">gdImageFilledPolygon</A>.
 <PRE>
 typedef struct {
@@ -1568,7 +1635,8 @@ typedef struct {
 <DT><A NAME="gdPointPtr">gdPointPtr</A> <strong>(TYPE)</strong>
 <DD>
 A pointer to a <A HREF="#gdPoint">gdPoint</A> structure; passed
-as an argument to <A HREF="#gdImagePolygon">gdImagePolygon</A>
+as an argument to <A HREF="#gdImagePolygon">gdImagePolygon</A>,
+<A HREF="#gdImageOpenPolygon">gdImageOpenPolygon</A>
 and <A HREF="#gdImageFilledPolygon">gdImageFilledPolygon</A>.
 </DL>
 <DT><A NAME="gdFTStringExtra">gdFTStringExtra</a> <strong>(TYPE)</strong>
@@ -2073,7 +2141,7 @@ void gdImageGifCtx(gdImagePtr im, gdIOCtx *out)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
 gdImageGif outputs the specified image to the specified
-file in PNG format. The file must be open for writing. Under MSDOS
+file in GIF format. The file must be open for writing. Under MSDOS
 and all versions of Windows, it is important to use "wb" as opposed
 to simply "w" as the mode when opening the file, and under Unix there
 is no penalty for doing so. gdImageGif does <em>not</em>
@@ -2121,6 +2189,186 @@ unless the caller is absolutely certain that the same implementations of
 malloc, free, etc. are used both at library build time and at application
 build time.</strong> The 'size' parameter receives the total size of the block
 of memory.
+
+<DT><A NAME="gdImageGifAnimBegin">
+void gdImageGifAnimBegin(gdImagePtr im, FILE *out, int GlobalCM, int Loops)</A>
+<br>
+<A NAME="gdImageGifAnimBeginCtx">
+void gdImageGifAnimBeginCtx(gdImagePtr im, gdIOCtx *out, int GlobalCM, int Loops)</A>
+
+<STRONG>(FUNCTION)</STRONG>
+
+<DD>This function must be called as the first function when creating a
+GIF animation.  It writes the correct GIF file headers to selected
+file output, and prepares for frames to be added for the animation.
+The image argument is not used to produce an image frame to the file,
+it is only used to establish the GIF animation frame size, interlacing
+options and the color palette.  gdImageGifAnimAdd is used to
+add the first and subsequent frames to the animation, and the animation
+must be terminated by writing a semicolon character (;) to it or by using
+gdImageGifAnimEnd to do that.
+<p>
+
+The GlobalCM flag indicates if a global color map (or palette) is used
+in the GIF89A header.  A nonzero value specifies that a global color
+map should be used to reduce the size of the animation.
+Of course, if the color maps of
+individual frames differ greatly, a global color map may not be a good idea.
+GlobalCM=1 means write global color map, GlobalCM=0 means do not, and
+GlobalCM=-1 means to do the default, which currently is to use a global
+color map.
+
+<p>
+
+If Loops is 0 or greater, the Netscape 2.0 extension for animation
+loop count is written.  0 means infinite loop count.  -1 means that
+the extension is not added which results in no looping. -1 is the
+default.
+
+<DT><A NAME="gdImageGifAnimBeginPtr">
+void* gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalCM, int Loops)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>Identical to gdImageGifAnimBegin except that it returns a pointer
+to a memory area with the GIF data. This memory must be freed by the
+caller when it is no longer needed. <strong>The caller must invoke
+gdFree(), not free(), unless the caller is absolutely certain that the
+same implementations of malloc, free, etc. are used both at library
+build time and at application build time.</strong> The 'size'
+parameter receives the total size of the block of memory.
+
+<DT><A NAME="gdImageGifAnimAdd">
+void gdImageGifAnimAdd(gdImagePtr im, FILE *out, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)</A>
+<br>
+<A NAME="gdImageGifAnimAddCtx">
+void gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtx *out, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)</A>
+
+<STRONG>(FUNCTION)</STRONG>
+
+<DD> This function writes GIF animation frames to GIF animation, which
+was initialized with <a
+href="#gdImageGifAnimBegin">gdImageGifAnimBegin</a>.  With LeftOfs and
+TopOfs you can place this frame in different offset than (0,0) inside
+the image screen as defined in gdImageGifAnimBegin.  Delay between the
+previous frame and this frame is in 1/100s units.  Disposal is usually
+<code>gdDisposalNone</code>, meaning that the pixels changed by this
+frame should remain on the display when the next frame begins to render, but
+can also be <code>gdDisposalUnknown</code> (not recommended),
+<code>gdDisposalRestoreBackground</code> (restores the first
+allocated color of the global palette), or
+<code>gdDisposalRestorePrevious</code> (restores the appearance of the
+affected area before the frame was rendered). Only
+<code>gdDisposalNone</code> is a sensible choice for the first frame.
+If <code>previm</code> is
+passed, the built-in GIF optimizer will always use <code>gdDisposalNone</code> 
+regardless of the Disposal parameter.
+<p>
+Setting the LocalCM flag to 1 adds a local palette for this image to the 
+animation.  Otherwise the global palette is assumed and the user must make 
+sure the palettes match.  Use <A HREF="#gdImagePaletteCopy">gdImagePaletteCopy</A> to do that.
+
+<p>
+
+Automatic optimization is activated by giving the previous image as a 
+parameter.  This function then compares the images and only writes the changed
+pixels to the new frame in animation.  The Disposal parameter for
+optimized animations must be set to 1, also for the first frame.
+LeftOfs and TopOfs parameters are ignored for optimized frames.  To
+achieve good optimization, it is usually best to use a single global 
+color map.  To allow gdImageGifAnimAdd to compress unchanged pixels via
+the use of a transparent color, the image must include a transparent color.
+
+<PRE>
+... inside a function ...
+gdImagePtr im, im2, im3;
+int black, white, trans;
+FILE *out;
+/* Create the image */
+im = gdImageCreate(100, 100);
+/* Allocate background */
+white = gdImageColorAllocate(im, 255, 255, 255);
+/* Allocate drawing color */
+black = gdImageColorAllocate(im, 0, 0, 0);
+/* Allocate transparent color for animation compression */
+trans = gdImageColorAllocate(im, 1, 1, 1);
+/* Draw rectangle */
+gdImageRectangle(im, 0, 0, 10, 10, black);
+/* Open output file in binary mode */
+out = fopen("anim.gif", "wb");
+/* Write GIF header.  Use global color map.  Loop a few times */
+gdImageGifAnimBegin(im, out, 1, 3);
+/* Write the first frame.  No local color map.  Delay = 1s */
+gdImageGifAnimAdd(im, out, 0, 0, 0, 100, 1, NULL);
+/* construct the second frame */
+im2 = gdImageCreate(100, 100);
+/* Allocate background to make it white */
+(void)gdImageColorAllocate(im2, 255, 255, 255);
+/* Make sure the palette is identical */
+gdImagePaletteCopy (im2, im);
+/* Draw something */
+gdImageRectangle(im2, 0, 0, 15, 15, black);
+/* Allow animation compression with transparent pixels */
+gdImageColorTransparent (im2, trans);
+/* Add the second frame */
+gdImageGifAnimAdd(im2, out, 0, 0, 0, 100, 1, im);
+/* construct the second frame */
+im3 = gdImageCreate(100, 100);
+/* Allocate background to make it white */
+(void)gdImageColorAllocate(im3, 255, 255, 255);
+/* Make sure the palette is identical */
+gdImagePaletteCopy (im3, im);
+/* Draw something */
+gdImageRectangle(im3, 0, 0, 15, 20, black);
+/* Allow animation compression with transparent pixels */
+gdImageColorTransparent (im3, trans);
+/* Add the third frame, compressing against the second one */
+gdImageGifAnimAdd(im3, out, 0, 0, 0, 100, 1, im2);
+/* Write the end marker */
+/* gdImageGifAnimEnd(out); is the same as the following: */
+putc (';', out);
+/* Close file */
+fclose(out);
+/* Destroy images */
+gdImageDestroy(im);
+gdImageDestroy(im2);
+gdImageDestroy(im3);
+</PRE>
+
+<DT><A NAME="gdImageGifAnimAddPtr">
+void* gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>Identical to gdImageGifAnimAdd except that it returns a pointer
+to a memory area with the GIF data. This memory must be freed by the
+caller when it is no longer needed. <strong>The caller must invoke
+gdFree(), not free(), unless the caller is absolutely certain that the
+same implementations of malloc, free, etc. are used both at library
+build time and at application build time.</strong> The 'size'
+parameter receives the total size of the block of memory.
+
+<DT><A NAME="gdImageGifAnimEnd">
+void gdImageGifAnimEnd(FILE *out)</A>
+<br>
+<A NAME="gdImageGifAnimEndCtx">
+void gdImageGifAnimEndCtx(gdIOCtx *out)</A>
+
+<STRONG>(FUNCTION)</STRONG>
+
+<DD>Writes semicolon character (;) to the output file.  This
+terminates the GIF file properly.  You can omit the call to
+gdImageGifAnimEnd and just print out the semicolon.
+
+<DT><A NAME="gdImageGifAnimEndPtr">
+void* gdImageGifAnimEndPtr(int *size)</A>
+<STRONG>(FUNCTION)</STRONG>
+
+<DD>Returns a one byte string containing the semicolon character (;).
+Returns a pointer to a memory area with that string. This memory must
+be freed by the caller when it is no longer needed. <strong>The caller
+must invoke gdFree(), not free(), unless the caller is absolutely
+certain that the same implementations of malloc, free, etc. are used
+both at library build time and at application build time.</strong> The
+'size' parameter receives the total size of the block of memory.  The
+string ";" can be used in place of this function.
+
 <DT><A NAME="gdImagePng">
 void gdImagePng(gdImagePtr im, FILE *out)</A>
 <br>
@@ -2544,6 +2792,13 @@ gdImagePolygon(im, points, 3, white);
 /* Destroy it */
 <A HREF="#gdImageDestroy">gdImageDestroy</A>(im);
 </PRE>
+<DT><A NAME="gdImageOpenPolygon">void gdImageOpenPolygon(gdImagePtr im, gdPointPtr points, int pointsTotal, int color)</A>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+gdImageOpenPolygon is used to draw a sequence of lines with the verticies
+(at least 3) specified, using the color index specified.  Unlike
+<A HREF="#gdImagePolygon">gdImagePolygon</A>, the enpoints of the line
+sequence are not connected to a closed polygon.
 <DT><A NAME="gdImageRectangle">void gdImageRectangle(gdImagePtr im, int x1, int y1, int x2, int y2, int color)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
@@ -2824,7 +3079,8 @@ drawing can be reduced by blending the foreground color with an appropriate
 percentage of the background, depending on how much of the pixel in question
 is actually within the boundaries of the line being drawn. 
 All line-drawing functions,
-such as <A HREF="#gdImageLine">gdImageLine</A> and
+such as <A HREF="#gdImageLine">gdImageLine</A>,
+<A HREF="#gdImageOpenPolygon">gdImageOpenPolygon</A> and
 <A HREF="#gdImagePolygon">gdImagePolygon</A>, will draw antialiased lines
 if the special "color" <A HREF="#gdAntiAliased">
 gdAntiAliased</A> is used when calling them.
@@ -2910,7 +3166,8 @@ a single pixel. <em>Any</em> gd image can be used as a brush, and by
 setting the transparent color index of the brush image with
 <A HREF="#gdImageColorTransparent">gdImageColorTransparent</A>,
 a brush of any shape can be created. All line-drawing functions,
-such as <A HREF="#gdImageLine">gdImageLine</A> and
+such as <A HREF="#gdImageLine">gdImageLine</A>,
+<A HREF="#gdImageOpenPolygon">gdImageOpenPolygon</A> and
 <A HREF="#gdImagePolygon">gdImagePolygon</A>, will use the
 current brush if the special "color" <A HREF="#gdBrushed">
 gdBrushed</A> or <A HREF="#gdStyledBrushed">gdStyledBrushed</A>
@@ -3089,7 +3346,7 @@ gdImageSetStyle(im, styleDashed, 6);
 </PRE>
 <DT><A NAME="gdImageSetThickness">void gdImageSetThickness(gdImagePtr im, int thickness)</A> <STRONG>(FUNCTION)</STRONG>
 <DD>gdImageSetThickness determines the width of lines drawn by the
-<a href="#gdImageLine">gdImageLine</a>, <a href="#gdImagePolygon">gdImagePolygon</a>
+<a href="#gdImageLine">gdImageLine</a>, <a href="#gdImagePolygon">gdImagePolygon</a>, <a href="#gdImageOpenPolygon">gdImageOpenPolygon</a>
 and related functions, in pixels. 
 <PRE>
 ... inside a function ...
@@ -3672,6 +3929,64 @@ set by a particular character retain their previous color.
 This function was added in gd1.3 to provide a means of rendering
 fonts with more than 256 characters for those who have them. A
 more frequently used routine is <a href="#gdImageStringUp">gdImageStringUp</a>.
+<DT><A NAME="gdFTUseFontConfig">int gdFTUseFontConfig(int flag)</a>
+<STRONG>(FUNCTION)</STRONG>
+<DD>
+GD 2.0.29 introduced the ability to use 
+<a href="http://freedesktop.org/software/fontconfig">fontconfig patterns</a>
+rather than font file names as parameters to 
+<a href="#gdImageStringFT">gdImageStringFT</a>,
+<a href="#gdImageStringFTEx">gdImageStringFTEx</a> and
+<a href="#gdImageStringFTEx">gdImageStringFTCircle</a>. 
+For backwards compatibility reasons, the fontlist parameter to those
+functions is still expected to be a full or partial font file path name 
+or list thereof by default. However, as a convenience, a single call
+to gdFTUseFontConfig with a nonzero parameter configures gd to expect
+the fontlist parameter to be a fontconfig pattern. Regardless of whether
+the flag argument is nonzero, this function returns true when the 
+fontconfig library is available and false when it is not. When fontconfig
+is not available, the fontlist parameter always behaves as in previous
+versions of GD.
+<pre>
+#include "gd.h"
+#include &lt;string.h&gt;
+... inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im;
+int black;
+int white;
+int brect[8];
+int x, y;
+char *err;
+
+char *s = "Hello."; /* String to draw. */
+double sz = 40.;
+char *fc = "times:bold:italic"; /* fontconfig pattern */
+
+/* Signal that all freetype font calls in this program will receive
+  fontconfig patterns rather than filenames of font files */
+gdUseFontConfig(1);
+
+/* obtain brect so that we can size the image */
+err = <A HREF="#gdImageStringFT">gdImageStringFT</A>(NULL,&brect[0],0,fc,sz,0.,0,0,s);
+if (err) {fprintf(stderr,err); return 1;}
+
+/* create an image big enough for the string plus a little whitespace */
+x = brect[2]-brect[6] + 6;
+y = brect[3]-brect[7] + 6;
+im = <A HREF="#gdImageCreate">gdImageCreate</A>(x,y);
+
+/* Background color (first allocated) */
+white = <A HREF="#gdImageColorResolve">gdImageColorResolve</A>(im, 255, 255, 255);
+black = <A HREF="#gdImageColorResolve">gdImageColorResolve</A>(im, 0, 0, 0);
+
+/* render the string, offset origin to center string*/
+/* note that we use top-left coordinate for adjustment
+ * since gd origin is in top-left with y increasing downwards. */
+x = 3 - brect[6];
+y = 3 - brect[7];
+err = <A HREF="#gdImageStringFT">gdImageStringFT</A>(im,&brect[0],black,fc,sz,0.0,x,y,s);
+if (err) {fprintf(stderr,err); return 1;}
+</pre>
 <DT><A NAME="gdImageStringFT">
 char *gdImageStringFT(gdImagePtr im, int *brect,
   int fg, char *fontname, double ptsize, double angle,
@@ -3810,6 +4125,8 @@ typedef struct {
        /* Rendering resolution */
        int hdpi;
        int vdpi;
+       char *xshow;
+       char *fontpath;
 } gdFTStringExtra, *gdFTStringExtraPtr;
 </pre>
 To output multiline text with a specific line spacing, 
@@ -3848,7 +4165,68 @@ specify a different resolution, set hdpi and vdpi accordingly
 <pre>
 flags | gdFTEX_RESOLUTION;
 </pre>
+GD 2.0.29 and later will normally attempt to apply kerning tables, if 
+fontconfig is available, to adjust the relative positions of consecutive 
+characters more ideally for that pair of characters. This can be turn off by
+specifying the gdFTEX_DISABLE_KERNING flag:
+<pre>
+flags | gdFTEX_DISABLE_KERNING;
+</pre>
+GD 2.0.29 and later can return a vector of individual character
+position advances, occasionally useful in applications that must know
+exactly where each character begins. This is returned in the xshow
+element of the gdFTStringExtra structure if the gdFTEX_XSHOW
+flag is set:
+<pre>
+flags | gdFTEX_XSHOW;
+</pre>
+<b>The caller is responsible for calling gdFree() on the xshow
+element after the call</b> if gdFTEX_XSHOW is set.
 <p>
+GD 2.0.29 and later can also return the path to the actual font file
+used if the gdFTEX_RETURNFONTPATHNAME flag is set. This is useful because 
+GD 2.0.29 and above are capable of
+selecting a font automatically based on a fontconfig font pattern
+when fontconfig is available. This information is returned in the
+fontpath element of the gdFTStringExtra structure. 
+<pre>
+flags | gdFTEX_RETURNFONTPATHNAME;
+</pre>
+<b>The caller is responsible for calling gdFree() on the fontpath
+element after the call</b> if gdFTEX_RETURNFONTPATHNAME is set.
+<p>
+GD 2.0.29 and later can use fontconfig to resolve
+font names, including fontconfig patterns, if the gdFTEX_FONTCONFIG
+flag is set. As a convenience, this behavior can be made the default
+by calling <a href="#gdFTUseFontConfig">gdFTUseFontConfig</a> with
+a nonzero value. In that situation it is not necessary to set the
+gdFTEX_FONTCONFIG flag on every call; however explicit font path names
+can still be used if the gdFTEX_FONTPATHNAME flag is set:
+<pre>
+flags | gdFTEX_FONTPATHNAME;
+</pre>
+<p>
+Unless <a href="#gdFTUseFontConfig">gdFTUseFontConfig</a> has been
+called with a nonzero value, GD 2.0.29 and later will still expect
+the fontlist argument to the freetype text output functions to be
+a font file name or list thereof as in previous versions. If you do
+not wish to make fontconfig the default, it is
+still possible to force the use of fontconfig for a single call to
+the freetype text output functions by setting the gdFTEX_FONTCONFIG
+flag:
+<pre>
+flags | gdFTEX_FONTCONFIG;
+</pre>
+GD 2.0.29 and above can use fontconfig to resolve
+font names, including fontconfig patterns, if the gdFTEX_FONTCONFIG
+flag is set. As a convenience, this behavior can be made the default
+by calling <a href="#gdFTUseFontConfig">gdFTUseFontConfig</a> with
+a nonzero value. In that situation it is not necessary to set the
+gdFTEX_FONTCONFIG flag on every call; however explicit font path names
+can still be used if the gdFTEX_FONTPATHNAME flag is set:
+<pre>
+flags | gdFTEX_FONTPATHNAME;
+</pre>
 For more information, see <a href="#gdImageStringFT">gdImageStringFT</a>.
 <DT><A NAME="gdImageStringFTCircle">
 char *gdImageStringFTCircle(gdImagePtr im,
@@ -5113,16 +5491,26 @@ purchase gd support at the hourly rate above.
 <A HREF="#gdImageFillToBorder">gdImageFillToBorder</A> |
 <A HREF="#gdImageFilledRectangle">gdImageFilledRectangle</A> |
 <A HREF="#gdImageGd">gdImageGd</A> |
-<A HREF="#gdImageGd">gdImageGd2</A> |
+<A HREF="#gdImageGd2">gdImageGd2</A> |
 <A HREF="#gdImageGetInterlaced">gdImageGetInterlaced</A> |
 <A HREF="#gdImageGetPixel">gdImageGetPixel</A> |
 <A HREF="#gdImageGetTransparent">gdImageGetTransparent</A> |
+<A HREF="#gdImageGifAnimAdd">gdImageGifAnimAdd</A> |
+<A HREF="#gdImageGifAnimAddCtx">gdImageGifAnimAddCtx</A> |
+<A HREF="#gdImageGifAnimAddPtr">gdImageGifAnimAddPtr</A> |
+<A HREF="#gdImageGifAnimBegin">gdImageGifAnimBegin</A> |
+<A HREF="#gdImageGifAnimBeginCtx">gdImageGifAnimBeginCtx</A> |
+<A HREF="#gdImageGifAnimBeginPtr">gdImageGifAnimBeginPtr</A> |
+<A HREF="#gdImageGifAnimEnd">gdImageGifAnimEnd</A> |
+<A HREF="#gdImageGifAnimEndCtx">gdImageGifAnimEndCtx</A> |
+<A HREF="#gdImageGifAnimEndPtr">gdImageGifAnimEndPtr</A> |
 <A HREF="#gdImageGreen">gdImageGreen</A> |
 <A HREF="#gdImageInterlace">gdImageInterlace</A> |
 <A HREF="#gdImageJpeg">gdImageJpeg</A> |
 <A HREF="#gdImageJpegCtx">gdImageJpegCtx</A> |
 <A HREF="#gdImageLine">gdImageLine</A> |
 <A HREF="#gdImageFilledPolygon">gdImageFilledPolygon</A> |
+<A HREF="#gdImageOpenPolygon">gdImageOpenPolygon</A> |
 <A HREF="#gdImagePaletteCopy">gdImagePaletteCopy</A> |
 <A HREF="#gdImagePng">gdImagePng</A> |
 <A HREF="#gdImagePngEx">gdImagePngEx</A> |

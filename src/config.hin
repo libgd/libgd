@@ -21,10 +21,13 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define if you have the fontconfig library. */
+#undef HAVE_LIBFONTCONFIG
+
 /* Define if you have the freetype library. */
 #undef HAVE_LIBFREETYPE
 
-/* Define if you have the freetype library. */
+/* Define if you have the jpeg library. */
 #undef HAVE_LIBJPEG
 
 /* Define to 1 if you have the `m' library (-lm). */

@@ -5,13 +5,13 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the vesion number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.0.28], [gd@boutell.com])
+AC_INIT([GD], [2.0.29], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=0
-GDLIB_REVISION=28
+GDLIB_REVISION=29
 GDLIBNAME=gd
 #Expanded by tests later in this file. TBB 2.0.26
 #2.0.28: GIF is standard now. Doesn't depend on anything else,
@@ -399,6 +399,24 @@ else
   ac_cv_lib_freetype_FT_Init_FreeType=no
 fi
 
+dnl check for libfontconfig by default
+AC_ARG_WITH(fontconfig,dnl
+[  --with-fontconfig=DIR         where to find the fontconfig library],
+  [if test -d "$withval"; then
+     LDFLAGS="$LDFLAGS -L$withval/lib"
+     CPPFLAGS="$CPPFLAGS -I$withval/include"
+   fi],
+  withval=yes)
+
+if test "$withval" != no; then
+  AC_CHECK_LIB(fontconfig,FcInit,
+    [LIBS="-lfontconfig $LIBS" 
+     FEATURES="GD_FONTCONFIG $FEATURES"
+     AC_DEFINE(HAVE_LIBFONTCONFIG, 1, [ Define if you have the fontconfig library. ])])
+else
+  ac_cv_lib_fontconfig_FcInit=no
+fi
+
 dnl check for libjpeg by default
 AC_ARG_WITH(jpeg,dnl
 [  --with-jpeg=DIR         where to find the jpeg library],
@@ -412,7 +430,7 @@ if test "$withval" != no; then
   AC_CHECK_LIB(jpeg,jpeg_set_defaults,
     [LIBS="-ljpeg $LIBS" 
      FEATURES="GD_JPEG $FEATURES"
-     AC_DEFINE(HAVE_LIBJPEG, 1, [ Define if you have the freetype library. ])])
+     AC_DEFINE(HAVE_LIBJPEG, 1, [ Define if you have the jpeg library. ])])
 else
   ac_cv_lib_jpeg_jpeg_set_defaults=no
 fi
@@ -445,6 +463,7 @@ AC_MSG_RESULT([
    Support for PNG library:          $ac_cv_lib_png_png_create_read_struct
    Support for JPEG library:         $ac_cv_lib_jpeg_jpeg_set_defaults
    Support for Freetype 2.x library: $ac_cv_lib_freetype_FT_Init_FreeType
+   Support for Fontconfig library:   $ac_cv_lib_fontconfig_FcInit
    Support for Xpm library:          $ac_cv_lib_Xpm_XpmReadFileToXpmImage
    Support for pthreads:             $acx_pthread_ok
 ])
