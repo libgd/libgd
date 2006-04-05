@@ -15,7 +15,7 @@
 #endif
 
 #include <stdio.h>
-#include <errno.h>
+/* 2.0.29: no more errno.h, makes windows happy */
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -649,7 +649,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int
 	         Longstanding bug. 01/16/03 */
 	      if (!gdSeek (in, dpos))
 		{
-		  printf ("Error from seek: %d\n", errno);
+		  fprintf (stderr, "Seek error\n");
 		  goto fail2;
 		};
 	      GD2_DBG (printf
@@ -958,8 +958,7 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 
 		  if (gdPutBuf (compData, compLen, out) <= 0)
 		    {
-		      /* Any alternate suggestions for handling this? */
-		      printf ("Error %d on write\n", errno);
+			fprintf(stderr, "gd write error\n");
 		    };
 		};
 	    };

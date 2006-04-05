@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef GD_IO_H
 #define GD_IO_H 1
 
@@ -44,4 +48,8 @@ void Putchar (int c, gdIOCtx * ctx);
  int gdSeek (gdIOCtx * ctx, const int);
  long gdTell (gdIOCtx * ctx);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

@@ -37,6 +37,12 @@
 #ifdef HAVE_LIBJPEG
 #include "gdhelpers.h"
 
+/* JCE undef two symbols that we don't need anymore but which are
+   may be defined in config.h from ./configure but which are
+   redefined incompatibly in jpeglib.h */
+#undef HAVE_STDDEF_H
+#undef HAVE_STDLIB_H
+
 /* 1.8.1: remove dependency on jinclude.h */
 #include "jpeglib.h"
 #include "jerror.h"
@@ -523,9 +529,13 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx (gdIOCtx * infile)
   if (jpeg_finish_decompress (&cinfo) != TRUE)
     fprintf (stderr, "gd-jpeg: warning: jpeg_finish_decompress"
 	     " reports suspended data source\n");
-  /* Thanks to Truxton Fulton */
+  /* TBB 2.0.29: we should do our best to read whatever we can read, and a 
+    warning is a warning. A fatal error on warnings doesn't make sense. */
+#if 0
+  /* This was originally added by Truxton Fulton */
   if (cinfo.err->num_warnings > 0)
     goto error;
+#endif
 
   jpeg_destroy_decompress (&cinfo);
   gdFree (row);

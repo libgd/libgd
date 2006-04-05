@@ -199,6 +199,9 @@ dynamicSeek (struct gdIOCtx *ctx, const int pos)
 	{
 	  return FALSE;
 	}
+      if (overflow2(dp->realSize, 2)) {
+        return FALSE;
+      }
       if (!gdReallocDynamic (dp, dp->realSize * 2))
 	{
 	  dp->dataGood = FALSE;
@@ -375,6 +378,9 @@ appendDynamic (dynamicPtr * dp, const void *src, int size)
 	{
 	  return FALSE;
 	}
+      if (overflow2(dp->realSize, 2)) {
+        return FALSE;
+      }
       if (!gdReallocDynamic (dp, bytesNeeded * 2))
 	{
 	  dp->dataGood = FALSE;

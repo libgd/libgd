@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gdhelpers.h"
 
 /* Code drawn from ppmtogif.c, from the pbmplus package
 **
@@ -90,6 +91,7 @@ static int colorstobpp(int colors);
 static void BumpPixel (GifCtx *ctx);
 static int GIFNextPixel (gdImagePtr im, GifCtx *ctx);
 static void GIFEncode (gdIOCtxPtr fp, int GWidth, int GHeight, int GInterlace, int Background, int Transparent, int BitsPerPixel, int *Red, int *Green, int *Blue, gdImagePtr im);
+static void GIFAnimEncode (gdIOCtxPtr fp, int IWidth, int IHeight, int LeftOfs, int TopOfs, int GInterlace, int Transparent, int Delay, int Disposal, int BitsPerPixel, int *Red, int *Green, int *Blue, gdImagePtr im);
 static void compress (int init_bits, gdIOCtx *outfile, gdImagePtr im, GifCtx *ctx);
 static void output (code_int code, GifCtx *ctx);
 static void cl_block (GifCtx *ctx);
@@ -139,6 +141,322 @@ BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out)
 		/* Destroy palette based temporary image. */
 		gdImageDestroy(	pim);
 	}
+}
+
+BGD_DECLARE(void *) gdImageGifAnimBeginPtr (gdImagePtr im, int *size, int GlobalCM, int Loops)
+{
+  void *rv;
+  gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
+  gdImageGifAnimBeginCtx(im, out, GlobalCM, Loops);
+  rv = gdDPExtractData (out, size);
+  out->gd_free (out);
+  return rv;
+}
+
+BGD_DECLARE(void) gdImageGifAnimBegin (gdImagePtr im, FILE *outFile, int GlobalCM, int Loops)
+{
+  gdIOCtx *out = gdNewFileCtx (outFile);
+  gdImageGifAnimBeginCtx (im, out, GlobalCM, Loops);
+  out->gd_free (out);
+}
+
+BGD_DECLARE(void) gdImageGifAnimBeginCtx(gdImagePtr im, gdIOCtxPtr out, int GlobalCM, int Loops)
+{
+	int B;
+	int RWidth, RHeight;
+	int Resolution;
+	int ColorMapSize;
+	int BitsPerPixel;
+	int Background = 0;
+	int i;
+
+	/* Default is to use global color map */
+	if (GlobalCM < 0) GlobalCM = 1;
+
+	BitsPerPixel = colorstobpp(im->colorsTotal);
+        ColorMapSize = 1 << BitsPerPixel;
+
+        RWidth = im->sx;
+        RHeight = im->sy;
+
+        Resolution = BitsPerPixel;
+
+        /*
+         * Write the Magic header
+         */
+        gdPutBuf("GIF89a", 6, out );
+
+        /*
+         * Write out the screen width and height
+         */
+        gifPutWord( RWidth, out );
+        gifPutWord( RHeight, out );
+
+        /*
+         * Indicate that there is a global colour map
+         */
+        B = GlobalCM ? 0x80 : 0;
+
+        /*
+         * OR in the resolution
+         */
+        B |= (Resolution - 1) << 5;
+
+        /*
+         * OR in the Bits per Pixel
+         */
+        B |= (BitsPerPixel - 1);
+
+        /*
+         * Write it out
+         */
+        gdPutC( B, out );
+
+        /*
+         * Write out the Background colour
+         */
+        gdPutC( Background, out );
+
+        /*
+         * Byte of 0's (future expansion)
+         */
+        gdPutC( 0, out );
+
+        /*
+         * Write out the Global Colour Map
+         */
+	if (GlobalCM)
+		for( i=0; i<ColorMapSize; ++i ) {
+			gdPutC( im->red[i], out );
+			gdPutC( im->green[i], out );
+			gdPutC( im->blue[i], out );
+		}
+
+	if (Loops >= 0) {
+		gdPutBuf( "!\377\13NETSCAPE2.0\3\1", 16, out );
+		gifPutWord( Loops, out );
+		gdPutC( 0, out );
+	}
+}
+
+BGD_DECLARE(void *) gdImageGifAnimAddPtr (gdImagePtr im, int *size, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)
+{
+  void *rv;
+  gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
+  gdImageGifAnimAddCtx(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm);
+  rv = gdDPExtractData (out, size);
+  out->gd_free (out);
+  return rv;
+}
+
+BGD_DECLARE(void) gdImageGifAnimAdd (gdImagePtr im, FILE * outFile, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)
+{
+  gdIOCtx *out = gdNewFileCtx (outFile);
+  gdImageGifAnimAddCtx (im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm);
+  out->gd_free (out);
+}
+
+static int
+comparewithmap (gdImagePtr im1, gdImagePtr im2, int c1, int c2, int *colorMap)
+{
+	if (!colorMap)
+		return c1 == c2;
+	if (-2 != colorMap[c1])
+		return colorMap[c1] == c2;
+	return (colorMap[c1] = gdImageColorExactAlpha (im2, im1->red[c1], im1->green[c1], im1->blue[c1], im1->alpha[c1]))
+	       == c2;
+}
+
+BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)
+{
+	gdImagePtr pim = 0, tim = im;
+	int interlace, transparent, BitsPerPixel;
+	interlace = im->interlace;
+	transparent = im->transparent;
+
+	/* Default is no local color map */
+	if (LocalCM < 0) LocalCM = 0;
+	if (im->trueColor) {
+		/* Expensive, but the only way that produces an
+			acceptable result: mix down to a palette
+			based temporary image. */
+		pim = gdImageCreatePaletteFromTrueColor(im, 1, 256);
+		if (!pim) {
+			return;
+		}
+		tim = pim; 
+	}
+	if (previm) {
+		/* create optimized animation.  Compare this image to
+		   the previous image and crop the temporary copy of
+		   current image to include only changed rectangular
+		   area.  Also replace unchanged pixels inside this
+		   area with transparent color.  Transparent color
+		   needs to be already allocated!
+		   Preconditions:
+		   TopOfs, LeftOfs are assumed 0
+
+		   Images should be of same size.  If not, a temporary
+		   copy is made with the same size as previous image.
+		   
+		*/
+		gdImagePtr prev_pim = 0, prev_tim = previm;
+		int x, y;
+		int min_x;
+		int min_y = tim->sy;
+		int max_x;
+		int max_y;
+		int colorMap[256];
+
+		if (previm->trueColor) {
+			prev_pim = gdImageCreatePaletteFromTrueColor(previm, 1, 256);
+			if (!prev_pim) {
+				return;
+			}
+			prev_tim = prev_pim; 
+		}
+		for (x = 0; x < 256; ++x)
+			colorMap[x] = -2;
+
+		/* First find bounding box of changed areas. */
+		/* first find the top changed row */
+		for (y = 0; y < tim->sy; ++y)
+			for (x = 0; x < tim->sx; ++x)
+				if (!comparewithmap(prev_tim, tim,
+						    prev_tim->pixels[y][x],
+						    tim->pixels[y][x],
+						    colorMap)) {
+					min_y = max_y = y;
+					min_x = max_x = x;
+					goto break_top;
+				}
+	break_top:
+		if (tim->sy == min_y) {
+			/* No changes in this frame!! Encode empty image. */
+			transparent = 0;
+			min_x = min_y = 1;
+			max_x = max_y = 0;
+		} else {
+			/* Then the bottom row */
+			for (y = tim->sy - 1; y > min_y; --y)
+				for (x = 0; x < tim->sx; ++x)
+					if (!comparewithmap
+					    (prev_tim, tim,
+					     prev_tim->pixels[y][x],
+					     tim->pixels[y][x],
+					     colorMap)) {
+						max_y = y;
+						if (x < min_x) min_x = x;
+						if (x > max_x) max_x = x;
+						goto break_bot;
+					}
+		break_bot:
+			/* left side */
+			for (x = 0; x < min_x; ++x)
+				for (y = min_y; y <= max_y; ++y)
+					if (!comparewithmap
+					    (prev_tim, tim,
+					     prev_tim->pixels[y][x],
+					     tim->pixels[y][x],
+					     colorMap)) {
+						min_x = x;
+						goto break_left;
+					}
+		break_left:
+			/* right side */
+			for (x = tim->sx-1; x > max_x; --x)
+				for (y = min_y; y <= max_y; ++y)
+					if (!comparewithmap
+					    (prev_tim, tim,
+					     prev_tim->pixels[y][x],
+					     tim->pixels[y][x],
+					     colorMap)) {
+						max_x = x;
+						goto break_right;
+					}
+		break_right:
+			;
+		}
+
+		LeftOfs = min_x;
+		TopOfs = min_y;
+		Disposal = 1;
+
+		/* Make a copy of the image with the new offsets.
+		   But only if necessary. */
+		if (min_x != 0 || max_x != tim->sx-1
+		    || min_y != 0 || max_y != tim->sy-1
+		    || transparent >= 0) {
+			gdImagePtr pim2
+				= gdImageCreate(max_x-min_x+1, max_y-min_y+1);
+			if (!pim2) {
+				if (prev_pim)
+					gdImageDestroy (prev_pim);
+				goto fail_end;
+			}
+			gdImagePaletteCopy (pim2, LocalCM ? tim : prev_tim);
+			gdImageCopy (pim2, tim, 0, 0, min_x, min_y,
+				     max_x-min_x+1, max_y-min_y+1);
+			if (pim)
+				gdImageDestroy (pim);
+			tim = pim = pim2;
+		}
+
+		/* now let's compare pixels for transparent
+		   optimization.  But only if transparent is set. */
+		if (transparent >= 0) {
+			for (y = 0; y < tim->sy; ++y)
+				for (x = 0; x < tim->sx; ++x)
+					if (comparewithmap
+					    (prev_tim, tim,
+					     prev_tim->pixels[min_y+y][min_x+x],
+					     tim->pixels[y][x], 0)) {
+						gdImageSetPixel (tim, x, y,
+								 transparent);
+						break;
+					}
+		}
+		if (prev_pim)
+			gdImageDestroy (prev_pim);
+	}
+	BitsPerPixel = colorstobpp(tim->colorsTotal);
+	/* All set, let's do it. */
+	GIFAnimEncode(
+		out, tim->sx, tim->sy, LeftOfs, TopOfs, interlace, transparent,
+		Delay, Disposal, BitsPerPixel,
+		LocalCM ? tim->red : 0, tim->green, tim->blue, tim);
+ fail_end:
+	if (pim) {
+		/* Destroy palette based temporary image. */
+		gdImageDestroy(	pim);
+	}
+}
+
+BGD_DECLARE(void) gdImageGifAnimEnd(FILE *outFile)
+{
+#if 1
+  putc (';', outFile);
+#else
+  gdIOCtx *out = gdNewFileCtx (outFile);
+  gdImageGifAnimEndCtx (out);
+  out->gd_free (out);
+#endif
+}
+
+BGD_DECLARE(void *) gdImageGifAnimEndPtr (int *size)
+{
+  char *rv = (char *) gdMalloc (1);
+  *rv = ';';
+  *size = 1;
+  return (void *)rv;
+}
+
+BGD_DECLARE(void) gdImageGifAnimEndCtx(gdIOCtx *out)
+{
+	/*
+	 * Write the GIF file terminator
+	 */
+	gdPutC( ';', out );
 }
 
 static int
@@ -404,6 +722,122 @@ GIFEncode(gdIOCtxPtr fp, int GWidth, int GHeight, int GInterlace, int Background
          * Write the GIF file terminator
          */
         gdPutC( ';', fp );
+}
+
+static void
+GIFAnimEncode(gdIOCtxPtr fp, int IWidth, int IHeight, int LeftOfs, int TopOfs, int GInterlace, int Transparent, int Delay, int Disposal, int BitsPerPixel, int *Red, int *Green, int *Blue, gdImagePtr im)
+{
+	int B;
+        int ColorMapSize;
+        int InitCodeSize;
+        int i;
+	GifCtx ctx;
+        ctx.Interlace = GInterlace;
+	ctx.in_count = 1;
+	memset(&ctx, 0, sizeof(ctx));
+        ColorMapSize = 1 << BitsPerPixel;
+
+	if (LeftOfs < 0) LeftOfs = 0;
+	if (TopOfs < 0) TopOfs = 0;
+	if (Delay < 0) Delay = 100;
+	if (Disposal < 0) Disposal = 1;
+
+	ctx.Width = IWidth;
+        ctx.Height = IHeight;
+
+        /*
+         * Calculate number of bits we are expecting
+         */
+        ctx.CountDown = (long)ctx.Width * (long)ctx.Height;
+
+        /*
+         * Indicate which pass we are on (if interlace)
+         */
+        ctx.Pass = 0;
+
+        /*
+         * The initial code size
+         */
+        if( BitsPerPixel <= 1 )
+                InitCodeSize = 2;
+        else
+                InitCodeSize = BitsPerPixel;
+
+        /*
+         * Set up the current x and y position
+         */
+        ctx.curx = ctx.cury = 0;
+
+	/*
+	 * Write out extension for image animation and looping
+	 */
+	gdPutC( '!', fp );
+	gdPutC( 0xf9, fp );
+	gdPutC( 4, fp );
+	gdPutC( (Transparent >= 0 ? 1 : 0)
+		| (Disposal << 2), fp );
+	gdPutC( (unsigned char)(Delay & 255), fp );
+	gdPutC( (unsigned char)((Delay >> 8) & 255), fp );
+	gdPutC( (unsigned char) Transparent, fp );
+	gdPutC( 0, fp );
+
+	/*
+	 * Write an Image separator
+	 */
+	gdPutC( ',', fp );
+
+        /*
+         * Write out the Image header
+         */
+        gifPutWord( LeftOfs, fp );
+        gifPutWord( TopOfs, fp );
+        gifPutWord( ctx.Width, fp );
+        gifPutWord( ctx.Height, fp );
+
+        /*
+         * Indicate that there is a local colour map
+         */
+        B = (Red && Green && Blue) ? 0x80 : 0;
+
+        /*
+         * OR in the interlacing
+         */
+        B |= ctx.Interlace ? 0x40 : 0;
+
+        /*
+         * OR in the Bits per Pixel
+         */
+        B |= (Red && Green && Blue) ? (BitsPerPixel - 1) : 0;
+
+        /*
+         * Write it out
+         */
+        gdPutC( B, fp );
+
+	/*
+	 * Write out the Local Colour Map
+	 */
+	if (Red && Green && Blue)
+		for( i=0; i<ColorMapSize; ++i ) {
+			gdPutC( Red[i], fp );
+			gdPutC( Green[i], fp );
+			gdPutC( Blue[i], fp );
+		}
+
+        /*
+         * Write out the initial code size
+         */
+        gdPutC( InitCodeSize, fp );
+
+        /*
+         * Go and actually compress the data
+         */
+        compress( InitCodeSize+1, fp, im, &ctx );
+
+        /*
+         * Write out a Zero-length packet (to end the series)
+         */
+        gdPutC( 0, fp );
 }
 
 /***************************************************************************

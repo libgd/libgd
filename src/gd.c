@@ -65,7 +65,7 @@ extern int gdSinT[];
 
 static void gdImageBrushApply (gdImagePtr im, int x, int y);
 static void gdImageTileApply (gdImagePtr im, int x, int y);
-int gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
+BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 
 BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 {
@@ -575,7 +575,8 @@ BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
     {
       for (y = 0; y < (to->sy); y++)
 	{
-	  p = gdImageGetPixel (to, x, y);
+          /* Optimization: no gdImageGetPixel */
+	  p = to->pixels[y][x];
 	  if (xlate[p] == -1)
 	    {
 	      /* This ought to use HWB, but we don't have an alpha-aware
@@ -587,7 +588,8 @@ BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
 	      /*      p,  to->red[p], to->green[p], to->blue[p], to->alpha[p], */
 	      /*      xlate[p], from->red[xlate[p]], from->green[xlate[p]], from->blue[xlate[p]], from->alpha[xlate[p]]); */
 	    };
-	  gdImageSetPixel (to, x, y, xlate[p]);
+          /* Optimization: no gdImageSetPixel */
+	  to->pixels[y][x] = xlate[p];
 	};
     };
 
@@ -924,8 +926,7 @@ BGD_DECLARE(int) gdImageGetPixel (gdImagePtr im, int x, int y)
     }
 }
 
-int
-gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
+BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
 {
   int p = gdImageGetPixel (im, x, y);
   if (!im->trueColor)
@@ -2063,10 +2064,14 @@ BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, 
   int *sty;
   /* We only need to use floating point to determine the correct
      stretch vector for one line's worth. */
-  double accum;
+  if (overflow2(sizeof (int), srcW)) {
+    return;
+  }
+  if (overflow2(sizeof (int), srcH)) {
+    return;
+  }
   stx = (int *) gdMalloc (sizeof (int) * srcW);
   sty = (int *) gdMalloc (sizeof (int) * srcH);
-  accum = 0;
   /* Fixed by Mao Morimoto 2.0.16 */
   for (i = 0; (i < srcW); i++)
     {
@@ -2519,6 +2524,18 @@ fail:
 
 BGD_DECLARE(void) gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 {
+  if (!n)
+    {
+      return;
+    }
+
+
+  gdImageLine (im, p->x, p->y, p[n - 1].x, p[n - 1].y, c);
+  gdImageOpenPolygon (im, p, n, c);
+}
+
+BGD_DECLARE(void) gdImageOpenPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
+{
   int i;
   int lx, ly;
   if (!n)
@@ -2529,7 +2546,6 @@ BGD_DECLARE(void) gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 
   lx = p->x;
   ly = p->y;
-  gdImageLine (im, lx, ly, p[n - 1].x, p[n - 1].y, c);
   for (i = 1; (i < n); i++)
     {
       p++;
@@ -2547,8 +2563,10 @@ BGD_DECLARE(void) gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 /* That could help to adjust intersections  to produce a nice */
 /* interior_extrema. */
 
+#if 0
 static void horizontalLine(gdImagePtr im, int minx, int maxx, int y,
 	int fill_color);
+#endif
 
 BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 {
@@ -2570,6 +2588,9 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
 
   if (!im->polyAllocated)
     {
+      if (overflow2(sizeof (int), n)) {
+        return;
+      }
       im->polyInts = (int *) gdMalloc (sizeof (int) * n);
       im->polyAllocated = n;
     }
@@ -2611,7 +2632,7 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
 /*1.4           int interLast = 0; */
 /*              int dirLast = 0; */
 /*              int interFirst = 1; */
-      int yshift = 0;
+/* 2.0.26+      int yshift = 0; */
       if (c == gdAntiAliased) {
         fill_color = im->AA_color;
       } else {
@@ -2683,7 +2704,10 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
 	{
           int minx = im->polyInts[i];
           int maxx = im->polyInts[i + 1];
-          horizontalLine(im, minx, maxx, y, fill_color);
+          /* 2.0.29: back to gdImageLine to prevent segfaults when
+            performing a pattern fill */
+          gdImageLine (im, im->polyInts[i], y, im->polyInts[i + 1], y,
+            fill_color);
 	}
     }
   /* If we are drawing this AA, then redraw the border with AA lines. */
@@ -2693,6 +2717,7 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
   } 
 }
 
+#if 0
 static void horizontalLine(gdImagePtr im, int minx, int maxx, int y,
 	int fill_color)
 {
@@ -2715,8 +2740,9 @@ static void horizontalLine(gdImagePtr im, int minx, int maxx, int y,
     }
   }
 }
+#endif
 
-inline static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t);
+static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t);
 
 BGD_DECLARE(void) gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels)
 {
@@ -2724,6 +2750,9 @@ BGD_DECLARE(void) gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels)
     {
       gdFree (im->style);
     }
+  if (overflow2(sizeof (int), noOfPixels)) {
+    return;
+  }   	
   im->style = (int *) gdMalloc (sizeof (int) * noOfPixels);
   memcpy (im->style, style, sizeof (int) * noOfPixels);
   im->styleLength = noOfPixels;
@@ -2884,25 +2913,54 @@ BGD_DECLARE(int) gdImageCompare (gdImagePtr im1, gdImagePtr im2)
   return cmpStatus;
 }
 
+
+/* Thanks to Frank Warmerdam for this superior implementation
+	of gdAlphaBlend(), which merges alpha in the
+	destination color much better. */
+
 BGD_DECLARE(int) gdAlphaBlend (int dst, int src)
 {
-  /* 2.0.12: TBB: alpha in the destination should be a 
-     component of the result. Thanks to Frank Warmerdam for
-     pointing out the issue. */
-  return ((((gdTrueColorGetAlpha (src) *
-	     gdTrueColorGetAlpha (dst)) / gdAlphaMax) << 24) +
-	  ((((gdAlphaTransparent - gdTrueColorGetAlpha (src)) *
-	     gdTrueColorGetRed (src) / gdAlphaMax) +
-	    (gdTrueColorGetAlpha (src) *
-	     gdTrueColorGetRed (dst)) / gdAlphaMax) << 16) +
-	  ((((gdAlphaTransparent - gdTrueColorGetAlpha (src)) *
-	     gdTrueColorGetGreen (src) / gdAlphaMax) +
-	    (gdTrueColorGetAlpha (src) *
-	     gdTrueColorGetGreen (dst)) / gdAlphaMax) << 8) +
-	  (((gdAlphaTransparent - gdTrueColorGetAlpha (src)) *
-	    gdTrueColorGetBlue (src) / gdAlphaMax) +
-	   (gdTrueColorGetAlpha (src) *
-	    gdTrueColorGetBlue (dst)) / gdAlphaMax));
+    int src_alpha = gdTrueColorGetAlpha(src);
+    int dst_alpha, alpha, red, green, blue;
+    int src_weight, dst_weight, tot_weight;
+
+/* -------------------------------------------------------------------- */
+/*      Simple cases we want to handle fast.                            */
+/* -------------------------------------------------------------------- */
+    if( src_alpha == gdAlphaOpaque )
+        return src;
+
+    dst_alpha = gdTrueColorGetAlpha(dst);
+    if( src_alpha == gdAlphaTransparent )
+        return dst;
+    if( dst_alpha == gdAlphaTransparent )
+        return src;
+
+/* -------------------------------------------------------------------- */
+/*      What will the source and destination alphas be?  Note that      */
+/*      the destination weighting is substantially reduced as the       */
+/*      overlay becomes quite opaque.                                   */
+/* -------------------------------------------------------------------- */
+    src_weight = gdAlphaTransparent - src_alpha;
+    dst_weight = (gdAlphaTransparent - dst_alpha) * src_alpha / gdAlphaMax;
+    tot_weight = src_weight + dst_weight;
+    
+/* -------------------------------------------------------------------- */
+/*      What red, green and blue result values will we use?             */
+/* -------------------------------------------------------------------- */
+    alpha = src_alpha * dst_alpha / gdAlphaMax;
+
+    red = (gdTrueColorGetRed(src) * src_weight
+           + gdTrueColorGetRed(dst) * dst_weight) / tot_weight;
+    green = (gdTrueColorGetGreen(src) * src_weight
+           + gdTrueColorGetGreen(dst) * dst_weight) / tot_weight;
+    blue = (gdTrueColorGetBlue(src) * src_weight
+           + gdTrueColorGetBlue(dst) * dst_weight) / tot_weight;
+
+/* -------------------------------------------------------------------- */
+/*      Return merged result.                                           */
+/* -------------------------------------------------------------------- */
+    return ((alpha << 24) + (red << 16) + (green << 8) + blue);
 }
 
 BGD_DECLARE(void) gdImageAlphaBlending (gdImagePtr im, int alphaBlendingArg)
@@ -2969,7 +3027,7 @@ BGD_DECLARE(void) gdImageGetClip (gdImagePtr im, int *x1P, int *y1P, int *x2P, i
 #define BLEND_COLOR(a, nc, c, cc) \
 nc = (cc) + (((((c) - (cc)) * (a)) + ((((c) - (cc)) * (a)) >> 8) + 0x80) >> 8);
 
-inline static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t)
+static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t)
 {
 	int dr,dg,db,p,r,g,b;
 	p = gdImageGetPixel(im,x,y);

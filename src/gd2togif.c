@@ -34,5 +34,7 @@ int main(int argc, char **argv)
 	gdImageGif(im, out);
 	fclose(out);
 	gdImageDestroy(im);
+
+	return 0;
 }
 
