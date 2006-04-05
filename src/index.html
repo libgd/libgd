@@ -1,12 +1,12 @@
 <html>
 <head>
-<TITLE>gd 2.0.7</TITLE>
+<TITLE>gd 2.0.8</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<h1>This is gd 2.0.7.</h1>
+<h1>This is gd 2.0.8.</h1>
 <p>
-<H2>gd 2.0.7</H2>
+<H2>gd 2.0.8</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -22,7 +22,7 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.7 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.8 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -35,7 +35,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-gd 2.0.7 <strong>requires</strong> that the following libraries 
+gd 2.0.8 <strong>requires</strong> that the following libraries 
 also be installed, in order to produce the related image formats:
 <p>
 libpng (see the <a href="http://www.libpng.org/pub/png/">libpng home page</a>), if you want PNG
@@ -65,7 +65,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.7">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.8">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -164,7 +164,7 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.7.
+with 2.0.8.
 <h4>Perl</h4>
 gd can also be used from Perl, courtesy of
 Lincoln Stein's
@@ -190,6 +190,16 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<P>
+<A NAME="whatsnew2.0.8"><H3>What's new in version 2.0.8?</H3></A>
+<P>
+<ul>
+<li>Version 2.0.8 contains additional fixes to the 'configure' script,
+allowing a clean out-of-the-box build on more systems.
+<li>Version 2.0.8 adds the new 
+<a href="#gdImageCopyRotated">gdImageCopyRotated</a> function, which
+can rotate any rectangular image region by an arbitrary number of degrees.
 </ul>
 <P>
 <A NAME="whatsnew2.0.7"><H3>What's new in version 2.0.7?</H3></A>
@@ -718,8 +728,8 @@ saving of alpha channel information to the file instead.
 <P>
 <A NAME="getgd"><H3>How do I get gd?</H3></A>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.7.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.7.zip">.ZIP File (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.8.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.8.zip">.ZIP File (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -730,10 +740,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.7".
+Unpacking the archive will produce a directory called "gd-2.0.8".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.7 directory and type:
+<code>cd</code> to the 2.0.8 directory and type:
 <p>
 <code>./configure</code>
 <P>
@@ -911,7 +921,7 @@ filling functions</A></LI>
 <LI><A HREF="#query">Query functions (not color-related)</A></LI>
 <LI><A HREF="#fonts">Font and text-handling functions</A></LI>
 <LI><A HREF="#colors">Color handling functions</A></LI>
-<LI><A HREF="#copying">Copying and resizing functions</A></LI>
+<LI><A HREF="#copying">Copying, resizing and rotating functions</A></LI>
 <LI><A HREF="#misc">Miscellaneous Functions</A></LI>
 <LI><A HREF="#constants">Constants</A></LI>
 </UL>
@@ -3128,7 +3138,7 @@ for both palette and truecolor images.
 int gdImageColorBlue(gdImagePtr im, int c)</A>
 <STRONG>(MACRO)</STRONG>
 <DD>
-gdImageColorBlue is a macro which returns the green portion
+gdImageColorBlue is a macro which returns the blue portion
 of the specified color in the image.  This macro works
 for both palette and truecolor images.
 <DT><A NAME="gdImageGetInterlaced">
@@ -3446,6 +3456,64 @@ im_out = <A HREF="#gdImageCreate">gdImageCreateTrueColor</A>(im_in->sx / 4, im_i
 gdImageCopyResampled(im_out, im_in, 0, 0, 0, 0,
 	im_out->sx, im_out->sy,
 	im_in->sx, im_in->sy);	
+out = fopen("large.png", "wb");
+<A HREF="#gdImagePng">gdImagePng</A>(im_out, out);
+fclose(out);
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im_in);
+<A HREF="#gdImageDestroy">gdImageDestroy</A>(im_out);
+</PRE>
+<DT><A NAME="gdImageCopyRotated">void gdImageCopyRotated(gdImagePtr dst, gdImagePtr src, double dstX, double dstY, int srcX, int srcY, int srcW, int srcH, int angle)
+<STRONG> (FUNCTION)</STRONG>
+<DD>
+gdImageCopyRotated is used to copy a rectangular portion of one image to
+another image, or to another region of the same image. <strong>The srcX and
+srcY coordinates specify the upper left corner of the source area; however,
+the dstX and dstY coordinates specify the CENTER of the destination area.
+</strong> This important distinction is made because the rotated rectangle may
+may or may not be parallel to the X and Y axes. The destination coordinates
+may be floating point, as the center of the desired destination area may lie
+at the center of a pixel (0.5 pixels) rather than its upper left corner.
+The angle specified is an integer number of degrees, between 0 and 360,
+with 0 degrees causing no change, and counterclockwise rotation as 
+the angle increases.
+<P>
+When you copy a region from one location in an image to another
+location in the same image, gdImageCopyRotated will perform as expected
+unless the regions overlap, in which case the result is
+unpredictable. If this presents a problem, create a scratch image
+in which to keep intermediate results.
+<P>
+<strong>Important note on copying between images:</strong> since 
+palette-based images do not necessarily have the same color tables, pixels 
+are not simply set to the same color index values to copy them. 
+If the destination image is not a truecolor image, 
+<a href="#gdImageColorResolveAlpha">gdImageColorResolveAlpha</a> is 
+used to choose the destination pixel.
+<PRE>
+... Inside a function ...
+<A HREF="#gdImagePtr">gdImagePtr</A> im_in;
+<A HREF="#gdImagePtr">gdImagePtr</A> im_out;
+int x, y;
+int a;
+FILE *in;
+FILE *out;
+/* Load a small png to rotate in the larger one */
+in = fopen("small.png", "rb");
+im_in = <A HREF="#gdImageCreateFromPng">gdImageCreateFromPng</A>(in);
+fclose(in);
+/* Make the output image four times as large on both axes */
+im_out = <A HREF="#gdImageCreate">gdImageCreate</A>(im_in->sx * 4, im_in->sy * 4);
+/* Now rotate the smaller image */
+for (a = 0; (a < 360); a += 45) {
+        double x = cos(a * .0174532925) * gdImageSX(im_out) / 2;
+        double y = -sin(a * .0174532925) * gdImageSY(im_out) / 2;
+	gdImageCopyRotated(im_out, im_in, 
+                gdImageSX(im_out) / 2 + x, 
+                gdImageSY(im_out) / 2 + y, 
+		0, 0,
+                gdImageSX(im_in),
+                gdImageSY(im_in),
+                a); 
 out = fopen("large.png", "wb");
 <A HREF="#gdImagePng">gdImagePng</A>(im_out, out);
 fclose(out);
@@ -3778,6 +3846,7 @@ purchase gd support at the hourly rate above.
 <A HREF="#gdImageCopyMergeGray">gdImageMergeGray</A> |
 <A HREF="#gdImageCopyResized">gdImageCopyResized</A> |
 <A HREF="#gdImageCopyResampled">gdImageCopyResampled</A> |
+<A HREF="#gdImageCopyRotated">gdImageCopyRotated</A> |
 <A HREF="#gdImageCreate">gdImageCreate</A> |
 <A HREF="#gdImageCreate">gdImageCreatePalette</A> |
 <A HREF="#gdImageCreate">gdImageCreateTrueColor</A> |

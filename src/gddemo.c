@@ -31,14 +31,13 @@ main (void)
   /* Points for polygon */
   gdPoint points[3];
 
-  /* Create output image, 256 by 256 pixels, true color. */
-  im_out = gdImageCreateTrueColor (256, 256);
-
+  /* Create output image, in true color. */ 
+  im_out = gdImageCreateTrueColor (256 + 384, 384);
   /* 2.0.2: first color allocated would automatically be background in a 
     palette based image. Since this is a truecolor image, with an 
     automatic background of black, we must fill it explicitly. */
   white = gdImageColorAllocate (im_out, 255, 255, 255);
-  gdImageFilledRectangle(im_out, 0, 0, 256, 256, white);
+  gdImageFilledRectangle(im_out, 0, 0, gdImageSX(im_out), gdImageSY(im_out), white);
 
   /* Set transparent color. */
   gdImageColorTransparent (im_out, white);
@@ -55,11 +54,20 @@ main (void)
     }
   else
     {
+      int a;
       im_in = gdImageCreateFromPng (in);
       fclose (in);
       /* Now copy, and magnify as we do so */
       gdImageCopyResized (im_out, im_in,
 			  32, 32, 0, 0, 192, 192, 255, 255);
+      /* Now display variously rotated space shuttles in a circle of our own */
+      for (a = 0; (a < 360); a += 45) {
+        int cx = cos(a * .0174532925) * 128;
+        int cy = - sin(a * .0174532925) * 128;
+        gdImageCopyRotated(im_out, im_in, 
+          256 + 192 + cx, 192 + cy, 
+          0, 0, gdImageSX(im_in), gdImageSY(im_in), a);
+      }
     }
   red = gdImageColorAllocate (im_out, 255, 0, 0);
   green = gdImageColorAllocate (im_out, 0, 255, 0);

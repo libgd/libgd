@@ -4,7 +4,7 @@
 #
 AC_PREREQ(2.54)
 
-AC_INIT([GD], [2.0.7], [gd@boutell.com])
+AC_INIT([GD], [2.0.8], [gd@boutell.com])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 
@@ -69,11 +69,12 @@ if test "$withval" != no; then
   if test -n "$LIBPNG_CONFIG"; then
     libpng_CPPFLAGS=`libpng-config --cflags`
     # should be --ldopts, but it's currently broken
-    libpng_LDFLAGS=`libpng-config --ldflags | sed 's/ *-l.*$//'`
+    libpng_LDFLAGS=`libpng-config --ldflags | sed 's/-l[[^ ]][[^ ]]*//g'`
   elif test -d "$withval"; then
     libpng_CPPFLAGS="-I$withval/include"
     libpng_LDFLAGS="-L$withval/lib"
   fi
+
   _cppflags="$CPPFLAGS"
   _ldflags="$LDFLAGS"
   CPPFLAGS="$CPPFLAGS $libpng_CPPFLAGS"
@@ -112,18 +113,18 @@ if test "$withval" != no; then
   if test -n "$FREETYPE_CONFIG"; then
     if test -n "$FREETYPE_DIR"; then
       libft_INCLUDES="`$FREETYPE_CONFIG --cflags` -I$FREETYPE_DIR/include"
-      libft_LDFLAGS=`$FREETYPE_CONFIG --libs`
+      libft_LDFLAGS=`$FREETYPE_CONFIG --libs |sed 's/-l[[^ ]][[^ ]]*//g'`
     else
       libft_INCLUDES=`$FREETYPE_CONFIG --cflags`
-      libft_LDFLAGS=`$FREETYPE_CONFIG --libs`
+      libft_LDFLAGS=`$FREETYPE_CONFIG --libs |sed 's/-l[[^ ]][[^ ]]*//g'`
     fi
   else
     if test -n "$FREETYPE_DIR"; then
       libft_INCLUDES="-I$FREETYPE_DIR/include/freetype2 -I$FREETYPE_DIR/include"
-      libft_LDFLAGS="-L$FREETYPE_DIR/lib -lfreetype"
+      libft_LDFLAGS="-L$FREETYPE_DIR/lib"
     else
       libft_INCLUDES=""
-      libft_LDFLAGS="-lfreetype"
+      libft_LDFLAGS=""
     fi
   fi
 

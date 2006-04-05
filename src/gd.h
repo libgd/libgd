@@ -438,6 +438,20 @@ void gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int 
 	substituted automatically. */
 void gdImageCopyResampled(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH);
 
+/* gd 2.0.8: gdImageCopyRotated is added. Source
+        is a rectangle, with its upper left corner at
+        srcX and srcY. Destination is the *center* of
+        the rotated copy. Angle is in degrees, same as
+        gdImageArc. Floating point destination center
+        coordinates allow accurate rotation of
+        objects of odd-numbered width or height. */
+void gdImageCopyRotated (gdImagePtr dst,
+                      gdImagePtr src,
+                      double dstX, double dstY,
+                      int srcX, int srcY,
+                      int srcWidth, int srcHeight,
+                      int angle);
+
 void gdImageSetBrush(gdImagePtr im, gdImagePtr brush);
 void gdImageSetTile(gdImagePtr im, gdImagePtr tile);
 void gdImageSetStyle(gdImagePtr im, int *style, int noOfPixels);
