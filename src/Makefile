@@ -22,11 +22,12 @@ CFLAGS=-O
 
 #If you don't have FreeType and/or Xpm fully installed, uncomment this
 #(default).
-LIBS=-lm -lz -lpng -lgd 
+LIBS=-lm -lgd -lpng -lz
+
 #If you do have FreeType and/or Xpm fully installed, uncomment a 
 #variation of this and comment out the line above. Note that
 #Xpm requires X11. See also CFLAGS above.
-#LIBS=-lm -lttf -lz -lpng -lXpm -lX11 -lgd 
+#LIBS=-lm -lgd -lpng -lz -lttf -lXpm -lX11
 
 #Typical install locations for freetype, zlib, xpm and libpng header files.
 #If yours are somewhere else, change this. 
