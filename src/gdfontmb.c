@@ -3866,7 +3866,7 @@ gdFont gdFontMediumBoldRep = {
 
 BGD_EXPORT_DATA_IMPL gdFontPtr gdFontMediumBold = &gdFontMediumBoldRep;
 
-gdFontPtr
+BGD_DECLARE(gdFontPtr)
 gdFontGetMediumBold (void)
 {
   return gdFontMediumBold;
