@@ -941,7 +941,7 @@ gdImageAntiAliasedApply (gdImagePtr im, int px, int py)
   unsigned char opacity;
   /* 2.0.13: bounds check! AA_opacity is just as capable of
     overflowing as the main pixel array. Arne Jorgensen. */
-  if (!gdImageBoundsSafeMacro (im, x, y))
+  if (!gdImageBoundsSafeMacro (im, px, py))
   {
     return;
   }

@@ -561,10 +561,9 @@ fill_input_buffer (j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
   /* 2.0.12: signed size. Thanks to Geert Jansen */
-  ssize_t nbytes = 0;
-
-  /* ssize_t got; */
-  /* char *s; */
+  /* 2.0.14: some platforms (mingw-msys) don't have ssize_t. Call 
+    an int an int. */
+  int nbytes = 0;
   memset (src->buffer, 0, INPUT_BUF_SIZE);
 
   while (nbytes < INPUT_BUF_SIZE)
