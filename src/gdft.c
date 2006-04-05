@@ -1301,14 +1301,14 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
       total_max.y += 64;
  
       /* rotate bounding rectangle, scale and round to int pixels, and translate */
-      brect[0] = x + (total_min.x * cos_a + total_min.y * sin_a + 32)/64;
-      brect[1] = y - (total_min.x * sin_a - total_min.y * cos_a + 32)/64;
-      brect[2] = x + (total_max.x * cos_a + total_min.y * sin_a + 32)/64;
-      brect[3] = y - (total_max.x * sin_a - total_min.y * cos_a + 32)/64;
-      brect[4] = x + (total_max.x * cos_a + total_max.y * sin_a + 32)/64;
-      brect[5] = y - (total_max.x * sin_a - total_max.y * cos_a + 32)/64;
-      brect[6] = x + (total_min.x * cos_a + total_max.y * sin_a + 32)/64;
-      brect[7] = y - (total_min.x * sin_a - total_max.y * cos_a + 32)/64;
+      brect[0] = x + (total_min.x * cos_a + total_max.y * sin_a + 32)/64;
+      brect[1] = y - (total_min.x * sin_a - total_max.y * cos_a + 32)/64;
+      brect[2] = x + (total_max.x * cos_a + total_max.y * sin_a + 32)/64;
+      brect[3] = y - (total_max.x * sin_a - total_max.y * cos_a + 32)/64;
+      brect[4] = x + (total_max.x * cos_a + total_min.y * sin_a + 32)/64;
+      brect[5] = y - (total_max.x * sin_a - total_min.y * cos_a + 32)/64;
+      brect[6] = x + (total_min.x * cos_a + total_min.y * sin_a + 32)/64;
+      brect[7] = y - (total_min.x * sin_a - total_min.y * cos_a + 32)/64;
     }
 
   if (tmpstr)

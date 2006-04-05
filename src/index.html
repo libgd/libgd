@@ -1,10 +1,10 @@
 <!-- REMEMBER TO EDIT index.html.source -->
 <head>
-<TITLE>gd 2.0.26</TITLE>
+<TITLE>gd 2.0.27</TITLE>
 </head>
 <body bgcolor="#FFFFFF">
 <!-- BANNER HERE -->
-<H2>gd 2.0.26</H2>
+<H2>gd 2.0.27</H2>
 <H3>A graphics library for fast image creation</H3>
 <H3>Follow this link to the
 <A HREF="http://www.boutell.com/gd/">latest version
@@ -20,7 +20,7 @@ To ensure that your
 new installation overwrites the old.
 <p>
 <strong>ABOUT GD AND GIF:</strong>
-gd 2.0.26 creates PNG, JPEG and WBMP images, not GIF images. This is a 
+gd 2.0.27 creates PNG, JPEG and WBMP images, not GIF images. This is a 
 good thing.  PNG is a more compact format, and full compression is
 available.  JPEG works best with photographic images, and is still
 more compatible with the major Web browsers than even PNG is. WBMP is
@@ -33,7 +33,7 @@ solution is to move to legally unencumbered, well-compressed,
 modern image formats such as PNG and JPEG as soon as possible.
 
 <p>
-When building from soruce, gd 2.0.26 <strong>requires</strong> that the 
+When building from soruce, gd 2.0.27 <strong>requires</strong> that the 
 following libraries also be installed, in order to produce the related 
 image formats. The win32 binary release (bgd) already contains the
 appropriate libraries.
@@ -66,7 +66,7 @@ information. Thank you!
 <H3>Table of Contents</H3>
 <UL>
 <LI><A HREF="#notice">Credits and license terms</A>
-<LI><A HREF="#whatsnew2.0.26">What's new in version "XYZ" of GD?</A>
+<LI><A HREF="#whatsnew2.0.27">What's new in version "XYZ" of GD?</A>
 <LI><A HREF="#whatis">What is gd?</A>
 <LI><A HREF="#gdother">What if I want to use another programming language?</A>
 <LI><A HREF="#required">What else do I need to use gd?</A>
@@ -165,10 +165,10 @@ and so forth.
 <A NAME="gdother"><H3>What if I want to use another programming
 language?</h3></A>
 Not all of these tools are necessarily up to date and fully compatible
-with 2.0.26.
+with 2.0.27.
 <h4>PHP</h4>
 A variant of gd 2.x is included in PHP 4.3.0. It is also possible
-to patch PHP 4.2.3 for use with gd 2.0.26; see the
+to patch PHP 4.2.3 for use with gd 2.0.27; see the
 <a href="http://www.boutell.com/gd/">gd home page</a> for a link to
 that information. It would be a Good Idea to merge all of the things
 that are better in mainstream gd and all of the things that are
@@ -202,6 +202,18 @@ invoke the interpreter.
 <p>
 <ul>
 <li><a href="http://martin.gleeson.com/fly/">fly</a>, by Martin Gleeson
+</ul>
+<P>
+<A NAME="whatsnew2.0.27"><H3>What's new in version 2.0.27?</H3></A>
+<P>
+<ul>
+<li>In gd 2.0.26, there was potential for out of bounds fills, and therefore
+crashes, in the horizontalLine function used by gdImageFilledPolygon.
+Fixed by John Ellson.
+<li>The order of the points returned in the bounding rectangle by
+gdImageStringFT was incorrect in version 2.0.26. This has been
+corrected in version 2.0.27. Thanks to Riccardo Cohen for pointing
+this out, and to John Ellson for verifying and fixing it.
 </ul>
 <P>
 <A NAME="whatsnew2.0.26"><H3>What's new in version 2.0.26?</H3></A>
@@ -1140,8 +1152,8 @@ saving of alpha channel information to the file instead.
 </ul>
 <h4>Source Code:</h4>
 <ul>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.26.tar.gz">Gzipped Tar File (Unix)</a>
-<li><a href="http://www.boutell.com/gd/http/gd-2.0.26.zip">.ZIP File of SOURCE CODE (Windows)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.27.tar.gz">Gzipped Tar File (Unix)</a>
+<li><a href="http://www.boutell.com/gd/http/gd-2.0.27.zip">.ZIP File of SOURCE CODE (Windows)</a>
 </ul>
 <P>
 <A NAME="buildgd"><H3>How do I build gd?</H3></A>
@@ -1163,10 +1175,10 @@ downloaded. If you are not familiar with <code>tar</code> and
 consult with an experienced user of your system. Sorry, we cannot
 answer questions about basic Internet skills.
 <p>
-Unpacking the archive will produce a directory called "gd-2.0.26".
+Unpacking the archive will produce a directory called "gd-2.0.27".
 <p>
 <h4>For Unix</h4>
-<code>cd</code> to the 2.0.26 directory and type:
+<code>cd</code> to the 2.0.27 directory and type:
 <p>
 <code>./configure</code>
 <P>
