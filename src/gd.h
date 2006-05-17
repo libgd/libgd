@@ -5,6 +5,13 @@ extern "C" {
 #ifndef GD_H
 #define GD_H 1
 
+#define GD_MAJOR_VERSION 2
+#define GD_MINOR_VERSION 0
+#define GD_RELEASE_VERSION 33
+#define GD_EXTRA_VERSION ""
+#define GD_VERSION_STRING "2.0.33"
+
+
 /* Do the DLL dance: dllexport when building the DLL,
 	dllimport when importing from it, nothing when
 	not on Silly Silly Windows (tm Aardman Productions). */
