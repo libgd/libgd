@@ -127,6 +127,18 @@ $(DLLNAME): $(OBJS) libgd.dll.res
 		libgd.dll.res \
 		$(LIBS)
 		
+dist: all
+	-rmdir /s /q distro
+	mkdir distro
+	mkdir distro\bin
+	copy *.exe distro\bin
+	copy *.dll distro\bin
+	mkdir distro\include
+	copy ..\*.h distro\include
+	mkdir distro\lib
+	copy *.lib distro\lib
+	copy ..\COPYING distro\COPYING.TXT
 
 clean:
-	del /q *.obj *.dll *.lib *.ilk *.pdb *.exp *.exe *.png
+	-del /q *.obj *.dll *.lib *.ilk *.pdb *.exp *.exe *.png
+	-rmdir /s /q distro
