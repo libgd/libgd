@@ -17,8 +17,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 //Version
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,0,33,0
- PRODUCTVERSION 2,0,33,0
+ FILEVERSION GD_MAJOR_VERSION,GD_MINOR_VERSION,GD_RELEASE_VERSION,0
+ PRODUCTVERSION GD_MAJOR_VERSION,GD_MINOR_VERSION,GD_RELEASE_VERSION,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS VS_FF_DEBUG
@@ -34,17 +34,17 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "Thaks to Tom Boutell" "\0"
-            VALUE "CompanyName", "The PHP Group\0"
+            VALUE "CompanyName", "LIBGD Development Team\0"
             VALUE "FileDescription", "LIBGD" "\0"
-            VALUE "FileVersion", "2.0.33\0"
-            VALUE "InternalName", "libgd.dll" "\0"
-            VALUE "LegalCopyright", "Copyright © 1997-2006 The PHP Group\0"
-            VALUE "LegalTrademarks", "PHP\0"
-            VALUE "OriginalFilename", "libgd.dll" "\0"
+            VALUE "FileVersion", GD_VERSION_STRING "\0"
+            VALUE "InternalName", "bgd.dll" "\0"
+            VALUE "LegalCopyright", "Copyright © 1997-2006 Thomas Boutell and contributors, see COPYING\0" 
+            VALUE "LegalTrademarks", "Thomas Boutell and contributors\0"
+            VALUE "OriginalFilename", "bgd.dll" "\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "LIBGD dynamic link library" "\0"
             VALUE "SpecialBuild", "win32" "\0"
-			VALUE "URL", "http://www.php.net"
+			VALUE "URL", "http://www.libgd.org/"
         END
     END
     BLOCK "VarFileInfo"
