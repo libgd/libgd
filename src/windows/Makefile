@@ -94,10 +94,10 @@ EXE_OBJS= \
   testtr.obj
   
   
+all: $(DLLNAME) $(STATICLIB) tests
+
 $(EXE_OBJS:.obj=.exe): $*.obj $(DLLNAME)
 	link /out:$*.exe $*.obj libgd.lib
-
-all: $(DLLNAME) $(STATICLIB) tests
 
 tests: $(EXE_OBJS:.obj=.exe)
 
