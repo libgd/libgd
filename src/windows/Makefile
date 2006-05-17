@@ -52,7 +52,6 @@ STATICLIB=bgd_a.lib
 !endif
 
 OBJS= \
-	gd2copypal.obj \
   gd.obj \
 	gdcache.obj \
   gdfontg.obj \
@@ -88,11 +87,21 @@ EXE_OBJS= \
   fontconfigtest.obj \
   fontsizetest.obj \
   fontwheeltest.obj \
+	gd2copypal.obj \
+	gd2togif.obj \
+	gd2topng.obj \
+	gdcmpgif.obj \
+	gdparttopng.obj \
+	gdtopng.obj \
+	giftogd2.obj \
   gdtest.obj \
   gdtestft.obj \
   gifanimtest.obj \
+  pngtogd.obj \
+  pngtogd2.obj \
   testac.obj \
-  testtr.obj
+  testtr.obj \
+  webpng.obj
   
   
 all: $(DLLNAME) $(STATICLIB) tests
