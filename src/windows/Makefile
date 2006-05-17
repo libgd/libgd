@@ -42,13 +42,14 @@ LIBS=$(LIBS) msvcrt.lib
 CPPFLAGS=$(CFLAGS)
 
 !if "$(DLLNAME)" == ""
-DLLNAME=libgd.dll
+DLLNAME=bgd.dll
 !endif
+
+DYNAMICLIB=$(DLLNAME:.dll=.lib)
 
 !if "$(STATICLIB)" == ""
-STATICLIB=libgd_a.lib
+STATICLIB=bgd_a.lib
 !endif
-
 
 OBJS= \
 	gd2copypal.obj \
@@ -97,7 +98,7 @@ EXE_OBJS= \
 all: $(DLLNAME) $(STATICLIB) tests
 
 $(EXE_OBJS:.obj=.exe): $*.obj $(DLLNAME)
-	link /out:$*.exe $*.obj libgd.lib
+	link /out:$*.exe $*.obj $(DYNAMICLIB)
 
 tests: $(EXE_OBJS:.obj=.exe)
 
