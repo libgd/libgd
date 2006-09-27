@@ -1,0 +1,4 @@
+GDBUGS                                                                     NEWS
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+#1, Initialize values this also provides a 5x speedup in the imagefttext.phpt 
+    test, because without this patch it never got cache hits (Nuno Lopes)
