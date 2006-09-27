@@ -71,6 +71,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 {
   int i;
   gdImagePtr im;
+
+  if (overflow2(sizeof (unsigned char *), sy)) {
+	gdFree(im);
+	return NULL;
+  }
+
   im = (gdImage *) gdMalloc (sizeof (gdImage));
   memset (im, 0, sizeof (gdImage));
   /* Row-major ever since gd 1.3 */
@@ -1658,136 +1664,213 @@ BGD_DECLARE(void) gdImageFillToBorder (gdImagePtr im, int x, int y, int border, 
     }
 }
 
-BGD_DECLARE(void) gdImageFill (gdImagePtr im, int x, int y, int color)
+/*
+ * set the pixel at (x,y) and its 4-connected neighbors
+ * with the same pixel value to the new pixel value nc (new color).
+ * A 4-connected neighbor:  pixel above, below, left, or right of a pixel.
+ * ideas from comp.graphics discussions.
+ * For tiled fill, the use of a flag buffer is mandatory. As the tile image can
+ * contain the same color as the color to fill. To do not bloat normal filling
+ * code I added a 2nd private function.
+ */
+
+static int gdImageTileGet (gdImagePtr im, int x, int y)
 {
-  int lastBorder;
-  int old;
-  int leftLimit, rightLimit;
-  int i;
-  old = gdImageGetPixel (im, x, y);
-  if (color == gdTiled)
-    {
-      /* Tile fill -- got to watch out! */
-      int p, tileColor;
-      int srcx, srcy;
-      if (!im->tile)
-	{
-	  return;
+	int srcx, srcy;
+	int tileColor,p;
+	if (!im->tile) {
+		return -1;
 	}
-      /* Refuse to flood-fill with a transparent pattern --
-         I can't do it without allocating another image */
-      if (gdImageGetTransparent (im->tile) != (-1))
-	{
-	  return;
-	}
-      srcx = x % gdImageSX (im->tile);
-      srcy = y % gdImageSY (im->tile);
-      p = gdImageGetPixel (im->tile, srcx, srcy);
-      if (im->trueColor)
-	{
-	  tileColor = p;
-	}
-      else
-	{
-	  if (im->tile->trueColor)
-	    {
-	      tileColor = gdImageColorResolveAlpha (im,
-						    gdTrueColorGetRed (p),
-						    gdTrueColorGetGreen (p),
-						    gdTrueColorGetBlue (p),
-						    gdTrueColorGetAlpha (p));
-	    }
-	  else
-	    {
-	      tileColor = im->tileColorMap[p];
-	    }
-	}
-      if (old == tileColor)
-	{
-	  /* Nothing to be done */
-	  return;
-	}
-    }
-  else
-    {
-      if (old == color)
-	{
-	  /* Nothing to be done */
-	  return;
-	}
-    }
-  /* Seek left */
-  leftLimit = (-1);
-  for (i = x; (i >= 0); i--)
-    {
-      if (gdImageGetPixel (im, i, y) != old)
-	{
-	  break;
-	}
-      gdImageSetPixel (im, i, y, color);
-      leftLimit = i;
-    }
-  if (leftLimit == (-1))
-    {
-      return;
-    }
-  /* Seek right */
-  rightLimit = x;
-  for (i = (x + 1); (i < im->sx); i++)
-    {
-      if (gdImageGetPixel (im, i, y) != old)
-	{
-	  break;
-	}
-      gdImageSetPixel (im, i, y, color);
-      rightLimit = i;
-    }
-  /* Look at lines above and below and start paints */
-  /* Above */
-  if (y > 0)
-    {
-      lastBorder = 1;
-      for (i = leftLimit; (i <= rightLimit); i++)
-	{
-	  int c;
-	  c = gdImageGetPixel (im, i, y - 1);
-	  if (lastBorder)
-	    {
-	      if (c == old)
-		{
-		  gdImageFill (im, i, y - 1, color);
-		  lastBorder = 0;
+	srcx = x % gdImageSX(im->tile);
+	srcy = y % gdImageSY(im->tile);
+	p = gdImageGetPixel(im->tile, srcx, srcy);
+
+	if (im->trueColor) {
+		if (im->tile->trueColor) {
+			tileColor = p;
+		} else {
+			tileColor = gdTrueColorAlpha( gdImageRed(im->tile,p), gdImageGreen(im->tile,p), gdImageBlue (im->tile,p), gdImageAlpha (im->tile,p));
 		}
-	    }
-	  else if (c != old)
-	    {
-	      lastBorder = 1;
-	    }
-	}
-    }
-  /* Below */
-  if (y < ((im->sy) - 1))
-    {
-      lastBorder = 1;
-      for (i = leftLimit; (i <= rightLimit); i++)
-	{
-	  int c;
-	  c = gdImageGetPixel (im, i, y + 1);
-	  if (lastBorder)
-	    {
-	      if (c == old)
-		{
-		  gdImageFill (im, i, y + 1, color);
-		  lastBorder = 0;
+	} else {
+		if (im->tile->trueColor) {
+			tileColor = gdImageColorResolveAlpha(im, gdTrueColorGetRed (p), gdTrueColorGetGreen (p), gdTrueColorGetBlue (p), gdTrueColorGetAlpha (p));
+		} else {
+			tileColor = p;
+			tileColor = gdImageColorResolveAlpha(im, gdImageRed (im->tile,p), gdImageGreen (im->tile,p), gdImageBlue (im->tile,p), gdImageAlpha (im->tile,p));
 		}
-	    }
-	  else if (c != old)
-	    {
-	      lastBorder = 1;
-	    }
 	}
-    }
+	return tileColor;
 }
+
+
+
+/* horizontal segment of scan line y */
+struct seg {int y, xl, xr, dy;};
+
+/* max depth of stack */
+#define FILL_MAX 1200000
+#define FILL_PUSH(Y, XL, XR, DY) \
+    if (sp<stack+FILL_MAX*10 && Y+(DY)>=0 && Y+(DY)<wy2) \
+    {sp->y = Y; sp->xl = XL; sp->xr = XR; sp->dy = DY; sp++;}
+
+#define FILL_POP(Y, XL, XR, DY) \
+    {sp--; Y = sp->y+(DY = sp->dy); XL = sp->xl; XR = sp->xr;}
+
+void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc);
+BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
+{
+	int l, x1, x2, dy;
+	int oc;   /* old pixel value */
+	int wx2,wy2;
+
+	int alphablending_bak;
+
+	/* stack of filled segments */
+	/* struct seg stack[FILL_MAX],*sp = stack;; */
+	struct seg *stack;
+	struct seg *sp;
+
+	if (!im->trueColor && nc > im->colorsTotal) {
+		return;
+	}
+
+	alphablending_bak = im->alphaBlendingFlag;	
+	im->alphaBlendingFlag = 0;
+	if (nc==gdTiled) {
+		_gdImageFillTiled(im,x,y,nc);
+		im->alphaBlendingFlag = alphablending_bak;
+		return;
+	}
+
+	wx2=im->sx;wy2=im->sy;
+	oc = gdImageGetPixel(im, x, y);
+	if (oc==nc || x<0 || x>wx2 || y<0 || y>wy2) {
+		im->alphaBlendingFlag = alphablending_bak;	
+		return;
+	}
+
+	stack = (struct seg *)gdMalloc(sizeof(struct seg) * ((int)(im->sy*im->sx)/4));
+	sp = stack;
+
+	/* required! */
+	FILL_PUSH(y,x,x,1);
+	/* seed segment (popped 1st) */
+ 	FILL_PUSH(y+1, x, x, -1);
+	while (sp>stack) {
+		FILL_POP(y, x1, x2, dy);
+
+		for (x=x1; x>=0 && gdImageGetPixel(im,x, y)==oc; x--) {
+			gdImageSetPixel(im,x, y, nc);
+		}
+		if (x>=x1) {
+			goto skip;
+		}
+		l = x+1;
+
+                /* leak on left? */
+		if (l<x1) {
+			FILL_PUSH(y, l, x1-1, -dy);
+		}
+		x = x1+1;
+		do {
+			for (; x<=wx2 && gdImageGetPixel(im,x, y)==oc; x++) {
+				gdImageSetPixel(im, x, y, nc);
+			}
+			FILL_PUSH(y, l, x-1, dy);
+			/* leak on right? */
+			if (x>x2+1) {
+				FILL_PUSH(y, x2+1, x-1, -dy);
+			}
+skip:			for (x++; x<=x2 && (gdImageGetPixel(im, x, y)!=oc); x++);
+
+			l = x;
+		} while (x<=x2);
+	}
+	gdFree(stack);
+	im->alphaBlendingFlag = alphablending_bak;	
+}
+
+void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
+{
+	int i,l, x1, x2, dy;
+	int oc;   /* old pixel value */
+	int tiled;
+	int wx2,wy2;
+	/* stack of filled segments */
+	struct seg *stack;
+	struct seg *sp;
+
+	int **pts;
+	if(!im->tile){
+		return;
+	}
+
+	wx2=im->sx;wy2=im->sy;
+	tiled = nc==gdTiled;
+
+	nc =  gdImageTileGet(im,x,y);
+	pts = (int **) gdCalloc(sizeof(int *) * im->sy, sizeof(int));
+
+	for (i=0; i<im->sy;i++) {
+		pts[i] = (int *) gdCalloc(im->sx, sizeof(int));
+	}
+
+	stack = (struct seg *)gdMalloc(sizeof(struct seg) * ((int)(im->sy*im->sx)/4));
+	sp = stack;
+
+	oc = gdImageGetPixel(im, x, y);
+
+	/* required! */
+	FILL_PUSH(y,x,x,1);
+	/* seed segment (popped 1st) */
+ 	FILL_PUSH(y+1, x, x, -1);
+	while (sp>stack) {
+		FILL_POP(y, x1, x2, dy);
+		for (x=x1; x>=0 && (!pts[y][x] && gdImageGetPixel(im,x,y)==oc); x--) {
+			if (pts[y][x]){
+				/* we should never be here */
+				break;
+			}
+			nc = gdImageTileGet(im,x,y);
+			pts[y][x]=1;
+			gdImageSetPixel(im,x, y, nc);
+		}
+		if (x>=x1) {
+			goto skip;
+		}
+		l = x+1;
+
+		/* leak on left? */
+		if (l<x1) {
+			FILL_PUSH(y, l, x1-1, -dy);
+		}
+		x = x1+1;
+		do {
+			for (; x<=wx2 && (!pts[y][x] && gdImageGetPixel(im,x, y)==oc) ; x++) {
+				if (pts[y][x]){
+					/* we should never be here */
+					break;
+				}
+				nc = gdImageTileGet(im,x,y);
+				pts[y][x]=1;
+				gdImageSetPixel(im, x, y, nc);
+			}
+			FILL_PUSH(y, l, x-1, dy);
+			/* leak on right? */
+			if (x>x2+1) {
+				FILL_PUSH(y, x2+1, x-1, -dy);
+			}
+skip:			for (x++; x<=x2 && (pts[y][x] || gdImageGetPixel(im,x, y)!=oc); x++);
+			l = x;
+		} while (x<=x2);
+	}
+	for (i=0; i<im->sy;i++) {
+		gdFree(pts[i]);
+	}
+	gdFree(pts);
+	gdFree(stack);
+}
+
 
 BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
@@ -2600,6 +2683,9 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
 	{
 	  im->polyAllocated *= 2;
 	}
+      if (overflow2(sizeof (int), im->polyAllocated)) {
+        return;
+      }
       im->polyInts = (int *) gdRealloc (im->polyInts,
 					sizeof (int) * im->polyAllocated);
     }
