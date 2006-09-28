@@ -2,5 +2,7 @@ GDBUGS                                                                     NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 #1, Initialize values this also provides a 5x speedup in the imagefttext.phpt 
     test, because without this patch it never got cache hits (Nuno Lopes)
-#2, imagefill, multiple segfaults with complex patterns, transparent colors
+#2, gdImageFill, multiple segfaults with complex patterns, transparent colors
   or invalid color index
+#3, gdImageRectangle draws corners twice (affects rectangles with alpha 
+    channel)
