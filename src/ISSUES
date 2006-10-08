@@ -6,7 +6,6 @@ GDBUGS                                                                     NEWS
   or invalid color index
 #3, gdImageRectangle draws corners twice (affects rectangles with alpha 
     channel)
-#4, to come
-
+#4, TrueColor transparent color not used  with GIF output (palette)
 #5, Numerous security fixes in GIF loader. When the gif palette is broken, 
     the image size is invalid or NULL block at unexpected postions.
