@@ -9,3 +9,5 @@ GDBUGS                                                                     NEWS
 #4, TrueColor transparent color not used  with GIF output (palette)
 #5, Numerous security fixes in GIF loader. When the gif palette is broken, 
     the image size is invalid or NULL block at unexpected postions.
+#6, Add test for gdImagePng and transparent color
+#7, gdIimageCopy doen't use the alpha channel (palette to truecolor copy)
