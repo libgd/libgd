@@ -17,6 +17,8 @@ int main()
 	gdImageAlphaBlending(dst_tc, 0);
 
 	gdImageCopy(dst_tc, src, 0,0, 0,0, gdImageSX(src), gdImageSY(src));
+
+	fp = fopen("a.png", "wb");
  	gdImagePng(dst_tc, fp);
 	fclose(fp);
 
