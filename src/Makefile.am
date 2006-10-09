@@ -21,7 +21,7 @@ libgd_la_SOURCES = gd.c gdfx.c gd_security.c gd_gd.c gd_gd2.c gd_io.c gd_io_dp.c
 
 libgd_la_LDFLAGS = -version-info 2:0:0
 
-LDADD = ./libgd.la
+LDADD = ./libgd.la $(LIBICONV)
 
 dist-zip: distdir
 	zip -qr $(distdir).zip $(distdir)
