@@ -11,3 +11,18 @@ GDBUGS                                                                     NEWS
     the image size is invalid or NULL block at unexpected postions.
 #6, Add test for gdImagePng and transparent color
 #7, gdIimageCopy doen't use the alpha channel (palette to truecolor copy)
+#9, Update configure/build scripts (Lars Hecking, 
+	lhecking[at]users.sourceforge.net)
+	AUTO* tools and libtool
+	Regenerate all files with latest version of tools (automake 1.9.6,
+    libtool 1.5.22)
+
+	LIBICONV handling
+	Makefile.am, configure.ac: Add $(LIBICONV) to LDADD and remove manual
+    LIBICONV handling from configure.ac
+
+	PTHREAD handling
+	configure.ac: Update to current version of acx_pthread.m4
+
+	RANLIB handling
+	configure.ac: AC_PROG_RANLIB is obsolete, now handled by AC_PROG_LIBTOO
