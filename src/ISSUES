@@ -27,3 +27,5 @@ GDBUGS                                                                     NEWS
 	RANLIB handling
 	configure.ac: AC_PROG_RANLIB is obsolete, now handled by AC_PROG_LIBTOO
 #10, gdImageFilledEllipse does not respect transparency
+#11, gdImageCreateFromPng* possible crash with empty file
+     (Thanks Antony Dovgal to have catched it)
