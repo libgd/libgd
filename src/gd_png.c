@@ -1,3 +1,4 @@
+/* $Id$ */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -142,7 +143,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 
   /* first do a quick check that the file really is a PNG image; could
    * have used slightly more general png_sig_cmp() function instead */
-  gdGetBuf (sig, 8, infile);
+  if (gdGetBuf (sig, 8, infile) < 8) {
+	return NULL;
+  }
+
   if (!png_check_sig (sig, 8))
     return NULL;		/* bad signature */
 
