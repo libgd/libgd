@@ -71,7 +71,7 @@ while test $# -gt 0; do
 	echo @LDFLAGS@
 	;;
     --libs)
-	echo @LIBS@
+	echo @LIBS@ @LIBICONV@
 	;;
     --cflags|--includes)
 	echo -I@includedir@
@@ -84,7 +84,7 @@ while test $# -gt 0; do
 	echo "includedir: $includedir"
 	echo "cflags:     -I@includedir@"
 	echo "ldflags:    @LDFLAGS@"
-	echo "libs:       @LIBS@"
+	echo "libs:       @LIBS@ @LIBICONV@"
 	echo "libdir:     $libdir"
 	echo "features:   @FEATURES@"
 	;;
