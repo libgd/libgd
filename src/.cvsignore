@@ -1,7 +1,13 @@
 .deps
+.libs
 Makefile
+Makefile.in
+aclocal.m4
 config.h
+config.hin
+config.hin~
 config.log
 config.status
+configure
 libtool
 stamp-h1
