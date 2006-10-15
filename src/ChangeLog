@@ -1,0 +1,513 @@
+2006-10-12 13:38  lhecking
+
+	* Makefile.in, aclocal.m4, configure, config/Makefile.in,
+	  test/Makefile.in: Remove generated files.
+
+2006-10-12 13:36  lhecking
+
+	* bootstrap.sh: Bootstrap script to generate auto* files.
+
+2006-10-12 13:30  lhecking
+
+	* .cvsignore, config/.cvsignore, test/.cvsignore: Update after
+	  removal of generated files.
+
+2006-10-11 11:46  lhecking
+
+	* config/gdlib-config.in: Add @LIBICONV@ wherever @LIBS@ is used.
+
+2006-10-11 02:03  pajoye
+
+	* ISSUES: - #11 entry
+
+2006-10-11 02:02  pajoye
+
+	* gd_png.c, tests/bug00011.c, tests/emptyfile: - #11,
+	  gdImageCreateFromPng* possible crash with empty file
+	  Thanks to Antony Dovgal to have catched this bug
+
+2006-10-10 02:40  pajoye
+
+	* ISSUES, gd.c, tests/bug00010.c: - #10, gdImageFilledEllipse does
+	  not respect transparency (rewriten)
+
+2006-10-09 16:22  pajoye
+
+	* ISSUES, Makefile.am, Makefile.in, aclocal.m4, config.hin,
+	  configure, configure.ac, config/Makefile.in, config/config.guess,
+	  config/config.sub, config/ltmain.sh, test/Makefile.in: - #9,
+	  configure/build script updates auto* lib* (Lars Hecking)
+
+2006-10-09 04:38  pajoye
+
+	* ISSUES, tests/bug00008.c: - port another test for gdImageFill
+
+2006-10-09 04:37  pajoye
+
+	* tests/bug00007.c: - temp fp
+
+2006-10-08 23:43  pajoye
+
+	* ISSUES, gd.c, tests/bug00007.c: - #7, imagecopy doen't copy the
+	  alpha channel, palette to truecolor copy
+
+2006-10-08 18:42  pajoye
+
+	* ISSUES, gd_gif_out.c, tests/bug00004.c: - #4, TrueColor
+	  transparency with GIF palette output
+
+2006-09-28 17:22  pajoye
+
+	* ISSUES, gd_gif_in.c, tests/bug00005.c, tests/bug00005_1.gif,
+	  tests/bug00005_2.gif, tests/bug00005_3.gif: - GIF security fixes
+
+2006-09-28 10:16  pajoye
+
+	* ISSUES, gd.c, tests/bug00003.c: - #3, gdImageRectanle draws the
+	  corners twice
+
+2006-09-28 02:32  pajoye
+
+	* tests/bug00002_2.c: - #2, test with gdTile
+
+2006-09-28 02:01  pajoye
+
+	* ISSUES: - #2 entry
+
+2006-09-28 01:58  pajoye
+
+	* gd.c, tests/bug00002_1.c:
+	  - #2, imagefill segfaults:  - when call with invalid index color
+	  - segfaults or invalid result when used with complex patterns or
+	  transparent color  (more tests to come)
+
+2006-09-28 01:07  pajoye
+
+	* tests/bug00001.c: - test case for bug #1
+
+2006-09-28 01:05  pajoye
+
+	* gdft.c: - #1, Initialize values this also provides a 5x speedup
+	  in the imagefttext.phpt   test, because without this patch it
+	  never got cache hits (Nuno Lopes)
+
+2006-09-28 01:04  pajoye
+
+	* ISSUES: - initial commit   temp file to store issue fixes
+	  history. Will be replaced by the issue   tracker asap
+
+2006-09-28 00:50  pajoye
+
+	* aclocal.m4, configure: - Sync the generated version	TODO:
+	  remove all generated files from CVS and add an autogen.sh script
+
+2006-05-17 17:53  edink
+
+	* windows/: .cvsignore, Makefile: Added nmake dist target
+
+2006-05-17 17:27  edink
+
+	* gdcmpgif.c: Fixed windows build
+
+2006-05-17 17:26  edink
+
+	* windows/Makefile: Compile more helper tools
+
+2006-05-17 15:05  edink
+
+	* windows/: Makefile, libgd.rc: Use bgd.dll name, and update
+	  copyright info
+
+2006-05-17 15:04  edink
+
+	* gd.h: Added version info
+
+2006-05-17 14:39  edink
+
+	* windows/Makefile: "all" target should be the first
+
+2006-05-17 14:34  edink
+
+	* windows/: .cvsignore, Makefile, libgd.rc: Added MSVC++ build file
+	  for use with nmake.exe
+
+2006-05-17 11:15  edink
+
+	* windows/.cvsignore: Added windows build dir
+
+2006-05-17 10:43  edink
+
+	* .cvsignore, config/.cvsignore, test/.cvsignore: Ignore build
+	  files
+
+2006-04-14 02:15  pajoye
+
+	* tests/README: - as reminder, initila commit
+
+2006-04-05 22:46  pajoye
+
+	* gd_jpeg.c, wbmp.c: - URLs
+
+2006-04-05 22:40  pajoye
+
+	* configure.ac: - use the devel list in there
+
+2006-04-05 22:14  pajoye
+
+	* AUTHORS, ChangeLog, HISTORY, Makefile, Makefile.nt, NEWS, README,
+	  alphachanneltest.html, antialiased.png, arc, bdf-howto.txt,
+	  bresenham_ellipse, bwtest.png, config.guess, config.sub,
+	  configure.in, demoout.gif, demoout.png, errs, gd-1.2.lsm, gd.1,
+	  gd.ver, gd2tolzw.c, gd_arc_f.c, gd_arc_f_buggy.c, gd_lzw_out.c,
+	  gdfonta.c, gdfonta.h, gdft.c.swp, gdparttogif.c, gdprog,
+	  gdprog.1, gdtestttf.c, gdtogif.c, gdttf.c, giftogd.c, giftolzw.c,
+	  io.c, io.h, io_dp.c, io_file.c, io_ss.c, libgd.so.2.0.0,
+	  ltconfig, ltmain.sh, mathmake.c, mtables.c, readme.txt,
+	  so_locations, tc, webgif.c: - remove files not present in 2.0.33
+
+2006-04-05 19:21  pajoye
+
+	* alphachanneltest.html: - testing loginfo/cvsspam
+
+2006-04-05 19:12  pajoye
+
+	* index.html: - update URLs and MLs
+
+2006-04-05 17:56  pierre
+
+	* config/Makefile.am, config/Makefile.in, config/config.guess,
+	  config/config.rpath, config/config.sub, config/depcomp,
+	  config/gdlib-config.in, config/install-sh, config/ltmain.sh,
+	  config/missing, config/mkinstalldirs, test/Makefile.am,
+	  test/Makefile.in, test/gdtest.gd2, test/gdtest.png,
+	  test/gdtest_200_300_150_100.png, test/gdtest_merge.png,
+	  test/gdtest_wbmp_to_png.png: - sync with 2.0.33
+
+2006-04-05 17:55  pierre
+
+	* circletexttest.c, configure, configure.ac, fontconfigtest.c,
+	  gd2togif.c, gd2topng.c, gd_gif_out.c, gdcmpgif.c, gdft.c,
+	  gdkanji.c, gifanimtest.c, index.html: - sync to 2.0.33
+
+2006-04-05 17:55  pierre
+
+	* configure, configure.ac, gd.c, gd_gif_in.c, gdft.c, gdtestft.c,
+	  index.html, testtr.c: - sync to 2.0.32
+
+2006-04-05 17:55  pierre
+
+	* Makefile.in, aclocal.m4, configure, configure.ac, gdft.c,
+	  index.html: - sync to 2.0.31
+
+2006-04-05 17:54  pierre
+
+	* configure, configure.ac, gd.h, gdft.c, index.html: - sync to
+	  2.0.30
+
+2006-04-05 17:54  pierre
+
+	* Makefile.am, Makefile.in, circletexttest.c, config.hin,
+	  configure, configure.ac, entities.h, entities.tcl, err.out,
+	  fontconfigtest.c, fontsizetest.c, fontwheeltest.c, gd.c, gd.h,
+	  gd2togif.c, gd_gd2.c, gd_gif_out.c, gd_io.h, gd_io_dp.c,
+	  gd_jpeg.c, gd_png.c, gd_security.c, gd_topal.c, gd_wbmp.c,
+	  gdcache.h, gdcmpgif.c, gdfontg.h, gdfontl.h, gdfontmb.h,
+	  gdfonts.h, gdfontt.h, gdft.c, gdfx.c, gdfx.h, gdhelpers.c,
+	  gdhelpers.h, gdxpm.c, gifanimtest.c, giftogd2.c, index.html,
+	  jisx0208.h, makefile.sample, testtr.c, wbmp.c, wbmp.h: - sync to
+	  2.0.29
+
+2006-04-05 17:53  pierre
+
+	* Makefile.am, Makefile.in, configure, configure.ac, gd.h,
+	  gd_gif_in.c, gd_gif_out.c, gd_topal.c, gddemo.c, index.html,
+	  testtr.c: - sync to 2.0.28
+
+2006-04-05 17:53  pierre
+
+	* configure, configure.ac, gd.c, gdft.c, index.html: - sync to
+	  2.0.27
+
+2006-04-05 17:53  pierre
+
+	* Makefile.am, Makefile.in, config.hin, configure, configure.ac,
+	  entities.h, entities.html, entities.tcl, fontwheeltest.c, gd.c,
+	  gd.h, gddemo.c, gdft.c, index.html, testtr.c: - sync to 2.0.26
+
+2006-04-05 17:52  pierre
+
+	* configure, configure.ac, gd.h, gdfontg.h, gdfontl.h, gdfontmb.h,
+	  gdfonts.h, gdfontt.h, index.html: - sync to 2.0.25
+
+2006-04-05 17:52  pierre
+
+	* annotate.c, configure, configure.ac, fontsizetest.c, gd.c, gd.h,
+	  gd2time.c, gd_gd.c, gd_gd2.c, gd_io_dp.c, gd_io_file.c,
+	  gd_io_ss.c, gd_jpeg.c, gd_png.c, gd_ss.c, gd_topal.c, gd_wbmp.c,
+	  gdcache.h, gdfontg.c, gdfontg.h, gdfontl.c, gdfontl.h,
+	  gdfontmb.c, gdfontmb.h, gdfonts.c, gdfonts.h, gdfontt.c,
+	  gdfontt.h, gdft.c, gdfx.c, gdfx.h, gdhelpers.c, gdhelpers.h,
+	  gdkanji.c, gdxpm.c, index.html, webpng.c: - sync to 2.0.24
+
+2006-04-05 17:51  pierre
+
+	* circletexttest.c, configure, configure.ac, gd.h, gd_gd2.c,
+	  gd_io_dp.c, gd_jpeg.c, gd_png.c, gd_topal.c, gddemo.c, gdfontg.c,
+	  gdfontl.c, gdfontmb.c, gdfonts.c, gdfontt.c, gdft.c, gdfx.c,
+	  gdtest.c, index.html: - sync to 2.0.23
+
+2006-04-05 17:51  pierre
+
+	* Makefile.in, circletexttest.c, configure, configure.ac, gd.c,
+	  gd_jpeg.c, gddemo.c, gdfontg.c, gdfontg.h, gdfontl.c, gdfontl.h,
+	  gdfontmb.c, gdfontmb.h, gdfonts.c, gdfonts.h, gdfontt.c,
+	  gdfontt.h, index.html: - sync to 2.0.22
+
+2006-04-05 17:50  pierre
+
+	* configure, configure.ac, gd.c, gd.h, gd_gd.c, gd_gd2.c,
+	  gd_io_dp.c, gd_jpeg.c, gd_png.c, gd_wbmp.c, gdft.c, gdtest.c,
+	  index.html: - sync to 2.0.21
+
+2006-04-05 17:50  pierre
+
+	* configure, configure.ac, gd.h, gdfontg.c, gdfontl.c, gdfontmb.c,
+	  gdfonts.c, gdfontt.c, gdft.c, index.html: - sync to 2.0.20
+
+2006-04-05 17:50  pierre
+
+	* configure, configure.ac, gd.h, gdfontg.h, gdfontl.h, gdfonts.h,
+	  index.html: - sync to 2.0.19
+
+2006-04-05 17:50  pierre
+
+	* circletexttest.c, configure, configure.ac, gd.h, gd_io.h,
+	  gdcache.h, gdfontg.c, gdfontg.h, gdfontl.c, gdfontl.h,
+	  gdfontmb.c, gdfontmb.h, gdfonts.c, gdfonts.h, gdfontt.c,
+	  gdfontt.h, gdft.c, gdfx.h, gdhelpers.h, index.html: - sync to
+	  2.0.18
+
+2006-04-05 17:49  pierre
+
+	* Makefile.am, Makefile.in, circletexttest.c, config.hin,
+	  configure, configure.ac, gd.c, gd.h, gd_gd2.c, gd_io.c,
+	  gd_io_file.c, gd_jpeg.c, gd_png.c, gd_topal.c, gdft.c, gdfx.c,
+	  gdfx.h, gdhelpers.h, index.html: - sync to 2.0.17
+
+2006-04-05 17:49  pierre
+
+	* configure, configure.ac, gd.c, index.html: - sync to 2.0.15
+
+2006-04-05 17:48  pierre
+
+	* configure, configure.ac, gd.c, gd_jpeg.c, index.html: - sync to
+	  2.0.14
+
+2006-04-05 17:48  pierre
+
+	* configure, configure.ac, gd.c, gd_gd2.c, gd_png.c, gdft.c,
+	  index.html: - sync to 2.0.13
+
+2006-04-05 17:47  pierre
+
+	* Makefile.am, Makefile.in, annotate.c, config.hin, configure,
+	  configure.ac, gd.c, gd.h, gd2topng.c, gd_gd.c, gd_gd2.c, gd_io.h,
+	  gd_jpeg.c, gd_png.c, gd_topal.c, gdcache.c, gdcache.h, gddemo.c,
+	  gdft.c, gdkanji.c, gdtest.c, gdtestft.c, gdtopng.c, index.html: -
+	  sync to 2.0.12
+
+2006-04-05 17:47  pierre
+
+	* configure, configure.ac, gd.h, gd2topng.c, gd_gd2.c, gd_io.h,
+	  gd_io_file.c, index.html, pngtogd2.c: - sync to 2.0.11
+
+2006-04-05 17:47  pierre
+
+	* Makefile.in, aclocal.m4, configure, configure.ac, depcomp, gd.c,
+	  gd.h, gd_jpeg.c, gddemo.c, gdft.c, gdtestft.c, index.html,
+	  install-sh, missing, mkinstalldirs: - sync to 2.0.10
+
+2006-04-05 17:46  pierre
+
+	* Makefile.in, aclocal.m4, annotate.c, config.hin, configure,
+	  configure.ac, fontsizetest.c, fontwheeltest.c, gd.c, gd.h,
+	  gd2time.c, gd2topng.c, gd_gd.c, gd_gd2.c, gd_io.h, gd_io_dp.c,
+	  gd_io_file.c, gd_io_ss.c, gd_jpeg.c, gd_png.c, gd_ss.c,
+	  gd_topal.c, gd_wbmp.c, gdcache.c, gdcache.h, gddemo.c, gdfontg.c,
+	  gdfontg.h, gdfontl.c, gdfontl.h, gdfontmb.c, gdfontmb.h,
+	  gdfonts.c, gdfonts.h, gdfontt.c, gdfontt.h, gdft.c, gdhelpers.h,
+	  gdkanji.c, gdparttopng.c, gdtables.c, gdtest.c, gdtestft.c,
+	  gdtopng.c, index.html, jisx0208.h, mathmake.c, pngtogd.c,
+	  pngtogd2.c, testac.c, wbmp.c, wbmp.h, webpng.c: - sync to 2.0.9
+
+2006-04-05 17:46  pierre
+
+	* aclocal.m4, configure, configure.ac, gd.c, gd.h, gddemo.c,
+	  index.html: - sync to 2.0.8
+
+2006-04-05 17:45  pierre
+
+	* configure, configure.ac, index.html: - sync to 2.0.7
+
+2006-04-05 17:45  pierre
+
+	* README.TXT, configure, configure.ac, gd.c, gd2copypal.c,
+	  gd2topng.c, gdft.c, gdtestft.c, gdxpm.c, index.html, mathmake.c,
+	  pngtogd.c, testac.c: - sync to 2.0.6
+
+2006-04-05 17:44  pierre
+
+	* COPYING, INSTALL, Makefile.am, Makefile.in, README.TXT,
+	  aclocal.m4, annotate.c, config.hin, configure, configure.ac,
+	  configure.pl, fontsizetest.c, fontwheeltest.c, gd.c, gd.h,
+	  gd2copypal.c, gd2time.c, gd2topng.c, gd_gd.c, gd_gd2.c, gd_io.c,
+	  gd_io_dp.c, gd_io_file.c, gd_io_ss.c, gd_jpeg.c, gd_png.c,
+	  gd_ss.c, gd_topal.c, gd_wbmp.c, gdcache.c, gdcache.h, gddemo.c,
+	  gdft.c, gdhelpers.c, gdkanji.c, gdparttopng.c, gdtest.c,
+	  gdtestft.c, gdtopng.c, gdxpm.c, index.html, mathmake.c,
+	  pngtogd.c, pngtogd2.c, testac.c, wbmp.c, webpng.c: - sync to
+	  2.0.5
+
+2006-04-05 17:44  pierre
+
+	* configure, err.out, fontsizetest.c, fontwheeltest.c, gd.c, gd.h,
+	  gd2topng.c, gd_gd.c, gd_gd2.c, gd_io.h, gd_io_dp.c, gd_io_file.c,
+	  gd_io_ss.c, gd_jpeg.c, gd_png.c, gd_ss.c, gd_topal.c, gd_wbmp.c,
+	  gdcache.h, gddemo.c, gdft.c, gdhelpers.c, gdhelpers.h, gdkanji.c,
+	  gdparttopng.c, gdtest.c, gdtestft.c, gdtopng.c, gdxpm.c,
+	  index.html, makefile.sample, testac.c, wbmp.c, webpng.c: - sync
+	  to 2.0.4
+
+2006-04-05 17:43  pierre
+
+	* annotate.c, configure, gd.c, gd_gd2.c, index.html: - sync to
+	  2.0.3
+
+2006-04-05 17:43  pierre
+
+	* README.TXT, configure, gd.c, gd.h, gddemo.c, gdft.c, gdtestft.c,
+	  index.html, makefile.sample: - sync to 2.0.2
+
+2006-04-05 17:42  pierre
+
+	* Makefile, arc, bresenham_ellipse, gd.c, gd.h, gd2copypal.c,
+	  gd2time.c, gd2topng.c, gd_arc_f_buggy.c, gd_gd.c, gd_gd2.c,
+	  gd_io.c, gd_io_dp.c, gd_io_file.c, gd_io_ss.c, gd_jpeg.c,
+	  gd_png.c, gd_ss.c, gd_topal.c, gd_wbmp.c, gdcache.c, gddemo.c,
+	  gdfontg.c, gdfontl.c, gdfontmb.c, gdfonts.c, gdfontt.c, gdft.c,
+	  gdhelpers.c, gdkanji.c, gdparttopng.c, gdtables.c, gdtest.c,
+	  gdtestft.c, gdtopng.c, gdxpm.c, index.html, libgd.so.2.0.0,
+	  mathmake.c, pngtogd.c, pngtogd2.c, readme.jpn, readme.txt,
+	  testac.c, wbmp.c, webpng.c: - sync to 2.0.1
+
+2006-04-05 17:42  pierre
+
+	* Makefile, Makefile.nt, README-JPEG.TXT, alphachanneltest.html,
+	  antialiased.png, errs, gd.c, gd.h, gd_arc_f.c, gd_gd.c, gd_gd2.c,
+	  gd_jpeg.c, gd_png.c, gd_topal.c, gddemo.c, gdft.c, gdft.c.swp,
+	  gdkanji.c, gdtestft.c, index.html, libgd.so.2.0.0, readme.txt,
+	  tc, testac.c, webpng.c: - sync to 2.0.0
+
+2006-04-05 17:41  pierre
+
+	* Makefile, Makefile.nt, gd.c, gd.h, gd_gd2.c, gd_io.c, gd_io_dp.c,
+	  gd_io_file.c, gd_io_ss.c, gd_jpeg.c, gd_png.c, gd_wbmp.c,
+	  gdcache.c, gdft.c, gdhelpers.c, gdhelpers.h, gdkanji.c,
+	  gdtestft.c, gdtestttf.c, gdttf.c, gdxpm.c, index.html,
+	  readme.txt, wbmp.c, wbmp.h: - sync to 1.8.4
+
+2006-04-05 17:41  pierre
+
+	* Makefile, bwtest.png, gd.c, gd.h, gd_jpeg.c, gd_png.c, gd_wbmp.c,
+	  gdtest.c, index.html, install-item, readme.txt, wbmp.c, wbmp.h: -
+	  sync to 1.8.3
+
+2006-04-05 17:40  pierre
+
+	* Makefile, Makefile.nt, bdftogd, gd_jpeg.c, gdtest.c, index.html,
+	  readme.txt, webpng.c: - sync to 1.8.1
+
+2006-04-05 17:40  pierre
+
+	* Makefile, gd.c, gd.h, gd_jpeg.c, gd_wbmp.c, gdtest.c, index.html,
+	  readme.txt: - sync to 1.8.0
+
+2006-04-05 17:39  pierre
+
+	* Makefile, index.html, readme.txt: - sync to 1.7.3
+
+2006-04-05 17:39  pierre
+
+	* Makefile, gdttf.c, index.html, readme.txt: - sync to 1.7.2
+
+2006-04-05 17:38  pierre
+
+	* ChangeLog, Makefile, gdtestttf.c, index.html, readme.txt: - sync
+	  to 1.7.1
+
+2006-04-05 17:38  pierre
+
+	* ChangeLog, Makefile, bdftogd, demoout.png, gd.c, gd.h, gd_gd2.c,
+	  gd_io_dp.c, gd_io_file.c, gd_io_ss.c, gddemo.c, gdfontg.h,
+	  gdfontl.h, gdfontmb.h, gdfonts.h, gdfontt.h, gdkanji.c,
+	  gdtables.c, gdtestttf.c, gdttf.c, gdxpm.c, index.html,
+	  jisx0208.h, readme.txt: - sync to 1.7.0
+
+2006-04-05 17:37  pierre
+
+	* COPYING, ChangeLog, NEWS, README, configure, configure.in,
+	  gd_png.c, index.html, mkinstalldirs: - sync to 1.6.3
+
+2006-04-05 17:37  pierre
+
+	* AUTHORS, COPYING, ChangeLog, INSTALL, Makefile.am, Makefile.in,
+	  NEWS, README, aclocal.m4, config.guess, config.sub, configure,
+	  configure.in, gd.c, gd.h, gd2copypal.c, gd2time.c, gd2topng.c,
+	  gd_gd.c, gd_gd2.c, gd_io_dp.c, gd_png.c, gdcache.c, gdcache.h,
+	  gdparttopng.c, gdtest.c, gdtestttf.c, gdtopng.c, gdttf.c,
+	  index.html, install-sh, ltconfig, ltmain.sh, missing,
+	  mkinstalldirs, pngtogd.c, pngtogd2.c, webpng.c: - sync to 1.6.2
+
+2006-04-05 17:36  pierre
+
+	* HISTORY, gd.h, gd_png.c, index.html, readme.txt: - sync to 1.6.1
+
+2006-04-05 17:35  pierre
+
+	* HISTORY, Makefile, demoin.png, demoout.png, gd.c, gd.h,
+	  gd2copypal.c, gd2time.c, gd2topng.c, gd_gd.c, gd_gd2.c, gd_io.c,
+	  gd_io.h, gd_io_dp.c, gd_io_file.c, gd_io_ss.c, gd_png.c, gd_ss.c,
+	  gddemo.c, gdparttopng.c, gdtest.c, gdtopng.c, index.html,
+	  pngtogd.c, pngtogd2.c, readme.txt, webpng.c: - sync to 1.6.0
+
+2006-04-05 17:35  pierre
+
+	* HISTORY, Makefile, bdftogd, gd.c, gd.h, gd2copypal.c, gd2time.c,
+	  gd2togif.c, gd2tolzw.c, gd_gd.c, gd_gd2.c, gd_gif_in.c,
+	  gd_gif_out.c, gd_lzw_out.c, gdparttogif.c, gdtest.c, gdtogif.c,
+	  giftogd2.c, giftolzw.c, index.html, io.c, io.h, io_dp.c,
+	  io_file.c, io_ss.c, readme.txt: - sync to 1.5.0
+
+2006-04-05 17:34  pierre
+
+	* Makefile, bdf-howto.txt, bdftogd, gd.c, gd.h, gdfonta.c,
+	  gdfonta.h, index.html, readme.txt: - sync to 1.4.0
+
+2006-04-05 17:33  pierre
+
+	* Makefile, bdftogd, demoin.gif, demoout.gif, gd.c, gd.h, gddemo.c,
+	  gdfontg.c, gdfontg.h, gdfontl.c, gdfontl.h, gdfontmb.c,
+	  gdfontmb.h, gdfonts.c, gdfonts.h, gdfontt.c, gdfontt.h,
+	  giftogd.c, index.html, mathmake.c, mtables.c, readme.txt,
+	  so_locations, webgif.c: - sync to 1.3.0
+
+2006-04-05 17:28  pierre
+
+	* INSTALL, Makefile, README, gd-1.2.lsm, gd.1, gd.ver, gdprog,
+	  gdprog.1: Initial revision
+
+2006-04-05 17:28  pierre
+
+	* INSTALL, Makefile, README, gd-1.2.lsm, gd.1, gd.ver, gdprog,
+	  gdprog.1: initial import
+
