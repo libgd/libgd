@@ -29,3 +29,5 @@ GDBUGS                                                                     NEWS
 #10, gdImageFilledEllipse does not respect transparency
 #11, gdImageCreateFromPng* possible crash with empty file
      (Thanks Antony Dovgal to have catched it)
+#12, gdImageCreateFromPngCrx, initialize the signature buffer not the infile
+     CTX (Takeshi Abe)
