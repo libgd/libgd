@@ -18,8 +18,8 @@ GDBUGS                                                                     NEWS
     libtool 1.5.22)
 
 	LIBICONV handling
-	Makefile.am, configure.ac: Add $(LIBICONV) to LDADD and remove manual
-    LIBICONV handling from configure.ac
+	Makefile.am, configure.ac, config/gdlib-config.in:: Add $(LIBICONV)
+    to LDADD and remove manual LIBICONV handling from configure.ac
 
 	PTHREAD handling
 	configure.ac: Update to current version of acx_pthread.m4
@@ -31,3 +31,4 @@ GDBUGS                                                                     NEWS
      (Thanks Antony Dovgal to have catched it)
 #12, gdImageCreateFromPngCrx, initialize the signature buffer not the infile
      CTX (Takeshi Abe)
+#13, remove generated files from cvs, add bootstrap script
