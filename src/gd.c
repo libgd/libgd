@@ -940,7 +940,7 @@ BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
     {
       return gdTrueColorAlpha (im->red[p], im->green[p], im->blue[p],
 			       (im->transparent == p) ? gdAlphaTransparent :
-			       gdAlphaOpaque);
+			       im->alpha[p]);
     }
   else
     {
