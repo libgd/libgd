@@ -2819,6 +2819,9 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
         return;
       }
       im->polyInts = (int *) gdMalloc (sizeof (int) * n);
+			if (!im->polyInts) {
+				return;
+			}
       im->polyAllocated = n;
     }
   if (im->polyAllocated < n)
@@ -2832,6 +2835,9 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
       }
       im->polyInts = (int *) gdRealloc (im->polyInts,
 					sizeof (int) * im->polyAllocated);
+			if (!im->polyInts) {
+				return;
+			}
     }
   miny = p[0].y;
   maxy = p[0].y;
@@ -2986,6 +2992,9 @@ BGD_DECLARE(void) gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels)
     return;
   }   	
   im->style = (int *) gdMalloc (sizeof (int) * noOfPixels);
+	if (!im->style) {
+		return;
+	}
   memcpy (im->style, style, sizeof (int) * noOfPixels);
   im->styleLength = noOfPixels;
   im->stylePos = 0;
@@ -3262,6 +3271,11 @@ nc = (cc) + (((((c) - (cc)) * (a)) + ((((c) - (cc)) * (a)) >> 8) + 0x80) >> 8);
 static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t)
 {
 	int dr,dg,db,p,r,g,b;
+
+	/* 2.0.34: watch out for out of range calls */
+	if (!gdImageBoundsSafeMacro(im, x, y)) {
+		return;
+	}
 	p = gdImageGetPixel(im,x,y);
         /* TBB: we have to implement the dont_blend stuff to provide
           the full feature set of the old implementation */
