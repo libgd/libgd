@@ -49,3 +49,6 @@ GDBUGS                                                                     NEWS
 #24, Out of range checks in gdImageSetAAPixelColor
 #25, Added sanity checks for possible allocation failures in gdCacheCreate
      and main
+#26, gdFontCacheSetup returns error when gdCacheCreate fails
+#27, Added sanity checks for possible failures in fontFetch and
+     tweenColorFetch

@@ -439,6 +439,10 @@ fontFetch (char **error, void *key)
   *error = NULL;
 
   a = (font_t *) gdMalloc (sizeof (font_t));
+	if (!a) {
+		return NULL;
+	}
+
   a->fontlist = strdup (b->fontlist);
   a->flags = b->flags;
   a->library = b->library;
@@ -538,6 +542,10 @@ tweenColorFetch (char **error, void *key)
   gdImagePtr im;
 
   a = (tweencolor_t *) gdMalloc (sizeof (tweencolor_t));
+	if (!a) {
+		return NULL;
+	}
+
   pixel = a->pixel = b->pixel;
   bg = a->bgcolor = b->bgcolor;
   fg = a->fgcolor = b->fgcolor;
@@ -818,6 +826,9 @@ BGD_DECLARE(int) gdFontCacheSetup (void)
       return -1;
     }
   fontCache = gdCacheCreate (FONTCACHESIZE, fontTest, fontFetch, fontRelease);
+	if (!fontCache) {
+		return -2;
+	}
   return 0;
 }
 
