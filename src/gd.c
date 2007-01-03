@@ -2425,6 +2425,17 @@ BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
   double scY = srcY + ((double) srcHeight) / 2;
   int cmap[gdMaxColors];
   int i;
+
+	/* 
+		 2.0.34: transparency preservation. The transparentness of
+		 the transparent color is more important than its hue.
+	*/
+	if (src->transparent != -1) {
+		if (dst->transparent == -1) {
+			dst->transparent = src->transparent;
+		}
+	}
+
   for (i = 0; (i < gdMaxColors); i++)
     {
       cmap[i] = (-1);

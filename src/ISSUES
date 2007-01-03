@@ -43,3 +43,4 @@ GDBUGS                                                                     NEWS
 #19, Use abs instead of fbas in HWB_Diff (Nick Atty)
 #20, Fixed gdImageCopyMergeGray when used with a true color image
 #21, gdImageCopyResized sanity check for allocation failures
+#22, Fixed transparency preservation in gdImageCopyRotated 
