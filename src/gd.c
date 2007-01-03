@@ -2221,8 +2221,8 @@ BGD_DECLARE(void) gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX
 	  else
 	    {
 	      dc = gdImageGetPixel (dst, tox, toy);
-	      g = 0.29900 * dst->red[dc]
-		+ 0.58700 * dst->green[dc] + 0.11400 * dst->blue[dc];
+	      g = 0.29900 * gdImageRed(dst, dc)
+		+ 0.58700 * gdImageGreen(dst, dc) + 0.11400 * gdImageBlue(dst, dc);
 
 	      ncR = gdImageRed (src, c) * (pct / 100.0)
 		+ g * ((100 - pct) / 100.0);
