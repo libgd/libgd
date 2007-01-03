@@ -2274,7 +2274,15 @@ BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, 
     return;
   }
   stx = (int *) gdMalloc (sizeof (int) * srcW);
+	if (!stx) {
+		return;
+	}
+
   sty = (int *) gdMalloc (sizeof (int) * srcH);
+	if (!sty) {
+		return;
+	}
+
   /* Fixed by Mao Morimoto 2.0.16 */
   for (i = 0; (i < srcW); i++)
     {

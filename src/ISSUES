@@ -42,3 +42,4 @@ GDBUGS                                                                     NEWS
 #18, Removed invalid gdFree call when overflow2 fails
 #19, Use abs instead of fbas in HWB_Diff (Nick Atty)
 #20, Fixed gdImageCopyMergeGray when used with a true color image
+#21, gdImageCopyResized sanity check for allocation failures
