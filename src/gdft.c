@@ -843,7 +843,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
   FT_Matrix matrix;
   FT_Vector penf, oldpenf, delta, total_min = {0,0}, total_max = {0,0}, glyph_min, glyph_max;
   FT_Face face;
-  FT_CharMap charmap;
+  FT_CharMap charmap = NULL;
   FT_Glyph image;
   FT_GlyphSlot slot;
   FT_Error err;
@@ -915,6 +915,12 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
     }
   face = font->face;		/* shortcut */
   slot = face->glyph;		/* shortcut */
+
+   if (brect)
+     {
+       total_min.x = total_min.y = 0;
+       total_max.x = total_max.y = 0;
+     }
 
   /*
    * Added hdpi and vdpi to support images at non-screen resolutions, i.e. 300 dpi TIFF,

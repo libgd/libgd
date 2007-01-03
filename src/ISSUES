@@ -52,3 +52,5 @@ GDBUGS                                                                     NEWS
 #26, gdFontCacheSetup returns error when gdCacheCreate fails
 #27, Added sanity checks for possible failures in fontFetch and
      tweenColorFetch
+#28, Fixed gdImageStringFTEx when called with an empty string 
+     Initialize the bounding box variables to zero (Kevin Scaldeferri)
