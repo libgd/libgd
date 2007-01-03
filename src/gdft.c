@@ -1224,13 +1224,19 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 	  /* make sure we have enough allocation for two numbers
 		so we don't have to recheck for the terminating number */
 	  if (! xshow_alloc) {
-		xshow_alloc = 100;
-		strex->xshow = malloc(xshow_alloc);
-		xshow_pos = 0;
+			xshow_alloc = 100;
+			strex->xshow = gdMalloc(xshow_alloc);
+			if (!strex->xshow) {
+				return 0;
+			}
+			xshow_pos = 0;
 	  } 
 	  else if (xshow_pos + 20 > xshow_alloc) {
 		xshow_alloc += 100;
-		strex->xshow = realloc(strex->xshow, xshow_alloc);
+		strex->xshow = gdRealloc(strex->xshow, xshow_alloc);
+		if (!strex->xshow) {
+			return 0;
+		}
 	}
 	  xshow_pos += sprintf(strex->xshow + xshow_pos, "%g ",
 		(double)(penf.x - oldpenf.x) * hdpi / (64 * METRIC_RES));
@@ -1339,10 +1345,8 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 
   if (brect)
     {				/* only if need brect */
-      double dpix, dpiy;
-      
-      dpix = 64 * METRIC_RES / hdpi;
-      dpiy = 64 * METRIC_RES / vdpi;
+			double scalex = (double)hdpi / (64 * METRIC_RES);
+			double scaley = (double)vdpi / (64 * METRIC_RES);
 
       /* increase by 1 pixel to allow for rounding */
       total_min.x -= METRIC_RES;
@@ -1351,14 +1355,14 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
       total_max.y += METRIC_RES;
  
       /* rotate bounding rectangle, scale and round to int pixels, and translate */
-      brect[0] = x + (total_min.x * cos_a + total_max.y * sin_a)/dpix;
-      brect[1] = y - (total_min.x * sin_a - total_max.y * cos_a)/dpiy;
-      brect[2] = x + (total_max.x * cos_a + total_max.y * sin_a)/dpix;
-      brect[3] = y - (total_max.x * sin_a - total_max.y * cos_a)/dpiy;
-      brect[4] = x + (total_max.x * cos_a + total_min.y * sin_a)/dpix;
-      brect[5] = y - (total_max.x * sin_a - total_min.y * cos_a)/dpiy;
-      brect[6] = x + (total_min.x * cos_a + total_min.y * sin_a)/dpix;
-      brect[7] = y - (total_min.x * sin_a - total_min.y * cos_a)/dpiy;
+			brect[0] = x + (total_min.x * cos_a + total_max.y * sin_a)*scalex;
+			brect[1] = y - (total_min.x * sin_a - total_max.y * cos_a)*scaley;
+			brect[2] = x + (total_max.x * cos_a + total_max.y * sin_a)*scalex;
+      brect[3] = y - (total_max.x * sin_a - total_max.y * cos_a)*scaley;
+      brect[4] = x + (total_max.x * cos_a + total_min.y * sin_a)*scalex;
+      brect[5] = y - (total_max.x * sin_a - total_min.y * cos_a)*scaley;
+      brect[6] = x + (total_min.x * cos_a + total_min.y * sin_a)*scalex;
+      brect[7] = y - (total_min.x * sin_a - total_min.y * cos_a)*scaley;
     }
 
   FT_Done_Size (platform_independent);
