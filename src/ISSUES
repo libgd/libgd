@@ -35,3 +35,5 @@ GDBUGS                                                                     NEWS
 #14, Fixed leak in jinit_2pass_quantizer (gd_topal.c)
 #15, gdImageCreatePaletteFromTrueColor(), colors allocated henceforth from 
      the resulting image overwrite the palette colors (Rob Leslie)
+#16, Added sanity checks in gdImageCreate for possible allocation failures
+     (John Ellson/Graphviz)

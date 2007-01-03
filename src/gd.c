@@ -79,9 +79,18 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
   }
 
   im = (gdImage *) gdMalloc (sizeof (gdImage));
+	if (!im) {
+		return NULL;
+	}
+
   memset (im, 0, sizeof (gdImage));
   /* Row-major ever since gd 1.3 */
   im->pixels = (unsigned char **) gdMalloc (sizeof (unsigned char *) * sy);
+	if (!im->pixels) {
+		gdFree(im);
+		return NULL;
+	}
+
   im->polyInts = 0;
   im->polyAllocated = 0;
   im->brush = 0;
@@ -91,6 +100,16 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
     {
       /* Row-major ever since gd 1.3 */
       im->pixels[i] = (unsigned char *) gdCalloc (sx, sizeof (unsigned char));
+			if (!im->pixels[i]) 
+			{
+				for (--i ; i >= 0; i--)
+				{
+					gdFree(im->pixels[i]);
+				}
+				gdFree(im);
+				return NULL;
+			}
+
     }
   im->sx = sx;
   im->sy = sy;
