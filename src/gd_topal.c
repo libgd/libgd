@@ -800,6 +800,9 @@ select_colors (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize, int d
     return;
    }
   boxlist = (boxptr) gdMalloc (desired_colors * sizeof (box));
+	if (!boxlist) {
+		return;
+	}
 #endif
   /* Initialize one box containing whole space */
   numboxes = 1;

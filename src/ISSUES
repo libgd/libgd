@@ -61,4 +61,6 @@ GDBUGS                                                                     NEWS
 #31, Added DISABLE_THREADS to permit disabling of thread support
      (John Ellson/Graphviz)
 #32, Added sanity checks for allocations failure in gd_gd2
-#33, dynamicGetbuf must return 0 for errors and EOF
+#33, dynamicGetbuf, sourceGetbuf must return 0 for errors and EOF
+#34, Fixed gdSeek declaration, offset argument was missing
+#35, Added sanity checks for allocations failure in gd_topal
