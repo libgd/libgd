@@ -54,3 +54,7 @@ GDBUGS                                                                     NEWS
      tweenColorFetch
 #28, Fixed gdImageStringFTEx when called with an empty string 
      Initialize the bounding box variables to zero (Kevin Scaldeferri)
+#29, Added sanity checks for allocations failure in gdImageStringFTEx
+     use gdMalloc and gdRealloc
+#30, uninitialized variable "charmap" and avoid divide-by-zero errors
+     at very small dpi values (John Ellson/Graphviz)
