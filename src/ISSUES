@@ -32,3 +32,4 @@ GDBUGS                                                                     NEWS
 #12, gdImageCreateFromPngCrx, initialize the signature buffer not the infile
      CTX (Takeshi Abe)
 #13, remove generated files from cvs, add bootstrap script
+#14, Fixed leak in jinit_2pass_quantizer (gd_topal.c)
