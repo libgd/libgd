@@ -60,4 +60,5 @@ GDBUGS                                                                     NEWS
      at very small dpi values (John Ellson/Graphviz)
 #31, Added DISABLE_THREADS to permit disabling of thread support
      (John Ellson/Graphviz)
-#32,  Added sanity checks for allocations failure in gd_gd2
+#32, Added sanity checks for allocations failure in gd_gd2
+#33, dynamicGetbuf must return 0 for errors and EOF
