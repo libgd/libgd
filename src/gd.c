@@ -74,8 +74,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
   gdImagePtr im;
 
   if (overflow2(sizeof (unsigned char *), sy)) {
-	gdFree(im);
-	return NULL;
+		return NULL;
+  }
+  if (overflow2(sizeof (unsigned char *), sx)) {
+		return NULL;
   }
 
   im = (gdImage *) gdMalloc (sizeof (gdImage));
@@ -106,6 +108,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 				{
 					gdFree(im->pixels[i]);
 				}
+				gdFree(im->pixels);
 				gdFree(im);
 				return NULL;
 			}

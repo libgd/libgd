@@ -39,3 +39,4 @@ GDBUGS                                                                     NEWS
      (John Ellson/Graphviz)
 #17, Added "static" to entities_s struct declaration to avoid obscure 
      compiler problem on Suns (John Ellson/Graphviz)
+#18, Removed invalid gdFree call when overflow2 fails
