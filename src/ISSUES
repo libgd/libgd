@@ -37,3 +37,5 @@ GDBUGS                                                                     NEWS
      the resulting image overwrite the palette colors (Rob Leslie)
 #16, Added sanity checks in gdImageCreate for possible allocation failures
      (John Ellson/Graphviz)
+#17, Added "static" to entities_s struct declaration to avoid obscure 
+     compiler problem on Suns (John Ellson/Graphviz)
