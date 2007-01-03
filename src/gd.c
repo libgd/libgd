@@ -324,7 +324,7 @@ HWB_Diff (int r1, int g1, int b1, int r2, int g2, int b2)
     }
   else
     {
-      diff = abs (HWB1.H - HWB2.H);
+      diff = fabs (HWB1.H - HWB2.H);
       if (diff > 3)
 	{
 	  diff = 6 - diff;	/* Remember, it's a colour circle */
