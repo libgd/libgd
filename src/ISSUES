@@ -58,3 +58,5 @@ GDBUGS                                                                     NEWS
      use gdMalloc and gdRealloc
 #30, uninitialized variable "charmap" and avoid divide-by-zero errors
      at very small dpi values (John Ellson/Graphviz)
+#31, Added DISABLE_THREADS to permit disabling of thread support
+     (John Ellson/Graphviz)
