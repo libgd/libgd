@@ -33,3 +33,5 @@ GDBUGS                                                                     NEWS
      CTX (Takeshi Abe)
 #13, remove generated files from cvs, add bootstrap script
 #14, Fixed leak in jinit_2pass_quantizer (gd_topal.c)
+#15, gdImageCreatePaletteFromTrueColor(), colors allocated henceforth from 
+     the resulting image overwrite the palette colors (Rob Leslie)
