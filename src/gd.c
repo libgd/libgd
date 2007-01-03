@@ -2451,9 +2451,14 @@ BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
 	  if ((sx >= srcX) && (sx < srcX + srcWidth) &&
 	      (sy >= srcY) && (sy < srcY + srcHeight))
 	    {
-	      int c = gdImageGetPixel (src, sx, sy);
-	      if (!src->trueColor)
-		{
+				int c = gdImageGetPixel (src, sx, sy);
+				/* 2.0.34: transparency wins */
+				if (c == src->transparent) 
+				{
+					gdImageSetPixel (dst, dx, dy, dst->transparent);
+				}  
+					else if (!src->trueColor)
+				{
 		  /* Use a table to avoid an expensive
 		     lookup on every single pixel */
 		  if (cmap[c] == -1)
