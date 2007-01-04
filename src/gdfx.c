@@ -507,3 +507,4 @@ gdImageSharpen (gdImagePtr im, int pct)
 	}
     }
 }
+
