@@ -2,6 +2,9 @@ For documentation, browse index.html.
 
 Quick install guide:
 
+If the sources have been fetched from CVS, run bootstrap.sh [options].
+
+From a released source, use:
 1. Type './configure'
 2. Type 'make install'
 
