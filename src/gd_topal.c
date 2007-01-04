@@ -1936,11 +1936,11 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
   arraysize = (size_t) ((nim->sx + 2) * (3 * sizeof (FSERROR)));
   /* Allocate Floyd-Steinberg workspace. */
 	cquantize->fserrors = gdRealloc(cquantize->fserrors, arraysize);
-	memset(cquantize->fserrors, 0, arraysize);
   if (!cquantize->fserrors)
     {
       goto outOfMemory;
     }
+  memset(cquantize->fserrors, 0, arraysize);
   cquantize->on_odd_row = FALSE;
 
   /* Do the work! */
