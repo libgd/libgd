@@ -52,8 +52,3 @@ you can use the following command line options:
 --with-xpm=DIR
 
   Dto. for xpm library.
-
-Last but not least, if all else fails, you can still try Tom Boutell's
-original, perl-based configure utility, which is included in this
-distribution as configure.pl, or even the included makefile.sample.
-
