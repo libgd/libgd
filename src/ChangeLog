@@ -1,3 +1,164 @@
+2007-01-04 13:52  pajoye
+
+	* gdfx.c: - New line at the end of the file
+
+2007-01-04 13:49  pajoye
+
+	* gd_topal.c: #14, set fserror after the check
+
+2007-01-04 13:44  pajoye
+
+	* ISSUES, gd_gif_out.c: - #14, sanity check in gd_gif_out
+
+2007-01-04 13:40  pajoye
+
+	* gd_gd2.c: - #14, one more sanity check in gd_gd2
+
+2007-01-04 13:36  pajoye
+
+	* ISSUES, gd.c: - #14, sanity check for memory alloc error in
+	  gdImageCreateTrueColor
+
+2007-01-04 13:05  pajoye
+
+	* README.TXT, configure.pl: - rm configure.pl, outdated anyway
+
+2007-01-04 02:49  pajoye
+
+	* ISSUES: - Update credentials
+
+2007-01-04 02:24  pajoye
+
+	* gdxpm.c: - #14, some more sanitiy check
+
+2007-01-04 01:40  pajoye
+
+	* ISSUES: - fix to match the issues #
+
+2007-01-03 22:57  pajoye
+
+	* ISSUES, gd_topal.c: #35, Added sanity checks for allocations
+	  failure in gd_topal (yet another.)
+
+2007-01-03 22:50  pajoye
+
+	* gd_io.h, gd_io_ss.c: #33, sourceGetbuf must return 0 for errors
+	  and EOF #34, Fixed gdSeek declaration, offset argument was
+	  missing
+
+2007-01-03 22:47  pajoye
+
+	* ISSUES, gd_io_dp.c: #33, dynamicGetbuf must return 0 for errors
+	  and EOF
+
+2007-01-03 22:42  pajoye
+
+	* ISSUES, gd_gd2.c: #32, Added sanity checks for allocations
+	  failures in gd_gd2
+
+2007-01-03 22:24  pajoye
+
+	* ISSUES: #31, Added DISABLE_THREADS to permit disabling of thread
+	  support      (John Ellson/Graphviz)
+
+2007-01-03 22:21  pajoye
+
+	* ISSUES, gdft.c: #30, uninitialized variable "charmap" and avoid
+	  divide-by-zero errors      at very small dpi values (John
+	  Ellson/Graphviz)
+
+2007-01-03 22:04  pajoye
+
+	* ISSUES, gdft.c: #28, Fixed gdImageStringFTEx when called with an
+	  empty string	    Initialize the bounding box variables to zero
+	  (Kevin Scaldeferri)
+
+2007-01-03 21:56  pajoye
+
+	* ISSUES, gdft.c: #26, gdFontCacheSetup returns error when
+	  gdCacheCreate fails #27, Added sanity checks for possible
+	  failures in fontFetch and	 tweenColorFetch
+
+2007-01-03 21:50  pajoye
+
+	* ISSUES, gdcache.c: #25, Added sanity checks for possible
+	  allocation failures in gdCacheCreate	    and main
+
+2007-01-03 21:45  pajoye
+
+	* ISSUES, gd.c: #23,  Added sanity checks  for possible allocation
+	  failures in	    gdImageFilledPolygon and gdImageSetStyle #24,
+	  Out of range checks in gdImageSetAAPixelColor
+
+2007-01-03 21:38  pajoye
+
+	* gd.c: #22, missing immplementation
+
+2007-01-03 21:34  pajoye
+
+	* ISSUES, gd.c: #22, Fixed transparency preservation in
+	  gdImageCopyRotated
+
+2007-01-03 21:31  pajoye
+
+	* ISSUES, gd.c: #21, gdImageCopyResized sanity check for allocation
+	  failures
+
+2007-01-03 21:25  pajoye
+
+	* ISSUES, gd.c: #20, Fixed gdImageCopyMergeGray when used with a
+	  true color image
+
+2007-01-03 21:18  pajoye
+
+	* ISSUES, gd.c: #19, Use abs instead of fbas in HWB_Diff (Nick
+	  Atty)
+
+2007-01-03 21:09  pajoye
+
+	* ISSUES, gd.c: - #18, Removed invalid gdFree call when overflow2
+	  fails - #17, Free im->pixels as well on error
+
+2007-01-03 20:48  pajoye
+
+	* ISSUES, entities.tcl: #17, Added "static" to entities_s struct
+	  declaration to avoid obscure	    compiler problem on Suns (John
+	  Ellson/Graphviz)
+
+2007-01-03 20:42  pajoye
+
+	* ISSUES, gd.c: - #16, Added sanity checks in gdImageCreate for
+	  possible allocation	  failures (John Ellson/Graphviz)
+
+2007-01-03 20:14  pajoye
+
+	* ISSUES, gd_topal.c: - #15, gdImageCreatePaletteFromTrueColor(),
+	  colors allocated henceforth from	  the resulting image
+	  overwrite the palette colors (Rob Leslie)
+
+2007-01-03 19:31  pajoye
+
+	* ISSUES, gd_topal.c: - #14, Fixed leak in jinit_2pass_quantizer
+	  (gd_topal.c)
+
+2006-11-08 13:32  lhecking
+
+	* ISSUES: Updated.
+
+2006-11-08 13:23  pajoye
+
+	* gd.c: - #7, gdImageCopy does not respect alpha (2/2)
+
+2006-11-05 16:01  pajoye
+
+	* ISSUES, gd_png.c: - #12, initialize the sig buf not infile, good
+	  that we don't use getC...
+
+2006-10-15 19:20  pajoye
+
+	* ChangeLog: - initial cvs ChangeLog, will create a cronjob to
+	  update it daily
+
 2006-10-12 13:38  lhecking
 
 	* Makefile.in, aclocal.m4, configure, config/Makefile.in,
