@@ -142,8 +142,18 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
   int i;
   gdImagePtr im;
   im = (gdImage *) gdMalloc (sizeof (gdImage));
+  if (!im) {
+    return 0;
+  }
   memset (im, 0, sizeof (gdImage));
+  if (overflow2(sizeof (int *), sy)) {
+    return 0;
+  }
   im->tpixels = (int **) gdMalloc (sizeof (int *) * sy);
+  if (!im->tpixels) {
+    free(im);
+    return 0;
+  }
   im->polyInts = 0;
   im->polyAllocated = 0;
   im->brush = 0;
@@ -152,6 +162,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
   for (i = 0; (i < sy); i++)
     {
       im->tpixels[i] = (int *) gdCalloc (sx, sizeof (int));
+      if (!im->tpixels[i]) {
+        /* 2.0.34 */
+        i--;
+        while (i >= 0) {
+          gdFree(im->tpixels[i]);
+          i--;
+        }
+        gdFree(im->tpixels);
+        gdFree(im);
+        return 0;
+      }
     }
   im->sx = sx;
   im->sy = sy;
@@ -2050,7 +2071,7 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 	  /* 2.0: much easier when the destination is truecolor. */
 	  /* 2.0.10: needs a transparent-index check that is still valid if
 	   *          * the source is not truecolor. Thanks to Frank Warmerdam.
-	   *                   */
+	   */
 
 	  if (src->trueColor) {
 		  for (y = 0; (y < h); y++) {
@@ -3296,7 +3317,7 @@ static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t
 	BLEND_COLOR(t, dr, r, dr);
 	BLEND_COLOR(t, dg, g, dg);
 	BLEND_COLOR(t, db, b, db);
-	im->tpixels[y][x]=gdTrueColorAlpha(dr, dg, db,  gdAlphaOpaque);
+	im->tpixels[y][x] = gdTrueColorAlpha(dr, dg, db,  gdAlphaOpaque);
 }  
 
 static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int col)

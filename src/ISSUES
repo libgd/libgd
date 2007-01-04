@@ -32,8 +32,9 @@ GDBUGS                                                                     NEWS
      CTX (Takeshi Abe)
 #13, Fixed leak in jinit_2pass_quantizer (gd_topal.c) (Huib-Jan Imbens)
 #14, Added santiy checks for possible memory allocation errors:
-     (John Ellson/Graphviz, Pierre, Phil Knirsch)
+     (John Ellson/Graphviz, Pierre, Phil Knirsch, Phil Knirsch)
  - gdImageCreate 
+ - gdImageCreateTrueColor
  - gdImageFilledPolygon and gdImageSetStyle
  - gdCacheCreate and main
  - fontFetch and tweenColorFetch
