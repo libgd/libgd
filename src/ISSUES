@@ -41,6 +41,7 @@ GDBUGS                                                                     NEWS
  - gdImageStringFTEx, use gdMalloc and gdRealloc
  - gd_gd2
  - gd_topal
+ - gd_gif_out
  - gdImageCopyResized 
 #15, gdImageCreatePaletteFromTrueColor(), colors allocated henceforth from 
      the resulting image overwrite the palette colors (Rob Leslie)
