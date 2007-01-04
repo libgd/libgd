@@ -61,3 +61,4 @@ GDBUGS                                                                     NEWS
      (John Ellson/Graphviz)
 #26, dynamicGetbuf, sourceGetbuf must return 0 for errors and EOF
 #27, Fixed gdSeek declaration, offset argument was missing
+#29, Added Windows Build support and files (Edin Kadribašić)
