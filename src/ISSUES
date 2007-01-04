@@ -1,16 +1,15 @@
 GDBUGS                                                                     NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-#1, Initialize values this also provides a 5x speedup in the imagefttext.phpt 
+#3 Initialize values this also provides a 5x speedup in the imagefttext.phpt 
     test, because without this patch it never got cache hits (Nuno Lopes)
-#2, #8, gdImageFill, multiple segfaults with complex patterns, transparent 
+#4 gdImageFill, multiple segfaults with complex patterns, transparent 
     colors or invalid color index
-#3, gdImageRectangle draws corners twice (affects rectangles with alpha 
+#5 gdImageRectangle draws corners twice (affects rectangles with alpha 
     channel)
-#4, TrueColor transparent color not used  with GIF output (palette)
-#5, Numerous security fixes in GIF loader. When the gif palette is broken, 
+#6, TrueColor transparent color not used  with GIF output (palette)
+#7, Numerous security fixes in GIF loader. When the gif palette is broken, 
     the image size is invalid or NULL block at unexpected postions.
-#6, Add test for gdImagePng and transparent color
-#7, gdIimageCopy doen't use the alpha channel (palette to truecolor copy)
+#8,  gdIimageCopy doen't use the alpha channel (palette to truecolor copy)
 #9, Update configure/build scripts (Lars Hecking, 
 	lhecking[at]users.sourceforge.net)
 	AUTO* tools and libtool
@@ -26,41 +25,38 @@ GDBUGS                                                                     NEWS
 
 	RANLIB handling
 	configure.ac: AC_PROG_RANLIB is obsolete, now handled by AC_PROG_LIBTOO
-#10, gdImageFilledEllipse does not respect transparency
-#11, gdImageCreateFromPng* possible crash with empty file
+#10 gdImageFilledEllipse does not respect transparency
+#11 gdImageCreateFromPng* possible crash with empty file
      (Thanks Antony Dovgal to have catched it)
 #12, gdImageCreateFromPngCrx, initialize the signature buffer not the infile
      CTX (Takeshi Abe)
-#13, remove generated files from cvs, add bootstrap script
-#14, Fixed leak in jinit_2pass_quantizer (gd_topal.c)
+#13, Fixed leak in jinit_2pass_quantizer (gd_topal.c) (Huib-Jan Imbens)
+#14, Added santiy checks for possible memory allocation errors:
+     (John Ellson/Graphviz, Pierre)
+ - gdImageCreate 
+ - gdImageFilledPolygon and gdImageSetStyle
+ - gdCacheCreate and main
+ - fontFetch and tweenColorFetch
+ - gdImageStringFTEx, use gdMalloc and gdRealloc
+ - gd_gd2
+ - gd_topal
+ - gdImageCopyResized 
 #15, gdImageCreatePaletteFromTrueColor(), colors allocated henceforth from 
      the resulting image overwrite the palette colors (Rob Leslie)
-#16, Added sanity checks in gdImageCreate for possible allocation failures
-     (John Ellson/Graphviz)
-#17, Added "static" to entities_s struct declaration to avoid obscure 
+
+#16, Added "static" to entities_s struct declaration to avoid obscure 
      compiler problem on Suns (John Ellson/Graphviz)
-#18, Removed invalid gdFree call when overflow2 fails
-#19, Use abs instead of fbas in HWB_Diff (Nick Atty)
-#20, Fixed gdImageCopyMergeGray when used with a true color image
-#21, gdImageCopyResized sanity check for allocation failures
-#22, Fixed transparency preservation in gdImageCopyRotated 
-#23, Added sanity checks for possible allocation failures in 
-      gdImageFilledPolygon and gdImageSetStyle
-#24, Out of range checks in gdImageSetAAPixelColor
-#25, Added sanity checks for possible allocation failures in gdCacheCreate
-     and main
-#26, gdFontCacheSetup returns error when gdCacheCreate fails
-#27, Added sanity checks for possible failures in fontFetch and
-     tweenColorFetch
-#28, Fixed gdImageStringFTEx when called with an empty string 
+#17, Removed invalid gdFree call when overflow2 fails
+#18, Use abs instead of fbas in HWB_Diff (Nick Atty)
+#19, Fixed gdImageCopyMergeGray when used with a true color image
+#20, Fixed transparency preservation in gdImageCopyRotated 
+#21, Out of range checks in gdImageSetAAPixelColor
+#22, gdFontCacheSetup returns error when gdCacheCreate fails
+#23, Fixed gdImageStringFTEx when called with an empty string 
      Initialize the bounding box variables to zero (Kevin Scaldeferri)
-#29, Added sanity checks for allocations failure in gdImageStringFTEx
-     use gdMalloc and gdRealloc
-#30, uninitialized variable "charmap" and avoid divide-by-zero errors
+#24, uninitialized variable "charmap" and avoid divide-by-zero errors
      at very small dpi values (John Ellson/Graphviz)
-#31, Added DISABLE_THREADS to permit disabling of thread support
+#25, Added DISABLE_THREADS to permit disabling of thread support
      (John Ellson/Graphviz)
-#32, Added sanity checks for allocations failure in gd_gd2
-#33, dynamicGetbuf, sourceGetbuf must return 0 for errors and EOF
-#34, Fixed gdSeek declaration, offset argument was missing
-#35, Added sanity checks for allocations failure in gd_topal
+#26, dynamicGetbuf, sourceGetbuf must return 0 for errors and EOF
+#27, Fixed gdSeek declaration, offset argument was missing
