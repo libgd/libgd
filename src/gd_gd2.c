@@ -898,6 +898,9 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
       gdSeek (out, idxPos + idxSize);
 
       chunkIdx = gdCalloc (idxSize * sizeof (t_chunk_info), 1);
+      if (!chunkIdx) {
+        goto fail;
+      }
     };
 
   _gdPutColors (im, out);
