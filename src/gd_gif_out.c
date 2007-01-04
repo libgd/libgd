@@ -446,6 +446,9 @@ BGD_DECLARE(void) gdImageGifAnimEnd(FILE *outFile)
 BGD_DECLARE(void *) gdImageGifAnimEndPtr (int *size)
 {
   char *rv = (char *) gdMalloc (1);
+  if (!rv) {
+    return 0;
+  }
   *rv = ';';
   *size = 1;
   return (void *)rv;
