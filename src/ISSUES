@@ -32,7 +32,7 @@ GDBUGS                                                                     NEWS
      CTX (Takeshi Abe)
 #13, Fixed leak in jinit_2pass_quantizer (gd_topal.c) (Huib-Jan Imbens)
 #14, Added santiy checks for possible memory allocation errors:
-     (John Ellson/Graphviz, Pierre)
+     (John Ellson/Graphviz, Pierre, Phil Knirsch)
  - gdImageCreate 
  - gdImageFilledPolygon and gdImageSetStyle
  - gdCacheCreate and main
@@ -43,7 +43,6 @@ GDBUGS                                                                     NEWS
  - gdImageCopyResized 
 #15, gdImageCreatePaletteFromTrueColor(), colors allocated henceforth from 
      the resulting image overwrite the palette colors (Rob Leslie)
-
 #16, Added "static" to entities_s struct declaration to avoid obscure 
      compiler problem on Suns (John Ellson/Graphviz)
 #17, Removed invalid gdFree call when overflow2 fails
