@@ -1775,8 +1775,9 @@ static int gdImageTileGet (gdImagePtr im, int x, int y)
 	srcx = x % gdImageSX(im->tile);
 	srcy = y % gdImageSY(im->tile);
 	p = gdImageGetPixel(im->tile, srcx, srcy);
-
-	if (im->trueColor) {
+	if (p == im->tile->transparent) {
+		tileColor = im->transparent;
+	} else if (im->trueColor) {
 		if (im->tile->trueColor) {
 			tileColor = p;
 		} else {
@@ -1821,7 +1822,7 @@ BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
 	struct seg *stack;
 	struct seg *sp;
 
-	if (!im->trueColor && nc > im->colorsTotal) {
+	if (!im->trueColor && nc > (im->colorsTotal - 1)) {
 		return;
 	}
 
@@ -1841,6 +1842,9 @@ BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
 	}
 
 	stack = (struct seg *)gdMalloc(sizeof(struct seg) * ((int)(im->sy*im->sx)/4));
+	if (!stack) {
+		return;
+	}
 	sp = stack;
 
 	/* required! */
@@ -1907,6 +1911,9 @@ void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 	}
 
 	stack = (struct seg *)gdMalloc(sizeof(struct seg) * ((int)(im->sy*im->sx)/4));
+	if (!stack) {
+		return;
+	}
 	sp = stack;
 
 	oc = gdImageGetPixel(im, x, y);
