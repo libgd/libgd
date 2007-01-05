@@ -11,14 +11,18 @@ int main()
 
 	fputs("flag 0\n", stdout);
 	im = gdImageCreate(150, 150);
+
+
 	tile = gdImageCreateTrueColor(36, 36);
+
 	tile_white = gdImageColorAllocate(tile,255,255,255);
-	tile_black = gdImageColorAllocate(tile,0,0,0);
+	tile_black = gdImageColorAllocate(tile,55,0,0);
 	im_white = gdImageColorAllocate(im,255,255,255);
 	im_black = gdImageColorAllocate(im,0,0,0);
 
 	gdImageFill(tile, 0,0, tile_white);
-
+	gdImageColorTransparent(tile, tile_black);
+	gdImageColorTransparent(im, im_black);
 
 	/* create the dots pattern */
 	for (x=0;x<36;x+=2) {
