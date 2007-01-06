@@ -16,7 +16,7 @@ GDLIBNAME=gd
 #Expanded by tests later in this file. TBB 2.0.26
 #2.0.28: GIF is standard now. Doesn't depend on anything else,
 #so we always build it.
-FEATURES=GD_GIF GD_GIFANIM GD_OPENPOLYGON
+FEATURES="GD_GIF GD_GIFANIM GD_OPENPOLYGON"
 AC_SUBST(FEATURES)
 
 AC_SUBST(GDLIB_MAJOR)
