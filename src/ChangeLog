@@ -1,3 +1,57 @@
+2007-01-07 19:18  pajoye
+
+	* gd_png.c: - #32, malformed PNG image crashes (CRC error)   test
+	  is following
+
+2007-01-06 14:48  pajoye
+
+	* configure.ac: - older versions of auto* need quotes here
+
+2007-01-05 05:11  pajoye
+
+	* gd.c: - add sanity checks for alloc error in gdImageFill
+
+2007-01-05 05:03  pajoye
+
+	* tests/bug00002_3.c: - #2, #32, add transparent color to each
+	  image (see #32)
+
+2007-01-05 03:41  pajoye
+
+	* tests/bug00002_3.c: - add a test to conver the case described in
+	  issue #32   when a tile is a truecolor image, background of tiled
+	  region is painted   black rather than transparent
+
+2007-01-04 15:27  pajoye
+
+	* README.TXT: - add bootstrap.sh note
+
+2007-01-04 15:25  pajoye
+
+	* COPYING: - add myself
+
+2007-01-04 15:23  pajoye
+
+	* makefile.sample: - remove outdated makefile.sample
+
+2007-01-04 15:21  pajoye
+
+	* index.html: - changelog, issues and the release announcements
+	  will be used from now on
+
+2007-01-04 15:10  pajoye
+
+	* configure.ac, index.html: - update version nr - update links -
+	  update bug report link
+
+2007-01-04 14:45  pajoye
+
+	* ISSUES: - windows build support entry (Edin)
+
+2007-01-04 14:23  pajoye
+
+	* ChangeLog: - update it
+
 2007-01-04 13:52  pajoye
 
 	* gdfx.c: - New line at the end of the file
