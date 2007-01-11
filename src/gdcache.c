@@ -134,6 +134,11 @@ gdCacheGet (gdCache_head_t * head, void *keydata)
   if (i < head->size)
     {				/* cache still growing - add new elem */
       elem = (gdCache_element_t *) gdMalloc (sizeof (gdCache_element_t));
+			if (!elem)
+			 {
+				(*(head->gdCacheRelease)) (userdata);
+					return NULL;
+			 }
     }
   else
     {				/* cache full - replace least-recently-used */
