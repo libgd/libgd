@@ -1835,6 +1835,7 @@ BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
 
 	alphablending_bak = im->alphaBlendingFlag;	
 	im->alphaBlendingFlag = 0;
+
 	if (nc==gdTiled) {
 		_gdImageFillTiled(im,x,y,nc);
 		im->alphaBlendingFlag = alphablending_bak;
@@ -1846,6 +1847,29 @@ BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
 	if (oc==nc || x<0 || x>wx2 || y<0 || y>wy2) {
 		im->alphaBlendingFlag = alphablending_bak;	
 		return;
+	}
+
+	/* Do not use the 4 neighbors implementation with
+   * small images
+   */
+	if (im->sx < 4) {
+		int ix = x, iy = y, c;
+		do {
+			c = gdImageGetPixel(im, ix, iy);
+			if (c != oc) {
+				goto done;
+			}
+			gdImageSetPixel(im, ix, iy, nc);
+		} while(ix++ < (im->sx -1));
+		ix = x; iy = y + 1;
+		do {
+			c = gdImageGetPixel(im, ix, iy);
+			if (c != oc) {
+				goto done;
+			}
+			gdImageSetPixel(im, ix, iy, nc);
+		} while(ix++ < (im->sx -1));
+		goto done;
 	}
 
 	stack = (struct seg *)gdMalloc(sizeof(struct seg) * ((int)(im->sy*im->sx)/4));
@@ -1888,7 +1912,10 @@ skip:			for (x++; x<=x2 && (gdImageGetPixel(im, x, y)!=oc); x++);
 			l = x;
 		} while (x<=x2);
 	}
+
 	gdFree(stack);
+
+done:
 	im->alphaBlendingFlag = alphablending_bak;	
 }
 
