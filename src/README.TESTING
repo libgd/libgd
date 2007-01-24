@@ -49,5 +49,5 @@ Exception: SegFault: self explaining
 Failed               test failed, check the log to know where
 timeout              the default timeout is 5 seconds. Some test may
                      have infinite loops when compiled against old versions
-										 of the GD library (esp. 2.0.33 or earlier)
+                     of the GD library (esp. 2.0.33 or earlier)
 
