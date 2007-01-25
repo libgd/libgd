@@ -22,7 +22,7 @@ endif(WIN32 AND NOT CYGWIN)
 
 FIND_LIBRARY(GD_LIBRARY
   NAMES ${GD_NAMES}
-  PATHS /usr/lib /usr/local/lib
+  PATHS /usr/lib64 /usr/lib /usr/local/lib
   )
 
 IF (GD_LIBRARY AND GD_INCLUDE_DIR)

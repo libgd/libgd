@@ -21,6 +21,7 @@ FIND_PATH(FREETYPE_INCLUDE_DIR_FTHEADER freetype/config/ftheader.h
 )
 
 FIND_LIBRARY(FREETYPE_LIBRARY freetype
+  /usr/lib64
   /usr/lib
   /usr/local/lib
 )

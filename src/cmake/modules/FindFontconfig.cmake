@@ -37,6 +37,7 @@ ENDIF (NOT WIN32)
   find_library(FONTCONFIG_LIBRARIES NAMES fontconfig
     PATHS
     ${_FONTCONFIGLinkDir}
+	/usr/lib64
     /usr/lib
     /usr/local/lib
   )

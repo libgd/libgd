@@ -27,7 +27,7 @@ FIND_PATH(XPM_XPM_INCLUDE_DIR xpm.h
 SET(XPM_NAMES ${XPM_NAMES} Xpm libXpm)
 FIND_LIBRARY(XPM_LIBRARY
  NAMES ${XPM_NAMES}
- PATHS /usr/lib /usr/local/lib
+ PATHS /usr/lib64 /usr/lib /usr/local/lib
 )
 
 IF (XPM_LIBRARY AND XPM_XPM_INCLUDE_DIR)

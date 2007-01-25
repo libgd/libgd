@@ -54,9 +54,11 @@
   FIND_LIBRARY(PTHREAD_LIBRARY
     NAMES pthread pthreadGC2 pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2
     PATHS
+    /usr/lib64
     /usr/lib
     /usr/local/lib
     /lib
+    /lib64
     $ENV{PTHREAD_LIBRARY_PATH}
     )
 

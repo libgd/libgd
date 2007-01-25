@@ -29,7 +29,7 @@ IF(ZLIB_FOUND)
   SET(PNG_NAMES ${PNG_NAMES} png libpng)
   FIND_LIBRARY(PNG_LIBRARY
     NAMES ${PNG_NAMES}
-    PATHS /usr/lib /usr/local/lib
+    PATHS /usr/lib64 /usr/lib /usr/local/lib
   )
 
   IF (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
