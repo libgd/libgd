@@ -926,7 +926,9 @@ gdImageTileApply (gdImagePtr im, int x, int y)
   if (im->trueColor)
     {
       p = gdImageGetTrueColorPixel (im->tile, srcx, srcy);
-      gdImageSetPixel (im, x, y, p);
+			if (p != gdImageGetTransparent (im->tile)) {
+	      gdImageSetPixel (im, x, y, p);
+			}
     }
   else
     {
