@@ -1,3 +1,12 @@
+2007-01-29 22:56  pajoye
+
+	* gd.c: - #32, Pattern-fill works incorrectly if tile is created
+	  via gdImageCreateTruecolor (Ethan Merritt)
+
+2007-01-29 22:11  pajoye
+
+	* ChangeLog: - update changelog
+
 2007-01-29 22:07  pajoye
 
 	* COPYING, index.html: - update years and (c)
