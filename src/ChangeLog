@@ -1,3 +1,132 @@
+2007-01-29 22:07  pajoye
+
+	* COPYING, index.html: - update years and (c)
+
+2007-01-25 01:08  pajoye
+
+	* cmake/modules/: FindFontconfig.cmake, FindFreetype.cmake,
+	  FindGD.cmake, FindPNG.cmake, FindPTHREAD.cmake, FindXPM.cmake: -
+	  add lib64 tests (Chritian Rodriguez)
+
+2007-01-25 00:06  pajoye
+
+	* tests/gif/bug00005.c: - remove version checks
+
+2007-01-24 23:32  pajoye
+
+	* config.h.cmake: - config.h.in for cmake
+
+2007-01-24 23:20  pajoye
+
+	* cmake/modules/: AC_HEADER_STDC.cmake, CheckDIRSymbolExists.cmake,
+	  CheckPrototypeExists.cmake, FindFontconfig.cmake,
+	  FindFreetype.cmake, FindGD.cmake, FindPNG.cmake,
+	  FindPTHREAD.cmake, FindXPM.cmake, TestForHighBitCharacters.c,
+	  TestForHighBitCharacters.cmake, TestForStandardHeaderwait.cmake,
+	  gd.cmake: - add missing cmake macros/modules
+
+2007-01-24 01:36  pajoye
+
+	* README.TESTING: - WS
+
+2007-01-24 00:57  pajoye
+
+	* tests/: gd2/CMakeLists.txt, gd2/conv_gd2_exp.gd2,
+	  gd2/conv_test.gd2, gd2/conv_test_exp.png, gd2/empty.gd2,
+	  gd2/gd2_empty_file.c, gd2/gd2_read.c,
+	  gdimagecolorclosest/CMakeLists.txt,
+	  gdimagecolorclosest/gdimagecolorclosest.c,
+	  gdimagecolorexact/CMakeLists.txt,
+	  gdimagecolorexact/gdimagecolorexact.c,
+	  gdimagecolorresolve/CMakeLists.txt,
+	  gdimagecolorresolve/gdimagecolorresolve.c,
+	  gdimagecopy/CMakeLists.txt, gdimagecopy/bug00007.c,
+	  gdimagecopyrotated/CMakeLists.txt, gdimagecopyrotated/bug00020.c,
+	  gdimagecopyrotated/bug00020_exp.png, gdimagefill/CMakeLists.txt,
+	  gdimagefill/bug00002_1.c, gdimagefill/bug00002_1_exp.png,
+	  gdimagefill/bug00002_2.c, gdimagefill/bug00002_2_exp.png,
+	  gdimagefill/bug00002_3.c, gdimagefill/bug00002_3_exp.png,
+	  gdimagefill/bug00002_4.c, gdimagefill/bug00002_4_exp.png,
+	  gdimagefilledellipse/CMakeLists.txt,
+	  gdimagefilledellipse/bug00010.c,
+	  gdimagefilledellipse/bug00010_exp.png,
+	  gdimagefilledrectangle/CMakeLists.txt,
+	  gdimagefilledrectangle/bug00004.c,
+	  gdimagefilltoborder/CMakeLists.txt,
+	  gdimagefilltoborder/bug00037.c, gdimageline/CMakeLists.txt,
+	  gdimageline/gdimageline_aa.c,
+	  gdimageline/gdimageline_aa_a_0_exp.png,
+	  gdimageline/gdimageline_aa_a_1_exp.png,
+	  gdimageline/gdimageline_aa_b_0_exp.png,
+	  gdimageline/gdimageline_aa_b_1_exp.png,
+	  gdimageline/gdimageline_aa_c_0_exp.png,
+	  gdimageline/gdimageline_aa_c_1_exp.png,
+	  gdimageline/gdimageline_aa_d_0_exp.png,
+	  gdimageline/gdimageline_aa_d_1_exp.png,
+	  gdimageline/gdimageline_aa_outofrange.c,
+	  gdimagerectangle/CMakeLists.txt, gdimagerectangle/bug00003.c,
+	  gdtest/CMakeLists.txt, gdtest/gdtest.c, gdtest/gdtest.h,
+	  gdtiled/CMakeLists.txt, gdtiled/bug00032.c,
+	  gdtiled/bug00032_exp.png, gif/CMakeLists.txt, gif/bug00005.c,
+	  gif/bug00005_0.gif, gif/bug00005_1.gif, gif/bug00005_2.c,
+	  gif/bug00005_2.gif, gif/bug00005_2_exp.png, gif/bug00005_3.gif,
+	  gif/bug00006.c, jpeg/CMakeLists.txt, jpeg/conv_test.jpeg,
+	  jpeg/conv_test_exp.png, jpeg/empty.jpeg, jpeg/jpeg_empty_file.c,
+	  jpeg/jpeg_read.c, png/CMakeLists.txt, png/bug00011.c,
+	  png/bug00033.c, png/bug00033.png, png/emptyfile: - initial commit
+	  of the GD test suites    See README.TESTING for more details or
+	  how to run it
+
+2007-01-24 00:55  pajoye
+
+	* tests/CMakeLists.txt: - initial commit of the GD test suites
+	  See README.TESTING for more details or how to ru
+
+2007-01-24 00:54  pajoye
+
+	* CMakeLists.txt, README.TESTING: - initial commit of the GD test
+	  suites   See README.TESTING for more details or how to run it
+
+2007-01-24 00:45  pajoye
+
+	* tests/: README, bug00001.c, bug00002_1.c, bug00002_2.c,
+	  bug00002_3.c, bug00003.c, bug00004.c, bug00005.c, bug00005_1.gif,
+	  bug00005_2.gif, bug00005_3.gif, bug00007.c, bug00008.c,
+	  bug00010.c, bug00011.c, emptyfile: - remove temporary tests
+	  before adding the tests suite
+
+2007-01-20 03:09  pajoye
+
+	* gd.c: - #4, gdImageFill rewrite fix, small images (< 4 pixels)
+	  crash
+
+2007-01-20 03:02  pajoye
+
+	* gd.c: #37, gdImageFillToBorder crashes when used with alpha
+
+2007-01-12 14:02  pajoye
+
+	* gd.h: - prepare snap
+
+2007-01-12 14:00  pajoye
+
+	* circletexttest.c: - double config.h include removed (Edin)
+
+2007-01-11 21:58  pajoye
+
+	* gd_gif_in.c: - #7, part of the patch required for
+	  http://bugs.php.net/bug.php?id=33220	 was missing. Thanks to
+	  Nuno Lopes for the head up
+
+2007-01-11 03:24  pajoye
+
+	* gdcache.c: #14, another sanity check (catched by Takeshi
+	  (tabe[at]fixedpoint[dot]jp))
+
+2007-01-09 17:08  pajoye
+
+	* ChangeLog: - update
+
 2007-01-07 19:18  pajoye
 
 	* gd_png.c: - #32, malformed PNG image crashes (CRC error)   test
