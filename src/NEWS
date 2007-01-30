@@ -1,0 +1,34 @@
+ 3, Initialize variables in tweenColorTest, fix cache
+ 4, gdImageFill, multiple segfaults with patterns or invalid arguments
+ 5, gdImageRectangle draws corners twice
+ 6, GIF Output does use the transparent color with truecolor images
+ 7, Multiple security issues in GIF loader
+ 8, gdIimageCopy doen't use the alpha channel
+ 9, Add autogen and and misc configure/makefile
+10, gdImageFilledEllipse does not respect transparency
+11, gdImageCreateFromPng*  crashes with empty file
+12, gdImageCreateFromPngCrx, initialize the signature buffer not the
+    infile
+13, leak in jinit_2pass_quantizer (gd_topal.c)
+14, Added santiy checks for possible memory allocation errors
+15, gdImageCreatePaletteFromTrueColor, later color allocations overwrite
+    the palette colors
+16, Obscure error on Sun's compiler in entities.tcl
+17, gdImageCreate, invalid gdFree call when overflow2 fails
+18, HWB_Diff, invalid usage of abs instead of fabs
+19, Fixed gdImageCopyMergeGray when used with a true color image
+20, transparency preservation in gdImageCopyRotated
+21, Out of range checks in gdImageSetAAPixelColor
+22, gdFontCacheSetup does not stop on error
+23, Errors when gdImageStringFTEx is called with an empty string
+24, gdft.c, uninitialized variable "charmap" and avoid divide-by-zero
+25, DISABLE_THREADS to permit disabling of thread support
+26, dynamicGetbuf, sourceGetbuf must return 0 for errors and EOF
+27, gdSeek declaration is wrong
+29, Windows native makefile
+31, Shared library support on cygwin (patch)
+32, Pattern-fill works incorrectly if tile is created via
+    gdImageCreateTruecolor
+33, malformed PNG image crashes  (CRC error)
+34, reading some gif images creates infinite loop
+36, gdImageFillToBorder crashes when used with alpha
