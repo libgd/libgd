@@ -4135,7 +4135,7 @@ See also <a href="#gdImageStringFTEx">gdImageStringFTEx</a>.
 <DT><A NAME="gdImageStringFTEx">
 char *gdImageStringFTEx(gdImagePtr im, int *brect,
   int fg, char *fontname, double ptsize, double angle,
-  int x, int y, gdFTStringExtraPtr strex)</A>
+  int x, int y, char *string, gdFTStringExtraPtr strex)</A>
 <STRONG>(FUNCTION)</STRONG>
 <DD>
 <strong>New in 2.0.5,</strong> also found in common third-party versions
@@ -4183,8 +4183,8 @@ include <code>gdFTEX_CHARMAP</code> in the setting of
 flags |= gdFTEX_CHARMAP;
 </pre>
 And set <code>charmap</code> to the desired value, which can be
-any of gdFTEX_Unicode, gdFTEX_Shift_JIS, or gdFTEX_Big5. If you do not
-specify a preference, Unicode will be tried first. If the preferred
+any of gdFTEX_Unicode, gdFTEX_Shift_JIS, gdFTEX_Big5, or gdFTEX_Adobe_Custom.
+If you do not specify a preference, Unicode will be tried first. If the preferred
 character mapping is not found in the font, other character mappings 
 are attempted.
 <p>

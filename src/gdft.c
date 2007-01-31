@@ -1004,6 +1004,14 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	      break;
 	    }
 	}
+      else if (encoding == gdFTEX_Adobe_Custom)
+	{
+	  if (charmap->encoding == FT_ENCODING_ADOBE_CUSTOM)
+	    {
+	      encodingfound++;
+	      break;
+	    }
+	}
       else if (encoding == gdFTEX_Big5)
 	{
 /* renamed sometime after freetype-2.1.4 */
@@ -1198,6 +1206,11 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 		  next++;
 		}
 	    }
+	    break;
+
+	  case gdFTEX_Adobe_Custom:
+	  default:
+	    next++;
 	    break;
 	  }
 
