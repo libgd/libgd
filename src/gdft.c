@@ -1210,6 +1210,7 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 
 	  case gdFTEX_Adobe_Custom:
 	  default:
+			ch &= 0xFF;
 	    next++;
 	    break;
 	  }
