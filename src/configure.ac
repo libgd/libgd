@@ -4,10 +4,11 @@
 #
 AC_PREREQ(2.54)
 
-#HEY! Change BOTH the vesion number and the GDLIB_REVISION setting!
+#HEY! Change BOTH the version number and the GDLIB_REVISION setting!
 AC_INIT([GD], [2.0.34], [http://bugs.libgd.org])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
+AC_CANONICAL_TARGET([])
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=0
@@ -26,6 +27,18 @@ AC_SUBST(GDLIBNAME)
 
 AM_INIT_AUTOMAKE()
 AC_CONFIG_HEADERS([config.h:config.hin])
+
+AC_MSG_CHECKING([if we are building a Cygwin target])
+case "$target" in
+  *-*-cygwin*) XTRA_LDFLAGS="-no-undefined"
+               os_cygwin=yes
+               ;;
+           *)  XTRA_LDFLAGS=
+               os_cygwin=no
+               ;;
+esac
+AC_MSG_RESULT([$os_cygwin])
+AC_SUBST([XTRA_LDFLAGS])
 
 AC_PROG_CC
 AM_PROG_CC_STDC
