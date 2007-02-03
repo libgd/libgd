@@ -1941,6 +1941,9 @@ void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 
 	nc =  gdImageTileGet(im,x,y);
 	pts = (int **) gdCalloc(sizeof(int *) * im->sy, sizeof(int));
+	if (!pts) {
+		return;	
+	}
 
 	for (i=0; i<im->sy;i++) {
 		pts[i] = (int *) gdCalloc(im->sx, sizeof(int));
