@@ -1680,7 +1680,6 @@ BGD_DECLARE(void) gdImageFillToBorder (gdImagePtr im, int x, int y, int border, 
   /* Seek left */
   int leftLimit, rightLimit;
   int i;
-  leftLimit = (-1);
 	int restoreAlphaBleding;
 
   if (border < 0)
@@ -1688,6 +1687,8 @@ BGD_DECLARE(void) gdImageFillToBorder (gdImagePtr im, int x, int y, int border, 
       /* Refuse to fill to a non-solid border */
       return;
     }
+
+	leftLimit = (-1);
 
 	restoreAlphaBleding = im->alphaBlendingFlag;
 	im->alphaBlendingFlag = 0;
