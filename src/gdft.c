@@ -800,6 +800,7 @@ BGD_DECLARE(void) gdFontCacheShutdown ()
       gdCacheDelete (fontCache);
       /* 2.0.16: Gustavo Scotti: make sure we don't free this twice */
       fontCache = 0;
+			gdMutexUnlock(gdFontCacheMutex);
       gdMutexShutdown (gdFontCacheMutex);
       FT_Done_FreeType (library);
     }
