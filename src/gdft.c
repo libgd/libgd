@@ -217,6 +217,16 @@ static int comp_entities(const void *e1, const void *e2) {
   return strcmp(en1->name, en2->name);
 }
 
+extern int any2eucjp (char *, char *, unsigned int);
+
+/* Persistent font cache until explicitly cleared */
+/* Fonts can be used across multiple images */
+
+/* 2.0.16: thread safety (the font cache is shared) */
+gdMutexDeclare (gdFontCacheMutex);
+static gdCache_head_t *fontCache;
+static FT_Library library;
+
 #define Tcl_UniChar int
 #define TCL_UTF_MAX 3
 static int
@@ -767,23 +777,15 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
 	      /* find antialised color */
 
 	      tc_key.bgcolor = *pixel;
+				gdMutexLock(gdFontCacheMutex);
 	      tc_elem = (tweencolor_t *) gdCacheGet (tc_cache, &tc_key);
 	      *pixel = tc_elem->tweencolor;
+				gdMutexUnlock(gdFontCacheMutex);
 	    }
 	}
     }
   return (char *) NULL;
 }
-
-extern int any2eucjp (char *, char *, unsigned int);
-
-/* Persistent font cache until explicitly cleared */
-/* Fonts can be used across multiple images */
-
-/* 2.0.16: thread safety (the font cache is shared) */
-gdMutexDeclare (gdFontCacheMutex);
-static gdCache_head_t *fontCache;
-static FT_Library library;
 
 BGD_DECLARE(void) gdFreeFontCache ()
 {
@@ -794,11 +796,12 @@ BGD_DECLARE(void) gdFontCacheShutdown ()
 {
   if (fontCache)
     {
-      gdMutexShutdown (gdFontCacheMutex);
+			gdMutexLock(gdFontCacheMutex);
       gdCacheDelete (fontCache);
-      FT_Done_FreeType (library);
       /* 2.0.16: Gustavo Scotti: make sure we don't free this twice */
       fontCache = 0;
+      gdMutexShutdown (gdFontCacheMutex);
+      FT_Done_FreeType (library);
     }
 }
 
