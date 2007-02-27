@@ -3,9 +3,7 @@
 
 CC=cl.exe
 LD=link.exe
-
 BUILD=Release
-
 LIBGDCFLAGS= \
    /D PATHSEPARATOR="\";\"" \
    /D DEFAULT_FONTPATH="\"C:\\WINDOWS\\FONTS;C:\\WINNT\\FONTS\"" \
@@ -27,7 +25,6 @@ LIBGDCFLAGS= \
    /D USE_GD_IMGSTRTTF
 
 CFLAGS=-I. -I.. -nologo -DWIN32 -D_WIN32 -DMSWIN32 -DBGDWIN32 $(LIBGDCFLAGS)
-
 LIBS=libjpeg.lib freetype2.lib libpng.lib zlib.lib kernel32.lib user32.lib advapi32.lib
 
 !if "$(BUILD)" == "Debug"
@@ -39,12 +36,12 @@ CFLAGS=$(CFLAGS) /Og /Oi /O2 /Oy /GF /MD /DNDEBUG /LD
 LDFLAGS=/nodefaultlib:msvcrtd.lib
 LIBS=$(LIBS) msvcrt.lib
 !endif
+
 CPPFLAGS=$(CFLAGS)
 
 !if "$(DLLNAME)" == ""
 DLLNAME=bgd.dll
 !endif
-
 DYNAMICLIB=$(DLLNAME:.dll=.lib)
 
 !if "$(STATICLIB)" == ""
@@ -53,7 +50,7 @@ STATICLIB=bgd_a.lib
 
 OBJS= \
   gd.obj \
-	gdcache.obj \
+  gdcache.obj \
   gdfontg.obj \
   gdfontl.obj \
   gdfontmb.obj \
@@ -81,6 +78,7 @@ OBJS= \
   gdxpm.obj \
   wbmp.obj
 
+
 EXE_OBJS= \
   annotate.obj \
   circletexttest.obj \
@@ -90,43 +88,31 @@ EXE_OBJS= \
 	gd2copypal.obj \
 	gd2togif.obj \
 	gd2topng.obj \
-	gdcmpgif.obj \
-	gdparttopng.obj \
-	gdtopng.obj \
-	giftogd2.obj \
-  gdtest.obj \
-  gdtestft.obj \
-  gifanimtest.obj \
-  pngtogd.obj \
-  pngtogd2.obj \
-  testac.obj \
-  testtr.obj \
-  webpng.obj
-  
-  
+	gdcmpgif.obj \	gdparttopng.obj \	gdtopng.obj \	giftogd2.obj \	gdtest.obj \	gdtestft.obj \	gifanimtest.obj \	pngtogd.obj \	pngtogd2.obj \	testac.obj \	testtr.obj \	webpng.obj
+
 all: $(DLLNAME) $(STATICLIB) tests
 
 $(EXE_OBJS:.obj=.exe): $*.obj $(DLLNAME)
 	link /out:$*.exe $*.obj $(DYNAMICLIB)
-
+	
 tests: $(EXE_OBJS:.obj=.exe)
 
 libgd.dll.res: libgd.rc
 	$(RC) /fo libgd.dll.res libgd.rc
-
+	
 {..}.c.obj:
 	$(CC) $(CFLAGS) -c $<
-
+	
 $(STATICLIB): $(OBJS)
 	$(LD) /lib /out:$(STATICLIB) $(OBJS)
-	
+
 $(DLLNAME): $(OBJS) libgd.dll.res
 	$(LD) /dll /out:$(DLLNAME) \
 		$(LDFLAGS) \
 		$(OBJS) \
 		libgd.dll.res \
 		$(LIBS)
-		
+
 dist: all
 	-rmdir /s /q distro
 	mkdir distro
@@ -138,7 +124,7 @@ dist: all
 	mkdir distro\lib
 	copy *.lib distro\lib
 	copy ..\COPYING distro\COPYING.TXT
-
+	
 clean:
 	-del /q *.obj *.dll *.lib *.ilk *.pdb *.exp *.exe *.png
 	-rmdir /s /q distro
