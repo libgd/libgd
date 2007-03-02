@@ -115,7 +115,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
        int             bitPixel;
        int	       i;
        /*1.4//int             imageCount = 0; */
-       char            version[4];
        /* 2.0.28: threadsafe storage */
        int ZeroDataBlock = FALSE;
 
@@ -126,10 +125,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
        if (strncmp((char *)buf,"GIF",3) != 0) {
 		return 0;
 	}
-       strncpy(version, (char *)buf + 3, 3);
-       version[3] = '\0';
 
-       if ((strcmp(version, "87a") != 0) && (strcmp(version, "89a") != 0)) {
+       if ((strncmp((char *)buf+3, "87a", 3) != 0) && (strncmp((char *)buf+3, "89a", 3) != 0)) {
 		return 0;
 	}
        if (! ReadOK(fd,buf,7)) {
