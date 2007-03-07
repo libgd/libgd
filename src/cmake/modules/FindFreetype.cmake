@@ -20,12 +20,13 @@ FIND_PATH(FREETYPE_INCLUDE_DIR_FTHEADER freetype/config/ftheader.h
   /usr/local/include/freetype2
 )
 
-FIND_LIBRARY(FREETYPE_LIBRARY freetype
+FIND_LIBRARY(FREETYPE_LIBRARY NAMES freetype freetype2
+  PATHS
   /usr/lib64
   /usr/lib
   /usr/local/lib
 )
-
+MESSAGE("FT2 lib found: " ${FREETYPE_LIBRARY})
 IF (FREETYPE_LIBRARY)
   IF (FREETYPE_INCLUDE_DIR_FTHEADER AND FREETYPE_INCLUDE_DIR_FT2BUILD)
     SET( FREETYPE_FOUND "YES" )
