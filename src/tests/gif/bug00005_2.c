@@ -447,8 +447,8 @@ int main(void) {
 	if ( ( im = gdImageCreateFromGifPtr(8994,
 					(char*) &gifdata[0]) ) != NULL) {
 		fprintf(stderr, "success!\n");
-		return 0;
 		gdImageDestroy(im);
+		return 0;
 	} else {
 		fprintf(stderr, "failed!\n");
 		return 1;
