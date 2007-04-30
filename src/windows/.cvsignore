@@ -5,4 +5,5 @@
 *.obj
 *.ilk
 *.res
+*.manifest
 distro

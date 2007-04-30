@@ -18,9 +18,15 @@
 #include "entities.h"
 
 /* 2.0.10: WIN32, not MSWIN32 */
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_WIN32_WCE)
 #include <unistd.h>
-#else
+#elif defined(_WIN32_WCE)
+#include <wce_stdlib.h> /* getenv() */
+#include <wce_unistd.h> /* access() */
+#define getenv wceex_getenv
+#define access wceex_access
+#define strdup _strdup
+#else /* _WIN32_WCE */
 #include <io.h>
 #define R_OK 04			/* Needed in Windows */
 #endif
