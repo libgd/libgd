@@ -1000,6 +1000,44 @@ BGD_DECLARE(void) gdImageAABlend (gdImagePtr im)
 
 static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int col);
 
+static void gdImageHLine(gdImagePtr im, int y, int x1, int x2, int col)
+{
+	if (im->thick > 1) {
+		int thickhalf = im->thick >> 1;
+		gdImageFilledRectangle(im, x1, y - thickhalf, x2, y + im->thick - thickhalf - 1, col);
+	} else {
+		if (x2 < x1) {
+			int t = x2;
+			x2 = x1;
+			x1 = t;
+		}
+
+		for (;x1 <= x2; x1++) {
+			gdImageSetPixel(im, x1, y, col);
+		}
+	}
+	return;
+}
+
+static void gdImageVLine(gdImagePtr im, int x, int y1, int y2, int col)
+{
+	if (im->thick > 1) {
+		int thickhalf = im->thick >> 1;
+		gdImageFilledRectangle(im, x - thickhalf, y1, x + im->thick - thickhalf - 1, y2, col);
+	} else {
+		if (y2 < y1) {
+			int t = y1;
+			y2 = y1;
+			y1 = t;
+		}
+
+		for (;y1 <= y2; y1++) {
+			gdImageSetPixel(im, x, y1, col);
+		}
+	}
+	return;
+}
+
 /* Bresenham as presented in Foley & Van Dam */
 BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
@@ -1007,6 +1045,7 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
   int wid;
   int w, wstart;
   int thick;
+
   if (color == gdAntiAliased)
     {
       /* 
@@ -1031,6 +1070,15 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 
   dx = abs (x2 - x1);
   dy = abs (y2 - y1);
+
+	if (dx == 0) {
+		gdImageVLine(im, x1, y1, y2, color);
+		return;
+	} else if (dy == 0) {
+		gdImageHLine(im, y1, x1, x2, color);
+		return;
+	}
+
   if (dy <= dx)
     {
       /* More-or-less horizontal. use wid for vertical stroke */
@@ -3383,6 +3431,7 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 	/* keep them as 32bits */
 	long x, y, inc;
 	long dx, dy,tmp;
+
 	if (!im->trueColor) {
 		/* TBB: don't crash when the image is of the wrong type */
 		gdImageLine(im, x1, y1, x2, y2, col);
@@ -3395,6 +3444,15 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
           return;
 	dx = x2 - x1;
 	dy = y2 - y1;
+
+	/* Axis aligned lines */
+	if (dx == 0) {
+		gdImageHLine(im, y1, x1, x2, col);
+		return;
+	} else if (dy == 0) {
+		gdImageVLine(im, x1, y1, y2, col);
+		return;
+	}
 
 	if (dx == 0 && dy == 0) {
 		/* TBB: allow setting points */
