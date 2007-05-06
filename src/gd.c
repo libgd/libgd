@@ -151,7 +151,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
   }
   im->tpixels = (int **) gdMalloc (sizeof (int *) * sy);
   if (!im->tpixels) {
-    free(im);
+    gdFree(im);
     return 0;
   }
   im->polyInts = 0;

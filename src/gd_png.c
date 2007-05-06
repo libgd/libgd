@@ -746,7 +746,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	      for (i = 0; i < j; ++i)
 		gdFree (row_pointers[i]);
               /* 2.0.29: memory leak TBB */
-              free(row_pointers);
+              gdFree(row_pointers);
 	      return;
 	    }
 	  pOutputRow = *prow_pointers++;
