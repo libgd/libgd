@@ -31,6 +31,7 @@ int main()
 	 0x005e5e5e == c3 && 0x005e5e5e == c4)) {
 	 	return 1;
 	}
+
 	gdImageDestroy(im);
 	return 0;
 }

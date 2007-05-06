@@ -8,6 +8,7 @@ int main()
 	int im_white, im_black, tile_white, tile_black;
 	int x,y, error = 0;
 	FILE *fp;
+	char path[1024];
 
 	fputs("flag 0\n", stdout);
 	im = gdImageCreate(150, 150);
@@ -37,7 +38,9 @@ int main()
 	gdImageFill(im, 0, 0, 0xffffff);
 	fputs("flag 2\n", stdout);
 
-	if (!gdAssertImageEqualsToFile("bug00002_2_exp.png", im)) {
+
+	sprintf(path, "%s/gdimagefill/bug00002_2_exp.png", GDTEST_TOP_DIR);
+	if (!gdAssertImageEqualsToFile(path, im)) {
 		error = 1;
 	}
 

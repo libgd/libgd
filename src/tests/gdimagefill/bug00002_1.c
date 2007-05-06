@@ -7,6 +7,7 @@ int main()
 	gdImagePtr im;
 	int error = 0;
 	FILE *fp;
+	char path[1024];
 
 	fputs("flag 0\n", stdout);
 	im = gdImageCreateTrueColor(100, 100);
@@ -22,7 +23,8 @@ int main()
  	gdImagePng(im,fp);
 	fclose(fp);
 
-	if (!gdAssertImageEqualsToFile("bug00002_1_exp.png", im)) {
+	sprintf(path, "%s/gdimagefill/bug00002_1_exp.png", GDTEST_TOP_DIR);
+	if (!gdAssertImageEqualsToFile(path, im)) {
 		error = 1;
 	}
 

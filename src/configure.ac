@@ -5,14 +5,14 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the version number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.0.34], [http://bugs.libgd.org])
+AC_INIT([GD], [2.1.0], [http://bugs.libgd.org])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET([])
 
 GDLIB_MAJOR=2
-GDLIB_MINOR=0
-GDLIB_REVISION=34
+GDLIB_MINOR=1
+GDLIB_REVISION=0
 GDLIBNAME=gd
 #Expanded by tests later in this file. TBB 2.0.26
 #2.0.28: GIF is standard now. Doesn't depend on anything else,

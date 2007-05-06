@@ -9,8 +9,10 @@ int main()
 	int error;
  	gdImagePtr im;
 	FILE *fp;
+	char path[1024];
 
-	fp = fopen("conv_test.jpeg", "rb");
+	sprintf(path, "%s/jpeg/conv_test.jpeg", GDTEST_TOP_DIR);
+	fp = fopen(path, "rb");
 	if (!fp) {
 		printf("failed, cannot open file\n");
 		return 1;
@@ -19,7 +21,8 @@ int main()
 	im = gdImageCreateFromJpeg(fp);
 	fclose(fp);
 
-	if (!gdAssertImageEqualsToFile("conv_test_exp.png", im)) {
+	sprintf(path, "%s/jpeg/conv_test_exp.png", GDTEST_TOP_DIR);
+	if (!gdAssertImageEqualsToFile(path, im)) {
 		error = 1;
 	} else {
 		if (im) {

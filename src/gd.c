@@ -1027,8 +1027,8 @@ static void gdImageVLine(gdImagePtr im, int x, int y1, int y2, int col)
 	} else {
 		if (y2 < y1) {
 			int t = y1;
-			y2 = y1;
-			y1 = t;
+			y1 = y2;
+			y2 = t;
 		}
 
 		for (;y1 <= y2; y1++) {
@@ -2000,7 +2000,7 @@ void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 	nc =  gdImageTileGet(im,x,y);
 	pts = (int **) gdCalloc(sizeof(int *) * im->sy, sizeof(int));
 	if (!pts) {
-		return;	
+		return;
 	}
 
 	for (i=0; i<im->sy;i++) {
@@ -2041,7 +2041,7 @@ void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 		}
 		x = x1+1;
 		do {
-			for (; x<=wx2 && (!pts[y][x] && gdImageGetPixel(im,x, y)==oc) ; x++) {
+			for (; x<wx2 && (!pts[y][x] && gdImageGetPixel(im,x, y)==oc) ; x++) {
 				if (pts[y][x]){
 					/* we should never be here */
 					break;

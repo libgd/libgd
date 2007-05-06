@@ -2,13 +2,15 @@
 #include "gd.h"
 #include "gdtest.h"
 
-#define exp_img "bug00020_exp.png"
 #define width 50
 
 int main()
 {
  	gdImagePtr im, im2;
  	int error = 0;
+	char path[1024];
+
+	sprintf(path, "%s/gdimagecopyrotated/bug00020_exp.png", GDTEST_TOP_DIR);
 
 	im = gdImageCreateTrueColor(width, width);
 	gdImageFilledRectangle(im, 0,0, width, width, 0xFF0000);
@@ -20,7 +22,7 @@ int main()
 
 	gdImageCopyRotated(im2, im, width / 2, width / 2, 0,0, width, width, 60);
 
-	if (!gdAssertImageEqualsToFile(exp_img, im2)) {
+	if (!gdAssertImageEqualsToFile(path, im2)) {
 		error = 1;
 	}
 

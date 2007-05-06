@@ -7,6 +7,8 @@
 #include <gd.h>
 
 #include "gdtest.h"
+#include "test_config.h"
+
 
 gdImagePtr gdTestImageFromPng(const char *filename)
 {
@@ -114,6 +116,11 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 	gdImagePtr surface_diff = NULL;
 	CuTestImageResult result;
 
+	if (!actual) {
+		fprintf(stderr, "Image is NULL\n");
+		goto fail;
+	}
+
 	width_a  = gdImageSX(expected);
 	height_a = gdImageSY(expected);
 	width_b  = gdImageSX(actual);
@@ -131,16 +138,34 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 
 	gdTestImageDiff(expected, actual, surface_diff, &result);
 	if (result.pixels_changed>0) {
+		char *filename;
 		char file_diff[255];
+		char file_out[1024];
 		FILE *fp;
+		int len, p;
 
 		sprintf(buf, "Total pixels changed: %d with a maximum channel difference of %d.\n",
 			result.pixels_changed,
 			result.max_diff
 		);
-		sprintf(file_diff, "%s_%u_diff.png", file, line);
+
+		p = len = strlen(file);
+		p--;
+
+		/* Use only the filename (and store it in the bld dir not the src dir
+		 */
+		while(p > 0 && (file[p] != '/' && file[p] != '\\')) {
+			p--;
+		}
+		sprintf(file_diff, "%s_%u_diff.png", file + p  + 1, line);
+		sprintf(file_out, "%s_%u_out.png", file + p  + 1, line);
+
 		fp = fopen(file_diff, "wb");
 		gdImagePng(surface_diff,fp);
+		fclose(fp);
+
+		fp = fopen(file_out, "wb");
+		gdImagePng(actual, fp);
 		fclose(fp);
 	} else {
 		if (surface_diff) {

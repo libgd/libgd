@@ -1,0 +1,71 @@
+Dear OpenVMS user,
+
+Installation process is identical to one in *nix* world and consist to 
+four simple steps:
+1. Installing required libraries
+2. Configuration
+3. Compiling
+4. Installation.
+
+
+1. Please install required libraries first:
+
+1. ZLIB 1.2 or newer
+2. PNG 1.2.12 or newer
+3. FreeType 2
+4. JPEG 6B
+
+All may be found at OpenVMS libSDL porting project site
+http://fafner.dyndns.org/~alexey/libsdl/required.html
+
+Also, system should have MMS make utility from DEC or 
+free analogue MMK. And C compiler with runtime, of course. ;)
+
+
+2. Configuration is doing automatically by a configuration script:
+
+$@[.VMS]CONFIGURE
+
+The script detects hardware,system and required libraries have been installed.
+Compilation stage will be prepeared to create shared and static libraries. 
+Alpha,IA64 or VAX platform are supported. Optional argument "static" 
+tells to configurator to make static libraries only:
+
+$@[.VMS]CONFIGURE STATIC
+
+CONFIGURE script checks your ZLIB, FREETYPE, JPEG, PNG libraries. 
+If it detects any troubles, you may get and install good and tested ones 
+from OpenVMS libSDL porting project site:
+http://fafner.dyndns.org/~alexey/libsdl/required.html
+
+When success, it creates a building script named BUILD.COM
+
+3. Compilation:
+
+$@BUILD
+
+It should be error-free.
+
+When success, it creates a setup script named LIBGD$STARTUP.COM
+
+4. Setup OpenVMS environment before using libGD:
+
+$@LIBGD$STARTUP
+
+LIBGD and its utilites are ready to using.
+
+Optionally you may insert this startup file into your LOGIN.COM 
+to set libGD environment every time you login automatically.
+
+To learn libGD please refer libGD official documentation.
+Compiling with library should be:
+
+$CC/INCL=LIBGD PROG
+$LINK PROG, LIBGD:LIBGD/OPT
+
+
+
+yours,
+Alexey Chupahin
+Rostov-on-Don, Russia
+elvis_75@mail.ru  alex@rostov.rs-ultra.ru

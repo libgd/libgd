@@ -8,6 +8,7 @@ int main()
  	gdImagePtr im;
 	FILE *fp;
 	int red, blue, white, black, error = 0;
+	char path[1024];
 
 	im = gdImageCreate(50,100);
 	red = gdImageColorAllocate(im, 255, 0, 0);
@@ -29,7 +30,8 @@ int main()
 	gdImageFill(im, 100,69, red);
 	gdImageFill(im, 100,21, white);
 
-	if (!gdAssertImageEqualsToFile("bug00002_4_exp.png", im)) {
+	sprintf(path, "%s/gdimagefill/bug00002_4_exp.png", GDTEST_TOP_DIR);
+	if (!gdAssertImageEqualsToFile(path, im)) {
 		error = 1;
 	}
 

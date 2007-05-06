@@ -8,8 +8,10 @@ int main()
 {
  	gdImagePtr im;
 	FILE *fp;
+	char path[1024];
 
-	fp = fopen("empty.jpeg", "rb");
+	sprintf(path, "%s/jpeg/empty.jpeg", GDTEST_TOP_DIR);
+	fp = fopen(path, "rb");
 	if (!fp) {
 		printf("failed, cannot open file\n");
 		return 1;
