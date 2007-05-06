@@ -2096,6 +2096,17 @@ BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2,
   if (y1 > gdImageSY (im))
     y1 = gdImageSY (im);
 
+  if (x1 > x2) {
+	  x = x1;
+	  x1 = x2;
+	  x2 = x;
+  }
+  if (y1 > y2) {
+	  y = y1;
+	  y1 = y2;
+	  y2 = y;
+  }
+
   for (y = y1; (y <= y2); y++)
     {
       for (x = x1; (x <= x2); x++)
