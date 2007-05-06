@@ -1,6 +1,8 @@
 SET(TESTS_FILES
 	gdimageline_aa
 	gdimageline_aa_outofrange
+	bug00077
+	bug00072
 )
 
 FOREACH(test_name ${TESTS_FILES})

@@ -6,10 +6,10 @@ extern "C" {
 #define GD_H 1
 
 #define GD_MAJOR_VERSION 2
-#define GD_MINOR_VERSION 0
-#define GD_RELEASE_VERSION 34
+#define GD_MINOR_VERSION 1
+#define GD_RELEASE_VERSION 0
 #define GD_EXTRA_VERSION "alpha"
-#define GD_VERSION_STRING "2.0.34-alpha"
+#define GD_VERSION_STRING "2.1.0-alpha"
 
 
 /* Do the DLL dance: dllexport when building the DLL,
@@ -62,6 +62,11 @@ extern "C"
 #endif
 
 /* some might want to set DEFAULT_FONTPATH from configure in config.h */
+#ifdef NETWARE
+/* default fontpath for netware systems, could probably be handled in configure for 2.1 */
+#define DEFAULT_FONTPATH "sys:/java/nwgfx/lib/x11/fonts/ttf;."
+#define PATHSEPARATOR ";"
+#endif
 
 /* 2.0.23: more Type 1 fonts */
 #ifndef DEFAULT_FONTPATH

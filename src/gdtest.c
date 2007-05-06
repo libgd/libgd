@@ -62,7 +62,11 @@ main (int argc, char **argv)
   /* */
   /* Send to PNG File then Ptr */
   /* */
+#ifdef VMS
+  sprintf (of, "%s-png", argv[1]);
+#else
   sprintf (of, "%s.png", argv[1]);
+#endif
   out = fopen (of, "wb");
   gdImagePng (im, out);
   fclose (out);
@@ -92,7 +96,11 @@ main (int argc, char **argv)
   /* */
   /* Send to GD2 File then Ptr */
   /* */
+#ifdef VMS
+  sprintf (of, "%s-gd2", argv[1]);
+#else
   sprintf (of, "%s.gd2", argv[1]);
+#endif
   out = fopen (of, "wb");
   gdImageGd2 (im, out, 128, 2);
   fclose (out);
@@ -124,7 +132,11 @@ main (int argc, char **argv)
   /* */
   /* Send to GD File then Ptr */
   /* */
+#ifdef VMS
+  sprintf (of, "%s-gd", argv[1]);
+#else
   sprintf (of, "%s.gd", argv[1]);
+#endif
   out = fopen (of, "wb");
   gdImageGd (im, out);
   fclose (out);
@@ -154,8 +166,8 @@ main (int argc, char **argv)
   gdImageDestroy (im2);
 
   /*
-     ** Test gdImageCreateFromPngSource'
-     * */
+   * Test gdImageCreateFromPngSource'
+   */
 
   in = fopen (argv[1], "rb");
 
@@ -177,10 +189,13 @@ main (int argc, char **argv)
 
 
   /*
-     ** Test gdImagePngToSink'
-     * */
-
+   * Test gdImagePngToSink'
+   */
+#ifdef VMS
+  sprintf (of, "%s-snk", argv[1]);
+#else
   sprintf (of, "%s.snk", argv[1]);
+#endif
   out = fopen (of, "wb");
   imgsnk.sink = fwriteWrapper;
   imgsnk.context = out;

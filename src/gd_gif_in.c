@@ -128,13 +128,14 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
        unsigned char   c;
        unsigned char   ColorMap[3][MAXCOLORMAPSIZE];
        unsigned char   localColorMap[3][MAXCOLORMAPSIZE];
-       int             imw, imh;
-       int             useGlobalColormap;
+       int             imw, imh, screen_width, screen_height;
+       int             gif87a, useGlobalColormap;
        int             bitPixel;
        int	       i;
        /*1.4//int             imageCount = 0; */
        /* 2.0.28: threadsafe storage */
        int ZeroDataBlock = FALSE;
+       int haveGlobalColormap;
 
        gdImagePtr im = 0;
        if (! ReadOK(fd,buf,6)) {
@@ -143,28 +144,37 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
        if (strncmp((char *)buf,"GIF",3) != 0) {
 		return 0;
 	}
-
-       if ((strncmp((char *)buf+3, "87a", 3) != 0) && (strncmp((char *)buf+3, "89a", 3) != 0)) {
+		if (memcmp((char *)buf+3, "87a", 3) == 0) {
+			gif87a = 1;
+		} else if (memcmp((char *)buf+3, "89a", 3) == 0) {
+			gif87a = 0;
+		} else {
 		return 0;
 	}
+
        if (! ReadOK(fd,buf,7)) {
 		return 0;
 	}
+
        BitPixel        = 2<<(buf[4]&0x07);
 #if 0
        ColorResolution = (int) (((buf[4]&0x70)>>3)+1);
        Background      = buf[5];
        AspectRatio     = buf[6];
 #endif
-	   imw = LM_to_uint(buf[0],buf[1]);
-	   imh = LM_to_uint(buf[2],buf[3]);
+			screen_width = imw = LM_to_uint(buf[0],buf[1]);
+			screen_height = imh = LM_to_uint(buf[2],buf[3]);
 
-       if (BitSet(buf[4], LOCALCOLORMAP)) {    /* Global Colormap */
+			haveGlobalColormap = BitSet(buf[4], LOCALCOLORMAP);    /* Global Colormap */
+			if (haveGlobalColormap) {
                if (ReadColorMap(fd, BitPixel, ColorMap)) {
 			return 0;
 		}
        }
        for (;;) {
+							int top, left;
+							int width, height;
+
                if (! ReadOK(fd,&c,1)) {
                        return 0;
                }
@@ -193,26 +203,35 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
                useGlobalColormap = ! BitSet(buf[8], LOCALCOLORMAP);
 
                bitPixel = 1<<((buf[8]&0x07)+1);
+							left = LM_to_uint(buf[0], buf[1]);
+							top = LM_to_uint(buf[2], buf[3]);
+							width = LM_to_uint(buf[4], buf[5]);
+							height = LM_to_uint(buf[6], buf[7]);
 
+							if (left + width > screen_width || top + height > screen_height) {
+						 		if (VERBOSE) {
+									printf("Frame is not confined to screen dimension.\n");
+								}
+								return 0;
+							}
 
-			   if (!useGlobalColormap) {
-				   if (ReadColorMap(fd, bitPixel, localColorMap)) {
-					   return 0;
-				   }
-			   }
-
-			   if (!(im = gdImageCreate(imw, imh))) {
+			   if (!(im = gdImageCreate(width, height))) {
 				   return 0;
 			   }
 			   im->interlace = BitSet(buf[8], INTERLACE);
-               if (! useGlobalColormap) {
+			   if (!useGlobalColormap) {
                        if (ReadColorMap(fd, bitPixel, localColorMap)) { 
-                                 return 0;
-                       }
-                       ReadImage(im, fd, imw, imh, localColorMap, 
+													gdImageDestroy(im);
+					   return 0;
+				   }
+                       ReadImage(im, fd, width, height, localColorMap, 
                                  BitSet(buf[8], INTERLACE), &ZeroDataBlock); 
                } else {
-                       ReadImage(im, fd, imw, imh,
+							 				if (!haveGlobalColormap) {
+													gdImageDestroy(im);
+													return 0;
+                       }
+                       ReadImage(im, fd, width, height,
                                  ColorMap, 
                                  BitSet(buf[8], INTERLACE), &ZeroDataBlock);
                }
@@ -281,8 +300,7 @@ DoExtension(gdIOCtx *fd, int label, int *Transparent, int *ZeroDataBlockP)
                if ((buf[0] & 0x1) != 0)
                        *Transparent = buf[3];
 
-               while (GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP) > 0)
-                       ;
+               while (GetDataBlock(fd, (unsigned char*) buf, ZeroDataBlockP) > 0);
                return FALSE;
        default:
                break;

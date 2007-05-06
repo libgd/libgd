@@ -3,6 +3,8 @@
 
 #include <stdarg.h>
 #include <gd.h>
+#include "test_config.h"
+
 #define GDTEST_STRING_MAX 1024
 typedef struct CuTestImageResult CuTestImageResult;
 struct CuTestImageResult {
