@@ -783,10 +783,8 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
 	      /* find antialised color */
 
 	      tc_key.bgcolor = *pixel;
-				gdMutexLock(gdFontCacheMutex);
 	      tc_elem = (tweencolor_t *) gdCacheGet (tc_cache, &tc_key);
 	      *pixel = tc_elem->tweencolor;
-				gdMutexUnlock(gdFontCacheMutex);
 	    }
 	}
     }
@@ -1196,7 +1194,7 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 		{
 		  ch = c & 0xFF;	/* don't extend sign */
 		}
-	      next++;
+	      if (*next) next++;
 	    }
 	    break;
 	  case gdFTEX_Big5:
@@ -1590,9 +1588,14 @@ static char * font_path(char **fontpath, char *name_list)
       fullname = gdRealloc (fullname,
                           strlen (fontsearchpath) + strlen (name) + 8);
       /* if name is an absolute or relative pathname then test directly */
+#ifdef NETWARE
+      /* netware uses the format "volume:/path" or the standard "/path" */
+      if (name[0] != 0 && (strstr(name, ":/") || name[0] == '/'))
+#else
       if (strchr (name, '/')
 	  || (name[0] != 0 && name[1] == ':'
 	      && (name[2] == '/' || name[2] == '\\')))
+#endif
 	{
 	  sprintf (fullname, "%s", name);
 	  if (access (fullname, R_OK) == 0)
@@ -1651,7 +1654,7 @@ static char * font_path(char **fontpath, char *name_list)
   gdFree (fontlist);
   if (!font_found)
     {
-      free (fullname);
+      gdFree (fullname);
       return "Could not find/open font";
     }
 
