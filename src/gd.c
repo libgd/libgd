@@ -1610,6 +1610,7 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
     {
       e += 360;
     }
+
   for (i = s; (i <= e); i++)
     {
       int x, y;
@@ -3456,10 +3457,10 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 
 	/* Axis aligned lines */
 	if (dx == 0) {
-		gdImageHLine(im, y1, x1, x2, col);
+		gdImageVLine(im, x1, y1, y2, col);
 		return;
 	} else if (dy == 0) {
-		gdImageVLine(im, x1, y1, y2, col);
+		gdImageHLine(im, y1, x1, x2, col);
 		return;
 	}
 
