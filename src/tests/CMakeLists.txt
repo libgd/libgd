@@ -28,6 +28,7 @@ if (BUILD_TEST)
 
 	SET(TESTS_DIRS
 		gdtest
+		gdimagearc
 		gdimagecolorclosest
 		gdimagecolorexact
 		gdimagecolorresolve
