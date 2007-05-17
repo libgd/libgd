@@ -18,6 +18,9 @@ GD 2.0.35RC3 (2007-04-??)
 72, gdImageAALine draws axis lines with two pixels width
 73, TTF usage doesn't work properly on Netware (Guenter Knauf, Scott MacVicar)
 74, gdImageArc CPU usage with large angles
+78, gdImageFilledRectangle regression fixed when used with reversed edges
+86, Possible infinite loop in libgd/gd_png.c, flaw found by Xavier Roche
+    (Pierre)
 
 GD 2.0.34 (2007-02-07)
  3, Initialize variables in tweenColorTest, fix cache
