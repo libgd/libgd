@@ -141,14 +141,25 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 {
   int i;
   gdImagePtr im;
+
+  if (overflow2(sx, sy)) {
+    return NULL;
+  }
+
+  if (overflow2(sizeof (int *), sy)) {
+    return 0;
+  }
+
+  if (overflow2(sizeof(int), sx)) {
+    return NULL;
+  }
+
   im = (gdImage *) gdMalloc (sizeof (gdImage));
   if (!im) {
     return 0;
   }
   memset (im, 0, sizeof (gdImage));
-  if (overflow2(sizeof (int *), sy)) {
-    return 0;
-  }
+
   im->tpixels = (int **) gdMalloc (sizeof (int *) * sy);
   if (!im->tpixels) {
     gdFree(im);
