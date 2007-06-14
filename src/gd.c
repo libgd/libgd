@@ -1609,18 +1609,29 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
   int lx = 0, ly = 0;
   int fx = 0, fy = 0;
 
-	if (s > 360) {
-		s = s % 360;
-	}
+  if ((s % 360)  == (e % 360)) {
+	  s = 0; e = 360;
+  } else {
+	  if (s > 360) {
+		  s = s % 360;
+	  }
 
-	if (e > 360) {
-		e = e % 360;
-	}
+	  if (e > 360) {
+		  e = e % 360;
+	  }
 
-  while (e < s)
-    {
-      e += 360;
-    }
+	  while (s < 0) {
+		  s += 360;
+	  }
+
+	  while (e < s) {
+		  e += 360;
+	  }
+
+	  if (s == e) {
+		  s = 0; e = 360;
+	  }
+  }
 
   for (i = s; (i <= e); i++)
     {
