@@ -3,8 +3,17 @@
 To run the tests suite, all you need is (add the cmake options if you need any
 or if the default libs and include paths are not the default) :
 
+In a sub directory:
+$ mkdir bld
+$ cd bld
+$ cmake -DBUILD_TEST=1 ..
+$ ctest .
+
+Or if you like to build in the source tree:
 $ cmake -DBUILD_TEST=1 .
 $ ctest .
+
+Add "-DCMAKE_BUILD_TYPE=DEBUG" if you like to have a debug version.
 
 If you like to run the tests against a installed GD library, set the following
 environment variables:
