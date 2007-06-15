@@ -11,3 +11,9 @@ config.status
 configure
 libtool
 stamp-h1
+CMakeCache.txt
+CMakeFiles
+DartConfiguration.tcl
+DartTestfile.txt
+Testing
+cmake_install.cmake
