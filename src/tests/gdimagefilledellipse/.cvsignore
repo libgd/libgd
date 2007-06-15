@@ -2,8 +2,5 @@ CMakeFiles
 DartTestfile.txt
 Makefile
 cmake_install.cmake
-bug00005
-bug00005_2
-bug00006
-bug00060
-bug00066
+bug00010
+bug00010.c_14_diff.png
