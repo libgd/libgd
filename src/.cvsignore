@@ -17,3 +17,4 @@ DartConfiguration.tcl
 DartTestfile.txt
 Testing
 cmake_install.cmake
+test_config.h
