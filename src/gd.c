@@ -61,8 +61,8 @@ static const unsigned char gd_toascii[256] = {
 };
 #endif /*CHARSET_EBCDIC */
 
-extern int gdCosT[];
-extern int gdSinT[];
+extern const int gdCosT[];
+extern const int gdSinT[];
 
 static void gdImageBrushApply (gdImagePtr im, int x, int y);
 static void gdImageTileApply (gdImagePtr im, int x, int y);
