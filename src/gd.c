@@ -80,12 +80,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 		return NULL;
   }
 
-  im = (gdImage *) gdMalloc (sizeof (gdImage));
+	im = (gdImage *) gdCalloc(1, sizeof(gdImage));
 	if (!im) {
 		return NULL;
 	}
 
-  memset (im, 0, sizeof (gdImage));
   /* Row-major ever since gd 1.3 */
   im->pixels = (unsigned char **) gdMalloc (sizeof (unsigned char *) * sy);
 	if (!im->pixels) {
@@ -2028,6 +2027,7 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 
 	stack = (struct seg *)gdMalloc(sizeof(struct seg) * ((int)(im->sy*im->sx)/4));
 	if (!stack) {
+		gdFree(pts);
 		return;
 	}
 	sp = stack;
