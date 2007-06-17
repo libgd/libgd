@@ -4,3 +4,4 @@ Makefile
 cmake_install.cmake
 bug00011
 bug00033
+bug00086
