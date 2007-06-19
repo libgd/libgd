@@ -2838,6 +2838,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm (FILE * fd)
     }
   bytes = (w * h / 8) + 1;
   im = gdImageCreate (w, h);
+  if (!im) {
+    return 0;
+  }
+
   gdImageColorAllocate (im, 255, 255, 255);
   gdImageColorAllocate (im, 0, 0, 0);
   x = 0;
