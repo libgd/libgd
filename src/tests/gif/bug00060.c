@@ -20,4 +20,5 @@ int main()
 	im = gdImageCreateFromGif(fp);
 	fclose(fp);
 	gdImageDestroy(im);
+	return 0;
 }
