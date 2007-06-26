@@ -135,7 +135,7 @@ extern "C"
 	based on the alpha channel value of the source color.
 	The resulting color is opaque. */
 
-   BGD_DECLARE(int) gdAlphaBlend (int dest, int src);
+BGD_DECLARE(int) gdAlphaBlend (int dest, int src);
 
   typedef struct gdImageStruct
   {
@@ -377,7 +377,8 @@ BGD_DECLARE(void) gdImageStringUp16 (gdImagePtr im, gdFontPtr f, int x, int y,
 BGD_DECLARE(int) gdFontCacheSetup (void);
 
 /* Optional: clean up after application is done using fonts in 
-BGD_DECLARE( ) gdImageStringFT(). */
+BGD_DECLARE( )
+ gdImageStringFT(). */
 BGD_DECLARE(void) gdFontCacheShutdown (void);
 /* 2.0.20: for backwards compatibility. A few applications did start calling
  this function when it first appeared although it was never documented. 
