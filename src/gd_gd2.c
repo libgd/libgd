@@ -293,6 +293,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ptr (int size, void *data)
 {
   gdImagePtr im;
   gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
+  if(!in)
+  	return 0;
   im = gdImageCreateFromGd2Ctx (in);
   in->gd_free (in);
   return im;
@@ -503,6 +505,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartPtr (int size, void *data, int s
 {
   gdImagePtr im;
   gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
+  if(!in)
+  	return 0;
   im = gdImageCreateFromGd2PartCtx (in, srcx, srcy, w, h);
   in->gd_free (in);
   return im;
