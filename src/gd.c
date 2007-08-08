@@ -1954,6 +1954,14 @@ BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
 		goto done;
 	}
 
+	if(overflow2(im->sy, im->sx)) {
+		return;
+	}
+
+	if(overflow2(sizeof(struct seg), ((im->sy * im->sx) / 4))) {
+		return;
+	}
+
 	stack = (struct seg *)gdMalloc(sizeof(struct seg) * ((int)(im->sy*im->sx)/4));
 	if (!stack) {
 		return;
@@ -2018,6 +2026,14 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 
 	wx2=im->sx;wy2=im->sy;
 	tiled = nc==gdTiled;
+
+	if(overflow2(im->sy, im->sx)) {
+		return;
+	}
+
+	if(overflow2(sizeof(struct seg), ((im->sy * im->sx) / 4))) {
+		return;
+	}
 
 	nc =  gdImageTileGet(im,x,y);
 	pts = (char *) gdCalloc(im->sy * im->sx, sizeof(char));
