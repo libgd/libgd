@@ -1911,7 +1911,7 @@ BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
 	struct seg *stack;
 	struct seg *sp;
 
-	if (!im->trueColor && nc > (im->colorsTotal - 1)) {
+	if (!im->trueColor && (nc >= 0) && (nc > (im->colorsTotal - 1))) {
 		return;
 	}
 
