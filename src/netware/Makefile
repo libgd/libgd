@@ -136,16 +136,14 @@ SDK_LIBC = $(NDK_ROOT)/libc
 INCLUDES = -I. -I$(LIBGD) -I$(LIBPNG) -I$(LIBJPEG) -I$(LIBFT2)/include -I$(ZLIBSDK) 
 
 ifeq ($(LIBARCH),LIBC)
-	INCLUDES += -I$(SDK_LIBC)/include -I$(SDK_LIBC)/include/nks
-	# INCLUDES += -I$(SDK_LIBC)/include/winsock
-	# INCLUDES += -I$(SDK_LDAP)/libc/inc
+	INCLUDES += -I$(SDK_LIBC)/include
+	# INCLUDES += -I$(SDK_LIBC)/include/nks
 	CFLAGS += -D_POSIX_SOURCE
 	# CFLAGS += -D__ANSIC__
 else
-	INCLUDES += -I$(SDK_CLIB)/include/nlm -I$(SDK_CLIB)/include
+	INCLUDES += -I$(SDK_CLIB)/include/nlm
+	# INCLUDES += -I$(SDK_CLIB)/include
 	# INCLUDES += -I$(SDK_CLIB)/include/nlm/obsolete
-	# INCLUDES += -I$(SDK_LDAP)/clib/inc
-	CFLAGS += -DNETDB_USE_INTERNET
 endif
 CFLAGS	+= $(INCLUDES)
 
@@ -332,7 +330,7 @@ LDLIBS	+= $(LIBFT2)/builds/netware/LIBC/libft2.$(LIBEXT)
 
 OBJS	:= $(GDLIBOBJS) $(PNGLIBOBJS) $(JPGLIBOBJS) $(ZLIBOBJS)
 
-OBJL = $(OBJS) $(OBJDIR)/nwlibc.o
+OBJL	= $(OBJS) $(OBJDIR)/nwlibc.o
 
 vpath %.c . $(LIBGD) $(LIBPNG) $(LIBJPEG) $(ZLIBSDK)
 
@@ -426,6 +424,7 @@ endif
 ifdef XDCDATA
 	@echo $(DL)xdcdata $(XDCDATA)$(DL) >> $@
 endif
+	@echo $(DL)flag_on 64$(DL) >> $@
 ifeq ($(LIBARCH),CLIB)
 	@echo $(DL)start _Prelude$(DL) >> $@
 	@echo $(DL)exit _Stop$(DL) >> $@
@@ -435,7 +434,6 @@ ifeq ($(LIBARCH),CLIB)
 	@echo $(DL)import @$(SDK_CLIB)/imports/socklib.imp$(DL) >> $@
 	@echo $(DL)module clib$(DL) >> $@
 else
-	@echo $(DL)flag_on 64$(DL) >> $@
 	@echo $(DL)pseudopreemption$(DL) >> $@
 	@echo $(DL)start _LibCPrelude$(DL) >> $@
 	@echo $(DL)exit _LibCPostlude$(DL) >> $@
