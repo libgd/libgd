@@ -122,14 +122,14 @@ SDK_CLIB = $(NDK_ROOT)/nwsdk
 SDK_LIBC = $(NDK_ROOT)/libc
 
 ifeq ($(LIBARCH),LIBC)
-	INCLUDES += -I$(SDK_LIBC)/include -I$(SDK_LIBC)/include/nks
-	# INCLUDES += -I$(SDK_LIBC)/include/winsock
+	INCLUDES += -I$(SDK_LIBC)/include
+	# INCLUDES += -I$(SDK_LIBC)/include/nks
 	CFLAGS += -D_POSIX_SOURCE
 	# CFLAGS += -D__ANSIC__
 else
-	INCLUDES += -I$(SDK_CLIB)/include/nlm -I$(SDK_CLIB)/include
+	INCLUDES += -I$(SDK_CLIB)/include/nlm
+	# INCLUDES += -I$(SDK_CLIB)/include
 	# INCLUDES += -I$(SDK_CLIB)/include/nlm/obsolete
-	CFLAGS += -DNETDB_USE_INTERNET
 endif
 CFLAGS	+= -I. -I.. -I$(LIBGD)
 CFLAGS	+= $(INCLUDES)
@@ -244,6 +244,7 @@ endif
 ifeq ($(LDRING),3)
 	@echo $(DL)flag_on 512$(DL) >> $@
 endif
+	@echo $(DL)flag_on 64$(DL) >> $@
 ifeq ($(LIBARCH),CLIB)
 	@echo $(DL)start _Prelude$(DL) >> $@
 	@echo $(DL)exit _Stop$(DL) >> $@
@@ -252,7 +253,6 @@ ifeq ($(LIBARCH),CLIB)
 	@echo $(DL)import @$(SDK_CLIB)/imports/nlmlib.imp$(DL) >> $@
 	@echo $(DL)module clib$(DL) >> $@
 else
-	@echo $(DL)flag_on 64$(DL) >> $@
 	@echo $(DL)pseudopreemption$(DL) >> $@
 	@echo $(DL)start _LibCPrelude$(DL) >> $@
 	@echo $(DL)exit _LibCPostlude$(DL) >> $@
