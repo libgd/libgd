@@ -50,6 +50,7 @@ MTSAFE	= YES
 STACK	= 64000
 SCREEN	= none
 EXPORTS	= @$(TARGET).imp
+EPREFIX	= LIBGD
 
 # Edit the var below to point to your lib architecture.
 ifndef LIBARCH
@@ -77,6 +78,8 @@ ifdef METROWERKS
 else
 	CC = gcc
 endif
+# http://www.gknw.net/development/prgtools/awk.zip
+AWK	= awk
 YACC	= bison -y
 CP	= cp -afv
 # RM	= rm -f
@@ -85,6 +88,7 @@ CP	= cp -afv
 # http://www.gknw.net/development/prgtools/mkxdc.zip
 MPKXDC	= mkxdc
 PATCH	= patch
+PERLRUN	= perl
 
 # Global flags for all compilers
 CFLAGS	= $(OPT) -D$(DB) -DNETWARE -DHAVE_CONFIG_H -nostdinc
@@ -348,7 +352,7 @@ $(OBJDIR)/%.o: %.c
 
 $(OBJDIR)/version.inc: ../configure.ac $(OBJDIR)
 	@echo Creating $@
-	@awk -f get_ver.awk $< > $@
+	@$(AWK) -f get_ver.awk $< > $@
 
 dist: all
 	-$(RM) -r $(OBJDIR)*
@@ -520,9 +524,9 @@ config.h: Makefile
 #	@echo $(DL)#define DEFAULT_FONTPATH "sys:/java/nwgfx/lib/x11/fonts/ttf"$(DL) >> $@
 #	@echo $(DL)#define PATHSEPARATOR ";"$(DL) >> $@
 
-$(TARGET).imp: $(LIBGD)/gd.h
+$(TARGET).imp: get_exp.awk $(LIBGD)/gd.h
 	@echo Creating $@
-	@perl mkgdimp.pl $< $@
+	@$(AWK) -v EPREFIX=$(EPREFIX) -f $^ > $@
 
 patch: Makefile
 	@echo Patching sources...
