@@ -2102,6 +2102,11 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 	int half1 = 1;
 	int t;
 
+	if (x1 == x2 && y1 == y2 && thick == 1) {
+			gdImageSetPixel(im, x1, y1, color);
+			return;
+	}
+
 	if (y2 < y1) {
 		t=y1;
 		y1 = y2;
