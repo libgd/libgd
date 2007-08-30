@@ -3484,13 +3484,21 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 		gdImageLine(im, x1, y1, x2, y2, col);
 		return;
 	}
-        /* TBB: use the clipping rectangle */
-        if (clip_1d (&x1, &y1, &x2, &y2, im->cx1, im->cx2) == 0)
-          return;
-        if (clip_1d (&y1, &x1, &y2, &x2, im->cy1, im->cy2) == 0)
-          return;
+
+	/* TBB: use the clipping rectangle */
+	if (clip_1d (&x1, &y1, &x2, &y2, im->cx1, im->cx2) == 0)
+		return;
+	if (clip_1d (&y1, &x1, &y2, &x2, im->cy1, im->cy2) == 0)
+		return;
+
 	dx = x2 - x1;
 	dy = y2 - y1;
+
+    if (dx == 0 && dy == 0) {
+        /* TBB: allow setting points */
+        gdImageSetAAPixelColor(im, x1, y1, col, 0xFF);
+        return;
+    }
 
 	/* Axis aligned lines */
 	if (dx == 0) {
@@ -3501,11 +3509,6 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 		return;
 	}
 
-	if (dx == 0 && dy == 0) {
-		/* TBB: allow setting points */
-		gdImageSetAAPixelColor(im, x1, y1, col, 0xFF);
-		return;
-	}
 	if (abs(dx) > abs(dy)) {
 		if (dx < 0) {
 			tmp = x1;
