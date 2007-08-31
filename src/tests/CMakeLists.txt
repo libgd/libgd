@@ -32,6 +32,7 @@ if (BUILD_TEST)
 		gdimagecolorclosest
 		gdimagecolorexact
 		gdimagecolorresolve
+		gdimagecolordeallocate
 		#gdimageellipse
 		gdimageline
 		gdimagefilledellipse
