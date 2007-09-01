@@ -588,7 +588,7 @@ BGD_DECLARE(int) gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, i
 
 BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color)
 {
-  if (im->trueColor || (color >= gdMaxColors))
+  if (im->trueColor || (color >= gdMaxColors) || (color < 0))
     {
       return;
     }
