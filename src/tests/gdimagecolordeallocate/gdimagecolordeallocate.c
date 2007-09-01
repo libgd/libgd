@@ -17,6 +17,14 @@ int main()
 		error = -1;
 	}	
 
+	im->open[-1] = 0;
+
+	gdImageColorDeallocate(im, -1);
+
+	if(im->open[-1] == 1) {
+		error = -1;
+	}
+
 	gdImageDestroy(im);
 
 	return error;
