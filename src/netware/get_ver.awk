@@ -1,7 +1,8 @@
-#
+#!awk
 # awk script which fetches libgd version number and string from input file
 # and writes them to STDOUT. Here you can get an awk version for Win32:
 # http://www.gknw.net/development/prgtools/awk.zip
+# $Id$
 #
 BEGIN {
     while ((getline < ARGV[1]) > 0) {
