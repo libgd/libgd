@@ -2,6 +2,7 @@
  * Universal NetWare library stub.                                   *
  * written by Ulrich Neuman and given to OpenSource copyright-free.  *
  * version: 1.0                                                      *
+ * $Id$
  *********************************************************************/
 
 #include <errno.h>

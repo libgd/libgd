@@ -4,6 +4,8 @@
 ## Use: make -f Makefile
 ##
 ## Comments to: Guenter Knauf <eflash@gmx.net>
+##
+## $Id$
 #
 #################################################################
 
