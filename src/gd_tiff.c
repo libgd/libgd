@@ -66,7 +66,7 @@ tiff_handle;
 
 tiff_handle *new_tiff_handle(tiff_handle *t, gdIOCtx *g)
 {
-	t = malloc(sizeof(tiff_handle));
+	t = gdMalloc(sizeof(tiff_handle));
 
 	t->size = 0;
 	t->pos = 0;
@@ -239,9 +239,9 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 
 	/* build the color map for 8 bit images */
 	if(bitDepth != 24) {
-		colorMapRed = malloc(3 * pow(2, bitsPerSample));
-		colorMapGreen = malloc(3 * pow(2, bitsPerSample));
-		colorMapBlue = malloc(3 * pow(2, bitsPerSample));
+		colorMapRed = gdMalloc(3 * pow(2, bitsPerSample));
+		colorMapGreen = gdMalloc(3 * pow(2, bitsPerSample));
+		colorMapBlue = gdMalloc(3 * pow(2, bitsPerSample));
 
 		for(i = 0; i < image->colorsTotal; i++) {
 			colorMapRed[i] = gdImageRed(image,i) + (gdImageRed(image,i) * 256);
@@ -269,7 +269,7 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, 1);
 
 	/* loop through y-coords, and x-coords */
-	scan = malloc(width * samplesPerPixel);
+	scan = gdMalloc(width * samplesPerPixel);
 	for(y = 0; y < height; y++) {
 		for(x = 0; x < width; x++) {
 			/* generate scan line for writing to tiff */
@@ -316,13 +316,13 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 
 	/* now cloase and free up resources */
 	TIFFClose(tiff);
-	free(scan);
-	free(th);
+	gdFree(scan);
+	gdFree(th);
 
 	if(bitDepth != 24) {
-		free(colorMapRed);
-		free(colorMapGreen);
-		free(colorMapBlue);
+		gdFree(colorMapRed);
+		gdFree(colorMapGreen);
+		gdFree(colorMapBlue);
 	}
 }
 
@@ -456,7 +456,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit(TIFF *tiff, int width, int height)
 		TIFFGetField(tiff, TIFFTAG_TILELENGTH, &tileMaxY);
 
 		tileSize = TIFFTileSize(tiff);
-		scan = malloc(tileSize);
+		scan = gdMalloc(tileSize);
 		tileX = 0;
 		tileY = 0;
 		for(tileNum = 0; tileNum < numberOfTiles; tileNum++) {
@@ -510,12 +510,12 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit(TIFF *tiff, int width, int height)
 			}
 		}
 
-		free(scan);
+		gdFree(scan);
 
 	} else {
 		/* image is not tiled - assume stripped (scanline) format */
 		printf("is a 1bit scanline tiff!\n");
-		scan = malloc(TIFFScanlineSize(tiff));
+		scan = gdMalloc(TIFFScanlineSize(tiff));
 		y = x = 0;
 
 		for(i = 0; i < height; i++) {
@@ -550,7 +550,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit(TIFF *tiff, int width, int height)
 			x=0;
 		}
 
-		free(scan);
+		gdFree(scan);
 	}
 
 	return im;
@@ -598,7 +598,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx8bit(TIFF *tiff, int width, int height)
 		TIFFGetField(tiff, TIFFTAG_TILELENGTH, &tileMaxY);
 
 		tileSize = TIFFTileSize(tiff);
-		scan = malloc(tileSize);
+		scan = gdMalloc(tileSize);
 		tileX=0;
 		tileY=0;
 
@@ -645,10 +645,10 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx8bit(TIFF *tiff, int width, int height)
 			}
 		}
 
-		free(scan);
+		gdFree(scan);
 
 	} else {
-		scan = malloc(TIFFScanlineSize(tiff));     
+		scan = gdMalloc(TIFFScanlineSize(tiff));     
 		y=0;
 		x=0;
 
@@ -673,7 +673,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx8bit(TIFF *tiff, int width, int height)
 			x=0;
 		}
 
-		free(scan);
+		gdFree(scan);
 	}
 
 	return im;
@@ -730,7 +730,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx32bit(TIFF *tiff, int width,int height)
 		}
 	}
 
-	free(scan);
+	gdFree(scan);
 
 	/* now reset colour merge for alpha blending routines */
 	gdImageAlphaBlending(im, alphaBlendingFlag);
@@ -780,7 +780,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	}
 
 	TIFFClose(tiff);
-	free(th);
+	gdFree(th);
 
 	return im;
 }
