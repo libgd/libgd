@@ -1,5 +1,3 @@
-
-
 /*
    TIFF - Tagged Image File Format Encapsulation for GD Library
 
@@ -27,6 +25,7 @@
 
    ----------------------------------------------------------------------------
  */
+/* $Id$ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -520,7 +519,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit (TIFF *tiff,int width,int height)
   else
   {
     /* image is not tiled - assume stripped (scanline) format */
-/*    printf("is a 1bit scanline tiff!\n");*/
+    printf("is a 1bit scanline tiff!\n");
     scan=malloc(TIFFScanlineSize(tiff));
     y=0;
     x=0;
@@ -607,7 +606,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx8bit (TIFF *tiff,int width,int height)
 
   if(TIFFIsTiled(tiff))
   {
-/*    printf("is a 8bit tiled tiff! (%d tiles)\n",numberOfTiles);*/
+    printf("is a 8bit tiled tiff! (%d tiles)\n",numberOfTiles);
     TIFFGetField(tiff, TIFFTAG_TILEWIDTH, &tileMaxX);
     TIFFGetField(tiff, TIFFTAG_TILELENGTH, &tileMaxY);
 
@@ -719,6 +718,8 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx32bit(TIFF *tiff,int width,int height)
   uint32 *scan;
   uint32 rgba;
 
+	printf("32 bits\n");
+
   if(!(im=gdImageCreateTrueColor(width,height)))
   {
     TIFFClose(tiff);
@@ -730,9 +731,6 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx32bit(TIFF *tiff,int width,int height)
      data until the user chooses what to do with the image */
   alphaBlendingFlag=im->alphaBlendingFlag;
   gdImageAlphaBlending(im,0);
-
-  /* Make sure new image begins completely black */
-  gdImageColorAllocateAlpha(im, 0, 0, 0, 0x0);
 
   /* loop through y-coords, and x-coords */
   scan=calloc(sizeof(uint32),width*height);
@@ -749,10 +747,10 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx32bit(TIFF *tiff,int width,int height)
       g=TIFFGetG(rgba);
       r=TIFFGetR(rgba);
 
-      colour=gdImageColorResolveAlpha(im,r,g,b,a);
+      colour=gdTrueColorAlpha(r,g,b,a);
 
       /* set pixel colour to this colour */
-      gdImageSetPixel(im,x,y,colour);
+      gdImageSetPixel(im, x, height - y - 1,colour);
     }
   }
   free(scan);
