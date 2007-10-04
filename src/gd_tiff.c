@@ -18,6 +18,8 @@
    ---------------------------------------------------------------------------
 
    Todo:
+
+   If we fail - cleanup
    
    (suggestions only)
    Implement 2 color black/white saving using group4 fax compression
@@ -182,9 +184,9 @@ void tiff_unmapproc(thandle_t h, tdata_t d, toff_t o)
  */
 BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 {
-	int x,y;
+	int x, y;
 	int i;
-	int r,g,b,a;
+	int r, g, b, a;
 	TIFF *tiff;
 	int width;
 	int height;
@@ -224,17 +226,20 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	 * functions so that tiff lib writes correct bits of tiff content to
 	 * correct areas of file opened and modifieable by the gdIOCtx functions
 	 */
-	tiff = TIFFClientOpen("", "w", th, tiff_readproc, tiff_writeproc,
-							tiff_seekproc, tiff_closeproc, tiff_sizeproc,
-							tiff_mapproc, tiff_unmapproc);
+	tiff = TIFFClientOpen("", "w", th,	tiff_readproc,
+										tiff_writeproc,
+										tiff_seekproc,
+										tiff_closeproc,
+										tiff_sizeproc,
+										tiff_mapproc,
+										tiff_unmapproc);
 
 	TIFFSetField(tiff, TIFFTAG_IMAGEWIDTH, width);
 	TIFFSetField(tiff, TIFFTAG_IMAGELENGTH, height);
 	TIFFSetField(tiff, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
 	TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-	TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC, (bitDepth == 24) ?
-														PHOTOMETRIC_RGB
-                                                      	: PHOTOMETRIC_PALETTE);
+	TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC,
+					(bitDepth == 24) ? PHOTOMETRIC_RGB : PHOTOMETRIC_PALETTE);
 
 	bitsPerSample = (bitDepth ==24) ? 8 : ((bitDepth == 8) ? 8 : 1);
 	TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, bitsPerSample);
@@ -295,9 +300,9 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 			 * then set alpha fully transparent */
 			if(	transparentColourR == r &&
 				transparentColourG == g &&
-				transparentColourB==b
+				transparentColourB == b
 			) {
-				a=0x00;
+				a = 0x00;
 			}
 
 			if(bitDepth != 24) {
@@ -430,9 +435,9 @@ BGD_DECLARE(uint16) getColor(TIFF *tiff, RgbContext ctx, int index, char color)
 BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit(TIFF *tiff, int width, int height)
 {
 	gdImagePtr im = NULL;
-	int x,y,
+	int x, y,
 	int tileX, tileY, tileMaxX, tileMaxY;
-	int i,j,k;
+	int i, j, k;
 	int colour;
 	char *scan;
 	int compression;
@@ -469,8 +474,9 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit(TIFF *tiff, int width, int height)
 		if(!(scan = gdMalloc(tileSize))) {
 			return 0;
 		}
-		tileX = 0;
-		tileY = 0;
+
+		tileX = tileY = 0;
+
 		for(tileNum = 0; tileNum < numberOfTiles; tileNum++) {
 			TIFFReadEncodedTile(tiff, tileNum, scan, tileSize); 
 
@@ -527,9 +533,11 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit(TIFF *tiff, int width, int height)
 	} else {
 		/* image is not tiled - assume stripped (scanline) format */
 		printf("is a 1bit scanline tiff!\n");
+
 		if(!(scan = gdMalloc(TIFFScanlineSize(tiff)))) {
 			return 0;
 		}
+
 		y = x = 0;
 
 		for(i = 0; i < height; i++) {
@@ -561,7 +569,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit(TIFF *tiff, int width, int height)
 			}
 
 			y++;
-			x=0;
+			x = 0;
 		}
 
 		gdFree(scan);
@@ -615,8 +623,8 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx8bit(TIFF *tiff, int width, int height)
 		if(!(scan = gdMalloc(tileSize))) {
 			return 0;
 		}
-		tileX=0;
-		tileY=0;
+
+		tileX = tileY = 0;
 
 		for(tileNum = 0; tileNum < numberOfTiles; tileNum++) {
 			TIFFReadEncodedTile(tiff, tileNum, scan, tileSize);
@@ -667,8 +675,8 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx8bit(TIFF *tiff, int width, int height)
 		if(!(scan = gdMalloc(TIFFScanlineSize(tiff)))) {
 			return 0;
 		}
-		y=0;
-		x=0;
+
+		y = x = 0;
 
 		/* image is not tiled - assume scanline based images */
 		for(i = 0; i < height; i++) {
@@ -688,7 +696,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx8bit(TIFF *tiff, int width, int height)
 			}
 			
 			y++;
-			x=0;
+			x = 0;
 		}
 
 		gdFree(scan);
@@ -737,6 +745,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx32bit(TIFF *tiff, int width,int height)
 			 * else use existing one */
 			rgba = scan[((y * width) + x)];
 			a = (0xff - TIFFGetA(rgba)) / 2;
+
 			b = TIFFGetB(rgba);
 			g = TIFFGetG(rgba);
 			r = TIFFGetR(rgba);
