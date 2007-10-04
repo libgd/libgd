@@ -13,6 +13,7 @@ SET (LIBGD_SRC_FILES
 	gd_io_ss.c
 	gd_jpeg.c
 	gd_png.c
+	gd_tiff.c
 	gd_ss.c
 	gd_topal.c
 	gd_wbmp.c
@@ -41,6 +42,6 @@ ENDIF(WIN32)
 
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/  ${GD_SOURCE_DIR}/src)
 
-target_link_libraries(${GD_LIB} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${JPEG_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARIES})
+target_link_libraries(${GD_LIB} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${JPEG_LIBRARIES} ${TIFF_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARIES})
 
 
