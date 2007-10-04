@@ -93,12 +93,20 @@ ENDIF (NOT WIN32)
 	SET(HAVE_CONFIG_H 1)
 
 	ADD_DEFINITIONS(-DHAVE_CONFIG_H)
-
-
 	
 	CONFIGURE_FILE(${GD_SOURCE_DIR}/src/config.h.cmake ${CMAKE_BINARY_DIR}/config.h ESCAPE_QUOTES)
-	add_subdirectory(src)
 
+	set(BUILD_SHARED_LIBS On)
+
+	if (WIN32)
+		SET(GD_LIB bgd)
+		ADD_DEFINITIONS( -DWIN32 -D_WIN32 -DMSWIN32 -DBGDWIN32)
+	else(WIN32)
+		SET(GD_LIB gd)
+	endif(WIN32)
+
+	add_subdirectory(src)
+	message("GD_LIB Main: ${GD_LIB}")
 endif (USE_EXT_GD)
 add_subdirectory(tests)
 

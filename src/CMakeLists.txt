@@ -33,15 +33,6 @@ SET (LIBGD_SRC_FILES
 	wbmp.h
 )
 
-set(BUILD_SHARED_LIBS On)
-
-if (WIN32)
-	SET(GD_LIB bgd)
-	ADD_DEFINITIONS( -DWIN32 -D_WIN32 -DMSWIN32 -DBGDWIN32)
-else(WIN32)
-	SET(GD_LIB gd)
-endif(WIN32)
-
 add_library(${GD_LIB} ${LIBGD_SRC_FILES})
 
 if (WIN32)

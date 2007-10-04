@@ -26,6 +26,9 @@ if (BUILD_TEST)
 	#FIND_LIBRARY(GD_LIB "gd" PATHS ${GD_LIBS_DIR})
 	#message(STATUS "GD_LIB: ${GD_LIB}")
 
+	include_directories (BEFORE ${GD_INCLUDE_DIR} "${GDTEST_SOURCE_DIR}" "${CMAKE_BINARY_DIR}")
+
+
 	SET(TESTS_DIRS
 		gdtest
 		gdimagearc
