@@ -30,6 +30,9 @@
 /* Define if you have the jpeg library. */
 #cmakedefine HAVE_LIBJPEG
 
+/* Define if you have the jpeg library. */
+#cmakedefine HAVE_LIBTIFF
+
 /* Define to 1 if you have the `m' library (-lm). */
 #cmakedefine HAVE_LIBM
 
