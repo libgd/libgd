@@ -20,7 +20,9 @@
    Todo:
 
    If we fail - cleanup
-   
+   Writer: Use gd error function, overflow check may not be necessary as
+	 we write our own data (check already done)
+
    (suggestions only)
    Implement 2 color black/white saving using group4 fax compression
    Implement function to specify encoding to use when writing tiff data
@@ -68,7 +70,8 @@ tiff_handle;
 
 tiff_handle *new_tiff_handle(tiff_handle *t, gdIOCtx *g)
 {
-	if(!t || !g || (t = gdMalloc(sizeof(tiff_handle)))) {
+	t = (tiff_handle *) gdMalloc(sizeof(tiff_handle));
+	if(!t || !g) {
 		return 0;
 	}
 
@@ -247,9 +250,9 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	/* build the color map for 8 bit images */
 	if(bitDepth != 24) {
 		/*TODO: Add checking */
-		colorMapRed = gdMalloc(3 * pow(2, bitsPerSample));
-		colorMapGreen = gdMalloc(3 * pow(2, bitsPerSample));
-		colorMapBlue = gdMalloc(3 * pow(2, bitsPerSample));
+		colorMapRed = (uint16 *) gdMalloc(3 * pow(2, bitsPerSample));
+		colorMapGreen = (uint16 *) gdMalloc(3 * pow(2, bitsPerSample));
+		colorMapBlue = (uint16 *) gdMalloc(3 * pow(2, bitsPerSample));
 
 		for(i = 0; i < image->colorsTotal; i++) {
 			colorMapRed[i] = gdImageRed(image,i) + (gdImageRed(image,i) * 256);
@@ -277,11 +280,11 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, 1);
 
 	if(overflow2(width, samplesPerPixel)) {
-		return 0;
+		return;
 	}
 
-	if(!(scan = gdMalloc(width * samplesPerPixel))) {
-		return 0;
+	if(!(scan = (char *)gdMalloc(width * samplesPerPixel))) {
+		return;
 	}
 
 	/* loop through y-coords, and x-coords */
@@ -435,7 +438,7 @@ BGD_DECLARE(uint16) getColor(TIFF *tiff, RgbContext ctx, int index, char color)
 BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit(TIFF *tiff, int width, int height)
 {
 	gdImagePtr im = NULL;
-	int x, y,
+	int x, y;
 	int tileX, tileY, tileMaxX, tileMaxY;
 	int i, j, k;
 	int colour;
@@ -471,7 +474,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit(TIFF *tiff, int width, int height)
 		TIFFGetField(tiff, TIFFTAG_TILELENGTH, &tileMaxY);
 
 		tileSize = TIFFTileSize(tiff);
-		if(!(scan = gdMalloc(tileSize))) {
+		if(!(scan = (char *) gdMalloc(tileSize))) {
 			return 0;
 		}
 
@@ -534,7 +537,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx1bit(TIFF *tiff, int width, int height)
 		/* image is not tiled - assume stripped (scanline) format */
 		printf("is a 1bit scanline tiff!\n");
 
-		if(!(scan = gdMalloc(TIFFScanlineSize(tiff)))) {
+		if(!(scan = (char *) gdMalloc(TIFFScanlineSize(tiff)))) {
 			return 0;
 		}
 
@@ -620,7 +623,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx8bit(TIFF *tiff, int width, int height)
 		TIFFGetField(tiff, TIFFTAG_TILELENGTH, &tileMaxY);
 
 		tileSize = TIFFTileSize(tiff);
-		if(!(scan = gdMalloc(tileSize))) {
+		if(!(scan = (char*) gdMalloc(tileSize))) {
 			return 0;
 		}
 
@@ -672,7 +675,7 @@ BGD_DECLARE(gdImagePtr) createFromTiffCtx8bit(TIFF *tiff, int width, int height)
 		gdFree(scan);
 
 	} else {
-		if(!(scan = gdMalloc(TIFFScanlineSize(tiff)))) {
+		if(!(scan = (char *)gdMalloc(TIFFScanlineSize(tiff)))) {
 			return 0;
 		}
 
