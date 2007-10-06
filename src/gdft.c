@@ -28,11 +28,13 @@
 #define strdup _strdup
 #else /* _WIN32_WCE */
 #include <io.h>
+#ifndef R_OK
 #define R_OK 04			/* Needed in Windows */
+#endif
 #endif
 
 /* number of antialised colors for indexed bitmaps */
-#define NUMCOLORS 8
+#define GD_NUMCOLORS 8
 
 static int fontConfigFlag = 0;
 
@@ -543,7 +545,7 @@ tweenColorTest (void *element, void *key)
 /*
  * Computes a color in im's color table that is part way between
  * the background and foreground colors proportional to the gray
- * pixel value in the range 0-NUMCOLORS. The fg and bg colors must already
+ * pixel value in the range 0-GD_NUMCOLORS. The fg and bg colors must already
  * be in the color table for palette images. For truecolor images the
  * returned value simply has an alpha component and gdImageAlphaBlend
  * does the work so that text can be alpha blended across a complex
@@ -570,14 +572,14 @@ tweenColorFetch (char **error, void *key)
   /* if fg is specified by a negative color idx, then don't antialias */
   if (fg < 0)
     {
-      if ((pixel + pixel) >= NUMCOLORS)
+      if ((pixel + pixel) >= GD_NUMCOLORS)
 	a->tweencolor = -fg;
       else
 	a->tweencolor = bg;
     }
   else
     {
-      npixel = NUMCOLORS - pixel;
+      npixel = GD_NUMCOLORS - pixel;
       if (im->trueColor)
 	{
 	  /* 2.0.1: use gdImageSetPixel to do the alpha blending work,
@@ -590,20 +592,20 @@ tweenColorFetch (char **error, void *key)
 					    gdTrueColorGetBlue (fg),
 					    gdAlphaMax -
 					    (gdTrueColorGetAlpha (fg) *
-					     pixel / NUMCOLORS));
+					     pixel / GD_NUMCOLORS));
 	}
       else
 	{
 	  a->tweencolor = gdImageColorResolve (im,
 					       (pixel * im->red[fg] +
 						npixel * im->red[bg]) /
-					       NUMCOLORS,
+					       GD_NUMCOLORS,
 					       (pixel * im->green[fg] +
 						npixel * im->green[bg]) /
-					       NUMCOLORS,
+					       GD_NUMCOLORS,
 					       (pixel * im->blue[fg] +
 						npixel * im->blue[bg]) /
-					       NUMCOLORS);
+					       GD_NUMCOLORS);
 	}
     }
   return (void *) a;
@@ -740,23 +742,23 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
 	  if (bitmap.pixel_mode == ft_pixel_mode_grays)
 	    {
 	      /*
-	       * Round to NUMCOLORS levels of antialiasing for
+	       * Round to GD_NUMCOLORS levels of antialiasing for
 	       * index color images since only 256 colors are
 	       * available.
 	       */
-	      tc_key.pixel = ((bitmap.buffer[pc] * NUMCOLORS)
+	      tc_key.pixel = ((bitmap.buffer[pc] * GD_NUMCOLORS)
 			      + bitmap.num_grays / 2)
 		/ (bitmap.num_grays - 1);
 	    }
 	  else if (bitmap.pixel_mode == ft_pixel_mode_mono)
 	    {
 	      tc_key.pixel = ((bitmap.buffer[pc / 8]
-			       << (pc % 8)) & 128) ? NUMCOLORS : 0;
+			       << (pc % 8)) & 128) ? GD_NUMCOLORS : 0;
 	      /* 2.0.5: mode_mono fix from Giuliano Pochini */
 	      tc_key.pixel =
 		((bitmap.
 		  buffer[(col >> 3) +
-			 pcr]) & (1 << (~col & 0x07))) ? NUMCOLORS : 0;
+			 pcr]) & (1 << (~col & 0x07))) ? GD_NUMCOLORS : 0;
 	    }
 	  else
 	    {
@@ -772,7 +774,7 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
 	    continue;
 	  /* get pixel location in gd buffer */
 	  pixel = &im->pixels[y][x];
-	  if (tc_key.pixel == NUMCOLORS)
+	  if (tc_key.pixel == GD_NUMCOLORS)
 	    {
 	      /* use fg color directly. gd 2.0.2: watch out for
 	         negative indexes (thanks to David Marwood). */
@@ -1346,8 +1348,8 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
           /* position rounded down to nearest pixel at current dpi
 		 (the estimate was rounded up to next 1/METRIC_RES, so this should fit) */
 	  gdft_draw_bitmap (tc_cache, im, fg, bm->bitmap,
-                    x + (penf.x * cos_a + penf.y * sin_a)*hdpi/(METRIC_RES*64) + bm->left,
-                    y - (penf.x * sin_a - penf.y * cos_a)*vdpi/(METRIC_RES*64) - bm->top);
+                    (int)(x + (penf.x * cos_a + penf.y * sin_a)*hdpi/(METRIC_RES*64) + bm->left),
+                    (int)(y - (penf.x * sin_a - penf.y * cos_a)*vdpi/(METRIC_RES*64) - bm->top));
 
           FT_Done_Glyph (image);
 	}
