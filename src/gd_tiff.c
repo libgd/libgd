@@ -249,10 +249,10 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 
 	/* build the color map for 8 bit images */
 	if(bitDepth != 24) {
-		/*TODO: Add checking */
-		colorMapRed = (uint16 *) gdMalloc(3 * pow(2, bitsPerSample));
-		colorMapGreen = (uint16 *) gdMalloc(3 * pow(2, bitsPerSample));
-		colorMapBlue = (uint16 *) gdMalloc(3 * pow(2, bitsPerSample));
+		/* no overflow check is necessary because bitsPerSample is at most 8 and the following doesn't overflow */
+		colorMapRed = (uint16 *) gdMalloc(3 * (1 << bitsPerSample));
+		colorMapGreen = (uint16 *) gdMalloc(3 * (1 << bitsPerSample));
+		colorMapBlue = (uint16 *) gdMalloc(3 * (1 << bitsPerSample));
 
 		for(i = 0; i < image->colorsTotal; i++) {
 			colorMapRed[i] = gdImageRed(image,i) + (gdImageRed(image,i) * 256);
@@ -409,7 +409,7 @@ BGD_DECLARE(uint16) getColor(TIFF *tiff, RgbContext ctx, int index, char color)
 	uint32 offset;
 
 	TIFFGetField(tiff, TIFFTAG_BITSPERSAMPLE, &bitsPerSample);
-	offset = pow(2, bitsPerSample);
+	offset = 1 << bitsPerSample;
 
 	if(color == 0) {
 		val = ctx.red[index];
