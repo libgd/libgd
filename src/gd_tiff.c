@@ -68,7 +68,7 @@ tiff_handle;
          tiff (assuming one already exists)
 */
 
-tiff_handle *new_tiff_handle(tiff_handle *t, gdIOCtx *g)
+static tiff_handle *new_tiff_handle(tiff_handle *t, gdIOCtx *g)
 {
 	t = (tiff_handle *) gdMalloc(sizeof(tiff_handle));
 	if(!t || !g) {
@@ -85,7 +85,7 @@ tiff_handle *new_tiff_handle(tiff_handle *t, gdIOCtx *g)
 
 /* TIFFReadWriteProc tiff_readproc - Will use gdIOCtx procs to read required 
    (previously written) TIFF file content */
-tsize_t tiff_readproc(thandle_t clientdata, tdata_t data, tsize_t size)
+static tsize_t tiff_readproc(thandle_t clientdata, tdata_t data, tsize_t size)
 {
 	tiff_handle *th = (tiff_handle *)clientdata;
 	gdIOCtx *ctx = th->ctx;
@@ -97,7 +97,7 @@ tsize_t tiff_readproc(thandle_t clientdata, tdata_t data, tsize_t size)
 
 /* TIFFReadWriteProc tiff_writeproc - Will use gdIOCtx procs to write out 
    TIFF data */
-tsize_t tiff_writeproc(thandle_t clientdata, tdata_t data, tsize_t size)
+static tsize_t tiff_writeproc(thandle_t clientdata, tdata_t data, tsize_t size)
 {
 	tiff_handle *th = (tiff_handle *)clientdata;
 	gdIOCtx *ctx = th->ctx;
@@ -113,7 +113,7 @@ tsize_t tiff_writeproc(thandle_t clientdata, tdata_t data, tsize_t size)
 
 /* TIFFSeekProc tiff_seekproc
  * used to move around the partially written TIFF */
-toff_t tiff_seekproc(thandle_t clientdata, toff_t offset, int from)
+static toff_t tiff_seekproc(thandle_t clientdata, toff_t offset, int from)
 {
 	tiff_handle *th = (tiff_handle *)clientdata;
 	gdIOCtx *ctx = th->ctx;
@@ -147,7 +147,7 @@ toff_t tiff_seekproc(thandle_t clientdata, toff_t offset, int from)
 }
 
 /* TIFFCloseProc tiff_closeproc - used to finally close the TIFF file */
-int tiff_closeproc(thandle_t clientdata)
+static int tiff_closeproc(thandle_t clientdata)
 {
 	tiff_handle *th = (tiff_handle *)clientdata;
 	gdIOCtx *ctx = th->ctx;
@@ -158,20 +158,20 @@ int tiff_closeproc(thandle_t clientdata)
 }
 
 /* TIFFSizeProc tiff_sizeproc */
-toff_t tiff_sizeproc(thandle_t clientdata)
+static toff_t tiff_sizeproc(thandle_t clientdata)
 {
 	tiff_handle *th = (tiff_handle *)clientdata;
 	return th->size;
 }
 
 /* TIFFMapFileProc tiff_mapproc() */
-int tiff_mapproc(thandle_t h, tdata_t *d, toff_t *o)
+static int tiff_mapproc(thandle_t h, tdata_t *d, toff_t *o)
 {
 	return 0;
 }
 
 /* TIFFUnmapFileProc tiff_unmapproc */
-void tiff_unmapproc(thandle_t h, tdata_t d, toff_t o)
+static void tiff_unmapproc(thandle_t h, tdata_t d, toff_t o)
 {
 
 }
@@ -390,7 +390,7 @@ typedef struct
 }
 RgbContext;
 
-void readColorMap(TIFF *tiff, RgbContext ctx)
+static void readColorMap(TIFF *tiff, RgbContext ctx)
 {
 	uint32 dataSize;
 
