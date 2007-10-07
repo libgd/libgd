@@ -2,11 +2,9 @@
    TIFF - Tagged Image File Format Encapsulation for GD Library
 
    gd_tiff.c
-
-   Copyright (C) M. Retallack
+   Copyright (C) Pierre-A. Joye, M. Retallack
 
    ---------------------------------------------------------------------------
-
    **
    ** Permission to use, copy, modify, and distribute this software and its
    ** documentation for any purpose and without fee is hereby granted, provided
@@ -16,6 +14,7 @@
    ** implied warranty.
    **
    ---------------------------------------------------------------------------
+   Ctx code written by M. Retallack
 
    Todo:
 
@@ -23,7 +22,6 @@
    Writer: Use gd error function, overflow check may not be necessary as
 	 we write our own data (check already done)
 
-   (suggestions only)
    Implement 2 color black/white saving using group4 fax compression
    Implement function to specify encoding to use when writing tiff data
 
@@ -197,12 +195,12 @@ void tiff_unmapproc(thandle_t h, tdata_t d, toff_t o)
 
 
 /*  tiffWriter 
-**  ----------
-**  Write the gd image as a tiff file (called by gdImageTiffCtx)
-**  Parameters are:
-**  image:    gd image structure;
-**  out:      the stream where to write
-**  bitDepth: depth in bits of each pixel
+ *  ----------
+ *  Write the gd image as a tiff file (called by gdImageTiffCtx)
+ *  Parameters are:
+ *  image:    gd image structure;
+ *  out:      the stream where to write
+ *  bitDepth: depth in bits of each pixel
  */
 BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 {
@@ -601,7 +599,6 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 	int tile_width, tile_height;
 	int  x, y, height, width;
 	unsigned char *buffer;
-	double one_row;
 	int    i;
 
 	if (!TIFFGetField (tif, TIFFTAG_PLANARCONFIG, &planar)) {
@@ -612,7 +609,6 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 	TIFFGetField (tif, TIFFTAG_TILEWIDTH, &tile_width);
 	TIFFGetField (tif, TIFFTAG_TILELENGTH, &tile_height);
 
-	one_row = (double) tile_height / (double) im_height;
 	buffer = (unsigned char *) gdMalloc (TIFFTileSize (tif));
 	if (!buffer) {
 		return FALSE;
