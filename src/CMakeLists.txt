@@ -14,6 +14,7 @@ SET (LIBGD_SRC_FILES
 	gd_jpeg.c
 	gd_png.c
 	gd_tiff.c
+	gd_tga.c
 	gd_ss.c
 	gd_topal.c
 	gd_wbmp.c
