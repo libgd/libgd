@@ -85,11 +85,19 @@ tiff_handle;
          tiff (assuming one already exists)
 */
 
-tiff_handle *new_tiff_handle(tiff_handle *t, gdIOCtx *g)
+tiff_handle * new_tiff_handle(gdIOCtx *g)
 {
+	tiff_handle * t;
+
+	if (!g) {
+		fprintf(stderr, "Cannot create a new tiff handle, missing Ctx argument");
+		return NULL;
+	}
+
 	t = (tiff_handle *) gdMalloc(sizeof(tiff_handle));
-	if(!t || !g) {
-		return 0;
+	if (!t) {
+		fprintf(stderr, "Failed to allocate a new tiff handle");
+		return NULL;
 	}
 
 	t->size = 0;
@@ -223,7 +231,11 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	uint16 *colorMapBlue;
 
 	tiff_handle *th;
-	th = new_tiff_handle(th, out);
+
+	th = new_tiff_handle(out);
+	if (!th) {
+		return;
+	}
 	extraSamples[0] = EXTRASAMPLE_ASSOCALPHA;
 
 	/* read in the width/height of gd image */
@@ -772,7 +784,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 
 	gdImagePtr im = NULL;
 
-	th = new_tiff_handle(th, infile);
+	th = new_tiff_handle(infile);
+	if (!th) {
+		return;
+	}
+
 	tif = TIFFClientOpen("", "rb", th, tiff_readproc,
 										tiff_writeproc,
 										tiff_seekproc,
