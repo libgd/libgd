@@ -26,6 +26,10 @@
 /*#define IO_DBG(s) (s) */
 #define IO_DBG(s)
 
+#define GD_IO_EOF_CHK(r) \
+	if (r == EOF) { \
+		return 0; \
+	}
 
 /*
  * Write out a word to the I/O context pointer
@@ -110,7 +114,6 @@ gdGetWord (int *result, gdIOCtx * ctx)
   *result += r;
   return 1;
 }
-
 
 int
 gdGetInt (int *result, gdIOCtx * ctx)
