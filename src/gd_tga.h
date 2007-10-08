@@ -52,14 +52,13 @@ typedef struct oTga_
     int width;				// image width in pixels
     int height;				// image height in pixels
     byte  bits;				// image bits per pixel 8,16,24,32
-    byte  descriptor;			// image descriptor bits (vh flip bits)
-    
+		byte alphabits;   // alpha bits (low 4bits of header 17)
+		byte fliph;       // horizontal or vertical
+		byte flipv;       // flip
     char *ident;			// identifcation tag string
     int *bitmap;			// bitmap data
     
 } oTga;
-
-
 
 #define TGA_TYPE_NO_IMAGE                       0
 #define TGA_TYPE_INDEXED                        1

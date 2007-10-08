@@ -79,27 +79,40 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx)
 
 	/*!	\brief Populate GD image object
 	 *  Copy the pixel data from our tga bitmap buffer into the GD image
+	 *  Disable blending and save the alpha channel per default
 	 */
+	if (tga->alphabits) {
+		gdImageAlphaBlending(image, 0);
+		gdImageSaveAlpha(image, 1);
+	}
 
+	/* TODO: use alphabits as soon as we support 24bit and other alpha bps (ie != 8bits) */
 	for (y = 0; y < tga->height; y++) {
 		register int *tpix = image->tpixels[y];
 		for ( x = 0; x < tga->width; x++, tpix++) {
 			if (tga->bits == TGA_BPP_24) {
 				*tpix = gdTrueColor(tga->bitmap[bitmap_caret + 2], tga->bitmap[bitmap_caret + 1], tga->bitmap[bitmap_caret]);
 				bitmap_caret += 3;
-			}
+			} else if (tga->bits == TGA_BPP_32 || tga->alphabits) {
+				register int a = tga->bitmap[bitmap_caret + 3];
 
-			if (tga->bits == TGA_BPP_32) {
-				*tpix = gdTrueColorAlpha(tga->bitmap[bitmap_caret + 2], tga->bitmap[bitmap_caret + 1], tga->bitmap[bitmap_caret], tga->bitmap[bitmap_caret + 3]);
+				*tpix = gdTrueColorAlpha(tga->bitmap[bitmap_caret + 2], tga->bitmap[bitmap_caret + 1], tga->bitmap[bitmap_caret], gdAlphaMax - (a >> 1));
 				bitmap_caret += 4; 
 			}
-
 		}
 	}
-
+/* TODO: enable this part as soon as the flip functions have been commited*/
+#if 0
+	if (tga->flipv && tga->fliph) {
+		gdImageFlip(image, GD_FLIP_BOTH);
+	} else if (tga->flipv) {
+		gdImageFlip(image, GD_FLIP_HORIZONTAL);
+	} else if (tga->fliph) {
+		gdImageFlip(image, GD_FLIP_VERTICAL);
+	}
+#endif
 	free_tga(tga);
 
-	// Return pointer to our new image object
 	return image;
 }
 
@@ -113,28 +126,37 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga) {
 
 	unsigned char header[18];
 
-	if (gdGetBuf(header, 18, ctx) < 18) {
-		printf("fail to read header");
+	if (gdGetBuf(header, sizeof(header), ctx) < 18) {
+		fprintf(stderr, "fail to read header");
 		return -1;	
 	}
 
 	tga->identsize = header[0];
 	tga->colourmaptype = header[1];
 	tga->imagetype = header[2];
-	tga->colourmapstart = header[3] + header[4] * 256;
-	tga->colourmaplength = header[5] + header[6] * 256;
+	tga->colourmapstart = header[3] + (header[4] << 8);
+	tga->colourmaplength = header[5] + (header[6] << 8);
 	tga->colourmapbits = header[7];
-	tga->xstart = header[8] + header[9] * 256;
-	tga->ystart = header[10] + header[11] * 256;
-	tga->width = header[12] + header[13] * 256;
-	tga->height = header[14] + header[15] * 256;
+	tga->xstart = header[8] + (header[9] << 8);
+	tga->ystart = header[10] + (header[11] << 8);
+	tga->width = header[12] + (header[13] << 8);
+	tga->height = header[14] + (header[15] << 8);
 	tga->bits = header[16];
+	tga->alphabits = header[17] & 0x0f;
+	tga->fliph = (header[17] & 0x10) ? 1 : 0;
+	tga->flipv = (header[17] & 0x20) ? 0 : 1;
+
+#if DEBUG 
+	printf("format bps: %i\n", tga->bits);
+	printf("flip h/v: %i / %i\n", tga->fliph, tga->flipv);
+	printf("alpha: %i\n", tga->alphabits);
+	printf("wxh: %i %i\n", tga->width, tga->height);
+#endif 
 
 	if (tga->bits != 8 && tga->bits != 24 && tga->bits != 16 && tga->bits != 32) {
+		fprintf(stderr, "bps %i not supported", tga->bits);
 		return -1;
 	}
-
-	tga->descriptor = header[17];
 
 	tga->ident = (char *) gdMalloc(tga->identsize * sizeof( char ));
 	if (tga->ident == NULL) {
