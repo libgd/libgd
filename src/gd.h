@@ -292,6 +292,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffPtr(int size, void *data);
 
+BGD_DECLARE(gdImagePtr) gdImageCreateFromTga( FILE * fp );
+BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaPtr(int size, void *data);
+
 /* A custom data source. */
 /* The source function must return -1 on error, otherwise the number
         of bytes fetched. 0 is EOF, not an error! */
