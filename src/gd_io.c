@@ -116,6 +116,27 @@ gdGetWord (int *result, gdIOCtx * ctx)
 }
 
 int
+gdGetWordLSB (int *result, gdIOCtx * ctx)
+{
+	int high = 0, low = 0;
+	low = (ctx->getC) (ctx);
+	if (low == EOF) {
+ 		return 0;
+	}
+
+	high = (ctx->getC) (ctx);
+	if (high == EOF) {
+ 		return 0;
+	}
+
+	if (result) {
+		*result = (high << 8) | low;
+	}
+
+	return 1;
+}
+
+int
 gdGetInt (int *result, gdIOCtx * ctx)
 {
   int r;
@@ -148,6 +169,44 @@ gdGetInt (int *result, gdIOCtx * ctx)
   *result += r;
 
   return 1;
+}
+
+int
+gdGetIntLSB (int *result, gdIOCtx * ctx)
+{
+	int c = 0, r = 0;
+	c = (ctx->getC) (ctx);
+	if (c == EOF) {
+ 		return 0;
+	}
+	r |= (c << 24);
+	r >>= 8;
+
+	c = (ctx->getC) (ctx);
+	if (c == EOF) {
+ 		return 0;
+	}
+	r |= (c << 24);
+	r >>= 8;
+
+	c = (ctx->getC) (ctx);
+	if (c == EOF) {
+ 		return 0;
+	}
+	r |= (c << 24);
+	r >>= 8;
+
+	c = (ctx->getC) (ctx);
+	if (c == EOF) {
+ 		return 0;
+	}
+	r |= (c << 24);
+
+	if (result) {
+		*result = r;
+	}
+
+	return 1;
 }
 
 int

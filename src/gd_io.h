@@ -43,7 +43,9 @@ void Putchar (int c, gdIOCtx * ctx);
  int gdGetBuf (void *, int, gdIOCtx *);
  int gdGetByte (int *result, gdIOCtx * ctx);
  int gdGetWord (int *result, gdIOCtx * ctx);
+ int gdGetWordLSB (int *result, gdIOCtx * ctx);
  int gdGetInt (int *result, gdIOCtx * ctx);
+ int gdGetIntLSB (int *result, gdIOCtx * ctx);
 
  int gdSeek (gdIOCtx * ctx, const int offset);
  long gdTell (gdIOCtx * ctx);
