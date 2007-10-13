@@ -132,11 +132,11 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga) {
 	}
 
 	tga->identsize = header[0];
-	tga->colourmaptype = header[1];
+	tga->colormaptype = header[1];
 	tga->imagetype = header[2];
-	tga->colourmapstart = header[3] + (header[4] << 8);
-	tga->colourmaplength = header[5] + (header[6] << 8);
-	tga->colourmapbits = header[7];
+	tga->colormapstart = header[3] + (header[4] << 8);
+	tga->colormaplength = header[5] + (header[6] << 8);
+	tga->colormapbits = header[7];
 	tga->xstart = header[8] + (header[9] << 8);
 	tga->ystart = header[10] + (header[11] << 8);
 	tga->width = header[12] + (header[13] << 8);

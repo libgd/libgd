@@ -40,12 +40,12 @@
 typedef struct oTga_
 {
     byte  identsize;			// size of ID field that follows 18 byte header (0 usually)
-    byte  colourmaptype;		// type of colour map 0=none, 1=has palette					[IGNORED] Adrian requested no support
+    byte  colormaptype;		// type of colour map 0=none, 1=has palette					[IGNORED] Adrian requested no support
     byte  imagetype;			// type of image 0=none,1=indexed,2=rgb,3=grey,+8=rle packed
 
-    int colourmapstart;		        // first colour map entry in palette						[IGNORED] Adrian requested no support
-    int colourmaplength;		// number of colours in palette								[IGNORED] Adrian requested no support
-    byte  colourmapbits;		// number of bits per palette entry 15,16,24,32				[IGNORED] Adrian requested no support
+    int colormapstart;		        // first colour map entry in palette						[IGNORED] Adrian requested no support
+    int colormaplength;		// number of colours in palette								[IGNORED] Adrian requested no support
+    byte  colormapbits;		// number of bits per palette entry 15,16,24,32				[IGNORED] Adrian requested no support
 
     int xstart;				// image x origin
     int ystart;				// image y origin

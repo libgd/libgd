@@ -217,14 +217,14 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	int r, g, b, a;
 	TIFF *tiff;
 	int width, height;
-	int colour;
+	int color;
 	char *scan;
 	int rowsperstrip;
 	int samplesPerPixel = 3;
 	int bitsPerSample;
-	int transparentColourR = -1;
-	int transparentColourG = -1;
-	int transparentColourB = -1;
+	int transparentColorR = -1;
+	int transparentColorG = -1;
+	int transparentColorB = -1;
 	uint16 extraSamples[1];
 	uint16 *colorMapRed;
 	uint16 *colorMapGreen;
@@ -248,9 +248,9 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	/* handle old-style single-colour mapping to 100% transparency */
 	if(image->transparent != 0xffffffff) {
 		/* set our 100% transparent colour value */
-		transparentColourR = gdImageRed(image, image->transparent);
-		transparentColourG = gdImageGreen(image, image->transparent);
-		transparentColourB = gdImageBlue(image, image->transparent);
+		transparentColorR = gdImageRed(image, image->transparent);
+		transparentColorG = gdImageGreen(image, image->transparent);
+		transparentColorB = gdImageBlue(image, image->transparent);
 	}
 
 	/* Open tiff file writing routines, but use special read/write/seek
@@ -328,19 +328,19 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	for(y = 0; y < height; y++) {
 		for(x = 0; x < width; x++) {
 			/* generate scan line for writing to tiff */
-			colour = gdImageGetPixel(image, x, y);
+			color = gdImageGetPixel(image, x, y);
 
-			a = (127 - gdImageAlpha(image, colour)) * 2;
+			a = (127 - gdImageAlpha(image, color)) * 2;
 			a = (a == 0xfe) ? 0xff : a & 0xff;
-			b = gdImageBlue(image, colour);
-			g = gdImageGreen(image, colour);
-			r = gdImageRed(image, colour);
+			b = gdImageBlue(image, color);
+			g = gdImageGreen(image, color);
+			r = gdImageRed(image, color);
 
 			/* if this pixel has the same RGB as the transparent colour,
 			 * then set alpha fully transparent */
-			if(	transparentColourR == r &&
-				transparentColourG == g &&
-				transparentColourB == b
+			if(	transparentColorR == r &&
+				transparentColorG == g &&
+				transparentColorB == b
 			) {
 				a = 0x00;
 			}
@@ -348,7 +348,7 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 			if(bitDepth != 24) {
 				/* write out 1 or 8 bit value in 1 byte
 				 * (currently treats 1bit as 8bit) */
-				scan[(x * samplesPerPixel) + 0] = colour;
+				scan[(x * samplesPerPixel) + 0] = color;
 			} else {
 				/* write out 24 bit value in 3 (or 4 if transparent) bytes */
 				if(image->saveAlphaFlag || image->transparent != 0xffffffff) {
@@ -720,7 +720,7 @@ static int createFromTiffRgba(TIFF * tif, gdImagePtr im)
 	int r, g, b, a;
 	int x, y;
 	int alphaBlendingFlag = 0;
-	int colour;
+	int color;
 	int width = im->sx;
 	int height = im->sy;
 	uint32 *buffer;
@@ -745,10 +745,10 @@ static int createFromTiffRgba(TIFF * tif, gdImagePtr im)
 			 * else use existing one */
 			rgba = buffer[(y * width + x)];
 			a = (0xff - TIFFGetA(rgba)) / 2;
-			colour = gdTrueColorAlpha(TIFFGetR(rgba), TIFFGetG(rgba), TIFFGetB(rgba), a);
+			color = gdTrueColorAlpha(TIFFGetR(rgba), TIFFGetG(rgba), TIFFGetB(rgba), a);
 
 			/* set pixel colour to this colour */
-			gdImageSetPixel(im, x, height - y - 1, colour);
+			gdImageSetPixel(im, x, height - y - 1, color);
 		}
 	}
 
