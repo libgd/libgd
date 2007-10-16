@@ -197,6 +197,14 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga ) {
 	int j = 0;
 	byte encoded_pixels;
 
+	if(overflow2(tga->width, tga->height)) {
+		return -1;
+	}
+
+	if(overflow2(tga->width * tga->height, pixel_block_size)) {
+		return -1;
+	}
+
 	/*!	\brief Allocate memmory for image block
 	 *  Allocate a chunk of memory for the image block to be passed into.
 	 */
