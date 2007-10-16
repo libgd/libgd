@@ -12,7 +12,7 @@
  *	\param infile Pointer to TGA binary file
  *	\return gdImagePtr	
  */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromTga(FILE * fp)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromTga(FILE *fp)
 {
 	gdImagePtr image;
 	gdIOCtx* in = gdNewFileCtx(fp);
@@ -38,12 +38,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaPtr(int size, void *data)
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx)
 {
-
 	int bitmap_caret = 0;
 	int i = 0;
 	oTga *tga = NULL;
-	int pixel_block_size = 0;
-	int image_block_size = 0;
+/*	int pixel_block_size = 0;
+	int image_block_size = 0; */
 	volatile gdImagePtr image = NULL;
 	int x = 0;
 	int y = 0;
@@ -62,8 +61,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx)
 		return NULL;    
 	}
 
+/*TODO: Will this be used?
 	pixel_block_size = tga->bits / 8;
 	image_block_size = (tga->width * tga->height) * pixel_block_size;
+*/
 
 	if (read_image_tga(ctx, tga)) {
 		free_tga(tga);
