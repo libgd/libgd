@@ -166,12 +166,14 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga) {
 			break;
 	}
 
-	tga->ident = (char *) gdMalloc(tga->identsize * sizeof( char ));
-	if (tga->ident == NULL) {
-		return -1;
-	}
+	tga->ident = NULL;
 
 	if (tga->identsize > 0) {
+		tga->ident = (char *) gdMalloc(tga->identsize * sizeof(char));
+		if(tga->ident == NULL) {
+			return -1;
+		}
+
 		gdGetBuf( &( tga->ident ), tga->identsize, ctx );
 	}
 
