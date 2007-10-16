@@ -153,9 +153,16 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga) {
 	printf("wxh: %i %i\n", tga->width, tga->height);
 #endif 
 
-	if (tga->bits != 8 && tga->bits != 24 && tga->bits != 16 && tga->bits != 32) {
-		fprintf(stderr, "bps %i not supported", tga->bits);
-		return -1;
+	switch(tga->bits) {
+		case 8:
+		case 16:
+		case 24:
+		case 32:
+			break;
+		default:
+			fprintf(stderr, "bps %i not supported", tga->bits);
+			return -1;
+			break;
 	}
 
 	tga->ident = (char *) gdMalloc(tga->identsize * sizeof( char ));
