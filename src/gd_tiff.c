@@ -272,12 +272,11 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC,
 					(bitDepth == 24) ? PHOTOMETRIC_RGB : PHOTOMETRIC_PALETTE);
 
-	bitsPerSample = (bitDepth ==24) ? 8 : ((bitDepth == 8) ? 8 : 1);
+	bitsPerSample = (bitDepth == 24 || bitDepth == 8) ? 8 : 1;
 	TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, bitsPerSample);
 
 	/* build the color map for 8 bit images */
 	if(bitDepth != 24) {
-		/*TODO: Add checking */
 		colorMapRed   = (uint16 *) gdMalloc(3 * (1 << bitsPerSample));
 		if (!colorMapRed) {
 			return;
