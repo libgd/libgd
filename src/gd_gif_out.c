@@ -831,9 +831,9 @@ static void GIFAnimEncode(gdIOCtxPtr fp, int IWidth, int IHeight, int LeftOfs, i
 #define ARGVAL() (*++(*argv) || (--argc && *++argv))
 
 #ifdef COMPATIBLE /* But wrong! */
-	#define MAXCODE(n_bits) ((code_int) 1 << (n_bits) - 1)
+#	define MAXCODE(n_bits) ((code_int) 1 << (n_bits) - 1)
 #else /* COMPATIBLE */
-	#define MAXCODE(n_bits) (((code_int) 1 << (n_bits)) - 1)
+#	define MAXCODE(n_bits) (((code_int) 1 << (n_bits)) - 1)
 #endif /* COMPATIBLE */
 
 #define HashTabOf(i) ctx->htab[i]
