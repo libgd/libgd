@@ -102,16 +102,15 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx)
 			}
 		}
 	}
-/* TODO: enable this part as soon as the flip functions have been commited*/
-#if 0
+
 	if (tga->flipv && tga->fliph) {
-		gdImageFlip(image, GD_FLIP_BOTH);
+		gdImageFlipBoth(image);
 	} else if (tga->flipv) {
-		gdImageFlip(image, GD_FLIP_HORIZONTAL);
+		gdImageFlipHorizontal(image);
 	} else if (tga->fliph) {
-		gdImageFlip(image, GD_FLIP_VERTICAL);
+		gdImageFlipVertical(image);
 	}
-#endif
+ 
 	free_tga(tga);
 
 	return image;
