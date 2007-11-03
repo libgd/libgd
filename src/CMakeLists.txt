@@ -2,6 +2,7 @@
 SET (LIBGD_SRC_FILES
 	gd.c
 	gdfx.c
+	gd_transform.c
 	gd_security.c
 	gd_gd.c
 	gd_gd2.c
