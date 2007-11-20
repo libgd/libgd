@@ -2229,7 +2229,9 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 		  for (y = 0; (y < h); y++) {
 			  for (x = 0; (x < w); x++) {
 				  int c = gdImageGetTrueColorPixel (src, srcX + x, srcY + y);
-				  gdImageSetPixel (dst, dstX + x, dstY + y, c);
+					if (c != src->transparent) {
+					  gdImageSetPixel (dst, dstX + x, dstY + y, c);
+					}
 			  }
 		  }
 	  } else {
