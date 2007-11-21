@@ -23,7 +23,7 @@ int main()
 	gdImageFilledRectangle(im, 1, 1, 4, 4, 0xFF00FF);
 
 	im2 = gdImageCreateTrueColor(20, 20);
-	if (!im) {
+	if (!im2) {
 		printf("can't create the dst truecolor image\n");
 		gdImageDestroy(im);
 		return 1;
