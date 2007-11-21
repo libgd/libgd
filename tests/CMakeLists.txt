@@ -51,6 +51,7 @@ if (BUILD_TEST)
 		gdimagecopy
 		gdimagefill
 		gdimagefilltoborder
+		freetype
 	)
 
 	FOREACH(test_dir ${TESTS_DIRS})

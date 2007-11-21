@@ -294,7 +294,7 @@ gdTcl_UtfToUniChar (char *str, Tcl_UniChar * chPtr)
       else
         {
           key.name = p = entity_name_buf;
-          for (i = 1; i < 1 + ENTITY_NAME_LENGTH_MAX; i++)
+          for (i = 1; i <= 1 + ENTITY_NAME_LENGTH_MAX; i++)
             {
               byte = *((unsigned char *) (str + i));
               if (byte == '\0')
