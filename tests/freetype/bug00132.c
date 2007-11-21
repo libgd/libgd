@@ -9,7 +9,6 @@ int main()
 {
  	gdImagePtr im, im2;
  	int error = 0;
-	FILE *fp;
 	char path[2048];
 	const char *file_exp = "bug00132_exp.png";
 
