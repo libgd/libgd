@@ -9,17 +9,25 @@ int main()
 {
  	gdImagePtr im, im2;
  	int error = 0;
-	FILE *fp;
 	char path[2048];
 	const char *file_exp = "bug00081_exp.png";
 
 	im = gdImageCreateTrueColor(5, 5);
+	if (!im) {
+		printf("can't create the src truecolor image\n");
+		return 1;
+	}
 
 	gdImageFilledRectangle(im, 0, 0, 49, 49, 0x00FFFFFF);
 	gdImageColorTransparent(im, 0xFFFFFF);
 	gdImageFilledRectangle(im, 1, 1, 4, 4, 0xFF00FF);
 
 	im2 = gdImageCreateTrueColor(20, 20);
+	if (!im) {
+		printf("can't create the dst truecolor image\n");
+		gdImageDestroy(im);
+		return 1;
+	}
 
 	gdImageCopy(im2, im, 2, 2 , 0, 0, gdImageSX(im), gdImageSY(im));
 
