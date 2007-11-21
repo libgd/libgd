@@ -14,6 +14,10 @@ int main()
 	const char *file_exp = "bug00132_exp.png";
 
 	im = gdImageCreateTrueColor(50, 30);
+	if (!im) {
+		printf("can't get truecolor image\n");
+		return 1;
+	}
 
 	gdImageAlphaBlending(im, 0);
 	gdImageFilledRectangle(im, 0, 0, 200, 200, gdTrueColorAlpha(0, 0, 0, 127));
