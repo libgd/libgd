@@ -130,6 +130,15 @@ extern "C"
 #define gdTrueColorGetGreen(c) (((c) & 0x00FF00) >> 8)
 #define gdTrueColorGetBlue(c) ((c) & 0x0000FF)
 
+enum gdCropMode {
+	GD_CROP_DEFAULT = 0,
+	GD_CROP_TRANSPARENT,
+	GD_CROP_BLACK,
+	GD_CROP_WHITE,
+	GD_CROP_SIDES
+};
+
+
 /* This function accepts truecolor pixel values only. The 
 	source color is composited with the destination color
 	based on the alpha channel value of the source color.
@@ -475,11 +484,19 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 			   char *string, gdFTStringExtraPtr strex);
 
 /* Point type for use in polygon drawing. */
-  typedef struct
-  {
-    int x, y;
-  }
-  gdPoint, *gdPointPtr;
+typedef struct
+{
+	int x, y;
+}
+gdPoint, *gdPointPtr;
+
+typedef struct
+{
+	int x, y;
+	int width, height;
+}
+gdRect, *gdRectPtr;
+
 
 BGD_DECLARE(void) gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c);
 BGD_DECLARE(void) gdImageOpenPolygon (gdImagePtr im, gdPointPtr p, int n, int c);
@@ -730,6 +747,12 @@ BGD_DECLARE(void) gdImageSetThickness (gdImagePtr im, int thickness);
 BGD_DECLARE(void) gdImageInterlace (gdImagePtr im, int interlaceArg);
 BGD_DECLARE(void) gdImageAlphaBlending (gdImagePtr im, int alphaBlendingArg);
 BGD_DECLARE(void) gdImageSaveAlpha (gdImagePtr im, int saveAlphaArg);
+
+
+BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop);
+BGD_DECLARE(gdImagePtr) gdImageAutoCrop(gdImagePtr im, const unsigned int mode);
+BGD_DECLARE(gdImagePtr) gdImageThresholdCrop(gdImagePtr im, const unsigned int color, const int threshold);
+
 
 /* Macros to access information about images. */
 
