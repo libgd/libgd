@@ -664,9 +664,6 @@ BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size);
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size);
 
-BGD_DECLARE(void) gdImageEllipse (gdImagePtr im, int cx, int cy, int w, int h,
-		       int color);
-
 /* Style is a bitwise OR ( | operator ) of these.
 	gdArc and gdChord are mutually exclusive;
 	gdChord just connects the starting and ending
