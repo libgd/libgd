@@ -40,6 +40,9 @@
 */
 namespace GD
 	{
+	/**	This class GD::Point stores a point in two dimensions, somewhere
+		on the plane of an image.
+	*/
 	class Point
 		{
 	public:
@@ -79,6 +82,9 @@ namespace GD
 		int	_x, _y;
 		};
 	typedef Point * PointPtr;
+	/**	This class GD::Size stores length in two dimensions.
+		Giving the size of an area as width and height.
+	*/
 	class Size
 		{
 	public:
@@ -116,6 +122,9 @@ namespace GD
 		};
 	typedef Size * SizePtr;
 	
+	/**	This class GD::TrueColor stores a colour as an RGBA quadruplet.
+		It can also be read as an integer, and in other colour formats.
+	*/
 	class TrueColor
 		{
 	public:
@@ -182,6 +191,10 @@ namespace GD
 	struct Gd2_tag {};
 	struct Xbm_tag {};
 
+	/**	This class GD::Image wraps all of the 'C' libgd functionality
+		for the convenience of C++ users.  An instance of this class
+		corresponds to a single image.
+	*/
 	class BGD_EXPORT_DATA_IMPL Image
 		{
 	public:
@@ -221,7 +234,15 @@ namespace GD
 		*/
 		Image(gdImagePtr i) 
 		:im(i) {}
-		
+		/** Copy constructor. Construct an instance of the GD::Image class, 
+			by making a copy of the GD::Image provided.
+			\param[in] i Reference to the image to be copied
+		*/
+		Image(const GD::Image & i) 
+		:im(0)
+			{
+			Copy(i); 
+			}
 		/** Construct an image by reading from \p in.  This constructor
 			will first attempt to determine the file format.
 			\param[in] in The stream containing the image data
@@ -432,6 +453,30 @@ namespace GD
 
 		~Image()
 			{ clear(); }
+
+		/** Assignment Operator. Make this a copy of the GD::Image provided.
+			\param[in] src Reference to the image to be copied
+		*/
+		GD::Image & operator=(const GD::Image & src)
+			{
+			Copy(src);
+			return (* this);
+			}
+		/** Make this an exact copy of the GD::Image provided.  Any existing iamge data is discarded.
+			\param[in] src Reference to the image to be copied
+		*/
+		void Copy(const GD::Image & src)
+			{
+			int w = src.Width(), h = src.Height();
+			if (src.IsTrueColor())
+				CreateTrueColor(w, h);
+			else
+				{
+				Create(w, h);
+				PaletteCopy(src);
+				}
+			Copy(src, 0, 0, 0, 0, w, h);
+			}
 		/** Check to see if this appears to be a valid image
 		*/	
 		bool good() const
@@ -872,6 +917,8 @@ namespace GD
 
 		void PaletteCopy(gdImagePtr src)
 			{  gdImagePaletteCopy(im, src); }
+		void PaletteCopy(const GD::Image & src)
+			{  PaletteCopy(src.im); }
 
 		/**
 			Write out this image in GIF file format to \p out.
@@ -1033,18 +1080,24 @@ namespace GD
 			{ gdImageGifAnimBegin(im, out, GlobalCM, Loops); }
 		void GifAnimAdd(FILE * out, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm) const
 			{ gdImageGifAnimAdd(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm); }
+		void GifAnimAdd(FILE * out, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, const GD::Image & previm) const
+			{ GifAnimAdd(out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm.im); }
 		inline static void GifAnimEnd(FILE * out)
 			{ gdImageGifAnimEnd(out); }
 		void GifAnimBegin(gdIOCtx * out, int GlobalCM, int Loops) const
 			{ gdImageGifAnimBeginCtx(im, out, GlobalCM, Loops); }
 		void GifAnimAdd(gdIOCtx * out, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm) const
 			{ gdImageGifAnimAddCtx(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm); }
+		void GifAnimAdd(gdIOCtx * out, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, const GD::Image & previm) const
+			{ GifAnimAdd(out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm.im); }
 		inline static void GifAnimEnd(gdIOCtx * out)
 			{ gdImageGifAnimEndCtx(out); }
 		void * GifAnimBegin(int * size, int GlobalCM, int Loops) const
 			{ return gdImageGifAnimBeginPtr(im, size, GlobalCM, Loops); }
 		void * GifAnimAdd(int * size, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm) const
 			{ return gdImageGifAnimAddPtr(im, size, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm); }
+		void * GifAnimAdd(int * size, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, const GD::Image & previm) const
+			{ return GifAnimAdd(size, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm.im); }
 		inline static void * GifAnimEnd(int * size)
 			{ return gdImageGifAnimEndPtr(size); }
 
@@ -1114,10 +1167,42 @@ namespace GD
 		void CopyRotated(const gdImagePtr src, double dstX, double dstY, const Point & srcP, const Size & srcS, int angle)
 			{ CopyRotated(src, dstX, dstY, srcP.X(), srcP.Y(), srcS.W(), srcS.H(), angle); }
 
+		void Copy(const GD::Image & src, int dstX, int dstY, int srcX, int srcY, int w, int h)
+			{ Copy(src.im, dstX, dstY, srcX, srcY, w, h); }
+		void CopyMerge(const GD::Image & src, int dstX, int dstY, int srcX, int srcY, int w, int h, int pct)
+			{ CopyMerge(src.im, dstX, dstY, srcX, srcY, w, h, pct); }
+		void CopyMergeGray(const GD::Image & src, int dstX, int dstY, int srcX, int srcY, int w, int h, int pct)
+			{ CopyMergeGray(src.im, dstX, dstY, srcX, srcY, w, h, pct); }
+
+		void CopyResized(const GD::Image & src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH)
+			{ CopyResized(src.im, dstX, dstY, srcX, srcY, dstW, dstH, srcW, srcH); }
+		void CopyResampled(const GD::Image & src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH)
+			{ CopyResampled(src.im, dstX, dstY, srcX, srcY, dstW, dstH, srcW, srcH); }
+		void CopyRotated(const GD::Image & src, double dstX, double dstY, int srcX, int srcY, int srcWidth, int srcHeight, int angle)
+			{ CopyRotated(src.im, dstX, dstY, srcX, srcY, srcWidth, srcHeight, angle); }
+
+		void Copy(const GD::Image & src, const Point & dstP, const Point & srcP, const Size & s)
+			{ Copy(src.im, dstP.X(), dstP.Y(), srcP.X(), srcP.Y(), s.W(), s.H()); }
+		void CopyMerge(const GD::Image & src, const Point & dstP, const Point & srcP, const Size & s, int pct)
+			{ CopyMerge(src.im, dstP.X(), dstP.Y(), srcP.X(), srcP.Y(), s.W(), s.H(), pct); }
+		void CopyMergeGray(const GD::Image & src, const Point & dstP, const Point & srcP, const Size & s, int pct)
+			{ CopyMergeGray(src.im, dstP.X(), dstP.Y(), srcP.X(), srcP.Y(), s.W(), s.H(), pct); }
+
+		void CopyResized(const GD::Image & src, const Point & dstP, const Point & srcP, const Size & dstS, const Size & srcS)
+			{ CopyResized(src.im, dstP.X(), dstP.Y(), srcP.X(), srcP.Y(), dstS.W(), dstS.H(), srcS.W(), srcS.H()); }
+		void CopyResampled(const GD::Image & src, const Point & dstP, const Point & srcP, const Size & dstS, const Size & srcS)
+			{ CopyResampled(src.im, dstP.X(), dstP.Y(), srcP.X(), srcP.Y(), dstS.W(), dstS.H(), srcS.W(), srcS.H()); }
+		void CopyRotated(const GD::Image & src, double dstX, double dstY, const Point & srcP, const Size & srcS, int angle)
+			{ CopyRotated(src.im, dstX, dstY, srcP.X(), srcP.Y(), srcS.W(), srcS.H(), angle); }
+
 		void SetBrush(gdImagePtr brush)
 			{ gdImageSetBrush(im, brush); }
+		void SetBrush(const GD::Image & brush)
+			{ SetBrush(brush.im); }
 		void SetTile(gdImagePtr tile)
 			{ gdImageSetTile(im, tile); }
+		void SetTile(const GD::Image & tile)
+			{ SetTile(tile.im); }
 		void SetAntiAliased(int c)
 			{ gdImageSetAntiAliased(im, c); }
 		void SetAntiAliasedDontBlend(int c, int dont_blend)
@@ -1165,6 +1250,8 @@ namespace GD
 		int TrueColorPixel(int x, int y) const
 			{  return gdImageTrueColorPixel(im, x, y); }
 
+		const gdImagePtr GetPtr() const
+			{	return im; }
 
 	protected:
 		/// Free the internal image pointer 
