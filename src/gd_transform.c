@@ -61,13 +61,10 @@ gdImageFlipVertical(gdImagePtr im)
 	}
 }
 
-BGD_DECLARE(int)
+BGD_DECLARE(void)
 gdImageFlipBoth(gdImagePtr im)
 {
-	int res;
-
-	res = gdImageFlipVertical(im);
-	res &= gdImageFlipHorizontal(im);
-	return res;
+	gdImageFlipVertical(im);
+	gdImageFlipHorizontal(im);
 }
 
