@@ -570,7 +570,11 @@ static void readTiff8bit (const unsigned char *src,
 			} else {
 				for (y = 0; y < height; y++) {
 					for (x = 0; x < width; x++) {
-						gdImageSetPixel(im, x, y, gdTrueColor(*src++, *src++, *src++));
+						register unsigned char r = *src++;
+						register unsigned char g = *src++;
+						register unsigned char b = *src++;
+
+						gdImageSetPixel(im, x, y, gdTrueColor(r, g, b));
 					}
 				}
 			}
