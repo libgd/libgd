@@ -39,14 +39,11 @@ gdImagePtr read_png(const char *filename)
 int main()
 {
  	gdImagePtr im, im2;
-	FILE *fp;
-	char path[2048];
-	char dst[2048];
 
 	im = gdImageCreateTrueColor(400, 400);
 
 	if (!im) {
-		fprintf(stderr, "Can't create 400x400 TC image\n", path);
+		fprintf(stderr, "Can't create 400x400 TC image\n");
 		return 1;
 	}
 
@@ -85,4 +82,5 @@ int main()
 	}
 
 	gdImageDestroy(im);
+	return 0;
 }
