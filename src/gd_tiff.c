@@ -39,6 +39,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
+#include "gdhelpers.h"
+
 #ifdef HAVE_LIBTIFF
 
 #include "tiff.h"
@@ -174,10 +176,10 @@ static toff_t tiff_seekproc(thandle_t clientdata, toff_t offset, int from)
 /* TIFFCloseProc tiff_closeproc - used to finally close the TIFF file */
 static int tiff_closeproc(thandle_t clientdata)
 {
-	tiff_handle *th = (tiff_handle *)clientdata;
+	/*tiff_handle *th = (tiff_handle *)clientdata;
 	gdIOCtx *ctx = th->ctx;
 
-	/*(ctx->gd_free)(ctx);*/
+	(ctx->gd_free)(ctx);*/
 
 	return 0;
 }
@@ -219,7 +221,6 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	int width, height;
 	int color;
 	char *scan;
-	int rowsperstrip;
 	int samplesPerPixel = 3;
 	int bitsPerSample;
 	int transparentColorR = -1;
@@ -490,7 +491,6 @@ static void readTiffBw (const unsigned char *src,
 		int          extra,
 		int          align)
 {
-	unsigned char *buffer;
 	int x = startx, y = starty;
 	int src_x, src_y;
 	int k;
@@ -530,9 +530,8 @@ static void readTiff8bit (const unsigned char *src,
 		int          extra,
 		int          align)
 {
-	unsigned char *dst;
-	int    gray, red, green, blue, alpha;
-	int    x, y, i;
+	int    red, green, blue, alpha;
+	int    x, y;
 
 	switch (photometric) {
 		case PHOTOMETRIC_PALETTE:
@@ -614,7 +613,6 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 	int tile_width, tile_height;
 	int  x, y, height, width;
 	unsigned char *buffer;
-	int    i;
 
 	if (!TIFFGetField (tif, TIFFTAG_PLANARCONFIG, &planar)) {
 		planar = PLANARCONFIG_CONTIG;
@@ -644,6 +642,7 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 			}
 		}
 	}
+	return TRUE;
 }
 
 static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 photometric,
@@ -651,7 +650,7 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 {
 	uint16  planar;
 	uint32 im_height, im_width, im_line_size;
-	int y, i;
+	int y;
 
 	unsigned char *buffer;
 
@@ -665,7 +664,7 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 	}
 
 	if (!TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &im_width)) {
-		fprintf(stderr, "Can't fetch TUFF width", y);
+		fprintf(stderr, "Can't fetch TUFF width for %i", y);
 		return FALSE;
 	}
 
@@ -713,14 +712,13 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 			/* TODO: implement a reader for separate panes. We detect this case earlier for now and use force_rgb */
 	}
 
-error:
 	gdFree(buffer);
 	return GD_SUCCESS;
 }
 
 static int createFromTiffRgba(TIFF * tif, gdImagePtr im) 
 {
-	int r, g, b, a;
+	int a;
 	int x, y;
 	int alphaBlendingFlag = 0;
 	int color;
@@ -776,8 +774,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	int width, height;
 	uint16 extra, *extra_types;
 	uint16 planar;
-	float layer_offset_y_float, layer_offset_x_float;
-	int		layer_offset_y, layer_offset_x;
 	char	has_alpha, is_bw, is_gray;
 	char	flip_horizontal, flip_vertical;
 	char	force_rgba = FALSE;
@@ -789,7 +785,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 
 	th = new_tiff_handle(infile);
 	if (!th) {
-		return;
+		return NULL;
 	}
 
 	tif = TIFFClientOpen("", "rb", th, tiff_readproc,
