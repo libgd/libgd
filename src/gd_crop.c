@@ -9,6 +9,7 @@
  */
 
 #include <gd.h>
+#include <stdlib.h>
 
 static int gdGuessBackgroundColorFromCorners(gdImagePtr im, int *color);
 static int gdColorMatch(gdImagePtr im, int col1, int col2, int threshold);
@@ -71,9 +72,11 @@ BGD_DECLARE(gdImagePtr) gdImageAutoCrop(gdImagePtr im, const unsigned int mode)
 		}
 	}
 
-	/* Nothing to do > bye */
+	/* Nothing to do > bye 
+	 * Duplicate the image?
+	 */
 	if (y == height - 1) {
-		return;
+		return NULL;
 	}
 
 	crop.y = y -1;
@@ -115,7 +118,7 @@ BGD_DECLARE(gdImagePtr) gdImageThresholdCrop(gdImagePtr im, const unsigned int c
 	const int height = gdImageSY(im);
 
 	int x,y;
-	int corners, match;
+	int match;
 	gdRect crop;
 
 	crop.x = 0;
@@ -123,8 +126,9 @@ BGD_DECLARE(gdImagePtr) gdImageThresholdCrop(gdImagePtr im, const unsigned int c
 	crop.width = 0;
 	crop.height = 0;
 
+	/* Pierre: crop everything sounds bad */
 	if (threshold >= 255) {
-		return;
+		return NULL;
 	}
 
 	/* TODO: Add gdImageGetRowPtr and works with ptr at the row level
@@ -138,9 +142,12 @@ BGD_DECLARE(gdImagePtr) gdImageThresholdCrop(gdImagePtr im, const unsigned int c
 		}
 	}
 
-	/* Nothing to do > bye */
+	/* Piere
+	 * Nothing to do > bye 
+	 * Duplicate the image?
+	 */
 	if (y == height - 1) {
-		return;
+		return NULL;
 	}
 
 	crop.y = y -1;
