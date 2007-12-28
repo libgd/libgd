@@ -26,7 +26,7 @@ gdImageFlipHorizontal(gdImagePtr im)
 		}
 
 	}
-	return 1;
+	return;
 }
 
 BGD_DECLARE(void)
