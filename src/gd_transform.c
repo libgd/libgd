@@ -1,10 +1,9 @@
 #include "gd.h"
 
-BGD_DECLARE(int)
+BGD_DECLARE(void)
 gdImageFlipHorizontal(gdImagePtr im)
 {
-	int *p1, *p2, *src;
-	register int x, y, tmp;
+	register int x, y;
 
 
 	if (im->trueColor) {
@@ -30,13 +29,11 @@ gdImageFlipHorizontal(gdImagePtr im)
 	return 1;
 }
 
-BGD_DECLARE(int)
+BGD_DECLARE(void)
 gdImageFlipVertical(gdImagePtr im)
 {
 
 	int x, y;
-	int w = im->sx;
-	int h = im->sy;
 
 	if (im->trueColor) {
 		int p;
