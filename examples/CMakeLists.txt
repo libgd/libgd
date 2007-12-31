@@ -6,6 +6,7 @@ SET(TESTS_FILES
   tiffread
   tgaread
   crop
+	nnquant
 )
 
 FOREACH(test_name ${TESTS_FILES})
