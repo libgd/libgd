@@ -1,4 +1,6 @@
-$! (c) Alexey Chupahin  18-APR-2006
+$! (c) Alexey Chupahin  18-APR-2006, 15-DEC-2007
+$! OpenVMS 8.2  Alpha DEC 2000 model 300
+$! OpenVMS 8.3  Itanium rx1620 
 $! GNU
 $!
 $!
@@ -12,7 +14,9 @@ $! Checking architecture
 $    IF F$GETSYI("ARCH_TYPE").EQ.1 THEN CPU = "VAX"
 $    IF F$GETSYI("ARCH_TYPE").EQ.2 THEN CPU = "Alpha"
 $    IF F$GETSYI("ARCH_TYPE").EQ.3 THEN CPU = "I64"
+$    OS = F$GETSYI("VERSION")
 $WRITE SYS$OUTPUT "Checking architecture   ...  ", CPU
+$WRITE SYS$OUTPUT "Checking OS             ...  OpenVMS ",OS
 $SHARED=0
 $IF ( (CPU.EQS."Alpha").OR.(CPU.EQS."I64") )
 $  THEN
@@ -22,17 +26,18 @@ $       SHARED=32
 $ENDIF
 $DECC = F$SEARCH("SYS$SYSTEM:DECC$COMPILER.EXE") .NES. ""
 $IF (DECC) THEN $WRITE SYS$OUTPUT  "Compiler		...  DEC C"
-$IF (.NOT. DECC) THEN $WRITE SYS$OUTPUT  "BAD compiler" GOTO EXIT
+$IF (.NOT. DECC) THEN $WRITE SYS$OUTPUT  "BAD compiler" GOTO EXIT 
 $MMS = F$SEARCH("SYS$SYSTEM:MMS.EXE") .NES. ""
 $MMK = F$TYPE(MMK) 
-$IF (MMS .OR. MMK) THEN GOTO TEST_LIBRARIES
+$IF (MMS .OR. MMK.NES."") THEN GOTO TEST_LIBRARIES
+$WRITE SYS$OUTPUT "Please install MMS from DECSET or MMK"
 $! I cant find any make tool
 $GOTO EXIT
 $!
 $!
 $TEST_LIBRARIES:
 $!   Setting as MAKE utility one of MMS or MMK. I prefer MMS.
-$IF (MMK) THEN MAKE="MMK/IGN=WAR"
+$IF (MMK.NES."") THEN MAKE="MMK/IGN=WAR"
 $IF (MMS) THEN MAKE="MMS/IGN=WAR"
 $WRITE SYS$OUTPUT "Checking build utility	...  ''MAKE'"
 $WRITE SYS$OUTPUT " "
@@ -99,15 +104,15 @@ $DEAS  SYS$OUTPUT
 $IF (TMP .NE. %X10B90001)
 $  THEN
 $       HAVE_ZLIB=0
-$       GOTO EXIT
+$       GOTO NEXT1
 $ENDIF
 $DEFINE SYS$OUTPUT _NLA0:
 $!Testing for shared ZLIB
-$COPY SYS$INPUT OPT.OPT
+$COPY SYS$INPUT [.SRC]OPT.OPT
 SYS$SHARE:LIBZSHR/SHARE
-$LINK/EXE=TEST TEST,OPT/OPT
+$LINK/EXE=TEST TEST,[.SRC]OPT/OPT
 $TMP = $STATUS
-$DEL OPT.OPT;*
+$DEL [.SRC]OPT.OPT;*
 $!WRITE SYS$OUTPUT TMP
 $IF (TMP .NE. %X10000001)
 $  THEN
@@ -123,6 +128,7 @@ $	ENDIF
 $  ELSE
 $       HAVE_ZLIB=1
 $ENDIF
+$NEXT1:
 $DEAS  SYS$OUTPUT
 $IF (HAVE_ZLIB.EQ.1)
 $  THEN
@@ -202,7 +208,7 @@ $	GOTO EXIT
 $ENDIF
 $!
 $!
-$HAVE_LIBTIFF=0
+$HAVE_TIFF=0
 $!"Checking for libPNG "
 $ DEFINE SYS$OUTPUT _NLA0:
 $ CC/OBJECT=TEST.OBJ/INCLUDE=(PNG,ZLIB) SYS$INPUT
@@ -294,12 +300,11 @@ $!WRITE SYS$OUTPUT TMP
 $IF (TMP .NE. %X10B90001)
 $  THEN
 $	HAVE_JPEG=0
-$       GOTO EXIT
+$       GOTO  NEXT3
 $ENDIF
 $DEFINE SYS$OUTPUT _NLA0:
 $LINK/EXE=TEST TEST,JPEG:LIBJPEG$SHR/OPT
 $TMP = $STATUS
-$DEAS  SYS$OUTPUT
 $!WRITE SYS$OUTPUT TMP
 $IF (TMP .NE. %X10000001)
 $  THEN
@@ -309,7 +314,7 @@ $	IF (TMP .NE. %X10000001)
 $	  THEN
 $		HAVE_JPEG=0
 $		JPEG_STATIC=0
-$		GOTO EXIT
+$		GOTO NEXT3
 $	  ELSE
 $		HAVE_JPEG=1
 $		JPEG_STATIC=1
@@ -319,6 +324,8 @@ $	HAVE_JPEG=1
 $	JPEG_STATIC=0
 $ENDIF
 $!
+$NEXT3:
+$DEAS  SYS$OUTPUT
 $IF (HAVE_JPEG.EQ.1)
 $  THEN
 $       WRITE SYS$OUTPUT "Checking for correct jpeg library ...   Yes"
@@ -330,11 +337,55 @@ $ENDIF
 $RUN TEST
 $!
 $!
+$!Checking for libTIFF
+$ DEFINE SYS$OUTPUT _NLA0:
+$ DEL TEST.*;*
+$ CC/OBJECT=TEST.OBJ/INCLUDE=(TIFF) SYS$INPUT
+      #include <stdlib.h>
+      #include <stdio.h>
+      #include <tiffio.h>
+   int main()
+     {
+        printf("checking libTIFF version:\t%s\n\n", TIFFGetVersion());
+        return 0;
+     }
+$!
+$TMP = $STATUS
+$DEAS  SYS$OUTPUT
+$IF (TMP .NE. %X10B90001)
+$  THEN
+$       HAVE_TIFF=0
+$	GOTO NEXT4
+$ENDIF
+$DEFINE SYS$OUTPUT _NLA0:
+$LINK TEST, TIFF:LIBTIFF/OPT, ZLIB:LIBZ/LIB
+$TMP = $STATUS
+$!WRITE SYS$OUTPUT TMP
+$IF (TMP .NE. %X10000001)
+$  THEN
+$       HAVE_TIFF=0
+$  ELSE
+$       HAVE_TIFF=1
+$ENDIF
+$NEXT4:
+$DEAS  SYS$OUTPUT
+$IF (HAVE_TIFF.EQ.1)
+$  THEN
+$       WRITE SYS$OUTPUT "Checking for TIFF library ...   Yes"
+$       TIFF_LIBRARY_PATH="TIFF:LIBTIFF/OPT"
+$       RUN TEST
+$  ELSE
+$       WRITE SYS$OUTPUT "Checking for TIFF library ...   No"
+$       WRITE SYS$OUTPUT "No TIFF library installed. This is fatal. Please download and install good library from fafner.dyndns.org/~alexey/libsdl/public.html"
+$       GOTO EXIT
+$ENDIF
+$!
+$!
 $!WRITING BUILD FILES
 $!
 $IF (SHARED.EQ.64)
 $ THEN
-$	COPY SYS$INPUT LIBGD$DEF.OPT
+$	COPY SYS$INPUT [.SRC]LIBGD$DEF.OPT
 SYMBOL_VECTOR= (-
 gdAlphaBlend=PROCEDURE,-
 gdImageCreate=PROCEDURE,-
@@ -467,6 +518,18 @@ gdFontGetMediumBold=PROCEDURE,-
 gdFontGetSmall=PROCEDURE,-
 gdFontGetTiny=PROCEDURE,-
 gdImageCompare=PROCEDURE,-
+gdImageCreateFromTiff=PROCEDURE,-
+gdImageCreateFromTiffCtx=PROCEDURE,-
+gdImageCreateFromTiffPtr=PROCEDURE,-
+gdImageCreateFromTga=PROCEDURE,-
+gdImageCreateFromTgaCtx=PROCEDURE,-
+gdImageCreateFromTgaPtr=PROCEDURE,-
+gdImageTiff=PROCEDURE,-
+gdImageTiffPtr=PROCEDURE,-
+gdImageTiffCtx=PROCEDURE,-
+gdImageCrop=PROCEDURE,-
+gdImageAutoCrop=PROCEDURE,-
+gdImageThresholdCrop=PROCEDURE,-
 gdFontGiant=DATA,-
 GDFONTLARGE=DATA,-
 GDFONTMEDIUMBOLD=DATA,-
@@ -477,7 +540,7 @@ $ENDIF
 $!
 $IF (SHARED.EQ.32)
 $ THEN
-$	COPY SYS$INPUT LIBGD$DEF.OPT
+$	COPY SYS$INPUT [.SRC]LIBGD$DEF.OPT
 UNIVERSAL=gdAlphaBlend
 UNIVERSAL=gdImageCreate
 UNIVERSAL=gdImageCreateTrueColor
@@ -610,6 +673,18 @@ UNIVERSAL=gdFontGetSmall
 UNIVERSAL=gdFontGetTiny
 UNIVERSAL=gdImageCompare
 UNIVERSAL=gdFontGiant
+UNIVERSAL=gdImageCreateFromTiff
+UNIVERSAL=gdImageCreateFromTiffCtx
+UNIVERSAL=gdImageCreateFromTiffPtr
+UNIVERSAL=gdImageCreateFromTga
+UNIVERSAL=gdImageCreateFromTgaCtx
+UNIVERSAL=gdImageCreateFromTgaPtr
+UNIVERSAL=gdImageTiff
+UNIVERSAL=gdImageTiffPtr
+UNIVERSAL=gdImageTiffCtx
+UNIVERSAL=gdImageCrop
+UNIVERSAL=gdImageAutoCrop
+UNIVERSAL=gdImageThresholdCrop
 UNIVERSAL=GDFONTLARGE
 UNIVERSAL=GDFONTMEDIUMBOLD
 UNIVERSAL=GDFONTSMALL
@@ -621,116 +696,118 @@ $!
 $DEF SYS$OUTPUT _NL0:
 $!
 $!Making OPT file for GD$SHR.EXE, i.e without reference to himself
-$COPY SYS$INPUT OPT.OPT
+$COPY SYS$INPUT [.SRC]OPT.OPT
 []GD/LIB
 $IF ((HAVE_LIBPNG.EQ.1) .AND. (LIBPNG_STATIC.EQ.1))
 $  THEN
-$       APP SYS$INPUT OPT.OPT
+$       APP SYS$INPUT [.SRC]OPT.OPT
 PNG:LIBPNG/LIB
 $ENDIF
 $IF ((HAVE_LIBPNG.EQ.1) .AND. (LIBPNG_STATIC.EQ.0))
 $  THEN
-$       APP PNG:LIBPNG$SHR.OPT OPT.OPT
+$       APP PNG:LIBPNG$SHR.OPT [.SRC]OPT.OPT
 $ENDIF
 $!
-$IF ((HAVE_JPEG.EQ.1) .AND. (JPEG_STATIC.EQ.1))
+$IF ((HAVE_JPEG.EQ.1) .AND. (JPEG_STATIC.EQ.1) .AND. (HAVE_TIFF.NE.1))
 $  THEN
-$       APP SYS$INPUT OPT.OPT
+$       APP SYS$INPUT [.SRC]OPT.OPT
 JPEG:LIBJPEG/LIB
 $ENDIF
-$IF ((HAVE_JPEG.EQ.1) .AND. (JPEG_STATIC.EQ.0))
+$IF ((HAVE_JPEG.EQ.1) .AND. (JPEG_STATIC.EQ.0) .AND. (HAVE_TIFF.NE.1))
 $  THEN
-$       APP JPEG:LIBJPEG$SHR.OPT OPT.OPT
+$       APP JPEG:LIBJPEG$SHR.OPT [.SRC]OPT.OPT
 $ENDIF
 $!
-$IF (HAVE_LIBTIFF.EQ.1)
+$IF (HAVE_TIFF.EQ.1)
 $  THEN
-$       APP TIFF:LIBTIFF.OPT OPT.OPT
+$       APP TIFF:LIBTIFF.OPT [.SRC]OPT.OPT
 $ENDIF
 $!
 $IF (HAVE_FREETYPE.EQ.1) .AND. (FREETYPE_STATIC.EQ.1)
 $ THEN
-$       APP SYS$INPUT OPT.OPT
+$       APP SYS$INPUT [.SRC]OPT.OPT
         FREETYPE2:FREETYPE/LIB
         ZLIB:LIBZ/LIB
 $ENDIF
 $IF (HAVE_FREETYPE.EQ.1) .AND. (FREETYPE_STATIC.EQ.0)
 $ THEN
-$       APP FREETYPE2:FREETYPE.OPT OPT.OPT
+$       APP FREETYPE2:FREETYPE.OPT [.SRC]OPT.OPT
 $ENDIF
 $!
 $IF (HAVE_ZLIB.EQ.1) .AND. ((FREETYPE_STATIC.NE.1).AND.(JPEG_STATIC.NE.1))
 $  THEN
 $       IF (ZLIB_STATIC.EQ.0)
 $         THEN
-$               APP SYS$INPUT OPT.OPT
+$               APP SYS$INPUT [.SRC]OPT.OPT
                 SYS$SHARE:LIBZSHR/SHARE
 $         ELSE
-$               APP SYS$INPUT OPT.OPT
+$               APP SYS$INPUT [.SRC]OPT.OPT
                 ZLIB:LIBZ/LIB
 $       ENDIF
+$  ELSE
+$	APP SYS$INPUT [.SRC]OPT.OPT
+	ZLIB:LIBZ/LIB
 $ENDIF
 $!
 $!
-$PURGE OPT.OPT
+$PURGE [.SRC]OPT.OPT
 $!
 $!
 $!Making working LIBGD.OPT file
 $!
 $IF (SHARED.GT.0)
 $ THEN
-	$COPY SYS$INPUT LIBGD.OPT
+	$COPY SYS$INPUT [.SRC]LIBGD.OPT
 	SYS$SHARE:GD$SHR/SHARE
 $ ELSE
-	$COPY SYS$INPUT LIBGD.OPT
+	$COPY SYS$INPUT [.SRC]LIBGD.OPT
 	LIBGD:GD/LIB
 $ENDIF
 $!
 $!Append OPT files to LIBGD.OPT
 $IF ((HAVE_LIBPNG.EQ.1) .AND. (LIBPNG_STATIC.EQ.1))
 $  THEN
-$	APP SYS$INPUT LIBGD.OPT
+$	APP SYS$INPUT [.SRC]LIBGD.OPT
 PNG:LIBPNG/LIB
 $ENDIF
 $IF ((HAVE_LIBPNG.EQ.1) .AND. (LIBPNG_STATIC.EQ.0))
 $  THEN
-$	APP PNG:LIBPNG$SHR.OPT LIBGD.OPT
-PNG:LIBPNG/LIB
+$	APP PNG:LIBPNG$SHR.OPT [.SRC]LIBGD.OPT
 $ENDIF
 $!
-$IF ((HAVE_JPEG.EQ.1) .AND. (HAVE_LIBTIFF.NE.1) .AND. (JPEG_STATIC.EQ.1))
+$IF ((HAVE_JPEG.EQ.1) .AND. (HAVE_TIFF.NE.1) .AND. (JPEG_STATIC.EQ.1))
 $  THEN
-$       APP JPEG:LIBJPEG.OPT LIBGD.OPT
+$       APP JPEG:LIBJPEG.OPT [.SRC]LIBGD.OPT
 $ENDIF
-$IF ((HAVE_JPEG.EQ.1) .AND. (JPEG_STATIC.EQ.0) .AND. (HAVE_LIBTIFF.NE.1))
+$IF ((HAVE_JPEG.EQ.1) .AND. (JPEG_STATIC.EQ.0) .AND. (HAVE_TIFF.NE.1))
 $  THEN
-$       APP JPEG:LIBJPEG$SHR.OPT LIBGD.OPT
+$       APP JPEG:LIBJPEG$SHR.OPT [.SRC]LIBGD.OPT
 $ENDIF
 $!
-$IF (HAVE_LIBTIFF.EQ.1)
+$IF (HAVE_TIFF.EQ.1)
 $  THEN
-$	APP TIFF:LIBTIFF.OPT LIBGD.OPT
+$	APP TIFF:LIBTIFF.OPT [.SRC]LIBGD.OPT
 $ENDIF
 $!
 $IF (HAVE_FREETYPE.EQ.1) .AND. (FREETYPE_STATIC.EQ.1)
 $ THEN
-$	APP SYS$INPUT LIBGD.OPT
+$	APP SYS$INPUT [.SRC]LIBGD.OPT
 	FREETYPE2:FREETYPE/LIB
 	ZLIB:LIBZ/LIB
 $ENDIF
 $IF (HAVE_FREETYPE.EQ.1) .AND. (FREETYPE_STATIC.EQ.0)
 $ THEN
-$	APP FREETYPE2:FREETYPE.OPT LIBGD.OPT
+$	APP FREETYPE2:FREETYPE.OPT [.SRC]LIBGD.OPT
 $ENDIF
 $!
 $IF (HAVE_ZLIB.EQ.1) .AND. ((FREETYPE_STATIC.NE.1).AND.(JPEG_STATIC.NE.1))
 $  THEN
 $	IF (ZLIB_STATIC.EQ.0)
 $	  THEN
-$		APP SYS$INPUT LIBGD.OPT
+$		APP SYS$INPUT [.SRC]LIBGD.OPT
 		SYS$SHARE:LIBZSHR/SHARE	
 $	  ELSE
-$		APP SYS$INPUT LIBGD.OPT
+$		APP SYS$INPUT [.SRC]LIBGD.OPT
 		ZLIB:LIBZ/LIB
 $	ENDIF
 $ENDIF
@@ -740,38 +817,41 @@ $!
 $DEAS SYS$OUTPUT
 $!
 $OPEN/WRITE OUT BUILD.COM
+$ WRITE OUT "$SET DEF [.SRC]"
 $ WRITE OUT "$",MAKE
 $ WRITE OUT "$ CURRENT = F$ENVIRONMENT (""DEFAULT"") "
 $ WRITE OUT "$TMP=CURRENT"
-$ WRITE OUT "$OPEN/WRITE OUTT LIBGD$STARTUP.COM"
-$ WRITE OUT "$WRITE OUTT ""DEFINE LIBGD ","'","'","TMP'""
-$ WRITE OUT "$WRITE OUTT ""GD2COPYPAL==""""$","'","'","TMP'"",""GD2COPYPAL""""
-$ WRITE OUT "$WRITE OUTT ""GD2TIME==""""$","'","'","TMP'"",""GD2TIME""""
-$ WRITE OUT "$WRITE OUTT ""GD2TOGIF==""""$","'","'","TMP'"",""GD2TOGIF""""
-$ WRITE OUT "$WRITE OUTT ""GD2TOPNG==""""$","'","'","TMP'"",""GD2TOPNG""""
-$ WRITE OUT "$WRITE OUTT ""GDCMPGIF==""""$","'","'","TMP'"",""GDCMPGIF""""
-$ WRITE OUT "$WRITE OUTT ""GDTOPNG==""""$","'","'","TMP'"",""GDTOPNG""""
-$ WRITE OUT "$WRITE OUTT ""GIFTOGD2==""""$","'","'","TMP'"",""GIFTOGD2""""
-$ WRITE OUT "$WRITE OUTT ""PNGTOGD==""""$","'","'","TMP'"",""PNGTOGD""""
-$ WRITE OUT "$WRITE OUTT ""PNGTOGD2==""""$","'","'","TMP'"",""PNGTOGD2""""
-$ WRITE OUT "$WRITE OUTT ""WEBPNG==""""$","'","'","TMP'"",""WEBPNG""""
+$ WRITE OUT "$OPEN/WRITE OUTT [-]LIBGD$STARTUP.COM"
+$ WRITE OUT "$WRITE OUTT ""DEFINE LIBGD ","'","'","TMP'"" "
+$ WRITE OUT "$WRITE OUTT ""GD2COPYPAL==""""$","'","'","TMP'"",""GD2COPYPAL"""" "
+$ WRITE OUT "$WRITE OUTT ""GD2TIME==""""$","'","'","TMP'"",""GD2TIME"""" "{
+$ WRITE OUT "$WRITE OUTT ""GD2TOGIF==""""$","'","'","TMP'"",""GD2TOGIF"""" "
+$ WRITE OUT "$WRITE OUTT ""GD2TOPNG==""""$","'","'","TMP'"",""GD2TOPNG"""" "
+$ WRITE OUT "$WRITE OUTT ""GDCMPGIF==""""$","'","'","TMP'"",""GDCMPGIF"""" "
+$ WRITE OUT "$WRITE OUTT ""GDTOPNG==""""$","'","'","TMP'"",""GDTOPNG"""" "
+$ WRITE OUT "$WRITE OUTT ""GIFTOGD2==""""$","'","'","TMP'"",""GIFTOGD2"""" "
+$ WRITE OUT "$WRITE OUTT ""PNGTOGD==""""$","'","'","TMP'"",""PNGTOGD"""" "
+$ WRITE OUT "$WRITE OUTT ""PNGTOGD2==""""$","'","'","TMP'"",""PNGTOGD2"""" "
+$ WRITE OUT "$WRITE OUTT ""WEBPNG==""""$","'","'","TMP'"",""WEBPNG"""" "
+$ WRITE OUT "$CLOSE OUTT"
 $!
-$ WRITE OUT "$WRITE SYS$OUTPUT "" ""
-$ WRITE OUT "$WRITE SYS$OUTPUT ""***************************************************************************** ""
-$ WRITE OUT "$WRITE SYS$OUTPUT ""LIBGD$STARTUP.COM has been created. ""
-$ WRITE OUT "$WRITE SYS$OUTPUT ""This file setups all logicals needed. It should be execute before using ""
-$ WRITE OUT "$WRITE SYS$OUTPUT ""Nice place to call it - LOGIN.COM ""
-$ WRITE OUT "$WRITE SYS$OUTPUT """"
-$ WRITE OUT "$WRITE SYS$OUTPUT ""Using:""
-$ WRITE OUT "$WRITE SYS$OUTPUT ""CC/INCL=LIBGD PROG""
-$ WRITE OUT "$WRITE SYS$OUTPUT ""LINK PROG, LIBGD:LIBGD/OPT""
-$ WRITE OUT "$WRITE SYS$OUTPUT ""***************************************************************************** ""
-$ WRITE OUT "$WRITE SYS$OUTPUT ""***************************************************************************** ""
+$ WRITE OUT "$WRITE SYS$OUTPUT "" "" "
+$ WRITE OUT "$WRITE SYS$OUTPUT ""***************************************************************************** "" "
+$ WRITE OUT "$WRITE SYS$OUTPUT ""LIBGD$STARTUP.COM has been created. "" "
+$ WRITE OUT "$WRITE SYS$OUTPUT ""This file setups all logicals needed. It should be execute before using "" "
+$ WRITE OUT "$WRITE SYS$OUTPUT ""Nice place to call it - LOGIN.COM "" "
+$ WRITE OUT "$WRITE SYS$OUTPUT """" "
+$ WRITE OUT "$WRITE SYS$OUTPUT ""Using:"" "
+$ WRITE OUT "$WRITE SYS$OUTPUT ""CC/INCL=LIBGD PROG"" "
+$ WRITE OUT "$WRITE SYS$OUTPUT ""LINK PROG, LIBGD:LIBGD/OPT"" "
+$ WRITE OUT "$WRITE SYS$OUTPUT ""***************************************************************************** "" "
+$ WRITE OUT "$WRITE SYS$OUTPUT ""***************************************************************************** "" "
+$ WRITE OUT "$SET DEF [-]"
 $CLOSE OUT
 $!
 $!
 $!Writing config.h
-$COPY SYS$INPUT CONFIG.H
+$COPY SYS$INPUT [.SRC]CONFIG.H
 /* Generated by configure.com  for OpenVMS */
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
@@ -789,13 +869,13 @@ $COPY SYS$INPUT CONFIG.H
 #define PACKAGE_NAME "GD"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GD 2.0.34"
+#define PACKAGE_STRING "GD 2.1.0"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "gd"
+#define PACKAGE_TARNAME "GD"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.0.34"
+#define PACKAGE_VERSION "2.1.0"
 
 /* Define to necessary symbol if this constant uses a non-standard name on
  *    your system. */
@@ -805,7 +885,7 @@ $COPY SYS$INPUT CONFIG.H
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.0.34"
+#define VERSION "2.1.0"
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
@@ -866,7 +946,7 @@ $COPY SYS$INPUT CONFIG.H
 
 $IF HAVE_ICONV.EQ.1
 $ THEN
-$	APP SYS$INPUT CONFIG.H
+$	APP SYS$INPUT [.SRC]CONFIG.H
 	/* Define if you have the iconv() function. */
 	#define HAVE_ICONV 1
 	/* Define to 1 if you have the <iconv.h> header file. */
@@ -874,42 +954,48 @@ $	APP SYS$INPUT CONFIG.H
 	/* Define if <iconv.h> defines iconv_t. */
 	#define HAVE_ICONV_T_DEF 1
 $ENDIF
-$IF HAVE_LIBTIFF.EQ.1 
+$IF HAVE_TIFF.EQ.1 
 $  THEN 
-$	APP SYS$INPUT CONFIG.H
+$	APP SYS$INPUT [.SRC]CONFIG.H
 	#define HAVE_LIBTIFF 1
 $ENDIF
 $IF HAVE_LIBPNG.EQ.1   
 $   THEN 
-$	APP SYS$INPUT CONFIG.H
+$	APP SYS$INPUT [.SRC]CONFIG.H
 	#define HAVE_LIBPNG 1
 	#define HAVE_PNG_H 1
 $ENDIF
 $IF HAVE_FREETYPE.EQ.1
 $   THEN 
-$	APP SYS$INPUT CONFIG.H
+$	APP SYS$INPUT [.SRC]CONFIG.H
 	#define HAVE_LIBFREETYPE 1
 	#define HAVE_FT2BUILD_H 1
 $ENDIF
 $IF HAVE_JPEG.EQ.1 
 $   THEN 
-$	APP SYS$INPUT CONFIG.H
+$	APP SYS$INPUT [.SRC]CONFIG.H
 	#define HAVE_LIBJPEG 1
 $ENDIF
 $IF HAVE_ZLIB.EQ.1 
 $   THEN 
-$	APP SYS$INPUT CONFIG.H
+$	APP SYS$INPUT [.SRC]CONFIG.H
 	#define HAVE_LIBZ 1
 $ENDIF
+$IF HAVE_TIFF.EQ.1
+$   THEN
+$	APP SYS$INPUT [.SRC]CONFIG.H
+	#define HAVE_LIBTIFF 1
+$ENDIF
 $!
-$DEAS SYS$OUTPUT
 $!
 $!
 $!
-$COP SYS$INPUT DESCRIP.MMS
+$COP SYS$INPUT [.SRC]DESCRIP.MMS
 # Generated by CONFIGURE.COM
 # Alexey Chupahin elvis_75@mail.ru
-#
+# OpenVMS 7.3-1,8.2  DEC 2000 mod.300
+# OpenVMS 8.3        HP  rx1620
+  
 
 .FIRST
 	DEF LIBGD []
@@ -920,152 +1006,298 @@ LIBS=[]LIBGD/OPT
 
 
 ALL : \
-GD.OLB,\
+gd.olb,\
 $IF (SHARED.GT.0)
 $ THEN
-$	APP SYS$INPUT DESCRIP.MMS
-GD$SHR.EXE,\
+$	APP SYS$INPUT [.SRC]DESCRIP.MMS
+gd$shr.exe,\
 $ENDIF
 $!
-$APP SYS$INPUT DESCRIP.MMS
-ANNOTATE.EXE,\
-CIRCLETEXTTEST.EXE,\
-FONTCONFIGTEST.EXE,\
-CIRCLETEXTTEST.EXE,\
-FONTCONFIGTEST.EXE,\
-FONTSIZETEST.EXE,\
-FONTWHEELTEST.EXE,\
-GD2COPYPAL.EXE,\
-GD2TIME.EXE,\
-GD2TOGIF.EXE,\
-GD2TOPNG.EXE,\
-GDCMPGIF.EXE,\
-GDDEMO.EXE,\
-GDTEST.EXE,\
-GDTESTFT.EXE,\
-GDTOPNG.EXE,\
-GIFANIMTEST.EXE,\
-GIFTOGD2.EXE,\
-PNGTOGD.EXE,\
-PNGTOGD2.EXE,\
-TESTAC.EXE,\
-TESTTR.EXE,\
-WEBPNG.EXE,\
-GDPARTTOPNG.EXE
+$APP SYS$INPUT [.SRC]DESCRIP.MMS
+annotate.exe,\
+circletexttest.exe,\
+fontconfigtest.exe,\
+circletexttest.exe,\
+fontconfigtest.exe,\
+fontsizetest.exe,\
+fontwheeltest.exe,\
+gd2copypal.exe,\
+gd2time.exe,\
+gd2togif.exe,\
+gd2topng.exe,\
+gdcmpgif.exe,\
+gddemo.exe,\
+gdtest.exe,\
+gdtestft.exe,\
+gdtopng.exe,\
+gifanimtest.exe,\
+giftogd2.exe,\
+pngtogd.exe,\
+pngtogd2.exe,\
+testac.exe,\
+testtr.exe,\
+webpng.exe,\
+gdparttopng.exe
 	$!
 
-ANNOTATE.EXE : ANNOTATE.OBJ
-       LINK $<, $(LIBS)
+annotate.exe : annotate.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
-CIRCLETEXTTEST.EXE : CIRCLETEXTTEST.OBJ
-       LINK $<, $(LIBS)
+circletexttest.exe : circletexttest.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
-FONTCONFIGTEST.EXE : FONTCONFIGTEST.OBJ
-       LINK $<, $(LIBS)
+fontconfigtest.exe : fontconfigtest.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
-FONTSIZETEST.EXE : FONTSIZETEST.OBJ
-       LINK $<, $(LIBS)
+fontsizetest.exe : fontsizetest.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
-FONTWHEELTEST.EXE : FONTWHEELTEST.OBJ
-       LINK $<, $(LIBS)
+fontwheeltest.exe : fontwheeltest.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
-GD2COPYPAL.EXE : GD2COPYPAL.OBJ
-       LINK $<, $(LIBS)
+gd2copypal.exe : gd2copypal.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
-GD2TIME.EXE : GD2TIME.OBJ
-       LINK $<, $(LIBS)
+gd2time.exe : gd2time.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
-GD2TOGIF.EXE : GD2TOGIF.OBJ
-       LINK $<, $(LIBS)
+gd2togif.exe : gd2togif.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
-GD2TOPNG.EXE : GD2TOPNG.OBJ
-       LINK $<, $(LIBS)
-
-
-GDCMPGIF.EXE : GDCMPGIF.OBJ
-       LINK $<, $(LIBS)
-
-
-GDDEMO.EXE : GDDEMO.OBJ
-       LINK $<, $(LIBS)
-
-
-GDTEST.EXE : GDTEST.OBJ
-       LINK $<, $(LIBS)
-
-
-GDTESTFT.EXE : GDTESTFT.OBJ
-       LINK $<, $(LIBS)
-
-
-GDTOPNG.EXE : GDTOPNG.OBJ
-       LINK $<, $(LIBS)
+gd2topng.exe : gd2topng.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
 
-GIFANIMTEST.EXE : GIFANIMTEST.OBJ
-       LINK $<, $(LIBS)
-
-GIFTOGD2.EXE : GIFTOGD2.OBJ
-       LINK $<, $(LIBS)
-
-GIFTOGD2.OBJ : GIFTOGD2.C
-	CC $(CFLAGS) GIFTOGD2.C
+gdcmpgif.exe : gdcmpgif.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
 
-
-PNGTOGD.EXE : PNGTOGD.OBJ
-       LINK $<, $(LIBS)
-
-
-PNGTOGD2.EXE : PNGTOGD2.OBJ
-       LINK $<, $(LIBS)
+gddemo.exe : gddemo.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
 
-TESTAC.EXE : TESTAC.OBJ
-       LINK $<, $(LIBS)
+gdtest.exe : gdtest.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
 
-TESTTR.EXE : TESTTR.OBJ
-       LINK $<, $(LIBS)
+gdtestft.exe : gdtestft.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
 
-WEBPNG.EXE : WEBPNG.OBJ
-       LINK $<, $(LIBS)
+gdtopng.exe : gdtopng.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
 
-GDPARTTOPNG.EXE : GDPARTTOPNG.OBJ
-       LINK $<, $(LIBS)
+gifanimtest.exe : gifanimtest.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
+
+giftogd2.exe : giftogd2.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
+
+giftogd2.obj : giftogd2.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
+
+
+pngtogd.exe : pngtogd.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
+
+
+pngtogd2.exe : pngtogd2.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
+
+
+testac.exe : testac.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
+
+
+testtr.exe : testtr.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
+
+
+webpng.exe : webpng.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
+
+
+gdparttopng.exe : gdparttopng.c
+       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
+       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
+       DEL TMP.OBJ;*
 
 
 OBJ=\
-GD.OBJ,\
-GDCACHE.OBJ,\
-GDFONTG.OBJ,\
-GDFONTL.OBJ,\
-GDFONTMB.OBJ,\
-GDFONTS.OBJ,\
-GDFONTT.OBJ,\
-GDFT.OBJ,\
-GDFX.OBJ,\
-GDHELPERS.OBJ,\
-GDKANJI.OBJ,\
-GDTABLES.OBJ,\
-GDXPM.OBJ,\
-GD_GD.OBJ,\
-GD_GD2.OBJ,\
-GD_GIF_IN.OBJ,\
-GD_GIF_OUT.OBJ,\
-GD_IO.OBJ,\
-GD_IO_DP.OBJ,\
-GD_IO_FILE.OBJ,\
-GD_IO_SS.OBJ,\
-GD_JPEG.OBJ,\
-GD_PNG.OBJ,\
-GD_SECURITY.OBJ,\
-GD_SS.OBJ,\
-GD_TOPAL.OBJ,\
-GD_WBMP.OBJ,\
-WBMP.OBJ
+gd.obj,\
+gdcache.obj,\
+gdfontg.obj,\
+gdfontl.obj,\
+gdfontmb.obj,\
+gdfonts.obj,\
+gdfontt.obj,\
+gdft.obj,\
+gdfx.obj,\
+gdhelpers.obj,\
+gdkanji.obj,\
+gdtables.obj,\
+gdxpm.obj,\
+gd_gd.obj,\
+gd_gd2.obj,\
+gd_gif_in.obj,\
+gd_gif_out.obj,\
+gd_io.obj,\
+gd_io_dp.obj,\
+gd_io_file.obj,\
+gd_io_ss.obj,\
+gd_jpeg.obj,\
+gd_png.obj,\
+gd_security.obj,\
+gd_ss.obj,\
+gd_crop.obj,\
+gd_tga.obj,\
+gd_tiff.obj,\
+gd_transform.obj,\
+gd_topal.obj,\
+gd_wbmp.obj,\
+wbmp.obj
+
+
+gd_transform.obj : gd_transform.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_tiff.obj : gd_tiff.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_tga.obj : gd_tga.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_crop.obj : gd_crop.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd.obj : gd.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdcache.obj : gdcache.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdfontg.obj : gdfontg.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdfontl.obj : gdfontl.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdfontmb.obj : gdfontmb.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdfonts.obj : gdfonts.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdfontt.obj : gdfontt.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdft.obj : gdft.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdfx.obj : gdfx.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdhelpers.obj : gdhelpers.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdkanji.obj : gdkanji.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdtables.obj : gdtables.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gdxpm.obj : gdxpm.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_gd.obj : gd_gd.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_gd2.obj : gd_gd2.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_gif_in.obj : gd_gif_in.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_gif_out.obj : gd_gif_out.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_io.obj : gd_io.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_io_dp.obj : gd_io_dp.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_io_file.obj : gd_io_file.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_io_ss.obj : gd_io_ss.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_jpeg.obj : gd_jpeg.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_png.obj : gd_png.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_security.obj : gd_security.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_ss.obj : gd_ss.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_topal.obj : gd_topal.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_wbmp.obj : gd_wbmp.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+wbmp.obj : wbmp.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
 
 
 GD.OLB : $(OBJ)
@@ -1081,15 +1313,16 @@ CLEAN :
 	DEL [...]*.EXE;*
 $!DEL TMP.MMS;*
 $!
-$IF (F$SEARCH("GD.H;2").EQS."")
+$IF (F$SEARCH("[.SRC]GD.H;2").EQS."")
 $ THEN
 $       WRITE SYS$OUTPUT "Patching GD.H"
 $	DEF SYS$OUTPUT "_NLA0:"
-$       COPY SYS$INPUT VMS.VMS
-        #define gdImageCreatePaletteFromTrueColor gdImageCreatePaletteFromTrueCol
-$       APP GD.H;1 VMS.VMS
-$       REN VMS.VMS GD.H;2       
-$	DEL VMS.VMS;*
+$       OPEN/WRITE OUT [.SRC]VMS.VMS
+$       WRITE OUT "#define gdImageCreatePaletteFromTrueColor gdImageCreatePaletteFromTrueCol"
+$	CLOSE OUT
+$       APP [.SRC]GD.H;1 [.SRC]VMS.VMS
+$       REN [.SRC]VMS.VMS [.SRC]GD.H;2       
+$	DEL [.SRC]VMS.VMS;*
 $	DEAS SYS$INPUT
 $ENDIF
 $!
