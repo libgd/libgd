@@ -754,6 +754,8 @@ BGD_DECLARE(void) gdImageFlipHorizontal(gdImagePtr im);
 BGD_DECLARE(void) gdImageFlipVertical(gdImagePtr im);
 BGD_DECLARE(void) gdImageFlipBoth(gdImagePtr im);
 
+BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int sample_factor);
+
 /* Macros to access information about images. */
 
 /* Returns nonzero if the image is a truecolor image,
