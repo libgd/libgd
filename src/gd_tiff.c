@@ -664,7 +664,7 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 	}
 
 	if (!TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &im_width)) {
-		fprintf(stderr, "Can't fetch TUFF width \n");
+		fprintf(stderr, "Can't fetch TIFF width \n");
 		return FALSE;
 	}
 
