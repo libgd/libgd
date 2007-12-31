@@ -20,7 +20,8 @@
  * 
  *
  * Modified to process 32bit RGBA images.
- * Stuart Coyle 2004-2006
+ * Stuart Coyle 2004-2007
+ * From: http://pngnq.sourceforge.net/
  *
  * Ported to libgd by Pierre A. Joye
  * (and make it thread safety by droping static and  global variables)
