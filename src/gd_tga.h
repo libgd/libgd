@@ -77,9 +77,6 @@ typedef struct oTga_
 
 #define TGA_RLE_FLAG	128
 
-gdImagePtr gdImageCreateFromTga(FILE *fp);
-gdImagePtr gdImageCreateFromTgaCtx(gdIOCtx *ctx);
-
 int read_header_tga(gdIOCtx *ctx, oTga *tga);
 int read_image_tga(gdIOCtx *ctx, oTga *tga);
 void free_tga(oTga *tga);
