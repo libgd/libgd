@@ -481,7 +481,7 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 	nn_quant *nnq = NULL;
 
 	int row;
-	unsigned char *rgba;
+	unsigned char *rgba = NULL;
 	gdImagePtr dst;
 
 	/* Default it to 3 */
@@ -498,8 +498,9 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 	 */
 	rgba = (unsigned char *) gdMalloc(gdImageSX(im) * gdImageSY(im) * 4);
 	if (!rgba) {
-		return NULL;
+		goto done;
 	}
+
 	d = rgba;
 	for (row = 0; row < gdImageSY(im); row++) {
 		int *p = im->tpixels[row];
@@ -517,7 +518,7 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 
 	nnq = (nn_quant *) gdMalloc(sizeof(nn_quant));
 	if (!nnq) {
-		return NULL;
+		goto done;
 	}
 
 	initnet(nnq, rgba, gdImageSY(im) * gdImageSX(im) * 4, sample_factor, newcolors);
@@ -528,22 +529,23 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 	inxbuild(nnq); 
 	/* remapping colormap to eliminate opaque tRNS-chunk entries... */
 	for (top_idx = newcolors-1, bot_idx = x = 0;  x < newcolors;  ++x) {
-		if (map[x][3] == 255) /* maxval */
+		if (map[x][3] == 255) { /* maxval */
 			remap[x] = top_idx--;
-		else
+		} else {
 			remap[x] = bot_idx++;
+		}
 	}
 	if (bot_idx != top_idx + 1) {
 		fprintf(stderr,
 				"  internal logic error: remapped bot_idx = %d, top_idx = %d\n",
 				bot_idx, top_idx);
 		fflush(stderr);
-		return NULL;
+		goto done;
 	}
 
 	dst = gdImageCreate(gdImageSX(im), gdImageSY(im));
 	if (!dst) {
-		return NULL;
+		goto done;
 	}
 
 	for (x = 0; x < newcolors; ++x) {
@@ -570,6 +572,15 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 						rgba[i * 4 + offset + RED])
 					];
 		}
+	}
+
+done:
+	if (rgba) {
+		gdFree(rgba);
+	}
+
+	if (nnq) {
+		gdFree(nnq);
 	}
 	return dst;
 }
