@@ -8,7 +8,6 @@
 #include "gd.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "gd_resize.h"
 
 void save_png(gdImagePtr im, const char *filename)
 {
