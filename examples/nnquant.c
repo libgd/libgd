@@ -26,11 +26,8 @@ int main()
  	gdImagePtr im, im2;
 	FILE *fp;
 	char path[2048];
-	char dst[2048];
 
-//	fp = fopen("/home/pierre/IMG_3801.jpg", "rb");
 	fp=fopen("resampledbug.jpeg", "rb");
-	//fp = fopen("/home/pierre/bug_new.png", "rb");
 	if (!fp) {
 		fprintf(stderr, "Can't load /home/pierre/IM3801.jpg\n");
 		return 1;
