@@ -39,14 +39,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaPtr(int size, void *data)
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx)
 {
 	int bitmap_caret = 0;
-	int i = 0;
 	oTga *tga = NULL;
 /*	int pixel_block_size = 0;
 	int image_block_size = 0; */
 	volatile gdImagePtr image = NULL;
 	int x = 0;
 	int y = 0;
-	int color = 0;
 
 	tga = (oTga *) gdMalloc(sizeof(oTga));
 	if (!tga) {
