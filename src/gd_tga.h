@@ -27,11 +27,13 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
-
+#ifndef BGDWIN32
 #ifndef O_BYTE
 #define O_BYTE	1
 	typedef int byte;
 #endif
+#endif
+
 #ifndef O_SHORT_INT
 #define O_SHORT_INT	1
 	typedef int short_int;
