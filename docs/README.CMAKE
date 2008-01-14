@@ -1,5 +1,5 @@
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
+$Id$
 Tobuild GD using CMake, all you need is (add the cmake options if you need any
 or if the default libs and include paths are not the default) :
 
