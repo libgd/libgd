@@ -26,3 +26,8 @@ $ ctest .
 Add "-DCMAKE_BUILD_TYPE=DEBUG" if you like to have a debug version.
 
 
+Typical usage with only PNG enabled:
+
+This command generates VS7 project files and add some custom libraries and includes directories (libpng in this case):
+
+cmake  -DCMAKE_GENERATOR="Visual Studio 7 .NET 2003"  -DENABLE_PNG=1 -DCMAKE_LIBRARY_PATH=c:\gd_build\gd_deps\lib -DCMAKE_INCLUDE_PATH=c:\gd_build\gd_deps\include c:\libgd_src
