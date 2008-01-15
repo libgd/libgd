@@ -1,9 +1,4 @@
 /* $Id$ */
-/*
- * You can fetch a set of samples TIFF images here:
- * ftp://ftp.remotesensing.org/pub/libtiff/
- * (pics-x.y.z.tar.gz)
- */
 
 #include "gd.h"
 #include <stdio.h>
