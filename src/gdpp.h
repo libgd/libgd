@@ -262,7 +262,7 @@ namespace GD
 		*/
 		Image(int size, void * data) 
 		:im(0) { CreateFrom(size, data); }
-		
+#if HAVE_PNG
 		/** Construct an image by reading from \p in.
 			The tag is an empty struct which simply tells the compiler which image read function to use.
 			e.g. GD::Image img(input, GD::Png_tag()); // read a png file from input
@@ -292,6 +292,7 @@ namespace GD
 		*/
 		Image(int size, void * data, Png_tag) 
 		:im(0) { CreateFromPng(size, data); }
+#endif
 
 		/** Construct an image by reading from \p in.
 			The tag is an empty struct which simply tells the compiler which image read function to use.
@@ -353,6 +354,7 @@ namespace GD
 		Image(int size, void * data, WBMP_tag) 
 		:im(0) { CreateFromWBMP(size, data); }
 
+#if HAVE_JPEG
 		/** Construct an image by reading from \p in.
 			The tag is an empty struct which simply tells the compiler which image read function to use.
 			e.g. GD::Image img(input, GD::Jpeg_tag()); // read a jpeg file from input
@@ -382,6 +384,7 @@ namespace GD
 		*/
 		Image(int size, void * data, Jpeg_tag) 
 		:im(0) { CreateFromJpeg(size, data); }
+#endif
 
 		/** Construct an image by reading from \p in.
 			The tag is an empty struct which simply tells the compiler which image read function to use.
@@ -525,6 +528,8 @@ namespace GD
 		bool CreateFrom(std::istream & in);
 		/// Read an image from a memory block, after determining the image format
 		bool CreateFrom(int size, void * data);
+
+#if HAVE_PNG
 		// Png
 		bool CreateFromPng(FILE * in)
 			{
@@ -547,6 +552,8 @@ namespace GD
 			istreamIOCtx _in_ctx(in);
 			return ((im = gdImageCreateFromPngCtx( & _in_ctx)) != 0);
 			}
+#endif
+
 		// Gif
 		bool CreateFromGif(FILE * in)
 			{
@@ -591,6 +598,8 @@ namespace GD
 			istreamIOCtx _in_ctx(in);
 			return ((im = gdImageCreateFromWBMPCtx( & _in_ctx)) != 0);
 			}
+
+#if HAVE_JPEG
 		// Jpeg
 		/**
 			Load a truecolor image from a JPEG format file. 
@@ -648,6 +657,8 @@ namespace GD
 			istreamIOCtx _in_ctx(in);
 			return ((im = gdImageCreateFromJpegCtx( & _in_ctx)) != 0);
 			}
+#endif
+
 		// Gd
 		bool CreateFromGd(FILE * in)
 			{
@@ -948,7 +959,8 @@ namespace GD
 			ostreamIOCtx _out_ctx(out);
 			gdImageGifCtx(im, & _out_ctx); 
 			}
-			
+
+#if HAVE_PNG
 		/**
 			Write out this image in PNG file format to \p out.
 			\param out A FILE * handle 
@@ -1009,6 +1021,7 @@ namespace GD
 			ostreamIOCtx _out_ctx(out);
 			gdImagePngCtxEx(im, & _out_ctx, level); 
 			}
+#endif
 
 		/**
 			Write out this image in WBMP file format ( black and white only ) to \p out.
@@ -1042,7 +1055,8 @@ namespace GD
 			ostreamIOCtx _out_ctx(out);
 			gdImageWBMPCtx(im, fg, & _out_ctx); 
 			}
-			
+
+#if HAVE_JPEG
 		/**
 			Write out this image in JPEG file format to \p out.
 			\param out A FILE * handle
@@ -1075,6 +1089,7 @@ namespace GD
 			ostreamIOCtx _out_ctx(out);
 			gdImageJpegCtx(im, & _out_ctx, quality); 
 			}
+#endif
 			
 		void GifAnimBegin(FILE * out, int GlobalCM, int Loops) const
 			{ gdImageGifAnimBegin(im, out, GlobalCM, Loops); }
