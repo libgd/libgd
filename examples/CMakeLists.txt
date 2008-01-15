@@ -8,6 +8,12 @@ SET(TESTS_FILES
   nnquant
 )
 
+if (WIN32)
+	SET(TESTS_FILES
+		"${TESTS_FILES}"
+		windows
+	)
+endif (WIN32)
 if (JPEG_FOUND)
 	SET(TESTS_FILES
 		"${TESTS_FILES}"
