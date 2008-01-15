@@ -205,7 +205,7 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga ) {
 	/*!	\brief Allocate memmory for image block
 	 *  Allocate a chunk of memory for the image block to be passed into.
 	 */
-	tga->bitmap = (byte *) gdMalloc(image_block_size * sizeof(byte));
+	tga->bitmap = (int *) gdMalloc(image_block_size * sizeof(byte));
 	if (tga->bitmap == NULL) {
 		return -1;
 	}
