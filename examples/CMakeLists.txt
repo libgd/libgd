@@ -5,6 +5,7 @@ include_directories (BEFORE ${GD_SOURCE_DIR}/src "${CMAKE_BINARY_DIR}")
 SET(TESTS_FILES
   tgaread
   crop
+  nnquant
 )
 
 if (JPEG_FOUND)
