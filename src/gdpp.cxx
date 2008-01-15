@@ -40,15 +40,18 @@ namespace GD
 		   0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
 		   == .PNG\r\n.\n
 		*/
+#if HAVE_PNG
 		case 0x89: // PNG
 			rtn = CreateFromPng(in);
 			break;
+#endif
 		/* GIF
 			0x47 0x49 0x46
 		*/
 		case 0x47: // GIF
 			rtn = CreateFromGif(in);
 			break;
+#if HAVE_JPEG
 		/* JPEG
 		A JFIF-standard file will start with the four bytes (hex) FF D8 FF E0,
 		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.		
@@ -56,6 +59,7 @@ namespace GD
 		case 0xFF: // JPEG
 			rtn = CreateFromJpeg(in);
 			break;
+#endif
 		/* WBMP
 		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type		
 		*/
@@ -118,6 +122,7 @@ namespace GD
 		bool rtn;
 		switch (in.peek())
 			{
+#if HAVE_PNG
 		/* PNG
 		The first eight bytes of a PNG file always contain the following (decimal) values:
 		   0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
@@ -126,12 +131,16 @@ namespace GD
 		case 0x89: // PNG
 			rtn = CreateFromPng(in);
 			break;
+#endif
+
 		/* GIF
 			0x47 0x49 0x46
 		*/
 		case 0x47: // GIF
 			rtn = CreateFromGif(in);
 			break;
+
+#if HAVE_JPEG
 		/* JPEG
 		A JFIF-standard file will start with the four bytes (hex) FF D8 FF E0,
 		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.		
@@ -139,6 +148,8 @@ namespace GD
 		case 0xFF: // JPEG
 			rtn = CreateFromJpeg(in);
 			break;
+#endif
+
 		/* WBMP
 		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type		
 		*/
@@ -181,6 +192,8 @@ namespace GD
 		bool rtn;
 		switch (((unsigned char * )data)[0])
 			{
+
+#if HAVE_PNG
 		/* PNG
 		The first eight bytes of a PNG file always contain the following (decimal) values:
 		   0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
@@ -189,12 +202,15 @@ namespace GD
 		case 0x89: // PNG
 			rtn = CreateFromPng(size, data);
 			break;
+#endif
 		/* GIF
 			0x47 0x49 0x46
 		*/
 		case 0x47: // GIF
 			rtn = CreateFromGif(size, data);
 			break;
+
+#if HAVE_JPEG
 		/* JPEG
 		A JFIF-standard file will start with the four bytes (hex) FF D8 FF E0,
 		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.		
@@ -202,6 +218,8 @@ namespace GD
 		case 0xFF: // JPEG
 			rtn = CreateFromJpeg(size, data);
 			break;
+#endif
+
 		/* WBMP
 		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type		
 		*/

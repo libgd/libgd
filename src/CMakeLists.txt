@@ -2,12 +2,18 @@
 SET (LIBGD_SRC_FILES
 	gd.c
 	gdfx.c
+	gdfx.h
 	gd_crop.c
 	gd_transform.c
 	gd_security.c
+	gdpp.cxx
+	gdpp.h
 	gd_gd.c
 	gd_gd2.c
 	gd_io.c
+	gd_io.h
+	gd_io_stream.cxx
+	gd_io_stream.h
 	gd_io_dp.c
 	gd_gif_in.c
 	gd_gif_out.c
@@ -15,18 +21,26 @@ SET (LIBGD_SRC_FILES
 	gd_io_ss.c
 	gd_jpeg.c
 	gd_nnquant.c
+	gd_nnquant.h
 	gd_png.c
 	gd_tiff.c
 	gd_tga.c
+	gd_tga.h
 	gd_ss.c
 	gd_topal.c
 	gd_wbmp.c
 	gdcache.c
+	gdcache.h
 	gdfontg.c
+	gdfontg.h
 	gdfontl.c
+	gdfontl.h
 	gdfontmb.c
+	gdfontmb.h
 	gdfonts.c
+	gdfonts.h
 	gdfontt.c
+	gdfontt.h
 	gdft.c
 	gdhelpers.c
 	gdhelpers.h
@@ -35,6 +49,7 @@ SET (LIBGD_SRC_FILES
 	gdxpm.c
 	jisx0208.h
 	wbmp.c
+	gd.h
 	wbmp.h
 )
 
