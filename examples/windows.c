@@ -3,14 +3,12 @@ Sample usage of GD on windows. This little program opens a window, fetch its DIB
 and assigns to a GD truecolor image.
 
 Thanks to Mateusz Loskot (http://mateusz.loskot.net) for the AttachBuffer function!
+$Id$
 */
-#include <gd.h>
 #include <windows.h>
+#include <gd.h>
 #include <gdfontg.h>
 #include <gdfontl.h>
-#include <windef.h>
-
-const char g_szClassName[] = "myWindowClass";
 
 gdImagePtr gdImageTrueColorAttachBuffer(int* buffer, int sx, int sy, int stride)
 {
@@ -23,6 +21,7 @@ gdImagePtr gdImageTrueColorAttachBuffer(int* buffer, int sx, int sy, int stride)
 		return 0;
 	}
 	memset (im, 0, sizeof (gdImage));
+
 #if 0
 	if (overflow2(sizeof (int *), sy)) {
 		return 0;
@@ -71,30 +70,16 @@ gdImagePtr gdImageTrueColorAttachBuffer(int* buffer, int sx, int sy, int stride)
 	return im;
 }
 
-
-void gdWin32Paint(HWND hwnd)
+void gdImageDetachBuffer(gdImagePtr im)
 {
-	PAINTSTRUCT ps;
-	HDC dc;
-	RECT rc;
-	int width, height;
+	free(im->tpixels);
+	free(im);
+}
+
+
+BITMAPINFO gdCreateBmp(int width, int height)
+{
 	BITMAPINFO bmp_info;
-	HDC mem_dc;
-	void* bits;
-	HBITMAP bmp, temp;
-	int white, black, blue, red;
-	int stride;
-	char *s = "Hello world!";
-	gdImagePtr im;
-	gdFontPtr lfont, gfont;
-
-	memset(&ps, 0, sizeof(ps));
-	dc = BeginPaint(hwnd, &ps);
-
-	GetClientRect(hwnd, &rc);
-
-	width = rc.right - rc.left;
-	height = rc.bottom - rc.top;
 
 	// Configure bitmap properties
 
@@ -110,9 +95,85 @@ void gdWin32Paint(HWND hwnd)
 	bmp_info.bmiHeader.biYPelsPerMeter = 0;
 	bmp_info.bmiHeader.biClrUsed = 0;
 	bmp_info.bmiHeader.biClrImportant = 0;
+	return bmp_info;
+}
+
+LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
+
+int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                    PSTR szCmdLine, int iCmdShow)
+{
+     static TCHAR szAppName[] = TEXT ("Bezier") ;
+     HWND         hwnd ;
+     MSG          msg ;
+     WNDCLASS     wndclass ;
+
+     wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
+     wndclass.lpfnWndProc   = WndProc ;
+     wndclass.cbClsExtra    = 0 ;
+     wndclass.cbWndExtra    = 0 ;
+     wndclass.hInstance     = hInstance ;
+     wndclass.hIcon         = LoadIcon (NULL, IDI_APPLICATION) ;
+     wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW) ;
+     wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
+     wndclass.lpszMenuName  = NULL ;
+     wndclass.lpszClassName = szAppName ;
+     
+     if (!RegisterClass (&wndclass))
+     {    // UNICODE-Compilierung ist die einzige realistische Fehlermöglichkeit 
+          MessageBox (NULL, TEXT ("Programm arbeitet mit Unicode und setzt Windows NT voraus!"), 
+                      szAppName, MB_ICONERROR) ;
+          return 0 ;
+     }
+     
+     hwnd = CreateWindow (szAppName, TEXT ("Bezierkurven"),
+                          WS_OVERLAPPEDWINDOW,
+                          CW_USEDEFAULT, CW_USEDEFAULT,
+                          CW_USEDEFAULT, CW_USEDEFAULT,
+                          NULL, NULL, hInstance, NULL) ;
+     
+     ShowWindow (hwnd, iCmdShow) ;
+     UpdateWindow (hwnd) ;
+     
+     while (GetMessage (&msg, NULL, 0, 0))
+     {
+          TranslateMessage (&msg) ;
+          DispatchMessage (&msg) ;
+     }
+     return msg.wParam ;
+}
+
+void DrawBezier (HDC hdc, POINT apt[])
+{
+     PolyBezier (hdc, apt, 4) ;
+     
+     MoveToEx (hdc, apt[0].x, apt[0].y, NULL) ;
+     LineTo   (hdc, apt[1].x, apt[1].y) ;
+     
+     MoveToEx (hdc, apt[2].x, apt[2].y, NULL) ;
+     LineTo   (hdc, apt[3].x, apt[3].y) ;
+}
+
+
+void gdDrawImage(HDC hdc, RECT *rc)
+{
+    HDC  mem_dc;
+	BITMAPINFO bmp_info;
+	void* bits;
+	HBITMAP bmp, temp;
+	gdImagePtr im;
+	int width, height, stride;
+	int white, black, blue, red;
+	char *s = "Hello world!";
+	gdFontPtr lfont, gfont;
+
+	width = rc->right - rc->left;
+	height = rc->bottom - rc->top;
+
+	bmp_info = gdCreateBmp(width, height);
 
 	// Create memory device context
-	mem_dc = CreateCompatibleDC(dc);
+	mem_dc = CreateCompatibleDC(hdc);
 	if (!mem_dc) {
 		MessageBox(NULL, "Can't create a compatible DC!", "Error!", MB_ICONEXCLAMATION | MB_OK);
 		return;
@@ -126,10 +187,9 @@ void gdWin32Paint(HWND hwnd)
 	// together with native Windows GDI.
 	temp = (HBITMAP)SelectObject(mem_dc, bmp);
 
-
-	// Start of GD drawing
-	stride = ((width * 1 + 3) >> 2) << 2;
-
+	/*stride = ((width * 1 + 3) >> 2) << 2;*/
+	// always uses 32bit in BMPINFO
+	stride = width;
 	im = NULL;
 
 	// Attach shared buffer of pixels to GD image
@@ -140,9 +200,11 @@ void gdWin32Paint(HWND hwnd)
 		return;
 	}
 
+	// Start of GD drawing
 	white = gdImageColorAllocate(im, 255, 255, 255);
 	black = gdImageColorAllocate(im, 0, 0, 0);
 	blue = gdImageColorAllocate(im, 0, 0, 255);
+
 	// Allocate the color red, 50% transparent.
 	red = gdImageColorAllocateAlpha(im, 255, 0, 0, 64);
 
@@ -154,6 +216,7 @@ void gdWin32Paint(HWND hwnd)
 
 	// Draw a dashed line from the upper left corner to the lower right corner.
 	gdImageFilledRectangle(im, 25, 25, 100, 100, blue);
+
 	gdImageChar(im, gfont, 35, 35, 'Q', white);
 	gdImageFilledRectangle(im, 50, 50, 75, 175, red);
 	gdImageLine(im, 0, 0, 150, 150, black);
@@ -163,83 +226,90 @@ void gdWin32Paint(HWND hwnd)
 	im->sy / 2 - lfont->h / 2,
 	(unsigned char*)s, black);
 
-
 	// Copy drawing from memory context (shared bitmap buffer) to screen DC.
-	BitBlt(dc, rc.left, rc.top, width, height, mem_dc, 0, 0, SRCCOPY);
+	BitBlt(hdc, rc->left, rc->top, width, height, mem_dc, 0, 0, SRCCOPY);
 
 	// Free
-	//gdImageDetachBuffer(im);
+	gdImageDetachBuffer(im);
 	SelectObject(mem_dc, temp);
 	DeleteObject(bmp);
 	DeleteObject(mem_dc);
-	EndPaint(hwnd, &ps);
 }
 
-// Step 4: the Window Procedure
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	switch(msg) {
-		case WM_PAINT:
-			gdWin32Paint(hwnd);
-				break;
-		case WM_CLOSE:
-			DestroyWindow(hwnd);
-		break;
-		case WM_DESTROY:
-			PostQuitMessage(0);
-		break;
-	default:
-		return DefWindowProc(hwnd, msg, wParam, lParam);
-	}
-	return 0;
-}
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-    LPSTR lpCmdLine, int nCmdShow)
+LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	WNDCLASSEX wc;
-	HWND hwnd;
-	MSG Msg;
+     static POINT apt[4] ;
+     HDC          hdc ;
+     int          cxClient, cyClient ;
+     PAINTSTRUCT  ps ;
+     RECT rc;
 
-	//Step 1: Registering the Window Class
-	wc.cbSize        = sizeof(WNDCLASSEX);
-	wc.style         = 0;
-	wc.lpfnWndProc   = WndProc;
-	wc.cbClsExtra    = 0;
-	wc.cbWndExtra    = 0;
-	wc.hInstance     = hInstance;
-	wc.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
-	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
-	wc.lpszMenuName  = NULL;
-	wc.lpszClassName = g_szClassName;
-	wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
+	GetClientRect(hwnd, &rc);
 
-	if(!RegisterClassEx(&wc)) {
-		MessageBox(NULL, "Window Registration Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
-		return 0;
-	}
+     switch (message)
+	 {
+     case WM_SIZE:
+          cxClient = LOWORD (lParam) ;
+          cyClient = HIWORD (lParam) ;
+          
+          apt[0].x = cxClient / 4 ;
+          apt[0].y = cyClient / 2 ;
+          
+          apt[1].x = cxClient / 2 ;
+          apt[1].y = cyClient / 4 ;
+          
+          apt[2].x =     cxClient / 2 ;
+          apt[2].y = 3 * cyClient / 4 ;
+          
+          apt[3].x = 3 * cxClient / 4 ;
+          apt[3].y =     cyClient / 2 ;
+          return 0 ;
+#if 0
+     case WM_LBUTTONDOWN:
+     case WM_RBUTTONDOWN:
+     case WM_MOUSEMOVE:
+          if (wParam & MK_LBUTTON || wParam & MK_RBUTTON)
+          {
+               hdc = GetDC (hwnd) ;
+               
+               // alte Kurve löschen (mit Weiß übermalen)
+               SelectObject (hdc, GetStockObject (WHITE_PEN)) ;
+               DrawBezier (hdc, apt) ;
+               
+               if (wParam & MK_LBUTTON)
+               {
+                    apt[1].x = LOWORD (lParam) ;
+                    apt[1].y = HIWORD (lParam) ;
+               }
+               
+                if (wParam & MK_RBUTTON)
+               {
+                    apt[2].x = LOWORD (lParam) ;
+                    apt[2].y = HIWORD (lParam) ;
+               }
+               
+               // neue Kurve (mit Schwarz) zeichnen
+			   SelectObject (hdc, GetStockObject (BLACK_PEN)) ;
+               DrawBezier (hdc, apt) ;
+               ReleaseDC (hwnd, hdc) ;
+          }
+          return 0 ;
+#endif
 
-	// Step 2: Creating the Window
-	hwnd = CreateWindowEx(
-		WS_EX_CLIENTEDGE,
-		g_szClassName,
-		"The title of my window",
-		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, CW_USEDEFAULT, 640, 480,
-		NULL, NULL, hInstance, NULL);
+     case WM_PAINT:
+		hdc = BeginPaint (hwnd, &ps) ;
 
-	if(hwnd == NULL) {
-		MessageBox(NULL, "Window Creation Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
-		return 0;
-	}
+		GetClientRect(hwnd, &rc);
 
-	ShowWindow(hwnd, nCmdShow);
-	UpdateWindow(hwnd);
+		//DrawBezier (hdc, apt) ;
+		gdDrawImage(hdc, &rc);
 
-	// Step 3: The Message Loop
-	while(GetMessage(&Msg, NULL, 0, 0) > 0) {
-		TranslateMessage(&Msg);
-		DispatchMessage(&Msg);
-	}
-	return Msg.wParam;
+		EndPaint (hwnd, &ps) ;
+		return 0 ;
+
+     case WM_DESTROY:
+          PostQuitMessage (0) ;
+          return 0 ;
+     }
+     return DefWindowProc (hwnd, message, wParam, lParam) ;
 }
