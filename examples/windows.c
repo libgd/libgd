@@ -264,14 +264,14 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
           apt[3].x = 3 * cxClient / 4 ;
           apt[3].y =     cyClient / 2 ;
           return 0 ;
-#if 0
+
      case WM_LBUTTONDOWN:
      case WM_RBUTTONDOWN:
      case WM_MOUSEMOVE:
           if (wParam & MK_LBUTTON || wParam & MK_RBUTTON)
           {
                hdc = GetDC (hwnd) ;
-               
+
                // alte Kurve löschen (mit Weiß übermalen)
                SelectObject (hdc, GetStockObject (WHITE_PEN)) ;
                DrawBezier (hdc, apt) ;
@@ -290,19 +290,19 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                
                // neue Kurve (mit Schwarz) zeichnen
 			   SelectObject (hdc, GetStockObject (BLACK_PEN)) ;
+				gdDrawImage(hdc, &rc);
                DrawBezier (hdc, apt) ;
                ReleaseDC (hwnd, hdc) ;
           }
           return 0 ;
-#endif
+
 
      case WM_PAINT:
 		hdc = BeginPaint (hwnd, &ps) ;
 
 		GetClientRect(hwnd, &rc);
-
-		//DrawBezier (hdc, apt) ;
 		gdDrawImage(hdc, &rc);
+		DrawBezier (hdc, apt) ;
 
 		EndPaint (hwnd, &ps) ;
 		return 0 ;
