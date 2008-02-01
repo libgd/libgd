@@ -2495,6 +2495,7 @@ BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, 
 
   sty = (int *) gdMalloc (sizeof (int) * srcH);
 	if (!sty) {
+	  gdFree(stx);
 		return;
 	}
 
