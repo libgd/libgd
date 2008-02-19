@@ -822,9 +822,9 @@ $ WRITE OUT "$",MAKE
 $ WRITE OUT "$ CURRENT = F$ENVIRONMENT (""DEFAULT"") "
 $ WRITE OUT "$TMP=CURRENT"
 $ WRITE OUT "$OPEN/WRITE OUTT [-]LIBGD$STARTUP.COM"
-$ WRITE OUT "$WRITE OUTT ""DEFINE LIBGD ","'","'","TMP'"" "
+$ WRITE OUT "$WRITE OUTT ""DEFINE LIBGD """"", "'","'","TMP'"""""""
 $ WRITE OUT "$WRITE OUTT ""GD2COPYPAL==""""$","'","'","TMP'"",""GD2COPYPAL"""" "
-$ WRITE OUT "$WRITE OUTT ""GD2TIME==""""$","'","'","TMP'"",""GD2TIME"""" "{
+$ WRITE OUT "$WRITE OUTT ""GD2TIME==""""$","'","'","TMP'"",""GD2TIME"""" "
 $ WRITE OUT "$WRITE OUTT ""GD2TOGIF==""""$","'","'","TMP'"",""GD2TOGIF"""" "
 $ WRITE OUT "$WRITE OUTT ""GD2TOPNG==""""$","'","'","TMP'"",""GD2TOPNG"""" "
 $ WRITE OUT "$WRITE OUTT ""GDCMPGIF==""""$","'","'","TMP'"",""GDCMPGIF"""" "
