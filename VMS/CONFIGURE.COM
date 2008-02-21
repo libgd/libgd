@@ -1317,12 +1317,10 @@ $IF (F$SEARCH("[.SRC]GD.H;2").EQS."")
 $ THEN
 $       WRITE SYS$OUTPUT "Patching GD.H"
 $	DEF SYS$OUTPUT "_NLA0:"
-$       OPEN/WRITE OUT [.SRC]VMS.VMS
-$       WRITE OUT "#define gdImageCreatePaletteFromTrueColor gdImageCreatePaletteFromTrueCol"
-$	CLOSE OUT
-$       APP [.SRC]GD.H;1 [.SRC]VMS.VMS
-$       REN [.SRC]VMS.VMS [.SRC]GD.H;2       
-$	DEL [.SRC]VMS.VMS;*
+$	COPY SYS$INPUT [.SRC]GD.H;2
+#define gdImageCreatePaletteFromTrueColor gdImageCreatePaletteFromTrueCol
+
+$       APP [.SRC]GD.H;1 [.SRC]GD.H;2
 $	DEAS SYS$INPUT
 $ENDIF
 $!
