@@ -30,6 +30,14 @@ set(CPACK_SOURCE_IGNORE_FILES
 INCLUDE(CPack)
 SET(CMAKE_MODULE_PATH "${GD_SOURCE_DIR}/cmake/modules")
 
+OPTION(ENABLE_PNG "Enable PNG support" 1)
+OPTION(ENABLE_JPEG "Enable JPEG support" 1)
+OPTION(ENABLE_TIFF "Enable TIFF support" 1)
+OPTION(ENABLE_XPM "Enable XPM support" 1)
+OPTION(ENABLE_FREETYPE "Enable Freetype2 support" 1)
+OPTION(ENABLE_WBMP "Enable WBMP support" 1)
+OPTION(ENABLE_FONTCONFIG "Enable FontConfig support" 1)
+
 if (BUILD_TEST)
 	ENABLE_TESTING()
 endif(BUILD_TEST)
