@@ -104,9 +104,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx)
 	if (tga->flipv && tga->fliph) {
 		gdImageFlipBoth(image);
 	} else if (tga->flipv) {
-		gdImageFlipHorizontal(image);
-	} else if (tga->fliph) {
 		gdImageFlipVertical(image);
+	} else if (tga->fliph) {
+		gdImageFlipHorizontal(image);
 	}
  
 	free_tga(tga);

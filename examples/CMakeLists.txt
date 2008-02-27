@@ -3,10 +3,19 @@ include_directories (BEFORE ${GD_SOURCE_DIR}/src "${CMAKE_BINARY_DIR}")
 
 
 SET(TESTS_FILES
-  tgaread
+  tiffread
+  resize
+  copyrotated
+  ellipseaa
+  ellipse
+  arc
+  ellipsearc
+  flip
   crop
-	nnquant
-	gif
+  ellfullaa
+  tgaread
+  nnquant
+  gif
 )
 
 if (WIN32)
