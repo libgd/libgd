@@ -38,7 +38,7 @@ int main(int argc, char **arg)
 {
  	gdImagePtr im, im2;
  	int new_width, new_height;
- 	double angle;
+ 	double angle, a2;
 
 	if (argc < 3) {
 		fprintf(stderr, "Usage: copyrotated [angle in degree] [filename.png]\n");
@@ -55,12 +55,16 @@ int main(int argc, char **arg)
 	/*
 		cos adj hyp (cos = adjacent / hypothenus)
 		sin op hyp (sin adjacent / hypothenus)
+		+ 10 pixels margin
 	 */
-	new_width = cos(angle * .0174532925) * gdImageSX(im)
-				- sin(angle * .0174532925) * gdImageSY(im) + 1;
 
-	new_height = - sin(angle * .0174532925) * gdImageSX(im)
-		 		+ cos(angle * .0174532925) * gdImageSY(im) + 1;
+	/* to radian */
+	a2 = angle * .0174532925;
+
+	new_width = ceil(cos(a2) * gdImageSX(im)) +
+				 fabs(sin(a2) * gdImageSY(im));
+	new_height = ceil(cos(a2) * gdImageSY(im)) +
+				 fabs(sin(a2) * gdImageSX(im));
 
 
 	im2 = gdImageCreateTrueColor(new_width, new_height);
@@ -70,7 +74,11 @@ int main(int argc, char **arg)
 		return 1;
 	}
 
+	gdImageAlphaBlending(im2, 0);
+	gdImageFilledRectangle(im2, 0, 0, gdImageSX(im2), gdImageSY(im2), gdTrueColorAlpha(127,0,0,127));
+
 	gdImageCopyRotated(im2, im, new_width/2, new_height/2, 0, 0, gdImageSX(im), gdImageSY(im), angle);
+	gdImageSaveAlpha(im2, 1);
 	if (!savePngImage(im2, "rotated.png")) {
 		fprintf(stderr, "Can't save PNG file rotated.png");
 		gdImageDestroy(im);
