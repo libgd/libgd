@@ -6,13 +6,13 @@ SET(TESTS_FILES
   tiffread
   resize
   copyrotated
-  ellipseaa
-  ellipse
+#  ellipseaa
+#  ellipse
   arc
-  ellipsearc
+#  ellipsearc
   flip
   crop
-  ellfullaa
+#  ellfullaa
   tgaread
   nnquant
   gif
