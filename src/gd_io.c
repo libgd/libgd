@@ -1,4 +1,4 @@
-/* 
+/*
  * io.c
  *
  * Implements the simple I/O 'helper' routines.
@@ -75,7 +75,7 @@ int gdGetC(gdIOCtx *ctx)
 int gdGetByte(int *result, gdIOCtx *ctx)
 {
 	int r;
-	
+
 	r = (ctx->getC)(ctx);
 	if(r == EOF) {
 		return 0;
@@ -107,7 +107,7 @@ int gdGetWord(int *result, gdIOCtx *ctx)
 	return 1;
 }
 
-int gdGetWordLSB(int *result, gdIOCtx *ctx)
+int gdGetWordLSB(signed short int *result, gdIOCtx *ctx)
 {
 	int high = 0, low = 0;
 
@@ -163,7 +163,7 @@ int gdGetInt(int *result, gdIOCtx *ctx)
 	return 1;
 }
 
-int gdGetIntLSB(int *result, gdIOCtx *ctx)
+int gdGetIntLSB(signed int *result, gdIOCtx *ctx)
 {
 	int c = 0, r = 0;
 
