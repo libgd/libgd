@@ -58,19 +58,7 @@ int main()
 		return 1;
 	}
 
-	im2 = gdImageThresholdCrop(im, 0xFFFFFF, 120);
-	if (im2) {
-		save_png(im2, "a3.png");
-		gdImageDestroy(im2);
-	}
-	gdImageDestroy(im);
-
-	im = read_png("test_crop_threshold.png");
-	if (!im) {
-		return 1;
-	}
-
-	im2 = gdImageThresholdCrop(im, 0xFFFFFF, 70);
+	im2 = gdImageThresholdCrop(im, 0xFFFFFF, 0.6);
 	if (im2) {
 		save_png(im2, "a4.png");
 		gdImageDestroy(im2);

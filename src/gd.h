@@ -748,7 +748,7 @@ BGD_DECLARE(void) gdImageSaveAlpha (gdImagePtr im, int saveAlphaArg);
 
 BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop);
 BGD_DECLARE(gdImagePtr) gdImageAutoCrop(gdImagePtr im, const unsigned int mode);
-BGD_DECLARE(gdImagePtr) gdImageThresholdCrop(gdImagePtr im, const unsigned int color, const int threshold);
+BGD_DECLARE(gdImagePtr) gdImageThresholdCrop(gdImagePtr im, const unsigned int color, const float threshold);
 
 BGD_DECLARE(void) gdImageFlipHorizontal(gdImagePtr im);
 BGD_DECLARE(void) gdImageFlipVertical(gdImagePtr im);
