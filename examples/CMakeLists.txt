@@ -18,12 +18,6 @@ SET(TESTS_FILES
   gif
 )
 
-if (WIN32)
-	SET(TESTS_FILES
-		"${TESTS_FILES}"
-		windows
-	)
-endif (WIN32)
 if (JPEG_FOUND)
 	SET(TESTS_FILES
 		"${TESTS_FILES}"
@@ -43,3 +37,8 @@ FOREACH(test_name ${TESTS_FILES})
 	add_executable(${test_name} "${test_name}.c")
 	target_link_libraries (${test_name} ${GD_LIB})
 ENDFOREACH(test_name)
+
+if (WIN32)
+	add_executable(windows WIN32 "windows.c")
+	target_link_libraries (${test_name} ${GD_LIB})
+endif (WIN32)
