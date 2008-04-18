@@ -28,7 +28,6 @@ if (BUILD_TEST)
 
 	include_directories (BEFORE ${GD_INCLUDE_DIR} "${GDTEST_SOURCE_DIR}" "${CMAKE_BINARY_DIR}")
 
-
 	SET(TESTS_DIRS
 		gdtest
 		gdimagearc
@@ -54,7 +53,14 @@ if (BUILD_TEST)
 		freetype
 	)
 
+	IF (WIN32)
+		SET(GDTESTS_TARGET_LINK "gdTest")
+	ELSE (WIN32)
+		SET(GDTESTS_TARGET_LINK "")
+	ENDIF (WIN32)
+
 	FOREACH(test_dir ${TESTS_DIRS})
 		add_subdirectory (${test_dir})
 	ENDFOREACH(test_dir)
+
 endif (BUILD_TEST)

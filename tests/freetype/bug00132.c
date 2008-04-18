@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "gdtest.h"
+#include "gdfontl.h"
 
 int main()
 {
@@ -13,6 +14,7 @@ int main()
 	const char *file_exp = "bug00132_exp.png";
 
 	im = gdImageCreateTrueColor(50, 30);
+
 	if (!im) {
 		printf("can't get truecolor image\n");
 		return 1;
@@ -22,15 +24,16 @@ int main()
 	gdImageFilledRectangle(im, 0, 0, 200, 200, gdTrueColorAlpha(0, 0, 0, 127));
 
 	sprintf(path, "%s/freetype/DejaVuSans.ttf", GDTEST_TOP_DIR);
-	gdImageStringFT(im, NULL,  0xFFFFFF, path, 14.0, 0.0, 10, 20, "&thetasym; &theta;");
+	gdImageStringFT(im, NULL,  0xFFFFFF, path, 14.0, 0.0, 20, 20, "AAA&thetasym; &theta;");
 
 	sprintf(path, "%s/freetype/%s", GDTEST_TOP_DIR, file_exp);
 	if (!gdAssertImageEqualsToFile(path, im)) {
 		error = 1;
 		printf("Reference image and destination differ\n");
+	} else {
+
 	}
 
 	gdImageDestroy(im);
-
 	return error;
 }
