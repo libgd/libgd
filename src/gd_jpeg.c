@@ -25,7 +25,7 @@
 #	include "config.h"
 #endif
 
-#include <stdio.h>
+//#include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
 #include <limits.h>
@@ -36,6 +36,27 @@
 /* JCE: arrange HAVE_LIBJPEG so that it can be set in gd.h */
 #ifdef HAVE_LIBJPEG
 #include "gdhelpers.h"
+
+/*
+  Libjpeg's jmorecfg.h defines INT16 and INT32, but only if XMD_H is
+  not defined. MinGW and Borland compilers include a typedef for INT32,
+  which causes a conflict.  MSVC does not include a conficting typedef
+  given the headers which are included.
+ */
+#if defined(__BORLANDC__) || defined(__MINGW32__)
+# define XMD_H 1
+#endif
+
+/*
+  Another possible conflict under MinGW
+ */
+#if defined(WIN32) && defined(__MINGW32__)
+# ifndef __RPCNDR_H__            /* don't conflict if rpcndr.h already read */
+   typedef unsigned char boolean;
+# endif
+# define HAVE_BOOLEAN            /* prevent jmorecfg.h from redefining it */
+#endif
+
 
 /* JCE undef two symbols that we don't need anymore but which are
    may be defined in config.h from ./configure but which are
