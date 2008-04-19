@@ -3,31 +3,9 @@
 SET(PACKAGE GD)
 SET(PACKAGE_NAME GD)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.3 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4 FATAL_ERROR)
 PROJECT(GD)
-SET(CPACK_PACKAGE_NAME "libgd")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libGD, powerful and easy to use graphic library")
-SET(CPACK_PACKAGE_VENDOR "http://www.libgd.org")
-SET(CPACK_PACKAGE_VERSION_MAJOR "2")
-SET(CPACK_PACKAGE_VERSION_MINOR "1")
-SET(CPACK_PACKAGE_VERSION_PATCH "0")
 
-set(CPACK_GENERATOR TGZ)
-
-
-set(CPACK_SOURCE_GENERATOR TGZ)
-set(CPACK_SOURCE_IGNORE_FILES
-"~$"
-"\\\\.swp$"
-"\\\\.cvsignore$"
-"^${PROJECT_SOURCE_DIR}.*/CVS/"
-"^${PROJECT_SOURCE_DIR}/debian/"
-"^${PROJECT_SOURCE_DIR}/old/"
-"^${PROJECT_SOURCE_DIR}/bld/"
-"^${PROJECT_SOURCE_DIR}/autom4te\\\\.cache/"
-)
-
-INCLUDE(CPack)
 SET(CMAKE_MODULE_PATH "${GD_SOURCE_DIR}/cmake/modules")
 
 OPTION(ENABLE_PNG "Enable PNG support" 1)
@@ -80,14 +58,14 @@ else (USE_EXT_GD)
 
 	SET(CMAKE_REQUIRED_INCLUDES "/usr/include" "/usr/local/include")
 
-	message(STATUS "ft2build: ${CMAKE_REQUIRED_INCLUDES}")
-
 	include(CheckIncludeFiles)
 	include(CheckIncludeFile)
 
 	include(AC_HEADER_STDC)
 	include(CheckPrototypeExists)
 	SET(FONTCONFIG_FIND_QUIETLY, 1)
+
+	message(STATUS "PNG Support: ${ENABLE_PNG}")
 
 	if (ENABLE_PNG)
 		FIND_PACKAGE(PNG REQUIRED)
@@ -130,6 +108,7 @@ else (USE_EXT_GD)
 		INCLUDE_DIRECTORIES(${FREETYPE_INCLUDE_DIR})
 		SET(HAVE_FT2BUILD_H 1)
 		SET(HAVE_LIBFREETYPE 1)
+		MESSAGE("Freetype found******************************")
 	ENDIF(FREETYPE_FOUND)
 
 	IF(ZLIB_FOUND)
@@ -178,9 +157,18 @@ else (USE_EXT_GD)
 	if (WIN32)
 		SET(GD_LIB bgd)
 		ADD_DEFINITIONS( -DWIN32 -D_WIN32 -DMSWIN32 -DBGDWIN32 -DWINVER=0x0500  -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0600)
+
+		if(NOT MINGW AND MSVC_VERSION GREATER 1399)
+			ADD_DEFINITIONS("/D_CRT_SECURE_NO_DEPRECATE")
+		endif(NOT MINGW AND MSVC_VERSION GREATER 1399)
+		if (MINGW)
+			ADD_DEFINITIONS("-mms-bitfields -m32")
+		endif (MINGW)
 	else (WIN32)
 		SET(GD_LIB gd)
 	endif (WIN32)
+
+	SET(GD_LIB_STATIC "${GD_LIB}-static")
 
 	IF(PROFILE)
 		add_definitions("-pg")
@@ -195,4 +183,33 @@ endif (USE_EXT_GD)
 
 add_subdirectory(tests)
 add_subdirectory(examples)
+
+
+SET(CPACK_PACKAGE_NAME "libgd")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libGD, powerful and easy to use graphic library")
+SET(CPACK_PACKAGE_VENDOR "http://www.libgd.org")
+SET(CPACK_PACKAGE_VERSION_MAJOR "2")
+SET(CPACK_PACKAGE_VERSION_MINOR "1")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+
+if(WIN32)
+	set(CPACK_GENERATOR ZIP)
+else(WIN32)
+	set(CPACK_GENERATOR TGZ)
+endif(WIN32)
+
+
+set(CPACK_SOURCE_GENERATOR TGZ)
+set(CPACK_SOURCE_IGNORE_FILES
+"~$"
+"\\\\.swp$"
+"\\\\.cvsignore$"
+"^${PROJECT_SOURCE_DIR}.*/CVS/"
+"^${PROJECT_SOURCE_DIR}/debian/"
+"^${PROJECT_SOURCE_DIR}/old/"
+"^${PROJECT_SOURCE_DIR}/bld/"
+"^${PROJECT_SOURCE_DIR}/autom4te\\\\.cache/"
+)
+install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
+INCLUDE(CPack)
 
