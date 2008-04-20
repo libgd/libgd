@@ -1,5 +1,5 @@
 /*
-Sample usage of GD on windows. This little program opens a window, fetch its DIB 
+Sample usage of GD on windows. This little program opens a window, fetch its DIB
 and assigns to a GD truecolor image.
 
 Thanks to Mateusz Loskot (http://mateusz.loskot.net) for the AttachBuffer function!
@@ -9,6 +9,7 @@ $Id$
 #include <gd.h>
 #include <gdfontg.h>
 #include <gdfontl.h>
+
 
 gdImagePtr gdImageTrueColorAttachBuffer(int* buffer, int sx, int sy, int stride)
 {
@@ -118,23 +119,23 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
      wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
      wndclass.lpszMenuName  = NULL ;
      wndclass.lpszClassName = szAppName ;
-     
+
      if (!RegisterClass (&wndclass))
-     {    // UNICODE-Compilierung ist die einzige realistische Fehlermöglichkeit 
-          MessageBox (NULL, TEXT ("Programm arbeitet mit Unicode und setzt Windows NT voraus!"), 
+     {    // UNICODE-Compilierung ist die einzige realistische FehlermÃ¶glichkeit
+          MessageBox (NULL, TEXT ("Programm arbeitet mit Unicode und setzt Windows NT voraus!"),
                       szAppName, MB_ICONERROR) ;
           return 0 ;
      }
-     
+
      hwnd = CreateWindow (szAppName, TEXT ("Bezierkurven"),
                           WS_OVERLAPPEDWINDOW,
                           CW_USEDEFAULT, CW_USEDEFAULT,
                           CW_USEDEFAULT, CW_USEDEFAULT,
                           NULL, NULL, hInstance, NULL) ;
-     
+
      ShowWindow (hwnd, iCmdShow) ;
      UpdateWindow (hwnd) ;
-     
+
      while (GetMessage (&msg, NULL, 0, 0))
      {
           TranslateMessage (&msg) ;
@@ -146,10 +147,10 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 void DrawBezier (HDC hdc, POINT apt[])
 {
      PolyBezier (hdc, apt, 4) ;
-     
+
      MoveToEx (hdc, apt[0].x, apt[0].y, NULL) ;
      LineTo   (hdc, apt[1].x, apt[1].y) ;
-     
+
      MoveToEx (hdc, apt[2].x, apt[2].y, NULL) ;
      LineTo   (hdc, apt[3].x, apt[3].y) ;
 }
@@ -251,16 +252,16 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
      case WM_SIZE:
           cxClient = LOWORD (lParam) ;
           cyClient = HIWORD (lParam) ;
-          
+
           apt[0].x = cxClient / 4 ;
           apt[0].y = cyClient / 2 ;
-          
+
           apt[1].x = cxClient / 2 ;
           apt[1].y = cyClient / 4 ;
-          
+
           apt[2].x =     cxClient / 2 ;
           apt[2].y = 3 * cyClient / 4 ;
-          
+
           apt[3].x = 3 * cxClient / 4 ;
           apt[3].y =     cyClient / 2 ;
           return 0 ;
@@ -272,22 +273,22 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
           {
                hdc = GetDC (hwnd) ;
 
-               // alte Kurve löschen (mit Weiß übermalen)
+               // alte Kurve lÃ¶schen (mit WeiÃŸ Ã¼bermalen)
                SelectObject (hdc, GetStockObject (WHITE_PEN)) ;
                DrawBezier (hdc, apt) ;
-               
+
                if (wParam & MK_LBUTTON)
                {
                     apt[1].x = LOWORD (lParam) ;
                     apt[1].y = HIWORD (lParam) ;
                }
-               
+
                 if (wParam & MK_RBUTTON)
                {
                     apt[2].x = LOWORD (lParam) ;
                     apt[2].y = HIWORD (lParam) ;
                }
-               
+
                // neue Kurve (mit Schwarz) zeichnen
 			   SelectObject (hdc, GetStockObject (BLACK_PEN)) ;
 				gdDrawImage(hdc, &rc);
