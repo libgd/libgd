@@ -37,7 +37,7 @@ ENDFOREACH(test_name)
 
 if (WIN32 AND NOT MINGW AND NOT MSYS)
 	add_executable(windows WIN32 "windows.c")
-	target_link_libraries (${test_name} ${GD_LIB})
+	target_link_libraries (windows ${GD_LIB})
 else (WIN32 AND NOT MINGW AND NOT MSYS)
 	if (MINGW OR MSYS)
 		add_executable(windows "windows.c")
