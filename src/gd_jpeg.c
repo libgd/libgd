@@ -38,7 +38,9 @@
 #ifdef HAVE_LIBJPEG
 #include "gdhelpers.h"
 
+#if defined(WIN32) && defined(__MINGW32__)
 # define HAVE_BOOLEAN
+#endif
 
 /* JCE undef two symbols that we don't need anymore but which are
    may be defined in config.h from ./configure but which are
