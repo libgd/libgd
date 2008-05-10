@@ -1,17 +1,13 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-
 AUTOMAKE_OPTIONS = foreign 1.7
 
-ACLOCAL_AMFLAGS = -I config
-
-SUBDIRS = config test
-
 bin_PROGRAMS = annotate gdparttopng gdtopng gd2copypal gd2topng pngtogd pngtogd2 webpng gd2togif gdcmpgif giftogd2
 
-bin_SCRIPTS = bdftogd config/gdlib-config
+bin_SCRIPTS = bdftogd
 
 noinst_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac circletexttest testtr fontconfigtest gifanimtest
 
-EXTRA_DIST = README-JPEG.TXT README.TXT configure.pl bdftogd demoin.png err.out index.html install-item makefile.sample readme.jpn entities.html entities.tcl
+EXTRA_DIST = bdftogd demoin.png index.html entities.html entities.tcl
 
 include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h entities.h
 
@@ -25,6 +21,3 @@ libgd_la_LIBADD = $(LTLIBICONV)
 
 LDADD = ./libgd.la $(LIBICONV)
 
-dist-zip: distdir
-	zip -qr $(distdir).zip $(distdir)
-	$(am__remove_distdir)
