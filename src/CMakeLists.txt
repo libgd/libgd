@@ -8,6 +8,8 @@ SET (LIBGD_SRC_FILES
 	gd_security.c
 	gdpp.cxx
 	gdpp.h
+	gd_bmp.c
+	bmp.h
 	gd_gd.c
 	gd_gd2.c
 	gd_io.c
