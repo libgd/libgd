@@ -305,6 +305,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTga( FILE * fp );
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaPtr(int size, void *data);
 
+BGD_DECLARE(gdImagePtr) gdImageCreateFromBmp (FILE * inFile);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpPtr (int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx (gdIOCtxPtr infile);
+
 /* A custom data source. */
 /* The source function must return -1 on error, otherwise the number
         of bytes fetched. 0 is EOF, not an error! */
@@ -588,6 +592,10 @@ BGD_DECLARE(void) gdImageGifCtx (gdImagePtr im, gdIOCtx * out);
 BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile);
 BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size);
 BGD_DECLARE(void) gdImageTiffCtx(gdImagePtr image, gdIOCtx *out);
+
+BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression);
+BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression);
+BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
 
 /* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
   1 is FASTEST but produces larger files, 9 provides the best
