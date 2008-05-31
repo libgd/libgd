@@ -1182,6 +1182,7 @@ gdhelpers.obj,\
 gdkanji.obj,\
 gdtables.obj,\
 gdxpm.obj,\
+gd_bmp.obj,\
 gd_gd.obj,\
 gd_gd2.obj,\
 gd_gif_in.obj,\
@@ -1210,6 +1211,9 @@ gd_tiff.obj : gd_tiff.c
          $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
 
 gd_tga.obj : gd_tga.c
+         $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
+
+gd_bmp.obj : gd_bmp.c
          $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=$(MMS$TARGET)
 
 gd_crop.obj : gd_crop.c
