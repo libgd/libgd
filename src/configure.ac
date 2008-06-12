@@ -419,38 +419,32 @@ if test "$withval" != no; then
   _ldflags="$LDFLAGS"
   LDFLAGS="$libpng_LDFLAGS $LDFLAGS"
 
+  #TBB: png12's png_create_read_struct is just as good 
   if test -n "$LIBPNG12_CONFIG"; then
     AC_CHECK_LIB(png12,png_create_read_struct,
       [LIBS="-lpng12 $LIBS"
        FEATURES="GD_PNG $FEATURES"
-       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
-      [LDFLAGS="$_ldflags"  
-       AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
-  elif test -n "$LIBPNG_CONFIG"; then
-    AC_CHECK_LIB(png,png_create_read_struct,
-      [LIBS="-lpng $LIBS" 
-       FEATURES="GD_PNG $FEATURES"
-       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
-      [LDFLAGS="$_ldflags"  
-       AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
+       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])])
+  fi
+  # could be reached here in some case like the FreeBSD port of libpng;
+  # libpng12-config but '-lpng' (not '-lpng12').
+  #2.0.23: should be = not ==  
+  if test "$ac_cv_lib_png12_png_create_read_struct" = yes; then
+    ac_cv_lib_png_png_create_read_struct=yes
   else
     AC_CHECK_LIB(png,png_create_read_struct,
       [LIBS="-lpng $LIBS" 
        FEATURES="GD_PNG $FEATURES"
        AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
-      [LDFLAGS="$_ldflags"  
-       AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
+      [LDFLAGS="$_ldflags"])
   fi
 else
   ac_cv_lib_png_png_create_read_struct=no
-  AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])
 fi
 
-#TBB: png12's png_create_read_struct is just as good 
-#2.0.23: should be = not ==  
-if test "$ac_cv_lib_png12_png_create_read_struct" = yes; then
-  ac_cv_lib_png_png_create_read_struct=yes
-fi 
+if test "$ac_cv_lib_png_png_create_read_struct" != yes; then
+  AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])
+fi
 
 dnl FreeType configure tests snarfed from libwmf ..
 AC_ARG_WITH(freetype,dnl
