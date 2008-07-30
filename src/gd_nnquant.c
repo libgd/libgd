@@ -496,6 +496,10 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 	 * It alos lets us convert palette image, if one likes to reduce
 	 * a palette
 	 */
+	if (overflow2(gdImageSX(im), gdImageSY(im))
+		|| overflow2(gdImageSX(im) * gdImageSY(im), 4)) {
+		goto done;
+	}
 	rgba = (unsigned char *) gdMalloc(gdImageSX(im) * gdImageSY(im) * 4);
 	if (!rgba) {
 		goto done;

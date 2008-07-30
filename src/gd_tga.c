@@ -202,6 +202,10 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga ) {
 		return -1;
 	}
 
+	if(overflow2(image_block_size, sizeof(byte))) {
+		return -1;
+	}
+
 	/*!	\brief Allocate memmory for image block
 	 *  Allocate a chunk of memory for the image block to be passed into.
 	 */
