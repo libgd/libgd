@@ -1589,6 +1589,11 @@ static char * font_path(char **fontpath, char *name_list)
       /* 2.0.22: Thorben Kundinger: +8 is needed, not +6. */
       fullname = gdRealloc (fullname,
                           strlen (fontsearchpath) + strlen (name) + 8);
+      if (!fullname) {
+          free (path);
+          free (fontlist);
+          return "could not alloc full path of font";
+      }
       /* if name is an absolute or relative pathname then test directly */
 #ifdef NETWARE
       /* netware uses the format "volume:/path" or the standard "/path" */
@@ -1604,7 +1609,7 @@ static char * font_path(char **fontpath, char *name_list)
 	    {
 	      font_found++;
               /* 2.0.16: memory leak fixed, Gustavo Scotti */
-              gdFree (path);
+              free (path);
 	      break;
 	    }
 	}
@@ -1649,11 +1654,11 @@ static char * font_path(char **fontpath, char *name_list)
 	      break;
 	    }
 	}
-      gdFree (path);
+      free (path);
       if (font_found)
 	break;
     }
-  gdFree (fontlist);
+  free (fontlist);
   if (!font_found)
     {
       gdFree (fullname);
