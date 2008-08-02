@@ -1579,6 +1579,7 @@ static char * font_path(char **fontpath, char *name_list)
   for (name = gd_strtok_r (fontlist, LISTSEPARATOR, &strtok_ptr); name;
        name = gd_strtok_r (0, LISTSEPARATOR, &strtok_ptr))
     {
+      char *path_ptr;
 
       /* make a fresh copy each time - strtok corrupts it. */
       path = strdup (fontsearchpath);
@@ -1613,8 +1614,8 @@ static char * font_path(char **fontpath, char *name_list)
 	      break;
 	    }
 	}
-      for (dir = strtok (path, PATHSEPARATOR); dir;
-	   dir = strtok (0, PATHSEPARATOR))
+      for (dir = gd_strtok_r (path, PATHSEPARATOR, &path_ptr); dir;
+           dir = gd_strtok_r (0, PATHSEPARATOR, &path_ptr))
 	{
           if (strchr (name, '.'))
 	    {
