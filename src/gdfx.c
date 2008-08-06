@@ -246,7 +246,7 @@ main (int argc, char *argv[])
     {
       radius = gdImageSY (im) / 2;
     }
-  gdStringFTCircle (im,
+  gdImageStringFTCircle (im,
 		    gdImageSX (im) / 2,
 		    gdImageSY (im) / 2,
 		    radius,
