@@ -29,7 +29,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 {
 	XpmInfo info;
 	XpmImage image;
-	int i, j, k, number;
+	int i, j, k, number, len;
 	char buf[5];
 	gdImagePtr im = 0;
 	int *pointer;
@@ -39,10 +39,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 
 	ret = XpmReadFileToXpmImage(filename, &image, &info);
 	if(ret != XpmSuccess) {
-		return 0;
-	}
-
-	if(!(im = gdImageCreate(image.width, image.height))) {
 		return 0;
 	}
 
@@ -56,17 +52,30 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 		return (0);
 	}
 
+	if(!(im = gdImageCreate(image.width, image.height))) {
+		gdFree(colors);
+		return 0;
+	}
+
 	for(i = 0; i < number; i++) {
-		switch(strlen(image.colorTable[i].c_color)) {
+		if(strcmp(image.colorTable[i].c_color, "None") == 0) {
+		  colors[i] = gdImageGetTransparent(im);
+		  if(colors[i] == -1) colors[i] = gdImageColorAllocate(im, 0, 0, 0);
+		  if(colors[i] != -1) gdImageColorTransparent(im, colors[i]);
+		  continue;
+		}
+		len = strlen(image.colorTable[i].c_color);
+		if(len < 1 || image.colorTable[i].c_color[0] != '#') continue;
+		switch(len) {
 			case 4:
-				buf[1] = '\0';
-				buf[0] = image.colorTable[i].c_color[1];
+				buf[2] = '\0';
+				buf[0] = buf[1] = image.colorTable[i].c_color[1];
 				red = strtol(buf, NULL, 16);
 
-				buf[0] = image.colorTable[i].c_color[3];
+				buf[0] = buf[1] = image.colorTable[i].c_color[2];
 				green = strtol(buf, NULL, 16);
 
-				buf[0] = image.colorTable[i].c_color[5];
+				buf[0] = buf[1] = image.colorTable[i].c_color[3];
 				blue = strtol(buf, NULL, 16);
 			break;
 
