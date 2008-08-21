@@ -1,0 +1,17 @@
+/* XPM */
+static char *color_name = {
+"3 5 6 1",
+
+"  c None",
+"A c AliceBlue",
+"b c blue",
+"c c cyan",
+"w c wheat",
+"y c yellow",
+
+" A ",
+"AbA",
+"yby",
+"ycy",
+"wcw",
+};
