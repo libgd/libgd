@@ -14,6 +14,7 @@
 #include <string.h>
 #include "gd.h"
 #include "gdhelpers.h"
+#include "gd_color_map.h"
 
 #ifndef HAVE_LIBXPM
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
@@ -58,92 +59,94 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 	}
 
 	for(i = 0; i < number; i++) {
-		if(strcmp(image.colorTable[i].c_color, "None") == 0) {
+		char *c_color = image.colorTable[i].c_color;
+		if(strcmp(c_color, "None") == 0) {
 		  colors[i] = gdImageGetTransparent(im);
 		  if(colors[i] == -1) colors[i] = gdImageColorAllocate(im, 0, 0, 0);
 		  if(colors[i] != -1) gdImageColorTransparent(im, colors[i]);
 		  continue;
 		}
-		len = strlen(image.colorTable[i].c_color);
-		if(len < 1 || image.colorTable[i].c_color[0] != '#') continue;
-		switch(len) {
+		len = strlen(c_color);
+		if(len < 1) continue;
+		if(c_color[0] == '#') {
+			switch(len) {
 			case 4:
 				buf[2] = '\0';
-				buf[0] = buf[1] = image.colorTable[i].c_color[1];
+				buf[0] = buf[1] = c_color[1];
 				red = strtol(buf, NULL, 16);
 
-				buf[0] = buf[1] = image.colorTable[i].c_color[2];
+				buf[0] = buf[1] = c_color[2];
 				green = strtol(buf, NULL, 16);
 
-				buf[0] = buf[1] = image.colorTable[i].c_color[3];
+				buf[0] = buf[1] = c_color[3];
 				blue = strtol(buf, NULL, 16);
-			break;
+				break;
 
 			case 7:
 				buf[2] = '\0';
-				buf[0] = image.colorTable[i].c_color[1];
-				buf[1] = image.colorTable[i].c_color[2];
+				buf[0] = c_color[1];
+				buf[1] = c_color[2];
 				red = strtol(buf, NULL, 16);
 
-				buf[0] = image.colorTable[i].c_color[3];
-				buf[1] = image.colorTable[i].c_color[4];
+				buf[0] = c_color[3];
+				buf[1] = c_color[4];
 				green = strtol(buf, NULL, 16);
 
-				buf[0] = image.colorTable[i].c_color[5];
-				buf[1] = image.colorTable[i].c_color[6];
+				buf[0] = c_color[5];
+				buf[1] = c_color[6];
 				blue = strtol(buf, NULL, 16);
-			break;
+				break;
 
 			case 10:
 				buf[3] = '\0';
-				buf[0] = image.colorTable[i].c_color[1];
-				buf[1] = image.colorTable[i].c_color[2];
-				buf[2] = image.colorTable[i].c_color[3];
+				buf[0] = c_color[1];
+				buf[1] = c_color[2];
+				buf[2] = c_color[3];
 				red = strtol(buf, NULL, 16);
 				red /= 64;
 
-				buf[0] = image.colorTable[i].c_color[4];
-				buf[1] = image.colorTable[i].c_color[5];
-				buf[2] = image.colorTable[i].c_color[6];
+				buf[0] = c_color[4];
+				buf[1] = c_color[5];
+				buf[2] = c_color[6];
 				green = strtol(buf, NULL, 16);
 				green /= 64;
 
-				buf[0] = image.colorTable[i].c_color[7];
-				buf[1] = image.colorTable[i].c_color[8];
-				buf[2] = image.colorTable[i].c_color[9];
+				buf[0] = c_color[7];
+				buf[1] = c_color[8];
+				buf[2] = c_color[9];
 				blue = strtol(buf, NULL, 16);
 				blue /= 64;
-			break;
+				break;
 
 			case 13:
 				buf[4] = '\0';
-				buf[0] = image.colorTable[i].c_color[1];
-				buf[1] = image.colorTable[i].c_color[2];
-				buf[2] = image.colorTable[i].c_color[3];
-				buf[3] = image.colorTable[i].c_color[4];
+				buf[0] = c_color[1];
+				buf[1] = c_color[2];
+				buf[2] = c_color[3];
+				buf[3] = c_color[4];
 				red = strtol(buf, NULL, 16);
 				red /= 256;
 
-				buf[0] = image.colorTable[i].c_color[5];
-				buf[1] = image.colorTable[i].c_color[6];
-				buf[2] = image.colorTable[i].c_color[7];
-				buf[3] = image.colorTable[i].c_color[8];
+				buf[0] = c_color[5];
+				buf[1] = c_color[6];
+				buf[2] = c_color[7];
+				buf[3] = c_color[8];
 				green = strtol(buf, NULL, 16);
 				green /= 256;
 
-				buf[0] = image.colorTable[i].c_color[9];
-				buf[1] = image.colorTable[i].c_color[10];
-				buf[2] = image.colorTable[i].c_color[11];
-				buf[3] = image.colorTable[i].c_color[12];
+				buf[0] = c_color[9];
+				buf[1] = c_color[10];
+				buf[2] = c_color[11];
+				buf[3] = c_color[12];
 				blue = strtol(buf, NULL, 16);
 				blue /= 256;
-			break;
+				break;
+			}
+		} else if(!gdColorMapLookup(GD_COLOR_MAP_X11, c_color, &red, &green, &blue)) {
+			continue;
 		}
 
 		colors[i] = gdImageColorResolve(im, red, green, blue);
-		if(colors[i] == -1) {
-			fprintf(stderr, "ARRRGH\n");
-		}
 	}
 
 	pointer = (int *)image.data;
