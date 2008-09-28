@@ -1,6 +1,32 @@
 'GD                                                                         NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-GD 2.0.35RC3 (2007-04-??)
+GD HEAD
+169, gdColorMapLookup() answers the RGB values according to given color map
+     (Takeshi Abe)
+
+GD 2.0.36 (2007-11-xx)
+145, Fixed leak in gdImageCopyResized (Patch by Brent Bottles)
+ 81, Fixed gdImageCopy with true color image, the transparent color was ignored
+     (Pierre, Mark Fisher)
+ 88, Fixed support of PNG grayscale image with alpha channel (Pierre)
+ 95, Added Netware builds script (Guenter)
+ 97, ease the creation of regexp to match symbols/functions in the sources 
+     (Guenter)
+101, _gdCreateFromFile() can crash if gdImageCreate fails (Mattias Bengtsson)
+105, gdImageCreateFrom*Ptr() can crash if gdNewDynamicCtxEx() fails (Mattias)
+106, gdImageRectangle draws 1x1 rectangles as 1x3 rectangles (Pierre)
+109, Possible integer overflow in gdImageFill() (Mattias Bengtsson)
+111, Optimization for single pixel line not in correct order (Mattias)
+112, gdImageColorDeallocate can write outside buffer (Mattias Bengtsson)
+113, gdImageColorTransparent can write outside buffer (Mattias Bengtsson)
+127, gdImageWBMPCtx can crash when createwbmp fails (Scott)
+132, Fixed decoding of the html entity &thetasym; (Thomas Bonfort, Pierre)
+133, Fixed configure script ignoring --with-png=DIR option (Scott)
+166, Fixed handling 3-digit RGB and transparent color in XPM (Takeshi Abe)
+173, Fixed the memory management in font_path() of gdft.c (Takeshi Abe)
+174, Fixed that font_path() in gdft.c breaks reentrancy (Takeshi Abe)
+
+GD 2.0.35 (2007-06-21)
 41, Fix valgrind error in gdImageFillTiled (Nuno Lopes) 
 45, Add missing custom cmake macros (required for the tests suite)
 51, Avoid signature buffer copy  in gd_gif_c (Nuno Lopes)
@@ -10,17 +36,22 @@ GD 2.0.35RC3 (2007-04-??)
     functions) (Roman Nemecek, Nuno Lopes, Pierre)
 60, GIF Local palette is read twice
 66, GIF, Use local frame dimension when possible instead of the 
-    logical screen size
+    logical screen size (Pierre)
 68, OpenVMS build support, see VMS/README.VMS for the details 
     (Alexey Chupahin)
 70, GIF, do not try to use the global colmap if it does not exist
     (Nuno Lopes, Pierre)
-72, gdImageAALine draws axis lines with two pixels width
+72, gdImageAALine draws axis lines with two pixels width (Pierre)
 73, TTF usage doesn't work properly on Netware (Guenter Knauf, Scott MacVicar)
-74, gdImageArc CPU usage with large angles
+74, gdImageArc CPU usage with large angles (Pierre)
 78, gdImageFilledRectangle regression fixed when used with reversed edges
+    (Pierre)
 86, Possible infinite loop in libgd/gd_png.c, flaw found by Xavier Roche
     (Pierre)
+87, Fixed segfault when an invalid color index is present in a GIF 
+    image data, reported by Elliot <wccode at gmail dot com> (Pierre)
+89, Possible integer overflow in gdImageCreateTrueColor (Pierre)
+94, gdImageCreateXbm can crash if gdImageCreate fails (Pierre)
 
 GD 2.0.34 (2007-02-07)
  3, Initialize variables in tweenColorTest, fix cache
