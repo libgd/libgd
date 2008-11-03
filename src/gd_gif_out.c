@@ -593,10 +593,10 @@ static void GIFEncode(gdIOCtxPtr fp, int GWidth, int GHeight, int GInterlace, in
 	int i;
 	GifCtx ctx;
 
+	memset(&ctx, 0, sizeof(ctx));
+
 	ctx.Interlace = GInterlace;
 	ctx.in_count = 1;
-
-	memset(&ctx, 0, sizeof(ctx));
 
 	ColorMapSize = 1 << BitsPerPixel;
 
@@ -704,10 +704,10 @@ static void GIFAnimEncode(gdIOCtxPtr fp, int IWidth, int IHeight, int LeftOfs, i
 	int i;
 	GifCtx ctx;
 
+	memset(&ctx, 0, sizeof(ctx));
+
 	ctx.Interlace = GInterlace;
 	ctx.in_count = 1;
-
-	memset(&ctx, 0, sizeof(ctx));
 
 	ColorMapSize = 1 << BitsPerPixel;
 
