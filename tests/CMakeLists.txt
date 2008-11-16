@@ -25,6 +25,7 @@ if (BUILD_TEST)
 		gdimagearc
 		gdimagecolorclosest
 		gdimagecolorexact
+		gdimagecolorreplace
 		gdimagecolorresolve
 		gdimagecolordeallocate
 		gdimagecolortransparent

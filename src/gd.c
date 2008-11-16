@@ -675,6 +675,119 @@ BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
 
 }
 
+BGD_DECLARE(int) gdImageColorReplace (gdImagePtr im, int src, int dst)
+{
+	int x, y, n = 0;
+
+	if (src == dst) {
+		return 0;
+	}
+
+#define REPLACING_LOOP(pixel) do {								\
+		for (y = im->cy1; y <= im->cy2; y++) {					\
+			for (x = im->cx1; x <= im->cx2; x++) {				\
+				if (pixel(im, x, y) == src) {					\
+					gdImageSetPixel(im, x, y, dst);				\
+					n++;										\
+				}												\
+			}													\
+		}														\
+	} while (0)
+
+	if (im->trueColor) {
+		REPLACING_LOOP(gdImageTrueColorPixel);
+	} else {
+		REPLACING_LOOP(gdImagePalettePixel);
+	}
+
+#undef REPLACING_LOOP
+
+	return n;
+}
+
+BGD_DECLARE(int) gdImageColorReplaceArray (gdImagePtr im, unsigned int len, int *src, int *dst)
+{
+	int x, y, c, n = 0;
+	unsigned int i;
+
+	if (len == 0) {
+		return 0;
+	}
+	if (src == dst) {
+		return 0;
+	}
+
+#define REPLACING_LOOP(pixel) do {							\
+		for (y = im->cy1; y <= im->cy2; y++) {				\
+			for (x = im->cx1; x <= im->cx2; x++) {			\
+				c = pixel(im, x, y);						\
+				for (i = 0; i < len; i++) {					\
+					if (c == src[i] && c != dst[i]) {		\
+						gdImageSetPixel(im, x, y, dst[i]);	\
+						n++;								\
+						break;								\
+					}										\
+				}											\
+			}												\
+		}													\
+	} while (0)
+
+	if (im->trueColor) {
+		REPLACING_LOOP(gdImageTrueColorPixel);
+	} else {
+		REPLACING_LOOP(gdImagePalettePixel);
+	}
+
+#undef REPLACING_LOOP
+
+	return n;
+}
+
+BGD_DECLARE(int) gdImageColorReplaceCallback (gdImagePtr im, int (*callback)(gdImagePtr imx, int src))
+{
+	int x, y, c, d, n = 0;
+
+	if (!callback) {
+		return 0;
+	}
+	if (im->trueColor) {
+		for (y = im->cy1; y <= im->cy2; y++) {
+			for (x = im->cx1; x <= im->cx2; x++) {
+				c = gdImageTrueColorPixel(im, x, y);
+				if ( (d = callback(im, c)) != c) {
+					gdImageSetPixel(im, x, y, d);
+					n++;
+				}
+			}
+		}
+	} else { /* palette */
+		int *sarr, *darr;
+		unsigned int k, len = 0;
+
+		sarr = (int *)gdCalloc(im->colorsTotal, sizeof(int));
+		if (!sarr) {
+			return -1;
+		}
+		for (c = 0; c < im->colorsTotal; c++) {
+			if (!im->open[c]) {
+				sarr[len++] = c;
+			}
+		}
+		darr = (int *)gdCalloc(len, sizeof(int));
+		if (!darr) {
+			gdFree(sarr);
+			return -1;
+		}
+		for (k = 0; k < len; k++) {
+			darr[k] = callback(im, sarr[k]);
+		}
+		n = gdImageColorReplaceArray(im, k, sarr, darr);
+		gdFree(darr);
+		gdFree(sarr);
+	}
+	return n;
+}
+
 /* 2.0.10: before the drawing routines, some code to clip points that are
  * outside the drawing window.  Nick Atty (nick@canalplan.org.uk)
  *
