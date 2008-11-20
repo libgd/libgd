@@ -677,7 +677,8 @@ BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
 
 BGD_DECLARE(int) gdImageColorReplace (gdImagePtr im, int src, int dst)
 {
-	int x, y, n = 0;
+	register int x, y;
+	int n = 0;
 
 	if (src == dst) {
 		return 0;
@@ -705,31 +706,48 @@ BGD_DECLARE(int) gdImageColorReplace (gdImagePtr im, int src, int dst)
 	return n;
 }
 
-BGD_DECLARE(int) gdImageColorReplaceArray (gdImagePtr im, unsigned int len, int *src, int *dst)
+static int colorCmp (const void *x, const void *y)
 {
-	int x, y, c, n = 0;
-	unsigned int i;
+	int a = *(int const *)x;
+	int b = *(int const *)y;
+	return (a > b) - (a < b);
+}
 
-	if (len == 0) {
+BGD_DECLARE(int) gdImageColorReplaceArray (gdImagePtr im, int len, int *src, int *dst)
+{
+	register int x, y;
+	int c, *d, *base;
+	int i, n = 0;
+
+	if (len <= 0 || src == dst) {
 		return 0;
 	}
-	if (src == dst) {
-		return 0;
+	if (len == 1) {
+		return gdImageColorReplace(im, src[0], dst[0]);
 	}
+	if (overflow2(len, sizeof(int)<<1)) {
+		return -1;
+	}
+	base = (int *)gdMalloc(len * (sizeof(int)<<1));
+	if (!base) {
+		return -1;
+	}
+	for (i = 0; i < len; i++) {
+		base[(i<<1)]   = src[i];
+		base[(i<<1)+1] = dst[i];
+	}
+	qsort(base, len, sizeof(int)<<1, colorCmp);
 
-#define REPLACING_LOOP(pixel) do {							\
-		for (y = im->cy1; y <= im->cy2; y++) {				\
-			for (x = im->cx1; x <= im->cx2; x++) {			\
-				c = pixel(im, x, y);						\
-				for (i = 0; i < len; i++) {					\
-					if (c == src[i] && c != dst[i]) {		\
-						gdImageSetPixel(im, x, y, dst[i]);	\
-						n++;								\
-						break;								\
-					}										\
-				}											\
-			}												\
-		}													\
+#define REPLACING_LOOP(pixel) do {										\
+		for (y = im->cy1; y <= im->cy2; y++) {							\
+			for (x = im->cx1; x <= im->cx2; x++) {						\
+				c = pixel(im, x, y);									\
+				if ( (d = (int *)bsearch(&c, base, len, sizeof(int)<<1, colorCmp)) ) { \
+					gdImageSetPixel(im, x, y, d[1]);					\
+					n++;												\
+				}														\
+			}															\
+		}																\
 	} while (0)
 
 	if (im->trueColor) {
@@ -740,17 +758,20 @@ BGD_DECLARE(int) gdImageColorReplaceArray (gdImagePtr im, unsigned int len, int 
 
 #undef REPLACING_LOOP
 
+	gdFree(base);
 	return n;
 }
 
 BGD_DECLARE(int) gdImageColorReplaceCallback (gdImagePtr im, int (*callback)(gdImagePtr imx, int src))
 {
-	int x, y, c, d, n = 0;
+	int c, d, n = 0;
 
 	if (!callback) {
 		return 0;
 	}
 	if (im->trueColor) {
+		register int x, y;
+
 		for (y = im->cy1; y <= im->cy2; y++) {
 			for (x = im->cx1; x <= im->cx2; x++) {
 				c = gdImageTrueColorPixel(im, x, y);
@@ -762,7 +783,7 @@ BGD_DECLARE(int) gdImageColorReplaceCallback (gdImagePtr im, int (*callback)(gdI
 		}
 	} else { /* palette */
 		int *sarr, *darr;
-		unsigned int k, len = 0;
+		int k, len = 0;
 
 		sarr = (int *)gdCalloc(im->colorsTotal, sizeof(int));
 		if (!sarr) {

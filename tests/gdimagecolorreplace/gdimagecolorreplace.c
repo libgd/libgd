@@ -1,5 +1,6 @@
 #include <gd.h>
 #include <stdio.h>
+#include <limits.h>
 #include "gdtest.h"
 
 static int callback(gdImagePtr im, int src)
@@ -64,6 +65,13 @@ static void run_tests(gdImagePtr im, int *error)
 	CHECK_PIXEL(0, 0, c);
 	CHECK_PIXEL(2, 3, white);
 	CHECK_PIXEL(4, 4, white);
+
+	n = gdImageColorReplaceArray(im, 0, src, dst);
+	CHECK_VALUE(n, 0);
+	n = gdImageColorReplaceArray(im, -1, src, dst);
+	CHECK_VALUE(n, 0);
+	n = gdImageColorReplaceArray(im, INT_MAX, src, dst);
+	CHECK_VALUE(n, -1);
 
 	gdImageSetClip(im, 1, 1, 4, 4);
 	n = gdImageColorReplaceCallback(im, callback);

@@ -587,7 +587,7 @@ BGD_DECLARE(void) gdImageColorTransparent (gdImagePtr im, int color);
 BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr dst, gdImagePtr src);
 
 BGD_DECLARE(int) gdImageColorReplace(gdImagePtr im, int src, int dst);
-BGD_DECLARE(int) gdImageColorReplaceArray(gdImagePtr im, unsigned int len, int *src, int *dst);
+BGD_DECLARE(int) gdImageColorReplaceArray(gdImagePtr im, int len, int *src, int *dst);
 BGD_DECLARE(int) gdImageColorReplaceCallback(gdImagePtr im, int (*callback)(gdImagePtr imx, int src));
 
 BGD_DECLARE(void) gdImageGif (gdImagePtr im, FILE * out);
