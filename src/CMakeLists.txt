@@ -3,6 +3,8 @@ SET (LIBGD_SRC_FILES
 	gd.c
 	gdfx.c
 	gdfx.h
+	gd_color.c
+	gd_color.h
 	gd_color_map.c
 	gd_color_map.h
 	gd_crop.c
