@@ -1,11 +1,11 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef GD_COLOR_MAP_H
 #define GD_COLOR_MAP_H 1
 
-#include "gd.h"
+#include <gd.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
   char *color_name;
@@ -23,8 +23,8 @@ BGD_EXPORT_DATA_PROT gdColorMap GD_COLOR_MAP_X11;
 
 BGD_DECLARE(int) gdColorMapLookup(const gdColorMap color_map, const char *color_name, int *r, int *g, int *b);
 
-#endif
-
 #ifdef __cplusplus
 }
+#endif
+
 #endif
