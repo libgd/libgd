@@ -45,17 +45,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 
 	number = image.ncolors;
 	if(overflow2(sizeof(int), number)) {
-		return 0;
+		goto done;
 	}
 
 	colors = (int *)gdMalloc(sizeof(int) * number);
 	if(colors == NULL) {
-		return (0);
+		goto done;
 	}
 
 	if(!(im = gdImageCreate(image.width, image.height))) {
 		gdFree(colors);
-		return 0;
+		goto done;
 	}
 
 	for(i = 0; i < number; i++) {
@@ -160,6 +160,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 
 	gdFree(colors);
 
+ done:
+	XpmFreeXpmImage(&image);
+	XpmFreeXpmInfo(&info);
 	return im;
 }
 #endif /* HAVE_LIBXPM */
