@@ -127,7 +127,7 @@ BGD_DECLARE(gdImagePtr) gdImageThresholdCrop(gdImagePtr im, const unsigned int c
 	crop.height = 0;
 
 	/* Pierre: crop everything sounds bad */
-	if (threshold > 1.0) {
+	if (threshold > 100.0) {
 		return NULL;
 	}
 
@@ -142,7 +142,7 @@ BGD_DECLARE(gdImagePtr) gdImageThresholdCrop(gdImagePtr im, const unsigned int c
 		}
 	}
 
-	/* Piere
+	/* Pierre
 	 * Nothing to do > bye 
 	 * Duplicate the image?
 	 */
