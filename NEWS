@@ -26,6 +26,7 @@ GD 2.0.36 (2007-11-xx)
 173, Fixed the memory management in font_path() of gdft.c (Takeshi Abe)
 174, Fixed that font_path() in gdft.c breaks reentrancy (Takeshi Abe)
 181, Fixed gd_gif_out.c to enable proper interlace
+185, Fixed memory leaks in gdImageCreateFromXpm() (Takeshi Abe)
 
 GD 2.0.35 (2007-06-21)
 41, Fix valgrind error in gdImageFillTiled (Nuno Lopes) 
