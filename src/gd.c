@@ -635,9 +635,9 @@ BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
       xlate[i] = -1;
     };
 
-  for (x = 0; x < (to->sx); x++)
+  for (y = 0; y < (to->sy); y++)
     {
-      for (y = 0; y < (to->sy); y++)
+      for (x = 0; x < (to->sx); x++)
 	{
           /* Optimization: no gdImageGetPixel */
 	  p = to->pixels[y][x];
