@@ -76,4 +76,15 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/  ${GD_SOURCE_DIR}/src)
 target_link_libraries(${GD_LIB} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${JPEG_LIBRARIES} ${TIFF_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARIES})
 target_link_libraries(${GD_LIB_STATIC} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${JPEG_LIBRARIES} ${TIFF_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARIES})
 
+set(GD_PROGRAMS annotate gdparttopng gdtopng gd2copypal gd2topng pngtogd pngtogd2 webpng gd2togif gdcmpgif giftogd2)
+foreach(program ${GD_PROGRAMS})
+    add_executable(${program} ${program}.c)
+    target_link_libraries(${program} ${GD_LIB})
+endforeach(program)
 
+install(TARGETS ${GD_LIB} ${GD_LIB_STATIC} ${GD_PROGRAMS}
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+install(PROGRAMS bdftogd DESTINATION bin)
+install(FILES gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h gd_color_map.h DESTINATION include)
