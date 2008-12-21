@@ -3,6 +3,7 @@
 GD HEAD
 169, gdColorMapLookup() answers the RGB values according to given color map
      (Takeshi Abe)
+184, new filter gdImagePixelate() by Kalle Sommer Nielsen (Takeshi Abe)
 
 GD 2.0.36 (2007-11-xx)
 145, Fixed leak in gdImageCopyResized (Patch by Brent Bottles)

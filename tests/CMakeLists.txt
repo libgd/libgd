@@ -30,6 +30,7 @@ if (BUILD_TEST)
 		gdimagecolordeallocate
 		gdimagecolortransparent
 		#gdimageellipse
+		gdimagepixelate
 		gdimageline
 		gdimagefilledellipse
 		gdimagecopyrotated
