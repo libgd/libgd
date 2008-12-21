@@ -770,6 +770,13 @@ BGD_DECLARE(void) gdImageFlipBoth(gdImagePtr im);
 
 BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int sample_factor);
 
+enum gdPixelateMode {
+	GD_PIXELATE_UPPERLEFT,
+	GD_PIXELATE_AVERAGE
+};
+
+BGD_DECLARE(int) gdImagePixelate(gdImagePtr im, int block_size, const unsigned int mode);
+
 /* Macros to access information about images. */
 
 /* Returns nonzero if the image is a truecolor image,
