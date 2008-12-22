@@ -50,6 +50,8 @@ int gdImagePixelate(gdImagePtr im, int block_size, const unsigned int mode)
 			}
 		}
 		break;
+	default:
+		return 0;
 	}
 	return 1;
 }

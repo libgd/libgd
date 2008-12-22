@@ -55,6 +55,7 @@ static int testPixelate(gdImagePtr im)
 {
 	if (gdImagePixelate(im, -1, GD_PIXELATE_UPPERLEFT) != 0) return 0;
 	if (gdImagePixelate(im, 1, GD_PIXELATE_UPPERLEFT) != 1) return 0;
+	if (gdImagePixelate(im, 2, -1) != 0) return 0;
 
 	SETUP_PIXELS(im);
 	if (!gdImagePixelate(im, BLOCK_SIZE, GD_PIXELATE_UPPERLEFT)) return 0;
