@@ -27,10 +27,10 @@ Options:
 	--libs            # libs required for linking against GD library
 	--cflags          # options required for compiling GD library apps
 	--includes        # same as --cflags
-	--features        # lists optional features compiled into gd, separated
-                          # by spaces. Currently (as of 2.0.26) the optional
-                          # features are GD_PNG, GD_JPEG, GD_XPM, and
-                          # GD_FREETYPE. When these features are reported by
+	--features        # lists features compiled into gd, separated by spaces.
+                          # Currently (as of @VERSION@) the optional features
+                          # are GD_PNG, GD_JPEG, GD_XPM, GD_FREETYPE, and 
+                          # GD_FONTCONFIG. When these features are reported by
                           # --features, it is safe to include calls to the
                           # related functions in your code.
 	--all             # print a summary of all GD library configure options
