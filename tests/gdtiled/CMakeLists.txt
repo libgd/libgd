@@ -1,5 +1,10 @@
-add_executable(bug00032 bug00032.c)
+SET(TESTS_FILES
+	bug00032
+)
 
-target_link_libraries (bug00032 ${GDTESTS_TARGET_LINK})
-
-ADD_TEST(bug00032 ${EXECUTABLE_OUTPUT_PATH}/bug00032)
+FOREACH(test_name ${TESTS_FILES})
+	add_executable(${test_name} "${test_name}.c")
+	target_link_libraries (${test_name} ${GDTESTS_TARGET_LINK})
+	get_target_property(test_path ${test_name} LOCATION)
+	ADD_TEST(${test_name} ${test_path})
+ENDFOREACH(test_name)
