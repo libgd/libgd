@@ -67,7 +67,7 @@ _gdGetColors (gdIOCtx * in, gdImagePtr im, int gd2xFlag)
 	}
     }
   GD2_DBG (printf
-	   ("Pallette had %d colours (T=%d)\n", im->colorsTotal,
+	   ("Palette had %d colours (T=%d)\n", im->colorsTotal,
 	    im->transparent));
   if (im->trueColor)
     {
