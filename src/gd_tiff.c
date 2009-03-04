@@ -910,9 +910,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	if (!force_rgba && 
 			(image_type == GD_PALETTE || image_type == GD_INDEXED || image_type == GD_GRAY)) {
 		im = gdImageCreate(width, height);
+		if (!im) goto error;
 		readTiffColorMap(im, tif, is_bw, photometric);
 	} else {
 		im = gdImageCreateTrueColor(width, height);
+		if (!im) goto error;
 	}
 
 #ifdef DEBUG
