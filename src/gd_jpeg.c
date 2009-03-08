@@ -160,6 +160,10 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
 	jpeg_set_defaults(&cinfo);
 
+	cinfo.density_unit = 1;
+	cinfo.X_density = im->res_x;
+	cinfo.Y_density = im->res_y;
+
 	if(quality >= 0) {
 		jpeg_set_quality(&cinfo, quality, TRUE);
 	}
@@ -356,6 +360,18 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	if(im == 0) {
 		fprintf (stderr, "gd-jpeg error: cannot allocate gdImage struct\n");
 		goto error;
+	}
+
+	/* check if the resolution is specified */
+	switch (cinfo.density_unit) {
+	case 1:
+		im->res_x = cinfo.X_density;
+		im->res_y = cinfo.Y_density;
+		break;
+	case 2:
+		im->res_x = DPCM2DPI(cinfo.X_density);
+		im->res_y = DPCM2DPI(cinfo.Y_density);
+		break;
 	}
 
 	/* 2.0.22: very basic support for reading CMYK colorspace files. Nice for
