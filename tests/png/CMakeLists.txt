@@ -1,5 +1,6 @@
 
 SET(TESTS_FILES
+	png_resolution
 	bug00011
 	bug00033
 	bug00086

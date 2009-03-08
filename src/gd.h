@@ -224,6 +224,10 @@ BGD_DECLARE(int) gdAlphaBlend (int dest, int src);
     int cy1;
     int cx2;
     int cy2;
+
+    /* 2.1.0: allows to specify resolution in dpi */
+    unsigned int res_x;
+    unsigned int res_y;
   }
   gdImage;
 
@@ -376,6 +380,7 @@ BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2,
 			       int color);
 BGD_DECLARE(void) gdImageSetClip(gdImagePtr im, int x1, int y1, int x2, int y2);
 BGD_DECLARE(void) gdImageGetClip(gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P);
+BGD_DECLARE(void) gdImageSetResolution(gdImagePtr im, const unsigned int res_x, const unsigned int res_y);
 BGD_DECLARE(int) gdImageBoundsSafe (gdImagePtr im, int x, int y);
 BGD_DECLARE(void) gdImageChar (gdImagePtr im, gdFontPtr f, int x, int y, int c,
 		    int color);
@@ -806,6 +811,9 @@ BGD_DECLARE(int) gdImagePixelate(gdImagePtr im, int block_size, const unsigned i
 #define gdImagePalettePixel(im, x, y) (im)->pixels[(y)][(x)]
 #define gdImageTrueColorPixel(im, x, y) (im)->tpixels[(y)][(x)]
 
+#define gdImageResolutionX(im) (im)->res_x
+#define gdImageResolutionY(im) (im)->res_y
+
 /* I/O Support routines. */
 
 BGD_DECLARE(gdIOCtx *) gdNewFileCtx (FILE *);
@@ -851,8 +859,7 @@ BGD_DECLARE(int) gdImageCompare (gdImagePtr im1, gdImagePtr im2);
 #define GD_CMP_INTERLACE	128	/* Interlaced setting */
 #define GD_CMP_TRUECOLOR	256	/* Truecolor vs palette differs */
 
-/* resolution affects ttf font rendering, particularly hinting */
-#define GD_RESOLUTION           96	/* pixels per inch */
+#define GD_RESOLUTION           96	/* dots per inch */
 
 #ifdef __cplusplus
 }

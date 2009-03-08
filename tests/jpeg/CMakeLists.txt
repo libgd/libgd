@@ -2,6 +2,7 @@
 SET(TESTS_FILES
 	jpeg_read
 	jpeg_empty_file
+	jpeg_resolution
 )
 
 FOREACH(test_name ${TESTS_FILES})
