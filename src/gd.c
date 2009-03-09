@@ -798,7 +798,7 @@ BGD_DECLARE(int) gdImageColorReplaceArray (gdImagePtr im, int len, int *src, int
 	return n;
 }
 
-BGD_DECLARE(int) gdImageColorReplaceCallback (gdImagePtr im, int (*callback)(gdImagePtr imx, int src))
+BGD_DECLARE(int) gdImageColorReplaceCallback (gdImagePtr im, gdCallbackImageColor callback)
 {
 	int c, d, n = 0;
 
