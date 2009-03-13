@@ -5,6 +5,7 @@ SET(TESTS_FILES
 	bug00033
 	bug00086
 	bug00088
+	bug00193
 )
 
 FOREACH(test_name ${TESTS_FILES})

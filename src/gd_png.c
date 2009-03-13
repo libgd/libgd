@@ -606,6 +606,10 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 				++colors;
 			}
 		}
+		if (colors == 0) {
+			fprintf(stderr, "gd-png error: no colors in palette\n");
+			goto bail;
+		}
 		if (colors < im->colorsTotal)
 		{
 			remap = TRUE;
@@ -855,6 +859,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		}
 	}
 	/* 1.6.3: maybe we should give that memory BACK! TBB */
+ bail:
 	png_destroy_write_struct (&png_ptr, &info_ptr);
 }
 
