@@ -232,6 +232,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	}
 #endif
 
+#ifdef PNG_pHYs_SUPPORTED
 	/* check if the resolution is specified */
 	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_pHYs)) {
 		if (png_get_pHYs(png_ptr, info_ptr, &res_x, &res_y, &unit_type)) {
@@ -243,6 +244,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 			}
 		}
 	}
+#endif
 
 	switch (color_type) {
 		case PNG_COLOR_TYPE_PALETTE:
@@ -571,9 +573,11 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	/* 2.0.12: this is finally a parameter */
 	png_set_compression_level (png_ptr, level);
 
+#ifdef PNG_pHYs_SUPPORTED
 	/* 2.1.0: specify the resolution */
 	png_set_pHYs(png_ptr, info_ptr, DPI2DPM(im->res_x), DPI2DPM(im->res_y),
 				 PNG_RESOLUTION_METER);
+#endif
 
 	/* can set this to a smaller value without compromising compression if all
 	 * image data is 16K or less; will save some decoder memory [min == 8] */
