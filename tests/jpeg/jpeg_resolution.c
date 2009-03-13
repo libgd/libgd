@@ -19,6 +19,7 @@ int main()
 	im = gdImageCreateFromJpegPtr(size, data);
 	gdTestAssert(gdImageResolutionX(im) == 72);
 	gdTestAssert(gdImageResolutionY(im) == 300);
+	gdFree(data);
 	gdImageDestroy(im);
 	return 0;
 }
