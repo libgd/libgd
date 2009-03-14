@@ -221,7 +221,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	 */
 #ifndef PNG_SETJMP_NOT_SUPPORTED
 	if (setjmp(gdPngJmpbufStruct.jmpbuf)) {
-		fprintf(stderr, "gd-png error: setjmp returns error condition 2");
+		fprintf(stderr, "gd-png error: setjmp returns error condition 2\n");
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		gdFree(image_data);
 		gdFree(row_pointers);
