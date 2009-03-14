@@ -762,14 +762,13 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		png_bytep *prow_pointers;
 		int saveAlphaFlag = im->saveAlphaFlag;
 		if (overflow2(sizeof (png_bytep), height)) {
-			return;
+			goto bail;
 		} 
 		row_pointers = gdMalloc (sizeof (png_bytep) * height);
 		if (row_pointers == NULL)
 		{
 			fprintf (stderr, "gd-png error: unable to allocate row_pointers\n");
-			/* 2.0.29: return was missing */
-			return;
+			goto bail;
 		}
 		prow_pointers = row_pointers;
 		for (j = 0; j < height; ++j)
@@ -782,7 +781,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 					gdFree (row_pointers[i]);
 				/* 2.0.29: memory leak TBB */
 				gdFree(row_pointers);
-				return;
+				goto bail;
 			}
 			pOutputRow = *prow_pointers++;
 			pThisRow = *ptpixels++;
@@ -820,15 +819,13 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		{
 			png_bytep *row_pointers;
 			if (overflow2(sizeof (png_bytep), height)) {
-				return;
+				goto bail;
 			}
 			row_pointers = gdMalloc (sizeof (png_bytep) * height);
 			if (row_pointers == NULL)
 			{
-				fprintf (stderr,
-						"gd-png error: unable to allocate row_pointers\n");
-				/* TBB: return missing */
-				return;
+				fprintf (stderr, "gd-png error: unable to allocate row_pointers\n");
+				goto bail;
 			}
 			for (j = 0; j < height; ++j)
 			{
@@ -839,7 +836,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 						gdFree (row_pointers[i]);
 					/* TBB: memory leak */
 					gdFree (row_pointers);
-					return;
+					goto bail;
 				}
 				for (i = 0; i < width; ++i)
 					row_pointers[j][i] = mapping[im->pixels[j][i]];
