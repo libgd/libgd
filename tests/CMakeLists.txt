@@ -36,6 +36,7 @@ if (BUILD_TEST)
 		gdimagecopyrotated
 		gdtiled
 		gdimagerectangle
+		gdimagesetpixel
 		gdimagefilledrectangle
 		gd2
 		gif
