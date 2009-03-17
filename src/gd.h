@@ -828,7 +828,7 @@ BGD_DECLARE(gdIOCtx *) gdNewFileCtx (FILE *);
 BGD_DECLARE(gdIOCtx *) gdNewDynamicCtx (int size, void *data);
   /* 2.0.21: if freeFlag is nonzero, gd will free and/or reallocate "data" as
     needed as described above. If freeFlag is zero, gd will never free
-    or reallocate "data," which means that the context should only be used
+    or reallocate "data", which means that the context should only be used
     for *reading* an image from a memory buffer, or writing an image to a
     memory buffer which is already large enough. If the memory buffer is
     not large enough and an image write is attempted, the write operation
