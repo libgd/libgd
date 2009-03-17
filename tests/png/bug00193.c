@@ -1,5 +1,5 @@
+#include <stdlib.h>
 #include "gd.h"
-#include <stdio.h>
 #include "gdtest.h"
 
 static gdImagePtr im;
