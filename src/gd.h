@@ -437,7 +437,7 @@ BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fon
     int vdpi;			/* if (flags & gdFTEX_RESOLUTION) */
     char *xshow;	/* if (flags & gdFTEX_XSHOW)
 			   then, on return, xshow is a malloc'ed
-			   string contining xshow position data for
+			   string containing xshow position data for
 			   the last string.
 
 			   NB. The caller is responsible for gdFree'ing
