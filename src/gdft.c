@@ -1083,6 +1083,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
   else
     {
       /* No character set found! */
+      gdCacheDelete (tc_cache);
       gdMutexUnlock (gdFontCacheMutex);
       return "No character set found";
     }
@@ -1251,7 +1252,11 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 			xshow_alloc = 100;
 			strex->xshow = gdMalloc(xshow_alloc);
 			if (!strex->xshow) {
-				return 0;
+				if (tmpstr)
+				  gdFree (tmpstr);
+				gdCacheDelete (tc_cache);
+				gdMutexUnlock (gdFontCacheMutex);
+				return "Problem allocating memory";
 			}
 			xshow_pos = 0;
 	  } 
@@ -1259,7 +1264,11 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 		xshow_alloc += 100;
 		strex->xshow = gdRealloc(strex->xshow, xshow_alloc);
 		if (!strex->xshow) {
-			return 0;
+			if (tmpstr)
+			  gdFree (tmpstr);
+			gdCacheDelete (tc_cache);
+			gdMutexUnlock (gdFontCacheMutex);
+			return "Problem allocating memory";
 		}
 	}
 	  xshow_pos += sprintf(strex->xshow + xshow_pos, "%g ",
@@ -1271,6 +1280,8 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
       err = FT_Load_Glyph (face, glyph_index, render_mode);
       if (err)
 	{
+	  if (tmpstr)
+	    gdFree (tmpstr);
 	  gdCacheDelete (tc_cache);
 	  gdMutexUnlock (gdFontCacheMutex);
 	  return "Problem loading glyph";
@@ -1324,6 +1335,8 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
           err = FT_Load_Glyph (face, glyph_index, render_mode);
           if (err)
 	    {
+	      if (tmpstr)
+	        gdFree (tmpstr);
 	      gdCacheDelete (tc_cache);
 	      gdMutexUnlock (gdFontCacheMutex);
 	      return "Problem loading glyph";
@@ -1337,6 +1350,8 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 	      err = FT_Glyph_To_Bitmap (&image, ft_render_mode_normal, 0, 1);
 	      if (err)
 		{
+		  if (tmpstr)
+		    gdFree (tmpstr);
 		  gdCacheDelete (tc_cache);
 		  gdMutexUnlock (gdFontCacheMutex);
 		  return "Problem rendering glyph";
