@@ -41,14 +41,12 @@
 
   ---------------------------------------------------------------------------*/
 
-#ifndef PNG_SETJMP_NOT_SUPPORTED
+#ifdef PNG_SETJMP_SUPPORTED
 typedef struct _jmpbuf_wrapper
 {
 	jmp_buf jmpbuf;
 }
 jmpbuf_wrapper;
-
-static jmpbuf_wrapper gdPngJmpbufStruct;
 
 	static void
 gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
@@ -125,6 +123,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data)
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 {
 	png_byte sig[8];
+#ifdef PNG_SETJMP_SUPPORTED
+	jmpbuf_wrapper jbw;
+#endif
 	png_structp png_ptr;
 	png_infop info_ptr;
 	png_uint_32 width, height, rowbytes, w, h, res_x, res_y;
@@ -155,8 +156,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 		return NULL;		/* bad signature */
 	}
 
-#ifndef PNG_SETJMP_NOT_SUPPORTED
-	png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, &gdPngJmpbufStruct, gdPngErrorHandler, NULL);
+#ifdef PNG_SETJMP_SUPPORTED
+	png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, &jbw, gdPngErrorHandler, NULL);
 #else
 	png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 #endif
@@ -180,8 +181,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 
 	/* setjmp() must be called in every non-callback function that calls a
 	 * PNG-reading libpng function */
-#ifndef PNG_SETJMP_NOT_SUPPORTED
-	if (setjmp (gdPngJmpbufStruct.jmpbuf)) {
+#ifdef PNG_SETJMP_SUPPORTED
+	if (setjmp(jbw.jmpbuf)) {
 		fprintf (stderr, "gd-png error: setjmp returns error condition 1\n");
 		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
 
@@ -204,8 +205,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	if (im == NULL) {
 		fprintf (stderr, "gd-png error: cannot allocate gdImage struct\n");
 		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
-		gdFree (image_data);
-		gdFree (row_pointers);
 
 		return NULL;
 	}
@@ -219,8 +218,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	/* setjmp() must be called in every non-callback function that calls a
 	 * PNG-reading libpng function
 	 */
-#ifndef PNG_SETJMP_NOT_SUPPORTED
-	if (setjmp(gdPngJmpbufStruct.jmpbuf)) {
+#ifdef PNG_SETJMP_SUPPORTED
+	if (setjmp(jbw.jmpbuf)) {
 		fprintf(stderr, "gd-png error: setjmp returns error condition 2\n");
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		gdFree(image_data);
@@ -524,10 +523,11 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	png_infop info_ptr;
 	volatile int transparent = im->transparent;
 	volatile int remap = FALSE;
+#ifdef PNG_SETJMP_SUPPORTED
+	jmpbuf_wrapper jbw;
 
-#ifndef PNG_SETJMP_NOT_SUPPORTED
 	png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING,
-			&gdPngJmpbufStruct, gdPngErrorHandler,
+			&jbw, gdPngErrorHandler,
 			NULL);
 #else
 	png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -546,8 +546,8 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		return;
 	}
 
-#ifndef PNG_SETJMP_NOT_SUPPORTED
-	if (setjmp (gdPngJmpbufStruct.jmpbuf))
+#ifdef PNG_SETJMP_SUPPORTED
+	if (setjmp(jbw.jmpbuf))
 	{
 		fprintf (stderr, "gd-png error: setjmp returns error condition\n");
 		png_destroy_write_struct (&png_ptr, &info_ptr);
