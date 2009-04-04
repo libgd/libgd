@@ -31,6 +31,7 @@ GD 2.0.36 (2007-11-xx)
 185, Fixed memory leaks in gdImageCreateFromXpm() (Takeshi Abe)
 186, Fixed tiling true colour with palette image (Marko Vukovic, Takeshi Abe)
 193, Fixed gdImagePng() with no color allocated (Martin McNickle, Takeshi Abe)
+196, Fixed a memory leak in newDynamic() (Steve Fossen)
 
 GD 2.0.35 (2007-06-21)
 41, Fix valgrind error in gdImageFillTiled (Nuno Lopes) 
