@@ -220,6 +220,7 @@ static dynamicPtr *newDynamic(int initialSize, void *data, int freeOKFlag)
 	}
 
 	if(!allocDynamic(dp, initialSize, data)) {
+		gdFree(dp);
 		return NULL;
 	}
 
