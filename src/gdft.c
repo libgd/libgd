@@ -1688,7 +1688,7 @@ static char * font_path(char **fontpath, char *name_list)
 BGD_DECLARE(int) gdFTUseFontConfig(int flag)
 {
 #ifdef HAVE_LIBFONTCONFIG
-	fontConfigFlag = 1;
+	fontConfigFlag = flag;
 	return 1;
 #else
 	return 0;
