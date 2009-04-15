@@ -1517,8 +1517,12 @@ static char* find_postscript_font(FcPattern **fontpattern, char* fontname)
       font = find_font(pattern);
       FcPatternDestroy(pattern);
 
-      if (!font || FcPatternGetString(font, FC_FAMILY, 0, &family) != FcResultMatch)
-	return "fontconfig: Couldn't retrieve font family name.";
+      if (!font)
+        return "fontconfig: Couldn't find font.";
+      if (FcPatternGetString(font, FC_FAMILY, 0, &family) != FcResultMatch) {
+        FcPatternDestroy(font);
+        return "fontconfig: Couldn't retrieve font family name.";
+      }
       
       /* Check whether we got the font family we wanted. */
       if (strcmp((const char *)family, postscript_alias[i].family) != 0) {
@@ -1558,8 +1562,12 @@ static char * font_pattern(char **fontpath, char *fontpattern)
   }
 #endif
 
-  if (!font || FcPatternGetString(font, FC_FILE, 0, &file) != FcResultMatch)
+  if (!font)
+    return "fontconfig: Couldn't find font.";
+  if (FcPatternGetString(font, FC_FILE, 0, &file) != FcResultMatch) {
+    FcPatternDestroy(font);
     return "fontconfig: Couldn't retrieve font file name.";
+  }
 
   *fontpath = strdup((const char *)file);
 
