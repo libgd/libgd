@@ -47,6 +47,7 @@ if (BUILD_TEST)
 		gdimagefilltoborder
 		freetype
 		xpm
+		gdimagestringftex
 	)
 
 	IF (WIN32)

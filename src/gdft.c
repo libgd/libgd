@@ -960,8 +960,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
       /* 2.0.29: we can return the font path if desired */
       if (strex->flags & gdFTEX_RETURNFONTPATHNAME) 
         strex->fontpath = strdup(font->fontpath);
-      else
-        strex->fontpath = 0;
     }
 
   matrix.xx = (FT_Fixed) (cos_a * (1 << 16));
