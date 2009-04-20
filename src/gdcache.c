@@ -218,4 +218,4 @@ int main(char *argv[], int argc)
 }
 
 #endif /* TEST */
-#endif /* HAVE_LIBTTF */
+#endif /* NEED_CACHE */
