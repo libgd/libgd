@@ -1,7 +1,32 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-
 AUTOMAKE_OPTIONS = foreign 1.7
 
-SUBDIRS = gd2 gdimagecolordeallocate gdimagecolortransparent gdimagefill gdimagefilltoborder gdtest jpeg gdimagearc gdimagecolorexact gdimagecopy gdimagefilledellipse gdimageline gdimagepixelate gdtiled freetype gdimagecolorclosest gdimagecolorreplace gdimagecolorresolve gdimagecopyrotated gdimagefilledrectangle gdimagerectangle gdimagesetpixel gif png xpm gdimagestringftex
+SUBDIRS = gdtest \
+		freetype \
+		gd2 \
+		gdimagearc \
+		gdimagecolorclosest \
+		gdimagecolordeallocate \
+		gdimagecolorexact \
+		gdimagecolorreplace \
+		gdimagecolorresolve \
+		gdimagecolortransparent \
+		gdimagecopy \
+		gdimagecopyrotated \
+		gdimagefill \
+		gdimagefilledellipse \
+		gdimagefilledrectangle \
+		gdimagefilltoborder \
+		gdimageline \
+		gdimagepixelate \
+		gdimagerectangle \
+		gdimagesetpixel \
+		gdimagestringftex \
+		gdtiled \
+		gif \
+		jpeg \
+		png \
+		xpm
 
 EXTRA_DIST = CMakeLists.txt
 

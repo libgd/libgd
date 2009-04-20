@@ -22,32 +22,32 @@ if (BUILD_TEST)
 
 	SET(TESTS_DIRS
 		gdtest
+		freetype
+		gd2
 		gdimagearc
 		gdimagecolorclosest
+		gdimagecolordeallocate
 		gdimagecolorexact
 		gdimagecolorreplace
 		gdimagecolorresolve
-		gdimagecolordeallocate
 		gdimagecolortransparent
-		#gdimageellipse
-		gdimagepixelate
-		gdimageline
-		gdimagefilledellipse
+		gdimagecopy
 		gdimagecopyrotated
-		gdtiled
+		#gdimageellipse
+		gdimagefill
+		gdimagefilledellipse
+		gdimagefilledrectangle
+		gdimagefilltoborder
+		gdimageline
+		gdimagepixelate
 		gdimagerectangle
 		gdimagesetpixel
-		gdimagefilledrectangle
-		gd2
+		gdimagestringftex
+		gdtiled
 		gif
 		jpeg
 		png
-		gdimagecopy
-		gdimagefill
-		gdimagefilltoborder
-		freetype
 		xpm
-		gdimagestringftex
 	)
 
 	IF (WIN32)
