@@ -21,6 +21,7 @@ SUBDIRS = gdtest \
 		gdimagepixelate \
 		gdimagerectangle \
 		gdimagesetpixel \
+		gdimagestringft \
 		gdimagestringftex \
 		gdtiled \
 		gif \

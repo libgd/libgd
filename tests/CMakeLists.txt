@@ -42,6 +42,7 @@ if (BUILD_TEST)
 		gdimagepixelate
 		gdimagerectangle
 		gdimagesetpixel
+		gdimagestringft
 		gdimagestringftex
 		gdtiled
 		gif
