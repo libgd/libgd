@@ -22,7 +22,9 @@ if (BUILD_TEST)
 
 	SET(TESTS_DIRS
 		gdtest
+		bmp
 		freetype
+		gd
 		gd2
 		gdimagearc
 		gdimagecolorclosest
@@ -44,11 +46,15 @@ if (BUILD_TEST)
 		gdimagesetpixel
 		gdimagestringft
 		gdimagestringftex
+		gdnewfilectx
 		gdtiled
 		gif
 		jpeg
 		png
+		tga
+		tiff
 		xpm
+		wbmp
 	)
 
 	IF (WIN32)

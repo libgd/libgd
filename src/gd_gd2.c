@@ -282,6 +282,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2 (FILE * inFile)
   gdIOCtx *in = gdNewFileCtx (inFile);
   gdImagePtr im;
 
+  if (in == NULL) return NULL;
   im = gdImageCreateFromGd2Ctx (in);
 
   in->gd_free (in);
@@ -492,6 +493,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Part (FILE * inFile, int srcx, int s
   gdImagePtr im;
   gdIOCtx *in = gdNewFileCtx (inFile);
 
+  if (in == NULL) return NULL;
   im = gdImageCreateFromGd2PartCtx (in, srcx, srcy, w, h);
 
   in->gd_free (in);
@@ -1045,6 +1047,7 @@ fail:
 BGD_DECLARE(void) gdImageGd2 (gdImagePtr im, FILE * outFile, int cs, int fmt)
 {
   gdIOCtx *out = gdNewFileCtx (outFile);
+  if (out == NULL) return;
   _gdImageGd2 (im, out, cs, fmt);
   out->gd_free (out);
 }

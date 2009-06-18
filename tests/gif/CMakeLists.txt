@@ -1,5 +1,6 @@
 
 SET(TESTS_FILES
+	gif_null
 	bug00005
 	bug00005_2
 	bug00006

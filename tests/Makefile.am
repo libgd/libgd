@@ -2,7 +2,9 @@
 AUTOMAKE_OPTIONS = foreign 1.7
 
 SUBDIRS = gdtest \
+		bmp \
 		freetype \
+		gd \
 		gd2 \
 		gdimagearc \
 		gdimagecolorclosest \
@@ -23,11 +25,15 @@ SUBDIRS = gdtest \
 		gdimagesetpixel \
 		gdimagestringft \
 		gdimagestringftex \
+		gdnewfilectx \
 		gdtiled \
 		gif \
 		jpeg \
 		png \
-		xpm
+		tga \
+		tiff \
+		xpm \
+		wbmp
 
 EXTRA_DIST = CMakeLists.txt
 

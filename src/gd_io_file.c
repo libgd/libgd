@@ -54,6 +54,7 @@ BGD_DECLARE(gdIOCtx *) gdNewFileCtx(FILE *f)
 {
 	fileIOCtx *ctx;
 
+	if (f == NULL) return NULL;
 	ctx = (fileIOCtx *)gdMalloc(sizeof(fileIOCtx));
 	if(ctx == NULL) {
 		return NULL;

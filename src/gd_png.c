@@ -101,6 +101,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * inFile)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx (inFile);
+	if (in == NULL) return NULL;
 	im = gdImageCreateFromPngCtx (in);
 	in->gd_free (in);
 	return im;
@@ -467,6 +468,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
 {
 	gdIOCtx *out = gdNewFileCtx (outFile);
+	if (out == NULL) return;
 	gdImagePngCtxEx (im, out, level);
 	out->gd_free (out);
 }
@@ -474,6 +476,7 @@ BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
 BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * outFile)
 {
 	gdIOCtx *out = gdNewFileCtx (outFile);
+	if (out == NULL) return;
 	gdImagePngCtxEx (im, out, -1);
 	out->gd_free (out);
 }
