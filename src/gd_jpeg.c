@@ -95,6 +95,7 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 BGD_DECLARE(void) gdImageJpeg(gdImagePtr im, FILE *outFile, int quality)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
+	if (out == NULL) return;
 	gdImageJpegCtx(im, out, quality);
 	out->gd_free(out);
 }
@@ -265,6 +266,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *inFile)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
+	if (in == NULL) return NULL;
 	im = gdImageCreateFromJpegCtx(in);
 	in->gd_free(in);
 	return im;

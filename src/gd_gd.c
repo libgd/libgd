@@ -171,6 +171,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd (FILE * inFile)
   gdIOCtx *in;
 
   in = gdNewFileCtx (inFile);
+  if (in == NULL) return NULL;
   im = gdImageCreateFromGdCtx (in);
 
   in->gd_free (in);
@@ -316,6 +317,7 @@ _gdImageGd (gdImagePtr im, gdIOCtx * out)
 BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * outFile)
 {
   gdIOCtx *out = gdNewFileCtx (outFile);
+  if (out == NULL) return;
   _gdImageGd (im, out);
   out->gd_free (out);
 }

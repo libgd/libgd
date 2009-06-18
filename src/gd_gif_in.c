@@ -101,8 +101,9 @@ static void ReadImage (gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGif(FILE *fdFile)
 {
 	gdIOCtx *fd = gdNewFileCtx(fdFile);
-	gdImagePtr im = 0;
+	gdImagePtr im;
 
+	if (fd == NULL) return NULL;
 	im = gdImageCreateFromGifCtx(fd);
 
 	fd->gd_free(fd);

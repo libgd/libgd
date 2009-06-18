@@ -981,6 +981,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
+	if (in == NULL) return NULL;
 	im = gdImageCreateFromTiffCtx(in);
 	in->gd_free(in);
 	return im;
@@ -1001,6 +1002,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffPtr(int size, void *data)
 BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
+	if (out == NULL) return;
 	gdImageTiffCtx(im, out); /* what's an fg again? */
 	out->gd_free(out);
 }

@@ -170,6 +170,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP(FILE *inFile)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
+	if (in == NULL) return NULL;
 	im = gdImageCreateFromWBMPCtx(in);
 	in->gd_free(in);
 	return im;
@@ -192,6 +193,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr(int size, void *data)
 BGD_DECLARE(void) gdImageWBMP(gdImagePtr im, int fg, FILE *outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
+	if (out == NULL) return;
 	gdImageWBMPCtx(im, fg, out);
 	out->gd_free(out);
 }

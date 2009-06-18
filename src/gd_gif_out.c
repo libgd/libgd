@@ -102,6 +102,7 @@ BGD_DECLARE(void *) gdImageGifPtr(gdImagePtr im, int *size)
 BGD_DECLARE(void) gdImageGif(gdImagePtr im, FILE *outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
+	if (out == NULL) return;
 	gdImageGifCtx(im, out);
 	out->gd_free(out);
 }
@@ -150,6 +151,7 @@ BGD_DECLARE(void *) gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalC
 BGD_DECLARE(void) gdImageGifAnimBegin(gdImagePtr im, FILE *outFile, int GlobalCM, int Loops)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
+	if (out == NULL) return;
 	gdImageGifAnimBeginCtx(im, out, GlobalCM, Loops);
 	out->gd_free(out);
 }
@@ -231,6 +233,7 @@ BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, 
 BGD_DECLARE(void) gdImageGifAnimAdd(gdImagePtr im, FILE *outFile, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
+	if (out == NULL) return;
 	gdImageGifAnimAddCtx(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm);
 	out->gd_free(out);
 }
@@ -453,6 +456,7 @@ BGD_DECLARE(void) gdImageGifAnimEnd(FILE *outFile)
 	putc(';', outFile);
 #else
 	gdIOCtx *out = gdNewFileCtx(outFile);
+	if (out == NULL) return;
 	gdImageGifAnimEndCtx(out);
 	out->gd_free(out);
 #endif

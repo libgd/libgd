@@ -73,6 +73,7 @@ BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression)
 BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
+	if (out == NULL) return;
 	gdImageBmpCtx(im, out, compression);
 	out->gd_free(out);
 }
@@ -402,6 +403,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromBmp(FILE * inFile)
 {
 	gdImagePtr im = 0;
 	gdIOCtx *in = gdNewFileCtx(inFile);
+	if (in == NULL) return NULL;
 	im = gdImageCreateFromBmpCtx(in);
 	in->gd_free(in);
 	return im;
