@@ -37,8 +37,6 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 	gdImagePtr buf_diff, CuTestImageResult *result_ret)
 {
 	int x, y;
-	CuTestImageResult result = {0, 0};
-
 	int c1, c2;
 
 	for (y = 0; y < gdImageSY(buf_a); y++) {
@@ -96,15 +94,13 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 					diff_b = 255;
 				}
 
-				result.pixels_changed++;
-				gdImageSetPixel(buf_diff, x,y, gdTrueColorAlpha(diff_r, diff_g, diff_b, diff_a));
+				result_ret->pixels_changed++;
+				if (buf_diff) gdImageSetPixel(buf_diff, x,y, gdTrueColorAlpha(diff_r, diff_g, diff_b, diff_a));
 			} else {
-				gdImageSetPixel(buf_diff, x,y, gdTrueColorAlpha(255,255,255,0));
+				if (buf_diff) gdImageSetPixel(buf_diff, x,y, gdTrueColorAlpha(255,255,255,0));
 			}
 		}
 	}
-
-	*result_ret = result;
 }
 
 int gdTestImageCompareToImage(const char* file, int line, const char* message,
@@ -114,7 +110,7 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 	unsigned int width_a, height_a;
 	unsigned int width_b, height_b;
 	gdImagePtr surface_diff = NULL;
-	CuTestImageResult result;
+	CuTestImageResult result = {0, 0};
 
 	if (!actual) {
 		fprintf(stderr, "Image is NULL\n");

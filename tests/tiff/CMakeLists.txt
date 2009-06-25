@@ -1,5 +1,6 @@
 
 SET(TESTS_FILES
+	tiff_im2im
 	tiff_null
 )
 

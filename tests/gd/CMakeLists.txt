@@ -1,5 +1,6 @@
 
 SET(TESTS_FILES
+	gd_im2im
 	gd_null
 )
 
