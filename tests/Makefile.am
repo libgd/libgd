@@ -32,8 +32,8 @@ SUBDIRS = gdtest \
 		png \
 		tga \
 		tiff \
-		xpm \
-		wbmp
+		wbmp \
+		xpm
 
 EXTRA_DIST = CMakeLists.txt
 

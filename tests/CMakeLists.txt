@@ -53,8 +53,8 @@ if (BUILD_TEST)
 		png
 		tga
 		tiff
-		xpm
 		wbmp
+		xpm
 	)
 
 	IF (WIN32)
