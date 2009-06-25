@@ -326,6 +326,7 @@ BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size)
 {
   void *rv;
   gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
+  if (out == NULL) return NULL;
   _gdImageGd (im, out);
   rv = gdDPExtractData (out, size);
   out->gd_free (out);

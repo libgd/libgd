@@ -93,6 +93,7 @@ BGD_DECLARE(void *) gdImageGifPtr(gdImagePtr im, int *size)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+	if (out == NULL) return NULL;
 	gdImageGifCtx(im, out);
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
@@ -142,6 +143,7 @@ BGD_DECLARE(void *) gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalC
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+	if (out == NULL) return NULL;
 	gdImageGifAnimBeginCtx(im, out, GlobalCM, Loops);
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
@@ -224,6 +226,7 @@ BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, 
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+	if (out == NULL) return NULL;
 	gdImageGifAnimAddCtx(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm);
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
