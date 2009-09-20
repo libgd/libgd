@@ -14,6 +14,7 @@ SET (LIBGD_SRC_FILES
 	gdpp.h
 	gd_bmp.c
 	bmp.h
+	gd_filter.c
 	gd_gd.c
 	gd_gd2.c
 	gd_io.c

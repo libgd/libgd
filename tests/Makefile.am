@@ -22,6 +22,7 @@ SUBDIRS = gdtest \
 		gdimageline \
 		gdimagepixelate \
 		gdimagerectangle \
+		gdimagescatterex \
 		gdimagesetpixel \
 		gdimagestringft \
 		gdimagestringftex \

@@ -43,6 +43,7 @@ if (BUILD_TEST)
 		gdimageline
 		gdimagepixelate
 		gdimagerectangle
+		gdimagescatterex
 		gdimagesetpixel
 		gdimagestringft
 		gdimagestringftex
