@@ -1348,6 +1348,7 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 	      err = FT_Glyph_To_Bitmap (&image, ft_render_mode_normal, 0, 1);
 	      if (err)
 		{
+		  FT_Done_Glyph(image);
 		  if (tmpstr)
 		    gdFree (tmpstr);
 		  gdCacheDelete (tc_cache);
