@@ -1,0 +1,9 @@
+syntax: glob
+Makefile
+config.h
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+cscope.out
+CPackConfig.cmake
+CPackSourceConfig.cmake
