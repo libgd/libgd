@@ -18,7 +18,7 @@ if (BUILD_TEST)
 	include_directories (BEFORE ${GD_INCLUDE_DIR} "${GDTEST_SOURCE_DIR}")
 	link_directories ("${GD_LIBS_DIR}" "${GDTEST_BINARY_DIR}/gdtest")
 
-	include_directories (BEFORE ${GD_INCLUDE_DIR} "${GDTEST_SOURCE_DIR}" "${CMAKE_BINARY_DIR}")
+	include_directories (BEFORE ${GD_INCLUDE_DIR} "${GDTEST_SOURCE_DIR}" "${CMAKE_BINARY_DIR}" "${CMAKE_BINARY_DIR}/tests/gdtest")
 
 	SET(TESTS_DIRS
 		gdtest
