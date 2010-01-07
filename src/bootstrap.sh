@@ -1,5 +1,5 @@
 #!/bin/sh --
-# $Id$
+# $Id: bootstrap.sh,v 1.1 2006-10-12 11:36:43 lhecking Exp $
 # Small shell script to build gd from CVS
 
 # allow importing from the environment, e.g.

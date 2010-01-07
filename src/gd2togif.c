@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 	im = gdImageCreateFromGd2(in);
 	fclose(in);
 	if (!im) {
-		fprintf(stderr, "Input is not in GD2 format!\n");
+		fprintf(stderr, "Input is not in GIF format!\n");
 		exit(1);
 	}
 	out = fopen(argv[2], "wb");

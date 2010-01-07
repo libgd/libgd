@@ -6,11 +6,7 @@ extern "C" {
 #define GDHELPERS_H 1
 
 /* sys/types.h is needed for size_t on Sparc-SunOS-4.1 */
-#ifndef _WIN32_WCE
 #include <sys/types.h>
-#else
-#include <stdlib.h>
-#endif /* _WIN32_WCE */
 
 /* TBB: strtok_r is not universal; provide an implementation of it. */
 
@@ -57,11 +53,6 @@ int overflow2(int a, int b);
 #define gdMutexUnlock(x) 
 #endif /* HAVE_PTHREAD */
 #endif /* WIN32 */
-
-#define DPCM2DPI(dpcm) (unsigned int)((dpcm)*2.54 + 0.5)
-#define DPM2DPI(dpm)   (unsigned int)((dpm)*0.0254 + 0.5)
-#define DPI2DPCM(dpi)  (unsigned int)((dpi)/2.54 + 0.5)
-#define DPI2DPM(dpi)   (unsigned int)((dpi)/0.0254 + 0.5)
 
 #endif /* GDHELPERS_H */
 

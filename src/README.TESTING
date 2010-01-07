@@ -1,0 +1,53 @@
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+To run the tests suite, all you need is (add the cmake options if you need any
+or if the default libs and include paths are not the default) :
+
+$ cmake -DBUILD_TEST=1 .
+$ ctest .
+
+If you like to run the tests against a installed GD library, set the following
+environment variables:
+
+export CMAKE_INCLUDE_PATH=/path/to/the/gd/include
+export CMAKE_LIBRARY_PATH=/path/to/the/gd/lib
+
+then call cmake using:
+
+$ cmake -DUSE_EXT_GD=1 -DBUILD_TEST=1 
+$ make
+and finally:
+
+$ ctest .
+
+I will certainly add a nice CMake option to give prefix later.
+
+What to do if tests fail on your platform and you use the last GD release? 
+either from your favourite distributions or from http://www.libgd.org or cvs?
+
+If you use a packaged version of the GD Library (installed from RPM, deb or 
+ports, gentoo packages or any other packages format or distribution), please try
+to run the tests using the source releases available at:
+
+http://www.libgd.org/Downloads
+
+If the tests fail using our source release, please report a bug here:
+
+http://bugs.libgd.org
+
+You can attach the two files available in:
+
+./Testing/Temporary
+
+Later versions will have an automatic post mode.
+
+If the tests run successfully, please report a bug to the maintainer of the
+packages (debian, bsd, ubuntu or whoever is responsible for the packages).
+
+Reasons of failures:
+Exception: SegFault: self explaining
+Failed               test failed, check the log to know where
+timeout              the default timeout is 5 seconds. Some test may
+                     have infinite loops when compiled against old versions
+                     of the GD library (esp. 2.0.33 or earlier)
+

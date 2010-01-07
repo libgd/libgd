@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: gd.c 282781 2009-06-25 19:44:44Z tabe $ */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -10,7 +10,6 @@
 /* 2.03: don't include zlib here or we can't build without PNG */
 #include "gd.h"
 #include "gdhelpers.h"
-#include "gd_color.h"
 
 /* 2.0.12: this now checks the clipping rectangle */
 #define gdImageBoundsSafeMacro(im, x, y) (!((((y) < (im)->cy1) || ((y) > (im)->cy2)) || (((x) < (im)->cx1) || ((x) > (im)->cx2))))
@@ -62,8 +61,8 @@ static const unsigned char gd_toascii[256] = {
 };
 #endif /*CHARSET_EBCDIC */
 
-extern const int gdCosT[];
-extern const int gdSinT[];
+extern int gdCosT[];
+extern int gdSinT[];
 
 static void gdImageBrushApply (gdImagePtr im, int x, int y);
 static void gdImageTileApply (gdImagePtr im, int x, int y);
@@ -81,11 +80,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 		return NULL;
   }
 
-	im = (gdImage *) gdCalloc(1, sizeof(gdImage));
+  im = (gdImage *) gdMalloc (sizeof (gdImage));
 	if (!im) {
 		return NULL;
 	}
 
+  memset (im, 0, sizeof (gdImage));
   /* Row-major ever since gd 1.3 */
   im->pixels = (unsigned char **) gdMalloc (sizeof (unsigned char *) * sy);
 	if (!im->pixels) {
@@ -134,8 +134,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
   im->cy1 = 0;
   im->cx2 = im->sx - 1;
   im->cy2 = im->sy - 1;
-  im->res_x = GD_RESOLUTION;
-  im->res_y = GD_RESOLUTION;
   return im;
 }
 
@@ -205,8 +203,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
   im->cy1 = 0;
   im->cx2 = im->sx - 1;
   im->cy2 = im->sy - 1;
-  im->res_x = GD_RESOLUTION;
-  im->res_y = GD_RESOLUTION;
   return im;
 }
 
@@ -678,171 +674,6 @@ BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
 
   to->colorsTotal = from->colorsTotal;
 
-}
-
-BGD_DECLARE(int) gdImageColorReplace (gdImagePtr im, int src, int dst)
-{
-	register int x, y;
-	int n = 0;
-
-	if (src == dst) {
-		return 0;
-	}
-
-#define REPLACING_LOOP(pixel) do {								\
-		for (y = im->cy1; y <= im->cy2; y++) {					\
-			for (x = im->cx1; x <= im->cx2; x++) {				\
-				if (pixel(im, x, y) == src) {					\
-					gdImageSetPixel(im, x, y, dst);				\
-					n++;										\
-				}												\
-			}													\
-		}														\
-	} while (0)
-
-	if (im->trueColor) {
-		REPLACING_LOOP(gdImageTrueColorPixel);
-	} else {
-		REPLACING_LOOP(gdImagePalettePixel);
-	}
-
-#undef REPLACING_LOOP
-
-	return n;
-}
-
-BGD_DECLARE(int) gdImageColorReplaceThreshold (gdImagePtr im, int src, int dst, float threshold)
-{
-	register int x, y;
-	int n = 0;
-
-	if (src == dst) {
-		return 0;
-	}
-
-#define REPLACING_LOOP(pixel) do {										\
-		for (y = im->cy1; y <= im->cy2; y++) {							\
-			for (x = im->cx1; x <= im->cx2; x++) {						\
-				if (gdColorMatch(im, src, pixel(im, x, y), threshold)) { \
-					gdImageSetPixel(im, x, y, dst);						\
-					n++;												\
-				}														\
-			}															\
-		}																\
-	} while (0)
-
-	if (im->trueColor) {
-		REPLACING_LOOP(gdImageTrueColorPixel);
-	} else {
-		REPLACING_LOOP(gdImagePalettePixel);
-	}
-
-#undef REPLACING_LOOP
-
-	return n;
-}
-
-static int colorCmp (const void *x, const void *y)
-{
-	int a = *(int const *)x;
-	int b = *(int const *)y;
-	return (a > b) - (a < b);
-}
-
-BGD_DECLARE(int) gdImageColorReplaceArray (gdImagePtr im, int len, int *src, int *dst)
-{
-	register int x, y;
-	int c, *d, *base;
-	int i, n = 0;
-
-	if (len <= 0 || src == dst) {
-		return 0;
-	}
-	if (len == 1) {
-		return gdImageColorReplace(im, src[0], dst[0]);
-	}
-	if (overflow2(len, sizeof(int)<<1)) {
-		return -1;
-	}
-	base = (int *)gdMalloc(len * (sizeof(int)<<1));
-	if (!base) {
-		return -1;
-	}
-	for (i = 0; i < len; i++) {
-		base[(i<<1)]   = src[i];
-		base[(i<<1)+1] = dst[i];
-	}
-	qsort(base, len, sizeof(int)<<1, colorCmp);
-
-#define REPLACING_LOOP(pixel) do {										\
-		for (y = im->cy1; y <= im->cy2; y++) {							\
-			for (x = im->cx1; x <= im->cx2; x++) {						\
-				c = pixel(im, x, y);									\
-				if ( (d = (int *)bsearch(&c, base, len, sizeof(int)<<1, colorCmp)) ) { \
-					gdImageSetPixel(im, x, y, d[1]);					\
-					n++;												\
-				}														\
-			}															\
-		}																\
-	} while (0)
-
-	if (im->trueColor) {
-		REPLACING_LOOP(gdImageTrueColorPixel);
-	} else {
-		REPLACING_LOOP(gdImagePalettePixel);
-	}
-
-#undef REPLACING_LOOP
-
-	gdFree(base);
-	return n;
-}
-
-BGD_DECLARE(int) gdImageColorReplaceCallback (gdImagePtr im, gdCallbackImageColor callback)
-{
-	int c, d, n = 0;
-
-	if (!callback) {
-		return 0;
-	}
-	if (im->trueColor) {
-		register int x, y;
-
-		for (y = im->cy1; y <= im->cy2; y++) {
-			for (x = im->cx1; x <= im->cx2; x++) {
-				c = gdImageTrueColorPixel(im, x, y);
-				if ( (d = callback(im, c)) != c) {
-					gdImageSetPixel(im, x, y, d);
-					n++;
-				}
-			}
-		}
-	} else { /* palette */
-		int *sarr, *darr;
-		int k, len = 0;
-
-		sarr = (int *)gdCalloc(im->colorsTotal, sizeof(int));
-		if (!sarr) {
-			return -1;
-		}
-		for (c = 0; c < im->colorsTotal; c++) {
-			if (!im->open[c]) {
-				sarr[len++] = c;
-			}
-		}
-		darr = (int *)gdCalloc(len, sizeof(int));
-		if (!darr) {
-			gdFree(sarr);
-			return -1;
-		}
-		for (k = 0; k < len; k++) {
-			darr[k] = callback(im, sarr[k]);
-		}
-		n = gdImageColorReplaceArray(im, k, sarr, darr);
-		gdFree(darr);
-		gdFree(sarr);
-	}
-	return n;
 }
 
 /* 2.0.10: before the drawing routines, some code to clip points that are
@@ -1818,7 +1649,7 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
 	{
 	  if (!(style & gdChord))
 	    {
-	      if (style & gdNoFill)
+		if (style & gdNoFill)
 		{
 		  gdImageLine (im, lx, ly, x, y, color);
 		}
@@ -2116,7 +1947,7 @@ struct seg {int y, xl, xr, dy;};
 #define FILL_POP(Y, XL, XR, DY) \
     {sp--; Y = sp->y+(DY = sp->dy); XL = sp->xl; XR = sp->xr;}
 
-static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc);
+void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc);
 BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
 {
 	int l, x1, x2, dy;
@@ -2228,23 +2059,35 @@ done:
 	im->alphaBlendingFlag = alphablending_bak;	
 }
 
-static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
+void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 {
-	int l, x1, x2, dy;
+	int i,l, x1, x2, dy;
 	int oc;   /* old pixel value */
 	int tiled;
 	int wx2,wy2;
 	/* stack of filled segments */
 	struct seg *stack;
 	struct seg *sp;
-	char *pts;
 
-	if (!im->tile) {
+	int **pts;
+	if(!im->tile){
 		return;
 	}
 
 	wx2=im->sx;wy2=im->sy;
 	tiled = nc==gdTiled;
+
+	if(overflow2(sizeof(int *), im->sy)) {
+		return;
+	}
+
+	if(overflow2((sizeof(int *) * im->sy), sizeof(int))) {
+		return;
+	}
+
+	if(overflow2(im->sx, sizeof(int))) {
+		return;
+	}
 
 	if(overflow2(im->sy, im->sx)) {
 		return;
@@ -2255,14 +2098,24 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 	}
 
 	nc =  gdImageTileGet(im,x,y);
-	pts = (char *) gdCalloc(im->sy * im->sx, sizeof(char));
+	pts = (int **) gdCalloc(sizeof(int *) * im->sy, sizeof(int));
 	if (!pts) {
 		return;
 	}
 
+	for (i=0; i<im->sy;i++) {
+		pts[i] = (int *) gdCalloc(im->sx, sizeof(int));
+
+		if (!pts[i]) {
+			for (--i ; i >= 0; i--) {
+				gdFree(pts[i]);
+			}
+			return;
+		}
+	}
+
 	stack = (struct seg *)gdMalloc(sizeof(struct seg) * ((int)(im->sy*im->sx)/4));
 	if (!stack) {
-		gdFree(pts);
 		return;
 	}
 	sp = stack;
@@ -2275,9 +2128,13 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
  	FILL_PUSH(y+1, x, x, -1);
 	while (sp>stack) {
 		FILL_POP(y, x1, x2, dy);
-		for (x=x1; x>=0 && (!pts[y + x*wx2] && gdImageGetPixel(im,x,y)==oc); x--) {
+		for (x=x1; x>=0 && (!pts[y][x] && gdImageGetPixel(im,x,y)==oc); x--) {
+			if (pts[y][x]){
+				/* we should never be here */
+				break;
+			}
 			nc = gdImageTileGet(im,x,y);
-			pts[y + x*wx2]=1;
+			pts[y][x]=1;
 			gdImageSetPixel(im,x, y, nc);
 		}
 		if (x>=x1) {
@@ -2291,13 +2148,13 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 		}
 		x = x1+1;
 		do {
-			for (; x<wx2 && (!pts[y + x*wx2] && gdImageGetPixel(im,x, y)==oc) ; x++) {
-				if (pts[y + x*wx2]){
+			for (; x<wx2 && (!pts[y][x] && gdImageGetPixel(im,x, y)==oc) ; x++) {
+				if (pts[y][x]){
 					/* we should never be here */
 					break;
 				}
 				nc = gdImageTileGet(im,x,y);
-				pts[y + x*wx2]=1;
+				pts[y][x]=1;
 				gdImageSetPixel(im, x, y, nc);
 			}
 			FILL_PUSH(y, l, x-1, dy);
@@ -2305,11 +2162,13 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 			if (x>x2+1) {
 				FILL_PUSH(y, x2+1, x-1, -dy);
 			}
-skip:			for (x++; x<=x2 && (pts[y + x*wx2] || gdImageGetPixel(im,x, y)!=oc); x++);
+skip:			for (x++; x<=x2 && (pts[y][x] || gdImageGetPixel(im,x, y)!=oc); x++);
 			l = x;
 		} while (x<=x2);
 	}
-
+	for (i=0; i<im->sy;i++) {
+		gdFree(pts[i]);
+	}
 	gdFree(pts);
 	gdFree(stack);
 }
@@ -2320,6 +2179,7 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 	int thick = im->thick;
 	int half1 = 1;
 	int t;
+
 
 	if (x1 == x2 && y1 == y2 && thick == 1) {
 			gdImageSetPixel(im, x1, y1, color);
@@ -2340,6 +2200,7 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 	if (thick > 1) {
 		int cx, cy, x1ul, y1ul, x2lr, y2lr;
 		int half = thick >> 1;
+
 		half1 = thick - half;
 		x1ul = x1 - half;
 		y1ul = y1 - half;
@@ -2398,13 +2259,13 @@ BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2,
      nicely kills any plotting for rectangles completely outside the
      window as it makes the tests in the for loops fail */
   if (x1 < 0)
-    x1 = 0;
+	  x1 = 0;
   if (x1 > gdImageSX (im))
-    x1 = gdImageSX (im);
+	  x1 = gdImageSX (im);
   if (y1 < 0)
-    y1 = 0;
+	  y1 = 0;
   if (y1 > gdImageSY (im))
-    y1 = gdImageSY (im);
+	  y1 = gdImageSY (im);
 
   if (x1 > x2) {
 	  x = x1;
@@ -2445,9 +2306,9 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 		  for (y = 0; (y < h); y++) {
 			  for (x = 0; (x < w); x++) {
 				  int c = gdImageGetTrueColorPixel (src, srcX + x, srcY + y);
-					if (c != src->transparent) {
+				  if (c != src->transparent) {
 					  gdImageSetPixel (dst, dstX + x, dstY + y, c);
-					}
+				  }
 			  }
 		  }
 	  } else {
@@ -2671,7 +2532,7 @@ BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, 
 
   sty = (int *) gdMalloc (sizeof (int) * srcH);
 	if (!sty) {
-	  gdFree(stx);
+		gdFree(stx);
 		return;
 	}
 
@@ -3656,12 +3517,6 @@ BGD_DECLARE(void) gdImageGetClip (gdImagePtr im, int *x1P, int *y1P, int *x2P, i
   *y1P = im->cy1;
   *x2P = im->cx2;
   *y2P = im->cy2;
-}
-
-BGD_DECLARE(void) gdImageSetResolution(gdImagePtr im, const unsigned int res_x, const unsigned int res_y)
-{
-  if (res_x > 0) im->res_x = res_x;
-  if (res_y > 0) im->res_y = res_y;
 }
 
 /*

@@ -1,0 +1,1500 @@
+2008-03-11 11:38  pajoye
+
+	* Makefile.am: - missing config.h.cmake
+
+2008-03-11 11:37  pajoye
+
+	* Makefile.am: - missing CMakeLists.txt in EXTRA_DISTS
+
+2008-03-10 13:33  pajoye
+
+	* Makefile.am, configure.ac, VMS/Makefile.am, cmake/Makefile.am,
+	  cmake/modules/Makefile.am, netware/Makefile.am,
+	  netware/tests/Makefile.am, tests/Makefile.am,
+	  tests/freetype/Makefile.am, tests/gd2/Makefile.am,
+	  tests/gdimagearc/Makefile.am,
+	  tests/gdimagecolorclosest/Makefile.am,
+	  tests/gdimagecolordeallocate/Makefile.am,
+	  tests/gdimagecolorexact/Makefile.am,
+	  tests/gdimagecolorresolve/Makefile.am,
+	  tests/gdimagecolortransparent/Makefile.am,
+	  tests/gdimagecopy/Makefile.am,
+	  tests/gdimagecopyrotated/Makefile.am,
+	  tests/gdimagefill/Makefile.am,
+	  tests/gdimagefilledellipse/Makefile.am,
+	  tests/gdimagefilledrectangle/Makefile.am,
+	  tests/gdimagefilltoborder/Makefile.am,
+	  tests/gdimageline/Makefile.am,
+	  tests/gdimagerectangle/Makefile.am, tests/gdtest/Makefile.am,
+	  tests/gdtiled/Makefile.am, tests/gif/Makefile.am,
+	  tests/jpeg/Makefile.am, tests/png/Makefile.am,
+	  windows/Makefile.am: - Update autotools scripts  - add tests,
+	  netware, windows, cmake, VMS	- remove old files not present
+	  anymore since 2.0.3
+
+2008-03-10 13:09  pajoye
+
+	* netware/: Makefile, Makefile.netware, tests/Makefile,
+	  tests/Makefile.netware: - move makefile to Makefile.netware to
+	  avoid automake conflict
+
+2008-03-10 13:04  pajoye
+
+	* windows/: Makefile, Makefile.w32: - move Makefile to Makefile.w32
+	  to avoid conflict with automake files
+
+2008-03-10 02:50  pajoye
+
+	* tests/gdtiled/bug00032.c: - fix test on windows and remove
+	  possible leak when the system runs out of   memory (or the image
+	  creation failed for unknown reason)
+
+2008-03-10 00:02  pajoye
+
+	* ChangeLog: - update changelog
+
+2008-03-10 00:02  pajoye
+
+	* tests/freetype/: bug00132.c, bug00132_exp.png: - drop antialias
+	  to fix the test when run on many different archictures
+
+2008-03-09 22:06  pajoye
+
+	* ChangeLog: - update changelog 2.0.x
+
+2008-02-01 02:52  pajoye
+
+	* NEWS, gd.c: - #145, MFH: Leak in gdImageCopyResized (Patch by
+	  Brent Bottles)
+
+2007-12-30 21:03  chapg
+
+	* VMS/CONFIGURE.COM: [no log message]
+
+2007-11-27 08:56  pajoye
+
+	* CMakeLists.txt: - ignore automate.cache in cpack
+
+2007-11-27 08:49  pajoye
+
+	* ChangeLog: - update changelog
+
+2007-11-27 08:48  pajoye
+
+	* configure.ac: - #133, yet another fix the fix
+
+2007-11-27 00:14  pajoye
+
+	* CMakeLists.txt: - let make my life easier for 2.0.x too
+
+2007-11-26 23:17  pajoye
+
+	* ChangeLog: - update changelog
+
+2007-11-25 20:39  mattias
+
+	* gd_gd2.c: - Nuked unused label
+
+2007-11-23 17:14  pajoye
+
+	* ChangeLog: - update changelog
+
+2007-11-23 17:13  pajoye
+
+	* configure.ac: - version++
+
+2007-11-23 17:07  pajoye
+
+	* configure.ac: - version++
+
+2007-11-23 12:45  scottmac
+
+	* NEWS, configure.ac: - #133, configure script ignores
+	  --with-png=DIR option
+
+2007-11-21 22:16  pajoye
+
+	* tests/gdimageline/: CMakeLists.txt, bug00111.c, bug00111_exp.png:
+	  - #111, MFH: add test case
+
+2007-11-21 13:27  pajoye
+
+	* tests/freetype/bug00132.c: - MFH: add sanity check
+
+2007-11-21 13:22  pajoye
+
+	* tests/gdimagecopy/bug00081.c: - MFH:	- add sanity check  - nuke
+	  unused variabl
+
+2007-11-21 10:06  pajoye
+
+	* tests/freetype/bug00132.c: - #132, fix test take 2
+
+2007-11-21 10:05  pajoye
+
+	* tests/freetype/DejaVuSans.ttf: - #132, add font (DejaVu) and fix
+	  test
+
+2007-11-21 10:01  pajoye
+
+	* ChangeLog: - update changelog
+
+2007-11-21 10:00  pajoye
+
+	* NEWS, gdft.c, tests/CMakeLists.txt,
+	  tests/freetype/CMakeLists.txt, tests/freetype/bug00132.c,
+	  tests/freetype/bug00132_exp.png: - #132, Fixed decoding of the
+	  html entity &thetasym;
+
+2007-11-20 14:42  pajoye
+
+	* NEWS, gd.c, tests/gdimagecopy/CMakeLists.txt,
+	  tests/gdimagecopy/bug00081.c, tests/gdimagecopy/bug00081_exp.png:
+	  - #81, gdImageCopy ignores the transparent color
+
+2007-11-18 21:16  pajoye
+
+	* CMakeLists.txt, gd.h, index.html, tests/png/bug00088.c: - #88,
+	  add test - update version to .36-dev
+
+2007-11-18 16:09  pajoye
+
+	* ChangeLog: - update changelog
+
+2007-11-18 16:08  pajoye
+
+	* NEWS: - update NEWS
+
+2007-11-18 15:49  pajoye
+
+	* tests/png/: CMakeLists.txt, bug00088_1.png, bug00088_1_exp.png,
+	  bug00088_2.png, bug00088_2_exp.png: - #88, MFH: add test case
+
+2007-11-17 22:55  pajoye
+
+	* gd_png.c: - #88, Fix loading of grayscale png image with alpha
+
+2007-10-24 15:50  scottmac
+
+	* NEWS, gd_wbmp.c: MFH: #127,  segfault when createwbmp fails
+
+2007-10-07 00:19  guenter
+
+	* gdft.c: fixed FS#83 — re-defines within gdft.c when compiled with
+	  MingW32; added int casts for the gdft_draw_bitmap() pen params.
+
+2007-09-09 21:44  guenter
+
+	* netware/: get_exp.awk, get_ver.awk, keepscreen.c, nwlibc.c,
+	  tests/Makefile: added CVS Id tags.
+
+2007-09-09 21:39  guenter
+
+	* netware/: Makefile, get_exp.awk, get_ver.awk, keepscreen.c,
+	  mkgdimp.pl, nwlibc.c, tests/Makefile: updated NetWare build
+	  files.
+
+2007-09-09 15:12  mattias
+
+	* NEWS, gd.c, tests/CMakeLists.txt,
+	  tests/gdimagecolortransparent/CMakeLists.txt,
+	  tests/gdimagecolortransparent/gdimagecolortransparent.c: - #113,
+	  gdImageColorTransparent can write outside buffer
+
+2007-09-01 14:34  mattias
+
+	* gd.c, tests/gdimagecolordeallocate/gdimagecolordeallocate.c: -
+	  #112, More checking
+
+2007-08-31 09:31  mattias
+
+	* NEWS, gd.c, tests/CMakeLists.txt,
+	  tests/gdimagecolordeallocate/CMakeLists.txt,
+	  tests/gdimagecolordeallocate/gdimagecolordeallocate.c: - #112,
+	  gdImageColorDeallocate can write outside buffer
+
+2007-08-30 21:30  mattias
+
+	* NEWS: - Added bug #111
+
+2007-08-30 21:03  mattias
+
+	* gd.c: -MFH #111, Optimization for single pixel line not in
+	  correct order
+
+2007-08-26 21:47  pajoye
+
+	* tests/: gdimagefilledrectangle/CMakeLists.txt,
+	  gdimagerectangle/CMakeLists.txt: - #106, gdImageRectangle draws
+	  1x1 rectangles as 1x3 rectangles   missing cmake change
+
+2007-08-26 21:35  pajoye
+
+	* NEWS, gd.c, tests/gdimagefilledrectangle/bug00106.c,
+	  tests/gdimagerectangle/bug00106.c: - #106, gdImageRectangle draws
+	  1x1 rectangles as 1x3 rectangles
+
+2007-08-14 19:15  guenter
+
+	* netware/get_exp.awk: file get_exp.awk was added on branch GD_2_0
+	  on 2007-09-09 19:39:43 +0000
+
+2007-08-14 19:15  guenter
+
+	* netware/get_exp.awk: updated NetWare build files.
+
+2007-08-08 18:58  mattias
+
+	* gd.c: #109, 2.0 are diffrent than HEAD and require more checking
+
+2007-08-08 17:18  mattias
+
+	* gd_security.c: -MFH: Be paranoid and dont allow multiplication
+	  with zero
+
+2007-08-08 14:57  mattias
+
+	* NEWS, gd.c: -MFH: #109, Possible integer overflow in
+	  gdImageFill()
+
+2007-08-07 21:54  mattias
+
+	* gd_gif_in.c: -MFH: file lost in last commit for #105 :)
+
+2007-08-07 21:50  mattias
+
+	* NEWS, gd_gd.c, gd_gd2.c, gd_jpeg.c, gd_png.c, gd_wbmp.c: -MFH:
+	  #105, gdImageCreateFrom*Ptr() can crash if gdNewDynamicCtxEx()
+	  fails
+
+2007-08-06 20:38  mattias
+
+	* NEWS: - Added #101
+
+2007-08-06 20:35  mattias
+
+	* gd_gd.c: -MFH #101, _gdCreateFromFile() can crash if
+	  gdImageCreate fails
+
+2007-06-26 14:10  pajoye
+
+	* NEWS: - add #95 entry
+
+2007-06-26 14:09  pajoye
+
+	* NEWS, gd.h: - MFH: #97, ease the creation of regexps to match
+	  symbols/functions
+
+2007-06-24 14:56  pajoye
+
+	* netware/: Makefile, get_ver.awk, keepscreen.c, mkgdimp.pl,
+	  nwlibc.c, tests/Makefile: - #95, add NetWare makefiles to main
+	  source tree
+
+2007-06-21 20:35  pajoye
+
+	* ChangeLog: - update
+
+2007-06-21 20:35  pajoye
+
+	* NEWS: - 2.0.35, here we go
+
+2007-06-21 11:03  pajoye
+
+	* index.html: - s/2.0.33/2.0.35/ - add a note about reading NEWS
+	  instead
+
+2007-06-20 11:11  pajoye
+
+	* tests/gif/bug00060.c: - fix test (does not return 0 by default)
+
+2007-06-19 23:15  pajoye
+
+	* ChangeLog: - update
+
+2007-06-19 23:14  pajoye
+
+	* NEWS: - better info
+
+2007-06-19 22:35  pajoye
+
+	* ChangeLog: - update
+
+2007-06-19 22:25  pajoye
+
+	* NEWS, gd.c: - MFH: #94, gdImageCreateXbm can crash if
+	  gdImageCreate fails
+
+2007-06-17 21:02  nlopess
+
+	* gd.c: now plug the memleak I introduced (because it wont crash)
+
+2007-06-17 20:49  nlopess
+
+	* gd.c: backport a missing bit of bug #41 (_gdImageFillTiled()
+	  crashed if calloc failed)
+
+2007-06-14 22:02  pajoye
+
+	* ChangeLog: - update
+
+2007-06-14 21:23  pajoye
+
+	* gd.c: - WS
+
+2007-06-14 21:22  pajoye
+
+	* gd.c: - #74, Fix regression introduced by the original fix
+
+2007-06-09 14:55  pajoye
+
+	* ChangeLog: - update changelog
+
+2007-06-09 14:48  pajoye
+
+	* NEWS: - damned bug system posted it two times (our mailserver is
+	  on its knies...)
+
+2007-06-09 14:47  pajoye
+
+	* NEWS: - s/89/90/
+
+2007-06-09 14:30  pajoye
+
+	* NEWS, gd.c: - #89, Possible integer overflow in
+	  gdImageCreateTrueColor
+
+2007-06-08 07:21  pajoye
+
+	* NEWS, gd_gif_in.c: - #87, fix segfault when an invalid color
+	  index is present in the   image data
+
+2007-05-17 16:51  pajoye
+
+	* ChangeLog: - update
+
+2007-05-17 16:38  pajoye
+
+	* NEWS, gd_png.c, tests/png/CMakeLists.txt, tests/png/bug00086.c: -
+	  #86, Possible infinite loop in libgd/gd_png.c   (flaw reported by
+	  Xavier Roche)
+
+2007-05-15 13:31  pajoye
+
+	* CMakeLists.txt: - fix tests build when used with an external
+	  library
+
+2007-05-07 12:21  pajoye
+
+	* gd.c, tests/CMakeLists.txt, tests/gdimagearc/CMakeLists.txt,
+	  tests/gdimagearc/bug00079.c, tests/gdimagearc/bug00079_exp.png: -
+	  #79:	- reverse wrong fix  - fix hline and vline calls  - add
+	  test case
+
+2007-05-07 09:08  pajoye
+
+	* gd.c: - #79, regression in gdImageArc when used with
+	  gdAntiAliased
+
+2007-05-06 22:21  pajoye
+
+	* NEWS: - #78 entry
+
+2007-05-06 22:15  pajoye
+
+	* ChangeLog: - update changelog
+
+2007-05-06 22:13  pajoye
+
+	* CMakeLists.txt, cmake/modules/FindFreetype.cmake,
+	  tests/gdimagefilledrectangle/CMakeLists.txt,
+	  tests/gdimagefilledrectangle/bug00078.c: - update cmake  - remove
+	  strlcpy.c  - fix HAVE_FREETYPE definitiion
+
+2007-05-06 22:12  pajoye
+
+	* gd.c: - #78, gdImageFilledRectangle with reversed edges does not
+	  work
+
+2007-05-06 21:43  pajoye
+
+	* tests/gdimageline/bug00077.c: - #77, fix expected image name
+
+2007-05-06 21:37  pajoye
+
+	* gd.h: - remove gd_strlcpy declaration, has been droped already
+
+2007-05-06 21:33  pajoye
+
+	* tests/gdimageline/CMakeLists.txt: - #72, #77, add tests to
+	  CMakeLists.txt
+
+2007-05-06 21:15  pajoye
+
+	* cmake/modules/FindPTHREAD.cmake: - Fix PTHREAD config variable
+	  (Nuno)
+
+2007-05-06 20:36  pajoye
+
+	* tests/gdimageline/: bug00077.c, bug00077_exp.png: - #77, add test
+	  case
+
+2007-05-06 19:52  pajoye
+
+	* tests/gdimagefilledrectangle/bug00078.c: - #78, add test case
+
+2007-04-26 17:52  pajoye
+
+	* gd.c: - #72 (and #77), fix vertical lines when y2 < y1
+
+2007-04-24 16:24  pajoye
+
+	* windows/Makefile: - remove libgd.dll.res as well on make clean
+
+2007-04-24 09:47  pajoye
+
+	* CMakeLists.txt, configure.ac, gd.h: - prepare 2.0.35
+
+2007-04-22 19:13  pajoye
+
+	* NEWS, gdtest.c, VMS/CONFIGURE.COM, VMS/README.VMS: - #68, add
+	  OpenVMS build script
+
+2007-04-19 14:54  scottmac
+
+	* NEWS, gd.h, gdft.c: #73, Fix usage of TTF on Netware
+
+2007-04-17 12:56  pajoye
+
+	* CMakeLists.txt: - MFH: name the dll bgd not gd - make fontconfig
+	  optional on win32
+
+2007-04-17 12:50  pajoye
+
+	* windows/Makefile: - user friendly deps path definition
+
+2007-04-14 19:41  pajoye
+
+	* NEWS: - #74 entry
+
+2007-04-14 19:27  pajoye
+
+	* gd.c: - #74, gdImageFilledArc, huge CPU usage with large angles
+
+2007-04-10 23:26  pajoye
+
+	* NEWS: - s/#//
+
+2007-04-10 22:35  pajoye
+
+	* tests/jpeg/jpeg_empty_file.c: - don't use cont
+
+2007-04-10 22:32  pajoye
+
+	* tests/: gd2/gd2_empty_file.c, gd2/gd2_read.c,
+	  gdimagecopyrotated/bug00020.c, gdimagefill/bug00002_1.c,
+	  gdimagefill/bug00002_2.c, gdimagefill/bug00002_3.c,
+	  gdimagefill/bug00002_4.c, gdimagefilledellipse/bug00010.c,
+	  gdimageline/bug00072.c, gdimageline/gdimageline_aa.c,
+	  gdtest/gdtest.c, gdtest/gdtest.h, gif/bug00005.c, gif/bug00060.c,
+	  gif/bug00066.c, jpeg/jpeg_empty_file.c, jpeg/jpeg_read.c,
+	  png/bug00011.c, png/bug00033.c: - use a constant to get the top
+	  src dir - don't use const when it is not a const...
+
+2007-04-09 18:22  pajoye
+
+	* ChangeLog: - update changelog
+
+2007-04-09 18:21  pajoye
+
+	* NEWS: - #72 entry
+
+2007-04-09 18:18  pajoye
+
+	* gd.c, tests/gdimageline/bug00072.c,
+	  tests/gdimageline/bug00072_exp.png: - #72, gdImageAALine draws
+	  axis aligned lines two pixels large  . add gdImageVLine and
+	  HLine, not exported (will be 2.1.0)
+
+2007-04-09 16:00  pajoye
+
+	* tests/: gdimageline/gdimageline_aa.c, gdtest/gdtest.c,
+	  gif/bug00005.c: - always store image diff files in the build dir
+	  - store the output result as well - remove c++ comment - be more
+	  verbose in the error messages
+
+2007-04-04 14:04  pajoye
+
+	* tests/gif/: CMakeLists.txt, bug00060.c, bug00066.c, bug00066.gif,
+	  bug00066_exp.png: - add test for #66 - fix leak in test #60
+
+2007-04-04 13:38  pajoye
+
+	* NEWS: - #70 entry
+
+2007-04-04 13:33  pajoye
+
+	* gd_gif_in.c: - #70, do not try to use the global color map if
+	  none exists - free im on error
+
+2007-04-03 19:03  pajoye
+
+	* NEWS: - update NEWS entries for the last commits
+
+2007-04-03 18:38  pajoye
+
+	* gdft.c: - we already lock it earlier, prevent deadlock/double
+	  lock
+
+2007-04-01 22:41  pajoye
+
+	* gd.c, gd_png.c, gdft.c: - #67,  Preferable calls of gdFree() in
+	  libg (tabe at fixedpoint dot jp)
+
+2007-04-01 22:12  pajoye
+
+	* tests/gdtest/test_config.h.cmake: - add configuration file
+
+2007-04-01 21:54  pajoye
+
+	* gd_gif_in.c: - #52, #60, #66	 - a frame size must be confined to
+	  the screen defition	      - consider 00005_2 as invalid (65k x
+	  65k frame size for a 400x312 screen)	     - be sure to always
+	  read the dimensions in the frame and does not use	the screen
+	  size (see #66 for a side effect)
+
+2007-04-01 21:48  pajoye
+
+	* tests/: gd2/gd2_empty_file.c, gd2/gd2_read.c,
+	  gdimagecopyrotated/bug00020.c, gdimagefill/bug00002_1.c,
+	  gdimagefill/bug00002_2.c, gdimagefill/bug00002_3.c,
+	  gdimagefill/bug00002_4.c, gdimagefilledellipse/bug00010.c,
+	  gdimageline/gdimageline_aa.c, gdtest/CMakeLists.txt,
+	  gdtest/gdtest.c, gif/CMakeLists.txt, gif/bug00005.c,
+	  gif/bug00060.c, gif/bug00060.gif, jpeg/jpeg_empty_file.c,
+	  jpeg/jpeg_read.c, png/bug00011.c, png/bug00033.c: - allow tests
+	  to be launched outside the src tree - #60, add test case for #60
+
+2007-03-31 19:24  pajoye
+
+	* entities.h: - update from entities.tcl
+
+2007-03-31 16:26  pajoye
+
+	* gd_gif_in.c: - #52, #60   - local Pallette are read twice   - Use
+	  the local dimension when available   - Rely on the global
+	  dimension when the local dimension are invalid and	 the format
+	  is GIF87 (no animation)   NB: The #52 TS patch must be applied
+	  first
+
+2007-03-15 23:23  nlopess
+
+	* tests/gif/bug00005_2.c: fix leak in test
+
+2007-03-12 17:01  pajoye
+
+	* CMakeLists.txt: - generate config.h in the BUIL_DIR instead of
+	  the SOURCE_DIR - drop old commented lines
+
+2007-03-08 20:59  nlopess
+
+	* NEWS: fix news, sorry
+
+2007-03-08 20:56  nlopess
+
+	* NEWS, gd_gif_in.c: fix bug #52: Reading GIF images is not thread
+	  safe (static usage in private functions)
+
+2007-03-08 20:52  pajoye
+
+	* ISSUES: - we use NEWS now
+
+2007-03-05 16:42  pajoye
+
+	* Makefile.am, NEWS, windows/Makefile: - #51  - revert Ilia's patch
+	  (was not required)  - Remove strlcpy, we don't need it now (I
+	  keep it in cvs just in case	 but it will not be distributed or
+	  used in the binaries)
+
+2007-03-02 22:59  nlopess
+
+	* gd_gif_in.c: merge with php tree: fix access to unitialized
+	  memory (introduced with the strlcpy usage) # now gd_strlcpy()
+	  becomes useless again :P
+
+2007-03-02 15:36  edink
+
+	* windows/Makefile: Add new file compilation
+
+2007-02-27 21:32  pajoye
+
+	* windows/Makefile: - MFH: fix new lines, vc7 does not like
+	  makefile with both unix and windows line ending
+
+2007-02-27 01:38  pajoye
+
+	* NEWS: - andersrum..
+
+2007-02-27 00:55  pajoye
+
+	* ChangeLog: - update Changelog
+
+2007-02-27 00:55  pajoye
+
+	* NEWS: - update NEWS for 2.0.35RC1
+
+2007-02-27 00:46  pajoye
+
+	* gd.c: - #41, fix possible overrun (detected with valgrind) (Nuno
+	  Lopes)
+
+2007-02-27 00:39  pajoye
+
+	* CMakeLists.txt, Makefile.am, gd.h, gd_gif_in.c, strlcpy.c: - #51,
+	  Use strlcpy instead of strncpy in gd_gif_c   - fix off-by-one
+
+2007-02-26 20:58  pajoye
+
+	* gdft.c: - #48, Race condition in gdImageStringFTEx   it is safe
+	  to destroy an unlocked mutex, not a locked one (Nuno Lopes)
+
+2007-02-26 20:30  pajoye
+
+	* gdft.c: - #48, Race condition in gdImageStringFTEx (cache)
+
+2007-02-07 01:32  pajoye
+
+	* ChangeLog: - sync
+
+2007-02-07 01:27  pajoye
+
+	* NEWS: - add CVE ref.
+
+2007-02-07 01:26  pajoye
+
+	* ChangeLog: - sync changelog
+
+2007-02-07 01:26  pajoye
+
+	* gd.h: - go for 2.0.34
+
+2007-02-07 01:21  pajoye
+
+	* gd.c: - ansi/windows build fix, all declarations must be on top
+	  (Edin)
+
+2007-02-07 01:14  pajoye
+
+	* NEWS: - #40
+
+2007-02-07 01:12  pajoye
+
+	* gdft.c: - #40 â€” possible Buffer overflow in the
+	  gdImageStringFTEx   function in gdft.c (patch by Kees Kook)
+
+2007-02-06 23:29  pajoye
+
+	* windows/libgd.rc: - update dll rc
+
+2007-02-06 23:24  pajoye
+
+	* ChangeLog: - sync Changelog
+
+2007-02-03 02:34  pajoye
+
+	* NEWS: - updates
+
+2007-02-03 02:18  pajoye
+
+	* ChangeLog: - update changelog
+
+2007-02-03 02:15  pajoye
+
+	* Makefile.am, configure.ac: - #31 Shared library support on cygwin
+	  (Dr. Volker Zell)
+
+2007-02-03 02:11  pajoye
+
+	* gd.h, gdft.c, index.html: - MFB: #30, restores the ability to
+	  recognize and handle a font with	  Adobe-specific character
+	  encoding
+
+2007-02-03 02:00  pajoye
+
+	* gd.c: - #14, sanity check
+
+2007-01-30 10:11  pajoye
+
+	* NEWS: - 2.0.34RC1 news
+
+2007-01-29 23:22  pajoye
+
+	* ChangeLog: - update
+
+2007-01-29 22:56  pajoye
+
+	* gd.c: - #32, Pattern-fill works incorrectly if tile is created
+	  via gdImageCreateTruecolor (Ethan Merritt)
+
+2007-01-29 22:11  pajoye
+
+	* ChangeLog: - update changelog
+
+2007-01-29 22:07  pajoye
+
+	* COPYING, index.html: - update years and (c)
+
+2007-01-25 01:08  pajoye
+
+	* cmake/modules/: FindFontconfig.cmake, FindFreetype.cmake,
+	  FindGD.cmake, FindPNG.cmake, FindPTHREAD.cmake, FindXPM.cmake: -
+	  add lib64 tests (Chritian Rodriguez)
+
+2007-01-25 00:06  pajoye
+
+	* tests/gif/bug00005.c: - remove version checks
+
+2007-01-24 23:32  pajoye
+
+	* config.h.cmake: - config.h.in for cmake
+
+2007-01-24 23:20  pajoye
+
+	* cmake/modules/: AC_HEADER_STDC.cmake, CheckDIRSymbolExists.cmake,
+	  CheckPrototypeExists.cmake, FindFontconfig.cmake,
+	  FindFreetype.cmake, FindGD.cmake, FindPNG.cmake,
+	  FindPTHREAD.cmake, FindXPM.cmake, TestForHighBitCharacters.c,
+	  TestForHighBitCharacters.cmake, TestForStandardHeaderwait.cmake,
+	  gd.cmake: - add missing cmake macros/modules
+
+2007-01-24 01:36  pajoye
+
+	* README.TESTING: - WS
+
+2007-01-24 00:57  pajoye
+
+	* tests/: gd2/CMakeLists.txt, gd2/conv_gd2_exp.gd2,
+	  gd2/conv_test.gd2, gd2/conv_test_exp.png, gd2/empty.gd2,
+	  gd2/gd2_empty_file.c, gd2/gd2_read.c,
+	  gdimagecolorclosest/CMakeLists.txt,
+	  gdimagecolorclosest/gdimagecolorclosest.c,
+	  gdimagecolorexact/CMakeLists.txt,
+	  gdimagecolorexact/gdimagecolorexact.c,
+	  gdimagecolorresolve/CMakeLists.txt,
+	  gdimagecolorresolve/gdimagecolorresolve.c,
+	  gdimagecopy/CMakeLists.txt, gdimagecopy/bug00007.c,
+	  gdimagecopyrotated/CMakeLists.txt, gdimagecopyrotated/bug00020.c,
+	  gdimagecopyrotated/bug00020_exp.png, gdimagefill/CMakeLists.txt,
+	  gdimagefill/bug00002_1.c, gdimagefill/bug00002_1_exp.png,
+	  gdimagefill/bug00002_2.c, gdimagefill/bug00002_2_exp.png,
+	  gdimagefill/bug00002_3.c, gdimagefill/bug00002_3_exp.png,
+	  gdimagefill/bug00002_4.c, gdimagefill/bug00002_4_exp.png,
+	  gdimagefilledellipse/CMakeLists.txt,
+	  gdimagefilledellipse/bug00010.c,
+	  gdimagefilledellipse/bug00010_exp.png,
+	  gdimagefilledrectangle/CMakeLists.txt,
+	  gdimagefilledrectangle/bug00004.c,
+	  gdimagefilltoborder/CMakeLists.txt,
+	  gdimagefilltoborder/bug00037.c, gdimageline/CMakeLists.txt,
+	  gdimageline/gdimageline_aa.c,
+	  gdimageline/gdimageline_aa_a_0_exp.png,
+	  gdimageline/gdimageline_aa_a_1_exp.png,
+	  gdimageline/gdimageline_aa_b_0_exp.png,
+	  gdimageline/gdimageline_aa_b_1_exp.png,
+	  gdimageline/gdimageline_aa_c_0_exp.png,
+	  gdimageline/gdimageline_aa_c_1_exp.png,
+	  gdimageline/gdimageline_aa_d_0_exp.png,
+	  gdimageline/gdimageline_aa_d_1_exp.png,
+	  gdimageline/gdimageline_aa_outofrange.c,
+	  gdimagerectangle/CMakeLists.txt, gdimagerectangle/bug00003.c,
+	  gdtest/CMakeLists.txt, gdtest/gdtest.c, gdtest/gdtest.h,
+	  gdtiled/CMakeLists.txt, gdtiled/bug00032.c,
+	  gdtiled/bug00032_exp.png, gif/CMakeLists.txt, gif/bug00005.c,
+	  gif/bug00005_0.gif, gif/bug00005_1.gif, gif/bug00005_2.c,
+	  gif/bug00005_2.gif, gif/bug00005_2_exp.png, gif/bug00005_3.gif,
+	  gif/bug00006.c, jpeg/CMakeLists.txt, jpeg/conv_test.jpeg,
+	  jpeg/conv_test_exp.png, jpeg/empty.jpeg, jpeg/jpeg_empty_file.c,
+	  jpeg/jpeg_read.c, png/CMakeLists.txt, png/bug00011.c,
+	  png/bug00033.c, png/bug00033.png, png/emptyfile: - initial commit
+	  of the GD test suites    See README.TESTING for more details or
+	  how to run it
+
+2007-01-24 00:55  pajoye
+
+	* tests/CMakeLists.txt: - initial commit of the GD test suites
+	  See README.TESTING for more details or how to ru
+
+2007-01-24 00:54  pajoye
+
+	* CMakeLists.txt, README.TESTING: - initial commit of the GD test
+	  suites   See README.TESTING for more details or how to run it
+
+2007-01-20 03:09  pajoye
+
+	* gd.c: - #4, gdImageFill rewrite fix, small images (< 4 pixels)
+	  crash
+
+2007-01-20 03:02  pajoye
+
+	* gd.c: #37, gdImageFillToBorder crashes when used with alpha
+
+2007-01-12 14:02  pajoye
+
+	* gd.h: - prepare snap
+
+2007-01-12 14:00  pajoye
+
+	* circletexttest.c: - double config.h include removed (Edin)
+
+2007-01-11 21:58  pajoye
+
+	* gd_gif_in.c: - #7, part of the patch required for
+	  http://bugs.php.net/bug.php?id=33220	 was missing. Thanks to
+	  Nuno Lopes for the head up
+
+2007-01-11 03:24  pajoye
+
+	* gdcache.c: #14, another sanity check (catched by Takeshi
+	  (tabe[at]fixedpoint[dot]jp))
+
+2007-01-09 17:08  pajoye
+
+	* ChangeLog: - update
+
+2007-01-07 19:18  pajoye
+
+	* gd_png.c: - #32, malformed PNG image crashes (CRC error)   test
+	  is following
+
+2007-01-06 14:48  pajoye
+
+	* configure.ac: - older versions of auto* need quotes here
+
+2007-01-05 05:11  pajoye
+
+	* gd.c: - add sanity checks for alloc error in gdImageFill
+
+2007-01-04 15:27  pajoye
+
+	* README.TXT: - add bootstrap.sh note
+
+2007-01-04 15:25  pajoye
+
+	* COPYING: - add myself
+
+2007-01-04 15:21  pajoye
+
+	* index.html: - changelog, issues and the release announcements
+	  will be used from now on
+
+2007-01-04 15:10  pajoye
+
+	* configure.ac, index.html: - update version nr - update links -
+	  update bug report link
+
+2007-01-04 14:45  pajoye
+
+	* ISSUES: - windows build support entry (Edin)
+
+2007-01-04 14:23  pajoye
+
+	* ChangeLog: - update it
+
+2007-01-04 13:52  pajoye
+
+	* gdfx.c: - New line at the end of the file
+
+2007-01-04 13:49  pajoye
+
+	* gd_topal.c: #14, set fserror after the check
+
+2007-01-04 13:44  pajoye
+
+	* ISSUES, gd_gif_out.c: - #14, sanity check in gd_gif_out
+
+2007-01-04 13:40  pajoye
+
+	* gd_gd2.c: - #14, one more sanity check in gd_gd2
+
+2007-01-04 13:36  pajoye
+
+	* ISSUES, gd.c: - #14, sanity check for memory alloc error in
+	  gdImageCreateTrueColor
+
+2007-01-04 13:05  pajoye
+
+	* README.TXT: - rm configure.pl, outdated anyway
+
+2007-01-04 02:49  pajoye
+
+	* ISSUES: - Update credentials
+
+2007-01-04 02:24  pajoye
+
+	* gdxpm.c: - #14, some more sanitiy check
+
+2007-01-04 01:40  pajoye
+
+	* ISSUES: - fix to match the issues #
+
+2007-01-03 22:57  pajoye
+
+	* ISSUES, gd_topal.c: #35, Added sanity checks for allocations
+	  failure in gd_topal (yet another.)
+
+2007-01-03 22:50  pajoye
+
+	* gd_io.h, gd_io_ss.c: #33, sourceGetbuf must return 0 for errors
+	  and EOF #34, Fixed gdSeek declaration, offset argument was
+	  missing
+
+2007-01-03 22:47  pajoye
+
+	* ISSUES, gd_io_dp.c: #33, dynamicGetbuf must return 0 for errors
+	  and EOF
+
+2007-01-03 22:42  pajoye
+
+	* ISSUES, gd_gd2.c: #32, Added sanity checks for allocations
+	  failures in gd_gd2
+
+2007-01-03 22:24  pajoye
+
+	* ISSUES: #31, Added DISABLE_THREADS to permit disabling of thread
+	  support      (John Ellson/Graphviz)
+
+2007-01-03 22:21  pajoye
+
+	* ISSUES, gdft.c: #30, uninitialized variable "charmap" and avoid
+	  divide-by-zero errors      at very small dpi values (John
+	  Ellson/Graphviz)
+
+2007-01-03 22:04  pajoye
+
+	* ISSUES, gdft.c: #28, Fixed gdImageStringFTEx when called with an
+	  empty string	    Initialize the bounding box variables to zero
+	  (Kevin Scaldeferri)
+
+2007-01-03 21:56  pajoye
+
+	* ISSUES, gdft.c: #26, gdFontCacheSetup returns error when
+	  gdCacheCreate fails #27, Added sanity checks for possible
+	  failures in fontFetch and	 tweenColorFetch
+
+2007-01-03 21:50  pajoye
+
+	* ISSUES, gdcache.c: #25, Added sanity checks for possible
+	  allocation failures in gdCacheCreate	    and main
+
+2007-01-03 21:45  pajoye
+
+	* ISSUES, gd.c: #23,  Added sanity checks  for possible allocation
+	  failures in	    gdImageFilledPolygon and gdImageSetStyle #24,
+	  Out of range checks in gdImageSetAAPixelColor
+
+2007-01-03 21:38  pajoye
+
+	* gd.c: #22, missing immplementation
+
+2007-01-03 21:34  pajoye
+
+	* ISSUES, gd.c: #22, Fixed transparency preservation in
+	  gdImageCopyRotated
+
+2007-01-03 21:31  pajoye
+
+	* ISSUES, gd.c: #21, gdImageCopyResized sanity check for allocation
+	  failures
+
+2007-01-03 21:25  pajoye
+
+	* ISSUES, gd.c: #20, Fixed gdImageCopyMergeGray when used with a
+	  true color image
+
+2007-01-03 21:18  pajoye
+
+	* ISSUES, gd.c: #19, Use abs instead of fbas in HWB_Diff (Nick
+	  Atty)
+
+2007-01-03 21:09  pajoye
+
+	* ISSUES, gd.c: - #18, Removed invalid gdFree call when overflow2
+	  fails - #17, Free im->pixels as well on error
+
+2007-01-03 20:48  pajoye
+
+	* ISSUES, entities.tcl: #17, Added "static" to entities_s struct
+	  declaration to avoid obscure	    compiler problem on Suns (John
+	  Ellson/Graphviz)
+
+2007-01-03 20:42  pajoye
+
+	* ISSUES, gd.c: - #16, Added sanity checks in gdImageCreate for
+	  possible allocation	  failures (John Ellson/Graphviz)
+
+2007-01-03 20:14  pajoye
+
+	* ISSUES, gd_topal.c: - #15, gdImageCreatePaletteFromTrueColor(),
+	  colors allocated henceforth from	  the resulting image
+	  overwrite the palette colors (Rob Leslie)
+
+2007-01-03 19:31  pajoye
+
+	* ISSUES, gd_topal.c: - #14, Fixed leak in jinit_2pass_quantizer
+	  (gd_topal.c)
+
+2006-11-08 13:32  lhecking
+
+	* ISSUES: Updated.
+
+2006-11-08 13:23  pajoye
+
+	* gd.c: - #7, gdImageCopy does not respect alpha (2/2)
+
+2006-11-05 16:01  pajoye
+
+	* ISSUES, gd_png.c: - #12, initialize the sig buf not infile, good
+	  that we don't use getC...
+
+2006-10-15 19:20  pajoye
+
+	* ChangeLog: - initial cvs ChangeLog, will create a cronjob to
+	  update it daily
+
+2006-10-12 13:36  lhecking
+
+	* bootstrap.sh: Bootstrap script to generate auto* files.
+
+2006-10-12 13:30  lhecking
+
+	* .cvsignore, config/.cvsignore, test/.cvsignore: Update after
+	  removal of generated files.
+
+2006-10-11 11:46  lhecking
+
+	* config/gdlib-config.in: Add @LIBICONV@ wherever @LIBS@ is used.
+
+2006-10-11 02:03  pajoye
+
+	* ISSUES: - #11 entry
+
+2006-10-11 02:02  pajoye
+
+	* gd_png.c: - #11, gdImageCreateFromPng* possible crash with empty
+	  file	      Thanks to Antony Dovgal to have catched this bug
+
+2006-10-10 02:40  pajoye
+
+	* ISSUES, gd.c: - #10, gdImageFilledEllipse does not respect
+	  transparency (rewriten)
+
+2006-10-09 16:22  pajoye
+
+	* ISSUES, Makefile.am, config.hin, configure.ac,
+	  config/config.guess, config/config.sub, config/ltmain.sh: - #9,
+	  configure/build script updates auto* lib* (Lars Hecking)
+
+2006-10-09 04:38  pajoye
+
+	* ISSUES: - port another test for gdImageFill
+
+2006-10-08 23:43  pajoye
+
+	* ISSUES, gd.c: - #7, imagecopy doen't copy the alpha channel,
+	  palette to truecolor copy
+
+2006-10-08 18:42  pajoye
+
+	* ISSUES, gd_gif_out.c: - #4, TrueColor transparency with GIF
+	  palette output
+
+2006-09-28 17:22  pajoye
+
+	* ISSUES, gd_gif_in.c: - GIF security fixes
+
+2006-09-28 10:16  pajoye
+
+	* ISSUES, gd.c: - #3, gdImageRectanle draws the corners twice
+
+2006-09-28 02:01  pajoye
+
+	* ISSUES: - #2 entry
+
+2006-09-28 01:58  pajoye
+
+	* gd.c:
+	  - #2, imagefill segfaults:  - when call with invalid index color
+	  - segfaults or invalid result when used with complex patterns or
+	  transparent color  (more tests to come)
+
+2006-09-28 01:05  pajoye
+
+	* gdft.c: - #1, Initialize values this also provides a 5x speedup
+	  in the imagefttext.phpt   test, because without this patch it
+	  never got cache hits (Nuno Lopes)
+
+2006-09-28 01:04  pajoye
+
+	* ISSUES: - initial commit   temp file to store issue fixes
+	  history. Will be replaced by the issue   tracker asap
+
+2006-05-17 17:53  edink
+
+	* windows/: .cvsignore, Makefile: Added nmake dist target
+
+2006-05-17 17:27  edink
+
+	* gdcmpgif.c: Fixed windows build
+
+2006-05-17 17:26  edink
+
+	* windows/Makefile: Compile more helper tools
+
+2006-05-17 15:05  edink
+
+	* windows/: Makefile, libgd.rc: Use bgd.dll name, and update
+	  copyright info
+
+2006-05-17 15:04  edink
+
+	* gd.h: Added version info
+
+2006-05-17 14:39  edink
+
+	* windows/Makefile: "all" target should be the first
+
+2006-05-17 14:34  edink
+
+	* windows/: .cvsignore, Makefile, libgd.rc: Added MSVC++ build file
+	  for use with nmake.exe
+
+2006-05-17 11:15  edink
+
+	* windows/.cvsignore: Added windows build dir
+
+2006-05-17 10:43  edink
+
+	* .cvsignore, config/.cvsignore, test/.cvsignore: Ignore build
+	  files
+
+2006-04-05 22:46  pajoye
+
+	* gd_jpeg.c, wbmp.c: - URLs
+
+2006-04-05 22:40  pajoye
+
+	* configure.ac: - use the devel list in there
+
+2006-04-05 22:14  pajoye
+
+	* ChangeLog, NEWS: - remove files not present in 2.0.33
+
+2006-04-05 19:12  pajoye
+
+	* index.html: - update URLs and MLs
+
+2006-04-05 17:56  pierre
+
+	* config/Makefile.am, config/config.guess, config/config.rpath,
+	  config/config.sub, config/depcomp, config/gdlib-config.in,
+	  config/install-sh, config/ltmain.sh, config/missing,
+	  config/mkinstalldirs, test/Makefile.am, test/gdtest.gd2,
+	  test/gdtest.png, test/gdtest_200_300_150_100.png,
+	  test/gdtest_merge.png, test/gdtest_wbmp_to_png.png: - sync with
+	  2.0.33
+
+2006-04-05 17:55  pierre
+
+	* circletexttest.c, configure.ac, fontconfigtest.c, gd2togif.c,
+	  gd2topng.c, gd_gif_out.c, gdcmpgif.c, gdft.c, gdkanji.c,
+	  gifanimtest.c, index.html: - sync to 2.0.33
+
+2006-04-05 17:55  pierre
+
+	* configure.ac, gd.c, gd_gif_in.c, gdft.c, gdtestft.c, index.html,
+	  testtr.c: - sync to 2.0.32
+
+2006-04-05 17:55  pierre
+
+	* configure.ac, gdft.c, index.html: - sync to 2.0.31
+
+2006-04-05 17:54  pierre
+
+	* configure.ac, gd.h, gdft.c, index.html: - sync to 2.0.30
+
+2006-04-05 17:54  pierre
+
+	* Makefile.am, circletexttest.c, config.hin, configure.ac,
+	  entities.h, entities.tcl, err.out, fontconfigtest.c,
+	  fontsizetest.c, fontwheeltest.c, gd.c, gd.h, gd2togif.c,
+	  gd_gd2.c, gd_gif_out.c, gd_io.h, gd_io_dp.c, gd_jpeg.c, gd_png.c,
+	  gd_security.c, gd_topal.c, gd_wbmp.c, gdcache.h, gdcmpgif.c,
+	  gdfontg.h, gdfontl.h, gdfontmb.h, gdfonts.h, gdfontt.h, gdft.c,
+	  gdfx.c, gdfx.h, gdhelpers.c, gdhelpers.h, gdxpm.c, gifanimtest.c,
+	  giftogd2.c, index.html, jisx0208.h, testtr.c, wbmp.c, wbmp.h: -
+	  sync to 2.0.29
+
+2006-04-05 17:53  pierre
+
+	* Makefile.am, configure.ac, gd.h, gd_gif_in.c, gd_gif_out.c,
+	  gd_topal.c, gddemo.c, index.html, testtr.c: - sync to 2.0.28
+
+2006-04-05 17:53  pierre
+
+	* configure.ac, gd.c, gdft.c, index.html: - sync to 2.0.27
+
+2006-04-05 17:53  pierre
+
+	* Makefile.am, config.hin, configure.ac, entities.h, entities.html,
+	  entities.tcl, fontwheeltest.c, gd.c, gd.h, gddemo.c, gdft.c,
+	  index.html, testtr.c: - sync to 2.0.26
+
+2006-04-05 17:52  pierre
+
+	* configure.ac, gd.h, gdfontg.h, gdfontl.h, gdfontmb.h, gdfonts.h,
+	  gdfontt.h, index.html: - sync to 2.0.25
+
+2006-04-05 17:52  pierre
+
+	* annotate.c, configure.ac, fontsizetest.c, gd.c, gd.h, gd2time.c,
+	  gd_gd.c, gd_gd2.c, gd_io_dp.c, gd_io_file.c, gd_io_ss.c,
+	  gd_jpeg.c, gd_png.c, gd_ss.c, gd_topal.c, gd_wbmp.c, gdcache.h,
+	  gdfontg.c, gdfontg.h, gdfontl.c, gdfontl.h, gdfontmb.c,
+	  gdfontmb.h, gdfonts.c, gdfonts.h, gdfontt.c, gdfontt.h, gdft.c,
+	  gdfx.c, gdfx.h, gdhelpers.c, gdhelpers.h, gdkanji.c, gdxpm.c,
+	  index.html, webpng.c: - sync to 2.0.24
+
+2006-04-05 17:51  pierre
+
+	* circletexttest.c, configure.ac, gd.h, gd_gd2.c, gd_io_dp.c,
+	  gd_jpeg.c, gd_png.c, gd_topal.c, gddemo.c, gdfontg.c, gdfontl.c,
+	  gdfontmb.c, gdfonts.c, gdfontt.c, gdft.c, gdfx.c, gdtest.c,
+	  index.html: - sync to 2.0.23
+
+2006-04-05 17:51  pierre
+
+	* circletexttest.c, configure.ac, gd.c, gd_jpeg.c, gddemo.c,
+	  gdfontg.c, gdfontg.h, gdfontl.c, gdfontl.h, gdfontmb.c,
+	  gdfontmb.h, gdfonts.c, gdfonts.h, gdfontt.c, gdfontt.h,
+	  index.html: - sync to 2.0.22
+
+2006-04-05 17:50  pierre
+
+	* configure.ac, gd.c, gd.h, gd_gd.c, gd_gd2.c, gd_io_dp.c,
+	  gd_jpeg.c, gd_png.c, gd_wbmp.c, gdft.c, gdtest.c, index.html: -
+	  sync to 2.0.21
+
+2006-04-05 17:50  pierre
+
+	* configure.ac, gd.h, gdfontg.c, gdfontl.c, gdfontmb.c, gdfonts.c,
+	  gdfontt.c, gdft.c, index.html: - sync to 2.0.20
+
+2006-04-05 17:50  pierre
+
+	* configure.ac, gd.h, gdfontg.h, gdfontl.h, gdfonts.h, index.html:
+	  - sync to 2.0.19
+
+2006-04-05 17:50  pierre
+
+	* circletexttest.c, configure.ac, gd.h, gd_io.h, gdcache.h,
+	  gdfontg.c, gdfontg.h, gdfontl.c, gdfontl.h, gdfontmb.c,
+	  gdfontmb.h, gdfonts.c, gdfonts.h, gdfontt.c, gdfontt.h, gdft.c,
+	  gdfx.h, gdhelpers.h, index.html: - sync to 2.0.18
+
+2006-04-05 17:49  pierre
+
+	* Makefile.am, circletexttest.c, config.hin, configure.ac, gd.c,
+	  gd.h, gd_gd2.c, gd_io.c, gd_io_file.c, gd_jpeg.c, gd_png.c,
+	  gd_topal.c, gdft.c, gdfx.c, gdfx.h, gdhelpers.h, index.html: -
+	  sync to 2.0.17
+
+2006-04-05 17:49  pierre
+
+	* configure.ac, gd.c, index.html: - sync to 2.0.15
+
+2006-04-05 17:48  pierre
+
+	* configure.ac, gd.c, gd_jpeg.c, index.html: - sync to 2.0.14
+
+2006-04-05 17:48  pierre
+
+	* configure.ac, gd.c, gd_gd2.c, gd_png.c, gdft.c, index.html: -
+	  sync to 2.0.13
+
+2006-04-05 17:47  pierre
+
+	* Makefile.am, annotate.c, config.hin, configure.ac, gd.c, gd.h,
+	  gd2topng.c, gd_gd.c, gd_gd2.c, gd_io.h, gd_jpeg.c, gd_png.c,
+	  gd_topal.c, gdcache.c, gdcache.h, gddemo.c, gdft.c, gdkanji.c,
+	  gdtest.c, gdtestft.c, gdtopng.c, index.html: - sync to 2.0.12
+
+2006-04-05 17:47  pierre
+
+	* configure.ac, gd.h, gd2topng.c, gd_gd2.c, gd_io.h, gd_io_file.c,
+	  index.html, pngtogd2.c: - sync to 2.0.11
+
+2006-04-05 17:47  pierre
+
+	* configure.ac, depcomp, gd.c, gd.h, gd_jpeg.c, gddemo.c, gdft.c,
+	  gdtestft.c, index.html, install-sh, missing, mkinstalldirs: -
+	  sync to 2.0.10
+
+2006-04-05 17:46  pierre
+
+	* annotate.c, config.hin, configure.ac, fontsizetest.c,
+	  fontwheeltest.c, gd.c, gd.h, gd2time.c, gd2topng.c, gd_gd.c,
+	  gd_gd2.c, gd_io.h, gd_io_dp.c, gd_io_file.c, gd_io_ss.c,
+	  gd_jpeg.c, gd_png.c, gd_ss.c, gd_topal.c, gd_wbmp.c, gdcache.c,
+	  gdcache.h, gddemo.c, gdfontg.c, gdfontg.h, gdfontl.c, gdfontl.h,
+	  gdfontmb.c, gdfontmb.h, gdfonts.c, gdfonts.h, gdfontt.c,
+	  gdfontt.h, gdft.c, gdhelpers.h, gdkanji.c, gdparttopng.c,
+	  gdtables.c, gdtest.c, gdtestft.c, gdtopng.c, index.html,
+	  jisx0208.h, pngtogd.c, pngtogd2.c, testac.c, wbmp.c, wbmp.h,
+	  webpng.c: - sync to 2.0.9
+
+2006-04-05 17:46  pierre
+
+	* configure.ac, gd.c, gd.h, gddemo.c, index.html: - sync to 2.0.8
+
+2006-04-05 17:45  pierre
+
+	* configure.ac, index.html: - sync to 2.0.7
+
+2006-04-05 17:45  pierre
+
+	* README.TXT, configure.ac, gd.c, gd2copypal.c, gd2topng.c, gdft.c,
+	  gdtestft.c, gdxpm.c, index.html, pngtogd.c, testac.c: - sync to
+	  2.0.6
+
+2006-04-05 17:44  pierre
+
+	* COPYING, INSTALL, Makefile.am, README.TXT, annotate.c,
+	  config.hin, configure.ac, fontsizetest.c, fontwheeltest.c, gd.c,
+	  gd.h, gd2copypal.c, gd2time.c, gd2topng.c, gd_gd.c, gd_gd2.c,
+	  gd_io.c, gd_io_dp.c, gd_io_file.c, gd_io_ss.c, gd_jpeg.c,
+	  gd_png.c, gd_ss.c, gd_topal.c, gd_wbmp.c, gdcache.c, gdcache.h,
+	  gddemo.c, gdft.c, gdhelpers.c, gdkanji.c, gdparttopng.c,
+	  gdtest.c, gdtestft.c, gdtopng.c, gdxpm.c, index.html, pngtogd.c,
+	  pngtogd2.c, testac.c, wbmp.c, webpng.c: - sync to 2.0.5
+
+2006-04-05 17:44  pierre
+
+	* err.out, fontsizetest.c, fontwheeltest.c, gd.c, gd.h, gd2topng.c,
+	  gd_gd.c, gd_gd2.c, gd_io.h, gd_io_dp.c, gd_io_file.c, gd_io_ss.c,
+	  gd_jpeg.c, gd_png.c, gd_ss.c, gd_topal.c, gd_wbmp.c, gdcache.h,
+	  gddemo.c, gdft.c, gdhelpers.c, gdhelpers.h, gdkanji.c,
+	  gdparttopng.c, gdtest.c, gdtestft.c, gdtopng.c, gdxpm.c,
+	  index.html, testac.c, wbmp.c, webpng.c: - sync to 2.0.4
+
+2006-04-05 17:43  pierre
+
+	* annotate.c, gd.c, gd_gd2.c, index.html: - sync to 2.0.3
+
+2006-04-05 17:43  pierre
+
+	* README.TXT, gd.c, gd.h, gddemo.c, gdft.c, gdtestft.c, index.html:
+	  - sync to 2.0.2
+
+2006-04-05 17:42  pierre
+
+	* gd.c, gd.h, gd2copypal.c, gd2time.c, gd2topng.c, gd_gd.c,
+	  gd_gd2.c, gd_io.c, gd_io_dp.c, gd_io_file.c, gd_io_ss.c,
+	  gd_jpeg.c, gd_png.c, gd_ss.c, gd_topal.c, gd_wbmp.c, gdcache.c,
+	  gddemo.c, gdfontg.c, gdfontl.c, gdfontmb.c, gdfonts.c, gdfontt.c,
+	  gdft.c, gdhelpers.c, gdkanji.c, gdparttopng.c, gdtables.c,
+	  gdtest.c, gdtestft.c, gdtopng.c, gdxpm.c, index.html, pngtogd.c,
+	  pngtogd2.c, readme.jpn, testac.c, wbmp.c, webpng.c: - sync to
+	  2.0.1
+
+2006-04-05 17:42  pierre
+
+	* README-JPEG.TXT, gd.c, gd.h, gd_gd.c, gd_gd2.c, gd_jpeg.c,
+	  gd_png.c, gd_topal.c, gddemo.c, gdft.c, gdkanji.c, gdtestft.c,
+	  index.html, testac.c, webpng.c: - sync to 2.0.0
+
+2006-04-05 17:41  pierre
+
+	* gd.c, gd.h, gd_gd2.c, gd_io.c, gd_io_dp.c, gd_io_file.c,
+	  gd_io_ss.c, gd_jpeg.c, gd_png.c, gd_wbmp.c, gdcache.c, gdft.c,
+	  gdhelpers.c, gdhelpers.h, gdkanji.c, gdtestft.c, gdxpm.c,
+	  index.html, wbmp.c, wbmp.h: - sync to 1.8.4
+
+2006-04-05 17:41  pierre
+
+	* gd.c, gd.h, gd_jpeg.c, gd_png.c, gd_wbmp.c, gdtest.c, index.html,
+	  install-item, wbmp.c, wbmp.h: - sync to 1.8.3
+
+2006-04-05 17:40  pierre
+
+	* bdftogd, gd_jpeg.c, gdtest.c, index.html, webpng.c: - sync to
+	  1.8.1
+
+2006-04-05 17:40  pierre
+
+	* gd.c, gd.h, gd_jpeg.c, gd_wbmp.c, gdtest.c, index.html: - sync to
+	  1.8.0
+
+2006-04-05 17:39  pierre
+
+	* index.html: - sync to 1.7.3
+
+2006-04-05 17:39  pierre
+
+	* index.html: - sync to 1.7.2
+
+2006-04-05 17:38  pierre
+
+	* ChangeLog, index.html: - sync to 1.7.1
+
+2006-04-05 17:38  pierre
+
+	* ChangeLog, bdftogd, gd.c, gd.h, gd_gd2.c, gd_io_dp.c,
+	  gd_io_file.c, gd_io_ss.c, gddemo.c, gdfontg.h, gdfontl.h,
+	  gdfontmb.h, gdfonts.h, gdfontt.h, gdkanji.c, gdtables.c, gdxpm.c,
+	  index.html, jisx0208.h: - sync to 1.7.0
+
+2006-04-05 17:37  pierre
+
+	* COPYING, ChangeLog, NEWS, gd_png.c, index.html, mkinstalldirs: -
+	  sync to 1.6.3
+
+2006-04-05 17:37  pierre
+
+	* COPYING, ChangeLog, INSTALL, Makefile.am, NEWS, gd.c, gd.h,
+	  gd2copypal.c, gd2time.c, gd2topng.c, gd_gd.c, gd_gd2.c,
+	  gd_io_dp.c, gd_png.c, gdcache.c, gdcache.h, gdparttopng.c,
+	  gdtest.c, gdtopng.c, index.html, install-sh, missing,
+	  mkinstalldirs, pngtogd.c, pngtogd2.c, webpng.c: - sync to 1.6.2
+
+2006-04-05 17:36  pierre
+
+	* gd.h, gd_png.c, index.html: - sync to 1.6.1
+
+2006-04-05 17:35  pierre
+
+	* demoin.png, gd.c, gd.h, gd2copypal.c, gd2time.c, gd2topng.c,
+	  gd_gd.c, gd_gd2.c, gd_io.c, gd_io.h, gd_io_dp.c, gd_io_file.c,
+	  gd_io_ss.c, gd_png.c, gd_ss.c, gddemo.c, gdparttopng.c, gdtest.c,
+	  gdtopng.c, index.html, pngtogd.c, pngtogd2.c, webpng.c: - sync to
+	  1.6.0
+
+2006-04-05 17:35  pierre
+
+	* bdftogd, gd.c, gd.h, gd2copypal.c, gd2time.c, gd2togif.c,
+	  gd_gd.c, gd_gd2.c, gd_gif_in.c, gd_gif_out.c, gdtest.c,
+	  giftogd2.c, index.html: - sync to 1.5.0
+
+2006-04-05 17:34  pierre
+
+	* bdftogd, gd.c, gd.h, index.html: - sync to 1.4.0
+
+2006-04-05 17:33  pierre
+
+	* bdftogd, demoin.gif, gd.c, gd.h, gddemo.c, gdfontg.c, gdfontg.h,
+	  gdfontl.c, gdfontl.h, gdfontmb.c, gdfontmb.h, gdfonts.c,
+	  gdfonts.h, gdfontt.c, gdfontt.h, index.html: - sync to 1.3.0
+
+2006-04-05 17:28  pierre
+
+	* INSTALL: Initial revision
+

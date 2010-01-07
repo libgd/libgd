@@ -99,7 +99,7 @@ main (int argc, char **argv)
 #ifdef VMS
   sprintf (of, "%s-gd2", argv[1]);
 #else
-  sprintf (of, "%s.gd2", argv[1]);
+sprintf (of, "%s.gd2", argv[1]);
 #endif
   out = fopen (of, "wb");
   gdImageGd2 (im, out, 128, 2);
@@ -166,8 +166,8 @@ main (int argc, char **argv)
   gdImageDestroy (im2);
 
   /*
-   * Test gdImageCreateFromPngSource'
-   */
+     ** Test gdImageCreateFromPngSource'
+     * */
 
   in = fopen (argv[1], "rb");
 
@@ -189,8 +189,8 @@ main (int argc, char **argv)
 
 
   /*
-   * Test gdImagePngToSink'
-   */
+     ** Test gdImagePngToSink'
+     * */
 #ifdef VMS
   sprintf (of, "%s-snk", argv[1]);
 #else

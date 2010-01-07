@@ -1,91 +1,180 @@
+# $Id: CMakeLists.txt 247123 2007-11-27 07:56:23Z pajoye $
 
-SET (LIBGD_SRC_FILES
-	gd.c
-	gdfx.c
-	gdfx.h
-	gd_color.c
-	gd_color.h
-	gd_color_map.c
-	gd_color_map.h
-	gd_crop.c
-	gd_transform.c
-	gd_security.c
-	gdpp.cxx
-	gdpp.h
-	gd_bmp.c
-	bmp.h
-	gd_gd.c
-	gd_gd2.c
-	gd_io.c
-	gd_io.h
-	gd_io_stream.cxx
-	gd_io_stream.h
-	gd_io_dp.c
-	gd_gif_in.c
-	gd_gif_out.c
-	gd_io_file.c
-	gd_io_ss.c
-	gd_jpeg.c
-	gd_nnquant.c
-	gd_nnquant.h
-	gd_pixelate.c
-	gd_png.c
-	gd_tiff.c
-	gd_tga.c
-	gd_tga.h
-	gd_ss.c
-	gd_topal.c
-	gd_wbmp.c
-	gdcache.c
-	gdcache.h
-	gdfontg.c
-	gdfontg.h
-	gdfontl.c
-	gdfontl.h
-	gdfontmb.c
-	gdfontmb.h
-	gdfonts.c
-	gdfonts.h
-	gdfontt.c
-	gdfontt.h
-	gdft.c
-	gdhelpers.c
-	gdhelpers.h
-	gdkanji.c
-	gdtables.c
-	gdxpm.c
-	jisx0208.h
-	wbmp.c
-	gd.h
-	wbmp.h
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.3 FATAL_ERROR)
+PROJECT(GD)
+SET(CPACK_PACKAGE_NAME "libgd")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libGD, powerful and easy to use graphic library")
+SET(CPACK_PACKAGE_VENDOR "http://www.libgd.org")
+SET(CPACK_PACKAGE_VERSION_MAJOR "2")
+SET(CPACK_PACKAGE_VERSION_MINOR "0")
+SET(CPACK_PACKAGE_VERSION_PATCH "36")
+
+set(CPACK_GENERATOR TGZ)
+
+
+set(CPACK_SOURCE_GENERATOR TGZ)
+
+set(CPACK_SOURCE_IGNORE_FILES
+"~$"
+"\\\\.swp$"
+"\\\\.cvsignore$"
+"^${PROJECT_SOURCE_DIR}.*/CVS/"
+"^${PROJECT_SOURCE_DIR}/debian/"
+"^${PROJECT_SOURCE_DIR}/old/"
+"^${PROJECT_SOURCE_DIR}/bld/"
+"^${PROJECT_SOURCE_DIR}/autom4te\\\\.cache/"
 )
+INCLUDE(CPack)
+
+SET(CMAKE_MODULE_PATH "${GD_SOURCE_DIR}/cmake/modules")
+
+if (BUILD_TEST)
+	ENABLE_TESTING()
+endif(BUILD_TEST)
+
+if (USE_EXT_GD)
+	message("Using GD at: ${USE_EXT_GD}")
+	INCLUDE_DIRECTORIES(BEFORE ${GD_INCLUDE_DIR} ${GD_BINARY_DIR})
+	FIND_PACKAGE(GD)
+	if (GD_FOUND)
+		INCLUDE_DIRECTORIES(BEFORE ${GD_INCLUDE_DIR})
+		LINK_DIRECTORIES(BEFORE ${GD_LIBRARIES})
+		SET(GD_LIB ${GD_LIBRARIES})
+		SET(GD_LIBS_DIR ${GD_LIBRARY})
+
+		message("GD libs #: ${GD_LIBRARIES}")
+		message("GD lib #: ${GD_LIBRARY}")
+		message("GD include: ${GD_INCLUDE_DIR}")
+	else (GD_FOUND)
+		message("No gd found")
+	endif (GD_FOUND)
+else (USE_EXT_GD)
+	SET(GD_VERSION_MAJOR "2")
+	SET(GD_VERSION_MINOR "0x0")
+	SET(GD_VERSION_PATCH "36-dev")
+	SET(GD_VERSION "${GD_VERSION_MAJOR}.${GD_VERSION_MINOR}.${GD_VERSION_PATCH}")
+	SET(GD_VERSION_STRING "${GD_VERSION}")
+
+	SET(GD_VERSION_INT "20036")
+
+	SET(PACKAGE GD)
+	SET(PACKAGE_NAME GD)
+
+	SET(CMAKE_REQUIRED_INCLUDES "/usr/include" "/usr/local/include")
+
+	message(STATUS "ft2build: ${CMAKE_REQUIRED_INCLUDES}")
+
+	include(CheckIncludeFiles)
+	include(CheckIncludeFile)
+
+	include(AC_HEADER_STDC)
+	include(CheckPrototypeExists)
+	SET(FONTCONFIG_FIND_QUIETLY, 1)
+
+	FIND_PACKAGE(PNG REQUIRED)
+	FIND_PACKAGE(ZLIB)
+	FIND_PACKAGE(JPEG)
+IF (NOT WIN32)
+	FIND_PACKAGE(PTHREAD)
+ENDIF (NOT WIN32)
+	FIND_PACKAGE(Freetype)
+	FIND_PACKAGE(XPM)
+	FIND_PACKAGE(Fontconfig)
+
+	if (FREETYPE_FOUND)
+		INCLUDE_DIRECTORIES(${FREETYPE_INCLUDE_DIR})
+		SET(HAVE_FT2BUILD_H 1)
+		SET(HAVE_LIBFREETYPE 1)
+	ENDIF(FREETYPE_FOUND)
+
+	IF(ZLIB_FOUND)
+		INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
+		SET(HAVE_LIBZ 1)
+		SET(HAVE_LIBPNG_PNG_H 1)
+	ENDIF(ZLIB_FOUND)
+
+	IF(PNG_FOUND)
+		INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
+		SET(HAVE_LIBPNG 1)
+	ENDIF(PNG_FOUND)
+
+	IF(XPM_FOUND)
+		INCLUDE_DIRECTORIES(${XPM_INCLUDE_DIR})
+		SET(HAVE_LIBXPM 1)
+	ENDIF(XPM_FOUND)
+
+	IF(JPEG_FOUND)
+		INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
+		SET(HAVE_LIBJPEG 1)
+	ENDIF(JPEG_FOUND)
+
+	IF(FONTCONFIG_FOUND)
+		INCLUDE_DIRECTORIES(${FONTCONFIG_INCLUDE_DIR})
+		SET(HAVE_LIBFONTCONFIG 1)
+	ELSE (FONTCONFIG_FOUND)
+		SET(FONTCONFIG_LIBRARIES "")
+	ENDIF(FONTCONFIG_FOUND)
+
+	SET(HAVE_CONFIG_H 1)
+
+	ADD_DEFINITIONS(-DHAVE_CONFIG_H)
 
 
-add_library(${GD_LIB} ${LIBGD_SRC_FILES})
-add_library(${GD_LIB_STATIC} STATIC  ${LIBGD_SRC_FILES})
+	INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/  ${GD_SOURCE_DIR})
 
-if (WIN32 AND NOT MINGW AND NOT MSYS)
-#	SET_TARGET_PROPERTIES(${GD_LIB} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:msvcrt.lib")
-ENDIF(WIN32 AND NOT MINGW AND NOT MSYS)
+	CONFIGURE_FILE(${GD_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h ESCAPE_QUOTES)
 
-if (MINGW OR MSYS)
-	ADD_DEFINITIONS("-mms-bitfields")
-endif (MINGW OR MSYS)
+	SET (LIBGD_SRC_FILES
+		gd.c
+		gdfx.c
+		gd_security.c
+		gd_gd.c
+		gd_gd2.c
+		gd_io.c
+		gd_io_dp.c
+		gd_gif_in.c
+		gd_gif_out.c
+		gd_io_file.c
+		gd_io_ss.c
+		gd_jpeg.c
+		gd_png.c
+		gd_ss.c
+		gd_topal.c
+		gd_wbmp.c
+		gdcache.c
+		gdfontg.c
+		gdfontl.c
+		gdfontmb.c
+		gdfonts.c
+		gdfontt.c
+		gdft.c
+		gdhelpers.c
+		gdhelpers.h
+		gdkanji.c
+		gdtables.c
+		gdxpm.c
+		jisx0208.h
+		wbmp.c
+		wbmp.h
+	)
 
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/  ${GD_SOURCE_DIR}/src)
+	set(BUILD_SHARED_LIBS On)
 
-target_link_libraries(${GD_LIB} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${JPEG_LIBRARIES} ${TIFF_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARIES})
-target_link_libraries(${GD_LIB_STATIC} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${JPEG_LIBRARIES} ${TIFF_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARIES})
+	if (WIN32)
+		SET(GD_LIB bgd)
+		ADD_DEFINITIONS( -DWIN32 -D_WIN32 -DMSWIN32 -DBGDWIN32)
+	else(WIN32)
+		SET(GD_LIB gd)
+	endif(WIN32)
 
-set(GD_PROGRAMS annotate gdparttopng gdtopng gd2copypal gd2topng pngtogd pngtogd2 webpng gd2togif gdcmpgif giftogd2)
-foreach(program ${GD_PROGRAMS})
-    add_executable(${program} ${program}.c)
-    target_link_libraries(${program} ${GD_LIB})
-endforeach(program)
+	add_library(${GD_LIB} ${LIBGD_SRC_FILES})
 
-install(TARGETS ${GD_LIB} ${GD_LIB_STATIC} ${GD_PROGRAMS}
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib)
-install(PROGRAMS bdftogd DESTINATION bin)
-install(FILES gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h gd_color_map.h DESTINATION include)
+	if (WIN32)
+		SET_TARGET_PROPERTIES(${GD_LIB} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:msvcrt.lib")
+	ENDIF(WIN32)
+
+	target_link_libraries(${GD_LIB} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${JPEG_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARIES})
+
+endif (USE_EXT_GD)
+
+add_subdirectory(tests)

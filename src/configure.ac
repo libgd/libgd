@@ -5,14 +5,14 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the version number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.1.0], [http://bugs.libgd.org])
+AC_INIT([GD], [2.0.36], [http://bugs.libgd.org])
 AC_CONFIG_SRCDIR([gd.c])
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET([])
 
 GDLIB_MAJOR=2
-GDLIB_MINOR=1
-GDLIB_REVISION=0
+GDLIB_MINOR=0
+GDLIB_REVISION=36
 GDLIBNAME=gd
 #Expanded by tests later in this file. TBB 2.0.26
 #2.0.28: GIF is standard now. Doesn't depend on anything else,
@@ -85,90 +85,53 @@ AC_CHECK_HEADERS(iconv.h,
 #AC_FUNC_VPRINTF
 #AC_CHECK_FUNCS([floor memset sqrt strchr strdup strtol])
 
-##### http://autoconf-archive.cryp.to/acx_pthread.html
-#
-# SYNOPSIS
-#
-#   ACX_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-#
-# DESCRIPTION
-#
-#   This macro figures out how to build C programs using POSIX threads.
-#   It sets the PTHREAD_LIBS output variable to the threads library and
-#   linker flags, and the PTHREAD_CFLAGS output variable to any special
-#   C compiler flags that are needed. (The user can also force certain
-#   compiler flags/libs to be tested by setting these environment
-#   variables.)
-#
-#   Also sets PTHREAD_CC to any special C compiler that is needed for
-#   multi-threaded programs (defaults to the value of CC otherwise).
-#   (This is necessary on AIX to use the special cc_r compiler alias.)
-#
-#   NOTE: You are assumed to not only compile your program with these
-#   flags, but also link it with them as well. e.g. you should link
-#   with $PTHREAD_CC $CFLAGS $PTHREAD_CFLAGS $LDFLAGS ... $PTHREAD_LIBS
-#   $LIBS
-#
-#   If you are only building threads programs, you may wish to use
-#   these variables in your default LIBS, CFLAGS, and CC:
-#
-#          LIBS="$PTHREAD_LIBS $LIBS"
-#          CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-#          CC="$PTHREAD_CC"
-#
-#   In addition, if the PTHREAD_CREATE_JOINABLE thread-attribute
-#   constant has a nonstandard name, defines PTHREAD_CREATE_JOINABLE to
-#   that name (e.g. PTHREAD_CREATE_UNDETACHED on AIX).
-#
-#   ACTION-IF-FOUND is a list of shell commands to run if a threads
-#   library is found, and ACTION-IF-NOT-FOUND is a list of commands to
-#   run it if it is not found. If ACTION-IF-FOUND is not specified, the
-#   default action will define HAVE_PTHREAD.
-#
-#   Please let the authors know if this macro fails on any platform, or
-#   if you have any other suggestions or comments. This macro was based
-#   on work by SGJ on autoconf scripts for FFTW (http://www.fftw.org/)
-#   (with help from M. Frigo), as well as ac_pthread and hb_pthread
-#   macros posted by Alejandro Forero Cuervo to the autoconf macro
-#   repository. We are also grateful for the helpful feedback of
-#   numerous users.
-#
-# LAST MODIFICATION
-#
-#   2007-07-29
-#
-# COPYLEFT
-#
-#   Copyright (c) 2007 Steven G. Johnson <stevenj@alum.mit.edu>
-#
-#   This program is free software: you can redistribute it and/or
-#   modify it under the terms of the GNU General Public License as
-#   published by the Free Software Foundation, either version 3 of the
-#   License, or (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful, but
-#   WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-#   General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with this program. If not, see
-#   <http://www.gnu.org/licenses/>.
-#
-#   As a special exception, the respective Autoconf Macro's copyright
-#   owner gives unlimited permission to copy, distribute and modify the
-#   configure scripts that are the output of Autoconf when processing
-#   the Macro. You need not follow the terms of the GNU General Public
-#   License when using or distributing such scripts, even though
-#   portions of the text of the Macro appear in them. The GNU General
-#   Public License (GPL) does govern all other use of the material that
-#   constitutes the Autoconf Macro.
-#
-#   This special exception to the GPL applies to versions of the
-#   Autoconf Macro released by the Autoconf Macro Archive. When you
-#   make and distribute a modified version of the Autoconf Macro, you
-#   may extend this special exception to the GPL to apply to your
-#   modified version as well.
+dnl @synopsis ACX_PTHREAD([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+dnl
+dnl @summary figure out how to build C programs using POSIX threads
+dnl
+dnl This macro figures out how to build C programs using POSIX threads.
+dnl It sets the PTHREAD_LIBS output variable to the threads library and
+dnl linker flags, and the PTHREAD_CFLAGS output variable to any special
+dnl C compiler flags that are needed. (The user can also force certain
+dnl compiler flags/libs to be tested by setting these environment
+dnl variables.)
+dnl
+dnl Also sets PTHREAD_CC to any special C compiler that is needed for
+dnl multi-threaded programs (defaults to the value of CC otherwise).
+dnl (This is necessary on AIX to use the special cc_r compiler alias.)
+dnl
+dnl NOTE: You are assumed to not only compile your program with these
+dnl flags, but also link it with them as well. e.g. you should link
+dnl with $PTHREAD_CC $CFLAGS $PTHREAD_CFLAGS $LDFLAGS ... $PTHREAD_LIBS
+dnl $LIBS
+dnl
+dnl If you are only building threads programs, you may wish to use
+dnl these variables in your default LIBS, CFLAGS, and CC:
+dnl
+dnl        LIBS="$PTHREAD_LIBS $LIBS"
+dnl        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+dnl        CC="$PTHREAD_CC"
+dnl
+dnl In addition, if the PTHREAD_CREATE_JOINABLE thread-attribute
+dnl constant has a nonstandard name, defines PTHREAD_CREATE_JOINABLE to
+dnl that name (e.g. PTHREAD_CREATE_UNDETACHED on AIX).
+dnl
+dnl ACTION-IF-FOUND is a list of shell commands to run if a threads
+dnl library is found, and ACTION-IF-NOT-FOUND is a list of commands to
+dnl run it if it is not found. If ACTION-IF-FOUND is not specified, the
+dnl default action will define HAVE_PTHREAD.
+dnl
+dnl Please let the authors know if this macro fails on any platform, or
+dnl if you have any other suggestions or comments. This macro was based
+dnl on work by SGJ on autoconf scripts for FFTW (www.fftw.org) (with
+dnl help from M. Frigo), as well as ac_pthread and hb_pthread macros
+dnl posted by Alejandro Forero Cuervo to the autoconf macro repository.
+dnl We are also grateful for the helpful feedback of numerous users.
+dnl
+dnl @category InstalledPackages
+dnl @author Steven G. Johnson <stevenj@alum.mit.edu>
+dnl @version 2006-05-29
+dnl @license GPLWithACException
 
 AC_DEFUN([ACX_PTHREAD], [
 AC_REQUIRE([AC_CANONICAL_HOST])
@@ -411,6 +374,9 @@ if test "$withval" != no; then
     libpng_LDFLAGS=`echo " $libpng_LDFLAGS" | sed 's/ -l[[^ ]][[^ ]]*//g'`
   fi
 
+  _cppflags="$CPPFLAGS"
+  CPPFLAGS="$CPPFLAGS $libpng_CPPFLAGS"
+
   AC_CHECK_HEADERS(png.h,,
     [AC_CHECK_HEADERS(libpng/png.h,
        [CPPFLAGS="$CPPFLAGS $libpng_CPPFLAGS/libpng"],
@@ -419,32 +385,38 @@ if test "$withval" != no; then
   _ldflags="$LDFLAGS"
   LDFLAGS="$libpng_LDFLAGS $LDFLAGS"
 
-  #TBB: png12's png_create_read_struct is just as good 
   if test -n "$LIBPNG12_CONFIG"; then
     AC_CHECK_LIB(png12,png_create_read_struct,
       [LIBS="-lpng12 $LIBS"
        FEATURES="GD_PNG $FEATURES"
-       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])])
-  fi
-  # could be reached here in some case like the FreeBSD port of libpng;
-  # libpng12-config but '-lpng' (not '-lpng12').
-  #2.0.23: should be = not ==  
-  if test "$ac_cv_lib_png12_png_create_read_struct" = yes; then
-    ac_cv_lib_png_png_create_read_struct=yes
+       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
+      [LDFLAGS="$_ldflags"  
+       AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
+  elif test -n "$LIBPNG_CONFIG"; then
+    AC_CHECK_LIB(png,png_create_read_struct,
+      [LIBS="-lpng $LIBS" 
+       FEATURES="GD_PNG $FEATURES"
+       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
+      [LDFLAGS="$_ldflags"  
+       AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
   else
     AC_CHECK_LIB(png,png_create_read_struct,
       [LIBS="-lpng $LIBS" 
        FEATURES="GD_PNG $FEATURES"
        AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
-      [LDFLAGS="$_ldflags"])
+      [LDFLAGS="$_ldflags"  
+       AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])])
   fi
 else
   ac_cv_lib_png_png_create_read_struct=no
-fi
-
-if test "$ac_cv_lib_png_png_create_read_struct" != yes; then
   AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])
 fi
+
+#TBB: png12's png_create_read_struct is just as good 
+#2.0.23: should be = not ==  
+if test "$ac_cv_lib_png12_png_create_read_struct" = yes; then
+  ac_cv_lib_png_png_create_read_struct=yes
+fi 
 
 dnl FreeType configure tests snarfed from libwmf ..
 AC_ARG_WITH(freetype,dnl
@@ -574,6 +546,45 @@ AC_MSG_RESULT([
    Support for pthreads:             $acx_pthread_ok
 ])
 
-AC_CONFIG_FILES([Makefile config/Makefile config/gdlib-config test/Makefile])
+AC_CONFIG_FILES([Makefile 
+                 config/Makefile
+                 config/gdlib-config
+                 test/Makefile
+                 tests/Makefile
+                 tests/gdtest/Makefile
+                 tests/freetype/Makefile
+                 tests/gd/Makefile
+                 tests/gd2/Makefile
+                 tests/gdimagearc/Makefile
+                 tests/gdimagecolorclosest/Makefile
+                 tests/gdimagecolordeallocate/Makefile
+                 tests/gdimagecolorexact/Makefile
+                 tests/gdimagecolorresolve/Makefile
+                 tests/gdimagecolortransparent/Makefile
+                 tests/gdimagecopy/Makefile
+                 tests/gdimagecopyrotated/Makefile
+                 tests/gdimagefill/Makefile
+                 tests/gdimagefilledellipse/Makefile
+                 tests/gdimagefilledrectangle/Makefile
+                 tests/gdimagefilltoborder/Makefile
+                 tests/gdimageline/Makefile
+                 tests/gdimagerectangle/Makefile
+                 tests/gdimagesetpixel/Makefile
+                 tests/gdimagestringft/Makefile
+                 tests/gdimagestringftex/Makefile
+                 tests/gdnewfilectx/Makefile
+                 tests/gdtiled/Makefile
+                 tests/gif/Makefile
+                 tests/jpeg/Makefile
+                 tests/png/Makefile
+                 tests/wbmp/Makefile
+                 tests/xpm/Makefile
+                 VMS/Makefile
+                 windows/Makefile
+                 netware/Makefile
+                 netware/tests/Makefile
+                 cmake/Makefile
+                 cmake/modules/Makefile
+])
 
 AC_OUTPUT

@@ -1,5 +1,5 @@
 
-const int gdCosT[] = {
+int gdCosT[] = {
   1024,
   1023,
   1023,
@@ -362,7 +362,7 @@ const int gdCosT[] = {
   1023
 };
 
-const int gdSinT[] = {
+int gdSinT[] = {
   0,
   17,
   35,

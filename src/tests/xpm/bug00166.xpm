@@ -1,0 +1,12 @@
+/* XPM */
+static char * a[] = {
+/* width height colors cpp */
+"4 4 3 1",
+"  c None",
+"@ c #abc",
+". c #def",
+/* pixels */
+" .. ",
+".@@.",
+".@@.",
+" .. "};

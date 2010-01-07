@@ -8,7 +8,7 @@ extern "C" {
    by Dr. Kakugawa */
 
 /* JIS -> Unicode mapping table */
-static const unsigned short UnicodeTbl[][94] = {
+static unsigned short UnicodeTbl[][94] = {
   {				/* category 01 */
    0x0000, 0x3001, 0x3002, 0xFF0C, 0xFF0E, 0x30FB, 0xFF1A, 0xFF1B,
    0xFF1F, 0xFF01, 0x309B, 0x309C, 0x00B4, 0xFF40, 0x00A8, 0xFF3E,

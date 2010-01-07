@@ -18,15 +18,9 @@
 #include "entities.h"
 
 /* 2.0.10: WIN32, not MSWIN32 */
-#if !defined(WIN32) && !defined(_WIN32_WCE)
+#ifndef WIN32
 #include <unistd.h>
-#elif defined(_WIN32_WCE)
-#include <wce_stdlib.h> /* getenv() */
-#include <wce_unistd.h> /* access() */
-#define getenv wceex_getenv
-#define access wceex_access
-#define strdup _strdup
-#else /* _WIN32_WCE */
+#else
 #include <io.h>
 #ifndef R_OK
 #define R_OK 04			/* Needed in Windows */
@@ -1195,7 +1189,7 @@ fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize
 		{
 		  ch = c & 0xFF;	/* don't extend sign */
 		}
-	      if (*next) next++;
+				if (*next) next++;
 	    }
 	    break;
 	  case gdFTEX_Big5:
