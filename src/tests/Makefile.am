@@ -15,9 +15,12 @@ SUBDIRS = gdtest \
 		gdimagecopyrotated \
 		gdimagefill \
 		gdimagefilledellipse \
+		gdimagefilledpolygon \
 		gdimagefilledrectangle \
 		gdimagefilltoborder \
 		gdimageline \
+		gdimageopenpolygon \
+		gdimagepolygon \
 		gdimagerectangle \
 		gdimagesetpixel \
 		gdimagestringft \

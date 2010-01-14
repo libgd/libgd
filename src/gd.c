@@ -3008,7 +3008,7 @@ fail:
 
 BGD_DECLARE(void) gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 {
-  if (!n)
+  if (n <= 0)
     {
       return;
     }
@@ -3022,7 +3022,7 @@ BGD_DECLARE(void) gdImageOpenPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 {
   int i;
   int lx, ly;
-  if (!n)
+  if (n <= 0)
     {
       return;
     }
@@ -3064,7 +3064,7 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
   int ind1, ind2;
   int ints;
   int fill_color;
-  if (!n)
+  if (n <= 0)
     {
       return;
     }

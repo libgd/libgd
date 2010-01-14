@@ -42,9 +42,12 @@ if (BUILD_TEST)
 		#gdimageellipse
 		gdimagefill
 		gdimagefilledellipse
+		gdimagefilledpolygon
 		gdimagefilledrectangle
 		gdimagefilltoborder
 		gdimageline
+		gdimageopenpolygon
+		gdimagepolygon
 		gdimagerectangle
 		gdimagesetpixel
 		gdimagestringft
