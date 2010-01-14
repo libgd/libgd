@@ -38,10 +38,13 @@ if (BUILD_TEST)
 		#gdimageellipse
 		gdimagefill
 		gdimagefilledellipse
+		gdimagefilledpolygon
 		gdimagefilledrectangle
 		gdimagefilltoborder
 		gdimageline
+		gdimageopenpolygon
 		gdimagepixelate
+		gdimagepolygon
 		gdimagerectangle
 		gdimagescatterex
 		gdimagesetpixel

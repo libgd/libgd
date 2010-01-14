@@ -17,10 +17,13 @@ SUBDIRS = gdtest \
 		gdimagecopyrotated \
 		gdimagefill \
 		gdimagefilledellipse \
+		gdimagefilledpolygon \
 		gdimagefilledrectangle \
 		gdimagefilltoborder \
 		gdimageline \
+		gdimageopenpolygon \
 		gdimagepixelate \
+		gdimagepolygon \
 		gdimagerectangle \
 		gdimagescatterex \
 		gdimagesetpixel \
