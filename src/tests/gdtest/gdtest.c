@@ -134,7 +134,6 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 
 	gdTestImageDiff(expected, actual, surface_diff, &result);
 	if (result.pixels_changed>0) {
-		char *filename;
 		char file_diff[255];
 		char file_out[1024];
 		FILE *fp;
