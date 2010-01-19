@@ -3260,10 +3260,6 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
   /* Fix in 1.3: count a vertex only once */
   for (y = miny; (y <= maxy); y++)
     {
-/*1.4           int interLast = 0; */
-/*              int dirLast = 0; */
-/*              int interFirst = 1; */
-/* 2.0.26+      int yshift = 0; */
       ints = 0;
       for (i = 0; (i < n); i++)
 	{
