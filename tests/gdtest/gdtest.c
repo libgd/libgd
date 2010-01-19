@@ -157,10 +157,12 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 		sprintf(file_out, "%s_%u_out.png", file + p  + 1, line);
 
 		fp = fopen(file_diff, "wb");
+		if (!fp) goto fail;
 		gdImagePng(surface_diff,fp);
 		fclose(fp);
 
 		fp = fopen(file_out, "wb");
+		if (!fp) goto fail;
 		gdImagePng(actual, fp);
 		fclose(fp);
 	} else {
