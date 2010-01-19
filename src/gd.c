@@ -3192,7 +3192,7 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
   int j;
   int index;
   int y;
-  int miny, maxy;
+  int miny, maxy, pmaxy;
   int x1, y1;
   int x2, y2;
   int ind1, ind2;
@@ -3247,6 +3247,7 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
 	  maxy = p[i].y;
 	}
     }
+  pmaxy = maxy;
   /* 2.0.16: Optimization by Ilia Chipitsine -- don't waste time offscreen */
   /* 2.0.26: clipping rectangle is even better */
   if (miny < im->cy1)
@@ -3301,10 +3302,9 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
 	      im->polyInts[ints++] = (int) ((float) ((y - y1) * (x2 - x1)) /
 		(float) (y2 - y1) + 0.5 + x1);
 	    }
-	  else if ((y == maxy) && (y > y1) && (y <= y2))
+	  else if ((y == pmaxy) && (y == y2))
 	    {
-	      im->polyInts[ints++] = (int) ((float) ((y - y1) * (x2 - x1)) /
-		(float) (y2 - y1) + 0.5 + x1);
+	      im->polyInts[ints++] = x2;
 	    }
 	}
       /* 
@@ -3322,7 +3322,7 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
         }
         im->polyInts[j] = index;
       }
-      for (i = 0; (i < (ints)); i += 2)
+      for (i = 0; (i < (ints-1)); i += 2)
 	{
           /* 2.0.29: back to gdImageLine to prevent segfaults when
             performing a pattern fill */

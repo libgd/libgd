@@ -8,4 +8,6 @@ EXTRA_DIST = CMakeLists.txt \
 	gdimagefilledpolygon2.c \
 	gdimagefilledpolygon2.png \
 	gdimagefilledpolygon3.c \
-	gdimagefilledpolygon3.png
+	gdimagefilledpolygon3.png \
+	bug00100.c \
+	bug00100.png
