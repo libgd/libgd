@@ -3203,7 +3203,11 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
       return;
     }
 
-
+  if (c == gdAntiAliased) {
+	  fill_color = im->AA_color;
+  } else {
+	  fill_color = c;
+  }
   if (!im->polyAllocated)
     {
       if (overflow2(sizeof (int), n)) {
@@ -3260,11 +3264,6 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
 /*              int dirLast = 0; */
 /*              int interFirst = 1; */
 /* 2.0.26+      int yshift = 0; */
-      if (c == gdAntiAliased) {
-        fill_color = im->AA_color;
-      } else {
-        fill_color = c;
-      }
       ints = 0;
       for (i = 0; (i < n); i++)
 	{
