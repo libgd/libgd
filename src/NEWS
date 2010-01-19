@@ -8,6 +8,7 @@ GD 2.0.36 (2007-11-xx)
  95, Added Netware builds script (Guenter)
  97, ease the creation of regexp to match symbols/functions in the sources 
      (Guenter)
+100, spurious horizontal line drawn by gdImageFilledPolygon (Takeshi Abe)
 101, _gdCreateFromFile() can crash if gdImageCreate fails (Mattias Bengtsson)
 105, gdImageCreateFrom*Ptr() can crash if gdNewDynamicCtxEx() fails (Mattias)
 106, gdImageRectangle draws 1x1 rectangles as 1x3 rectangles (Pierre)

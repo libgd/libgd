@@ -3,6 +3,7 @@ SET(TESTS_FILES
 	gdimagefilledpolygon1
 	gdimagefilledpolygon2
 	gdimagefilledpolygon3
+	bug00100
 )
 
 FOREACH(test_name ${TESTS_FILES})
