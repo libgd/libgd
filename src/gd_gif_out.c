@@ -191,7 +191,7 @@ BGD_DECLARE(void) gdImageGifAnimBeginCtx(gdImagePtr im, gdIOCtxPtr out, int Glob
 	B = GlobalCM ? 0x80 : 0;
 
 	/* OR in the resolution */
-	B |= (Resolution - 1) << 5;
+	B |= (Resolution - 1) << 4;
 
 	/* OR in the Bits per Pixel */
 	B |= (BitsPerPixel - 1);
@@ -640,7 +640,7 @@ static void GIFEncode(gdIOCtxPtr fp, int GWidth, int GHeight, int GInterlace, in
 	B = 0x80;
 
 	/* OR in the resolution */
-	B |= (Resolution - 1) << 5;
+	B |= (Resolution - 1) << 4;
 
 	/* OR in the Bits per Pixel */
 	B |= (BitsPerPixel - 1);
