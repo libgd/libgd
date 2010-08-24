@@ -61,6 +61,7 @@ int main()
 	if (!buf) return 1;
 	if (PROBE_SIZE != fread(buf, 1, PROBE_SIZE, fp)) return 1;
 	if (buf[PROBE_SIZE-1] & 0x80) return 1;
+	free(buf);
 	fclose(fp);
 	return 0;
 }
