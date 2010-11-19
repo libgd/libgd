@@ -118,8 +118,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data)
 	return im;
 }
 
-/* This routine is based in part on the Chapter 13 demo code in "PNG: The
- *  Definitive Guide" (http://www.cdrom.com/pub/png/pngbook.html).
+/* This routine is based in part on the Chapter 13 demo code in
+ * "PNG: The Definitive Guide" (http://www.libpng.org/pub/png/book/).
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 {
@@ -511,7 +511,7 @@ BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 
 /* This routine is based in part on code from Dale Lutz (Safe Software Inc.)
  *  and in part on demo code from Chapter 15 of "PNG: The Definitive Guide"
- *  (http://www.cdrom.com/pub/png/pngbook.html).
+ *  (http://www.libpng.org/pub/png/book/).
  */
 BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 {
