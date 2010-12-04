@@ -530,7 +530,13 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	volatile int remap = FALSE;
 #ifdef PNG_SETJMP_SUPPORTED
 	jmpbuf_wrapper jbw;
+#endif
 
+	/* width or height of value 0 is invalid in IHDR;
+	   see http://www.w3.org/TR/PNG-Chunks.html */
+	if (width == 0 || height ==0) return;
+
+#ifdef PNG_SETJMP_SUPPORTED
 	png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING,
 			&jbw, gdPngErrorHandler,
 			NULL);
