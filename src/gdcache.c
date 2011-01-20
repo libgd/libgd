@@ -176,6 +176,10 @@ static void *cacheFetch(char **error, void *key)
 	key_value_t *map;
 
 	map = (key_value_t *)gdMalloc(sizeof(key_value_t));
+	if (!map) {
+		*error = "gdMalloc failed";
+		return NULL;
+	}
 	map->key = *(int *)key;
 	map->value = 3;
 

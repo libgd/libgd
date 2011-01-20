@@ -786,6 +786,7 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
 
 	      tc_key.bgcolor = *pixel;
 	      tc_elem = (tweencolor_t *) gdCacheGet (tc_cache, &tc_key);
+	      if (!tc_elem) return tc_cache->error;
 	      *pixel = tc_elem->tweencolor;
 	    }
 	}
