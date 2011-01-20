@@ -551,7 +551,6 @@ AC_CONFIG_FILES([Makefile
                  config/gdlib-config
                  test/Makefile
                  tests/Makefile
-                 tests/gdtest/Makefile
                  tests/freetype/Makefile
                  tests/gd/Makefile
                  tests/gd2/Makefile
@@ -565,14 +564,18 @@ AC_CONFIG_FILES([Makefile
                  tests/gdimagecopyrotated/Makefile
                  tests/gdimagefill/Makefile
                  tests/gdimagefilledellipse/Makefile
+                 tests/gdimagefilledpolygon/Makefile
                  tests/gdimagefilledrectangle/Makefile
                  tests/gdimagefilltoborder/Makefile
                  tests/gdimageline/Makefile
+                 tests/gdimageopenpolygon/Makefile
+                 tests/gdimagepolygon/Makefile
                  tests/gdimagerectangle/Makefile
                  tests/gdimagesetpixel/Makefile
                  tests/gdimagestringft/Makefile
                  tests/gdimagestringftex/Makefile
                  tests/gdnewfilectx/Makefile
+                 tests/gdtest/Makefile
                  tests/gdtiled/Makefile
                  tests/gif/Makefile
                  tests/jpeg/Makefile
