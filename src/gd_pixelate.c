@@ -1,6 +1,6 @@
 #include "gd.h"
 
-int gdImagePixelate(gdImagePtr im, int block_size, const unsigned int mode)
+BGD_DECLARE(int) gdImagePixelate(gdImagePtr im, int block_size, const unsigned int mode)
 {
 	int x, y;
 

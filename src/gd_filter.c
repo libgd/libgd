@@ -18,7 +18,7 @@
 # define GD_SCATTER_SEED() (unsigned int)(time(0) * getpid())
 #endif
 
-int gdImageScatter(gdImagePtr im, int sub, int plus)
+BGD_DECLARE(int) gdImageScatter(gdImagePtr im, int sub, int plus)
 {
 	gdScatter s;
 
@@ -29,7 +29,7 @@ int gdImageScatter(gdImagePtr im, int sub, int plus)
 	return gdImageScatterEx(im, &s);
 }
 
-int gdImageScatterColor(gdImagePtr im, int sub, int plus, int colors[], unsigned int num_colors)
+BGD_DECLARE(int) gdImageScatterColor(gdImagePtr im, int sub, int plus, int colors[], unsigned int num_colors)
 {
 	gdScatter s;
 
@@ -53,7 +53,7 @@ int gdImageScatterColor(gdImagePtr im, int sub, int plus, int colors[], unsigned
 		new_pxl = f(im, dest_x, dest_y);						\
 	} while (0)
 
-int gdImageScatterEx(gdImagePtr im, gdScatterPtr scatter)
+BGD_DECLARE(int) gdImageScatterEx(gdImagePtr im, gdScatterPtr scatter)
 {
 	register int x, y;
 	int dest_x, dest_y;
