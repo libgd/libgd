@@ -7,3 +7,4 @@ cmake_install.cmake
 cscope.out
 CPackConfig.cmake
 CPackSourceConfig.cmake
+CTestTestfile.cmake
