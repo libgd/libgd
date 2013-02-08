@@ -29,7 +29,7 @@ int main()
 	ret = gdImageStringFT(im, NULL,  - 0xFFFFFF, path, 14.0, 0.0, 10, 20, "&thetasym; &theta;");
 	if (ret) {
 		error = 1;
-		printf(ret);
+		printf("%s\n", ret);
 	} else {
 		sprintf(path, "%s/freetype/%s", GDTEST_TOP_DIR, file_exp);
 		if (!gdAssertImageEqualsToFile(path, im)) {
