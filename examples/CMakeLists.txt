@@ -35,6 +35,12 @@ FOREACH(test_name ${TESTS_FILES})
 	target_link_libraries (${test_name} ${GD_LIB})
 ENDFOREACH(test_name)
 
+if(JPEG_FOUND)
+  if(UNIX)
+    target_link_libraries(copyrotated m)
+  endif(UNIX)
+endif(JPEG_FOUND)
+
 if (WIN32 AND NOT MINGW AND NOT MSYS)
 	add_executable(windows WIN32 "windows.c")
 	target_link_libraries (windows ${GD_LIB})
