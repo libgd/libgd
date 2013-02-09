@@ -212,7 +212,7 @@ static int gdGuessBackgroundColorFromCorners(gdImagePtr im, int *color)
 	} else if (tl == tr  || tl == bl || tl == br) {
 		*color = tl;
 		return 2;
-	} else if (tr == bl || tr == bl) {
+	} else if (tr == bl) {
 		*color = tr;
 		return 2;
 	} else if (br == bl) {
