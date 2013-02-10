@@ -20,14 +20,12 @@ if (BUILD_TEST)
 	ENABLE_TESTING()
 endif(BUILD_TEST)
 
-if (NOT WIN32)
-	if(CMAKE_BUILD_TYPE)
-		STRING(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_TOLOWER)
-		IF (CMAKE_BUILD_TYPE_TOLOWER MATCHES debug)
-			set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -O0")
-		ENDIF (CMAKE_BUILD_TYPE_TOLOWER MATCHES debug)
-	endif(CMAKE_BUILD_TYPE)
-endif (NOT WIN32)
+# if you would like to pass C flags to the compiler, then just
+# - specify -DCMAKE_C_FLAGS=... on invocation of cmake, or
+# - specify CFLAGS=... on invocation of make
+IF(CMAKE_COMPILER_IS_GNUCC)
+  SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
+ENDIF(CMAKE_COMPILER_IS_GNUCC)
 
 if (USE_EXT_GD)
 	message("Using GD at: ${USE_EXT_GD}")
