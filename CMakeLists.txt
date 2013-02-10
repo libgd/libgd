@@ -199,12 +199,10 @@ set(CPACK_SOURCE_GENERATOR TGZ)
 set(CPACK_SOURCE_IGNORE_FILES
 "~$"
 "\\\\.swp$"
-"\\\\.cvsignore$"
-"^${PROJECT_SOURCE_DIR}.*/CVS/"
+"\\\\.hgignore$"
 "^${PROJECT_SOURCE_DIR}/debian/"
 "^${PROJECT_SOURCE_DIR}/old/"
 "^${PROJECT_SOURCE_DIR}/bld/"
-"^${PROJECT_SOURCE_DIR}/autom4te\\\\.cache/"
 )
 install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
 INCLUDE(CPack)
