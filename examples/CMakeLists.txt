@@ -1,24 +1,19 @@
 include_directories (BEFORE "${GD_SOURCE_DIR}/src" "${CMAKE_BINARY_DIR}")
 
 SET(TESTS_FILES
-#  resize
-#  ellipseaa
-#  ellipse
   arc
-#  ellipsearc
   crop
-#  ellfullaa
-  tgaread
-  nnquant
   gif
+  nnquant
+  tgaread
 )
 
 if (JPEG_FOUND)
 	SET(TESTS_FILES
 		"${TESTS_FILES}"
-		nnquant
 		copyrotated
 		flip
+		nnquant
 	)
 endif (JPEG_FOUND)
 

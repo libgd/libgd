@@ -35,7 +35,6 @@ if (BUILD_TEST)
 		gdimagecolortransparent
 		gdimagecopy
 		gdimagecopyrotated
-		#gdimageellipse
 		gdimagefill
 		gdimagefilledellipse
 		gdimagefilledpolygon
