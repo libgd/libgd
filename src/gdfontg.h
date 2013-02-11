@@ -1,8 +1,3 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 #ifndef _GDFONTG_H_
 #define _GDFONTG_H_ 1
 
@@ -31,8 +26,4 @@ extern "C"
 }
 #endif
 
-#endif
-
-#ifdef __cplusplus
-}
 #endif
