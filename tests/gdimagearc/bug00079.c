@@ -4,7 +4,6 @@
 int main()
 {
 	gdImagePtr im;
-	FILE *fp;
 	int error = 0;
 	char path[1024];
 

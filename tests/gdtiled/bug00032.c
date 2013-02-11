@@ -7,8 +7,6 @@
 int main()
 {
 	gdImagePtr im, tile;
-	char exp[] = "bug00032_exp.png";
-	FILE *fp;
 
 	tile = gdImageCreateTrueColor(10, 10);
 	gdImageFill(tile, 0, 0, 0xFFFFFF);

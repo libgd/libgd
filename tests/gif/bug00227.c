@@ -12,7 +12,7 @@ int main()
 {
 	FILE *fp;
 	gdImagePtr im0, im1, im2;
-	int file, i;
+	int i;
 	char *buf;
 
 	/* generate a GIF animation */

@@ -7,7 +7,6 @@ int main()
 	gdImagePtr im, tile;
 	int im_white, im_black, tile_white, tile_black;
 	int x,y, error = 0;
-	FILE *fp;
 	char path[1024];
 
 	fputs("flag 0\n", stdout);

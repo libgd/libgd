@@ -5,11 +5,8 @@
 
 int main()
 {
- 	gdImagePtr im, im2;
+ 	gdImagePtr im;
 	FILE *fp;
-	char path[2048];
-	int i;
-	char dst[2048];
 	int cor_rad = 60;
 	im = gdImageCreateTrueColor(400, 400);
 	gdImageFilledRectangle(im, 0, 0, 399, 399, 0x00FFFFFF);

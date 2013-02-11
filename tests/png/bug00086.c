@@ -8,10 +8,7 @@
 
 static const unsigned char pngdata[93];
 int main(void) {
-	FILE *fp;
 	gdImagePtr im;
-	int i;
-	size_t out;
 
 	if ( ( im = gdImageCreateFromPngPtr(93, (char*) &pngdata[0]) ) == NULL) {
 		fprintf(stderr, "success!\n");

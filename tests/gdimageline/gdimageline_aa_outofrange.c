@@ -5,7 +5,6 @@
 int main()
 {
 	gdImagePtr im;
-	int bordercolor, color;
 
 	im = gdImageCreateTrueColor(300, 300);
 

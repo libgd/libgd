@@ -183,7 +183,6 @@ fail:
 int gdTestImageCompareToFile(const char* file, int line, const char* message,
 	const char *expected_file, gdImagePtr actual)
 {
-	char buf[GDTEST_STRING_MAX];
 	gdImagePtr expected;
 	int res = 1;
 
@@ -210,7 +209,6 @@ int _gdTestErrorMsg(const char* file, int line, const char* format, ...) /* {{{ 
 {
  char output_buf[512];
  va_list args;
- char *debug;
 
  (void)file;
  (void)line;

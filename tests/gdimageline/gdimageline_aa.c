@@ -45,11 +45,8 @@ int gen_image(const char* filename, int idx, int reverse_x, int width, int heigh
 
 int main()
 {
-	int i;
 	int error = 0;
 	char path[1024];
-	const char *srcdir;
-	int n;
 
 	sprintf(path, "%s/gdimageline/gdimageline_aa_a_0_exp.png", GDTEST_TOP_DIR);
 	error |= gen_image(path,0,1,10,100, 1);

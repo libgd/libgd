@@ -4,7 +4,6 @@
 int main()
 {
 	gdImagePtr im;
-	FILE *fp;
 	int c1,c2,c3,c4;
 
 	im = gdImageCreateTrueColor(10,10);

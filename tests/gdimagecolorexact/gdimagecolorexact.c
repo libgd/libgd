@@ -6,7 +6,7 @@ int main()
 {
 	gdImagePtr im;
 	int error = 0;
-	int c, c1, c2, c3, c4, color, i;
+	int c, c1, c2, c3, c4, color;
 
 	im = gdImageCreateTrueColor(5, 5);
 	c = gdImageColorExact(im, 255, 0, 255);

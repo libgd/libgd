@@ -5,9 +5,6 @@ int main()
 {
  	gdImagePtr im;
 	const char *exp = "bug00072_exp.png";
-	const int files_cnt = 4;
-	FILE *fp;
-	int i = 0;
 	int error = 0;
 
 	char path[1024];
