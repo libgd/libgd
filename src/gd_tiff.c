@@ -662,7 +662,7 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 		char has_alpha, char is_bw, int extra)
 {
 	uint16  planar;
-	uint32 im_height, im_width, im_line_size;
+	uint32 im_height, im_width;
 	int y;
 
 	unsigned char *buffer;
@@ -680,8 +680,6 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 		fprintf(stderr, "Can't fetch TIFF width \n");
 		return FALSE;
 	}
-
-	im_line_size = TIFFScanlineSize(tif);
 
 	buffer = (unsigned char *)gdMalloc(im_width * 4);
 	if (!buffer) {
@@ -788,7 +786,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	uint16 extra, *extra_types;
 	uint16 planar;
 	char	has_alpha, is_bw, is_gray;
-	char	flip_horizontal, flip_vertical;
 	char	force_rgba = FALSE;
 	char	save_transparent;
 	int		image_type;
@@ -937,6 +934,9 @@ printf("save trans: %i\n", save_transparent);
 printf("is_bw: %i\n", is_bw);
 printf("is_gray: %i\n", is_gray);
 printf("type: %i\n", image_type);
+#else
+ (void)is_gray;
+ (void)save_transparent;
 #endif
 
 	if (force_rgba) {
@@ -956,28 +956,12 @@ printf("type: %i\n", image_type);
 	if (TIFFGetField (tif, TIFFTAG_ORIENTATION, &orientation)) {
 		switch (orientation) {
 			case ORIENTATION_TOPLEFT:
-				flip_horizontal = FALSE;
-				flip_vertical   = FALSE;
-				break;
-
 			case ORIENTATION_TOPRIGHT:
-				flip_horizontal = TRUE;
-				flip_vertical   = FALSE;
-				break;
-
 			case ORIENTATION_BOTRIGHT:
-				flip_horizontal = TRUE;
-				flip_vertical   = TRUE;
-				break;
-
 			case ORIENTATION_BOTLEFT:
-				flip_horizontal = FALSE;
-				flip_vertical   = TRUE;
 				break;
 
 			default:
-				flip_horizontal = FALSE;
-				flip_vertical   = FALSE;
 				fprintf (stderr, "Orientation %d not handled yet!", orientation);
 				break;
 		}

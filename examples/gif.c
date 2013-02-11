@@ -9,7 +9,7 @@ int main(void)
 
 	gdImagePtr im;
 	gdImagePtr prev =NULL;
-	int white, black;
+	int black;
 
 	im = gdImageCreate(100, 100);
 	if (!im) {
@@ -23,7 +23,7 @@ int main(void)
 		return 1;
 	}
 
-   white = gdImageColorAllocate(im, 255, 255, 255);
+	gdImageColorAllocate(im, 255, 255, 255); /* allocate white as side effect */
    gdImageGifAnimBegin(im, out, 1, -1);
 
 	for(i = 0; i < 20; i++) {
@@ -33,7 +33,7 @@ int main(void)
 		g = rand() % 255;
 		b = rand() % 255;
 
-		white = gdImageColorAllocate(im, 255, 255, 255);
+		gdImageColorAllocate(im, 255, 255, 255);  /* allocate white as side effect */
 		black = gdImageColorAllocate(im,  r, g, b);
 		printf("(%i, %i, %i)\n",r, g, b);
 		gdImageFilledRectangle(im, rand() % 100, rand() % 100, rand() % 100, rand() % 100, black);

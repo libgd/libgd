@@ -6,7 +6,7 @@ int main()
 {
 	gdImagePtr im, im2, im3;
 	FILE *fp;
-    int black, white, trans;
+    int black, trans;
 	int error = 0;
 
 	/* GIFEncode */
@@ -28,7 +28,7 @@ int main()
 	/* GIFAnimEncode */
 	im = gdImageCreate(100, 100);
 	im->interlace = 1;
-    white = gdImageColorAllocate(im, 255, 255, 255);
+    gdImageColorAllocate(im, 255, 255, 255); /* allocate white for background color */
     black = gdImageColorAllocate(im, 0, 0, 0);
     trans = gdImageColorAllocate(im, 1, 1, 1);
     gdImageRectangle(im, 0, 0, 10, 10, black);

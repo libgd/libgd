@@ -6,7 +6,7 @@
 int main()
 {
 	gdImagePtr im, tile;
-	int im_white, im_black, tile_white, tile_black;
+	int im_black, tile_white, tile_black;
 	int x,y, error = 0;
 	char path[1024];
 
@@ -18,7 +18,7 @@ int main()
 
 	tile_white = gdImageColorAllocate(tile,255,255,255);
 	tile_black = gdImageColorAllocate(tile,55,0,0);
-	im_white = gdImageColorAllocate(im,255,255,255);
+	gdImageColorAllocate(im,255,255,255); /* allocate white for background color */
 	im_black = gdImageColorAllocate(im,0,0,0);
 
 	gdImageFill(tile, 0,0, tile_white);

@@ -4,7 +4,7 @@
 int main()
 {
 	gdImagePtr src, dst;
-	int w, b;
+	int b;
 	void *p;
 	int size = 0;
 	int status = 0;
@@ -15,7 +15,7 @@ int main()
 		printf("could not create src\n");
 		return 1;
 	}
-	w = gdImageColorAllocate(src, 0xFF, 0xFF, 0xFF);
+	gdImageColorAllocate(src, 0xFF, 0xFF, 0xFF); /* allocate white for background color */
 	b = gdImageColorAllocate(src, 0, 0, 0);
 	gdImageRectangle(src, 20, 20, 79, 79, b);
 	gdImageEllipse(src, 70, 25, 30, 20, b);

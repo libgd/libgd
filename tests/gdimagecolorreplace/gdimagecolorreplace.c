@@ -28,7 +28,6 @@ static void run_tests(gdImagePtr im, int *error)
 		old_lace,								\
 		seashell,								\
 		yellow,									\
-		red,									\
 		c, d;
 	int src[2], dst[2];
 	int n;
@@ -43,7 +42,6 @@ static void run_tests(gdImagePtr im, int *error)
 	COLOR(old_lace, 0xFD, 0xF5, 0xE6);
 	COLOR(seashell, 0xFF, 0xF5, 0xEE);
 	COLOR(yellow, 0xFF, 0xFF, 0);
-	COLOR(red, 0xFF, 0, 0);
 #undef COLOR
 
 #define CHECK_VALUE(n, expected) do {							\

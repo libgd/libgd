@@ -30,7 +30,7 @@ int main()
 {
 	char path[2048];
 	gdImagePtr im;
-	int bg, black;
+	int black;
 	double cos_t, sin_t;
 	int x, y, temp;
 	int i, j;
@@ -40,7 +40,7 @@ int main()
 
 	sprintf(path, "%s/freetype/DejaVuSans.ttf", GDTEST_TOP_DIR);
 	im = gdImageCreate(800, 800);
-	bg = gdImageColorAllocate(im, 0xFF, 0xFF, 0xFF);
+	gdImageColorAllocate(im, 0xFF, 0xFF, 0xFF); /* allocate white for background color */
 	black = gdImageColorAllocate(im, 0, 0, 0);
 	cos_t = cos(DELTA);
 	sin_t = sin(DELTA);

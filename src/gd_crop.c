@@ -31,7 +31,7 @@ BGD_DECLARE(gdImagePtr) gdImageAutoCrop(gdImagePtr im, const unsigned int mode)
 	const int height = gdImageSY(im);
 
 	int x,y;
-	int color, corners, match;
+	int color, match;
 	gdRect crop;
 
 	crop.x = 0;
@@ -53,7 +53,7 @@ BGD_DECLARE(gdImagePtr) gdImageAutoCrop(gdImagePtr im, const unsigned int mode)
 			break;
 
 		case GD_CROP_SIDES:
-			corners = gdGuessBackgroundColorFromCorners(im, &color);
+			gdGuessBackgroundColorFromCorners(im, &color);
 			break;
 
 		case GD_CROP_DEFAULT:

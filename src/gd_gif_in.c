@@ -137,7 +137,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 	unsigned char ColorMap[3][MAXCOLORMAPSIZE];
 	unsigned char localColorMap[3][MAXCOLORMAPSIZE];
 	int imw, imh, screen_width, screen_height;
-	int gif87a, useGlobalColormap;
+	int useGlobalColormap;
 	int bitPixel, i;
 	/*1.4//int             imageCount = 0; */
 	/* 2.0.28: threadsafe storage */
@@ -155,9 +155,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 	}
 
 	if(memcmp((char *)buf + 3, "87a", 3) == 0) {
-		gif87a = 1;
+		/* GIF87a */
 	} else if(memcmp((char *)buf + 3, "89a", 3) == 0) {
-		gif87a = 0;
+		/* GIF89a */
 	} else {
 		return 0;
 	}

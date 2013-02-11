@@ -1924,7 +1924,7 @@ BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int mx, int my, int w, in
 	int x=0,mx1=0,mx2=0,my1=0,my2=0;
 	long aq,bq,dx,dy,r,rx,ry,a,b;
 	int i;
-	int old_y1,old_y2;
+	int old_y2;
 
 	a=w>>1;
 	b=h>>1;
@@ -1945,7 +1945,6 @@ BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int mx, int my, int w, in
 	ry = 0;
 	x = a;
 	old_y2=-2;
-	old_y1=-2;
 	while (x > 0){
 		if (r > 0) {
 			my1++;my2--;
@@ -1969,7 +1968,6 @@ BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int mx, int my, int w, in
 			}
 		}
 		old_y2 = my2;
-		old_y1 = my1;
 	}
 }
 
@@ -2233,7 +2231,6 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 {
 	int l, x1, x2, dy;
 	int oc;   /* old pixel value */
-	int tiled;
 	int wx2,wy2;
 	/* stack of filled segments */
 	struct seg *stack;
@@ -2245,7 +2242,6 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 	}
 
 	wx2=im->sx;wy2=im->sy;
-	tiled = nc==gdTiled;
 
 	if(overflow2(im->sy, im->sx)) {
 		return;
@@ -2319,7 +2315,6 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 {
 	int x1h = x1, x1v = x1, y1h = y1, y1v = y1, x2h = x2, x2v = x2, y2h = y2, y2v = y2;
 	int thick = im->thick;
-	int half1 = 1;
 	int t;
 
 	if (x1 == x2 && y1 == y2 && thick == 1) {
@@ -2341,7 +2336,6 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 	if (thick > 1) {
 		int cx, cy, x1ul, y1ul, x2lr, y2lr;
 		int half = thick >> 1;
-		half1 = thick - half;
 		x1ul = x1 - half;
 		y1ul = y1 - half;
 		

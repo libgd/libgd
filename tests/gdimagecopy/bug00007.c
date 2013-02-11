@@ -8,12 +8,12 @@
 int main()
 {
  	gdImagePtr dst_tc, src;
-	int c0,c1;
+	int c1;
 
 	src = gdImageCreate(5,5);
 	gdImageAlphaBlending(src, 0);
 
-	c0 = gdImageColorAllocate(src, 255,255,255);
+	gdImageColorAllocate(src, 255,255,255); /* allocate white for background color */
 	c1 = gdImageColorAllocateAlpha(src, 255,0,0,70);
 
 	gdImageFilledRectangle(src, 0,0, 4,4, c1);
