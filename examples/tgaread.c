@@ -49,4 +49,5 @@ int main()
 		fclose(fp);
 		gdImageDestroy(im);
 	}
+	return 0;
 }

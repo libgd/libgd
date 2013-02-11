@@ -219,5 +219,6 @@ int _gdTestErrorMsg(const char* file, int line, const char* format, ...) /* {{{ 
 
  fputs (output_buf, stderr);
  fflush (stderr);
+ return 0;
 }
 /* }}} */
