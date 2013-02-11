@@ -5,7 +5,7 @@ int main()
 {
  	gdImagePtr im;
 	FILE *fp;
-	const r = 255, g = 0, b = 0;
+	const int r = 255, g = 0, b = 0;
 	int r_f,g_f,b_f, trans_c_f;
 	int trans_c = gdTrueColorAlpha(r,g,b,0);
 	int error = 0;
