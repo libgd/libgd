@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <gd.h>
 
-int main(int argc, char ** argv)
+int main(void)
 {
 	int i;
 	FILE * out;

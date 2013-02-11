@@ -176,6 +176,7 @@ static toff_t tiff_seekproc(thandle_t clientdata, toff_t offset, int from)
 /* TIFFCloseProc tiff_closeproc - used to finally close the TIFF file */
 static int tiff_closeproc(thandle_t clientdata)
 {
+	(void)clientdata;
 	/*tiff_handle *th = (tiff_handle *)clientdata;
 	gdIOCtx *ctx = th->ctx;
 
@@ -194,13 +195,18 @@ static toff_t tiff_sizeproc(thandle_t clientdata)
 /* TIFFMapFileProc tiff_mapproc() */
 static int tiff_mapproc(thandle_t h, tdata_t *d, toff_t *o)
 {
+	(void)h;
+	(void)d;
+	(void)o;
 	return 0;
 }
 
 /* TIFFUnmapFileProc tiff_unmapproc */
 static void tiff_unmapproc(thandle_t h, tdata_t d, toff_t o)
 {
-
+	(void)h;
+	(void)d;
+	(void)o;
 }
 
 
@@ -495,6 +501,10 @@ static void readTiffBw (const unsigned char *src,
 	int src_x, src_y;
 	int k;
 
+	(void)has_alpha;
+	(void)extra;
+	(void)align;
+
 	for (src_y = 0; src_y < height; ++src_y) {
 		k = 0;
 		while (k < width) {
@@ -532,6 +542,9 @@ static void readTiff8bit (const unsigned char *src,
 {
 	int    red, green, blue, alpha;
 	int    x, y;
+
+	(void)extra;
+	(void)align;
 
 	switch (photometric) {
 		case PHOTOMETRIC_PALETTE:

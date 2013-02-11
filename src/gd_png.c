@@ -95,6 +95,7 @@ gdPngWriteData (png_structp png_ptr, png_bytep data, png_size_t length)
 	static void
 gdPngFlushData (png_structp png_ptr)
 {
+	(void)png_ptr;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * inFile)

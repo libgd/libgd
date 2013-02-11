@@ -19,6 +19,7 @@
 #ifndef HAVE_LIBXPM
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 {
+	(void)filename;
 	fprintf(stderr, "libgd was not built with xpm support\n");
 	return NULL;
 }

@@ -33,6 +33,8 @@ int iconv_close (iconv_t);
 iconv_t
 iconv_open (const char *tocode, const char *fromcode)
 {
+	(void)tocode;
+	(void)fromcode;
   return (iconv_t) (-1);
 }
 
@@ -40,12 +42,18 @@ size_t
 iconv (iconv_t cd, ICONV_CONST char **inbuf, size_t * inbytesleft,
        char **outbuf, size_t * outbytesleft)
 {
+	(void)cd;
+	(void)inbuf;
+	(void)inbytesleft;
+	(void)outbuf;
+	(void)outbytesleft;
   return 0;
 }
 
 int
 iconv_close (iconv_t cd)
 {
+	(void)cd;
   return 0;
 }
 
@@ -97,6 +105,8 @@ debug (const char *format, ...)
   vfprintf (stdout, format, args);
   fprintf (stdout, "\n");
   va_end (args);
+#else
+  (void)format;
 #endif
 }
 

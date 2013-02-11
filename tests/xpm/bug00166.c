@@ -5,7 +5,7 @@
 #include "gdtest.h"
 
 int
-main(int argc, char *argv[])
+main(void)
 {
   gdImagePtr im;
   char path[1024];

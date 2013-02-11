@@ -112,6 +112,8 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 	gdImagePtr surface_diff = NULL;
 	CuTestImageResult result = {0, 0};
 
+	(void)message;
+
 	if (!actual) {
 		fprintf(stderr, "Image is NULL\n");
 		goto fail;
@@ -209,6 +211,9 @@ int _gdTestErrorMsg(const char* file, int line, const char* format, ...) /* {{{ 
  char output_buf[512];
  va_list args;
  char *debug;
+
+ (void)file;
+ (void)line;
 
  va_start (args, format);
  vsnprintf (output_buf, sizeof (output_buf), format, args);

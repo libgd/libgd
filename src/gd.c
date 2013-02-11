@@ -1183,6 +1183,7 @@ BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
 BGD_DECLARE(void) gdImageAABlend (gdImagePtr im)
 {
   /* NO-OP, kept for library compatibility. */
+	(void)im;
 }
 
 static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int col);

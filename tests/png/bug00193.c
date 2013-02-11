@@ -13,12 +13,15 @@ static gdImagePtr im;
 static void
 failPutC(gdIOCtxPtr ctx, int c)
 {
+	(void)c;
 	TERMINATE(ctx, 1);
 }
 
 static int
 failPutBuf(gdIOCtxPtr ctx, const void * data, int size)
 {
+	(void)data;
+	(void)size;
 	TERMINATE(ctx, 1);
 	return -1;
 }

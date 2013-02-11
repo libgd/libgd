@@ -359,6 +359,8 @@ prescan_quantize (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 #else
   int width = oim->sx;
   int num_rows = oim->sy;
+
+  (void)nim;
 #endif
 
   for (row = 0; row < num_rows; row++)
@@ -479,6 +481,10 @@ LOCAL (void)
   int c0min, c0max, c1min, c1max, c2min, c2max;
   INT32 dist0, dist1, dist2;
   long ccount;
+#ifndef ORIGINAL_LIB_JPEG
+  (void)oim;
+  (void)nim;
+#endif
 
   c0min = boxp->c0min;
   c0max = boxp->c0max;
@@ -727,6 +733,9 @@ LOCAL (void)
   long c0total = 0;
   long c1total = 0;
   long c2total = 0;
+#ifndef ORIGINAL_LIB_JPEG
+  (void)oim;
+#endif
 
   c0min = boxp->c0min;
   c0max = boxp->c0max;
@@ -954,6 +963,10 @@ find_nearby_colors (
   int i, x, ncolors;
   INT32 minmaxdist, min_dist, max_dist, tdist;
   INT32 mindist[MAXNUMCOLORS];	/* min distance to colormap entry i */
+#ifndef ORIGINAL_LIB_JPEG
+  (void)oim;
+  (void)cquantize;
+#endif
 
   /* Compute true coordinates of update box's upper corner and center.
    * Actually we compute the coordinates of the center of the upper-corner
@@ -1130,6 +1143,10 @@ LOCAL (void) find_best_colors (
   INT32 inc0, inc1, inc2;	/* initial values for increments */
   /* This array holds the distance to the nearest-so-far color for each cell */
   INT32 bestdist[BOX_C0_ELEMS * BOX_C1_ELEMS * BOX_C2_ELEMS];
+#ifndef ORIGINAL_LIB_JPEG
+  (void)oim;
+  (void)cquantize;
+#endif
 
   /* Initialize best-distance for each cell of the update box */
   bptr = bestdist;
@@ -1607,6 +1624,9 @@ init_error_limit (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize)
   table = (int *) (*cinfo->mem->alloc_small)
     ((j_common_ptr) cinfo, JPOOL_IMAGE, (MAXJSAMPLE * 2 + 1) * SIZEOF (int));
 #else
+  (void)oim;
+  (void)nim;
+
   cquantize->error_limiter_storage =
     (int *) gdMalloc ((MAXJSAMPLE * 2 + 1) * sizeof (int));
   if (!cquantize->error_limiter_storage)
