@@ -12,7 +12,6 @@ gdImagePtr loadImage(const char *name)
 	fp = fopen(name, "rb");
 	if (!fp) {
 		fprintf(stderr, "Can't open jpeg file\n");
-		gdImageDestroy(im);
 		return NULL;
 	}
 
