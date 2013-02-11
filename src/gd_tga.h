@@ -18,8 +18,6 @@
  * 
  */
 
-#define TGA_LINE_LENGTH	1024
-
 #ifndef __TGA_H
 #define __TGA_H	1
 
