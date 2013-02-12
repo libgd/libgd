@@ -92,12 +92,33 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 		   double ptsize, double angle, int x, int y, char *string,
 		   gdFTStringExtraPtr strex)
 {
+  (void)im;
+  (void)brect;
+  (void)fg;
+  (void)fontlist;
+  (void)ptsize;
+  (void)angle;
+  (void)x;
+  (void)y;
+  (void)string;
+  (void)strex;
+
   return "libgd was not built with FreeType font support\n";
 }
 
 BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
 		 double ptsize, double angle, int x, int y, char *string)
 {
+  (void)im;
+  (void)brect;
+  (void)fg;
+  (void)fontlist;
+  (void)ptsize;
+  (void)angle;
+  (void)x;
+  (void)y;
+  (void)string;
+
   return "libgd was not built with FreeType font support\n";
 }
 #else
@@ -105,6 +126,9 @@ BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fon
 #ifndef HAVE_LIBFONTCONFIG
 static char * font_pattern(char **fontpath, char *fontpattern)
 {
+  (void)fontpath;
+  (void)fontpattern;
+
   return "libgd was not built with FontConfig support\n";
 }
 #endif /* HAVE_LIBFONTCONFIG */
