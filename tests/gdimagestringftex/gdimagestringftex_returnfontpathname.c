@@ -1,3 +1,4 @@
+#include <string.h>
 #include "gd.h"
 #include "gdtest.h"
 

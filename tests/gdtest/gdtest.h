@@ -2,7 +2,6 @@
 #define GD_TEST_H
 
 #include <stdarg.h>
-#include <gd.h>
 #include "test_config.h"
 
 #define GDTEST_STRING_MAX 1024
@@ -24,6 +23,8 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 
 int gdTestImageCompareToFile(const char* file, int line, const char* message,
 	const char *expected_file, gdImagePtr actual);
+
+int _gdTestAssert(const char* file, int line, const char* message, int condition);
 
 int _gdTestErrorMsg(const char* file, int line, const char* string, ...);
 

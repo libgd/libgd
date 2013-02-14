@@ -1,6 +1,6 @@
-#include <gd.h>
 #include <stdio.h>
 #include <limits.h>
+#include "gd.h"
 #include "gdtest.h"
 
 static int callback(gdImagePtr im, int src)

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "gd.h"
 #include "gdtest.h"
 
@@ -48,6 +49,6 @@ int main()
 
  	/* Destroy it */
  	gdImageDestroy(im);
-	unlink("_tmp_bug0006.gif");
+	remove("_tmp_bug0006.gif");
  	return error;
 }

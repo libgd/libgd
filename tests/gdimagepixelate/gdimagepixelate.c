@@ -1,5 +1,5 @@
-#include "gdtest.h"
 #include "gd.h"
+#include "gdtest.h"
 
 #define WIDTH 12
 #define BLOCK_SIZE 4
