@@ -1528,7 +1528,7 @@ static FcPattern* find_font(FcPattern* pattern)
 static char* find_postscript_font(FcPattern **fontpattern, char* fontname)
 {
   FcPattern* font = NULL;
-  int i;
+  size_t i;
 
   *fontpattern = NULL;
   for (i = 0; i < sizeof(postscript_alias)/sizeof(*postscript_alias); i++) {

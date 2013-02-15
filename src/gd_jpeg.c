@@ -302,7 +302,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	volatile JSAMPROW row = 0;
 	volatile gdImagePtr im = 0;
 	JSAMPROW rowptr[1];
-	int i, j, retval;
+	JDIMENSION i, j;
+	int retval;
 	JDIMENSION nrows;
 	int channels = 3;
 	int inverted = 0;
@@ -919,7 +920,7 @@ safeboolean empty_output_buffer(j_compress_ptr cinfo)
 void term_destination(j_compress_ptr cinfo)
 {
 	my_dest_ptr dest = (my_dest_ptr) cinfo->dest;
-	size_t datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
+	int datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
 
 	/* Write any data remaining in the buffer */
 	if(datacount > 0) {

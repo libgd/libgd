@@ -170,7 +170,7 @@ static toff_t tiff_seekproc(thandle_t clientdata, toff_t offset, int from)
 		th->pos = offset;
 	}
 
-	return result ? offset : -1;
+	return result ? offset : (toff_t)-1;
 }
 
 /* TIFFCloseProc tiff_closeproc - used to finally close the TIFF file */
@@ -253,7 +253,7 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	gdImageSetClip(image, 0, 0, width, height);
 
 	/* handle old-style single-colour mapping to 100% transparency */
-	if(image->transparent != 0xffffffff) {
+	if(image->transparent != -1) {
 		/* set our 100% transparent colour value */
 		transparentColorR = gdImageRed(image, image->transparent);
 		transparentColorG = gdImageGreen(image, image->transparent);
@@ -310,7 +310,7 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 
 	/* here, we check if the 'save alpha' flag is set on the source gd image */
 	if(	(bitDepth == 24) &&
-		(image->saveAlphaFlag || image->transparent != 0xffffffff)) {
+		(image->saveAlphaFlag || image->transparent != -1)) {
 		/* so, we need to store the alpha values too! 
 		 * Also, tell TIFF what the extra sample means (associated alpha) */
 		samplesPerPixel = 4;
@@ -357,7 +357,7 @@ BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 				scan[(x * samplesPerPixel) + 0] = color;
 			} else {
 				/* write out 24 bit value in 3 (or 4 if transparent) bytes */
-				if(image->saveAlphaFlag || image->transparent != 0xffffffff) {
+				if(image->saveAlphaFlag || image->transparent != -1) {
 					scan[(x * samplesPerPixel) + 3] = a;
 				}
 
@@ -662,8 +662,7 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 		char has_alpha, char is_bw, int extra)
 {
 	uint16  planar;
-	uint32 im_height, im_width;
-	int y;
+	uint32 im_height, im_width, y;
 
 	unsigned char *buffer;
 
