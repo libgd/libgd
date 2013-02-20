@@ -31,7 +31,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 {
 	XpmInfo info;
 	XpmImage image;
-	int i, j, k, number, len;
+	unsigned int i, j, k, number, len;
 	char buf[5];
 	gdImagePtr im = 0;
 	int *pointer;
