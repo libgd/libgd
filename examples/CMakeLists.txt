@@ -13,7 +13,6 @@ if (JPEG_FOUND)
 		"${TESTS_FILES}"
 		copyrotated
 		flip
-		nnquant
 	)
 endif (JPEG_FOUND)
 
