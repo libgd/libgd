@@ -1,6 +1,6 @@
 SET(TESTS_FILES
 	bug00003
-	bug00106
+	bug00106_gdimagerectangle
 )
 
 FOREACH(test_name ${TESTS_FILES})
