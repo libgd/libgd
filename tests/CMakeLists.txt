@@ -60,12 +60,6 @@ if (BUILD_TEST)
 		xpm
 	)
 
-	IF (WIN32)
-		SET(GDTESTS_TARGET_LINK "gdTest")
-	ELSE (WIN32)
-		SET(GDTESTS_TARGET_LINK "gdTest")
-	ENDIF (WIN32)
-
 	FOREACH(test_dir ${TESTS_DIRS})
 		add_subdirectory (${test_dir})
 	ENDFOREACH(test_dir)
