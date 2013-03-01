@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <gd.h>
-#include <gdtest.h>
+#include "gd.h"
+#include "gdtest.h"
 
 int main()
 {

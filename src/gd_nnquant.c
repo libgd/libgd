@@ -29,7 +29,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <gd.h>
+#include "gd.h"
 #include "gdhelpers.h"
 
 #include "gd_nnquant.h"

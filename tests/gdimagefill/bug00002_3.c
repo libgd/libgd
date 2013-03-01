@@ -1,5 +1,5 @@
 /* $Id$ */
-#include <gd.h>
+#include "gd.h"
 #include <stdio.h>
 #include "gdtest.h"
 

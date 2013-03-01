@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <gd.h>
+#include "gd.h"
 
 static const unsigned char gifdata[8994] = {71,73,70,56,55,97,20,1,110,
 0,247,0,0,247,247,247,255,251,255,231,231,231,214,211,214,239,235,239,

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <gd.h>
+#include "gd.h"
 
 #include "gdtest.h"
 #include "test_config.h"
