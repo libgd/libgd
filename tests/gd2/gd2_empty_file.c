@@ -18,7 +18,7 @@ int main()
 		return 1;
 	}
 
-	im = gdImageCreateFromJpeg(fp);
+	im = gdImageCreateFromGd2(fp);
 	fclose(fp);
 
 	if (!im) {
