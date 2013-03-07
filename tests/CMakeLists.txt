@@ -20,7 +20,6 @@ if (BUILD_TEST)
 	SET(TESTS_DIRS
 		gdtest
 		bmp
-		freetype
 		gd
 		gd2
 		gdimagearc
@@ -44,18 +43,32 @@ if (BUILD_TEST)
 		gdimagerectangle
 		gdimagescatterex
 		gdimagesetpixel
-		gdimagestringft
-		gdimagestringftex
 		gdnewfilectx
 		gdtiled
 		gif
-		jpeg
-		png
 		tga
-		tiff
 		wbmp
-		xpm
 	)
+
+	IF(FREETYPE_FOUND)
+		LIST(APPEND TESTS_DIRS freetype gdimagestringft gdimagestringftex)
+	ENDIF(FREETYPE_FOUND)
+
+	IF(JPEG_FOUND)
+		LIST(APPEND TESTS_DIRS jpeg)
+	ENDIF(JPEG_FOUND)
+
+	IF(PNG_FOUND)
+		LIST(APPEND TESTS_DIRS png)
+	ENDIF(PNG_FOUND)
+
+	IF(TIFF_FOUND)
+		LIST(APPEND TESTS_DIRS tiff)
+	ENDIF(TIFF_FOUND)
+
+	IF(XPM_FOUND)
+		LIST(APPEND TESTS_DIRS xpm)
+	ENDIF(XPM_FOUND)
 
 	FOREACH(test_dir ${TESTS_DIRS})
 		add_subdirectory (${test_dir})
