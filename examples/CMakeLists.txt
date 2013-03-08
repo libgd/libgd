@@ -9,19 +9,11 @@ SET(TESTS_FILES
 )
 
 if (JPEG_FOUND)
-	SET(TESTS_FILES
-		"${TESTS_FILES}"
-		copyrotated
-		flip
-	)
+	LIST(APPEND TESTS_FILES copyrotated flip)
 endif (JPEG_FOUND)
 
-
 if (TIFF_FOUND)
-	SET(TESTS_FILES
-		"${TESTS_FILES}"
-		tiffread
-	)
+	LIST(APPEND TESTS_FILES	tiffread)
 endif (TIFF_FOUND)
 
 FOREACH(test_name ${TESTS_FILES})
