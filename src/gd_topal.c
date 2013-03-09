@@ -1661,30 +1661,30 @@ outOfMemory:
       }
     }
 success:
-  for (i = 0; i < HIST_C0_ELEMS; i++)
-    {
-      if (cquantize->histogram[i])
-	{
-	  gdFree (cquantize->histogram[i]);
-	}
-    }
-  if (cquantize->histogram)
-    {
-      gdFree (cquantize->histogram);
-    }
-  if (cquantize->fserrors)
-    {
-      gdFree (cquantize->fserrors);
-    }
-  if (cquantize->error_limiter_storage)
-    {
-      gdFree (cquantize->error_limiter_storage);
-    }
+
   if (cquantize)
     {
+      if (cquantize->histogram)
+        {
+          for (i = 0; i < HIST_C0_ELEMS; i++)
+            {
+               if (cquantize->histogram[i])
+                 {
+                    gdFree (cquantize->histogram[i]);
+                 }
+            }
+          gdFree (cquantize->histogram);
+        }
+      if (cquantize->fserrors)
+        {
+          gdFree (cquantize->fserrors);
+        }
+      if (cquantize->error_limiter_storage)
+        {
+          gdFree (cquantize->error_limiter_storage);
+        }
       gdFree (cquantize);
     }
-
 }
 
 #endif
