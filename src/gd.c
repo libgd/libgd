@@ -124,9 +124,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
   for (i = 0; (i < gdMaxColors); i++)
     {
       im->open[i] = 1;
-      im->red[i] = 0;
-      im->green[i] = 0;
-      im->blue[i] = 0;
     };
   im->trueColor = 0;
   im->tpixels = 0;
