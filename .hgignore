@@ -1,4 +1,5 @@
 syntax: glob
+*~
 Makefile
 config.h
 CMakeCache.txt
