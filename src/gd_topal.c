@@ -1453,6 +1453,44 @@ zeroHistogram (hist3d histogram)
     }
 }
 
+
+/*
+  Selects quantization method used for subsequent gdImageTrueColorToPalette calls.
+  See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT, GD_QUANT_LIQ).
+  Speed is from 1 (highest quality) to 10 (fastest).
+  Speed 0 selects method-specific default (recommended).
+*/
+BGD_DECLARE(void) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, int speed)
+{
+    if (method >= GD_QUANT_DEFAULT && method <= GD_QUANT_LIQ)
+      {
+        im->paletteQuantizationMethod = method;
+
+        if (speed < 0 || speed > 10)
+          {
+            speed = 0;
+          }
+        im->paletteQuantizationSpeed = speed;
+      }
+}
+
+/*
+  Chooses quality range that subsequent call to gdImageTrueColorToPalette will aim for.
+  Min and max quality is in range 1-100 (1 = ugly, 100 = perfect). Max must be higher than min.
+  If palette cannot represent image with at least min_quality, then image will remain true-color.
+  If palette can represent image with quality better than max_quality, then lower number of colors will be used.
+  This function has effect only when GD_QUANT_LIQ method has been selected.
+*/
+BGD_DECLARE(void) gdImageTrueColorToPaletteSetQuality (gdImagePtr im, int min_quality, int max_quality)
+{
+    if (min_quality >= 0 && min_quality <= 100 &&
+        max_quality >= 0 && max_quality <= 100 && min_quality <= max_quality)
+      {
+        im->paletteQuantizationMinQuality = min_quality;
+        im->paletteQuantizationMaxQuality = max_quality;
+      }
+}
+
 static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colorsWanted, gdImagePtr *cimP);
 
 BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int dither, int colorsWanted)
@@ -1517,6 +1555,7 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
   size_t arraysize;
   int maxColors = gdMaxColors;
   gdImagePtr nim;
+
   if (cimP) {
     nim = gdImageCreate(oim->sx, oim->sy);
     *cimP = nim;
@@ -1563,16 +1602,52 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
       }
   }
 
+
+  if (oim->paletteQuantizationMethod == GD_QUANT_NEUQUANT)
+    {
+      if (cimP) /* NeuQuant alwasy creates a copy, so the new blank image can't be used */
+        {
+          gdImageDestroy(nim);
+        }
+      nim = gdImageNeuQuant(oim, colorsWanted, oim->paletteQuantizationSpeed ? oim->paletteQuantizationSpeed : 2);
+      if (cimP)
+        {
+          *cimP = nim;
+        }
+      else
+        {
+          gdImageCopy(oim, nim, 0, 0, 0, 0, oim->sx, oim->sy);
+          gdImageDestroy(nim);
+        }
+      return;
+    }
+
+
 #ifdef HAVE_LIBIMAGEQUANT_H
+  if (oim->paletteQuantizationMethod == GD_QUANT_DEFAULT ||
+      oim->paletteQuantizationMethod == GD_QUANT_LIQ)
   {
-    liq_attr *attr = liq_attr_create();
+    liq_attr *attr = liq_attr_create_with_allocator(gdMalloc, gdFree);
     liq_image *image;
     liq_result *remap;
     int remapped_ok = 0;
 
-    liq_set_speed(attr, 9); /* make it fast to match speed of previous implementation */
+    liq_set_max_colors(attr, colorsWanted);
+
+    /* by default make it fast to match speed of previous implementation */
+    liq_set_speed(attr, oim->paletteQuantizationSpeed ? oim->paletteQuantizationSpeed : 9);
+    if (oim->paletteQuantizationMaxQuality)
+      {
+        liq_set_quality(attr, oim->paletteQuantizationMinQuality, oim->paletteQuantizationMaxQuality);
+      }
     image = liq_image_create_custom(attr, convert_gdpixel_to_rgba, oim, oim->sx, oim->sy, 0);
     remap = liq_quantize_image(attr, image);
+    if (!remap)  /* minimum quality not met, leave image unmodified */
+      {
+        liq_image_destroy(image);
+        liq_attr_destroy(attr);
+        goto outOfMemory;
+      }
 
     liq_set_dithering_level(remap, dither ? 1 : 0);
     if (LIQ_OK == liq_write_remapped_image_rows(remap, image, output_buf))
