@@ -588,24 +588,27 @@ BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color);
 
 	DIFFERENCES: gdImageCreatePaletteFromTrueColor creates and
 	returns a new image. gdImageTrueColorToPalette modifies
-	an existing image, and the truecolor pixels are discarded. */
+	an existing image, and the truecolor pixels are discarded.
+
+    gdImageTrueColorToPalette() returns TRUE on success, FALSE on failure.
+
+  */
 
 BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int ditherFlag,
 				  int colorsWanted);
 
-BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
+BGD_DECLARE(int) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
 				  int colorsWanted);
-
-BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
-          int colorsWanted);
 
 /*
   Selects quantization method used for subsequent gdImageTrueColorToPalette calls.
   See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT, GD_QUANT_LIQ).
   Speed is from 1 (highest quality) to 10 (fastest).
   Speed 0 selects method-specific default (recommended).
+
+  Returns FALSE if the given method is invalid or not available.
 */
-BGD_DECLARE(void) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, int speed);
+BGD_DECLARE(int) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, int speed);
 
 /*
   Chooses quality range that subsequent call to gdImageTrueColorToPalette will aim for.

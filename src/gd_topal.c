@@ -1459,9 +1459,18 @@ zeroHistogram (hist3d histogram)
   See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT, GD_QUANT_LIQ).
   Speed is from 1 (highest quality) to 10 (fastest).
   Speed 0 selects method-specific default (recommended).
+
+  Returns FALSE if the given method is invalid or not available.
 */
-BGD_DECLARE(void) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, int speed)
+BGD_DECLARE(int) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, int speed)
 {
+  #ifndef HAVE_LIBIMAGEQUANT_H
+    if (method == GD_QUANT_LIQ)
+      {
+        return FALSE;
+      }
+  #endif
+
     if (method >= GD_QUANT_DEFAULT && method <= GD_QUANT_LIQ)
       {
         im->paletteQuantizationMethod = method;
@@ -1472,6 +1481,7 @@ BGD_DECLARE(void) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method,
           }
         im->paletteQuantizationSpeed = speed;
       }
+    return TRUE;
 }
 
 /*
@@ -1491,18 +1501,21 @@ BGD_DECLARE(void) gdImageTrueColorToPaletteSetQuality (gdImagePtr im, int min_qu
       }
 }
 
-static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colorsWanted, gdImagePtr *cimP);
+static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colorsWanted, gdImagePtr *cimP);
 
 BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int dither, int colorsWanted)
 {
 	gdImagePtr nim;
-	gdImageTrueColorToPaletteBody(im, dither, colorsWanted, &nim);
-	return nim;
+	if (TRUE == gdImageTrueColorToPaletteBody(im, dither, colorsWanted, &nim))
+    {
+       return nim;
+    }
+	return NULL;
 }
 
-BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colorsWanted)
+BGD_DECLARE(int) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colorsWanted)
 {
-	gdImageTrueColorToPaletteBody(im, dither, colorsWanted, 0);
+	return gdImageTrueColorToPaletteBody(im, dither, colorsWanted, 0);
 }
 
 #ifdef HAVE_LIBIMAGEQUANT_H
@@ -1546,10 +1559,10 @@ static void free_truecolor_image_data(gdImagePtr oim)
  * Module initialization routine for 2-pass color quantization.
  */
 
-static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colorsWanted, gdImagePtr *cimP)
+static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colorsWanted, gdImagePtr *cimP)
 {
   my_cquantize_ptr cquantize = NULL;
-  int i;
+  int i, conversionSucceeded=0;
 
   /* Allocate the JPEG palette-storage */
   size_t arraysize;
@@ -1562,7 +1575,7 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
       *cimP = nim;
       if (!nim)
         {
-          return;
+          return FALSE;
         }
     }
   else
@@ -1578,7 +1591,7 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
           gdImageCopy(nim, oim, 0, 0, 0, 0, oim->sx, oim->sy);
           *cimP = nim;
         }
-      return;
+      return TRUE;
     }
 
   /* If we have a transparent color (the alphaless mode of transparency), we
@@ -1626,7 +1639,7 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
           gdImageCopy(oim, nim, 0, 0, 0, 0, oim->sx, oim->sy);
           gdImageDestroy(nim);
         }
-      return;
+      return TRUE;
     }
 
 
@@ -1691,7 +1704,7 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
             {
               free_truecolor_image_data(oim);
             }
-          return;
+          return TRUE;
         }
     }
 #endif
@@ -1800,14 +1813,16 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
     }
 
   /* Success! Get rid of the truecolor image data. */
+  conversionSucceeded = TRUE;
   if (!cimP)
     {
       free_truecolor_image_data(oim);
     }
 
-  goto success;
+  goto freeQuantizeData;
   /* Tediously free stuff. */
 outOfMemory:
+  conversionSucceeded = FALSE;
   if (oim->trueColor)
     {
       if (!cimP)
@@ -1833,7 +1848,7 @@ outOfMemory:
         }
     }
 
-success:
+freeQuantizeData:
   if (cquantize)
     {
       if (cquantize->histogram)
@@ -1857,6 +1872,8 @@ success:
         }
       gdFree (cquantize);
     }
+
+  return conversionSucceeded;
 }
 
 #endif
