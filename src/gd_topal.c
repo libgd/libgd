@@ -45,6 +45,10 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
+#ifdef HAVE_LIBIMAGEQUANT_H
+#include <libimagequant.h>
+#endif
+
 /* (Re)define some defines known by libjpeg */
 #define QUANT_2PASS_SUPPORTED
 
@@ -1463,6 +1467,30 @@ BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colo
 	gdImageTrueColorToPaletteBody(im, dither, colorsWanted, 0);
 }
 
+#ifdef HAVE_LIBIMAGEQUANT_H
+/**
+  LIQ library needs pixels in RGBA order with alpha 0-255 (opaque 255).
+  This callback is run whenever source rows need to be converted from GD's format.
+*/
+static void convert_gdpixel_to_rgba(liq_color output_row[], int y, int width, void *userinfo)
+{
+  gdImagePtr oim = userinfo;
+  int x;
+  for(x = 0; x < width; x++)
+    {
+      output_row[x].r = gdTrueColorGetRed(input_buf[y][x]) * 255/gdRedMax;
+      output_row[x].g = gdTrueColorGetGreen(input_buf[y][x]) * 255/gdGreenMax;
+      output_row[x].b = gdTrueColorGetBlue(input_buf[y][x]) * 255/gdBlueMax;
+      int alpha = gdTrueColorGetAlpha(input_buf[y][x]);
+      if (gdAlphaOpaque < gdAlphaTransparent)
+        {
+          alpha = gdAlphaTransparent - alpha;
+        }
+      output_row[x].a = alpha * 255/gdAlphaMax;
+    }
+}
+#endif
+
 static void free_truecolor_image_data(gdImagePtr oim)
 {
   int i;
@@ -1534,6 +1562,57 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
   	}
       }
   }
+
+#ifdef HAVE_LIBIMAGEQUANT_H
+  {
+    liq_attr *attr = liq_attr_create();
+    liq_image *image;
+    liq_result *remap;
+    int remapped_ok = 0;
+
+    liq_set_speed(attr, 9); /* make it fast to match speed of previous implementation */
+    image = liq_image_create_custom(attr, convert_gdpixel_to_rgba, oim, oim->sx, oim->sy, 0);
+    remap = liq_quantize_image(attr, image);
+
+    liq_set_dithering_level(remap, dither ? 1 : 0);
+    if (LIQ_OK == liq_write_remapped_image_rows(remap, image, output_buf))
+      {
+        remapped_ok = 1;
+        const liq_palette *pal = liq_get_palette(remap);
+        nim->transparent = -1;
+        for(int icolor=0; icolor < pal->count; icolor++)
+          {
+            nim->open[icolor] = 0;
+            nim->red[icolor] = pal->entries[icolor].r * gdRedMax/255;
+            nim->green[icolor] = pal->entries[icolor].g * gdGreenMax/255;
+            nim->blue[icolor] = pal->entries[icolor].b * gdBlueMax/255;
+            int alpha = pal->entries[icolor].a * gdAlphaMax/255;
+            if (gdAlphaOpaque < gdAlphaTransparent)
+              {
+                alpha = gdAlphaTransparent - alpha;
+              }
+            nim->alpha[icolor] = alpha;
+            if (nim->transparent == -1 && alpha == gdAlphaTransparent)
+              {
+                nim->transparent = icolor;
+              }
+          }
+        nim->colorsTotal = pal->count;
+      }
+    liq_result_destroy(remap);
+    liq_image_destroy(image);
+    liq_attr_destroy(attr);
+
+    if (remapped_ok)
+      {
+        if (!cimP)
+          {
+            free_truecolor_image_data(oim);
+          }
+        return;
+      }
+  }
+#endif
 
   cquantize = (my_cquantize_ptr) gdCalloc (sizeof (my_cquantizer), 1);
   if (!cquantize)
