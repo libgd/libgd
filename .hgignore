@@ -9,3 +9,5 @@ cscope.out
 CPackConfig.cmake
 CPackSourceConfig.cmake
 CTestTestfile.cmake
+libimagequant
+libimagequant-prefix

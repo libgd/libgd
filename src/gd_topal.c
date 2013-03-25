@@ -46,7 +46,7 @@
 #include "gdhelpers.h"
 
 #ifdef HAVE_LIBIMAGEQUANT_H
-#include <libimagequant.h>
+#include <libimagequant.h> /* if this fails then set -DENABLE_LIQ=NO in cmake or make static libimagequant.a in libimagequant/ */
 #endif
 
 /* (Re)define some defines known by libjpeg */
