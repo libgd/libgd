@@ -35,7 +35,7 @@
  * If it is not working, it's not Thomas G. Lane's fault.
  */
 
-/* 
+/*
   SETTING THIS ONE CAUSES STRIPED IMAGE
   to be done: solve this
   #define ORIGINAL_LIB_JPEG_REVERSE_ODD_ROWS
@@ -147,7 +147,7 @@
  * color space, and repeatedly splits the "largest" remaining box until we
  * have as many boxes as desired colors.  Then the mean color in each
  * remaining box becomes one of the possible output colors.
- * 
+ *
  * The second pass over the image maps each input pixel to the closest output
  * color (optionally after applying a Floyd-Steinberg dithering correction).
  * This mapping is logically trivial, but making it go fast enough requires
@@ -721,7 +721,7 @@ select_colors (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize, int d
   int i;
 
   /* Allocate workspace for box list */
-  /* This can't happen because we clamp desired_colors at gdMaxColors, 
+  /* This can't happen because we clamp desired_colors at gdMaxColors,
     but anyway */
   if (overflow2(desired_colors, sizeof (box))) {
     return;
@@ -1180,9 +1180,9 @@ pass2_no_dither (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize)
 	  int r, g, b;
 	  r = gdTrueColorGetRed (*inptr);
 	  g = gdTrueColorGetGreen (*inptr);
-	  /* 
+	  /*
 	     2.0.24: inptr must not be incremented until after
-	     transparency check, if any. Thanks to "Super Pikeman." 
+	     transparency check, if any. Thanks to "Super Pikeman."
 	   */
 	  b = gdTrueColorGetBlue (*inptr);
 
@@ -1556,22 +1556,28 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
   int maxColors = gdMaxColors;
   gdImagePtr nim;
 
-  if (cimP) {
-    nim = gdImageCreate(oim->sx, oim->sy);
-    *cimP = nim;
-    if (!nim) {
-      return;
+  if (cimP)
+    {
+      nim = gdImageCreate(oim->sx, oim->sy);
+      *cimP = nim;
+      if (!nim)
+        {
+          return;
+        }
     }
-  } else {
-    nim = oim;
-  }     
+  else
+    {
+      nim = oim;
+    }
+
   if (!oim->trueColor)
     {
       /* (Almost) nothing to do! */
-      if (cimP) {
-        gdImageCopy(nim, oim, 0, 0, 0, 0, oim->sx, oim->sy);
-        *cimP = nim;
-      }
+      if (cimP)
+        {
+          gdImageCopy(nim, oim, 0, 0, 0, 0, oim->sx, oim->sy);
+          *cimP = nim;
+        }
       return;
     }
 
@@ -1585,22 +1591,23 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
     {
       colorsWanted = maxColors;
     }
-  if (!cimP) {
-    nim->pixels = gdCalloc (sizeof (unsigned char *), oim->sy);
-    if (!nim->pixels)
-      {
-        /* No can do */
-        goto outOfMemory;
-      }
-    for (i = 0; (i < nim->sy); i++)
-      {
-        nim->pixels[i] = gdCalloc (sizeof (unsigned char *), oim->sx);
-        if (!nim->pixels[i])
-  	{
-  	  goto outOfMemory;
-  	}
-      }
-  }
+  if (!cimP)
+    {
+      nim->pixels = gdCalloc (sizeof (unsigned char *), oim->sy);
+      if (!nim->pixels)
+        {
+          /* No can do */
+          goto outOfMemory;
+        }
+      for (i = 0; (i < nim->sy); i++)
+        {
+          nim->pixels[i] = gdCalloc (sizeof (unsigned char *), oim->sx);
+          if (!nim->pixels[i])
+            {
+              goto outOfMemory;
+            }
+        }
+    }
 
 
   if (oim->paletteQuantizationMethod == GD_QUANT_NEUQUANT)
@@ -1626,67 +1633,67 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
 #ifdef HAVE_LIBIMAGEQUANT_H
   if (oim->paletteQuantizationMethod == GD_QUANT_DEFAULT ||
       oim->paletteQuantizationMethod == GD_QUANT_LIQ)
-  {
-    liq_attr *attr = liq_attr_create_with_allocator(gdMalloc, gdFree);
-    liq_image *image;
-    liq_result *remap;
-    int remapped_ok = 0;
+    {
+      liq_attr *attr = liq_attr_create_with_allocator(gdMalloc, gdFree);
+      liq_image *image;
+      liq_result *remap;
+      int remapped_ok = 0;
 
-    liq_set_max_colors(attr, colorsWanted);
+      liq_set_max_colors(attr, colorsWanted);
 
-    /* by default make it fast to match speed of previous implementation */
-    liq_set_speed(attr, oim->paletteQuantizationSpeed ? oim->paletteQuantizationSpeed : 9);
-    if (oim->paletteQuantizationMaxQuality)
-      {
-        liq_set_quality(attr, oim->paletteQuantizationMinQuality, oim->paletteQuantizationMaxQuality);
-      }
-    image = liq_image_create_custom(attr, convert_gdpixel_to_rgba, oim, oim->sx, oim->sy, 0);
-    remap = liq_quantize_image(attr, image);
-    if (!remap)  /* minimum quality not met, leave image unmodified */
-      {
-        liq_image_destroy(image);
-        liq_attr_destroy(attr);
-        goto outOfMemory;
-      }
+      /* by default make it fast to match speed of previous implementation */
+      liq_set_speed(attr, oim->paletteQuantizationSpeed ? oim->paletteQuantizationSpeed : 9);
+      if (oim->paletteQuantizationMaxQuality)
+        {
+          liq_set_quality(attr, oim->paletteQuantizationMinQuality, oim->paletteQuantizationMaxQuality);
+        }
+      image = liq_image_create_custom(attr, convert_gdpixel_to_rgba, oim, oim->sx, oim->sy, 0);
+      remap = liq_quantize_image(attr, image);
+      if (!remap)  /* minimum quality not met, leave image unmodified */
+        {
+          liq_image_destroy(image);
+          liq_attr_destroy(attr);
+          goto outOfMemory;
+        }
 
-    liq_set_dithering_level(remap, dither ? 1 : 0);
-    if (LIQ_OK == liq_write_remapped_image_rows(remap, image, output_buf))
-      {
-        remapped_ok = 1;
-        const liq_palette *pal = liq_get_palette(remap);
-        nim->transparent = -1;
-        for(int icolor=0; icolor < pal->count; icolor++)
-          {
-            nim->open[icolor] = 0;
-            nim->red[icolor] = pal->entries[icolor].r * gdRedMax/255;
-            nim->green[icolor] = pal->entries[icolor].g * gdGreenMax/255;
-            nim->blue[icolor] = pal->entries[icolor].b * gdBlueMax/255;
-            int alpha = pal->entries[icolor].a * gdAlphaMax/255;
-            if (gdAlphaOpaque < gdAlphaTransparent)
-              {
-                alpha = gdAlphaTransparent - alpha;
-              }
-            nim->alpha[icolor] = alpha;
-            if (nim->transparent == -1 && alpha == gdAlphaTransparent)
-              {
-                nim->transparent = icolor;
-              }
-          }
-        nim->colorsTotal = pal->count;
-      }
-    liq_result_destroy(remap);
-    liq_image_destroy(image);
-    liq_attr_destroy(attr);
+      liq_set_dithering_level(remap, dither ? 1 : 0);
+      if (LIQ_OK == liq_write_remapped_image_rows(remap, image, output_buf))
+        {
+          remapped_ok = 1;
+          const liq_palette *pal = liq_get_palette(remap);
+          nim->transparent = -1;
+          for(int icolor=0; icolor < pal->count; icolor++)
+            {
+              nim->open[icolor] = 0;
+              nim->red[icolor] = pal->entries[icolor].r * gdRedMax/255;
+              nim->green[icolor] = pal->entries[icolor].g * gdGreenMax/255;
+              nim->blue[icolor] = pal->entries[icolor].b * gdBlueMax/255;
+              int alpha = pal->entries[icolor].a * gdAlphaMax/255;
+              if (gdAlphaOpaque < gdAlphaTransparent)
+                {
+                  alpha = gdAlphaTransparent - alpha;
+                }
+              nim->alpha[icolor] = alpha;
+              if (nim->transparent == -1 && alpha == gdAlphaTransparent)
+                {
+                  nim->transparent = icolor;
+                }
+            }
+          nim->colorsTotal = pal->count;
+        }
+      liq_result_destroy(remap);
+      liq_image_destroy(image);
+      liq_attr_destroy(attr);
 
-    if (remapped_ok)
-      {
-        if (!cimP)
-          {
-            free_truecolor_image_data(oim);
-          }
-        return;
-      }
-  }
+      if (remapped_ok)
+        {
+          if (!cimP)
+            {
+              free_truecolor_image_data(oim);
+            }
+          return;
+        }
+    }
 #endif
 
   cquantize = (my_cquantize_ptr) gdCalloc (sizeof (my_cquantizer), 1);
@@ -1704,11 +1711,11 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
   for (i = 0; i < HIST_C0_ELEMS; i++)
     {
       cquantize->histogram[i] =
-	(hist2d) gdMalloc (HIST_C1_ELEMS * HIST_C2_ELEMS * sizeof (histcell));
+          (hist2d) gdMalloc (HIST_C1_ELEMS * HIST_C2_ELEMS * sizeof (histcell));
       if (!cquantize->histogram[i])
-	{
-	  goto outOfMemory;
-	}
+        {
+          goto outOfMemory;
+        }
     }
 
 
@@ -1803,37 +1810,40 @@ static void gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int color
 outOfMemory:
   if (oim->trueColor)
     {
-      if (!cimP) {
-        /* On failure only */
-        for (i = 0; i < nim->sy; i++)
-  	{
-  	  if (nim->pixels[i])
-  	    {
-  	      gdFree (nim->pixels[i]);
-  	    }
-  	}
-        if (nim->pixels)
-  	{
-  	  gdFree (nim->pixels);
-  	}
-        nim->pixels = 0;
-      } else {
-        gdImageDestroy(nim);
-        *cimP = 0;
-      }
+      if (!cimP)
+        {
+          /* On failure only */
+          for (i = 0; i < nim->sy; i++)
+            {
+              if (nim->pixels[i])
+                {
+                  gdFree (nim->pixels[i]);
+                }
+            }
+          if (nim->pixels)
+            {
+              gdFree (nim->pixels);
+            }
+          nim->pixels = 0;
+        }
+      else
+        {
+          gdImageDestroy(nim);
+          *cimP = 0;
+        }
     }
-success:
 
+success:
   if (cquantize)
     {
       if (cquantize->histogram)
         {
           for (i = 0; i < HIST_C0_ELEMS; i++)
             {
-               if (cquantize->histogram[i])
-                 {
-                    gdFree (cquantize->histogram[i]);
-                 }
+              if (cquantize->histogram[i])
+                {
+                   gdFree (cquantize->histogram[i]);
+                }
             }
           gdFree (cquantize->histogram);
         }
