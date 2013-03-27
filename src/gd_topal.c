@@ -35,11 +35,9 @@
  * If it is not working, it's not Thomas G. Lane's fault.
  */
 
-/*
-  SETTING THIS ONE CAUSES STRIPED IMAGE
-  to be done: solve this
-  #define ORIGINAL_LIB_JPEG_REVERSE_ODD_ROWS
- */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <string.h>
 #include "gd.h"
