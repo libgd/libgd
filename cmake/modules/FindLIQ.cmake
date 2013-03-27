@@ -33,24 +33,26 @@ IF (LIQ_FOUND)
 ELSE (LIQ_FOUND)
   # if existing library not found, then download and build it
   IF (NOT WIN32 OR CYGWIN OR MINGW) # MSVC's C compiler is too old to compile libimagequant
-    MESSAGE(STATUS "LIQ will be built")
-    INCLUDE(ExternalProject)
-    EXTERNALPROJECT_ADD(
-        libimagequant
-        URL "http://pngquant.org/libimagequant-2.0.0-src.tar.bz2"
-        SOURCE_DIR libimagequant
-        BUILD_IN_SOURCE 1
-        INSTALL_DIR libimagequant
-        INSTALL_COMMAND true
-        CONFIGURE_COMMAND true
-        BUILD_COMMAND make static
-    )
+    IF (CMAKE_VERSION VERSION_GREATER "2.8.1")
+      MESSAGE(STATUS "LIQ will be built")
+      INCLUDE(ExternalProject)
+      EXTERNALPROJECT_ADD(
+          libimagequant
+          URL "http://pngquant.org/libimagequant-2.0.0-src.tar.bz2"
+          SOURCE_DIR libimagequant
+          BUILD_IN_SOURCE 1
+          INSTALL_DIR libimagequant
+          INSTALL_COMMAND true
+          CONFIGURE_COMMAND true
+          BUILD_COMMAND make static
+      )
 
-    SET(LIQ_FOUND "SORTOF")
-    SET(LIQ_BUILD "YES")
+      SET(LIQ_FOUND "SORTOF")
+      SET(LIQ_BUILD "YES")
     SET(LIQ_LIBRARIES "${PROJECT_BINARY_DIR}/libimagequant/libimagequant.a")
     SET(LIQ_INCLUDE_DIR "${PROJECT_BINARY_DIR}/libimagequant/")
-    SET(HAVE_LIBIMAGEQUANT_H 1)
+      SET(HAVE_LIBIMAGEQUANT_H 1)
+    ENDIF(CMAKE_VERSION VERSION_GREATER "2.8.1")
   ENDIF(NOT WIN32 OR CYGWIN OR MINGW)
 ENDIF (LIQ_FOUND)
 
