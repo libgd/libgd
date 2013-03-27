@@ -1670,7 +1670,8 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
           remapped_ok = 1;
           const liq_palette *pal = liq_get_palette(remap);
           nim->transparent = -1;
-          for(int icolor=0; icolor < pal->count; icolor++)
+          unsigned int icolor;
+          for(icolor=0; icolor < pal->count; icolor++)
             {
               nim->open[icolor] = 0;
               nim->red[icolor] = pal->entries[icolor].r * gdRedMax/255;
