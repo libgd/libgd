@@ -1569,10 +1569,9 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
   int maxColors = gdMaxColors;
   gdImagePtr nim;
 
-  if (cimP)
-    {
-      nim = gdImageCreate(oim->sx, oim->sy);
-      *cimP = nim;
+  if (cimP) {
+    nim = gdImageCreate(oim->sx, oim->sy);
+    *cimP = nim;
       if (!nim)
         {
           return FALSE;
@@ -1586,11 +1585,10 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
   if (!oim->trueColor)
     {
       /* (Almost) nothing to do! */
-      if (cimP)
-        {
-          gdImageCopy(nim, oim, 0, 0, 0, 0, oim->sx, oim->sy);
-          *cimP = nim;
-        }
+      if (cimP) {
+        gdImageCopy(nim, oim, 0, 0, 0, 0, oim->sx, oim->sy);
+        *cimP = nim;
+      }
       return TRUE;
     }
 
@@ -1604,23 +1602,22 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
     {
       colorsWanted = maxColors;
     }
-  if (!cimP)
-    {
-      nim->pixels = gdCalloc (sizeof (unsigned char *), oim->sy);
-      if (!nim->pixels)
-        {
-          /* No can do */
-          goto outOfMemory;
-        }
-      for (i = 0; (i < nim->sy); i++)
-        {
-          nim->pixels[i] = gdCalloc (sizeof (unsigned char *), oim->sx);
-          if (!nim->pixels[i])
-            {
-              goto outOfMemory;
-            }
-        }
-    }
+  if (!cimP) {
+    nim->pixels = gdCalloc (sizeof (unsigned char *), oim->sy);
+    if (!nim->pixels)
+      {
+        /* No can do */
+        goto outOfMemory;
+      }
+    for (i = 0; (i < nim->sy); i++)
+      {
+        nim->pixels[i] = gdCalloc (sizeof (unsigned char *), oim->sx);
+        if (!nim->pixels[i])
+  	{
+  	  goto outOfMemory;
+  	}
+      }
+  }
 
 
   if (oim->paletteQuantizationMethod == GD_QUANT_NEUQUANT)
@@ -1724,11 +1721,11 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
   for (i = 0; i < HIST_C0_ELEMS; i++)
     {
       cquantize->histogram[i] =
-          (hist2d) gdMalloc (HIST_C1_ELEMS * HIST_C2_ELEMS * sizeof (histcell));
+	(hist2d) gdMalloc (HIST_C1_ELEMS * HIST_C2_ELEMS * sizeof (histcell));
       if (!cquantize->histogram[i])
-        {
-          goto outOfMemory;
-        }
+	{
+	  goto outOfMemory;
+	}
     }
 
 
@@ -1825,27 +1822,24 @@ outOfMemory:
   conversionSucceeded = FALSE;
   if (oim->trueColor)
     {
-      if (!cimP)
-        {
-          /* On failure only */
-          for (i = 0; i < nim->sy; i++)
-            {
-              if (nim->pixels[i])
-                {
-                  gdFree (nim->pixels[i]);
-                }
-            }
-          if (nim->pixels)
-            {
-              gdFree (nim->pixels);
-            }
-          nim->pixels = 0;
-        }
-      else
-        {
-          gdImageDestroy(nim);
-          *cimP = 0;
-        }
+      if (!cimP) {
+        /* On failure only */
+        for (i = 0; i < nim->sy; i++)
+  	{
+  	  if (nim->pixels[i])
+  	    {
+  	      gdFree (nim->pixels[i]);
+  	    }
+  	}
+        if (nim->pixels)
+  	{
+  	  gdFree (nim->pixels);
+  	}
+        nim->pixels = 0;
+      } else {
+        gdImageDestroy(nim);
+        *cimP = 0;
+      }
     }
 
 freeQuantizeData:
@@ -1855,10 +1849,10 @@ freeQuantizeData:
         {
           for (i = 0; i < HIST_C0_ELEMS; i++)
             {
-              if (cquantize->histogram[i])
-                {
-                   gdFree (cquantize->histogram[i]);
-                }
+               if (cquantize->histogram[i])
+                 {
+                    gdFree (cquantize->histogram[i]);
+                 }
             }
           gdFree (cquantize->histogram);
         }
