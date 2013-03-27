@@ -138,6 +138,12 @@ enum gdCropMode {
 	GD_CROP_SIDES
 };
 
+enum gdPaletteQuantizationMethod {
+  GD_QUANT_DEFAULT = 0,
+  GD_QUANT_JQUANT = 1,  /* libjpeg's old median cut. Fast, but only uses 16-bit color. */
+  GD_QUANT_NEUQUANT = 2, /* neuquant - approximation using kohonen neural network. */
+  GD_QUANT_LIQ = 3 /* combination of algorithms used in libimagequant/pngquant2 aiming for highest quality at cost of speed */
+};
 
 /* This function accepts truecolor pixel values only. The
 	source color is composited with the destination color
@@ -228,6 +234,18 @@ BGD_DECLARE(int) gdAlphaBlend (int dest, int src);
     /* 2.1.0: allows to specify resolution in dpi */
     unsigned int res_x;
     unsigned int res_y;
+
+    /* Selects quantization method, see gdImageTrueColorToPaletteSetMethod() and gdPaletteQuantizationMethod enum. */
+    int paletteQuantizationMethod;
+    /* speed/quality trade-off. 1 = best quality, 10 = best speed. 0 = method-specific default.
+       Applicable to GD_QUANT_LIQ and GD_QUANT_NEUQUANT. */
+    int paletteQuantizationSpeed;
+    /* Image will remain true-color if conversion to palette cannot achieve given quality.
+       Value from 1 to 100, 1 = ugly, 100 = perfect. Applicable to GD_QUANT_LIQ.*/
+    int paletteQuantizationMinQuality;
+    /* Image will use minimum number of palette colors needed to achieve given quality. Must be higher than paletteQuantizationMinQuality
+       Value from 1 to 100, 1 = ugly, 100 = perfect. Applicable to GD_QUANT_LIQ.*/
+    int paletteQuantizationMaxQuality;
   }
   gdImage;
 
@@ -570,13 +588,36 @@ BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color);
 
 	DIFFERENCES: gdImageCreatePaletteFromTrueColor creates and
 	returns a new image. gdImageTrueColorToPalette modifies
-	an existing image, and the truecolor pixels are discarded. */
+	an existing image, and the truecolor pixels are discarded.
+
+    gdImageTrueColorToPalette() returns TRUE on success, FALSE on failure.
+
+  */
 
 BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int ditherFlag,
 				  int colorsWanted);
 
-BGD_DECLARE(void) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
+BGD_DECLARE(int) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
 				  int colorsWanted);
+
+/*
+  Selects quantization method used for subsequent gdImageTrueColorToPalette calls.
+  See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT, GD_QUANT_LIQ).
+  Speed is from 1 (highest quality) to 10 (fastest).
+  Speed 0 selects method-specific default (recommended).
+
+  Returns FALSE if the given method is invalid or not available.
+*/
+BGD_DECLARE(int) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, int speed);
+
+/*
+  Chooses quality range that subsequent call to gdImageTrueColorToPalette will aim for.
+  Min and max quality is in range 1-100 (1 = ugly, 100 = perfect). Max must be higher than min.
+  If palette cannot represent image with at least min_quality, then image will remain true-color.
+  If palette can represent image with quality better than max_quality, then lower number of colors will be used.
+  This function has effect only when GD_QUANT_LIQ method has been selected and the source image is true-color.
+*/
+BGD_DECLARE(void) gdImageTrueColorToPaletteSetQuality (gdImagePtr im, int min_quality, int max_quality);
 
 /* Specifies a color index (if a palette image) or an
 	RGB color (if a truecolor image) which should be
