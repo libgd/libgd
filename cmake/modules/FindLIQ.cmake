@@ -44,7 +44,7 @@ ELSE (LIQ_FOUND)
           INSTALL_DIR libimagequant
           INSTALL_COMMAND true
           CONFIGURE_COMMAND true
-          BUILD_COMMAND make static
+          BUILD_COMMAND make static CFLAGSADD='-fPIC'
       )
 
       SET(LIQ_FOUND "SORTOF")
