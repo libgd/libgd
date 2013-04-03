@@ -30,10 +30,10 @@
 typedef int code_int;
 
 #ifdef SIGNED_COMPARE_SLOW
-	typedef unsigned long int count_int;
-	typedef unsigned short int count_short;
+typedef unsigned long int count_int;
+typedef unsigned short int count_short;
 #else /* SIGNED_COMPARE_SLOW */
-	typedef long int count_int;
+typedef long int count_int;
 #endif /* SIGNED_COMPARE_SLOW */
 
 /* 2.0.28: threadsafe */
@@ -122,15 +122,15 @@ BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out)
 		if(!pim) {
 			return;
 		}
-		tim = pim; 
+		tim = pim;
 	}
 
 	BitsPerPixel = colorstobpp(tim->colorsTotal);
 
 	/* All set, let's do it. */
 	GIFEncode(
-		out, tim->sx, tim->sy, interlace, 0, tim->transparent, BitsPerPixel,
-		tim->red, tim->green, tim->blue, tim);
+	    out, tim->sx, tim->sy, interlace, 0, tim->transparent, BitsPerPixel,
+	    tim->red, tim->green, tim->blue, tim);
 
 	if(pim) {
 		/* Destroy palette based temporary image. */
@@ -273,7 +273,7 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 		if (!pim) {
 			return;
 		}
-		tim = pim; 
+		tim = pim;
 	}
 
 	if (previm) {
@@ -288,7 +288,7 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 
 		   Images should be of same size.  If not, a temporary
 		   copy is made with the same size as previous image.
-		   
+
 		*/
 		gdImagePtr prev_pim = 0, prev_tim = previm;
 		int x, y;
@@ -303,7 +303,7 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 			if (!prev_pim) {
 				return;
 			}
-			prev_tim = prev_pim; 
+			prev_tim = prev_pim;
 		}
 
 		for (x = 0; x < 256; ++x) {
@@ -315,9 +315,9 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 		for (y = 0; y < tim->sy; ++y) {
 			for (x = 0; x < tim->sx; ++x) {
 				if (!comparewithmap(prev_tim, tim,
-						    prev_tim->pixels[y][x],
-						    tim->pixels[y][x],
-						    colorMap)) {
+				                    prev_tim->pixels[y][x],
+				                    tim->pixels[y][x],
+				                    colorMap)) {
 					min_y = max_y = y;
 					min_x = max_x = x;
 					goto break_top;
@@ -325,7 +325,7 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 			}
 		}
 
-	break_top:
+break_top:
 		if (tim->sy == min_y) {
 			/* No changes in this frame!! Encode empty image. */
 			transparent = 0;
@@ -336,10 +336,10 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 			for (y = tim->sy - 1; y > min_y; --y) {
 				for (x = 0; x < tim->sx; ++x) {
 					if (!comparewithmap
-					    (prev_tim, tim,
-					     prev_tim->pixels[y][x],
-					     tim->pixels[y][x],
-					     colorMap)) {
+					        (prev_tim, tim,
+					         prev_tim->pixels[y][x],
+					         tim->pixels[y][x],
+					         colorMap)) {
 						max_y = y;
 						if(x < min_x) {
 							min_x = x;
@@ -352,37 +352,37 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 				}
 			}
 
-		break_bot:
+break_bot:
 			/* left side */
 			for (x = 0; x < min_x; ++x) {
 				for (y = min_y; y <= max_y; ++y) {
 					if (!comparewithmap
-					    (prev_tim, tim,
-					     prev_tim->pixels[y][x],
-					     tim->pixels[y][x],
-					     colorMap)) {
+					        (prev_tim, tim,
+					         prev_tim->pixels[y][x],
+					         tim->pixels[y][x],
+					         colorMap)) {
 						min_x = x;
 						goto break_left;
 					}
 				}
 			}
 
-		break_left:
+break_left:
 			/* right side */
 			for (x = tim->sx - 1; x > max_x; --x) {
 				for (y = min_y; y <= max_y; ++y) {
 					if (!comparewithmap
-					    (prev_tim, tim,
-					     prev_tim->pixels[y][x],
-					     tim->pixels[y][x],
-					     colorMap)) {
+					        (prev_tim, tim,
+					         prev_tim->pixels[y][x],
+					         tim->pixels[y][x],
+					         colorMap)) {
 						max_x = x;
 						goto break_right;
 					}
 				}
 			}
 
-		break_right:
+break_right:
 			;
 		}
 
@@ -393,8 +393,8 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 		/* Make a copy of the image with the new offsets.
 		   But only if necessary. */
 		if (min_x != 0 || max_x != tim->sx - 1
-		    || min_y != 0 || max_y != tim->sy - 1
-		    || transparent >= 0) {
+		        || min_y != 0 || max_y != tim->sy - 1
+		        || transparent >= 0) {
 
 			gdImagePtr pim2 = gdImageCreate(max_x-min_x + 1, max_y-min_y + 1);
 
@@ -407,7 +407,7 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 
 			gdImagePaletteCopy(pim2, LocalCM ? tim : prev_tim);
 			gdImageCopy(pim2, tim, 0, 0, min_x, min_y,
-							max_x - min_x + 1, max_y - min_y + 1);
+			            max_x - min_x + 1, max_y - min_y + 1);
 
 			if (pim) {
 				gdImageDestroy(pim);
@@ -422,9 +422,9 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 			for(y = 0; y < tim->sy; ++y) {
 				for (x = 0; x < tim->sx; ++x) {
 					if(comparewithmap
-					    (prev_tim, tim,
-					     prev_tim->pixels[min_y + y][min_x + x],
-					     tim->pixels[y][x], 0)) {
+					        (prev_tim, tim,
+					         prev_tim->pixels[min_y + y][min_x + x],
+					         tim->pixels[y][x], 0)) {
 						gdImageSetPixel(tim, x, y, transparent);
 						break;
 					}
@@ -441,11 +441,11 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 
 	/* All set, let's do it. */
 	GIFAnimEncode(
-		out, tim->sx, tim->sy, LeftOfs, TopOfs, interlace, transparent,
-		Delay, Disposal, BitsPerPixel,
-		LocalCM ? tim->red : 0, tim->green, tim->blue, tim);
+	    out, tim->sx, tim->sy, LeftOfs, TopOfs, interlace, transparent,
+	    Delay, Disposal, BitsPerPixel,
+	    LocalCM ? tim->red : 0, tim->green, tim->blue, tim);
 
- fail_end:
+fail_end:
 	if(pim) {
 		/* Destroy palette based temporary image. */
 		gdImageDestroy(pim);
@@ -536,33 +536,33 @@ static void BumpPixel(GifCtx *ctx)
 		} else {
 			switch(ctx->Pass) {
 
-				case 0:
-					ctx->cury += 8;
-					if(ctx->cury >= ctx->Height) {
-						++(ctx->Pass);
-						ctx->cury = 4;
-					}
-					break;
+			case 0:
+				ctx->cury += 8;
+				if(ctx->cury >= ctx->Height) {
+					++(ctx->Pass);
+					ctx->cury = 4;
+				}
+				break;
 
-				case 1:
-					ctx->cury += 8;
-					if(ctx->cury >= ctx->Height) {
-						++(ctx->Pass);
-						ctx->cury = 2;
-					}
-					break;
+			case 1:
+				ctx->cury += 8;
+				if(ctx->cury >= ctx->Height) {
+					++(ctx->Pass);
+					ctx->cury = 2;
+				}
+				break;
 
-				case 2:
-					ctx->cury += 4;
-					if(ctx->cury >= ctx->Height) {
-						++(ctx->Pass);
-						ctx->cury = 1;
-					}
-					break;
+			case 2:
+				ctx->cury += 4;
+				if(ctx->cury >= ctx->Height) {
+					++(ctx->Pass);
+					ctx->cury = 1;
+				}
+				break;
 
-				case 3:
-					ctx->cury += 2;
-					break;
+			case 3:
+				ctx->cury += 2;
+				break;
 			}
 		}
 	}
@@ -813,9 +813,9 @@ static void GIFAnimEncode(gdIOCtxPtr fp, int IWidth, int IHeight, int LeftOfs, i
 #define GIFBITS	12
 
 #ifdef NO_UCHAR
-	typedef char char_type;
+typedef char char_type;
 #else /* NO_UCHAR */
-	typedef unsigned char char_type;
+typedef unsigned char char_type;
 #endif /* NO_UCHAR */
 
 /*
@@ -908,21 +908,21 @@ static void compress(int init_bits, gdIOCtxPtr outfile, gdImagePtr im, GifCtx *c
 
 	ent = GIFNextPixel(im, ctx);
 
-    hshift = 0;
-    for(fcode = (long)hsize; fcode < 65536L; fcode *= 2L) {
-        ++hshift;
+	hshift = 0;
+	for(fcode = (long)hsize; fcode < 65536L; fcode *= 2L) {
+		++hshift;
 	}
-    hshift = 8 - hshift; /* set hash code range bound */
+	hshift = 8 - hshift; /* set hash code range bound */
 
-    hsize_reg = hsize;
-    cl_hash((count_int) hsize_reg, ctx); /* clear hash table */
+	hsize_reg = hsize;
+	cl_hash((count_int) hsize_reg, ctx); /* clear hash table */
 
-    output((code_int)ctx->ClearCode, ctx);
+	output((code_int)ctx->ClearCode, ctx);
 
 #ifdef SIGNED_COMPARE_SLOW
-    while((c = GIFNextPixel(im)) != (unsigned) EOF) {
+	while((c = GIFNextPixel(im)) != (unsigned) EOF) {
 #else /* SIGNED_COMPARE_SLOW */
-    while((c = GIFNextPixel(im, ctx)) != EOF) {
+	while((c = GIFNextPixel(im, ctx)) != EOF) {
 #endif /* SIGNED_COMPARE_SLOW */
 
 		++(ctx->in_count);

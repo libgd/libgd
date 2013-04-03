@@ -18,7 +18,7 @@ int main()
 
 	color = gdImageGetPixel(im, 5, 5);
 
- 	gdImageDestroy(im);
+	gdImageDestroy(im);
 	if (gdTestAssert(color==0x1000000)) {
 		return 0;
 	} else {

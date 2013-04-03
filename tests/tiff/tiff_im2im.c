@@ -62,9 +62,9 @@ int main()
 	}
 #endif
 	gdImageDestroy(dst);
- door1:
+door1:
 	gdFree(p);
- door0:
+door0:
 	gdImageDestroy(src);
 	return status;
 }

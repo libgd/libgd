@@ -5,7 +5,7 @@
 
 int main()
 {
- 	gdImagePtr im;
+	gdImagePtr im;
 	FILE *fp;
 	int cor_rad = 60;
 	im = gdImageCreateTrueColor(400, 400);

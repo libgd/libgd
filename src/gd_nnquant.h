@@ -1,7 +1,7 @@
 
 /* maximum number of colours that can be used.
   actual number is now passed to initcolors */
-#define MAXNETSIZE	256    
+#define MAXNETSIZE	256
 
 /* For 256 colours, fixed arrays need 8kb, plus space for the image
    ---------------------------------------------------------------- */

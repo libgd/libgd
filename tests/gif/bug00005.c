@@ -3,7 +3,7 @@
 
 int main()
 {
- 	gdImagePtr im;
+	gdImagePtr im;
 	char * giffiles[4] = {"bug00005_0.gif", "bug00005_1.gif", "bug00005_2.gif", "bug00005_3.gif"};
 	int valid[4]       = {0, 0, 0, 0};
 	char *exp[4] = {NULL, NULL, "bug00005_2_exp.png", NULL};
@@ -31,9 +31,9 @@ int main()
 			} else {
 				sprintf(path, "%s/gif/%s", GDTEST_TOP_DIR, exp[i]);
 				if (!gdAssertImageEqualsToFile(path, im)) {
-				error = 1;
-			}
-			gdImageDestroy(im);
+					error = 1;
+				}
+				gdImageDestroy(im);
 			}
 		} else {
 			if (!gdTestAssert(im == NULL)) {

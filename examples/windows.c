@@ -44,15 +44,15 @@ gdImagePtr gdImageTrueColorAttachBuffer(int* buffer, int sx, int sy, int stride)
 	height = sy;
 	rowptr = buffer;
 	if (stride < 0) {
-		 int startoff = (height - 1) * stride;
-		 rowptr = buffer - startoff;
+		int startoff = (height - 1) * stride;
+		rowptr = buffer - startoff;
 	}
 
 	i = 0;
 	while (height--) {
-		 im->tpixels[i] = rowptr;
-		 rowptr += stride;
-		 i++;
+		im->tpixels[i] = rowptr;
+		rowptr += stride;
+		i++;
 	}
 
 	im->sx = sx;
@@ -104,61 +104,60 @@ LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
 int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
                     PSTR szCmdLine, int iCmdShow)
 {
-     static TCHAR szAppName[] = TEXT ("Bezier") ;
-     HWND         hwnd ;
-     MSG          msg ;
-     WNDCLASS     wndclass ;
+	static TCHAR szAppName[] = TEXT ("Bezier") ;
+	HWND         hwnd ;
+	MSG          msg ;
+	WNDCLASS     wndclass ;
 
-     wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
-     wndclass.lpfnWndProc   = WndProc ;
-     wndclass.cbClsExtra    = 0 ;
-     wndclass.cbWndExtra    = 0 ;
-     wndclass.hInstance     = hInstance ;
-     wndclass.hIcon         = LoadIcon (NULL, IDI_APPLICATION) ;
-     wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW) ;
-     wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
-     wndclass.lpszMenuName  = NULL ;
-     wndclass.lpszClassName = szAppName ;
+	wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
+	wndclass.lpfnWndProc   = WndProc ;
+	wndclass.cbClsExtra    = 0 ;
+	wndclass.cbWndExtra    = 0 ;
+	wndclass.hInstance     = hInstance ;
+	wndclass.hIcon         = LoadIcon (NULL, IDI_APPLICATION) ;
+	wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW) ;
+	wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
+	wndclass.lpszMenuName  = NULL ;
+	wndclass.lpszClassName = szAppName ;
 
-     if (!RegisterClass (&wndclass))
-     {    // UNICODE-Compilierung ist die einzige realistische Fehlermöglichkeit
-          MessageBox (NULL, TEXT ("Programm arbeitet mit Unicode und setzt Windows NT voraus!"),
-                      szAppName, MB_ICONERROR) ;
-          return 0 ;
-     }
+	if (!RegisterClass (&wndclass)) {
+		// UNICODE-Compilierung ist die einzige realistische Fehlermöglichkeit
+		MessageBox (NULL, TEXT ("Programm arbeitet mit Unicode und setzt Windows NT voraus!"),
+		            szAppName, MB_ICONERROR) ;
+		return 0 ;
+	}
 
-     hwnd = CreateWindow (szAppName, TEXT ("Bezierkurven"),
-                          WS_OVERLAPPEDWINDOW,
-                          CW_USEDEFAULT, CW_USEDEFAULT,
-                          CW_USEDEFAULT, CW_USEDEFAULT,
-                          NULL, NULL, hInstance, NULL) ;
+	hwnd = CreateWindow (szAppName, TEXT ("Bezierkurven"),
+	                     WS_OVERLAPPEDWINDOW,
+	                     CW_USEDEFAULT, CW_USEDEFAULT,
+	                     CW_USEDEFAULT, CW_USEDEFAULT,
+	                     NULL, NULL, hInstance, NULL) ;
 
-     ShowWindow (hwnd, iCmdShow) ;
-     UpdateWindow (hwnd) ;
+	ShowWindow (hwnd, iCmdShow) ;
+	UpdateWindow (hwnd) ;
 
-     while (GetMessage (&msg, NULL, 0, 0))
-     {
-          TranslateMessage (&msg) ;
-          DispatchMessage (&msg) ;
-     }
-     return msg.wParam ;
+	while (GetMessage (&msg, NULL, 0, 0)) {
+		TranslateMessage (&msg) ;
+		DispatchMessage (&msg) ;
+	}
+	return msg.wParam ;
 }
 
 void DrawBezier (HDC hdc, POINT apt[])
 {
-     PolyBezier (hdc, apt, 4) ;
+	PolyBezier (hdc, apt, 4) ;
 
-     MoveToEx (hdc, apt[0].x, apt[0].y, NULL) ;
-     LineTo   (hdc, apt[1].x, apt[1].y) ;
+	MoveToEx (hdc, apt[0].x, apt[0].y, NULL) ;
+	LineTo   (hdc, apt[1].x, apt[1].y) ;
 
-     MoveToEx (hdc, apt[2].x, apt[2].y, NULL) ;
-     LineTo   (hdc, apt[3].x, apt[3].y) ;
+	MoveToEx (hdc, apt[2].x, apt[2].y, NULL) ;
+	LineTo   (hdc, apt[3].x, apt[3].y) ;
 }
 
 
 void gdDrawImage(HDC hdc, RECT *rc)
 {
-    HDC  mem_dc;
+	HDC  mem_dc;
 	BITMAPINFO bmp_info;
 	void* bits;
 	HBITMAP bmp, temp;
@@ -223,9 +222,9 @@ void gdDrawImage(HDC hdc, RECT *rc)
 	gdImageLine(im, 0, 0, 150, 150, black);
 
 	gdImageString(im, gdFontGetLarge(),
-	im->sx / 2 - (strlen(s) * lfont->w / 2),
-	im->sy / 2 - lfont->h / 2,
-	(unsigned char*)s, black);
+	              im->sx / 2 - (strlen(s) * lfont->w / 2),
+	              im->sy / 2 - lfont->h / 2,
+	              (unsigned char*)s, black);
 
 	// Copy drawing from memory context (shared bitmap buffer) to screen DC.
 	BitBlt(hdc, rc->left, rc->top, width, height, mem_dc, 0, 0, SRCCOPY);
@@ -239,66 +238,62 @@ void gdDrawImage(HDC hdc, RECT *rc)
 
 LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-     static POINT apt[4] ;
-     HDC          hdc ;
-     int          cxClient, cyClient ;
-     PAINTSTRUCT  ps ;
-     RECT rc;
+	static POINT apt[4] ;
+	HDC          hdc ;
+	int          cxClient, cyClient ;
+	PAINTSTRUCT  ps ;
+	RECT rc;
 
 	GetClientRect(hwnd, &rc);
 
-     switch (message)
-	 {
-     case WM_SIZE:
-          cxClient = LOWORD (lParam) ;
-          cyClient = HIWORD (lParam) ;
+	switch (message) {
+	case WM_SIZE:
+		cxClient = LOWORD (lParam) ;
+		cyClient = HIWORD (lParam) ;
 
-          apt[0].x = cxClient / 4 ;
-          apt[0].y = cyClient / 2 ;
+		apt[0].x = cxClient / 4 ;
+		apt[0].y = cyClient / 2 ;
 
-          apt[1].x = cxClient / 2 ;
-          apt[1].y = cyClient / 4 ;
+		apt[1].x = cxClient / 2 ;
+		apt[1].y = cyClient / 4 ;
 
-          apt[2].x =     cxClient / 2 ;
-          apt[2].y = 3 * cyClient / 4 ;
+		apt[2].x =     cxClient / 2 ;
+		apt[2].y = 3 * cyClient / 4 ;
 
-          apt[3].x = 3 * cxClient / 4 ;
-          apt[3].y =     cyClient / 2 ;
-          return 0 ;
+		apt[3].x = 3 * cxClient / 4 ;
+		apt[3].y =     cyClient / 2 ;
+		return 0 ;
 
-     case WM_LBUTTONDOWN:
-     case WM_RBUTTONDOWN:
-     case WM_MOUSEMOVE:
-          if (wParam & MK_LBUTTON || wParam & MK_RBUTTON)
-          {
-               hdc = GetDC (hwnd) ;
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MOUSEMOVE:
+		if (wParam & MK_LBUTTON || wParam & MK_RBUTTON) {
+			hdc = GetDC (hwnd) ;
 
-               // alte Kurve löschen (mit Weiß übermalen)
-               SelectObject (hdc, GetStockObject (WHITE_PEN)) ;
-               DrawBezier (hdc, apt) ;
+			// alte Kurve löschen (mit Weiß übermalen)
+			SelectObject (hdc, GetStockObject (WHITE_PEN)) ;
+			DrawBezier (hdc, apt) ;
 
-               if (wParam & MK_LBUTTON)
-               {
-                    apt[1].x = LOWORD (lParam) ;
-                    apt[1].y = HIWORD (lParam) ;
-               }
+			if (wParam & MK_LBUTTON) {
+				apt[1].x = LOWORD (lParam) ;
+				apt[1].y = HIWORD (lParam) ;
+			}
 
-                if (wParam & MK_RBUTTON)
-               {
-                    apt[2].x = LOWORD (lParam) ;
-                    apt[2].y = HIWORD (lParam) ;
-               }
+			if (wParam & MK_RBUTTON) {
+				apt[2].x = LOWORD (lParam) ;
+				apt[2].y = HIWORD (lParam) ;
+			}
 
-               // neue Kurve (mit Schwarz) zeichnen
-			   SelectObject (hdc, GetStockObject (BLACK_PEN)) ;
-				gdDrawImage(hdc, &rc);
-               DrawBezier (hdc, apt) ;
-               ReleaseDC (hwnd, hdc) ;
-          }
-          return 0 ;
+			// neue Kurve (mit Schwarz) zeichnen
+			SelectObject (hdc, GetStockObject (BLACK_PEN)) ;
+			gdDrawImage(hdc, &rc);
+			DrawBezier (hdc, apt) ;
+			ReleaseDC (hwnd, hdc) ;
+		}
+		return 0 ;
 
 
-     case WM_PAINT:
+	case WM_PAINT:
 		hdc = BeginPaint (hwnd, &ps) ;
 
 		GetClientRect(hwnd, &rc);
@@ -308,9 +303,9 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint (hwnd, &ps) ;
 		return 0 ;
 
-     case WM_DESTROY:
-          PostQuitMessage (0) ;
-          return 0 ;
-     }
-     return DefWindowProc (hwnd, message, wParam, lParam) ;
+	case WM_DESTROY:
+		PostQuitMessage (0) ;
+		return 0 ;
+	}
+	return DefWindowProc (hwnd, message, wParam, lParam) ;
 }

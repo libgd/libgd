@@ -33,7 +33,7 @@ gdImagePtr read_png(const char *filename)
 
 int main()
 {
- 	gdImagePtr im, im2;
+	gdImagePtr im, im2;
 
 	im = gdImageCreateTrueColor(400, 400);
 

@@ -20,8 +20,8 @@ int main()
 	gdImageDestroy(im);
 
 	if (0x005e5e5e == c1 && 0x0 == c2 &&
-	 0x0 == c3 && 0x0 == c4) {
-	 	return 0;
+	        0x0 == c3 && 0x0 == c4) {
+		return 0;
 	} else {
 		return 1;
 	}

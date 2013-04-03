@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	in = fopen("eleanor.jpg", "rb");
 	if(!in) {
 		im = gdImageCreateTrueColor(300, 300);
-    } else {
+	} else {
 		im = gdImageCreateFromJpeg(in);
 		fclose(in);
 	}
@@ -40,11 +40,11 @@ int main(int argc, char *argv[])
 	}
 
 	error = gdImageStringFTCircle(im,
-		gdImageSX(im) / 2, gdImageSY(im) / 2,
-		radius, radius / 2,
-		0.8, "arial", 24, "top text", "bottom text",
-		gdTrueColorAlpha(192, 100, 255, 32)
-	);
+	                              gdImageSX(im) / 2, gdImageSY(im) / 2,
+	                              radius, radius / 2,
+	                              0.8, "arial", 24, "top text", "bottom text",
+	                              gdTrueColorAlpha(192, 100, 255, 32)
+	                             );
 	if(error)  {
 		fprintf(stderr, "gdImageStringFTEx error: %s\n", error);
 	}

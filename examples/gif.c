@@ -24,7 +24,7 @@ int main(void)
 	}
 
 	gdImageColorAllocate(im, 255, 255, 255); /* allocate white as side effect */
-   gdImageGifAnimBegin(im, out, 1, -1);
+	gdImageGifAnimBegin(im, out, 1, -1);
 
 	for(i = 0; i < 20; i++) {
 		int r,g,b;

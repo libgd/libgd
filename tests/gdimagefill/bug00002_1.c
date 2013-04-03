@@ -19,8 +19,8 @@ int main()
 	fputs("flag 3\n", stdout);
 
 	fp = fopen("a.png", "wb");
- 	/* Write img to stdout */
- 	gdImagePng(im,fp);
+	/* Write img to stdout */
+	gdImagePng(im,fp);
 	fclose(fp);
 
 	sprintf(path, "%s/gdimagefill/bug00002_1_exp.png", GDTEST_TOP_DIR);
@@ -28,8 +28,8 @@ int main()
 		error = 1;
 	}
 
- 	/* Destroy it */
- 	gdImageDestroy(im);
+	/* Destroy it */
+	gdImageDestroy(im);
 	return error;
 }
 

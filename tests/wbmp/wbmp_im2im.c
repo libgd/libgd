@@ -56,9 +56,9 @@ int main()
 		printf("pixels changed: %d\n", result.pixels_changed);
 	}
 	gdImageDestroy(dst);
- door1:
+door1:
 	gdFree(p);
- door0:
+door0:
 	gdImageDestroy(src);
 	return status;
 }

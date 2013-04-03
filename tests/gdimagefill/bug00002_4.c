@@ -5,7 +5,7 @@
 
 int main()
 {
- 	gdImagePtr im;
+	gdImagePtr im;
 	int red, blue, white, black, error = 0;
 	char path[1024];
 
@@ -34,7 +34,7 @@ int main()
 		error = 1;
 	}
 
- 	/* Destroy it */
- 	gdImageDestroy(im);
- 	return error;
+	/* Destroy it */
+	gdImageDestroy(im);
+	return error;
 }

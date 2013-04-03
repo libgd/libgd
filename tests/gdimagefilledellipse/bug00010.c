@@ -4,8 +4,8 @@
 
 int main()
 {
- 	gdImagePtr im;
- 	int error = 0;
+	gdImagePtr im;
+	int error = 0;
 	char path[1024];
 
 	im = gdImageCreateTrueColor(100,100);
@@ -16,6 +16,6 @@ int main()
 		error = 1;
 	}
 
- 	gdImageDestroy(im);
- 	return error;
+	gdImageDestroy(im);
+	return error;
 }

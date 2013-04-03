@@ -8,7 +8,7 @@
 #include "gd.h"
 
 /* A neat little utility which adds freetype text to
- * existing JPEG images. Type annotate -h for instructions. 
+ * existing JPEG images. Type annotate -h for instructions.
  * Thanks to Joel Dubiner for supporting this work. -TBB
  */
 
@@ -22,9 +22,9 @@ int main(int argc, char *argv[])
 
 	/* 2.0.12 */
 	fprintf (stderr, "annotate is not useful without freetype.\n"
-		"Install freetype, then './configure; make clean; make install'\n"
-		"the gd library again.\n"
-	);
+	         "Install freetype, then './configure; make clean; make install'\n"
+	         "the gd library again.\n"
+	        );
 	return 1;
 #else
 	gdImagePtr im;
@@ -53,11 +53,11 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "move x y\n");
 		fprintf(stderr, "text actual-output-text\n\n");
 		fprintf(stderr,
-			"If the file 'paris.ttf' exists in /usr/share/fonts/truetype or in a\n");
+		        "If the file 'paris.ttf' exists in /usr/share/fonts/truetype or in a\n");
 		fprintf(stderr,
-			"location specified in the GDFONTPATH environment variable, 'font paris' is\n");
+		        "location specified in the GDFONTPATH environment variable, 'font paris' is\n");
 		fprintf(stderr,
-			"sufficient. You may also specify the full, rooted path of a font file.\n");
+		        "sufficient. You may also specify the full, rooted path of a font file.\n");
 		exit(1);
 	}
 
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 			color = gdTrueColorAlpha(r, g, b, a);
 		} else if(!strcmp(st, "move")) {
 			char *st = strtok(0, "\r\n");
-	
+
 			if(!st) {
 				goto badLine;
 			}
@@ -158,15 +158,15 @@ int main(int argc, char *argv[])
 			gdImageStringFT(0, bounds, color, font, size, 0, x, y, text);
 
 			switch(align) {
-				case left:
+			case left:
 				break;
 
-				case center:
-					rx -= (bounds[2] - bounds[0]) / 2;
+			case center:
+				rx -= (bounds[2] - bounds[0]) / 2;
 				break;
 
-				case right:
-					rx -= (bounds[2] - bounds[0]);
+			case right:
+				rx -= (bounds[2] - bounds[0]);
 				break;
 			}
 

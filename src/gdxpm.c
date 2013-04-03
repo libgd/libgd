@@ -1,7 +1,7 @@
-/* 
+/*
  * Add ability to load xpm files to gd, requires the xpm
  * library.
- * Caolan.McNamara@ul.ie 
+ * Caolan.McNamara@ul.ie
  * http://www.csn.ul.ie/~caolan
  */
 
@@ -62,10 +62,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 	for(i = 0; i < number; i++) {
 		char *c_color = image.colorTable[i].c_color;
 		if(strcmp(c_color, "None") == 0) {
-		  colors[i] = gdImageGetTransparent(im);
-		  if(colors[i] == -1) colors[i] = gdImageColorAllocate(im, 0, 0, 0);
-		  if(colors[i] != -1) gdImageColorTransparent(im, colors[i]);
-		  continue;
+			colors[i] = gdImageGetTransparent(im);
+			if(colors[i] == -1) colors[i] = gdImageColorAllocate(im, 0, 0, 0);
+			if(colors[i] != -1) gdImageColorTransparent(im, colors[i]);
+			continue;
 		}
 		len = strlen(c_color);
 		if(len < 1) continue;
@@ -161,7 +161,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 
 	gdFree(colors);
 
- done:
+done:
 	XpmFreeXpmImage(&image);
 	XpmFreeXpmInfo(&info);
 	return im;

@@ -31,8 +31,7 @@
 
 /* this is used for creating images in main memory */
 
-typedef struct fileIOCtx
-{
+typedef struct fileIOCtx {
 	gdIOCtx ctx;
 	FILE *f;
 }

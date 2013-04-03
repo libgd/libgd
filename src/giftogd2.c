@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 
 	if (argc != 5) {
 		fprintf(stderr, "Usage: giftogd2 filename.gif filename.gd2 cs fmt\n");
-                fprintf(stderr, "    where cs is the chunk size\n");
+		fprintf(stderr, "    where cs is the chunk size\n");
 		fprintf(stderr, "          fmt is 1 for raw, 2 for compressed\n");
 		exit(1);
 	}
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 	if (!out) {
 		fprintf(stderr, "Output file cannot be written to!\n");
 		gdImageDestroy(im);
-		exit(1);	
+		exit(1);
 	}
 	cs = atoi(argv[3]);
 	fmt = atoi(argv[4]);

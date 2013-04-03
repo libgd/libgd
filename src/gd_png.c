@@ -28,7 +28,7 @@
   out all fprintf() statements to disable that).
 
   GD 2.0 supports RGBA truecolor and will read and write truecolor PNGs.
-  GD 2.0 supports 8 bits of color resolution per channel and 
+  GD 2.0 supports 8 bits of color resolution per channel and
   7 bits of alpha channel resolution. Images with more than 8 bits
   per channel are reduced to 8 bits. Images with an alpha channel are
   only able to resolve down to '1/128th opaque' instead of '1/256th',
@@ -42,13 +42,12 @@
   ---------------------------------------------------------------------------*/
 
 #ifdef PNG_SETJMP_SUPPORTED
-typedef struct _jmpbuf_wrapper
-{
+typedef struct _jmpbuf_wrapper {
 	jmp_buf jmpbuf;
 }
 jmpbuf_wrapper;
 
-	static void
+static void
 gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 {
 	jmpbuf_wrapper *jmpbuf_ptr;
@@ -76,7 +75,7 @@ gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 }
 #endif
 
-	static void
+static void
 gdPngReadData (png_structp png_ptr, png_bytep data, png_size_t length)
 {
 	int check;
@@ -86,13 +85,13 @@ gdPngReadData (png_structp png_ptr, png_bytep data, png_size_t length)
 	}
 }
 
-	static void
+static void
 gdPngWriteData (png_structp png_ptr, png_bytep data, png_size_t length)
 {
 	gdPutBuf (data, length, (gdIOCtx *) png_get_io_ptr (png_ptr));
 }
 
-	static void
+static void
 gdPngFlushData (png_structp png_ptr)
 {
 	(void)png_ptr;
@@ -178,7 +177,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 
 	/* we could create a second info struct here (end_info), but it's only
 	 * useful if we want to keep pre- and post-IDAT chunk info separated
-	 * (mainly for PNG-aware image editors and converters) 
+	 * (mainly for PNG-aware image editors and converters)
 	 */
 
 	/* setjmp() must be called in every non-callback function that calls a
@@ -199,7 +198,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 
 	png_get_IHDR (png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, NULL, NULL);
 	if ((color_type == PNG_COLOR_TYPE_RGB) || (color_type == PNG_COLOR_TYPE_RGB_ALPHA)
-		|| color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
+	        || color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
 		im = gdImageCreateTrueColor ((int) width, (int) height);
 	} else {
 		im = gdImageCreate ((int) width, (int) height);
@@ -248,92 +247,92 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 #endif
 
 	switch (color_type) {
-		case PNG_COLOR_TYPE_PALETTE:
-			png_get_PLTE (png_ptr, info_ptr, &palette, &num_palette);
+	case PNG_COLOR_TYPE_PALETTE:
+		png_get_PLTE (png_ptr, info_ptr, &palette, &num_palette);
 #ifdef DEBUG
-			fprintf (stderr, "gd-png color_type is palette, colors: %d\n", num_palette);
+		fprintf (stderr, "gd-png color_type is palette, colors: %d\n", num_palette);
 #endif /* DEBUG */
-			if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS)) {
-				/* gd 2.0: we support this rather thoroughly now. Grab the
-				 * first fully transparent entry, if any, as the value of
-				 * the simple-transparency index, mostly for backwards
-				 * binary compatibility. The alpha channel is where it's
-				 * really at these days.
-				 */
-				int firstZero = 1;
-				png_get_tRNS (png_ptr, info_ptr, &trans, &num_trans, NULL);
-				for (i = 0; i < num_trans; ++i) {
-					im->alpha[i] = gdAlphaMax - (trans[i] >> 1);
-					if ((trans[i] == 0) && (firstZero)) {
-						/* 2.0.5: long-forgotten patch from Wez Furlong */
-						transparent = i;
-						firstZero = 0;
-					}
+		if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS)) {
+			/* gd 2.0: we support this rather thoroughly now. Grab the
+			 * first fully transparent entry, if any, as the value of
+			 * the simple-transparency index, mostly for backwards
+			 * binary compatibility. The alpha channel is where it's
+			 * really at these days.
+			 */
+			int firstZero = 1;
+			png_get_tRNS (png_ptr, info_ptr, &trans, &num_trans, NULL);
+			for (i = 0; i < num_trans; ++i) {
+				im->alpha[i] = gdAlphaMax - (trans[i] >> 1);
+				if ((trans[i] == 0) && (firstZero)) {
+					/* 2.0.5: long-forgotten patch from Wez Furlong */
+					transparent = i;
+					firstZero = 0;
 				}
 			}
-			break;
+		}
+		break;
 
-		case PNG_COLOR_TYPE_GRAY:
-			/* create a fake palette and check for single-shade transparency */
-			if ((palette = (png_colorp) gdMalloc (256 * sizeof (png_color))) == NULL) {
-				fprintf (stderr, "gd-png error: cannot allocate gray palette\n");
-				png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
-				return NULL;
+	case PNG_COLOR_TYPE_GRAY:
+		/* create a fake palette and check for single-shade transparency */
+		if ((palette = (png_colorp) gdMalloc (256 * sizeof (png_color))) == NULL) {
+			fprintf (stderr, "gd-png error: cannot allocate gray palette\n");
+			png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
+			return NULL;
+		}
+		palette_allocated = TRUE;
+		if (bit_depth < 8) {
+			num_palette = 1 << bit_depth;
+			for (i = 0; i < 256; ++i) {
+				j = (255 * i) / (num_palette - 1);
+				palette[i].red = palette[i].green = palette[i].blue = j;
 			}
-			palette_allocated = TRUE;
-			if (bit_depth < 8) {
-				num_palette = 1 << bit_depth;
-				for (i = 0; i < 256; ++i) {
-					j = (255 * i) / (num_palette - 1);
-					palette[i].red = palette[i].green = palette[i].blue = j;
-				}
+		} else {
+			num_palette = 256;
+			for (i = 0; i < 256; ++i) {
+				palette[i].red = palette[i].green = palette[i].blue = i;
+			}
+		}
+		if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS)) {
+			png_get_tRNS (png_ptr, info_ptr, NULL, NULL, &trans_gray_rgb);
+			if (bit_depth == 16) {	/* png_set_strip_16() not yet in effect */
+				transparent = trans_gray_rgb->gray >> 8;
 			} else {
-				num_palette = 256;
-				for (i = 0; i < 256; ++i) {
-					palette[i].red = palette[i].green = palette[i].blue = i;
-				}
+				transparent = trans_gray_rgb->gray;
 			}
-			if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS)) {
-				png_get_tRNS (png_ptr, info_ptr, NULL, NULL, &trans_gray_rgb);
-				if (bit_depth == 16) {	/* png_set_strip_16() not yet in effect */
-					transparent = trans_gray_rgb->gray >> 8;
-				} else {
-					transparent = trans_gray_rgb->gray;
-				}
-				/* Note slight error in 16-bit case:  up to 256 16-bit shades
-				 * may get mapped to a single 8-bit shade, and only one of them
-				 * is supposed to be transparent.  IOW, both opaque pixels and
-				 * transparent pixels will be mapped into the transparent entry.
-				 * There is no particularly good way around this in the case
-				 * that all 256 8-bit shades are used, but one could write some
-				 * custom 16-bit code to handle the case where there are gdFree
-				 * palette entries.  This error will be extremely rare in
-				 * general, though.  (Quite possibly there is only one such
-				 * image in existence.) */
-			}
-			break;
+			/* Note slight error in 16-bit case:  up to 256 16-bit shades
+			 * may get mapped to a single 8-bit shade, and only one of them
+			 * is supposed to be transparent.  IOW, both opaque pixels and
+			 * transparent pixels will be mapped into the transparent entry.
+			 * There is no particularly good way around this in the case
+			 * that all 256 8-bit shades are used, but one could write some
+			 * custom 16-bit code to handle the case where there are gdFree
+			 * palette entries.  This error will be extremely rare in
+			 * general, though.  (Quite possibly there is only one such
+			 * image in existence.) */
+		}
+		break;
 
-		case PNG_COLOR_TYPE_GRAY_ALPHA:
-			png_set_gray_to_rgb(png_ptr);
+	case PNG_COLOR_TYPE_GRAY_ALPHA:
+		png_set_gray_to_rgb(png_ptr);
 
-		case PNG_COLOR_TYPE_RGB:
-		case PNG_COLOR_TYPE_RGB_ALPHA:
-			/* gd 2.0: we now support truecolor. See the comment above
-			   for a rare situation in which the transparent pixel may not
-			   work properly with 16-bit channels. */
-			if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS)) {
-				png_get_tRNS (png_ptr, info_ptr, NULL, NULL, &trans_color_rgb);
-				if (bit_depth == 16) {	/* png_set_strip_16() not yet in effect */
-					transparent = gdTrueColor (trans_color_rgb->red >> 8,
-							trans_color_rgb->green >> 8,
-							trans_color_rgb->blue >> 8);
-				} else {
-					transparent = gdTrueColor (trans_color_rgb->red,
-							trans_color_rgb->green,
-							trans_color_rgb->blue);
-				}
+	case PNG_COLOR_TYPE_RGB:
+	case PNG_COLOR_TYPE_RGB_ALPHA:
+		/* gd 2.0: we now support truecolor. See the comment above
+		   for a rare situation in which the transparent pixel may not
+		   work properly with 16-bit channels. */
+		if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS)) {
+			png_get_tRNS (png_ptr, info_ptr, NULL, NULL, &trans_color_rgb);
+			if (bit_depth == 16) {	/* png_set_strip_16() not yet in effect */
+				transparent = gdTrueColor (trans_color_rgb->red >> 8,
+				                           trans_color_rgb->green >> 8,
+				                           trans_color_rgb->blue >> 8);
+			} else {
+				transparent = gdTrueColor (trans_color_rgb->red,
+				                           trans_color_rgb->green,
+				                           trans_color_rgb->blue);
 			}
-			break;
+		}
+		break;
 	}
 
 	png_read_update_info (png_ptr, info_ptr);
@@ -362,7 +361,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 		return NULL;
 	}
 
-	row_pointers = (png_bytepp) gdMalloc (height * sizeof (png_bytep));    
+	row_pointers = (png_bytepp) gdMalloc (height * sizeof (png_bytep));
 	if (!row_pointers) {
 		fprintf (stderr, "gd-png error: cannot allocate row pointers\n");
 		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
@@ -403,54 +402,54 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	/* can't nuke structs until done with palette */
 	png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
 	switch (color_type) {
-		case PNG_COLOR_TYPE_RGB:
-			for (h = 0; h < height; h++) {
-				int boffset = 0;
-				for (w = 0; w < width; w++) {
-					register png_byte r = row_pointers[h][boffset++];
-					register png_byte g = row_pointers[h][boffset++];
-					register png_byte b = row_pointers[h][boffset++];
-					im->tpixels[h][w] = gdTrueColor (r, g, b);
-				}
+	case PNG_COLOR_TYPE_RGB:
+		for (h = 0; h < height; h++) {
+			int boffset = 0;
+			for (w = 0; w < width; w++) {
+				register png_byte r = row_pointers[h][boffset++];
+				register png_byte g = row_pointers[h][boffset++];
+				register png_byte b = row_pointers[h][boffset++];
+				im->tpixels[h][w] = gdTrueColor (r, g, b);
 			}
-			break;
+		}
+		break;
 
-		case PNG_COLOR_TYPE_GRAY_ALPHA:
-		case PNG_COLOR_TYPE_RGB_ALPHA:
-			for (h = 0; h < height; h++) {
-				int boffset = 0;
-				for (w = 0; w < width; w++) {
-					register png_byte r = row_pointers[h][boffset++];
-					register png_byte g = row_pointers[h][boffset++];
-					register png_byte b = row_pointers[h][boffset++];
+	case PNG_COLOR_TYPE_GRAY_ALPHA:
+	case PNG_COLOR_TYPE_RGB_ALPHA:
+		for (h = 0; h < height; h++) {
+			int boffset = 0;
+			for (w = 0; w < width; w++) {
+				register png_byte r = row_pointers[h][boffset++];
+				register png_byte g = row_pointers[h][boffset++];
+				register png_byte b = row_pointers[h][boffset++];
 
-					/* gd has only 7 bits of alpha channel resolution, and
-					 * 127 is transparent, 0 opaque. A moment of convenience,
-					 *  a lifetime of compatibility.
-					 */
+				/* gd has only 7 bits of alpha channel resolution, and
+				 * 127 is transparent, 0 opaque. A moment of convenience,
+				 *  a lifetime of compatibility.
+				 */
 
-					register png_byte a = gdAlphaMax - (row_pointers[h][boffset++] >> 1);
-					im->tpixels[h][w] = gdTrueColorAlpha(r, g, b, a);
-				}
+				register png_byte a = gdAlphaMax - (row_pointers[h][boffset++] >> 1);
+				im->tpixels[h][w] = gdTrueColorAlpha(r, g, b, a);
 			}
-			break;
-		default:
-			/* Palette image, or something coerced to be one */
-			for (h = 0; h < height; ++h) {
-				for (w = 0; w < width; ++w) {
-					register png_byte idx = row_pointers[h][w];
-					im->pixels[h][w] = idx;
-					open[idx] = 0;
-				}
+		}
+		break;
+	default:
+		/* Palette image, or something coerced to be one */
+		for (h = 0; h < height; ++h) {
+			for (w = 0; w < width; ++w) {
+				register png_byte idx = row_pointers[h][w];
+				im->pixels[h][w] = idx;
+				open[idx] = 0;
 			}
+		}
 	}
 #ifdef DEBUG
 	if (!im->trueColor) {
 		for (i = num_palette; i < gdMaxColors; ++i) {
 			if (!open[i]) {
 				fprintf (stderr,
-						"gd-png warning: image data references out-of-range"
-						" color index (%d)\n", i);
+				         "gd-png warning: image data references out-of-range"
+				         " color index (%d)\n", i);
 			}
 		}
 	}
@@ -539,28 +538,25 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 
 #ifdef PNG_SETJMP_SUPPORTED
 	png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING,
-			&jbw, gdPngErrorHandler,
-			NULL);
+	                                   &jbw, gdPngErrorHandler,
+	                                   NULL);
 #else
 	png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 #endif
-	if (png_ptr == NULL)
-	{
+	if (png_ptr == NULL) {
 		fprintf (stderr, "gd-png error: cannot allocate libpng main struct\n");
 		return;
 	}
 
 	info_ptr = png_create_info_struct (png_ptr);
-	if (info_ptr == NULL)
-	{
+	if (info_ptr == NULL) {
 		fprintf (stderr, "gd-png error: cannot allocate libpng info struct\n");
 		png_destroy_write_struct (&png_ptr, (png_infopp) NULL);
 		return;
 	}
 
 #ifdef PNG_SETJMP_SUPPORTED
-	if (setjmp(jbw.jmpbuf))
-	{
+	if (setjmp(jbw.jmpbuf)) {
 		fprintf (stderr, "gd-png error: setjmp returns error condition\n");
 		png_destroy_write_struct (&png_ptr, &info_ptr);
 		return;
@@ -568,7 +564,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 #endif
 
 	png_set_write_fn (png_ptr, (void *) outfile, gdPngWriteData,
-			gdPngFlushData);
+	                  gdPngFlushData);
 
 	/* This is best for palette images, and libpng defaults to it for
 	   palette images anyway, so we don't need to do it explicitly.
@@ -588,32 +584,27 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 #ifdef PNG_pHYs_SUPPORTED
 	/* 2.1.0: specify the resolution */
 	png_set_pHYs(png_ptr, info_ptr, DPI2DPM(im->res_x), DPI2DPM(im->res_y),
-				 PNG_RESOLUTION_METER);
+	             PNG_RESOLUTION_METER);
 #endif
 
 	/* can set this to a smaller value without compromising compression if all
 	 * image data is 16K or less; will save some decoder memory [min == 8] */
 	/*  png_set_compression_window_bits(png_ptr, 15);  */
 
-	if (!im->trueColor)
-	{
+	if (!im->trueColor) {
 		if (transparent >= im->colorsTotal ||
-				(transparent >= 0 && open[transparent]))
+		        (transparent >= 0 && open[transparent]))
 			transparent = -1;
 	}
-	if (!im->trueColor)
-	{
+	if (!im->trueColor) {
 		for (i = 0; i < gdMaxColors; ++i)
 			mapping[i] = -1;
 	}
-	if (!im->trueColor)
-	{
+	if (!im->trueColor) {
 		/* count actual number of colors used (colorsTotal == high-water mark) */
 		colors = 0;
-		for (i = 0; i < im->colorsTotal; ++i)
-		{
-			if (!open[i])
-			{
+		for (i = 0; i < im->colorsTotal; ++i) {
+			if (!open[i]) {
 				mapping[i] = colors;
 				++colors;
 			}
@@ -622,8 +613,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 			fprintf(stderr, "gd-png error: no colors in palette\n");
 			goto bail;
 		}
-		if (colors < im->colorsTotal)
-		{
+		if (colors < im->colorsTotal) {
 			remap = TRUE;
 		}
 		if (colors <= 2)
@@ -637,40 +627,32 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	}
 	interlace_type = im->interlace ? PNG_INTERLACE_ADAM7 : PNG_INTERLACE_NONE;
 
-	if (im->trueColor)
-	{
-		if (im->saveAlphaFlag)
-		{
+	if (im->trueColor) {
+		if (im->saveAlphaFlag) {
 			png_set_IHDR (png_ptr, info_ptr, width, height, 8,
-					PNG_COLOR_TYPE_RGB_ALPHA, interlace_type,
-					PNG_COMPRESSION_TYPE_DEFAULT,
-					PNG_FILTER_TYPE_DEFAULT);
-		}
-		else
-		{
+			              PNG_COLOR_TYPE_RGB_ALPHA, interlace_type,
+			              PNG_COMPRESSION_TYPE_DEFAULT,
+			              PNG_FILTER_TYPE_DEFAULT);
+		} else {
 			png_set_IHDR (png_ptr, info_ptr, width, height, 8,
-					PNG_COLOR_TYPE_RGB, interlace_type,
-					PNG_COMPRESSION_TYPE_DEFAULT,
-					PNG_FILTER_TYPE_DEFAULT);
+			              PNG_COLOR_TYPE_RGB, interlace_type,
+			              PNG_COMPRESSION_TYPE_DEFAULT,
+			              PNG_FILTER_TYPE_DEFAULT);
 		}
-	}
-	else
-	{
+	} else {
 		png_set_IHDR (png_ptr, info_ptr, width, height, bit_depth,
-				PNG_COLOR_TYPE_PALETTE, interlace_type,
-				PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+		              PNG_COLOR_TYPE_PALETTE, interlace_type,
+		              PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 	}
-	if (im->trueColor && (!im->saveAlphaFlag) && (transparent >= 0))
-	{
+	if (im->trueColor && (!im->saveAlphaFlag) && (transparent >= 0)) {
 		/* 2.0.9: fixed by Thomas Winzig */
 		trans_rgb_value.red = gdTrueColorGetRed (im->transparent);
 		trans_rgb_value.green = gdTrueColorGetGreen (im->transparent);
 		trans_rgb_value.blue = gdTrueColorGetBlue (im->transparent);
 		png_set_tRNS (png_ptr, info_ptr, 0, 0, &trans_rgb_value);
 	}
-	if (!im->trueColor)
-	{
-		/* Oy veh. Remap the PNG palette to put the 
+	if (!im->trueColor) {
+		/* Oy veh. Remap the PNG palette to put the
 		   entries with interesting alpha channel
 		   values first. This minimizes the size
 		   of the tRNS chunk and thus the size
@@ -679,25 +661,20 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		int i;
 		int j;
 		int k;
-		for (i = 0; (i < im->colorsTotal); i++)
-		{
-			if ((!im->open[i]) && (im->alpha[i] != gdAlphaOpaque))
-			{
+		for (i = 0; (i < im->colorsTotal); i++) {
+			if ((!im->open[i]) && (im->alpha[i] != gdAlphaOpaque)) {
 				tc++;
 			}
 		}
-		if (tc)
-		{
+		if (tc) {
 #if 0
-			for (i = 0; (i < im->colorsTotal); i++)
-			{
+			for (i = 0; (i < im->colorsTotal); i++) {
 				trans_values[i] = 255 -
-					((im->alpha[i] << 1) + (im->alpha[i] >> 6));
+				                  ((im->alpha[i] << 1) + (im->alpha[i] >> 6));
 			}
 			png_set_tRNS (png_ptr, info_ptr, trans_values, 256, NULL);
 #endif
-			if (!remap)
-			{
+			if (!remap) {
 				remap = TRUE;
 			}
 			/* (Semi-)transparent indexes come up from the bottom
@@ -705,19 +682,14 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 			   indexes come down from the top */
 			j = 0;
 			k = colors - 1;
-			for (i = 0; (i < im->colorsTotal); i++)
-			{
-				if (!im->open[i])
-				{
-					if (im->alpha[i] != gdAlphaOpaque)
-					{
+			for (i = 0; (i < im->colorsTotal); i++) {
+				if (!im->open[i]) {
+					if (im->alpha[i] != gdAlphaOpaque) {
 						/* Andrew Hull: >> 6, not >> 7! (gd 2.0.5) */
 						trans_values[j] = 255 -
-							((im->alpha[i] << 1) + (im->alpha[i] >> 6));
+						                  ((im->alpha[i] << 1) + (im->alpha[i] >> 6));
 						mapping[i] = j++;
-					}
-					else
-					{
+					} else {
 						mapping[i] = k--;
 					}
 				}
@@ -727,11 +699,9 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	}
 
 	/* convert palette to libpng layout */
-	if (!im->trueColor)
-	{
+	if (!im->trueColor) {
 		if (remap)
-			for (i = 0; i < im->colorsTotal; ++i)
-			{
+			for (i = 0; i < im->colorsTotal; ++i) {
 				if (mapping[i] < 0)
 					continue;
 				palette[mapping[i]].red = im->red[i];
@@ -739,8 +709,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 				palette[mapping[i]].blue = im->blue[i];
 			}
 		else
-			for (i = 0; i < colors; ++i)
-			{
+			for (i = 0; i < colors; ++i) {
 				palette[i].red = im->red[i];
 				palette[i].green = im->green[i];
 				palette[i].blue = im->blue[i];
@@ -760,8 +729,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	 * pointers and can be passed to png_write_image() function directly.
 	 * The remapping case could be accomplished with less memory for non-
 	 * interlaced images, but interlacing causes some serious complications. */
-	if (im->trueColor)
-	{
+	if (im->trueColor) {
 		/* performance optimizations by Phong Tran */
 		int channels = im->saveAlphaFlag ? 4 : 3;
 		/* Our little 7-bit alpha channel trick costs us a bit here. */
@@ -775,19 +743,16 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		int saveAlphaFlag = im->saveAlphaFlag;
 		if (overflow2(sizeof (png_bytep), height)) {
 			goto bail;
-		} 
+		}
 		row_pointers = gdMalloc (sizeof (png_bytep) * height);
-		if (row_pointers == NULL)
-		{
+		if (row_pointers == NULL) {
 			fprintf (stderr, "gd-png error: unable to allocate row_pointers\n");
 			goto bail;
 		}
 		prow_pointers = row_pointers;
-		for (j = 0; j < height; ++j)
-		{
+		for (j = 0; j < height; ++j) {
 			if (overflow2(width, channels) || ((*prow_pointers =
-							(png_bytep) gdMalloc (width * channels)) == NULL))
-			{
+			                                        (png_bytep) gdMalloc (width * channels)) == NULL)) {
 				fprintf (stderr, "gd-png error: unable to allocate rows\n");
 				for (i = 0; i < j; ++i)
 					gdFree (row_pointers[i]);
@@ -797,15 +762,13 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 			}
 			pOutputRow = *prow_pointers++;
 			pThisRow = *ptpixels++;
-			for (i = 0; i < width; ++i)
-			{
+			for (i = 0; i < width; ++i) {
 				thisPixel = *pThisRow++;
 				*pOutputRow++ = gdTrueColorGetRed (thisPixel);
 				*pOutputRow++ = gdTrueColorGetGreen (thisPixel);
 				*pOutputRow++ = gdTrueColorGetBlue (thisPixel);
 
-				if (saveAlphaFlag)
-				{
+				if (saveAlphaFlag) {
 					/* convert the 7-bit alpha channel to an 8-bit alpha channel.
 					   We do a little bit-flipping magic, repeating the MSB
 					   as the LSB, to ensure that 0 maps to 0 and
@@ -824,25 +787,19 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		for (j = 0; j < height; ++j)
 			gdFree (row_pointers[j]);
 		gdFree (row_pointers);
-	}
-	else
-	{
-		if (remap)
-		{
+	} else {
+		if (remap) {
 			png_bytep *row_pointers;
 			if (overflow2(sizeof (png_bytep), height)) {
 				goto bail;
 			}
 			row_pointers = gdMalloc (sizeof (png_bytep) * height);
-			if (row_pointers == NULL)
-			{
+			if (row_pointers == NULL) {
 				fprintf (stderr, "gd-png error: unable to allocate row_pointers\n");
 				goto bail;
 			}
-			for (j = 0; j < height; ++j)
-			{
-				if ((row_pointers[j] = (png_bytep) gdMalloc (width)) == NULL)
-				{
+			for (j = 0; j < height; ++j) {
+				if ((row_pointers[j] = (png_bytep) gdMalloc (width)) == NULL) {
 					fprintf (stderr, "gd-png error: unable to allocate rows\n");
 					for (i = 0; i < j; ++i)
 						gdFree (row_pointers[i]);
@@ -860,15 +817,13 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 			for (j = 0; j < height; ++j)
 				gdFree (row_pointers[j]);
 			gdFree (row_pointers);
-		}
-		else
-		{
+		} else {
 			png_write_image (png_ptr, im->pixels);
 			png_write_end (png_ptr, info_ptr);
 		}
 	}
 	/* 1.6.3: maybe we should give that memory BACK! TBB */
- bail:
+bail:
 	png_destroy_write_struct (&png_ptr, &info_ptr);
 }
 

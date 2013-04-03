@@ -3,7 +3,7 @@
 
 int main()
 {
- 	gdImagePtr im;
+	gdImagePtr im;
 	int c1,c2,c3,c4,c5;
 
 	im = gdImageCreateTrueColor(100,100);
@@ -17,9 +17,9 @@ int main()
 
 	gdImageDestroy(im);
 	if (0x005e5e5e == c1 && 0x005e5e5e == c2 &&
-		0x005e5e5e == c3 && 0x005e5e5e == c4 &&
-		0x005e5e5e == c5) {
-	 	return 0;
+	        0x005e5e5e == c3 && 0x005e5e5e == c4 &&
+	        0x005e5e5e == c5) {
+		return 0;
 	} else {
 		return 1;
 	}

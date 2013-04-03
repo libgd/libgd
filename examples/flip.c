@@ -33,8 +33,8 @@ int savePngImage(gdImagePtr im, const char *name)
 
 int main(int argc, char **arg)
 {
- 	gdImagePtr im;
- 	int returncode = 0;
+	gdImagePtr im;
+	int returncode = 0;
 
 	if (argc < 2) {
 		fprintf(stderr, "Usage: flip [filename.png]\n");

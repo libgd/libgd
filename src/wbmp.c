@@ -30,7 +30,7 @@
 
 /* getmbi
  * ------
- * Get a multibyte integer from a generic getin function 
+ * Get a multibyte integer from a generic getin function
  * 'getin' can be getc, with in = NULL
  * you can find getin as a function just above the main function
  * This way you gain a lot of flexibilty about how this package
@@ -90,7 +90,7 @@ int skipheader(int (*getin)(void *in), void *in)
 		if(i < 0) {
 			return (-1);
 		}
-    } while(i & 0x80);
+	} while(i & 0x80);
 
 	return 0;
 }
@@ -172,7 +172,7 @@ int readwbmp(int (*getin) (void *in), void *in, Wbmp **return_wbmp)
 #endif
 
 	if(	overflow2(sizeof(int), wbmp->width) ||
-		overflow2(sizeof(int) * wbmp->width, wbmp->height)) {
+	        overflow2(sizeof(int) * wbmp->width, wbmp->height)) {
 		gdFree(wbmp);
 		return -1;
 	}
@@ -216,7 +216,7 @@ int readwbmp(int (*getin) (void *in), void *in, Wbmp **return_wbmp)
  * Why not just giving a filedescriptor to this function?
  * Well, the incentive to write this function was the complete
  * integration in gd library from www.libgd.org. They use
- * their own io functions, so the passing of a function seemed to be 
+ * their own io functions, so the passing of a function seemed to be
  * a logic(?) decision ...
  */
 int writewbmp(Wbmp *wbmp, void (*putout)(int c, void *out), void *out)
@@ -295,7 +295,7 @@ int putout(int c, void *out)
 	return (putc(c, (FILE *)out));
 }
 
-/* getin from file descriptor 
+/* getin from file descriptor
  * --------------------------
  */
 int getin(void *in)

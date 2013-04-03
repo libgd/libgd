@@ -19,7 +19,7 @@ void save_png(gdImagePtr im, const char *filename)
 int main()
 {
 #ifdef HAVE_JPEG
- 	gdImagePtr im, im2;
+	gdImagePtr im, im2;
 	FILE *fp;
 	char path[2048];
 

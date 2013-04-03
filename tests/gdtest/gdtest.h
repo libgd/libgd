@@ -7,8 +7,8 @@
 #define GDTEST_STRING_MAX 1024
 typedef struct CuTestImageResult CuTestImageResult;
 struct CuTestImageResult {
-    unsigned int pixels_changed;
-    unsigned int max_diff;
+	unsigned int pixels_changed;
+	unsigned int max_diff;
 };
 
 
@@ -16,13 +16,13 @@ struct CuTestImageResult {
 gdImagePtr gdTestImageFromPng(const char *filename);
 
 void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
-	gdImagePtr buf_diff, CuTestImageResult *result_ret);
+                     gdImagePtr buf_diff, CuTestImageResult *result_ret);
 
 int gdTestImageCompareToImage(const char* file, int line, const char* message,
-	gdImagePtr expected, gdImagePtr actual);
+                              gdImagePtr expected, gdImagePtr actual);
 
 int gdTestImageCompareToFile(const char* file, int line, const char* message,
-	const char *expected_file, gdImagePtr actual);
+                             const char *expected_file, gdImagePtr actual);
 
 int _gdTestAssert(const char* file, int line, const char* message, int condition);
 

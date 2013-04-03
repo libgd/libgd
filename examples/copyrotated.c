@@ -35,9 +35,9 @@ int savePngImage(gdImagePtr im, const char *name)
 
 int main(int argc, char **arg)
 {
- 	gdImagePtr im, im2;
- 	int new_width, new_height;
- 	double angle, a2;
+	gdImagePtr im, im2;
+	int new_width, new_height;
+	double angle, a2;
 
 	if (argc < 3) {
 		fprintf(stderr, "Usage: copyrotated [angle in degree] [filename.png]\n");
@@ -61,9 +61,9 @@ int main(int argc, char **arg)
 	a2 = angle * .0174532925;
 
 	new_width = ceil(cos(a2) * gdImageSX(im)) +
-				 fabs(sin(a2) * gdImageSY(im));
+	            fabs(sin(a2) * gdImageSY(im));
 	new_height = ceil(cos(a2) * gdImageSY(im)) +
-				 fabs(sin(a2) * gdImageSX(im));
+	             fabs(sin(a2) * gdImageSX(im));
 
 
 	im2 = gdImageCreateTrueColor(new_width, new_height);

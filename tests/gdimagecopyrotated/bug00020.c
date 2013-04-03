@@ -6,8 +6,8 @@
 
 int main()
 {
- 	gdImagePtr im, im2;
- 	int error = 0;
+	gdImagePtr im, im2;
+	int error = 0;
 	char path[1024];
 
 	sprintf(path, "%s/gdimagecopyrotated/bug00020_exp.png", GDTEST_TOP_DIR);
@@ -16,7 +16,7 @@ int main()
 	gdImageFilledRectangle(im, 0,0, width, width, 0xFF0000);
 	gdImageColorTransparent(im, 0xFF0000);
 	gdImageFilledEllipse(im, width/2, width/2, width - 20, width - 10,
-				0x50FFFFFF);
+	                     0x50FFFFFF);
 
 	im2 = gdImageCreateTrueColor(width, width);
 
@@ -27,6 +27,6 @@ int main()
 	}
 
 	gdImageDestroy(im2);
- 	gdImageDestroy(im);
- 	return error;
+	gdImageDestroy(im);
+	return error;
 }

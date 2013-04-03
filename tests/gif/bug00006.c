@@ -4,7 +4,7 @@
 
 int main()
 {
- 	gdImagePtr im;
+	gdImagePtr im;
 	FILE *fp;
 	const int r = 255, g = 0, b = 0;
 	int r_f,g_f,b_f, trans_c_f;
@@ -16,10 +16,10 @@ int main()
 	gdImageFilledRectangle(im, 0,0, 192,36, trans_c);
 
 	fp = fopen("_tmp_bug0006.gif", "wb");
- 	gdImageGif(im,fp);
+	gdImageGif(im,fp);
 	fclose(fp);
 
- 	gdImageDestroy(im);
+	gdImageDestroy(im);
 
 	fp = fopen("_tmp_bug0006.gif", "rb");
 	if (!fp) {
@@ -34,7 +34,7 @@ int main()
 	}
 
 	trans_c_f =gdImageGetTransparent(im);
-		printf("c_f: %i\n", trans_c_f);
+	printf("c_f: %i\n", trans_c_f);
 	if (gdTestAssert(trans_c_f == 1)) {
 		r_f = gdImageRed(im, trans_c_f);
 		g_f = gdImageGreen(im, trans_c_f);
@@ -47,8 +47,8 @@ int main()
 		error = 1;
 	}
 
- 	/* Destroy it */
- 	gdImageDestroy(im);
+	/* Destroy it */
+	gdImageDestroy(im);
 	remove("_tmp_bug0006.gif");
- 	return error;
+	return error;
 }

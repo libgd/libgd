@@ -40,26 +40,26 @@ BGD_DECLARE(gdImagePtr) gdImageAutoCrop(gdImagePtr im, const unsigned int mode)
 	crop.height = 0;
 
 	switch (mode) {
-		case GD_CROP_TRANSPARENT:
-			color = gdImageGetTransparent(im);
-			break;
+	case GD_CROP_TRANSPARENT:
+		color = gdImageGetTransparent(im);
+		break;
 
-		case GD_CROP_BLACK:
-			color = gdImageColorClosestAlpha(im, 0, 0, 0, 0);
-			break;
+	case GD_CROP_BLACK:
+		color = gdImageColorClosestAlpha(im, 0, 0, 0, 0);
+		break;
 
-		case GD_CROP_WHITE:
-			color = gdImageColorClosestAlpha(im, 255, 255, 255, 0);
-			break;
+	case GD_CROP_WHITE:
+		color = gdImageColorClosestAlpha(im, 255, 255, 255, 0);
+		break;
 
-		case GD_CROP_SIDES:
-			gdGuessBackgroundColorFromCorners(im, &color);
-			break;
+	case GD_CROP_SIDES:
+		gdGuessBackgroundColorFromCorners(im, &color);
+		break;
 
-		case GD_CROP_DEFAULT:
-		default:
-			color = gdImageGetTransparent(im);
-			break;
+	case GD_CROP_DEFAULT:
+	default:
+		color = gdImageGetTransparent(im);
+		break;
 	}
 
 	/* TODO: Add gdImageGetRowPtr and works with ptr at the row level
@@ -73,7 +73,7 @@ BGD_DECLARE(gdImagePtr) gdImageAutoCrop(gdImagePtr im, const unsigned int mode)
 		}
 	}
 
-	/* Nothing to do > bye 
+	/* Nothing to do > bye
 	 * Duplicate the image?
 	 */
 	if (y == height - 1) {
@@ -144,7 +144,7 @@ BGD_DECLARE(gdImagePtr) gdImageThresholdCrop(gdImagePtr im, const unsigned int c
 	}
 
 	/* Pierre
-	 * Nothing to do > bye 
+	 * Nothing to do > bye
 	 * Duplicate the image?
 	 */
 	if (y == height - 1) {

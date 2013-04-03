@@ -29,8 +29,7 @@
 #define FALSE	0
 
 /* this is used for creating images in main memory */
-typedef struct dpStruct
-{
+typedef struct dpStruct {
 	void *data;
 	int logicalSize;
 	int realSize;
@@ -40,8 +39,7 @@ typedef struct dpStruct
 }
 dynamicPtr;
 
-typedef struct dpIOCtx
-{
+typedef struct dpIOCtx {
 	gdIOCtx ctx;
 	dynamicPtr *dp;
 }
@@ -271,7 +269,7 @@ static int dynamicGetbuf(gdIOCtxPtr ctx, void *buf, int len)
 		if(remain == 0) {
 			/* 2.0.34: EOF is incorrect. We use 0 for
 			 * errors and EOF, just like fileGetbuf,
-			 * which is a simple fread() wrapper. 
+			 * which is a simple fread() wrapper.
 			 * TBB. Original bug report: Daniel Cowgill. */
 			return 0; /* NOT EOF */
 		}

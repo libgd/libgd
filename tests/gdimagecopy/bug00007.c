@@ -6,7 +6,7 @@
 
 int main()
 {
- 	gdImagePtr dst_tc, src;
+	gdImagePtr dst_tc, src;
 	int c1;
 
 	src = gdImageCreate(5,5);
@@ -23,8 +23,8 @@ int main()
 
 	//CuAssertImageEquals(tc, src, dst_tc);
 
- 	/* Destroy it */
- 	gdImageDestroy(dst_tc);
+	/* Destroy it */
+	gdImageDestroy(dst_tc);
 	gdImageDestroy(src);
 	return 0;
 }

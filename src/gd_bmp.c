@@ -156,7 +156,7 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 			Putchar(gdImageGreen(im, i), out);
 			Putchar(gdImageRed(im, i), out);
 			Putchar(0, out);
-        }
+		}
 
 		if (compression) {
 			/* Can potentially change this to X + ((X / 128) * 3) */
@@ -167,7 +167,7 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 			}
 		}
 
-        for (row = (im->sy - 1); row >= 0; row--) {
+		for (row = (im->sy - 1); row >= 0; row--) {
 			if (compression) {
 				memset (uncompressed_row, 0, gdImageSX(im));
 			}
@@ -222,7 +222,7 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 		}
 
 	} else {
-        for (row = (im->sy - 1); row >= 0; row--) {
+		for (row = (im->sy - 1); row >= 0; row--) {
 			for (xpos = 0; xpos < im->sx; xpos++) {
 				pixel = gdImageGetPixel(im, xpos, row);
 
@@ -295,8 +295,7 @@ static int compress_row(unsigned char *row, int length)
 	memcpy(uncompressed_row, row, length);
 	uncompressed_start = uncompressed_rowp = uncompressed_row;
 
-	for (pixel = 0; pixel < length; pixel++)
-	{
+	for (pixel = 0; pixel < length; pixel++) {
 		if (compressed_run == 0) {
 			uncompressed_row = uncompressed_rowp;
 			compressed_run++;
@@ -472,27 +471,27 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx(gdIOCtxPtr infile)
 	}
 
 	switch (info->depth) {
-		case 1:
-			BMP_DEBUG(printf("1-bit image\n"));
-			error = bmp_read_1bit(im, infile, info, hdr);
+	case 1:
+		BMP_DEBUG(printf("1-bit image\n"));
+		error = bmp_read_1bit(im, infile, info, hdr);
 		break;
-		case 4:
-			BMP_DEBUG(printf("4-bit image\n"));
-			error = bmp_read_4bit(im, infile, info, hdr);
+	case 4:
+		BMP_DEBUG(printf("4-bit image\n"));
+		error = bmp_read_4bit(im, infile, info, hdr);
 		break;
-		case 8:
-			BMP_DEBUG(printf("8-bit image\n"));
-			error = bmp_read_8bit(im, infile, info, hdr);
+	case 8:
+		BMP_DEBUG(printf("8-bit image\n"));
+		error = bmp_read_8bit(im, infile, info, hdr);
 		break;
-		case 16:
-		case 24:
-		case 32:
-			BMP_DEBUG(printf("Direct BMP image\n"));
-			error = bmp_read_direct(im, infile, info, hdr);
+	case 16:
+	case 24:
+	case 32:
+		BMP_DEBUG(printf("Direct BMP image\n"));
+		error = bmp_read_direct(im, infile, info, hdr);
 		break;
-		default:
-			BMP_DEBUG(printf("Unknown bit count\n"));
-			error = 1;
+	default:
+		BMP_DEBUG(printf("Unknown bit count\n"));
+		error = 1;
 	}
 
 	gdFree(hdr);
@@ -509,11 +508,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx(gdIOCtxPtr infile)
 static int bmp_read_header(gdIOCtx *infile, bmp_hdr_t *hdr)
 {
 	if(
-	!gdGetWordLSB(&hdr->magic, infile) ||
-	!gdGetIntLSB(&hdr->size, infile) ||
-	!gdGetWordLSB(&hdr->reserved1, infile) ||
-	!gdGetWordLSB(&hdr->reserved2 , infile) ||
-	!gdGetIntLSB(&hdr->off , infile)
+	    !gdGetWordLSB(&hdr->magic, infile) ||
+	    !gdGetIntLSB(&hdr->size, infile) ||
+	    !gdGetWordLSB(&hdr->reserved1, infile) ||
+	    !gdGetWordLSB(&hdr->reserved2 , infile) ||
+	    !gdGetIntLSB(&hdr->off , infile)
 	) {
 		return 1;
 	}
@@ -529,27 +528,27 @@ static int bmp_read_info(gdIOCtx *infile, bmp_info_t *info)
 
 	switch (info->len) {
 		/* For now treat Windows v4 + v5 as v3 */
-		case BMP_WINDOWS_V3:
-		case BMP_WINDOWS_V4:
-		case BMP_WINDOWS_V5:
-			BMP_DEBUG(printf("Reading Windows Header\n"));
-			if (bmp_read_windows_v3_info(infile, info)) {
-				return 1;
-			}
-		break;
-		case BMP_OS2_V1:
-			if (bmp_read_os2_v1_info(infile, info)) {
-				return 1;
-			}
-		break;
-		case BMP_OS2_V2:
-			if (bmp_read_os2_v2_info(infile, info)) {
-				return 1;
-			}
-		break;
-		default:
-			BMP_DEBUG(printf("Unhandled bitmap\n"));
+	case BMP_WINDOWS_V3:
+	case BMP_WINDOWS_V4:
+	case BMP_WINDOWS_V5:
+		BMP_DEBUG(printf("Reading Windows Header\n"));
+		if (bmp_read_windows_v3_info(infile, info)) {
 			return 1;
+		}
+		break;
+	case BMP_OS2_V1:
+		if (bmp_read_os2_v1_info(infile, info)) {
+			return 1;
+		}
+		break;
+	case BMP_OS2_V2:
+		if (bmp_read_os2_v2_info(infile, info)) {
+			return 1;
+		}
+		break;
+	default:
+		BMP_DEBUG(printf("Unhandled bitmap\n"));
+		return 1;
 	}
 	return 0;
 }
@@ -557,16 +556,16 @@ static int bmp_read_info(gdIOCtx *infile, bmp_info_t *info)
 static int bmp_read_windows_v3_info(gdIOCtxPtr infile, bmp_info_t *info)
 {
 	if (
-		!gdGetIntLSB(&info->width, infile) ||
-		!gdGetIntLSB(&info->height, infile) ||
-		!gdGetWordLSB(&info->numplanes, infile) ||
-		!gdGetWordLSB(&info->depth, infile) ||
-		!gdGetIntLSB(&info->enctype, infile) ||
-		!gdGetIntLSB(&info->size, infile) ||
-		!gdGetIntLSB(&info->hres, infile) ||
-		!gdGetIntLSB(&info->vres, infile) ||
-		!gdGetIntLSB(&info->numcolors, infile) ||
-		!gdGetIntLSB(&info->mincolors, infile)
+	    !gdGetIntLSB(&info->width, infile) ||
+	    !gdGetIntLSB(&info->height, infile) ||
+	    !gdGetWordLSB(&info->numplanes, infile) ||
+	    !gdGetWordLSB(&info->depth, infile) ||
+	    !gdGetIntLSB(&info->enctype, infile) ||
+	    !gdGetIntLSB(&info->size, infile) ||
+	    !gdGetIntLSB(&info->hres, infile) ||
+	    !gdGetIntLSB(&info->vres, infile) ||
+	    !gdGetIntLSB(&info->numcolors, infile) ||
+	    !gdGetIntLSB(&info->mincolors, infile)
 	) {
 		return 1;
 	}
@@ -581,7 +580,7 @@ static int bmp_read_windows_v3_info(gdIOCtxPtr infile, bmp_info_t *info)
 	info->type = BMP_PALETTE_4;
 
 	if (info->width <= 0 || info->height <= 0 || info->numplanes <= 0 ||
-	  info->depth <= 0  || info->numcolors < 0 || info->mincolors < 0) {
+	        info->depth <= 0  || info->numcolors < 0 || info->mincolors < 0) {
 		return 1;
 	}
 
@@ -591,10 +590,10 @@ static int bmp_read_windows_v3_info(gdIOCtxPtr infile, bmp_info_t *info)
 static int bmp_read_os2_v1_info(gdIOCtxPtr infile, bmp_info_t *info)
 {
 	if (
-		!gdGetWordLSB((signed short int *)&info->width, infile) ||
-		!gdGetWordLSB((signed short int *)&info->height, infile) ||
-		!gdGetWordLSB(&info->numplanes, infile) ||
-		!gdGetWordLSB(&info->depth, infile)
+	    !gdGetWordLSB((signed short int *)&info->width, infile) ||
+	    !gdGetWordLSB((signed short int *)&info->height, infile) ||
+	    !gdGetWordLSB(&info->numplanes, infile) ||
+	    !gdGetWordLSB(&info->depth, infile)
 	) {
 		return 1;
 	}
@@ -606,7 +605,7 @@ static int bmp_read_os2_v1_info(gdIOCtxPtr infile, bmp_info_t *info)
 	info->type = BMP_PALETTE_3;
 
 	if (info->width <= 0 || info->height <= 0 || info->numplanes <= 0 ||
-	  info->depth <= 0 || info->numcolors < 0) {
+	        info->depth <= 0 || info->numcolors < 0) {
 		return 1;
 	}
 
@@ -617,16 +616,16 @@ static int bmp_read_os2_v2_info(gdIOCtxPtr infile, bmp_info_t *info)
 {
 	char useless_bytes[24];
 	if (
-		!gdGetIntLSB(&info->width, infile) ||
-		!gdGetIntLSB(&info->height, infile) ||
-		!gdGetWordLSB(&info->numplanes, infile) ||
-		!gdGetWordLSB(&info->depth, infile) ||
-		!gdGetIntLSB(&info->enctype, infile) ||
-		!gdGetIntLSB(&info->size, infile) ||
-		!gdGetIntLSB(&info->hres, infile) ||
-		!gdGetIntLSB(&info->vres, infile) ||
-		!gdGetIntLSB(&info->numcolors, infile) ||
-		!gdGetIntLSB(&info->mincolors, infile)
+	    !gdGetIntLSB(&info->width, infile) ||
+	    !gdGetIntLSB(&info->height, infile) ||
+	    !gdGetWordLSB(&info->numplanes, infile) ||
+	    !gdGetWordLSB(&info->depth, infile) ||
+	    !gdGetIntLSB(&info->enctype, infile) ||
+	    !gdGetIntLSB(&info->size, infile) ||
+	    !gdGetIntLSB(&info->hres, infile) ||
+	    !gdGetIntLSB(&info->vres, infile) ||
+	    !gdGetIntLSB(&info->numcolors, infile) ||
+	    !gdGetIntLSB(&info->mincolors, infile)
 	) {
 		return 1;
 	}
@@ -646,7 +645,7 @@ static int bmp_read_os2_v2_info(gdIOCtxPtr infile, bmp_info_t *info)
 	info->type = BMP_PALETTE_4;
 
 	if (info->width <= 0 || info->height <= 0 || info->numplanes <= 0 ||
-	 info->depth <= 0  || info->numcolors < 0 || info->mincolors < 0) {
+	        info->depth <= 0  || info->numcolors < 0 || info->mincolors < 0) {
 		return 1;
 	}
 
@@ -661,34 +660,34 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 	signed short int data = 0;
 
 	switch(info->enctype) {
-		case BMP_BI_RGB:
-			/* no-op */
+	case BMP_BI_RGB:
+		/* no-op */
 		break;
 
-		case BMP_BI_BITFIELDS:
-			if (info->depth == 24) {
-				BMP_DEBUG(printf("Bitfield compression isn't supported for 24-bit\n"));
-				return 1;
-			}
-			BMP_DEBUG(printf("Currently no bitfield support\n"));
+	case BMP_BI_BITFIELDS:
+		if (info->depth == 24) {
+			BMP_DEBUG(printf("Bitfield compression isn't supported for 24-bit\n"));
 			return 1;
+		}
+		BMP_DEBUG(printf("Currently no bitfield support\n"));
+		return 1;
 		break;
 
-		case BMP_BI_RLE8:
-			if (info->depth != 8) {
-				BMP_DEBUG(printf("RLE is only valid for 8-bit images\n"));
-				return 1;
-			}
-		case BMP_BI_RLE4:
-			if (info->depth != 4) {
-				BMP_DEBUG(printf("RLE is only valid for 4-bit images\n"));
-				return 1;
-			}
-		case BMP_BI_JPEG:
-		case BMP_BI_PNG:
-		default:
-			BMP_DEBUG(printf("Unsupported BMP compression format\n"));
+	case BMP_BI_RLE8:
+		if (info->depth != 8) {
+			BMP_DEBUG(printf("RLE is only valid for 8-bit images\n"));
 			return 1;
+		}
+	case BMP_BI_RLE4:
+		if (info->depth != 4) {
+			BMP_DEBUG(printf("RLE is only valid for 4-bit images\n"));
+			return 1;
+		}
+	case BMP_BI_JPEG:
+	case BMP_BI_PNG:
+	default:
+		BMP_DEBUG(printf("Unsupported BMP compression format\n"));
+		return 1;
 	}
 
 	/* There is a chance the data isn't until later, would be wierd but it is possible */
@@ -750,10 +749,10 @@ static int bmp_read_palette(gdImagePtr im, gdIOCtxPtr infile, int count, int rea
 
 	for (i = 0; i < count; i++) {
 		if (
-		!gdGetByte(&r, infile) ||
-		!gdGetByte(&g, infile) ||
-		!gdGetByte(&b, infile) ||
-		(read_four && !gdGetByte(&z, infile))
+		    !gdGetByte(&r, infile) ||
+		    !gdGetByte(&g, infile) ||
+		    !gdGetByte(&b, infile) ||
+		    (read_four && !gdGetByte(&z, infile))
 		) {
 			return 1;
 		}
@@ -867,7 +866,7 @@ static int bmp_read_4bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 	}
 
 	switch (info->enctype) {
-		case BMP_BI_RGB:
+	case BMP_BI_RGB:
 		for (ypos = 0; ypos < info->height; ++ypos) {
 			if (info->topdown) {
 				row = ypos;
@@ -906,14 +905,14 @@ static int bmp_read_4bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 		}
 		break;
 
-		case BMP_BI_RLE4:
+	case BMP_BI_RLE4:
 		if (bmp_read_rle(im, infile, info)) {
 			return 1;
 		}
 		break;
 
-		default:
-			return 1;
+	default:
+		return 1;
 	}
 	return 0;
 }
@@ -952,7 +951,7 @@ static int bmp_read_8bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 	}
 
 	switch (info->enctype) {
-		case BMP_BI_RGB:
+	case BMP_BI_RGB:
 		for (ypos = 0; ypos < info->height; ++ypos) {
 			if (info->topdown) {
 				row = ypos;
@@ -979,14 +978,14 @@ static int bmp_read_8bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 		}
 		break;
 
-		case BMP_BI_RLE8:
+	case BMP_BI_RLE8:
 		if (bmp_read_rle(im, infile, info)) {
 			return 1;
 		}
 		break;
 
-		default:
-			return 1;
+	default:
+		return 1;
 	}
 	return 0;
 }

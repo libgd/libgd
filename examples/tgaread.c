@@ -1,7 +1,7 @@
 /* $Id$ */
 /*
  * You can fetch a set of samples TIFF images here:
- * ftp://ftp.remotesensing.org/pub/libtiff/ 
+ * ftp://ftp.remotesensing.org/pub/libtiff/
  * (pics-x.y.z.tar.gz)
  */
 
@@ -11,7 +11,7 @@
 
 int main()
 {
- 	gdImagePtr im;
+	gdImagePtr im;
 	FILE *fp;
 	char path[4][2048];
 	int i;

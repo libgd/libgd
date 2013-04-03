@@ -27,7 +27,7 @@ int main (int argc, char *argv[])
 			gdImageDestroy(last);
 		}
 		last = cim;
-	}	
+	}
 	gdImageDestroy(last);
 	gdImageGifAnimEnd(out);
 	fclose(out);

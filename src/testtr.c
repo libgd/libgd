@@ -12,25 +12,25 @@ int
 main (int argc, char *argv[])
 {
 #ifdef HAVE_LIBFREETYPE
-  	FILE *out;
+	FILE *out;
 	int transparent, green, black;
 	gdImagePtr im;
 
 	im = gdImageCreateTrueColor(100,100);
 
-        black =  gdImageColorResolveAlpha(im, 0, 0, 0, gdAlphaOpaque);
-        green =  gdImageColorResolveAlpha(im, 0, gdGreenMax, 0, gdAlphaOpaque);
-        transparent = gdImageColorResolveAlpha(im,
-                        gdRedMax-1, gdGreenMax, gdBlueMax, gdAlphaTransparent);
-        gdImageColorTransparent(im, transparent);
+	black =  gdImageColorResolveAlpha(im, 0, 0, 0, gdAlphaOpaque);
+	green =  gdImageColorResolveAlpha(im, 0, gdGreenMax, 0, gdAlphaOpaque);
+	transparent = gdImageColorResolveAlpha(im,
+	                                       gdRedMax-1, gdGreenMax, gdBlueMax, gdAlphaTransparent);
+	gdImageColorTransparent(im, transparent);
 
 	/* Blending must be off to lay a transparent basecolor.
-                Nothing to blend with anyway. */
-        gdImageAlphaBlending(im, FALSE);
-        gdImageFill (im, im->sx/2, im->sy/2, transparent);
-        /* Blend everything else together,
-                especially fonts over non-transparent backgrounds */
-        gdImageAlphaBlending(im, TRUE);
+	            Nothing to blend with anyway. */
+	gdImageAlphaBlending(im, FALSE);
+	gdImageFill (im, im->sx/2, im->sy/2, transparent);
+	/* Blend everything else together,
+	        especially fonts over non-transparent backgrounds */
+	gdImageAlphaBlending(im, TRUE);
 
 	gdImageFilledRectangle (im, 30, 30, 70, 70, green);
 	gdImageStringFT (im, NULL, black, "Times", 18, 0, 50, 50, "Hello");

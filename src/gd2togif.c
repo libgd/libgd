@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 	if (!out) {
 		fprintf(stderr, "Output file cannot be written to!\n");
 		gdImageDestroy(im);
-		exit(1);	
+		exit(1);
 	}
 	gdImageGif(im, out);
 	fclose(out);

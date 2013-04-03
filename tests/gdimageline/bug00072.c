@@ -3,7 +3,7 @@
 
 int main()
 {
- 	gdImagePtr im;
+	gdImagePtr im;
 	const char *exp = "bug00072_exp.png";
 	int error = 0;
 

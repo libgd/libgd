@@ -21,9 +21,9 @@ int main()
 
 	gdAssertImageEqualsToFile(exp_img, im);
 
- 	/* Destroy it */
- 	gdImageDestroy(im);
- 	gdImageDestroy(tile);
+	/* Destroy it */
+	gdImageDestroy(im);
+	gdImageDestroy(tile);
 	return 0;
 }
 

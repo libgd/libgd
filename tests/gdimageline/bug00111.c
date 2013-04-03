@@ -7,16 +7,16 @@
 
 int main()
 {
- 	gdImagePtr im;
- 	int error = 0;
+	gdImagePtr im;
+	int error = 0;
 	char path[2048];
 	const char *file_exp = "bug00111_exp.png";
 
 	im = gdImageCreateTrueColor(10, 10);
-    if (!im) {
-        printf("can't get truecolor image\n");
-        return 1;
-    }
+	if (!im) {
+		printf("can't get truecolor image\n");
+		return 1;
+	}
 
 	gdImageLine(im, 2, 2, 2, 2, 0xFFFFFF);
 	gdImageLine(im, 5, 5, 5, 5, 0xFFFFFF);

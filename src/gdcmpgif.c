@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 	CompareImages("gdcmpgif", im1, im2);
 
 	gdImageDestroy(im1);
-        gdImageDestroy(im2);
+	gdImageDestroy(im2);
 
 	return 0;
 }
@@ -82,7 +82,7 @@ void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2)
 
 	if (cmpRes & GD_CMP_NUM_COLORS) {
 		printf("-%s: INFO number of palette entries differ %d Vs. %d\n",msg,
-			im1->colorsTotal, im2->colorsTotal);
+		       im1->colorsTotal, im2->colorsTotal);
 	}
 
 	if (cmpRes & GD_CMP_COLOR) {

@@ -34,7 +34,7 @@ gdImagePtr gdTestImageFromPng(const char *filename)
  * cairo_format_t instead of taking a mask as a parameter.
  */
 void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
-	gdImagePtr buf_diff, CuTestImageResult *result_ret)
+                     gdImagePtr buf_diff, CuTestImageResult *result_ret)
 {
 	int x, y;
 	int c1, c2;
@@ -104,7 +104,7 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 }
 
 int gdTestImageCompareToImage(const char* file, int line, const char* message,
-	gdImagePtr expected, gdImagePtr actual)
+                              gdImagePtr expected, gdImagePtr actual)
 {
 	char buf[GDTEST_STRING_MAX];
 	unsigned int width_a, height_a;
@@ -126,9 +126,9 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 
 	if (width_a  != width_b  || height_a != height_b) {
 		fprintf(stderr, "Image size mismatch: (%ux%u) vs. (%ux%u)\n       for %s vs. buffer\n",
-								width_a, height_a,
-								width_b, height_b,
-								file);
+		        width_a, height_a,
+		        width_b, height_b,
+		        file);
 		goto fail;
 	}
 
@@ -142,9 +142,9 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 		int len, p;
 
 		sprintf(buf, "Total pixels changed: %d with a maximum channel difference of %d.\n",
-			result.pixels_changed,
-			result.max_diff
-		);
+		        result.pixels_changed,
+		        result.max_diff
+		       );
 
 		p = len = strlen(file);
 		p--;
@@ -181,7 +181,7 @@ fail:
 }
 
 int gdTestImageCompareToFile(const char* file, int line, const char* message,
-	const char *expected_file, gdImagePtr actual)
+                             const char *expected_file, gdImagePtr actual)
 {
 	gdImagePtr expected;
 	int res = 1;
@@ -207,18 +207,18 @@ int _gdTestAssert(const char* file, int line, const char* message, int condition
 
 int _gdTestErrorMsg(const char* file, int line, const char* format, ...) /* {{{ */
 {
- char output_buf[512];
- va_list args;
+	char output_buf[512];
+	va_list args;
 
- (void)file;
- (void)line;
+	(void)file;
+	(void)line;
 
- va_start (args, format);
- vsnprintf (output_buf, sizeof (output_buf), format, args);
- va_end (args);
+	va_start (args, format);
+	vsnprintf (output_buf, sizeof (output_buf), format, args);
+	va_end (args);
 
- fputs (output_buf, stderr);
- fflush (stderr);
- return 0;
+	fputs (output_buf, stderr);
+	fflush (stderr);
+	return 0;
 }
 /* }}} */

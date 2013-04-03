@@ -3,7 +3,7 @@
 
 int main()
 {
- 	gdImagePtr im;
+	gdImagePtr im;
 	int c1,c2,c3,c4,c5;
 
 	im = gdImageCreateTrueColor(100,100);
@@ -15,8 +15,8 @@ int main()
 	c5 = gdImageGetTrueColorPixel(im, 49, 49);
 
 	if (!(0x005e5e5e == c1 && 0x005e5e5e == c2 &&
-	 0x005e5e5e == c3 && 0x005e5e5e == c4)) {
-	 	return 1;
+	        0x005e5e5e == c3 && 0x005e5e5e == c4)) {
+		return 1;
 	}
 	gdImageFilledRectangle(im, 0, 0, 99, 99, 0x0);
 
@@ -28,9 +28,9 @@ int main()
 	c5 = gdImageGetTrueColorPixel(im, 49, 49);
 
 	if (!(0x005e5e5e == c1 && 0x005e5e5e == c2 &&
-		  0x005e5e5e == c3 && 0x005e5e5e == c4 &&
-		  0x005e5e5e == c5)) {
-	 	return 1;
+	        0x005e5e5e == c3 && 0x005e5e5e == c4 &&
+	        0x005e5e5e == c5)) {
+		return 1;
 	}
 
 	gdImageDestroy(im);

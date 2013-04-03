@@ -44,17 +44,17 @@ int main()
 	}
 
 	color = gdTrueColorAlpha(gdImageRed(im, c1), gdImageGreen(im, c1),
-					gdImageBlue(im, c1), 0);
+	                         gdImageBlue(im, c1), 0);
 	if (gdTestAssert(color == 0xFF00FF) != 1) {
 		error = -1;
 	}
 	color = gdTrueColorAlpha(gdImageRed(im, c2), gdImageGreen(im, c2),
-					gdImageBlue(im, c2), 0);
+	                         gdImageBlue(im, c2), 0);
 	if (gdTestAssert(color == 0xFFC800) != 1) {
 		error = -1;
 	}
 	color = gdTrueColorAlpha(gdImageRed(im, c3), gdImageGreen(im, c3),
-					gdImageBlue(im, c3), 0);
+	                         gdImageBlue(im, c3), 0);
 	if (gdTestAssert(color == 0xFF00FF) != 1) {
 		error = -1;
 	}

@@ -7,7 +7,7 @@
 int main()
 {
 	int error;
- 	gdImagePtr im;
+	gdImagePtr im;
 	FILE *fp;
 	char path[1024];
 	const char * files[2] = {"bug00088_1.png", "bug00088_2.png"};

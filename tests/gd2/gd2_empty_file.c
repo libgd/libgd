@@ -6,7 +6,7 @@
 
 int main()
 {
- 	gdImagePtr im;
+	gdImagePtr im;
 	FILE *fp;
 	char path[1024];
 

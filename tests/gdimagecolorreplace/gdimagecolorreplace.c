@@ -20,15 +20,15 @@ static int callback(gdImagePtr im, int src)
 static void run_tests(gdImagePtr im, int *error)
 {
 	int black,									\
-		white,									\
-		cosmic_latte,							\
-		cream,									\
-		ivory,									\
-		magnolia,								\
-		old_lace,								\
-		seashell,								\
-		yellow,									\
-		c, d;
+	white,									\
+	cosmic_latte,							\
+	cream,									\
+	ivory,									\
+	magnolia,								\
+	old_lace,								\
+	seashell,								\
+	yellow,									\
+	c, d;
 	int src[2], dst[2];
 	int n;
 
@@ -138,7 +138,7 @@ int main()
 	im = gdImageCreateTrueColor(5, 5);
 	run_tests(im, &error);
 	gdImageDestroy(im);
-	
+
 	/* palette */
 	im = gdImageCreate(5, 5);
 	run_tests(im, &error);

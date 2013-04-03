@@ -7,7 +7,7 @@
 int main()
 {
 	int error;
- 	gdImagePtr im;
+	gdImagePtr im;
 	FILE *fp;
 	char path[1024];
 

@@ -26,8 +26,8 @@ int main()
 	gdImageColorTransparent(im, im_black);
 
 	/* create the dots pattern */
-	for (x=0;x<36;x+=2) {
-		for (y=0;y<36;y+=2) {
+	for (x=0; x<36; x+=2) {
+		for (y=0; y<36; y+=2) {
 			gdImageSetPixel(tile,x,y,tile_black);
 		}
 	}
@@ -49,8 +49,8 @@ int main()
 		error = 1;
 	}
 
- 	/* Destroy it */
- 	gdImageDestroy(im);
+	/* Destroy it */
+	gdImageDestroy(im);
 	return error;
 }
 
