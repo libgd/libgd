@@ -8,10 +8,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define PIXEL_FUNCTION_DECLARE(f) int (*f)(gdImagePtr, int, int)
-
-#define GET_PIXEL_FUNCTION(src)(src->trueColor ? gdImageGetTrueColorPixel : gdImageGetPixel)
-
 #ifdef WIN32
 # define GD_SCATTER_SEED() (unsigned int)(time(0) * GetCurrentProcessId())
 #else
@@ -41,18 +37,6 @@ BGD_DECLARE(int) gdImageScatterColor(gdImagePtr im, int sub, int plus, int color
 	return gdImageScatterEx(im, &s);
 }
 
-#define GD_SCATTER_MAIN() do {									\
-		dest_x = (int) (x + ((rand() % (plus - sub)) + sub));	\
-		dest_y = (int) (y + ((rand() % (plus - sub)) + sub));	\
-																\
-		if (!gdImageBoundsSafe(im, dest_x, dest_y)) {			\
-			continue;											\
-		}														\
-																\
-		pxl = f(im, x, y);										\
-		new_pxl = f(im, dest_x, dest_y);						\
-	} while (0)
-
 BGD_DECLARE(int) gdImageScatterEx(gdImagePtr im, gdScatterPtr scatter)
 {
 	register int x, y;
@@ -60,7 +44,6 @@ BGD_DECLARE(int) gdImageScatterEx(gdImagePtr im, gdScatterPtr scatter)
 	int pxl, new_pxl;
 	unsigned int n;
 	int sub = scatter->sub, plus = scatter->plus;
-	PIXEL_FUNCTION_DECLARE(f);
 
 	if (plus == 0 && sub == 0) {
 		return 1;
@@ -68,13 +51,20 @@ BGD_DECLARE(int) gdImageScatterEx(gdImagePtr im, gdScatterPtr scatter)
 		return 0;
 	}
 
-	f = GET_PIXEL_FUNCTION(im);
 	(void)srand(scatter->seed);
 
 	if (scatter->num_colors) {
 		for (y = 0; y < im->sy; y++) {
 			for (x = 0; x < im->sx; x++) {
-				GD_SCATTER_MAIN();
+				dest_x = (int) (x + ((rand() % (plus - sub)) + sub));
+				dest_y = (int) (y + ((rand() % (plus - sub)) + sub));
+
+				if (!gdImageBoundsSafe(im, dest_x, dest_y)) {
+					continue;
+				}
+
+				pxl = gdImageGetPixel(im, x, y);
+				new_pxl = gdImageGetPixel(im, dest_x, dest_y);
 
 				for (n = 0; n < scatter->num_colors; n++) {
 					if (pxl == scatter->colors[n]) {
@@ -87,7 +77,15 @@ BGD_DECLARE(int) gdImageScatterEx(gdImagePtr im, gdScatterPtr scatter)
 	} else {
 		for (y = 0; y < im->sy; y++) {
 			for (x = 0; x < im->sx; x++) {
-				GD_SCATTER_MAIN();
+				dest_x = (int) (x + ((rand() % (plus - sub)) + sub));
+				dest_y = (int) (y + ((rand() % (plus - sub)) + sub));
+
+				if (!gdImageBoundsSafe(im, dest_x, dest_y)) {
+					continue;
+				}
+
+				pxl = gdImageGetPixel(im, x, y);
+				new_pxl = gdImageGetPixel(im, dest_x, dest_y);
 
 				gdImageSetPixel(im, dest_x, dest_y, pxl);
 				gdImageSetPixel(im, x, y, new_pxl);
