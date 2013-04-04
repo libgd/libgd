@@ -1621,7 +1621,7 @@ gdImagePtr gdImageScaleBicubicFixed(gdImagePtr src, const unsigned int width, co
 	return dst;
 }
 
-gdImagePtr gdImageScale(const gdImagePtr src, const unsigned int new_width, const unsigned int new_height)
+BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int new_width, const unsigned int new_height)
 {
 	gdImagePtr im_scaled = NULL;
 
@@ -2177,7 +2177,7 @@ gdImagePtr gdImageRotateBicubicFixed(gdImagePtr src, const float degrees, const 
 	return dst;
 }
 
-gdImagePtr gdImageRotateInterpolated(const gdImagePtr src, const float angle, int bgcolor)
+BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const float angle, int bgcolor)
 {
 	const int angle_rounded = (int)floor(angle * 100);
 	
@@ -2261,7 +2261,7 @@ void gdDumpRect(const char *msg, gdRectPtr r)
  * Returns:
  *  GD_TRUE if the affine is rectilinear or GD_FALSE
  */
-int gdTransformAffineGetImage(gdImagePtr *dst,
+BGD_DECLARE(int) gdTransformAffineGetImage(gdImagePtr *dst,
 		  const gdImagePtr src,
 		  gdRectPtr src_area,
 		  const double affine[6])

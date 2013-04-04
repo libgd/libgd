@@ -1018,13 +1018,13 @@ gdImagePtr gdImageScaleBicubic(gdImagePtr src_img, const unsigned int new_width,
 gdImagePtr gdImageScaleBicubicFixed(gdImagePtr src, const unsigned int width, const unsigned int height);
 gdImagePtr gdImageScaleNearestNeighbour(gdImagePtr im, const unsigned int width, const unsigned int height);
 gdImagePtr gdImageScaleTwoPass(const gdImagePtr pOrigImage, const unsigned int uOrigWidth, const unsigned int uOrigHeight, const unsigned int uNewWidth, const unsigned int uNewHeight);
-gdImagePtr gdImageScale(const gdImagePtr src, const unsigned int new_width, const unsigned int new_height);
+BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int new_width, const unsigned int new_height);
 
 gdImagePtr gdImageRotateNearestNeighbour(gdImagePtr src, const float degrees, const int bgColor);
 gdImagePtr gdImageRotateBilinear(gdImagePtr src, const float degrees, const int bgColor);
 gdImagePtr gdImageRotateBicubicFixed(gdImagePtr src, const float degrees, const int bgColor);
 gdImagePtr gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor);
-gdImagePtr gdImageRotateInterpolated(const gdImagePtr src, const float angle, int bgcolor);
+BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const float angle, int bgcolor);
 
 typedef enum {
 	GD_AFFINE_TRANSLATE = 0,
@@ -1048,8 +1048,8 @@ int gdAffineTranslate (double dst[6], const double offset_x, const double offset
 double gdAffineExpansion (const double src[6]);
 int gdAffineRectilinear (const double src[6]);
 int gdAffineEqual (const double matrix1[6], const double matrix2[6]);
-int gdTransformAffineGetImage(gdImagePtr *dst, const gdImagePtr src, gdRectPtr src_area, const double affine[6]);
-int gdTransformAffineCopy(gdImagePtr dst, int dst_x, int dst_y, const gdImagePtr src, gdRectPtr src_region, const double affine[6]);
+BGD_DECLARE(int) gdTransformAffineGetImage(gdImagePtr *dst, const gdImagePtr src, gdRectPtr src_area, const double affine[6]);
+BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst, int dst_x, int dst_y, const gdImagePtr src, gdRectPtr src_region, const double affine[6]);
 /*
 gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
 			const gdImagePtr src, int src_width, int src_height,
