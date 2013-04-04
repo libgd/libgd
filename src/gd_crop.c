@@ -25,7 +25,7 @@ BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop)
 	return dst;
 }
 
-BGD_DECLARE(gdImagePtr) gdImageAutoCrop(gdImagePtr im, const unsigned int mode)
+BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 {
 	const int width = gdImageSX(im);
 	const int height = gdImageSY(im);
@@ -113,7 +113,7 @@ BGD_DECLARE(gdImagePtr) gdImageAutoCrop(gdImagePtr im, const unsigned int mode)
 	return gdImageCrop(im, &crop);
 }
 
-BGD_DECLARE(gdImagePtr) gdImageThresholdCrop(gdImagePtr im, const unsigned int color, const float threshold)
+BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int color, const float threshold)
 {
 	const int width = gdImageSX(im);
 	const int height = gdImageSY(im);
