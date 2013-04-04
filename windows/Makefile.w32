@@ -54,20 +54,6 @@ LIBGD_BIN_DIR=$(WITH_BUILD)\bin
 LIBGDCFLAGS= \
    /D PATHSEPARATOR="\";\"" \
    /D DEFAULT_FONTPATH="\"C:\\WINDOWS\\FONTS;C:\\WINNT\\FONTS\"" \
-   /D HAVE_FT2BUILD_H \
-   /D HAVE_LIBZ \
-   /D HAVE_GD_GIF_READ=1  \
-   /D HAVE_GD_GIF_CREATE=1  \
-   /D HAVE_GD_IMAGESETBRUSH=1  \
-   /D HAVE_GD_IMAGESETTILE=1 \
-   /D HAVE_GD_JPG  \
-   /D HAVE_GD_PNG  \
-   /D HAVE_GD_STRINGFTEX=1  \
-   /D HAVE_GD_STRINGTTF=1  \
-   /D HAVE_GD_XBM  \
-   /D HAVE_LIBFREETYPE=1  \
-   /D HAVE_LIBJPEG  \
-   /D USE_GD_IMGSTRTTF
 
 #LIBS=libjpeg.lib freetype2.lib libpng.lib zlib.lib kernel32.lib user32.lib advapi32.lib
 LIBS=kernel32.lib user32.lib advapi32.lib
