@@ -1,13 +1,35 @@
 # Makefile form Microsoft C++ nmake.exe
 # $Id$
+!IFNDEF WITH_DEVEL
+WITH_DEVEL          = ../../deps
+!ENDIF
 
-EXTRA_INCLUDE=C:\\gd_build\\gd_deps\\include
-EXTRA_LIBS=/libpath:C:\\gd_build\\gd_deps\\lib
+!IF "$(WITH_PNG)"=="dll"
+PNG_LIBS     = libpng.lib
+USE_LIBPNG      = true
+PNG          = dll
+!ELSEIF "$(WITH_SSL)"=="static"
+PNG_LIBS     = libeay32.lib ssleay32.lib gdi32.lib user32.lib
+USE_LIBPNG      = true
+PNG          = static
+!ELSE
+USE_LIBPNG   = false
+!ENDIF
+
+!IFDEF USE_SSL
+SSL_CFLAGS   = /I"$(DEVEL_INCLUDE)/libpng15"
+!ENDIF
+
+EXTRA_INCLUDE=$(WITH_DEVEL)/include
+EXTRA_LIBS=/libpath:$(WITH_DEVEL)/lib
 
 CC=cl.exe
 LD=link.exe
 BUILD=Release
 #BUILD=Debug
+
+LIBGD_SRC_DIR=..\src
+LIBGD_OBJ_DIR=build
 
 LIBGDCFLAGS= \
    /D PATHSEPARATOR="\";\"" \
@@ -26,10 +48,16 @@ LIBGDCFLAGS= \
    /D HAVE_GD_XBM  \
    /D HAVE_LIBFREETYPE=1  \
    /D HAVE_LIBJPEG  \
-   /D HAVE_LIBPNG  \
    /D USE_GD_IMGSTRTTF
 
-CFLAGS=-I. -I.. -I$(EXTRA_INCLUDE) -nologo -DWIN32 -D_WIN32 -DMSWIN32 -DBGDWIN32 $(LIBGDCFLAGS)
+#LIBS=libjpeg.lib freetype2.lib libpng.lib zlib.lib kernel32.lib user32.lib advapi32.lib
+LIBS=kernel32.lib user32.lib advapi32.lib
+!if "$(USE_PNG)" == "true"
+LIBGDCFLAGS = $(LIBGDCFLAGS) /D HAVE_LIBPNG
+LIBS= $(LIBS) libpng_a.lib
+!endif
+
+CFLAGS=/c -I. -I.. -I../src -I$(EXTRA_INCLUDE) -nologo -DWIN32 -D_WIN32 -DMSWIN32 -DBGDWIN32 $(LIBGDCFLAGS)
 LIBS=libjpeg.lib freetype2.lib libpng.lib zlib.lib kernel32.lib user32.lib advapi32.lib
 
 !if "$(BUILD)" == "Debug"
@@ -45,44 +73,45 @@ LIBS=$(LIBS) msvcrt.lib
 CPPFLAGS=$(CFLAGS)
 
 !if "$(DLLNAME)" == ""
-DLLNAME=bgd.dll
+DLLNAME=libgd.dll
 !endif
 DYNAMICLIB=$(DLLNAME:.dll=.lib)
 
 !if "$(STATICLIB)" == ""
-STATICLIB=bgd_a.lib
+STATICLIB=libgd_a.lib
 !endif
 
-OBJS= \
-  gd.obj \
-  gdcache.obj \
-  gdfontg.obj \
-  gdfontl.obj \
-  gdfontmb.obj \
-  gdfonts.obj \
-  gdfontt.obj \
-  gdft.obj \
-  gdfx.obj \
-  gd_gd2.obj \
-  gd_gd.obj \
-  gd_gif_in.obj \
-  gd_gif_out.obj \
-  gdhelpers.obj \
-  gd_io.obj \
-  gd_io_dp.obj \
-  gd_io_file.obj \
-  gd_io_ss.obj \
-  gd_jpeg.obj \
-  gd_security.obj \
-  gdkanji.obj \
-  gd_png.obj \
-  gd_ss.obj \
-  gdtables.obj \
-  gd_topal.obj \
-  gd_wbmp.obj \
-  gdxpm.obj \
-  wbmp.obj
-  
+LIB_OBJS= \
+  $(LIBGD_OBJ_DIR)\gd.obj \
+  $(LIBGD_OBJ_DIR)\gdcache.obj \
+  $(LIBGD_OBJ_DIR)\gdfontg.obj \
+  $(LIBGD_OBJ_DIR)\gdfontl.obj \
+  $(LIBGD_OBJ_DIR)\gdfontmb.obj \
+  $(LIBGD_OBJ_DIR)\gdfonts.obj \
+  $(LIBGD_OBJ_DIR)\gdfontt.obj \
+  $(LIBGD_OBJ_DIR)\gdft.obj \
+  $(LIBGD_OBJ_DIR)\gdfx.obj \
+  $(LIBGD_OBJ_DIR)\gd_gd2.obj \
+  $(LIBGD_OBJ_DIR)\gd_gd.obj \
+  $(LIBGD_OBJ_DIR)\gd_gif_in.obj \
+  $(LIBGD_OBJ_DIR)\gd_gif_out.obj \
+  $(LIBGD_OBJ_DIR)\gdhelpers.obj \
+  $(LIBGD_OBJ_DIR)\gd_io.obj \
+  $(LIBGD_OBJ_DIR)\gd_io_dp.obj \
+  $(LIBGD_OBJ_DIR)\gd_io_file.obj \
+  $(LIBGD_OBJ_DIR)\gd_io_ss.obj \
+  $(LIBGD_OBJ_DIR)\gd_jpeg.obj \
+  $(LIBGD_OBJ_DIR)\gd_security.obj \
+  $(LIBGD_OBJ_DIR)\gdkanji.obj \
+  $(LIBGD_OBJ_DIR)\gd_png.obj \
+  $(LIBGD_OBJ_DIR)\gd_ss.obj \
+  $(LIBGD_OBJ_DIR)\gdtables.obj \
+  $(LIBGD_OBJ_DIR)\gd_topal.obj \
+  $(LIBGD_OBJ_DIR)\gd_transform.obj \
+  $(LIBGD_OBJ_DIR)\gd_wbmp.obj \
+  $(LIBGD_OBJ_DIR)\gdxpm.obj \
+  $(LIBGD_OBJ_DIR)\wbmp.obj
+
 EXE_OBJS= \
   annotate.obj \
   circletexttest.obj \
@@ -105,28 +134,20 @@ EXE_OBJS= \
 	testtr.obj \
 	webpng.obj
 
-all: $(DLLNAME) $(STATICLIB) tests
+all: $(LIBGD_OBJ_DIR) $(LIB_OBJS) $(STATICLIB)
 
-$(EXE_OBJS:.obj=.exe): $*.obj $(DLLNAME)
-	link /out:$*.exe $*.obj $(DYNAMICLIB)
-	
-tests: $(EXE_OBJS:.obj=.exe)
+$(LIBGD_OBJ_DIR):
+	@if not exist "$(LIBGD_OBJ_DIR)" mkdir $(LIBGD_OBJ_DIR)
 
-libgd.dll.res: libgd.rc
-	$(RC) /fo libgd.dll.res libgd.rc
-	
-{..}.c.obj:
-	$(CC) $(CFLAGS) -c $<
-	
-$(STATICLIB): $(OBJS)
-	$(LD) /lib /out:$(STATICLIB) $(OBJS)
+.SUFFIXES: .c .obj .res
+!MESSAGE library source:  $(LIBGD_SRC_DIR)
+!MESSAGE library objects: $(LIBGD_OBJ_DIR)
 
-$(DLLNAME): $(OBJS) libgd.dll.res
-	$(LD) /dll /out:$(DLLNAME) \
-		$(LDFLAGS) \
-		$(OBJS) \
-		libgd.dll.res \
-		$(LIBS)
+{$(LIBGD_SRC_DIR)\}.c{$(LIBGD_OBJ_DIR)\}.obj:
+	$(CC) $(CFLAGS) /Fo"$@"  $<
+
+$(STATICLIB): $(LIB_OBJS)
+	$(LD) /lib /out:$(LIBGD_OBJ_DIR)/$(STATICLIB) $(LIB_OBJS)
 
 dist: all
 	-rmdir /s /q distro
@@ -141,5 +162,5 @@ dist: all
 	copy ..\COPYING distro\COPYING.TXT
 	
 clean:
-	-del /q *.obj *.dll *.lib *.ilk *.pdb *.exp *.exe *.png *.res
+	-del /q $(LIBGD_OBJ_DIR)\*.obj $(LIBGD_OBJ_DIR)\*.dll $(LIBGD_OBJ_DIR)\*.lib $(LIBGD_OBJ_DIR)\*.ilk $(LIBGD_OBJ_DIR)\*.pdb $(LIBGD_OBJ_DIR)\*.exp $(LIBGD_OBJ_DIR)\*.exe $(LIBGD_OBJ_DIR)\*.png $(LIBGD_OBJ_DIR)\*.res
 	-rmdir /s /q distro
