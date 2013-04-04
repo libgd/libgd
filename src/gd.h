@@ -1020,6 +1020,9 @@ gdImagePtr gdImageScaleNearestNeighbour(gdImagePtr im, const unsigned int width,
 gdImagePtr gdImageScaleTwoPass(const gdImagePtr pOrigImage, const unsigned int uOrigWidth, const unsigned int uOrigHeight, const unsigned int uNewWidth, const unsigned int uNewHeight);
 BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int new_width, const unsigned int new_height);
 
+gdImagePtr gdImageRotate90(gdImagePtr src, int ignoretransparent);
+gdImagePtr gdImageRotate180(gdImagePtr src, int ignoretransparent);
+gdImagePtr gdImageRotate270(gdImagePtr src, int ignoretransparent);
 gdImagePtr gdImageRotateNearestNeighbour(gdImagePtr src, const float degrees, const int bgColor);
 gdImagePtr gdImageRotateBilinear(gdImagePtr src, const float degrees, const int bgColor);
 gdImagePtr gdImageRotateBicubicFixed(gdImagePtr src, const float degrees, const int bgColor);
@@ -1034,20 +1037,20 @@ typedef enum {
 	GD_AFFINE_SHEAR_VERTICAL,
 } gdAffineStandardMatrix;
 
-int gdAffineApplyToPointF (gdPointFPtr dst, const gdPointFPtr src, const double affine[6]);
-int gdAffineInvert (double dst[6], const double src[6]);
-int gdAffineFlip (double dst_affine[6], const double src_affine[6], const int flip_h, const int flip_v);
-int gdAffineConcat (double dst[6], const double m1[6], const double m2[6]);
+BGD_DECLARE(int) gdAffineApplyToPointF (gdPointFPtr dst, const gdPointFPtr src, const double affine[6]);
+BGD_DECLARE(int) gdAffineInvert (double dst[6], const double src[6]);
+BGD_DECLARE(int) gdAffineFlip (double dst_affine[6], const double src_affine[6], const int flip_h, const int flip_v);
+BGD_DECLARE(int) gdAffineConcat (double dst[6], const double m1[6], const double m2[6]);
 
-int gdAffineIdentity (double dst[6]);
-int gdAffineScale (double dst[6], const double scale_x, const double scale_y);
-int gdAffineRotate (double dst[6], const double angle);
-int gdAffineShearHorizontal (double dst[6], const double angle);
-int gdAffineShearVertical(double dst[6], const double angle);
-int gdAffineTranslate (double dst[6], const double offset_x, const double offset_y);
-double gdAffineExpansion (const double src[6]);
-int gdAffineRectilinear (const double src[6]);
-int gdAffineEqual (const double matrix1[6], const double matrix2[6]);
+BGD_DECLARE(int) gdAffineIdentity (double dst[6]);
+BGD_DECLARE(int) gdAffineScale (double dst[6], const double scale_x, const double scale_y);
+BGD_DECLARE(int) gdAffineRotate (double dst[6], const double angle);
+BGD_DECLARE(int) gdAffineShearHorizontal (double dst[6], const double angle);
+BGD_DECLARE(int) gdAffineShearVertical(double dst[6], const double angle);
+BGD_DECLARE(int) gdAffineTranslate (double dst[6], const double offset_x, const double offset_y);
+BGD_DECLARE(double) gdAffineExpansion (const double src[6]);
+BGD_DECLARE(int) gdAffineRectilinear (const double src[6]);
+BGD_DECLARE(int) gdAffineEqual (const double matrix1[6], const double matrix2[6]);
 BGD_DECLARE(int) gdTransformAffineGetImage(gdImagePtr *dst, const gdImagePtr src, gdRectPtr src_area, const double affine[6]);
 BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst, int dst_x, int dst_y, const gdImagePtr src, gdRectPtr src_region, const double affine[6]);
 /*

@@ -85,7 +85,7 @@ CFLAGS=$(CFLAGS) /Od /Zi /MTd /D_DEBUG /LDd
 LDFLAGS=/DEBUG $(LDFLAGS) /nodefaultlib:msvcrt.lib  $(EXTRA_LIBS)
 LIBS=$(LIBS) msvcrtd.lib
 !else
-CFLAGS=$(CFLAGS) /Og /Oi /O2 /Oy /GF /MT /DNDEBUG /LD
+CFLAGS=$(CFLAGS) /Oi /O2 /Oy /GF /MT /DNDEBUG /LD
 LDFLAGS=/nodefaultlib:msvcrtd.lib $(EXTRA_LIBS)
 LIBS=$(LIBS) msvcrt.lib
 !endif

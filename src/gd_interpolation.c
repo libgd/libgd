@@ -2327,7 +2327,7 @@ BGD_DECLARE(int) gdTransformAffineGetImage(gdImagePtr *dst,
  * Returns:
  *  GD_TRUE if the affine is rectilinear or GD_FALSE
  */
-int gdTransformAffineCopy(gdImagePtr dst,
+BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 		  int dst_x, int dst_y,
 		  const gdImagePtr src,
 		  gdRectPtr src_region,
