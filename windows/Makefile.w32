@@ -7,6 +7,7 @@ WITH_DEVEL          = ../../deps
 !IFNDEF WITH_BUILD
 WITH_BUILD = ..\..\gdbuild
 !ENDIF
+
 !IFDEF WITH_PNG
 !IF "$(WITH_PNG)"=="dll"
 PNG_LIBS     = libpng.lib
@@ -21,6 +22,20 @@ USE_LIBPNG   = false
 !ENDIF
 !ENDIF
 
+!IFDEF WITH_JPEG
+!IF "$(WITH_JPEG)"=="dll"
+JPEG_LIBS     = libjpeg.lib
+USE_LIBJPEG      = true
+PNG          = dll
+!ELSEIF "$(WITH_JPEG)"=="static"
+JPEG_LIBS     = libjpeg_a.lib
+USE_LIBJPEG   = true
+PNG          = static
+!ELSE
+USE_LIBJPEG   = false
+!ENDIF
+!ENDIF
+
 EXTRA_INCLUDE=$(WITH_DEVEL)/include
 EXTRA_LIBS=/libpath:$(WITH_DEVEL)/lib
 
@@ -31,6 +46,7 @@ BUILD=Release
 
 LIBGD_SRC_DIR=..\src
 LIBGD_OBJ_DIR=$(WITH_BUILD)
+LIBGD_BIN_DIR=$(WITH_BUILD)\bin
 
 !MESSAGE library source:  $(LIBGD_SRC_DIR)
 !MESSAGE library objects: $(LIBGD_OBJ_DIR)
@@ -40,7 +56,6 @@ LIBGDCFLAGS= \
    /D DEFAULT_FONTPATH="\"C:\\WINDOWS\\FONTS;C:\\WINNT\\FONTS\"" \
    /D HAVE_FT2BUILD_H \
    /D HAVE_LIBZ \
-   /D HAVE_GD_BUNDLED=1  \
    /D HAVE_GD_GIF_READ=1  \
    /D HAVE_GD_GIF_CREATE=1  \
    /D HAVE_GD_IMAGESETBRUSH=1  \
@@ -116,7 +131,10 @@ LIB_OBJS= \
   $(LIBGD_OBJ_DIR)\gd_transform.obj \
   $(LIBGD_OBJ_DIR)\gd_wbmp.obj \
   $(LIBGD_OBJ_DIR)\gdxpm.obj \
-  $(LIBGD_OBJ_DIR)\wbmp.obj
+  $(LIBGD_OBJ_DIR)\wbmp.obj \
+  $(LIBGD_OBJ_DIR)\gd_interpolation.obj \
+  $(LIBGD_OBJ_DIR)\gd_matrix.obj \
+  $(LIBGD_OBJ_DIR)\gd_rotate.obj
 
 EXE_OBJS= \
   annotate.obj \
@@ -143,7 +161,10 @@ EXE_OBJS= \
 $(LIBGD_OBJ_DIR):
 	@if not exist $(LIBGD_OBJ_DIR) mkdir $(LIBGD_OBJ_DIR)
 
-all: $(LIBGD_OBJ_DIR) $(LIB_OBJS) $(STATICLIB)
+$(LIBGD_BIN_DIR):
+	@if not exist $(LIBGD_BIN_DIR) mkdir $(LIBGD_BIN_DIR)
+
+all: $(LIBGD_OBJ_DIR) $(LIBGD_BIN_DIR) $(LIB_OBJS) $(STATICLIB)
 
 .SUFFIXES: .c .obj .res
 
@@ -151,7 +172,7 @@ all: $(LIBGD_OBJ_DIR) $(LIB_OBJS) $(STATICLIB)
 	$(CC) $(CFLAGS) /Fo"$@"  $<
 
 $(STATICLIB): $(LIB_OBJS)
-	$(LD) /lib /out:$(LIBGD_OBJ_DIR)/$(STATICLIB) $(LIB_OBJS)
+	$(LD) /lib /out:$(LIBGD_BIN_DIR)/$(STATICLIB) $(LIB_OBJS)
 
 dist: all
 	-rmdir /s /q distro
