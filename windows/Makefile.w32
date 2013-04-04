@@ -4,20 +4,21 @@
 WITH_DEVEL          = ../../deps
 !ENDIF
 
+!IFNDEF WITH_BUILD
+WITH_BUILD = ..\..\gdbuild
+!ENDIF
+!IFDEF WITH_PNG
 !IF "$(WITH_PNG)"=="dll"
 PNG_LIBS     = libpng.lib
 USE_LIBPNG      = true
 PNG          = dll
-!ELSEIF "$(WITH_SSL)"=="static"
-PNG_LIBS     = libeay32.lib ssleay32.lib gdi32.lib user32.lib
-USE_LIBPNG      = true
+!ELSEIF "$(WITH_PNG)"=="static"
+PNG_LIBS     = libpng_a.lib
+USE_LIBPNG   = true
 PNG          = static
 !ELSE
 USE_LIBPNG   = false
 !ENDIF
-
-!IFDEF USE_SSL
-SSL_CFLAGS   = /I"$(DEVEL_INCLUDE)/libpng15"
 !ENDIF
 
 EXTRA_INCLUDE=$(WITH_DEVEL)/include
@@ -29,7 +30,10 @@ BUILD=Release
 #BUILD=Debug
 
 LIBGD_SRC_DIR=..\src
-LIBGD_OBJ_DIR=build
+LIBGD_OBJ_DIR=$(WITH_BUILD)
+
+!MESSAGE library source:  $(LIBGD_SRC_DIR)
+!MESSAGE library objects: $(LIBGD_OBJ_DIR)
 
 LIBGDCFLAGS= \
    /D PATHSEPARATOR="\";\"" \
@@ -52,13 +56,14 @@ LIBGDCFLAGS= \
 
 #LIBS=libjpeg.lib freetype2.lib libpng.lib zlib.lib kernel32.lib user32.lib advapi32.lib
 LIBS=kernel32.lib user32.lib advapi32.lib
-!if "$(USE_PNG)" == "true"
-LIBGDCFLAGS = $(LIBGDCFLAGS) /D HAVE_LIBPNG
+
+!IF "$(USE_LIBPNG)" == "true"
+LIBPNG_CFLAGS   = $(LIBPNG_CFLAGS) /I"$(WITH_DEVEL)/include/libpng15"  /D HAVE_LIBPNG
 LIBS= $(LIBS) libpng_a.lib
-!endif
+!ENDIF
 
 CFLAGS=/c -I. -I.. -I../src -I$(EXTRA_INCLUDE) -nologo -DWIN32 -D_WIN32 -DMSWIN32 -DBGDWIN32 $(LIBGDCFLAGS)
-LIBS=libjpeg.lib freetype2.lib libpng.lib zlib.lib kernel32.lib user32.lib advapi32.lib
+#LIBS=libjpeg.lib freetype2.lib libpng.lib zlib.lib kernel32.lib user32.lib advapi32.lib
 
 !if "$(BUILD)" == "Debug"
 CFLAGS=$(CFLAGS) /Od /Zi /MTd /D_DEBUG /LDd
@@ -75,6 +80,7 @@ CPPFLAGS=$(CFLAGS)
 !if "$(DLLNAME)" == ""
 DLLNAME=libgd.dll
 !endif
+
 DYNAMICLIB=$(DLLNAME:.dll=.lib)
 
 !if "$(STATICLIB)" == ""
@@ -134,14 +140,12 @@ EXE_OBJS= \
 	testtr.obj \
 	webpng.obj
 
+$(LIBGD_OBJ_DIR):
+	@if not exist $(LIBGD_OBJ_DIR) mkdir $(LIBGD_OBJ_DIR)
+
 all: $(LIBGD_OBJ_DIR) $(LIB_OBJS) $(STATICLIB)
 
-$(LIBGD_OBJ_DIR):
-	@if not exist "$(LIBGD_OBJ_DIR)" mkdir $(LIBGD_OBJ_DIR)
-
 .SUFFIXES: .c .obj .res
-!MESSAGE library source:  $(LIBGD_SRC_DIR)
-!MESSAGE library objects: $(LIBGD_OBJ_DIR)
 
 {$(LIBGD_SRC_DIR)\}.c{$(LIBGD_OBJ_DIR)\}.obj:
 	$(CC) $(CFLAGS) /Fo"$@"  $<
