@@ -17,17 +17,13 @@
 #endif /* ROTATE_PI */
 
 #ifdef NONDLL
-#define BGD_DECLARE(rt) extern rt
+# define BGD_DECLARE(rt) extern rt
 #else
-#ifdef BGDWIN32
+# ifdef BGDWIN32
 typedef int (__stdcall *FuncPtr)(gdImagePtr, int, int);
-/* 
-#define BGD_DECLARE(rt) __declspec(dllexport) rt __stdcall
-*/
-#else
+# else
 typedef int (__stdcall *FuncPtr)(gdImagePtr, int, int);
-/* #define BGD_DECLARE(rt) __declspec(dllimport) rt _stdcall */
-#endif /* BGDWIN32 */
+# endif /* BGDWIN32 */
 #endif /* NONDLL */
 
 #define ROTATE_DEG2RAD  3.1415926535897932384626433832795/180

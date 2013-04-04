@@ -30,14 +30,13 @@ extern "C" {
 #endif /* WIN32 */
 
 #ifdef NONDLL
-#define BGD_DECLARE(rt) extern rt
+# define BGD_DECLARE(rt) extern rt
 #else
-#ifdef BGDWIN32
-
-#define BGD_DECLARE(rt) __declspec(dllexport) rt __stdcall
-#else
-#define BGD_DECLARE(rt) __declspec(dllimport) rt _stdcall
-#endif /* BGDWIN32 */
+# ifdef BGDWIN32
+#  define BGD_DECLARE(rt) __declspec(dllexport) rt __stdcall
+# else
+#  define BGD_DECLARE(rt) __declspec(dllimport) rt _stdcall
+# endif /* BGDWIN32 */
 #endif /* NONDLL */
 
 	/* 2.0.20: for actual storage of exported data, functions don't need this,
@@ -907,6 +906,19 @@ typedef struct {
 BGD_DECLARE(int) gdImageScatter(gdImagePtr im, int sub, int plus);
 BGD_DECLARE(int) gdImageScatterColor(gdImagePtr im, int sub, int plus, int colors[], unsigned int num_colors);
 BGD_DECLARE(int) gdImageScatterEx(gdImagePtr im, gdScatterPtr s);
+BGD_DECLARE(int) gdImageSmooth(gdImagePtr im, float weight);
+BGD_DECLARE(int) gdImageMeanRemoval(gdImagePtr im);
+BGD_DECLARE(int) gdImageEmboss(gdImagePtr im);
+BGD_DECLARE(int) gdImageGaussianBlur(gdImagePtr im);
+BGD_DECLARE(int) gdImageEdgeDetectQuick(gdImagePtr src);
+BGD_DECLARE(int) gdImageSelectiveBlur( gdImagePtr src);
+BGD_DECLARE(int) gdImageConvolution(gdImagePtr src, float filter[3][3], float filter_div, float offset);
+BGD_DECLARE(int) gdImageColor(gdImagePtr src, const int red, const int green, const int blue, const int alpha);
+BGD_DECLARE(int) gdImageContrast(gdImagePtr src, double contrast);
+BGD_DECLARE(int) gdImageBrightness(gdImagePtr src, int brightness);
+BGD_DECLARE(int) gdImageGrayScale(gdImagePtr src);
+BGD_DECLARE(int) gdImageNegate(gdImagePtr src);
+
 
 /* Macros to access information about images. */
 
