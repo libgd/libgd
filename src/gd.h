@@ -61,9 +61,6 @@ extern "C" {
 	{
 #endif
 
-#ifdef WIN32
-#define inline __inline
-#endif
 /* some might want to set DEFAULT_FONTPATH from configure in config.h */
 #ifdef NETWARE
 /* default fontpath for netware systems, could probably be handled in configure for 2.1 */
