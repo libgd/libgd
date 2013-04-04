@@ -12,7 +12,11 @@ void save_png(gdImagePtr im, const char *filename)
 		fprintf(stderr, "Can't save png image %s\n", filename);
 		return;
 	}
+#ifdef HAVE_LIBPNG
 	gdImagePng(im, fp);
+#else
+	printf("No PNG support. Cannot save image.\n");
+#endif
 	fclose(fp);
 }
 
@@ -26,7 +30,11 @@ gdImagePtr read_png(const char *filename)
 		fprintf(stderr, "Can't read png image %s\n", filename);
 		return NULL;
 	}
+#ifdef HAVE_LIBPNG
 	im = gdImageCreateFromPng(fp);
+#else
+	printf("No PNG support. Cannot read image.\n");
+#endif
 	fclose(fp);
 	return im;
 }
@@ -46,7 +54,7 @@ int main()
 	gdImageRectangle(im, 19, 29, 390, 390, 0xFF0000);
 	save_png(im, "a1.png");
 
-	im2 = gdImageAutoCrop(im, GD_CROP_SIDES);
+	im2 = gdImageCropAuto(im, GD_CROP_SIDES);
 	if (im2) {
 		save_png(im2, "a2.png");
 		gdImageDestroy(im2);
@@ -58,7 +66,7 @@ int main()
 		return 1;
 	}
 
-	im2 = gdImageThresholdCrop(im, 0xFFFFFF, 0.6);
+	im2 = gdImageCropThreshold(im, 0xFFFFFF, 0.6);
 	if (im2) {
 		save_png(im2, "a4.png");
 		gdImageDestroy(im2);
