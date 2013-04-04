@@ -33,6 +33,7 @@ main (int argc, char **argv)
 #ifdef HAVE_LIBPNG
 	im = gdImageCreateFromPng (in);
 #else
+	im = NULL;
 	fprintf (stderr, "No PNG library support available.\n");
 #endif
 	fclose (in);

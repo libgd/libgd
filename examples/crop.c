@@ -33,6 +33,7 @@ gdImagePtr read_png(const char *filename)
 #ifdef HAVE_LIBPNG
 	im = gdImageCreateFromPng(fp);
 #else
+	im = NULL;
 	printf("No PNG support. Cannot read image.\n");
 #endif
 	fclose(fp);
