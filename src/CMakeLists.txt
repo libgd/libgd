@@ -29,7 +29,6 @@ SET (LIBGD_SRC_FILES
 	gd_jpeg.c
 	gd_nnquant.c
 	gd_nnquant.h
-	gd_pixelate.c
 	gd_png.c
 	gd_tiff.c
 	gd_tga.c
