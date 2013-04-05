@@ -2689,6 +2689,15 @@ BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
 				green /= spixels;
 				blue /= spixels;
 				alpha /= spixels;
+				alpha += 0.5;
+			}
+			if ( alpha_sum != 0.0f) {
+				if( contrib_sum != 0.0f) {
+					alpha_sum /= contrib_sum;
+				}
+				red /= alpha_sum;
+				green /= alpha_sum;
+				blue /= alpha_sum;
 			}
 			/* Clamping to allow for rounding errors above */
 			if (red > 255.0) {
