@@ -129,6 +129,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 	im->cy2 = im->sy - 1;
 	im->res_x = GD_RESOLUTION;
 	im->res_y = GD_RESOLUTION;
+	im->interpolation = NULL;
+	im->interpolation_id = GD_BILINEAR_FIXED;
 	return im;
 }
 
@@ -199,6 +201,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 	im->cy2 = im->sy - 1;
 	im->res_x = GD_RESOLUTION;
 	im->res_y = GD_RESOLUTION;
+	im->interpolation = NULL;
+	im->interpolation_id = GD_BILINEAR_FIXED;
 	return im;
 }
 
