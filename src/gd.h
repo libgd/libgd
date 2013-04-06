@@ -60,22 +60,6 @@ extern "C" {
 	{
 #endif
 
-/* some might want to set DEFAULT_FONTPATH from configure in config.h */
-#ifdef NETWARE
-/* default fontpath for netware systems, could probably be handled in configure for 2.1 */
-#define DEFAULT_FONTPATH "sys:/java/nwgfx/lib/x11/fonts/ttf;."
-#define PATHSEPARATOR ";"
-#endif
-
-/* 2.0.23: more Type 1 fonts */
-#ifndef DEFAULT_FONTPATH
-/* default fontpath for unix systems  - whatever happened to standards ! */
-#define DEFAULT_FONTPATH "/usr/X11R6/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/truetype:/usr/X11R6/lib/X11/fonts/TTF:/usr/share/fonts/TrueType:/usr/share/fonts/truetype:/usr/openwin/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/Type1:/usr/lib/X11/fonts/Type1:/usr/openwin/lib/X11/fonts/Type1"
-#endif
-#ifndef PATHSEPARATOR
-#define PATHSEPARATOR ":"
-#endif
-
 /* gd.h: declarations file for the graphic-draw module.
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted, provided
