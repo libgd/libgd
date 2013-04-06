@@ -1016,7 +1016,7 @@ enum gdCropMode {
 	GD_CROP_THRESHOLD
 };
 
-BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRectPtr crop);
+BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop);
 BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode);
 BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int color, const float threshold);
 
