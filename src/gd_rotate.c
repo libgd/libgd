@@ -18,12 +18,13 @@
 
 #ifdef NONDLL
 # define BGD_DECLARE(rt) extern rt
+typedef int (*FuncPtr)(gdImagePtr, int, int);
 #else
 # ifdef BGDWIN32
 typedef int (__stdcall *FuncPtr)(gdImagePtr, int, int);
 # else
 typedef int (__stdcall *FuncPtr)(gdImagePtr, int, int);
-# endif /* BGDWIN32 */
+#endif/* BGDWIN32 */
 #endif /* NONDLL */
 
 #define ROTATE_DEG2RAD  3.1415926535897932384626433832795/180
