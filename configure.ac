@@ -301,6 +301,31 @@ else
   ac_cv_lib_vpx_vpx_codec_destroy=no
 fi
 
+
+dnl check for libvpx by default
+AC_ARG_WITH(tiff,dnl
+[  --with-tiff=DIR         where to find the tiff library],
+  [if test -d "$withval"; then
+     LDFLAGS="$LDFLAGS -L$withval/lib"
+     CPPFLAGS="$CPPFLAGS -I$withval/include"
+   fi],
+  withval=yes)
+
+if test "$withval" != no; then
+  AC_CHECK_LIB(tiff,TIFFClientOpen,
+    [LIBS="-ltiff $LIBS" 
+     FEATURES="GD_VPX $FEATURES"
+     AC_DEFINE(HAVE_LIBTIFF, 1, [ Define if you have the vpx library. ])])
+else
+  ac_cv_lib_tiff_TIFFClientOpen=no
+fi
+
+
+
+
+
+
+
 ACX_PTHREAD()
 
 dnl report configuration
@@ -310,6 +335,7 @@ AC_MSG_RESULT([
    Support for PNG library:          $ac_cv_lib_png_png_create_read_struct
    Support for JPEG library:         $ac_cv_lib_jpeg_jpeg_set_defaults
    Support for VPX library:          $ac_cv_lib_vpx_vpx_codec_destroy
+   Support for VPX library:          $ac_cv_lib_tiff_TIFFClientOpen
    Support for Freetype 2.x library: $ac_cv_lib_freetype_FT_Init_FreeType
    Support for Fontconfig library:   $ac_cv_lib_fontconfig_FcInit
    Support for Xpm library:          $ac_cv_lib_Xpm_XpmReadFileToXpmImage
