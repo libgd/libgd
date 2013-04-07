@@ -664,6 +664,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int di
 BGD_DECLARE(int) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
         int colorsWanted);
 
+BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src);
+
 /*
   Selects quantization method used for subsequent gdImageTrueColorToPalette calls.
   See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT, GD_QUANT_LIQ).
