@@ -2,7 +2,7 @@
 # Configure template for gd library
 
 #
-AC_PREREQ(2.69)
+AC_PREREQ(2.54)
 
 #HEY! Change BOTH the version number and the GDLIB_REVISION setting!
 AC_INIT([GD], [2.1.0], [http://bugs.libgd.org])
