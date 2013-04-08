@@ -15,23 +15,25 @@ GDLIB_MAJOR=2
 GDLIB_MINOR=1
 GDLIB_REVISION=0
 GDLIBNAME=gd
+AC_SUBST(GDLIB_MAJOR)
+AC_SUBST(GDLIB_MINOR)
+AC_SUBST(GDLIB_REVISION)
+AC_SUBST(GDLIBNAME)
 
 # Dynamic library version information
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
 GDLIB_CURRENT=2
 GDLIB_REVISION=1
 GDLIB_AGE=1
+AC_SUBST(GDLIB_CURRENT)
+AC_SUBST(GDLIB_REVISION)
+AC_SUBST(GDLIB_AGE)
 
 #Expanded by tests later in this file. TBB 2.0.26
 #2.0.28: GIF is standard now. Doesn't depend on anything else,
 #so we always build it.
 FEATURES="GD_GIF GD_GIFANIM GD_OPENPOLYGON"
 AC_SUBST(FEATURES)
-
-AC_SUBST(GDLIB_MAJOR)
-AC_SUBST(GDLIB_MINOR)
-AC_SUBST(GDLIB_REVISION)
-AC_SUBST(GDLIBNAME)
 
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
