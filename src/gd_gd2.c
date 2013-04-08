@@ -161,10 +161,10 @@ _gd2GetHeader (gdIOCtxPtr in, int *sx, int *sy,
 		}
 		for (i = 0; i < nc; i++) {
 			if (gdGetInt (&cidx[i].offset, in) != 1) {
-				goto fail1;
+				goto fail2;
 			};
 			if (gdGetInt (&cidx[i].size, in) != 1) {
-				goto fail1;
+				goto fail2;
 			};
 		};
 		*chunkIdx = cidx;
@@ -173,7 +173,8 @@ _gd2GetHeader (gdIOCtxPtr in, int *sx, int *sy,
 	GD2_DBG (printf ("gd2 header complete\n"));
 
 	return 1;
-
+fail2:
+	gdFree(cidx);
 fail1:
 	return 0;
 }
@@ -196,21 +197,21 @@ _gd2CreateFromFile (gdIOCtxPtr in, int *sx, int *sy,
 	}
 	if (im == NULL) {
 		GD2_DBG (printf ("Could not create gdImage\n"));
-		goto fail1;
+		goto fail2;
 	};
 
 	if (!_gdGetColors (in, im, (*vers) == 2)) {
 		GD2_DBG (printf ("Could not read color palette\n"));
-		goto fail2;
+		goto fail3;
 	}
 	GD2_DBG (printf ("Image palette completed: %d colours\n", im->colorsTotal));
 
 	return im;
 
-fail2:
+fail3:
 	gdImageDestroy (im);
-	return 0;
-
+fail2:
+	gdFree(*cidx);
 fail1:
 	return 0;
 
@@ -297,6 +298,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 	                        &chunkIdx);
 
 	if (im == NULL) {
+		gdFree (chunkIdx);
 		return 0;
 	}
 

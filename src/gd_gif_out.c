@@ -255,7 +255,7 @@ static int comparewithmap(gdImagePtr im1, gdImagePtr im2, int c1, int c2, int *c
 
 BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)
 {
-	gdImagePtr pim = 0, tim = im;
+	gdImagePtr pim = NULL, tim = im;
 	int interlace, transparent, BitsPerPixel;
 	interlace = im->interlace;
 	transparent = im->transparent;
@@ -301,7 +301,7 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalC
 		if (previm->trueColor) {
 			prev_pim = gdImageCreatePaletteFromTrueColor(previm, 1, 256);
 			if (!prev_pim) {
-				return;
+				goto fail_end;
 			}
 			prev_tim = prev_pim;
 		}

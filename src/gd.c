@@ -2828,7 +2828,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm (FILE * fd)
 	}
 	/* Shouldn't happen */
 	fprintf (stderr, "Error: bug in gdImageCreateFromXbm!\n");
-	return 0;
 fail:
 	gdImageDestroy (im);
 	return 0;

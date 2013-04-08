@@ -15,7 +15,7 @@
 int
 main (int argc, char **argv)
 {
-	gdImagePtr im;
+	gdImagePtr im = NULL;
 	FILE *in, *out;
 	if (argc != 3) {
 		fprintf (stderr, "Usage: pngtogd filename.png filename.gd\n");

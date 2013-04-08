@@ -152,6 +152,7 @@ int readwbmp(int (*getin) (void *in), void *in, Wbmp **return_wbmp)
 	}
 
 	if(skipheader(getin, in)) {
+		gdFree(wbmp);
 		return -1;
 	}
 

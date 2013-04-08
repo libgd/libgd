@@ -210,11 +210,12 @@ BGD_DECLARE(int) gdImageGrayScale(gdImagePtr src)
 	int r,g,b,a;
 	int new_pxl, pxl;
 	FuncPtr f;
-	f = GET_PIXEL_FUNCTION(src);
 
 	if (src==NULL) {
 		return 0;
 	}
+
+	f = GET_PIXEL_FUNCTION(src);
 
 	for (y=0; y<src->sy; ++y) {
 		for (x=0; x<src->sx; ++x) {
@@ -242,15 +243,16 @@ BGD_DECLARE(int) gdImageBrightness(gdImagePtr src, int brightness)
 	int r,g,b,a;
 	int new_pxl, pxl;
 	FuncPtr f;
-	f = GET_PIXEL_FUNCTION(src);
 
-	if (src==NULL || (brightness < -255 || brightness>255)) {
+	if (src==NULL || (brightness < -255 || brightness > 255)) {
 		return 0;
 	}
 
 	if (brightness==0) {
 		return 1;
 	}
+
+	f = GET_PIXEL_FUNCTION(src);
 
 	for (y=0; y<src->sy; ++y) {
 		for (x=0; x<src->sx; ++x) {
@@ -288,11 +290,12 @@ BGD_DECLARE(int) gdImageContrast(gdImagePtr src, double contrast)
 	int new_pxl, pxl;
 
 	FuncPtr f;
-	f = GET_PIXEL_FUNCTION(src);
 
 	if (src==NULL) {
 		return 0;
 	}
+
+	f = GET_PIXEL_FUNCTION(src);
 
 	contrast = (double)(100.0-contrast)/100.0;
 	contrast = contrast*contrast;

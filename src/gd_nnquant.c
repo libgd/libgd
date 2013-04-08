@@ -516,7 +516,7 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 
 	int row;
 	unsigned char *rgba = NULL;
-	gdImagePtr dst;
+	gdImagePtr dst = NULL;
 
 	/* Default it to 3 */
 	if (sample_factor < 1) {

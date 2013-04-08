@@ -1485,7 +1485,7 @@ static char * font_path(char **fontpath, char *name_list)
 	char *fontsearchpath, *fontlist;
 	char *fullname = NULL;
 	char *name, *path, *dir;
-	char *strtok_ptr;
+	char *strtok_ptr = NULL;
 
 	/*
 	 * Search the pathlist for any of a list of font names.
@@ -1501,7 +1501,7 @@ static char * font_path(char **fontpath, char *name_list)
 	 */
 	for (name = gd_strtok_r (fontlist, LISTSEPARATOR, &strtok_ptr); name;
 	        name = gd_strtok_r (0, LISTSEPARATOR, &strtok_ptr)) {
-		char *path_ptr;
+		char *path_ptr = NULL;
 
 		/* make a fresh copy each time - strtok corrupts it. */
 		path = strdup (fontsearchpath);
