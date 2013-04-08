@@ -1,3 +1,3 @@
 ACLOCAL_AMFLAGS = -I m4
-
-SUBDIRS        = src config test
+SUBDIRS = src config
+EXTRA_DIST = test tests

@@ -15,19 +15,28 @@ GDLIB_MAJOR=2
 GDLIB_MINOR=1
 GDLIB_REVISION=0
 GDLIBNAME=gd
+AC_SUBST(GDLIB_MAJOR)
+AC_SUBST(GDLIB_MINOR)
+AC_SUBST(GDLIB_REVISION)
+AC_SUBST(GDLIBNAME)
+
+# Dynamic library version information
+# See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
+GDLIB_CURRENT=3
+GDLIB_REVISION=0
+GDLIB_AGE=1
+AC_SUBST(GDLIB_CURRENT)
+AC_SUBST(GDLIB_REVISION)
+AC_SUBST(GDLIB_AGE)
+
 #Expanded by tests later in this file. TBB 2.0.26
 #2.0.28: GIF is standard now. Doesn't depend on anything else,
 #so we always build it.
 FEATURES="GD_GIF GD_GIFANIM GD_OPENPOLYGON"
 AC_SUBST(FEATURES)
 
-AC_SUBST(GDLIB_MAJOR)
-AC_SUBST(GDLIB_MINOR)
-AC_SUBST(GDLIB_REVISION)
-AC_SUBST(GDLIBNAME)
-
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
-AC_CONFIG_HEADERS([config.h:config.hin])
+AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
 AC_MSG_CHECKING([if we are building a Cygwin target])
 case "$target" in
@@ -47,7 +56,7 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-#AC_PROG_RANLIB
+LT_INIT
 
 dnl may be required for freetype and Xpm
 AC_PATH_X
@@ -326,7 +335,7 @@ fi
 
 
 
-ACX_PTHREAD()
+AX_PTHREAD()
 
 dnl report configuration
 AC_MSG_RESULT([
@@ -335,13 +344,16 @@ AC_MSG_RESULT([
    Support for PNG library:          $ac_cv_lib_png_png_create_read_struct
    Support for JPEG library:         $ac_cv_lib_jpeg_jpeg_set_defaults
    Support for VPX library:          $ac_cv_lib_vpx_vpx_codec_destroy
-   Support for VPX library:          $ac_cv_lib_tiff_TIFFClientOpen
+   Support for TIFF library:         $ac_cv_lib_tiff_TIFFClientOpen
    Support for Freetype 2.x library: $ac_cv_lib_freetype_FT_Init_FreeType
    Support for Fontconfig library:   $ac_cv_lib_fontconfig_FcInit
    Support for Xpm library:          $ac_cv_lib_Xpm_XpmReadFileToXpmImage
    Support for pthreads:             $acx_pthread_ok
 ])
 
-AC_CONFIG_FILES([Makefile src/Makefile config/Makefile config/gdlib-config test/Makefile])
+AC_CONFIG_FILES([Makefile
+                src/Makefile
+                config/Makefile
+                config/gdlib-config])
 
 AC_OUTPUT
