@@ -15,6 +15,13 @@ GDLIB_MAJOR=2
 GDLIB_MINOR=1
 GDLIB_REVISION=0
 GDLIBNAME=gd
+
+# Dynamic library version information
+# See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
+GDLIB_CURRENT=2
+GDLIB_REVISION=1
+GDLIB_AGE=1
+
 #Expanded by tests later in this file. TBB 2.0.26
 #2.0.28: GIF is standard now. Doesn't depend on anything else,
 #so we always build it.
