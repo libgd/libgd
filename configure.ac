@@ -2,7 +2,7 @@
 # Configure template for gd library
 
 #
-AC_PREREQ(2.54)
+AC_PREREQ(2.69)
 
 #HEY! Change BOTH the version number and the GDLIB_REVISION setting!
 AC_INIT([GD], [2.1.0], [http://bugs.libgd.org])
@@ -27,7 +27,7 @@ AC_SUBST(GDLIB_REVISION)
 AC_SUBST(GDLIBNAME)
 
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
-AC_CONFIG_HEADERS([config.h:config.hin])
+AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
 AC_MSG_CHECKING([if we are building a Cygwin target])
 case "$target" in
@@ -47,7 +47,7 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-#AC_PROG_RANLIB
+LT_INIT
 
 dnl may be required for freetype and Xpm
 AC_PATH_X
@@ -326,7 +326,7 @@ fi
 
 
 
-ACX_PTHREAD()
+AX_PTHREAD()
 
 dnl report configuration
 AC_MSG_RESULT([
@@ -342,6 +342,9 @@ AC_MSG_RESULT([
    Support for pthreads:             $acx_pthread_ok
 ])
 
-AC_CONFIG_FILES([Makefile src/Makefile config/Makefile config/gdlib-config test/Makefile])
+AC_CONFIG_FILES([Makefile
+                src/Makefile
+                config/Makefile
+                config/gdlib-config])
 
 AC_OUTPUT
