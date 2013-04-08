@@ -335,7 +335,7 @@ AC_MSG_RESULT([
    Support for PNG library:          $ac_cv_lib_png_png_create_read_struct
    Support for JPEG library:         $ac_cv_lib_jpeg_jpeg_set_defaults
    Support for VPX library:          $ac_cv_lib_vpx_vpx_codec_destroy
-   Support for VPX library:          $ac_cv_lib_tiff_TIFFClientOpen
+   Support for TIFF library:         $ac_cv_lib_tiff_TIFFClientOpen
    Support for Freetype 2.x library: $ac_cv_lib_freetype_FT_Init_FreeType
    Support for Fontconfig library:   $ac_cv_lib_fontconfig_FcInit
    Support for Xpm library:          $ac_cv_lib_Xpm_XpmReadFileToXpmImage
