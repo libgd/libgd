@@ -22,8 +22,8 @@ AC_SUBST(GDLIBNAME)
 
 # Dynamic library version information
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
-GDLIB_CURRENT=2
-GDLIB_REVISION=1
+GDLIB_CURRENT=3
+GDLIB_REVISION=0
 GDLIB_AGE=1
 AC_SUBST(GDLIB_CURRENT)
 AC_SUBST(GDLIB_REVISION)
