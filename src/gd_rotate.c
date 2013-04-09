@@ -76,9 +76,9 @@ void gdImageSkewX (gdImagePtr dst, gdImagePtr src, int uRow, int iOffset, double
 		b = gdImageBlue(src,pxlSrc) - (gdImageBlue(src,pxlLeft) - gdImageBlue(src,pxlOldLeft));
 		a = gdImageAlpha(src,pxlSrc) - (gdImageAlpha(src,pxlLeft) - gdImageAlpha(src,pxlOldLeft));
 
-        if (r>255) {
-        	r = 255;
-        }
+		if (r>255) {
+			r = 255;
+		}
 
 		if (g>255) {
 			g = 255;
