@@ -111,8 +111,6 @@ else (USE_EXT_GD)
 		INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
 		SET(HAVE_LIBZ 1)
 	ENDIF(ZLIB_FOUND)
-	message(STATUS "Zlib Support: ${ZLIB_LIBRARIES}")
-	message(STATUS "WebP Support: ${VPX_LIBRARIES}")
 
 	IF(VPX_FOUND)
 		INCLUDE_DIRECTORIES(${VPX_INCLUDE_DIR})
@@ -190,6 +188,7 @@ endif (USE_EXT_GD)
 
 add_subdirectory(tests)
 add_subdirectory(examples)
+add_subdirectory(docs)
 
 SET(CPACK_PACKAGE_NAME "libgd")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libGD, powerful and easy to use graphic library")
@@ -209,11 +208,16 @@ IF (ENABLE_LIQ AND LIQ_BUILD)
     ADD_DEPENDENCIES(${GD_LIB_STATIC} libimagequant)
 ENDIF(ENABLE_LIQ AND LIQ_BUILD)
 
+
+INSTALL_FILES("docs" "examples" DESTINATION "gd-docs")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
+
 set(CPACK_SOURCE_GENERATOR TGZ)
 set(CPACK_SOURCE_IGNORE_FILES
 "~$"
 "\\\\.swp$"
 "\\\\.hgignore$"
+"\\\\.gitignore$"
 "^${PROJECT_SOURCE_DIR}/debian/"
 "^${PROJECT_SOURCE_DIR}/old/"
 "^${PROJECT_SOURCE_DIR}/bld/"
