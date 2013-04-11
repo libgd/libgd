@@ -5,7 +5,7 @@ bin_SCRIPTS = bdftogd
 
 noinst_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac circletexttest testtr fontconfigtest gifanimtest gd_color_map_test
 
-EXTRA_DIST = bdftogd demoin.png index.html entities.html entities.tcl
+EXTRA_DIST = bdftogd demoin.png entities.html entities.tcl
 
 include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h entities.h gd_color_map.h
 
