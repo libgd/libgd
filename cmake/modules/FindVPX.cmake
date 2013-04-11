@@ -18,6 +18,7 @@
 INCLUDE(FindZLIB)
 
 SET(VPX_FOUND "NO")
+SET(VPX_LIBRARY "")
 
 FIND_PATH(VPX_VPX_INCLUDE_DIR vp8cx.h
 /usr/local/include/vpx
