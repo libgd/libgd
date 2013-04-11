@@ -5,7 +5,7 @@
 AC_PREREQ(2.54)
 
 #HEY! Change BOTH the version number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.1.0], [http://bugs.libgd.org])
+AC_INIT([GD], [2.1.0], [https://bitbucket.org/libgd/gd-libgd/issues])
 AC_CONFIG_SRCDIR([src/gd.c])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
