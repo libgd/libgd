@@ -20,6 +20,7 @@ extern "C" {
 		int (*seek)(struct gdIOCtx *, const int);
 		long (*tell)(struct gdIOCtx *);
 		void (*gd_free)(struct gdIOCtx *);
+		void *data;
 	}
 	gdIOCtx;
 
