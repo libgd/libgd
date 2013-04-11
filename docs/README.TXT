@@ -2,7 +2,7 @@ For documentation, browse index.html.
 
 Quick install guide:
 
-If the sources have been fetched from CVS, run bootstrap.sh [options].
+If the sources have been fetched from git, run bootstrap.sh [options].
 
 From a released source, use:
 1. Type './configure'
@@ -55,3 +55,7 @@ you can use the following command line options:
 --with-xpm=DIR
 
   Dto. for xpm library.
+  
+ --with-tiff=DIR
+
+Dto. for TIFF library.
