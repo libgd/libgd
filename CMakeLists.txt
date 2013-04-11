@@ -14,7 +14,6 @@ OPTION(ENABLE_JPEG "Enable JPEG support" 0)
 OPTION(ENABLE_TIFF "Enable TIFF support" 0)
 OPTION(ENABLE_XPM "Enable XPM support" 0)
 OPTION(ENABLE_FREETYPE "Enable Freetype2 support" 0)
-OPTION(ENABLE_WBMP "Enable WBMP support" 0)
 OPTION(ENABLE_FONTCONFIG "Enable FontConfig support" 0)
 OPTION(ENABLE_WEBP "Enable WebP support" 0)
 

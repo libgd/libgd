@@ -39,11 +39,14 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngSource (gdSourcePtr inSource)
 #else /* no HAVE_LIBPNG */
 BGD_DECLARE(void) gdImagePngToSink (gdImagePtr im, gdSinkPtr outSink)
 {
+	(void)im;
+	(void)outSink;
 	fprintf (stderr, "PNG support is not available\n");
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngSource (gdSourcePtr inSource)
 {
+	(void)inSource;
 	fprintf (stderr, "PNG support is not available\n");
 	return NULL;
 }

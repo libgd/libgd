@@ -36,12 +36,15 @@
 /* number of antialised colors for indexed bitmaps */
 #define GD_NUMCOLORS 8
 
+#ifdef HAVE_LIBFONTCONFIG
 static int fontConfigFlag = 0;
 
-static char *font_path(char **fontpath, char *name_list);
 /* translate a fontconfig fontpattern into a fontpath.
 	return NULL if OK, else return error string */
 static char *font_pattern(char **fontpath, char *fontpattern);
+#endif
+
+static char *font_path(char **fontpath, char *name_list);
 
 /* 2.0.30: move these up here so we can build correctly without freetype
 	but with fontconfig */
@@ -1587,6 +1590,7 @@ BGD_DECLARE(int) gdFTUseFontConfig(int flag)
 	fontConfigFlag = flag;
 	return 1;
 #else
+	(void)flag;
 	return 0;
 #endif /* HAVE_LIBFONTCONFIG */
 }
