@@ -74,7 +74,7 @@ main (int argc, char *argv[])
     gdImageStringFT ((gdImagePtr) NULL, &brect[0], 0, f, sz, angle, 0, 0, s);
   if (err)
     {
-      fprintf (stderr, err);
+      fprintf (stderr, "%s\n", err);
       return 1;
     }
 
@@ -146,21 +146,21 @@ main (int argc, char *argv[])
   err = gdImageStringFT (im, NULL, blue, f, sz, angle, x, y, s);
   if (err)
     {
-      fprintf (stderr, err);
+      fprintf (stderr, "%s\n", err);
       return 1;
     }
   /* Without antialiasing (negative color value) */
   err = gdImageStringFT (im, NULL, -blue, f, sz, angle, sx + x, y, s);
   if (err)
     {
-      fprintf (stderr, err);
+      fprintf (stderr, "%s\n", err);
       return 1;
     }
   /* With antialiasing, and 50% alpha blending (truecolor only) */
   err = gdImageStringFT (im, NULL, blueAlpha, f, sz, angle, sx * 2 + x, y, s);
   if (err)
     {
-      fprintf (stderr, err);
+      fprintf (stderr, "%s\n", err);
       return 1;
     }
   /* TBB: Write img to test/fttest.jpg or test/fttest.png */
