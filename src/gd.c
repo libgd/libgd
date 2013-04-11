@@ -2637,7 +2637,7 @@ BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
 			double sx, sy;
 			double spixels = 0;
 			double red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
-			double alpha_factor, alpha_sum = 0.0, contrib_sum = 0.0;
+			double alpha_sum = 0.0, contrib_sum = 0.0;
 
 			sx1 = ((double) x - (double) dstX) * (double) srcW / dstW;
 			sx2 = ((double) (x + 1) - (double) dstX) * (double) srcW / dstW;
@@ -3381,7 +3381,6 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src)
 {
 	unsigned int y;
-	unsigned char alloc_y = 0, alloc_aa = 0;
 	unsigned int yy;
 
 	if (src == NULL) {
