@@ -44,6 +44,10 @@ _gdGetColors (gdIOCtx * in, gdImagePtr im, int gd2xFlag)
 	    {
 	      goto fail1;
 	    }
+	  if (im->colorsTotal > gdMaxColors)
+	    {
+	      goto fail1;
+	    }
 	}
       /* Int to accommodate truecolor single-color transparency */
       if (!gdGetInt (&im->transparent, in))
