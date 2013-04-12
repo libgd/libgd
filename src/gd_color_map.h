@@ -1,7 +1,11 @@
 #ifndef GD_COLOR_MAP_H
 #define GD_COLOR_MAP_H 1
 
-#include <gd.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include "gd.h"
 
 #ifdef __cplusplus
 extern "C" {

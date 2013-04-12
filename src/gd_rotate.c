@@ -1,9 +1,8 @@
-#if HAVE_GD_BUNDLED
-# include "gd.h"
-#else
-# include <gd.h>
-#endif
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
 
+#include "gd.h"
 #include "gd_intern.h"
 #include <math.h>
 

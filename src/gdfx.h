@@ -5,6 +5,10 @@ extern "C" {
 #ifndef GDFX_H
 #define GDFX_H 1
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "gd.h"
 
 	/* im MUST be square, but can have any size. Returns a new image

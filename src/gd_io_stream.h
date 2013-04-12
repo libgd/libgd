@@ -31,6 +31,10 @@
 #ifndef _gd_io_stream_h
 #define _gd_io_stream_h
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "gd.h"
 #include <iostream>
 

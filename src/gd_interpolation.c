@@ -53,12 +53,16 @@ TODO:
  - Add scale support for a portion only of an image (equivalent of copyresized/resampled)
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
-#include <gd.h>
+#include "gd.h"
 #include "gdhelpers.h"
 
 #ifdef _MSC_VER

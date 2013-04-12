@@ -30,6 +30,10 @@
  *
  * 6. AdjustColorspaceBack:
  */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "gd.h"
 #ifdef HAVE_LIBVPX
 #include "webpimg.h"
