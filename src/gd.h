@@ -30,7 +30,11 @@ extern "C" {
 #endif /* WIN32 */
 
 #ifdef NONDLL
-# define BGD_DECLARE(rt) extern rt
+# ifdef HAVE_VISIBILITY
+#  define BGD_DECLARE(rt) __attribute__ ((visibility ("default"))) rt
+# else
+#  define BGD_DECLARE(rt) rt
+# endif
 #else
 # ifdef BGDWIN32
 #  define BGD_DECLARE(rt) __declspec(dllexport) rt __stdcall

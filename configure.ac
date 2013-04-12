@@ -24,7 +24,7 @@ AC_SUBST(GDLIBNAME)
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
 GDLIB_CURRENT=3
 GDLIB_REVISION=0
-GDLIB_AGE=1
+GDLIB_AGE=0
 AC_SUBST(GDLIB_CURRENT)
 AC_SUBST(GDLIB_REVISION)
 AC_SUBST(GDLIB_AGE)
@@ -62,7 +62,7 @@ dnl may be required for freetype and Xpm
 AC_PATH_X
 
 if test -n "$x_includes" && test "x$x_includes" != xNONE ; then
-  CPPFLAGS="$CPPFLAGS -I$x_includes"
+  CFLAGS="$CFLAGS -I$x_includes"
 fi
 if test -n "$x_libraries" && test "x$x_libraries" != xNONE ; then
   LDFLAGS="$LDFLAGS -L$x_libraries"
@@ -130,12 +130,12 @@ if test "$withval" != no; then
   fi
 
   if test -n "$LIBPNG12_CONFIG"; then
-    libpng_CPPFLAGS=`$LIBPNG12_CONFIG --cflags`
+    libpng_CFLAGS=`$LIBPNG12_CONFIG --cflags`
     # should be --ldopts, but it's currently broken
     libpng_LDFLAGS=`$LIBPNG12_CONFIG --ldflags`
     libpng_LDFLAGS=`echo " $libpng_LDFLAGS" | sed 's/ -l[[^ ]][[^ ]]*//g'`
   elif test -n "$LIBPNG_CONFIG"; then
-    libpng_CPPFLAGS=`$LIBPNG_CONFIG --cflags`
+    libpng_CFLAGS=`$LIBPNG_CONFIG --cflags`
     # should be --ldopts, but it's currently broken
     libpng_LDFLAGS=`$LIBPNG_CONFIG --ldflags`
     libpng_LDFLAGS=`echo " $libpng_LDFLAGS" | sed 's/ -l[[^ ]][[^ ]]*//g'`
@@ -143,8 +143,8 @@ if test "$withval" != no; then
 
   AC_CHECK_HEADERS(png.h,,
     [AC_CHECK_HEADERS(libpng/png.h,
-       [CPPFLAGS="$CPPFLAGS $libpng_CPPFLAGS/libpng"],
-       [CPPFLAGS="$_cppflags"])])
+       [CFLAGS="$CFLAGS $libpng_CFLAGS/libpng"],
+       [CFLAGS="$_cppflags"])])
 
   _ldflags="$LDFLAGS"
   LDFLAGS="$libpng_LDFLAGS $LDFLAGS"
@@ -211,9 +211,9 @@ if test "$withval" != no; then
     fi
   fi
 
-  _cppflags="$CPPFLAGS"
+  _cppflags="$CFLAGS"
   _ldflags="$LDFLAGS"
-  CPPFLAGS="$libft_INCLUDES $CPPFLAGS"
+  CFLAGS="$libft_INCLUDES $CFLAGS"
   LDFLAGS="$libft_LDFLAGS $LDFLAGS"
   SAVE_FEATURES=$FEATURES
   AC_CHECK_LIB(freetype,FT_Init_FreeType,
@@ -229,7 +229,7 @@ if test "$withval" != no; then
       [AC_MSG_RESULT([no])
       FEATURES=$SAVE_FEATURES
       ac_cv_lib_freetype_FT_Init_FreeType=no
-      CPPFLAGS="$_cppflags"])
+      CFLAGS="$_cppflags"])
 
 else
   ac_cv_lib_freetype_FT_Init_FreeType=no
@@ -240,7 +240,7 @@ AC_ARG_WITH(fontconfig,dnl
 [  --with-fontconfig=DIR         where to find the fontconfig library],
   [if test -d "$withval"; then
      LDFLAGS="$LDFLAGS -L$withval/lib"
-     CPPFLAGS="$CPPFLAGS -I$withval/include"
+     CFLAGS="$CFLAGS -I$withval/include"
    fi],
   withval=yes)
 
@@ -258,7 +258,7 @@ AC_ARG_WITH(jpeg,dnl
 [  --with-jpeg=DIR         where to find the jpeg library],
   [if test -d "$withval"; then
      LDFLAGS="$LDFLAGS -L$withval/lib"
-     CPPFLAGS="$CPPFLAGS -I$withval/include"
+     CFLAGS="$CFLAGS -I$withval/include"
    fi],
   withval=yes)
 
@@ -276,7 +276,7 @@ AC_ARG_WITH(xpm,dnl
 [  --with-xpm=DIR          where to find the xpm library],
   [if test -d "$withval"; then
      LDFLAGS="$LDFLAGS -L$withval/lib"
-     CPPFLAGS="$CPPFLAGS -I$withval/include"
+     CFLAGS="$CFLAGS -I$withval/include"
    fi],
   withval=yes)
 
@@ -297,7 +297,7 @@ AC_ARG_WITH(vpx,dnl
 [  --with-vpx=DIR         where to find the vpx library],
   [if test -d "$withval"; then
      LDFLAGS="$LDFLAGS -L$withval/lib"
-     CPPFLAGS="$CPPFLAGS -I$withval/include"
+     CFLAGS="$CFLAGS -I$withval/include"
    fi],
   withval=yes)
 
@@ -316,7 +316,7 @@ AC_ARG_WITH(tiff,dnl
 [  --with-tiff=DIR         where to find the tiff library],
   [if test -d "$withval"; then
      LDFLAGS="$LDFLAGS -L$withval/lib"
-     CPPFLAGS="$CPPFLAGS -I$withval/include"
+     CFLAGS="$CFLAGS -I$withval/include"
    fi],
   withval=yes)
 
@@ -329,11 +329,8 @@ else
   ac_cv_lib_tiff_TIFFClientOpen=no
 fi
 
-
-
-
-
-
+gl_VISIBILITY()
+CFLAGS="$CFLAGS $CFLAG_VISIBILITY"
 
 AX_PTHREAD()
 
