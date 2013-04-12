@@ -32,11 +32,11 @@ extern "C" {
 /* http://gcc.gnu.org/wiki/Visibility */
 #ifdef NONDLL
 # ifdef HAVE_VISIBILITY
-#  define BGD_DECLARE(rt) __attribute__ ((visibility ("default"))) rt
+#  define BGD_DECLARE(rt) __attribute__ ((visibility ("default"))) extern rt
 #  define BGD_EXPORT_DATA_PROT __attribute__ ((visibility ("default")))
 #  define BGD_EXPORT_DATA_IMPL __attribute__ ((visibility ("hidden")))
 # else
-#  define BGD_DECLARE(rt) rt
+#  define BGD_DECLARE(rt) extern rt
 # endif
 #else
 # ifdef BGDWIN32
