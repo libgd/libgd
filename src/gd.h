@@ -29,34 +29,25 @@ extern "C" {
 #define NONDLL 1
 #endif /* WIN32 */
 
+/* http://gcc.gnu.org/wiki/Visibility */
 #ifdef NONDLL
 # ifdef HAVE_VISIBILITY
 #  define BGD_DECLARE(rt) __attribute__ ((visibility ("default"))) rt
+#  define BGD_EXPORT_DATA_PROT __attribute__ ((visibility ("default")))
+#  define BGD_EXPORT_DATA_IMPL __attribute__ ((visibility ("hidden")))
 # else
 #  define BGD_DECLARE(rt) rt
 # endif
 #else
 # ifdef BGDWIN32
 #  define BGD_DECLARE(rt) __declspec(dllexport) rt __stdcall
+#  define BGD_EXPORT_DATA_PROT __declspec(dllexport) extern
+#  define BGD_EXPORT_DATA_IMPL __declspec(dllexport)
 # else
 #  define BGD_DECLARE(rt) __declspec(dllimport) rt _stdcall
+#  define BGD_EXPORT_DATA_PROT __declspec(dllimport) extern
+#  define BGD_EXPORT_DATA_IMPL __declspec(dllimport)
 # endif /* BGDWIN32 */
-#endif /* NONDLL */
-
-	/* 2.0.20: for actual storage of exported data, functions don't need this,
-	  currently needed only for font pointers */
-#ifdef NONDLL
-	/* 2.0.25: bring back extern */
-#define BGD_EXPORT_DATA_PROT extern
-#define BGD_EXPORT_DATA_IMPL
-#else
-#ifdef BGDWIN32
-#define BGD_EXPORT_DATA_PROT __declspec(dllexport) extern
-#define BGD_EXPORT_DATA_IMPL __declspec(dllexport)
-#else
-#define BGD_EXPORT_DATA_PROT __declspec(dllimport) extern
-#define BGD_EXPORT_DATA_IMPL __declspec(dllimport)
-#endif /* BGDWIN32 */
 #endif /* NONDLL */
 
 #ifdef __cplusplus
