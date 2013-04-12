@@ -555,7 +555,7 @@ void gd_RGBAToYUV420(gdImagePtr im2,
   	   palette image. */
   	im = gdImageCreateTrueColor(im2->sx, im2->sy);
   	if (!im) {
-  		php_gd_error("gd-webp error: cannot convert palette input to truecolor");
+  		fprintf(stderr, "gd-webp error: cannot convert palette input to truecolor");
   		return;
 	}
   	gdImageCopy(im, im2, 0, 0, 0, 0, im->sx, im->sy);

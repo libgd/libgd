@@ -13,14 +13,14 @@
 #include "gdhelpers.h"
 
 extern void gd_YUV420toRGBA(uint8* Y,
-                  uint8* U,
-                  uint8* V,
-                  gdImagePtr im);
+				  uint8* U,
+				  uint8* V,
+				  gdImagePtr im);
 
 extern void gd_RGBAToYUV420(gdImagePtr im2,
-                  uint8* Y,
-                  uint8* U,
-                  uint8* V);
+				  uint8* Y,
+				  uint8* U,
+				  uint8* V);
 
 const char * gdWebpGetVersionString()
 {
@@ -39,7 +39,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
 {
-	int    width, height, ret;
+	int	width, height, ret;
  	unsigned char   *Y = NULL;
 	unsigned char   *U = NULL;
 	unsigned char   *V = NULL;
@@ -50,7 +50,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
 		if (Y) free(Y);
 		if (U) free(U);
 		if (V) free(V);
-		php_gd_error("WebP decode: fail to decode input data");
+		fprintf(stderr, "WebP decode: fail to decode input data");
 		return NULL;
 	}
 	im = gdImageCreateTrueColor(width, height);
@@ -63,7 +63,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 {
-	int    width, height, ret;
+	int	width, height, ret;
 	unsigned char   *filedata;
 	unsigned char   dummy[1024];
 	unsigned char   *Y = NULL;
@@ -79,7 +79,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 
 	filedata = gdMalloc(size);
 	if  (!filedata) {
-		php_gd_error("WebP decode: alloc failed");
+		fprintf(stderr, "WebP decode: alloc failed");
 		return NULL;
 	}
 	gdGetBuf(filedata, size, infile);
@@ -89,7 +89,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 		if (Y) free(Y);
 		if (U) free(U);
 		if (V) free(V);
-		php_gd_error("WebP decode: fail to decode input data");
+		fprintf(stderr, "WebP decode: fail to decode input data");
 		return NULL;
 	}
 	im = gdImageCreateTrueColor(width, height);
@@ -144,7 +144,7 @@ int mapQualityToVP8QP(int quality) {
 	const float vp8qp =
 	scale * (MAX_QUALITY - quality) / (MAX_QUALITY - MIN_QUALITY) + MIN_VP8QP;
 	if (quality < MIN_QUALITY || quality > MAX_QUALITY) {
-		php_gd_error("Wrong quality value %d.", quality);
+		fprintf(stderr, "Wrong quality value %d.", quality);
 		return -1;
 	}
 
@@ -170,35 +170,35 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantiza
 	unsigned char *filedata = NULL;
 
 	/* Conversion to Y,U,V buffer */
-    yuv_width = (width + 1) >> 1;
-    yuv_height = (height + 1) >> 1;
-    yuv_nbytes = width * height + 2 * yuv_width * yuv_height;
+	yuv_width = (width + 1) >> 1;
+	yuv_height = (height + 1) >> 1;
+	yuv_nbytes = width * height + 2 * yuv_width * yuv_height;
 
-    if ((Y = (unsigned char *)gdCalloc(yuv_nbytes, sizeof(unsigned char))) == NULL) {
-    	php_gd_error("gd-webp error: cannot allocate Y buffer");
-        return;
-    }
+	if ((Y = (unsigned char *)gdCalloc(yuv_nbytes, sizeof(unsigned char))) == NULL) {
+		fprintf(stderr, "gd-webp error: cannot allocate Y buffer");
+		return;
+	}
 	vp8_quality = mapQualityToVP8QP(quantization);
 
-    U = Y + width * height;
-    V = U + yuv_width * yuv_height;
-    gd_RGBAToYUV420(im, Y, U, V);
+	U = Y + width * height;
+	V = U + yuv_width * yuv_height;
+	gd_RGBAToYUV420(im, Y, U, V);
 
 	/* Encode Y,U,V and write data to file */
-    ret = WebPEncode(Y, U, V, width, height, width, yuv_width, yuv_height, yuv_width,
-                     vp8_quality, &filedata, &yuv_nbytes, NULL);
+	ret = WebPEncode(Y, U, V, width, height, width, yuv_width, yuv_height, yuv_width,
+					 vp8_quality, &filedata, &yuv_nbytes, NULL);
 	gdFree(Y);
 
-    if (ret != webp_success) {
-    	if (filedata) {
-    		free(filedata);
+	if (ret != webp_success) {
+		if (filedata) {
+			free(filedata);
 		}
-		php_gd_error("gd-webp error: WebP Encoder failed");
+		fprintf(stderr, "gd-webp error: WebP Encoder failed");
 		return;
-    }
+	}
 
-    gdPutBuf (filedata, yuv_nbytes, outfile);
-    free(filedata);
+	gdPutBuf (filedata, yuv_nbytes, outfile);
+	free(filedata);
 }
 
 #endif /* HAVE_LIBVPX */
