@@ -348,7 +348,7 @@ AC_MSG_RESULT([
    Support for Freetype 2.x library: $ac_cv_lib_freetype_FT_Init_FreeType
    Support for Fontconfig library:   $ac_cv_lib_fontconfig_FcInit
    Support for Xpm library:          $ac_cv_lib_Xpm_XpmReadFileToXpmImage
-   Support for pthreads:             $acx_pthread_ok
+   Support for pthreads:             $ax_pthread_ok
 ])
 
 AC_CONFIG_FILES([Makefile
