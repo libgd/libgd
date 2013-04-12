@@ -27,7 +27,7 @@ const char * gdWebpGetVersionString()
 	return "not defined";
 }
 
-gdImagePtr gdImageCreateFromWebp (FILE * inFile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
@@ -37,7 +37,7 @@ gdImagePtr gdImageCreateFromWebp (FILE * inFile)
 	return im;
 }
 
-gdImagePtr gdImageCreateFromWebpPtr (int size, void *data)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
 {
 	int    width, height, ret;
  	unsigned char   *Y = NULL;
@@ -61,7 +61,7 @@ gdImagePtr gdImageCreateFromWebpPtr (int size, void *data)
 	return im;
 }
 
-gdImagePtr gdImageCreateFromWebpCtx (gdIOCtx * infile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 {
 	int    width, height, ret;
 	unsigned char   *filedata;
@@ -97,21 +97,21 @@ gdImagePtr gdImageCreateFromWebpCtx (gdIOCtx * infile)
 	return im;
 }
 
-void gdImageWebpEx (gdImagePtr im, FILE * outFile, int quantization)
+BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quantization)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
 	gdImageWebpCtx(im, out, quantization);
 	out->gd_free(out);
 }
 
-void gdImageWebp (gdImagePtr im, FILE * outFile)
+BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
   	gdImageWebpCtx(im, out, -1);
 	out->gd_free(out);
 }
 
-void * gdImageWebpPtr (gdImagePtr im, int *size)
+BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
@@ -122,7 +122,7 @@ void * gdImageWebpPtr (gdImagePtr im, int *size)
 	return rv;
 }
 
-void * gdImageWebpPtrEx (gdImagePtr im, int *size, int quantization)
+BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quantization)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
@@ -155,7 +155,7 @@ int mapQualityToVP8QP(int quality) {
  *  and in part on demo code from Chapter 15 of "PNG: The Definitive Guide"
  *  (http://www.cdrom.com/pub/png/pngbook.html).
  */
-void gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantization)
+BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantization)
 {
 	int width = im->sx;
 	int height = im->sy;

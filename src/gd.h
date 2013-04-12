@@ -390,6 +390,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg (FILE * infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx (gdIOCtx * infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr (int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile);
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile);
@@ -745,6 +748,12 @@ BGD_DECLARE(void) gdImageJpegCtx (gdImagePtr im, gdIOCtx * out, int quality);
 
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImageJpegPtr (gdImagePtr im, int *size, int quality);
+
+BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quantization);
+BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile);
+BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quantization);
+BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantization);
 
 /* Legal values for Disposal. gdDisposalNone is always used by
 	the built-in optimizer if previm is passed. */
