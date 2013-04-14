@@ -37,6 +37,8 @@ extern "C" {
 #  define BGD_EXPORT_DATA_IMPL __attribute__ ((visibility ("hidden")))
 # else
 #  define BGD_DECLARE(rt) extern rt
+#  define BGD_EXPORT_DATA_PROT
+#  define BGD_EXPORT_DATA_IMPL
 # endif
 #else
 # ifdef BGDWIN32
