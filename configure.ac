@@ -310,9 +310,9 @@ else
 fi
 
 
-dnl check for libvpx by default
+dnl check for libtiff by default
 AC_ARG_WITH(tiff,dnl
-[  --with-tiff=DIR         where to find the tiff library],
+[  --with-tiff=DIR         where to find the TIFF library],
   [if test -d "$withval"; then
      LDFLAGS="$LDFLAGS -L$withval/lib"
      CFLAGS="$CFLAGS -I$withval/include"
@@ -322,8 +322,8 @@ AC_ARG_WITH(tiff,dnl
 if test "$withval" != no; then
   AC_CHECK_LIB(tiff,TIFFClientOpen,
     [LIBS="-ltiff $LIBS" 
-     FEATURES="GD_VPX $FEATURES"
-     AC_DEFINE(HAVE_LIBTIFF, 1, [ Define if you have the vpx library. ])])
+     FEATURES="GD_TIFF $FEATURES"
+     AC_DEFINE(HAVE_LIBTIFF, 1, [ Define if you have the TIFF library. ])])
 else
   ac_cv_lib_tiff_TIFFClientOpen=no
 fi
