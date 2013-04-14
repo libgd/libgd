@@ -71,7 +71,7 @@ while test $# -gt 0; do
 	echo @LDFLAGS@
 	;;
     --libs)
-	echo @LIBS@ @LIBICONV@
+	echo -lgd @LIBS@ @LIBICONV@
 	;;
     --cflags|--includes)
 	echo -I@includedir@
