@@ -350,6 +350,7 @@ AC_MSG_RESULT([
 AC_CONFIG_FILES([Makefile
                 src/Makefile
                 config/Makefile
-                config/gdlib-config])
+                config/gdlib-config
+		config/gdlib.pc])
 
 AC_OUTPUT
