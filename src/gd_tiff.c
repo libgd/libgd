@@ -217,7 +217,7 @@ static void tiff_unmapproc(thandle_t h, tdata_t d, toff_t o)
  *  out:      the stream where to write
  *  bitDepth: depth in bits of each pixel
  */
-BGD_DECLARE(void) tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
+void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 {
 	int x, y;
 	int i;
