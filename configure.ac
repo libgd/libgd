@@ -282,10 +282,9 @@ AC_ARG_WITH(xpm,dnl
 
 if test "$withval" != no; then
   AC_CHECK_LIB(Xpm,XpmReadFileToXpmImage,
-    [LIBS="-lXpm -lX11 $LIBS"
+    [LIBS="-lXpm $LIBS"
      FEATURES="GD_XPM $FEATURES"
-     AC_DEFINE(HAVE_LIBXPM, 1, [ Define if you have the Xpm library. ])],,
-    [-lX11])
+     AC_DEFINE(HAVE_LIBXPM, 1, [ Define if you have the Xpm library. ])])
 else
   ac_cv_lib_Xpm_XpmReadFileToXpmImage=no
 fi
