@@ -14,11 +14,11 @@ LOG_INFO       informational message
 LOG_DEBUG      debug-level message
 */
 
-#define E_ERROR LOG_ERR
-#define E_WARNING LOG_WARNING
-#define E_NOTICE LOG_NOTICE
-#define E_INFO LOG_INFO
-#define E_DEBUG LOG_DEBUG
+#define GD_ERROR LOG_ERR
+#define GD_WARNING LOG_WARNING
+#define GD_NOTICE LOG_NOTICE
+#define GD_INFO LOG_INFO
+#define GD_DEBUG LOG_DEBUG
 
 void gd_error(const char *format, ...);
 void gd_error_ex(int priority, const char *format, ...);

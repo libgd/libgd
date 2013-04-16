@@ -467,7 +467,7 @@ int verbose;
 	for (i=0; i<rad; i++)
 		nnq->radpower[i] = alpha*(((rad*rad - i*i)*radbias)/(rad*rad));
 
-	if (verbose) gd_error_ex(E_NOTICE, "beginning 1D learning: initial radius=%d\n", rad);
+	if (verbose) gd_error_ex(GD_NOTICE, "beginning 1D learning: initial radius=%d\n", rad);
 
 	if ((nnq->lengthcount%prime1) != 0) step = 4*prime1;
 	else {
@@ -502,7 +502,7 @@ int verbose;
 				nnq->radpower[j] = alpha*(((rad*rad - j*j)*radbias)/(rad*rad));
 		}
 	}
-	if (verbose) gd_error_ex(E_NOTICE, "finished 1D learning: final alpha=%f !\n",((float)alpha)/initalpha);
+	if (verbose) gd_error_ex(GD_NOTICE, "finished 1D learning: final alpha=%f !\n",((float)alpha)/initalpha);
 }
 
 BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int sample_factor)

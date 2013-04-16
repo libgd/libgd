@@ -21,7 +21,7 @@
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 {
 	(void)filename;
-	gd_error_ex(E_ERROR, "libgd was not built with xpm support\n");
+	gd_error_ex(GD_ERROR, "libgd was not built with xpm support\n");
 	return NULL;
 }
 #else

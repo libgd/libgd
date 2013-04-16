@@ -484,7 +484,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 		goto error;
 	}
 #if BITS_IN_JSAMPLE == 12
-	gd_error_ex(E_ERROR,
+	gd_error_ex(GD_ERROR,
 		    "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
 		    "precision. This is mostly useless, because JPEGs on the web are\n"
 		    "8-bit and such versions of the jpeg library won't read or write\n"

@@ -75,19 +75,19 @@ void gd_stderr_error(int priority, const char *format, ...)
 
         va_start(args, format);
 	switch (priority) {
-	case E_ERROR:
+	case GD_ERROR:
 		fputs("GD Error: ", stderr);
 		break;
-	case E_WARNING:
+	case GD_WARNING:
 		fputs("GD Warning: ", stderr);
 		break;
-	case E_NOTICE:
+	case GD_NOTICE:
 		fputs("GD Notice: ", stderr);
 		break;
-	case E_INFO:
+	case GD_INFO:
 		fputs("GD Info: ", stderr);
 		break;
-	case E_DEBUG:
+	case GD_DEBUG:
 		fputs("GD Debug: ", stderr);
 		break;
 	}
@@ -104,7 +104,7 @@ void gd_error(const char *format, ...)
         va_list args;
 
         va_start(args, format);
-	gd_error_ex(E_WARNING, format, args);
+	gd_error_ex(GD_WARNING, format, args);
         va_end(args);
 }
 void gd_error_ex(int priority, const char *format, ...)

@@ -173,11 +173,11 @@ DetectKanjiCode (unsigned char *str)
 
 #ifdef DEBUG
 	if (whatcode == ASCII)
-		gd_error_ex(E_DEBUG, "Kanji code not included.");
+		gd_error_ex(GD_DEBUG, "Kanji code not included.");
 	else if (whatcode == EUCORSJIS)
-		gd_error_ex(E_DEBUG, "Kanji code not detected.");
+		gd_error_ex(GD_DEBUG, "Kanji code not detected.");
 	else
-		gd_error_ex(E_DEBUG, "Kanji code detected at %d byte.", i);
+		gd_error_ex(GD_DEBUG, "Kanji code detected at %d byte.", i);
 #endif
 
 	if (whatcode == EUCORSJIS && oldcode != ASCII)
@@ -442,43 +442,43 @@ do_check_and_conv (unsigned char *to, unsigned char *from)
 
 	switch (DetectKanjiCode (from)) {
 	case NEW:
-		gd_error_ex(E_DEBUG, "Kanji code is New JIS.");
+		gd_error_ex(GD_DEBUG, "Kanji code is New JIS.");
 		do_convert (&tmp_p, &from, NEWJISSTR);
 		break;
 	case OLD:
-		gd_error_ex(E_DEBUG, "Kanji code is Old JIS.");
+		gd_error_ex(GD_DEBUG, "Kanji code is Old JIS.");
 		do_convert (&tmp_p, &from, OLDJISSTR);
 		break;
 	case ESCI:
-		gd_error_ex(E_DEBUG, "This string includes Hankaku-Kana (jisx0201) escape sequence [ESC] + ( + I.");
+		gd_error_ex(GD_DEBUG, "This string includes Hankaku-Kana (jisx0201) escape sequence [ESC] + ( + I.");
 		do_convert (&tmp_p, &from, NEWJISSTR);
 		break;
 	case NEC:
-		gd_error_ex(E_DEBUG, "Kanji code is NEC Kanji.");
+		gd_error_ex(GD_DEBUG, "Kanji code is NEC Kanji.");
 		gd_error("cannot convert NEC Kanji.");
 		ustrcpy (tmp, from);
 		kanji = FALSE;
 		break;
 	case EUC:
-		gd_error_ex(E_DEBUG, "Kanji code is EUC.");
+		gd_error_ex(GD_DEBUG, "Kanji code is EUC.");
 		ustrcpy (tmp, from);
 		break;
 	case SJIS:
-		gd_error_ex(E_DEBUG, "Kanji code is SJIS.");
+		gd_error_ex(GD_DEBUG, "Kanji code is SJIS.");
 		do_convert (&tmp_p, &from, SJISSTR);
 		break;
 	case EUCORSJIS:
-		gd_error_ex(E_DEBUG, "Kanji code is EUC or SJIS.");
+		gd_error_ex(GD_DEBUG, "Kanji code is EUC or SJIS.");
 		ustrcpy (tmp, from);
 		kanji = FALSE;
 		break;
 	case ASCII:
-		gd_error_ex(E_DEBUG, "This is ASCII string.");
+		gd_error_ex(GD_DEBUG, "This is ASCII string.");
 		ustrcpy (tmp, from);
 		kanji = FALSE;
 		break;
 	default:
-		gd_error_ex(E_DEBUG, "This string includes unknown code.");
+		gd_error_ex(GD_DEBUG, "This string includes unknown code.");
 		ustrcpy (tmp, from);
 		kanji = FALSE;
 		break;
