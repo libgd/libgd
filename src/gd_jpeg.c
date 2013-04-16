@@ -33,6 +33,7 @@
 #include <string.h>
 
 #include "gd.h"
+#include "gd_errors.h"
 /* TBB: move this up so include files are not brought in */
 /* JCE: arrange HAVE_LIBJPEG so that it can be set in gd.h */
 #ifdef HAVE_LIBJPEG
@@ -64,7 +65,7 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 {
 	jmpbuf_wrapper *jmpbufw;
 
-	fprintf(stderr, "gd-jpeg: JPEG library reports unrecoverable error: ");
+	gd_error("gd-jpeg: JPEG library reports unrecoverable error: ");
 	(*cinfo->err->output_message)(cinfo);
 	fflush(stderr);
 
@@ -73,9 +74,9 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 
 	if(jmpbufw != 0) {
 		longjmp(jmpbufw->jmpbuf, 1);
-		fprintf(stderr, "gd-jpeg: EXTREMELY fatal error: longjmp returned control; terminating\n");
+		gd_error("gd-jpeg: EXTREMELY fatal error: longjmp returned control; terminating\n");
 	} else {
-		fprintf(stderr, "gd-jpeg: EXTREMELY fatal error: jmpbuf unrecoverable; terminating\n");
+		gd_error("gd-jpeg: EXTREMELY fatal error: jmpbuf unrecoverable; terminating\n");
 	}
 
 	fflush(stderr);
@@ -181,7 +182,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
 	row = (JSAMPROW)gdCalloc(1, cinfo.image_width * cinfo.input_components * sizeof(JSAMPLE));
 	if(row == 0) {
-		fprintf (stderr, "gd-jpeg: error: unable to allocate JPEG row structure: gdCalloc returns NULL\n");
+		gd_error("gd-jpeg: error: unable to allocate JPEG row structure: gdCalloc returns NULL\n");
 		jpeg_destroy_compress(&cinfo);
 		return;
 	}
@@ -202,7 +203,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
 	if(im->trueColor) {
 #if BITS_IN_JSAMPLE == 12
-		fprintf(stderr,
+		gd_error(
 		        "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
 		        "precision. This is mostly useless, because JPEGs on the web are\n"
 		        "8-bit and such versions of the jpeg library won't read or write\n"
@@ -223,7 +224,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 			nlines = jpeg_write_scanlines(&cinfo, rowptr, 1);
 
 			if(nlines != 1) {
-				fprintf (stderr, "gd_jpeg: warning: jpeg_write_scanlines returns %u -- expected 1\n", nlines);
+				gd_error("gd_jpeg: warning: jpeg_write_scanlines returns %u -- expected 1\n", nlines);
 			}
 		}
 	} else {
@@ -251,7 +252,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
 			nlines = jpeg_write_scanlines(&cinfo, rowptr, 1);
 			if(nlines != 1) {
-				fprintf (stderr, "gd_jpeg: warning: jpeg_write_scanlines"
+				gd_error("gd_jpeg: warning: jpeg_write_scanlines"
 				         " returns %u -- expected 1\n", nlines);
 			}
 		}
@@ -343,25 +344,25 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 
 	retval = jpeg_read_header(&cinfo, TRUE);
 	if(retval != JPEG_HEADER_OK) {
-		fprintf (stderr, "gd-jpeg: warning: jpeg_read_header returns"
+		gd_error("gd-jpeg: warning: jpeg_read_header returns"
 		         " %d, expected %d\n", retval, JPEG_HEADER_OK);
 	}
 
 	if(cinfo.image_height > INT_MAX) {
-		fprintf (stderr, "gd-jpeg: warning: JPEG image height (%u) is"
+		gd_error("gd-jpeg: warning: JPEG image height (%u) is"
 		         " greater than INT_MAX (%d) (and thus greater than"
 		         " gd can handle)", cinfo.image_height, INT_MAX);
 	}
 
 	if(cinfo.image_width > INT_MAX) {
-		fprintf (stderr, "gd-jpeg: warning: JPEG image width (%u) is"
+		gd_error("gd-jpeg: warning: JPEG image width (%u) is"
 		         " greater than INT_MAX (%d) (and thus greater than"
 		         " gd can handle)\n", cinfo.image_width, INT_MAX);
 	}
 
 	im = gdImageCreateTrueColor((int)cinfo.image_width, (int)cinfo.image_height);
 	if(im == 0) {
-		fprintf (stderr, "gd-jpeg error: cannot allocate gdImage struct\n");
+		gd_error("gd-jpeg error: cannot allocate gdImage struct\n");
 		goto error;
 	}
 
@@ -388,7 +389,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	}
 
 	if(jpeg_start_decompress(&cinfo) != TRUE) {
-		fprintf(stderr, "gd-jpeg: warning: jpeg_start_decompress"
+		gd_error("gd-jpeg: warning: jpeg_start_decompress"
 		        " reports suspended data source\n");
 	}
 
@@ -452,7 +453,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 #endif
 	if(cinfo.out_color_space == JCS_RGB) {
 		if(cinfo.output_components != 3) {
-			fprintf (stderr, "gd-jpeg: error: JPEG color quantization"
+			gd_error("gd-jpeg: error: JPEG color quantization"
 			         " request resulted in output_components == %d"
 			         " (expected 3 for RGB)\n", cinfo.output_components);
 			goto error;
@@ -461,7 +462,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	} else if(cinfo.out_color_space == JCS_CMYK) {
 		jpeg_saved_marker_ptr marker;
 		if(cinfo.output_components != 4) {
-			fprintf (stderr, "gd-jpeg: error: JPEG color quantization"
+			gd_error("gd-jpeg: error: JPEG color quantization"
 			         " request resulted in output_components == %d"
 			         " (expected 4 for CMYK)\n", cinfo.output_components);
 			goto error;
@@ -479,22 +480,23 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 			marker = marker->next;
 		}
 	} else {
-		fprintf(stderr, "gd-jpeg: error: unexpected colorspace\n");
+		gd_error("gd-jpeg: error: unexpected colorspace\n");
 		goto error;
 	}
 #if BITS_IN_JSAMPLE == 12
-	fprintf(stderr, "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
-	        "precision. This is mostly useless, because JPEGs on the web are\n"
-	        "8-bit and such versions of the jpeg library won't read or write\n"
-	        "them. GD doesn't support these unusual images. Edit your\n"
-	        "jmorecfg.h file to specify the correct precision and completely\n"
-	        "'make clean' and 'make install' libjpeg again. Sorry.\n");
+	gd_error_ex(E_ERROR,
+		    "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
+		    "precision. This is mostly useless, because JPEGs on the web are\n"
+		    "8-bit and such versions of the jpeg library won't read or write\n"
+		    "them. GD doesn't support these unusual images. Edit your\n"
+		    "jmorecfg.h file to specify the correct precision and completely\n"
+		    "'make clean' and 'make install' libjpeg again. Sorry.\n");
 	goto error;
 #endif /* BITS_IN_JSAMPLE == 12 */
 
 	row = gdCalloc(cinfo.output_width *channels, sizeof(JSAMPLE));
 	if(row == 0) {
-		fprintf (stderr, "gd-jpeg: error: unable to allocate row for"
+		gd_error("gd-jpeg: error: unable to allocate row for"
 		         " JPEG scanline: gdCalloc returns NULL\n");
 		goto error;
 	}
@@ -505,7 +507,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 			register int *tpix = im->tpixels[i];
 			nrows = jpeg_read_scanlines(&cinfo, rowptr, 1);
 			if(nrows != 1) {
-				fprintf (stderr, "gd-jpeg: error: jpeg_read_scanlines"
+				gd_error("gd-jpeg: error: jpeg_read_scanlines"
 				         " returns %u, expected 1\n", nrows);
 				goto error;
 			}
@@ -519,7 +521,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 			register int *tpix = im->tpixels[i];
 			nrows = jpeg_read_scanlines(&cinfo, rowptr, 1);
 			if(nrows != 1) {
-				fprintf (stderr, "gd-jpeg: error: jpeg_read_scanlines"
+				gd_error("gd-jpeg: error: jpeg_read_scanlines"
 				         " returns %u, expected 1\n", nrows);
 				goto error;
 			}
@@ -530,8 +532,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	}
 
 	if(jpeg_finish_decompress (&cinfo) != TRUE) {
-		fprintf(stderr, "gd-jpeg: warning: jpeg_finish_decompress"
-		        " reports suspended data source\n");
+		gd_error("gd-jpeg: warning: jpeg_finish_decompress"
+		         " reports suspended data source\n");
 	}
 	/* TBB 2.0.29: we should do our best to read whatever we can read, and a
 	 * warning is a warning. A fatal error on warnings doesn't make sense. */

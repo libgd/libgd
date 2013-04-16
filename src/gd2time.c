@@ -23,7 +23,7 @@ main (int argc, char **argv)
 	int t0;
 
 	if (argc != 7) {
-		fprintf (stderr, "Usage: gd2time filename.gd count x y w h\n");
+		fprintf(stderr, "Usage: gd2time filename.gd count x y w h\n");
 		exit (1);
 	}
 
@@ -40,7 +40,7 @@ main (int argc, char **argv)
 	for (i = 0; i < c; i++) {
 		in = fopen (argv[1], "rb");
 		if (!in) {
-			fprintf (stderr, "Input file does not exist!\n");
+			fprintf(stderr, "Input file does not exist!\n");
 			exit (1);
 		}
 
@@ -48,7 +48,7 @@ main (int argc, char **argv)
 		fclose (in);
 
 		if (!im) {
-			fprintf (stderr, "Error reading source file!\n");
+			fprintf(stderr, "Error reading source file!\n");
 			exit (1);
 		}
 		gdImageDestroy (im);

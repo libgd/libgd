@@ -335,6 +335,11 @@ gdFont;
 /* Text functions take these. */
 typedef gdFont *gdFontPtr;
 
+typedef void(*gdErrorMethod)(int, const char *, ...);
+
+BGD_DECLARE(void) gdSetErrorMethod(gdErrorMethod);
+BGD_DECLARE(void) gdClearErrorMethod(void);
+
 /* For backwards compatibility only. Use gdImageSetStyle()
    for MUCH more flexible line drawing. Also see
    gdImageSetBrush(). */

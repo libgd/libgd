@@ -27,10 +27,10 @@ int
 main (int argc, char *argv[])
 {
 #ifndef HAVE_LIBFREETYPE
-	fprintf (stderr, "gd was not compiled with HAVE_LIBFREETYPE defined.\n");
-	fprintf (stderr, "Install the FreeType library, including the\n");
-	fprintf (stderr, "header files. Then edit the gd Makefile, type\n");
-	fprintf (stderr, "make clean, and type make again.\n");
+	fprintf(stderr, "gd was not compiled with HAVE_LIBFREETYPE defined.\n");
+	fprintf(stderr, "Install the FreeType library, including the\n");
+	fprintf(stderr, "header files. Then edit the gd Makefile, type\n");
+	fprintf(stderr, "make clean, and type make again.\n");
 	return 1;
 #else
 	gdImagePtr im;
@@ -60,9 +60,8 @@ main (int argc, char *argv[])
 	} else {
 		/* 2.02: usage message. Defaulting to Times wasn't working well for the
 		   many people with no /usr/share/fonts/truetype. */
-		fprintf (stderr, "Usage: gdtestft fontfilename\n");
-		fprintf (stderr,
-		         "If fontfilename is not a full or relative path, GDFONTPATH is searched for\n"
+		fprintf(stderr, "Usage: gdtestft fontfilename\n"
+			 "If fontfilename is not a full or relative path, GDFONTPATH is searched for\n"
 		         "it. If GDFONTPATH is not set, /usr/share/fonts/truetype is searched.\n");
 		exit (1);
 	}
@@ -70,7 +69,7 @@ main (int argc, char *argv[])
 	err =
 	    gdImageStringFT ((gdImagePtr) NULL, &brect[0], 0, f, sz, angle, 0, 0, s);
 	if (err) {
-		fprintf (stderr, "%s\n", err);
+		fprintf(stderr, "%s\n", err);
 		return 1;
 	}
 
@@ -99,10 +98,10 @@ main (int argc, char *argv[])
 #ifdef HAVE_LIBJPEG
 			imb = gdImageCreateFromJpeg (in);
 #else
-			fprintf (stderr, "No JPEG library support.\n");
+			fprintf(stderr, "No JPEG library support.\n");
 #endif
 			if (!imb) {
-				fprintf (stderr, "gdImageCreateFromJpeg failed\n");
+				fprintf(stderr, "gdImageCreateFromJpeg failed\n");
 				exit (1);
 			}
 			if (!im->trueColor) {
@@ -136,50 +135,50 @@ main (int argc, char *argv[])
 	/* With antialiasing (positive color value) */
 	err = gdImageStringFT (im, NULL, blue, f, sz, angle, x, y, s);
 	if (err) {
-		fprintf (stderr, "%s\n", err);
+		fprintf(stderr, "%s\n", err);
 		return 1;
 	}
 	/* Without antialiasing (negative color value) */
 	err = gdImageStringFT (im, NULL, -blue, f, sz, angle, sx + x, y, s);
 	if (err) {
-		fprintf (stderr, "%s\n", err);
+		fprintf(stderr, "%s\n", err);
 		return 1;
 	}
 	/* With antialiasing, and 50% alpha blending (truecolor only) */
 	err = gdImageStringFT (im, NULL, blueAlpha, f, sz, angle, sx * 2 + x, y, s);
 	if (err) {
-		fprintf (stderr, "%s\n", err);
+		fprintf(stderr, "%s\n", err);
 		return 1;
 	}
 	/* TBB: Write img to test/fttest.jpg or test/fttest.png */
 	if (im->trueColor) {
 		out = fopen ("test/fttest.jpg", "wb");
 		if (!out) {
-			fprintf (stderr, "Can't create test/fttest.jpg\n");
+			fprintf(stderr, "Can't create test/fttest.jpg\n");
 			exit (1);
 		}
 		/* Fairly high JPEG quality setting */
 #ifdef HAVE_LIBJPEG
 		gdImageJpeg (im, out, 90);
 #else
-		fprintf (stderr, "No JPEG library support.\n");
+		fprintf(stderr, "No JPEG library support.\n");
 #endif
 		fclose (out);
-		fprintf (stderr, "Test image written to test/fttest.jpg\n");
+		fprintf(stderr, "Test image written to test/fttest.jpg\n");
 	} else {
 		out = fopen ("test/fttest.png", "wb");
 		if (!out) {
-			fprintf (stderr, "Can't create test/fttest.png\n");
+			fprintf(stderr, "Can't create test/fttest.png\n");
 			exit (1);
 		}
 		/* 2.0.10: correct ifdef, thanks to Gabriele Verzeletti */
 #ifdef HAVE_LIBPNG
 		gdImagePng (im, out);
 #else
-		fprintf (stderr, "No PNG library support.\n");
+		fprintf(stderr, "No PNG library support.\n");
 #endif
 		fclose (out);
-		fprintf (stderr, "Test image written to test/fttest.png\n");
+		fprintf(stderr, "Test image written to test/fttest.png\n");
 	}
 	/* Destroy it */
 	gdImageDestroy (im);

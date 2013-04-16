@@ -91,13 +91,13 @@ tiff_handle * new_tiff_handle(gdIOCtx *g)
 	tiff_handle * t;
 
 	if (!g) {
-		fprintf(stderr, "Cannot create a new tiff handle, missing Ctx argument");
+		gd_error("Cannot create a new tiff handle, missing Ctx argument");
 		return NULL;
 	}
 
 	t = (tiff_handle *) gdMalloc(sizeof(tiff_handle));
 	if (!t) {
-		fprintf(stderr, "Failed to allocate a new tiff handle");
+		gd_error("Failed to allocate a new tiff handle");
 		return NULL;
 	}
 
@@ -369,7 +369,7 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 		/* Write the scan line to the tiff */
 		if(TIFFWriteEncodedStrip(tiff, y, scan, width * samplesPerPixel) == -1) {
 			/* error handler here */
-			fprintf(stderr, "Could not create TIFF\n");
+			gd_error("Could not create TIFF\n");
 			return;
 		}
 	}
@@ -463,7 +463,7 @@ static int readTiffColorMap(gdImagePtr im, TIFF *tif, char is_bw, int photometri
 			return GD_SUCCESS;
 
 		} else if (!TIFFGetField(tif, TIFFTAG_COLORMAP, &redcmap, &greencmap, &bluecmap)) {
-			fprintf(stderr, "Cannot read the color map");
+			gd_error("Cannot read the color map");
 			return GD_FAILURE;
 		}
 
@@ -670,12 +670,12 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 	}
 
 	if (!TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &im_height)) {
-		fprintf(stderr, "Can't fetch TIFF height\n");
+		gd_error("Can't fetch TIFF height\n");
 		return FALSE;
 	}
 
 	if (!TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &im_width)) {
-		fprintf(stderr, "Can't fetch TIFF width \n");
+		gd_error("Can't fetch TIFF width \n");
 		return FALSE;
 	}
 
@@ -694,7 +694,7 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 		case 8:
 			for (y = 0; y < im_height; y++ ) {
 				if (!TIFFReadScanline (tif, buffer, y, 0)) {
-					fprintf(stderr, "Error while reading scanline %i", y);
+					gd_error("Error while reading scanline %i", y);
 					break;
 				}
 				/* reading one line at a time */
@@ -706,7 +706,7 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 			if (is_bw) {
 				for (y = 0; y < im_height; y++ ) {
 					if (!TIFFReadScanline (tif, buffer, y, 0)) {
-						fprintf(stderr, "Error while reading scanline %i", y);
+						gd_error("Error while reading scanline %i", y);
 						break;
 					}
 					/* reading one line at a time */
@@ -805,17 +805,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	                     tiff_unmapproc);
 
 	if (!tif) {
-		fprintf(stderr, "Cannot open TIFF image");
+		gd_error("Cannot open TIFF image");
 		return NULL;
 	}
 
 	if (!TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width)) {
-		fprintf(stderr, "TIFF error, Cannot read image width");
+		gd_error("TIFF error, Cannot read image width");
 		goto error;
 	}
 
 	if (!TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height)) {
-		fprintf(stderr, "TIFF error, Cannot read image width");
+		gd_error("TIFF error, Cannot read image width");
 		goto error;
 	}
 
@@ -839,11 +839,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 		         compression == COMPRESSION_CCITTFAX4 ||
 		         compression == COMPRESSION_CCITTRLE ||
 		         compression == COMPRESSION_CCITTRLEW)) {
-			fprintf(stderr, "Could not get photometric. "
+			gd_error("Could not get photometric. "
 			        "Image is CCITT compressed, assuming min-is-white");
 			photometric = PHOTOMETRIC_MINISWHITE;
 		} else {
-			fprintf(stderr, "Could not get photometric. "
+			gd_error("Could not get photometric. "
 			        "Assuming min-is-black");
 
 			photometric = PHOTOMETRIC_MINISBLACK;
@@ -862,7 +862,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 		--extra;
 	} else if (extra > 0 && (extra_types[0] == EXTRASAMPLE_UNSPECIFIED)) {
 		/* assuming unassociated alpha if unspecified */
-		fprintf(stderr, "alpha channel type not defined, assuming alpha is not premultiplied");
+		gd_error("alpha channel type not defined, assuming alpha is not premultiplied");
 		has_alpha = TRUE;
 		save_transparent = TRUE;
 		--extra;
@@ -959,7 +959,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 			break;
 
 		default:
-			fprintf (stderr, "Orientation %d not handled yet!", orientation);
+			gd_error("Orientation %d not handled yet!", orientation);
 			break;
 		}
 	}

@@ -41,13 +41,13 @@ main (int argc, char *argv[])
 	gdImagePng (im, out);
 	fclose (out);
 #else
-	fprintf(stderr, "Compiled without libpng support\n");
+	gd_error("Compiled without libpng support\n");
 #endif /* HAVE_LIBPNG */
 	gdImageDestroy (im);
 
 	return 0;
 #else
-	fprintf(stderr, "Compiled without freetype support\n");
+	gd_error("Compiled without freetype support\n");
 	return 0;
 #endif /* HAVE_LIBFREETYPE */
 }
