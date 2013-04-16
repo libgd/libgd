@@ -57,8 +57,46 @@ static const char *const GD_JPEG_VERSION = "1.0";
 
 typedef struct _jmpbuf_wrapper {
 	jmp_buf jmpbuf;
+        int ignore_warning;
 }
 jmpbuf_wrapper;
+
+static long jpeg_emit_message(j_common_ptr jpeg_info, int level)
+{
+	char message[JMSG_LENGTH_MAX];
+	jmpbuf_wrapper *jmpbufw;
+	int ignore_warning = 0;
+
+	jmpbufw = (jmpbuf_wrapper *) jpeg_info->client_data;
+
+	if (jmpbufw != 0) {
+		ignore_warning = jmpbufw->ignore_warning;
+	}
+
+	(jpeg_info->err->format_message)(jpeg_info,message);
+
+	/* It is a warning message */
+	if (level < 0) {
+		/* display only the 1st warning, as would do a default libjpeg
+		 * unless strace_level >= 3
+		 */
+		if ((jpeg_info->err->num_warnings == 0) || (jpeg_info->err->trace_level >= 3)) {
+			if (!ignore_warning) {
+				gd_error("gd-jpeg, libjpeg: recoverable error: %s\n", message);
+			}
+		}
+
+		jpeg_info->err->num_warnings++;
+	} else {
+		/* strace msg, Show it if trace_level >= level. */
+		if (jpeg_info->err->trace_level >= level) {
+			if (!ignore_warning) {
+				gd_error("gd-jpeg, libjpeg: strace message: %s\n", message);
+			}
+		}
+	}
+	return 1;
+}
 
 /* Called by the IJG JPEG library upon encountering a fatal error */
 static void fatal_jpeg_error(j_common_ptr cinfo)
@@ -131,7 +169,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	if (!im->trueColor) {
 		for(i = 0; i < im->colorsTotal; i++) {
 			if(!im->open[i]) {
-				printf ("gd-jpeg: gd colormap index %d: (%d, %d, %d)\n", i, im->red[i], im->green[i], im->blue[i]);
+				printf("gd-jpeg: gd colormap index %d: (%d, %d, %d)\n", i, im->red[i], im->green[i], im->blue[i]);
 			}
 		}
 	}
@@ -265,22 +303,30 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *inFile)
 {
+	return gdImageCreateFromJpegEx(inFile, 1);
+}
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx(FILE *inFile, int ignore_warning)
+{
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
 	if (in == NULL) return NULL;
-	im = gdImageCreateFromJpegCtx(in);
+	im = gdImageCreateFromJpegCtxEx(in, ignore_warning);
 	in->gd_free(in);
 	return im;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data)
 {
+	return gdImageCreateFromJpegPtrEx(size, data, 1);
+}
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx(int size, void *data, int ignore_warning)
+{
 	gdImagePtr im;
 	gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
 	if(!in) {
 		return 0;
 	}
-	im = gdImageCreateFromJpegCtx(in);
+	im = gdImageCreateFromJpegCtxEx(in, ignore_warning);
 	in->gd_free(in);
 	return im;
 }
@@ -294,6 +340,10 @@ static int CMYKToRGB(int c, int m, int y, int k, int inverted);
  * image, or NULL upon error.
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
+{
+	return gdImageCreateFromJpegCtxEx(infile, 1);
+}
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning)
 {
 	struct jpeg_decompress_struct cinfo;
 	struct jpeg_error_mgr jerr;
@@ -317,8 +367,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	memset(&cinfo, 0, sizeof(cinfo));
 	memset(&jerr, 0, sizeof(jerr));
 
+	jmpbufw.ignore_warning = ignore_warning;
+
 	cinfo.err = jpeg_std_error(&jerr);
 	cinfo.client_data = &jmpbufw;
+
+	cinfo.err->emit_message = jpeg_emit_message;
 
 	if(setjmp(jmpbufw.jmpbuf) != 0) {
 		/* we're here courtesy of longjmp */
