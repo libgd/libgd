@@ -3,7 +3,7 @@ bin_PROGRAMS = annotate gdparttopng gdtopng gd2copypal gd2topng pngtogd pngtogd2
 
 bin_SCRIPTS = bdftogd
 
-noinst_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac circletexttest testtr fontconfigtest gifanimtest gd_color_map_test
+check_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac circletexttest testtr fontconfigtest gifanimtest gd_color_map_test
 
 EXTRA_DIST = bdftogd demoin.png entities.html entities.tcl CMakeLists.txt
 
