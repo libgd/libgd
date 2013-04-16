@@ -115,6 +115,7 @@ if test "$with_zlib" != no; then
     [AC_MSG_WARN([zlib is required - see http://www.gzip.org/zlib/])
      with_zlib=no])
 fi
+AM_CONDITIONAL([HAVE_LIBZ], test "$with_zlib" = yes)
 
 dnl libpng is required
 AC_ARG_WITH(png,dnl
@@ -151,6 +152,7 @@ else
   FEATURES="GD_PNG $FEATURES"
   AC_DEFINE(HAVE_LIBPNG, 1, [Define if you have the png library.])
 fi
+AM_CONDITIONAL([HAVE_LIBPNG], test "$with_png" = yes)
 
 dnl FreeType configure tests snarfed from libwmf ..
 AC_ARG_WITH(freetype,dnl
