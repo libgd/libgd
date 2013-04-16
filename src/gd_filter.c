@@ -13,19 +13,10 @@
 #include <time.h>
 
 #ifdef NONDLL
-typedef int (*FuncPtr)(gdImagePtr, int, int);
-#else
-#  ifdef BGDWIN32
-//typedef int (__stdcall *FuncPtr)(gdImagePtr, int, int);
+#define __stdcall
+#endif
+
 typedef int (__stdcall *FuncPtr)(gdImagePtr, int, int);
-/* 
-#define BGD_DECLARE(rt) __declspec(dllexport) rt __stdcall
-*/
-#  else
-typedef int (__stdcall *FuncPtr)(gdImagePtr, int, int);
-/* #define BGD_DECLARE(rt) __declspec(dllimport) rt _stdcall */
-#  endif /* BGDWIN32 */
-#endif /* NONDLL */
 
 #define GET_PIXEL_FUNCTION(src)(src->trueColor?gdImageGetTrueColorPixel:gdImageGetPixel)
 #define MIN(a,b) ((a)<(b)?(a):(b))

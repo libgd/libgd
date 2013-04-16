@@ -39,7 +39,7 @@
 /* Define to 1 if you have the <libpng/png.h> header file. */
 #undef HAVE_LIBPNG_PNG_H
 
-/* Define if you have the vpx library. */
+/* Define if you have the TIFF library. */
 #undef HAVE_LIBTIFF
 
 /* Define if you have the vpx library. */

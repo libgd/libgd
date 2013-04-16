@@ -282,10 +282,9 @@ AC_ARG_WITH(xpm,dnl
 
 if test "$withval" != no; then
   AC_CHECK_LIB(Xpm,XpmReadFileToXpmImage,
-    [LIBS="-lXpm -lX11 $LIBS"
+    [LIBS="-lXpm $LIBS"
      FEATURES="GD_XPM $FEATURES"
-     AC_DEFINE(HAVE_LIBXPM, 1, [ Define if you have the Xpm library. ])],,
-    [-lX11])
+     AC_DEFINE(HAVE_LIBXPM, 1, [ Define if you have the Xpm library. ])])
 else
   ac_cv_lib_Xpm_XpmReadFileToXpmImage=no
 fi
@@ -311,9 +310,9 @@ else
 fi
 
 
-dnl check for libvpx by default
+dnl check for libtiff by default
 AC_ARG_WITH(tiff,dnl
-[  --with-tiff=DIR         where to find the tiff library],
+[  --with-tiff=DIR         where to find the TIFF library],
   [if test -d "$withval"; then
      LDFLAGS="$LDFLAGS -L$withval/lib"
      CFLAGS="$CFLAGS -I$withval/include"
@@ -323,8 +322,8 @@ AC_ARG_WITH(tiff,dnl
 if test "$withval" != no; then
   AC_CHECK_LIB(tiff,TIFFClientOpen,
     [LIBS="-ltiff $LIBS" 
-     FEATURES="GD_VPX $FEATURES"
-     AC_DEFINE(HAVE_LIBTIFF, 1, [ Define if you have the vpx library. ])])
+     FEATURES="GD_TIFF $FEATURES"
+     AC_DEFINE(HAVE_LIBTIFF, 1, [ Define if you have the TIFF library. ])])
 else
   ac_cv_lib_tiff_TIFFClientOpen=no
 fi
@@ -351,6 +350,7 @@ AC_MSG_RESULT([
 AC_CONFIG_FILES([Makefile
                 src/Makefile
                 config/Makefile
-                config/gdlib-config])
+                config/gdlib-config
+		config/gdlib.pc])
 
 AC_OUTPUT
