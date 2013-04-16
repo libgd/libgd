@@ -75,6 +75,8 @@ fi
 AC_HEADER_STDC
 AC_CHECK_HEADERS([errno.h limits.h stddef.h stdlib.h string.h unistd.h])
 
+dnl if we're configuring on a system w/out gettext, don't fall over
+m4_ifndef([AM_ICONV],[m4_define([AM_ICONV],[:])])
 AM_ICONV
 # if test -n "$LIBICONV" ; then
 #   LIBS="$LIBS $LIBICONV"
