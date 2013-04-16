@@ -9,7 +9,7 @@ AC_INIT([GD], [2.1.0], [https://bitbucket.org/libgd/gd-libgd/issues])
 AC_CONFIG_SRCDIR([src/gd.c])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_TARGET([])
+AC_CANONICAL_HOST
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=1
