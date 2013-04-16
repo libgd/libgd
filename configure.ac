@@ -103,10 +103,16 @@ dnl do we need to specify -lm explicitly?
 AC_CHECK_FUNC(sin,,[AC_CHECK_LIB(m,sin)])
 
 dnl zlib is required
-AC_CHECK_LIB(z,deflate,
-  [LIBS="-lz $LIBS"
-   AC_DEFINE(HAVE_LIBZ, 1, [ Define if you have zlib. ])],
-  [AC_MSG_WARN([zlib is required - see http://www.gzip.org/zlib/])])
+AC_ARG_WITH(zlib,
+[  --with-zlib=DIR         where to find the zlib library])
+if test "$with_zlib" != no; then
+  AC_CHECK_LIB(z,deflate,
+    [LIBS="-lz $LIBS"
+     AC_DEFINE(HAVE_LIBZ, 1, [Define if you have zlib.])
+     with_zlib=yes],
+    [AC_MSG_WARN([zlib is required - see http://www.gzip.org/zlib/])
+     with_zlib=no])
+fi
 
 dnl libpng is required
 AC_ARG_WITH(png,dnl
@@ -285,6 +291,7 @@ dnl report configuration
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE $VERSION:
 
+   Support for Zlib:                 $with_zlib
    Support for PNG library:          $with_png
    Support for JPEG library:         $ac_cv_lib_jpeg_jpeg_set_defaults
    Support for VPX library:          $ac_cv_lib_vpx_vpx_codec_destroy
