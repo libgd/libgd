@@ -50,6 +50,10 @@ esac
 AC_MSG_RESULT([$os_cygwin])
 AC_SUBST([XTRA_LDFLAGS])
 
+dnl newer automake wants this, but we still want to work with older
+m4_ifndef([AM_PROG_AR],[m4_define([AM_PROG_AR],[:])])
+AM_PROG_AR
+
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
