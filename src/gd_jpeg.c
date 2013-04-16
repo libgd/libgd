@@ -264,22 +264,30 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *inFile)
 {
+	return gdImageCreateFromJpegEx(inFile, 1);
+}
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *inFile, int ignore_warning)
+{
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
 	if (in == NULL) return NULL;
-	im = gdImageCreateFromJpegCtx(in);
+	im = gdImageCreateFromJpegCtxEx(in, ignore_warning);
 	in->gd_free(in);
 	return im;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data)
 {
+	return gdImageCreateFromJpegPtrEx(size, data, 1);
+}
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data, int ignore_warning)
+{
 	gdImagePtr im;
 	gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
 	if(!in) {
 		return 0;
 	}
-	im = gdImageCreateFromJpegCtx(in);
+	im = gdImageCreateFromJpegCtxEx(in, ignore_warning);
 	in->gd_free(in);
 	return im;
 }
@@ -293,6 +301,10 @@ static int CMYKToRGB(int c, int m, int y, int k, int inverted);
  * image, or NULL upon error.
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
+{
+	return gdImageCreateFromJpegCtxEx(infile, 1);
+}
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning)
 {
 	struct jpeg_decompress_struct cinfo;
 	struct jpeg_error_mgr jerr;
@@ -533,13 +545,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 		fprintf(stderr, "gd-jpeg: warning: jpeg_finish_decompress"
 		        " reports suspended data source\n");
 	}
-	/* TBB 2.0.29: we should do our best to read whatever we can read, and a
-	 * warning is a warning. A fatal error on warnings doesn't make sense. */
-#if 0
-	/* This was originally added by Truxton Fulton */
-	if (cinfo.err->num_warnings > 0)
-		goto error;
-#endif
+
+	if (!ignore_warning) {
+		if (cinfo.err->num_warnings > 0) {
+			goto error;
+		}
+	}
 
 	jpeg_destroy_decompress(&cinfo);
 	gdFree(row);
