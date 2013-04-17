@@ -9,7 +9,7 @@ AC_INIT([GD], [2.1.0], [https://bitbucket.org/libgd/gd-libgd/issues])
 AC_CONFIG_SRCDIR([src/gd.c])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_TARGET([])
+AC_CANONICAL_HOST
 
 GDLIB_MAJOR=2
 GDLIB_MINOR=1
@@ -50,13 +50,17 @@ esac
 AC_MSG_RESULT([$os_cygwin])
 AC_SUBST([XTRA_LDFLAGS])
 
+dnl newer automake wants this, but we still want to work with older
+m4_ifndef([AM_PROG_AR],[m4_define([AM_PROG_AR],[:])])
+AM_PROG_AR
+
 AC_PROG_CC
-AM_PROG_CC_STDC
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 LT_INIT
+PKG_PROG_PKG_CONFIG
 
 dnl may be required for freetype and Xpm
 AC_PATH_X
@@ -71,6 +75,8 @@ fi
 AC_HEADER_STDC
 AC_CHECK_HEADERS([errno.h limits.h stddef.h stdlib.h string.h unistd.h])
 
+dnl if we're configuring on a system w/out gettext, don't fall over
+m4_ifndef([AM_ICONV],[m4_define([AM_ICONV],[:])])
 AM_ICONV
 # if test -n "$LIBICONV" ; then
 #   LIBS="$LIBS $LIBICONV"
@@ -99,140 +105,92 @@ dnl do we need to specify -lm explicitly?
 AC_CHECK_FUNC(sin,,[AC_CHECK_LIB(m,sin)])
 
 dnl zlib is required
-AC_CHECK_LIB(z,deflate,
-  [LIBS="-lz $LIBS"
-   AC_DEFINE(HAVE_LIBZ, 1, [ Define if you have zlib. ])],
-  [AC_MSG_WARN([zlib is required - see http://www.gzip.org/zlib/])])
+AC_ARG_WITH(zlib,
+[  --with-zlib=DIR         where to find the zlib library])
+if test "$with_zlib" != no; then
+  AC_CHECK_LIB(z,deflate,
+    [LIBS="-lz $LIBS"
+     AC_DEFINE(HAVE_LIBZ, 1, [Define if you have zlib.])
+     with_zlib=yes],
+    [AC_MSG_WARN([zlib is required - see http://www.gzip.org/zlib/])
+     with_zlib=no])
+fi
+AM_CONDITIONAL([HAVE_LIBZ], test "$with_zlib" = yes)
 
 dnl libpng is required
 AC_ARG_WITH(png,dnl
-[  --with-png=DIR          where to find the png library],,
-  withval=yes)
+[  --with-png=DIR          where to find the png library])
 
-# libpng12.so is a nightmare. We have to test separately for
-# libpng12-config and libpng-config. If we find libpng12-config,
-# we don't look for the other, which will just be a symlink to it,
-# confusing autoconf into thinking the library itself will be named -lpng,
-# which it won't be. Awful. This code will suffice unless the libpng
-# authors decide to do this AGAIN. Which I really hope they won't. TBB
-
-if test "$withval" != no; then
-  if test -d "$withval"; then
-    if test -e "$withval/bin/libpng12-config"; then
-      LIBPNG12_CONFIG="$withval/bin/libpng12-config"
+case $with_png in
+no) ;;
+yes|"")
+  PKG_CHECK_MODULES([LIBPNG], libpng, [
+    with_png=yes
+  ],[
+    if test "$with_png" = yes; then
+      AC_MSG_ERROR([png support requested, but not found])
     fi
-    if test -e "$withval/bin/libpng-config"; then
-      LIBPNG_CONFIG="$withval/bin/libpng-config"
-    fi
+    with_png=no
+  ])
+  ;;
+*)
+  LIBPNG_CONFIG=$with_png/bin/libpng-config
+  if test -e "$LIBPNG_CONFIG"; then
+    LIBPNG_CFLAGS=`$LIBPNG_CONFIG --cflags`
+    LIBPNG_LIBS=`$LIBPNG_CONFIG --libs`
+    with_png=yes
   else
-      AC_PATH_PROG([LIBPNG12_CONFIG], [libpng12-config])
-      AC_PATH_PROG([LIBPNG_CONFIG], [libpng-config])
+    AC_MSG_ERROR([png support requested, but not found: $LIBPNG_CONFIG])
   fi
-
-  if test -n "$LIBPNG12_CONFIG"; then
-    libpng_CFLAGS=`$LIBPNG12_CONFIG --cflags`
-    # should be --ldopts, but it's currently broken
-    libpng_LDFLAGS=`$LIBPNG12_CONFIG --ldflags`
-    libpng_LDFLAGS=`echo " $libpng_LDFLAGS" | sed 's/ -l[[^ ]][[^ ]]*//g'`
-  elif test -n "$LIBPNG_CONFIG"; then
-    libpng_CFLAGS=`$LIBPNG_CONFIG --cflags`
-    # should be --ldopts, but it's currently broken
-    libpng_LDFLAGS=`$LIBPNG_CONFIG --ldflags`
-    libpng_LDFLAGS=`echo " $libpng_LDFLAGS" | sed 's/ -l[[^ ]][[^ ]]*//g'`
-  fi
-
-  AC_CHECK_HEADERS(png.h,,
-    [AC_CHECK_HEADERS(libpng/png.h,
-       [CFLAGS="$CFLAGS $libpng_CFLAGS/libpng"],
-       [CFLAGS="$_cppflags"])])
-
-  _ldflags="$LDFLAGS"
-  LDFLAGS="$libpng_LDFLAGS $LDFLAGS"
-
-  #TBB: png12's png_create_read_struct is just as good 
-  if test -n "$LIBPNG12_CONFIG"; then
-    AC_CHECK_LIB(png12,png_create_read_struct,
-      [LIBS="-lpng12 $LIBS"
-       FEATURES="GD_PNG $FEATURES"
-       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])])
-  fi
-  # could be reached here in some case like the FreeBSD port of libpng;
-  # libpng12-config but '-lpng' (not '-lpng12').
-  #2.0.23: should be = not ==  
-  if test "$ac_cv_lib_png12_png_create_read_struct" = yes; then
-    ac_cv_lib_png_png_create_read_struct=yes
-  else
-    AC_CHECK_LIB(png,png_create_read_struct,
-      [LIBS="-lpng $LIBS" 
-       FEATURES="GD_PNG $FEATURES"
-       AC_DEFINE(HAVE_LIBPNG, 1, [ Define if you have the png library. ])],
-      [LDFLAGS="$_ldflags"])
-  fi
+  ;;
+esac
+if test "$with_png" = no; then
+  AC_MSG_WARN([libpng is required for PNG files - see http://www.libpng.org/pub/png/])
 else
-  ac_cv_lib_png_png_create_read_struct=no
+  CPPFLAGS="$CPPFLAGS $LIBPNG_CFLAGS"
+  LIBS="$LIBS $LIBPNG_LIBS"
+  FEATURES="GD_PNG $FEATURES"
+  AC_DEFINE(HAVE_LIBPNG, 1, [Define if you have the png library.])
 fi
-
-if test "$ac_cv_lib_png_png_create_read_struct" != yes; then
-  AC_MSG_WARN([libpng is required - see http://www.libpng.org/pub/png/])
-fi
+AM_CONDITIONAL([HAVE_LIBPNG], test "$with_png" = yes)
 
 dnl FreeType configure tests snarfed from libwmf ..
 AC_ARG_WITH(freetype,dnl
-[  --with-freetype=DIR     where to find the freetype 2.x library],
-  [if test "$withval" != no; then
-     if test "$withval" != yes; then
-       FREETYPE_DIR=$withval
-     fi
-   fi])
+[  --with-freetype=DIR     where to find the freetype 2.x library]])
 
-if test "$withval" != no; then
-
-  if test -n "$FREETYPE_DIR"; then
-    AC_PATH_PROG(FREETYPE_CONFIG,freetype-config,,[$FREETYPE_DIR/bin:$PATH])
-  else
-    AC_PATH_PROG(FREETYPE_CONFIG,freetype-config)
-  fi
-
-  if test -n "$FREETYPE_CONFIG"; then
-    if test -n "$FREETYPE_DIR"; then
-      libft_INCLUDES="`$FREETYPE_CONFIG --cflags` -I$FREETYPE_DIR/include"
-    else
-      libft_INCLUDES=`$FREETYPE_CONFIG --cflags`
+case $with_freetype in
+no) ;;
+yes|"")
+  dnl All freetype2 versions are numerically much larger than the actual
+  dnl version number you see in the tarball.  This is because the number
+  dnl corresponds to the shared library version rather than the release.
+  dnl 9.8.3 is the version that freetype2-2.1.10 used.
+  PKG_CHECK_MODULES([LIBFREETYPE], [freetype2 >= 9.8.3], [
+    with_freetype=yes
+  ],[
+    if test "$with_freetype" = yes; then
+      AC_MSG_ERROR([freetype support requested, but not found])
     fi
-    libft_LDFLAGS=`$FREETYPE_CONFIG --libs`
-    libft_LDFLAGS=`echo " $libft_LDFLAGS" |sed 's/ -l[[^ ]][[^ ]]*//g'`
+    with_freetype=no
+  ])
+  ;;
+*)
+  FREETYPE_CONFIG=$with_freetype/bin/freetype-config
+  if test -e "$FREETYPE_CONFIG"; then
+    LIBFREETYPE_CFLAGS=`$FREETYPE_CONFIG --cflags`
+    LIBFREETYPE_LIBS=`$FREETYPE_CONFIG --libs`
+    with_freetype=yes
   else
-    if test -n "$FREETYPE_DIR"; then
-      libft_INCLUDES="-I$FREETYPE_DIR/include/freetype2 -I$FREETYPE_DIR/include"
-      libft_LDFLAGS="-L$FREETYPE_DIR/lib"
-    else
-      libft_INCLUDES=""
-      libft_LDFLAGS=""
-    fi
+    AC_MSG_ERROR([freetype support requested, but not found: $FREETYPE_CONFIG])
   fi
-
-  _cppflags="$CFLAGS"
-  _ldflags="$LDFLAGS"
-  CFLAGS="$libft_INCLUDES $CFLAGS"
-  LDFLAGS="$libft_LDFLAGS $LDFLAGS"
-  SAVE_FEATURES=$FEATURES
-  AC_CHECK_LIB(freetype,FT_Init_FreeType,
-    [LIBS="-lfreetype $LIBS" 
-     FEATURES="GD_FREETYPE $FEATURES"
-     AC_DEFINE(HAVE_LIBFREETYPE, 1, [ Define if you have the freetype library. ])],
-    [LDFLAGS="$_ldflags"
-     AC_MSG_WARN([not found - disabling freetype support])
-     FEATURES=$SAVE_FEATURES])
-
-  #TBB: 2.0.26: newer gd versions require ft2build.h
-  AC_CHECK_HEADERS(ft2build.h,,
-      [AC_MSG_RESULT([no])
-      FEATURES=$SAVE_FEATURES
-      ac_cv_lib_freetype_FT_Init_FreeType=no
-      CFLAGS="$_cppflags"])
-
-else
-  ac_cv_lib_freetype_FT_Init_FreeType=no
+  ;;
+esac
+if test "$with_freetype" = yes; then
+  CPPFLAGS="$CPPFLAGS $LIBFREETYPE_CFLAGS"
+  LIBS="$LIBS $LIBFREETYPE_LIBS"
+  FEATURES="GD_FREETYPE $FEATURES"
+  AC_DEFINE(HAVE_LIBFREETYPE, 1, [Define if you have the freetype library.])
+  AC_DEFINE(HAVE_FT2BUILD_H, 1, [Define if you have the ft2build.h header.])
 fi
 
 dnl check for libfontconfig by default
@@ -337,11 +295,12 @@ dnl report configuration
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE $VERSION:
 
-   Support for PNG library:          $ac_cv_lib_png_png_create_read_struct
+   Support for Zlib:                 $with_zlib
+   Support for PNG library:          $with_png
    Support for JPEG library:         $ac_cv_lib_jpeg_jpeg_set_defaults
    Support for VPX library:          $ac_cv_lib_vpx_vpx_codec_destroy
    Support for TIFF library:         $ac_cv_lib_tiff_TIFFClientOpen
-   Support for Freetype 2.x library: $ac_cv_lib_freetype_FT_Init_FreeType
+   Support for Freetype 2.x library: $with_freetype
    Support for Fontconfig library:   $ac_cv_lib_fontconfig_FcInit
    Support for Xpm library:          $ac_cv_lib_Xpm_XpmReadFileToXpmImage
    Support for pthreads:             $ax_pthread_ok
