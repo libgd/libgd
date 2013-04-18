@@ -528,7 +528,7 @@ any2eucjp (unsigned char *dest, unsigned char *src, unsigned int dest_max)
 		return -1;
 	}
 	if (dest_max > BUFSIZ) {
-		error
+		gd_error
 		("invalid maximum size of destination\nit should be less than %d.",
 		 BUFSIZ);
 		return -1;
