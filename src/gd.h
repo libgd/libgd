@@ -441,6 +441,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartPtr (int size, void *data, int s
 						     int w, int h);
 /* 2.0.10: prototype was missing */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm (FILE * in);
+BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOCtx * out);
 
 /* NOTE: filename, not FILE */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm (char *filename);
