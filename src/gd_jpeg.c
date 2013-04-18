@@ -164,12 +164,12 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	char comment[255];
 
 #ifdef JPEG_DEBUG
-	printf("gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
-	printf("gd-jpeg: JPEG library version %d, %d-bit sample values\n", JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
+	gd_error_ex(E_DEBUG, "gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
+	gd_error_ex(E_DEBUG, "gd-jpeg: JPEG library version %d, %d-bit sample values\n", JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
 	if (!im->trueColor) {
 		for(i = 0; i < im->colorsTotal; i++) {
 			if(!im->open[i]) {
-				printf("gd-jpeg: gd colormap index %d: (%d, %d, %d)\n", i, im->red[i], im->green[i], im->blue[i]);
+				gd_error_ex(E_DEBUG, "gd-jpeg: gd colormap index %d: (%d, %d, %d)\n", i, im->red[i], im->green[i], im->blue[i]);
 			}
 		}
 	}
@@ -211,7 +211,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	/* If user requests interlace, translate that to progressive JPEG */
 	if(gdImageGetInterlaced(im)) {
 #ifdef JPEG_DEBUG
-		printf("gd-jpeg: interlace set, outputting progressive JPEG image\n");
+		gd_error_ex(E_DEBUG, "gd-jpeg: interlace set, outputting progressive JPEG image\n");
 #endif
 		jpeg_simple_progression(&cinfo);
 	}
@@ -359,9 +359,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 	int inverted = 0;
 
 #ifdef JPEG_DEBUG
-	printf("gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
-	printf("gd-jpeg: JPEG library version %d, %d-bit sample values\n", JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
-	printf("sizeof: %d\n", sizeof(struct jpeg_decompress_struct));
+	gd_error_ex(E_DEBUG, "gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
+	gd_error_ex(E_DEBUG, "gd-jpeg: JPEG library version %d, %d-bit sample values\n", JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
+	gd_error_ex(E_DEBUG, "sizeof: %d\n", sizeof(struct jpeg_decompress_struct));
 #endif
 
 	memset(&cinfo, 0, sizeof(cinfo));
@@ -448,49 +448,49 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 	}
 
 #ifdef JPEG_DEBUG
-	printf("gd-jpeg: JPEG image information:");
+	gd_error_ex(E_DEBUG, "gd-jpeg: JPEG image information:");
 	if(cinfo.saw_JFIF_marker) {
-		printf(" JFIF version %d.%.2d", (int)cinfo.JFIF_major_version, (int)cinfo.JFIF_minor_version);
+		gd_error_ex(E_DEBUG, " JFIF version %d.%.2d", (int)cinfo.JFIF_major_version, (int)cinfo.JFIF_minor_version);
 	} else if(cinfo.saw_Adobe_marker) {
-		printf(" Adobe format");
+		gd_error_ex(E_DEBUG, " Adobe format");
 	} else {
-		printf(" UNKNOWN format");
+		gd_error_ex(E_DEBUG, " UNKNOWN format");
 	}
 
-	printf(" %ux%u (raw) / %ux%u (scaled) %d-bit", cinfo.image_width,
-	       cinfo.image_height, cinfo.output_width,
-	       cinfo.output_height, cinfo.data_precision
-	      );
-	printf(" %s", (cinfo.progressive_mode ? "progressive" : "baseline"));
-	printf(" image, %d quantized colors, ", cinfo.actual_number_of_colors);
+	gd_error_ex(E_DEBUG, " %ux%u (raw) / %ux%u (scaled) %d-bit", cinfo.image_width,
+		    cinfo.image_height, cinfo.output_width,
+		    cinfo.output_height, cinfo.data_precision
+		);
+	gd_error_ex(E_DEBUG, " %s", (cinfo.progressive_mode ? "progressive" : "baseline"));
+	gd_error_ex(E_DEBUG, " image, %d quantized colors, ", cinfo.actual_number_of_colors);
 
 	switch(cinfo.jpeg_color_space) {
 	case JCS_GRAYSCALE:
-		printf("grayscale");
+		gd_error_ex(E_DEBUG, "grayscale");
 		break;
 
 	case JCS_RGB:
-		printf("RGB");
+		gd_error_ex(E_DEBUG, "RGB");
 		break;
 
 	case JCS_YCbCr:
-		printf("YCbCr (a.k.a. YUV)");
+		gd_error_ex(E_DEBUG, "YCbCr (a.k.a. YUV)");
 		break;
 
 	case JCS_CMYK:
-		printf("CMYK");
+		gd_error_ex(E_DEBUG, "CMYK");
 		break;
 
 	case JCS_YCCK:
-		printf("YCbCrK");
+		gd_error_ex(E_DEBUG, "YCbCrK");
 		break;
 
 	default:
-		printf("UNKNOWN (value: %d)", (int)cinfo.jpeg_color_space);
+		gd_error_ex(E_DEBUG, "UNKNOWN (value: %d)", (int)cinfo.jpeg_color_space);
 		break;
 	}
 
-	printf(" colorspace\n");
+	gd_error_ex(E_DEBUG, " colorspace\n");
 	fflush(stdout);
 #endif /* JPEG_DEBUG */
 
