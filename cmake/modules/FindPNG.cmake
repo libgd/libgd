@@ -1,63 +1,75 @@
 # - Find the native PNG includes and library
 #
-
-# This module defines
-#  PNG_INCLUDE_DIR, where to find png.h, etc.
-#  PNG_LIBRARIES, the libraries to link against to use PNG.
-#  PNG_DEFINITIONS - You should ADD_DEFINITONS(${PNG_DEFINITIONS}) before compiling code that includes png library files.
-#  PNG_FOUND, If false, do not try to use PNG.
-# also defined, but not for general use are
-#  PNG_LIBRARY, where to find the PNG library.
-# None of the above will be defined unles zlib can be found.
-# PNG depends on Zlib
+# This module searches libpng, the library for working with PNG images.
 #
-# Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
-# See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
+# It defines the following variables
+#  PNG_INCLUDE_DIRS, where to find png.h, etc.
+#  PNG_LIBRARIES, the libraries to link against to use PNG.
+#  PNG_DEFINITIONS - You should add_definitons(${PNG_DEFINITIONS}) before compiling code that includes png library files.
+#  PNG_FOUND, If false, do not try to use PNG.
+#  PNG_VERSION_STRING - the version of the PNG library found (since CMake 2.8.8)
+# Also defined, but not for general use are
+#  PNG_LIBRARY, where to find the PNG library.
+# For backward compatiblity the variable PNG_INCLUDE_DIR is also set. It has the same value as PNG_INCLUDE_DIRS.
+#
+# Since PNG depends on the ZLib compression library, none of the above will be
+# defined unless ZLib can be found.
 
+#=============================================================================
+# Copyright 2002-2009 Kitware, Inc.
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
+# (To distribute this file outside of CMake, substitute the full
+#  License text for the above reference.)
 
-INCLUDE(FindZLIB)
+if(PNG_FIND_QUIETLY)
+  set(_FIND_ZLIB_ARG QUIET)
+endif()
+find_package(ZLIB ${_FIND_ZLIB_ARG})
 
-SET(PNG_FOUND "NO")
-
-IF(ZLIB_FOUND)
-  FIND_PATH(PNG_PNG_INCLUDE_DIR png.h
-  /usr/local/include
-  /usr/include
+if(ZLIB_FOUND)
+  find_path(PNG_PNG_INCLUDE_DIR png.h
   /usr/local/include/libpng             # OpenBSD
   )
 
-  SET(PNG_NAMES ${PNG_NAMES} png libpng)
-  FIND_LIBRARY(PNG_LIBRARY
-    NAMES ${PNG_NAMES}
-    PATHS /usr/lib64 /usr/lib /usr/local/lib
-  )
+  set(PNG_NAMES ${PNG_NAMES} png libpng png15 libpng15 png15d libpng15d png14 libpng14 png14d libpng14d png12 libpng12 png12d libpng12d libpng_a)
+  find_library(PNG_LIBRARY NAMES ${PNG_NAMES} )
 
-  IF (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
+  if (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
       # png.h includes zlib.h. Sigh.
-      SET(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR} )
-      SET(PNG_LIBRARIES ${PNG_LIBRARY} ${ZLIB_LIBRARY})
-      SET(PNG_FOUND "YES")
-			SET(HAVE_PNG_H)
-      IF (CYGWIN)
-        IF(BUILD_SHARED_LIBS)
+      set(PNG_INCLUDE_DIRS ${PNG_PNG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR} )
+      set(PNG_INCLUDE_DIR ${PNG_INCLUDE_DIRS} ) # for backward compatiblity
+      set(PNG_LIBRARIES ${PNG_LIBRARY} ${ZLIB_LIBRARY})
+
+      if (CYGWIN)
+        if(BUILD_SHARED_LIBS)
            # No need to define PNG_USE_DLL here, because it's default for Cygwin.
-        ELSE(BUILD_SHARED_LIBS)
-          SET (PNG_DEFINITIONS -DPNG_STATIC)
-        ENDIF(BUILD_SHARED_LIBS)
-      ENDIF (CYGWIN)
+        else()
+          set (PNG_DEFINITIONS -DPNG_STATIC)
+        endif()
+      endif ()
 
-  ENDIF (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
+  endif ()
 
-ENDIF(ZLIB_FOUND)
+  if (PNG_PNG_INCLUDE_DIR AND EXISTS "${PNG_PNG_INCLUDE_DIR}/png.h")
+      file(STRINGS "${PNG_PNG_INCLUDE_DIR}/png.h" png_version_str REGEX "^#define[ \t]+PNG_LIBPNG_VER_STRING[ \t]+\".+\"")
 
-IF (PNG_FOUND)
-  IF (NOT PNG_FIND_QUIETLY)
-    MESSAGE(STATUS "Found PNG: ${PNG_LIBRARY}")
-  ENDIF (NOT PNG_FIND_QUIETLY)
-ELSE (PNG_FOUND)
-  IF (PNG_FIND_REQUIRED)
-    MESSAGE(FATAL_ERROR "Could not find PNG library")
-  ENDIF (PNG_FIND_REQUIRED)
-ENDIF (PNG_FOUND)
+      string(REGEX REPLACE "^#define[ \t]+PNG_LIBPNG_VER_STRING[ \t]+\"([^\"]+)\".*" "\\1" PNG_VERSION_STRING "${png_version_str}")
+      unset(png_version_str)
+  endif ()
+endif()
 
-MARK_AS_ADVANCED(PNG_PNG_INCLUDE_DIR PNG_LIBRARY )
+# handle the QUIETLY and REQUIRED arguments and set PNG_FOUND to TRUE if
+# all listed variables are TRUE
+include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
+find_package_handle_standard_args(PNG
+                                  REQUIRED_VARS PNG_LIBRARY PNG_PNG_INCLUDE_DIR
+                                  VERSION_VAR PNG_VERSION_STRING)
+
+mark_as_advanced(PNG_PNG_INCLUDE_DIR PNG_LIBRARY )
