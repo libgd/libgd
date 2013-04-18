@@ -109,6 +109,10 @@ extern "C" {
 #define gdTrueColorGetRed(c) (((c) & 0xFF0000) >> 16)
 #define gdTrueColorGetGreen(c) (((c) & 0x00FF00) >> 8)
 #define gdTrueColorGetBlue(c) ((c) & 0x0000FF)
+#define gdEffectReplace 0
+#define gdEffectAlphaBlend 1
+#define gdEffectNormal 2
+#define gdEffectOverlay 3
 
 #define GD_TRUE 1
 #define GD_FALSE 0
