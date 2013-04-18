@@ -677,6 +677,12 @@ BGD_DECLARE(int) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
 
 BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src);
 
+/* An attempt at getting the results of gdImageTrueColorToPalette to
+ * look a bit more like the original (im1 is the original and im2 is
+ * the palette version */
+
+BGD_DECLARE(int) gdImageColorMatch(gdImagePtr im1, gdImagePtr im2);
+
 /* Selects quantization method used for subsequent gdImageTrueColorToPalette calls.
    See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT, GD_QUANT_LIQ).
    Speed is from 1 (highest quality) to 10 (fastest).
