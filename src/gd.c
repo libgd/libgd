@@ -71,9 +71,9 @@ extern const int gdSinT[];
 
 void gd_stderr_error(int priority, const char *format, ...)
 {
-		va_list args;
+	va_list args;
 
-		va_start(args, format);
+	va_start(args, format);
 	switch (priority) {
 	case GD_ERROR:
 		fputs("GD Error: ", stderr);
@@ -101,21 +101,21 @@ static gdErrorMethod gd_error_method = gd_stderr_error;
 
 void gd_error(const char *format, ...)
 {
-		va_list args;
+	va_list args;
 
-		va_start(args, format);
-		gd_error_ex(GD_WARNING, format, args);
-		va_end(args);
+	va_start(args, format);
+	gd_error_ex(GD_WARNING, format, args);
+	va_end(args);
 }
 void gd_error_ex(int priority, const char *format, ...)
 {
-		va_list args;
+	va_list args;
 
-		va_start(args, format);
-		if (gd_error_method) {
-			gd_error_method(priority, format, args);
-		}
-		va_end(args);
+	va_start(args, format);
+	if (gd_error_method) {
+		gd_error_method(priority, format, args);
+	}
+	va_end(args);
 }
 
 BGD_DECLARE(void) gdSetErrorMethod(gdErrorMethod error_method)
