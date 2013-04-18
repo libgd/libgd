@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	(void)argv;
 
 	/* 2.0.12 */
-	fprintf (stderr, "annotate is not useful without freetype.\n"
+	fprintf(stderr, "annotate is not useful without freetype.\n"
 	         "Install freetype, then './configure; make clean; make install'\n"
 	         "the gd library again.\n"
 	        );

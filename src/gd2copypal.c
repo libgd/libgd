@@ -19,30 +19,30 @@ main (int argc, char **argv)
 	gdImagePtr pal;
 	FILE *in, *out;
 	if (argc != 3) {
-		fprintf (stderr, "Usage: gd2copypal palettefile.gd2 filename.gd2\n");
+		fprintf(stderr, "Usage: gd2copypal palettefile.gd2 filename.gd2\n");
 		exit (1);
 	}
 	in = fopen (argv[1], "rb");
 	if (!in) {
-		fprintf (stderr, "Palette file does not exist!\n");
+		fprintf(stderr, "Palette file does not exist!\n");
 		exit (1);
 	}
 	pal = gdImageCreateFromGd2 (in);
 	fclose (in);
 	if (!pal) {
-		fprintf (stderr, "Palette is not in GD2 format!\n");
+		fprintf(stderr, "Palette is not in GD2 format!\n");
 		exit (1);
 	}
 
 	in = fopen (argv[2], "rb");
 	if (!in) {
-		fprintf (stderr, "Input file does not exist!\n");
+		fprintf(stderr, "Input file does not exist!\n");
 		exit (1);
 	}
 	im = gdImageCreateFromGd2 (in);
 	fclose (in);
 	if (!im) {
-		fprintf (stderr, "Input is not in GD2 format!\n");
+		fprintf(stderr, "Input is not in GD2 format!\n");
 		exit (1);
 	}
 
@@ -50,7 +50,7 @@ main (int argc, char **argv)
 
 	out = fopen (argv[2], "wb");
 	if (!out) {
-		fprintf (stderr, "Output file cannot be written to!\n");
+		fprintf(stderr, "Output file cannot be written to!\n");
 		gdImageDestroy (im);
 		exit (1);
 	}

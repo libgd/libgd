@@ -20,30 +20,30 @@ main (int argc, char **argv)
 	int cs, fmt;
 
 	if (argc != 5) {
-		fprintf (stderr, "Usage: pngtogd2 filename.png filename.gd2 cs fmt\n");
-		fprintf (stderr, "    where cs is the chunk size\n");
-		fprintf (stderr, "          fmt is 1 for raw, 2 for compressed\n");
+		fprintf(stderr, "Usage: pngtogd2 filename.png filename.gd2 cs fmt\n");
+		fprintf(stderr, "    where cs is the chunk size\n");
+		fprintf(stderr, "          fmt is 1 for raw, 2 for compressed\n");
 		exit (1);
 	}
 	in = fopen (argv[1], "rb");
 	if (!in) {
-		fprintf (stderr, "Input file does not exist!\n");
+		fprintf(stderr, "Input file does not exist!\n");
 		exit (1);
 	}
 #ifdef HAVE_LIBPNG
 	im = gdImageCreateFromPng (in);
 #else
 	im = NULL;
-	fprintf (stderr, "No PNG library support available.\n");
+	fprintf(stderr, "No PNG library support available.\n");
 #endif
 	fclose (in);
 	if (!im) {
-		fprintf (stderr, "Input is not in PNG format!\n");
+		fprintf(stderr, "Input is not in PNG format!\n");
 		exit (1);
 	}
 	out = fopen (argv[2], "wb");
 	if (!out) {
-		fprintf (stderr, "Output file cannot be written to!\n");
+		fprintf(stderr, "Output file cannot be written to!\n");
 		gdImageDestroy (im);
 		exit (1);
 	}

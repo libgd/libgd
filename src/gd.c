@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -13,6 +14,7 @@
 #include "gd.h"
 #include "gdhelpers.h"
 #include "gd_color.h"
+#include "gd_errors.h"
 
 /* 2.0.12: this now checks the clipping rectangle */
 #define gdImageBoundsSafeMacro(im, x, y) (!((((y) < (im)->cy1) || ((y) > (im)->cy2)) || (((x) < (im)->cx1) || ((x) > (im)->cx2))))
@@ -66,6 +68,65 @@ static const unsigned char gd_toascii[256] = {
 
 extern const int gdCosT[];
 extern const int gdSinT[];
+
+void gd_stderr_error(int priority, const char *format, ...)
+{
+        va_list args;
+
+        va_start(args, format);
+	switch (priority) {
+	case GD_ERROR:
+		fputs("GD Error: ", stderr);
+		break;
+	case GD_WARNING:
+		fputs("GD Warning: ", stderr);
+		break;
+	case GD_NOTICE:
+		fputs("GD Notice: ", stderr);
+		break;
+	case GD_INFO:
+		fputs("GD Info: ", stderr);
+		break;
+	case GD_DEBUG:
+		fputs("GD Debug: ", stderr);
+		break;
+	}
+	va_start(args, format);
+	fprintf(stderr, format, args);
+	va_end(args);
+	fflush(stderr);
+}
+
+static gdErrorMethod gd_error_method = gd_stderr_error;
+
+void gd_error(const char *format, ...)
+{
+        va_list args;
+
+        va_start(args, format);
+	gd_error_ex(GD_WARNING, format, args);
+        va_end(args);
+}
+void gd_error_ex(int priority, const char *format, ...)
+{
+        va_list args;
+
+        va_start(args, format);
+	if (gd_error_method) {
+		gd_error_method(priority, format, args);
+	}
+        va_end(args);
+}
+
+BGD_DECLARE(void) gdSetErrorMethod(gdErrorMethod error_method)
+{
+	gd_error_method = error_method;
+}
+
+BGD_DECLARE(void) gdClearErrorMethod(void)
+{
+	gd_error_method = gd_stderr_error;
+}
 
 static void gdImageBrushApply (gdImagePtr im, int x, int y);
 static void gdImageTileApply (gdImagePtr im, int x, int y);
@@ -2840,7 +2901,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm (FILE * fd)
 		}
 	}
 	/* Shouldn't happen */
-	fprintf (stderr, "Error: bug in gdImageCreateFromXbm!\n");
+	gd_error("Error: bug in gdImageCreateFromXbm!\n");
 fail:
 	gdImageDestroy (im);
 	return 0;

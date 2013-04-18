@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -37,12 +36,12 @@ main (int argc, char **argv)
 	int foreground;
 	int i;
 	if (argc != 2) {
-		fprintf (stderr, "Usage: gdtest filename.png\n");
+		fprintf(stderr, "Usage: gdtest filename.png\n");
 		exit (1);
 	}
 	in = fopen (argv[1], "rb");
 	if (!in) {
-		fprintf (stderr, "Input file does not exist!\n");
+		fprintf(stderr, "Input file does not exist!\n");
 		exit (1);
 	}
 	im = gdImageCreateFromPng (in);
@@ -71,7 +70,7 @@ main (int argc, char **argv)
 
 	in = fopen (of, "rb");
 	if (!in) {
-		fprintf (stderr, "PNG Output file does not exist!\n");
+		fprintf(stderr, "PNG Output file does not exist!\n");
 		exit (1);
 	}
 	im2 = gdImageCreateFromPng (in);
@@ -104,7 +103,7 @@ main (int argc, char **argv)
 
 	in = fopen (of, "rb");
 	if (!in) {
-		fprintf (stderr, "GD2 Output file does not exist!\n");
+		fprintf(stderr, "GD2 Output file does not exist!\n");
 		exit (1);
 	}
 	im2 = gdImageCreateFromGd2 (in);
@@ -139,7 +138,7 @@ main (int argc, char **argv)
 
 	in = fopen (of, "rb");
 	if (!in) {
-		fprintf (stderr, "GD Output file does not exist!\n");
+		fprintf(stderr, "GD Output file does not exist!\n");
 		exit (1);
 	}
 	im2 = gdImageCreateFromGd (in);
@@ -212,7 +211,7 @@ main (int argc, char **argv)
 	/* */
 	in = fopen ("test/gdtest_200_300_150_100.png", "rb");
 	if (!in) {
-		fprintf (stderr, "gdtest_200_300_150_100.png does not exist!\n");
+		fprintf(stderr, "gdtest_200_300_150_100.png does not exist!\n");
 		exit (1);
 	}
 	im2 = gdImageCreateFromPng (in);
@@ -221,7 +220,7 @@ main (int argc, char **argv)
 
 	in = fopen ("test/gdtest.gd2", "rb");
 	if (!in) {
-		fprintf (stderr, "gdtest.gd2 does not exist!\n");
+		fprintf(stderr, "gdtest.gd2 does not exist!\n");
 		exit (1);
 	}
 	im3 = gdImageCreateFromGd2Part (in, 200, 300, 150, 100);
@@ -238,7 +237,7 @@ main (int argc, char **argv)
 	/* */
 	in = fopen ("test/gdtest.png", "rb");
 	if (!in) {
-		fprintf (stderr, "gdtest.png does not exist!\n");
+		fprintf(stderr, "gdtest.png does not exist!\n");
 		exit (1);
 	}
 	im2 = gdImageCreateFromPng (in);
@@ -260,7 +259,7 @@ main (int argc, char **argv)
 
 	in = fopen ("test/gdtest_merge.png", "rb");
 	if (!in) {
-		fprintf (stderr, "gdtest_merge.png does not exist!\n");
+		fprintf(stderr, "gdtest_merge.png does not exist!\n");
 		exit (1);
 	}
 	im3 = gdImageCreateFromPng (in);
@@ -275,20 +274,20 @@ main (int argc, char **argv)
 #ifdef HAVE_LIBJPEG
 	out = fopen ("test/gdtest.jpg", "wb");
 	if (!out) {
-		fprintf (stderr, "Can't create file test/gdtest.jpg.\n");
+		fprintf(stderr, "Can't create file test/gdtest.jpg.\n");
 		exit (1);
 	}
 	gdImageJpeg (im, out, -1);
 	fclose (out);
 	in = fopen ("test/gdtest.jpg", "rb");
 	if (!in) {
-		fprintf (stderr, "Can't open file test/gdtest.jpg.\n");
+		fprintf(stderr, "Can't open file test/gdtest.jpg.\n");
 		exit (1);
 	}
 	im2 = gdImageCreateFromJpeg (in);
 	fclose (in);
 	if (!im2) {
-		fprintf (stderr, "gdImageCreateFromJpeg failed.\n");
+		fprintf(stderr, "gdImageCreateFromJpeg failed.\n");
 		exit (1);
 	}
 	gdImageDestroy (im2);
@@ -302,33 +301,33 @@ main (int argc, char **argv)
 	         "NOTE: the WBMP output image will NOT match the original unless the original\n"
 	         "is also black and white. This is OK!\n");
 	foreground = gdImageColorClosest (im, 0, 0, 0);
-	fprintf (stderr, "Foreground index is %d\n", foreground);
+	fprintf(stderr, "Foreground index is %d\n", foreground);
 	if (foreground == -1) {
-		fprintf (stderr, "Source image has no colors, skipping wbmp test.\n");
+		fprintf(stderr, "Source image has no colors, skipping wbmp test.\n");
 	} else {
 		out = fopen ("test/gdtest.wbmp", "wb");
 		if (!out) {
-			fprintf (stderr, "Can't create file test/gdtest.wbmp.\n");
+			fprintf(stderr, "Can't create file test/gdtest.wbmp.\n");
 			exit (1);
 		}
 		gdImageWBMP (im, foreground, out);
 		fclose (out);
 		in = fopen ("test/gdtest.wbmp", "rb");
 		if (!in) {
-			fprintf (stderr, "Can't open file test/gdtest.wbmp.\n");
+			fprintf(stderr, "Can't open file test/gdtest.wbmp.\n");
 			exit (1);
 		}
 		im2 = gdImageCreateFromWBMP (in);
-		fprintf (stderr, "WBMP has %d colors\n", gdImageColorsTotal (im2));
-		fprintf (stderr, "WBMP colors are:\n");
+		fprintf(stderr, "WBMP has %d colors\n", gdImageColorsTotal (im2));
+		fprintf(stderr, "WBMP colors are:\n");
 		for (i = 0; (i < gdImageColorsTotal (im2)); i++) {
-			fprintf (stderr, "%02X%02X%02X\n",
+			fprintf(stderr, "%02X%02X%02X\n",
 			         gdImageRed (im2, i),
 			         gdImageGreen (im2, i), gdImageBlue (im2, i));
 		}
 		fclose (in);
 		if (!im2) {
-			fprintf (stderr, "gdImageCreateFromWBMP failed.\n");
+			fprintf(stderr, "gdImageCreateFromWBMP failed.\n");
 			exit (1);
 		}
 		CompareImages ("WBMP test (gdtest.png, gdtest.wbmp)", ref, im2);
@@ -345,7 +344,7 @@ main (int argc, char **argv)
 	gdImageDestroy (im);
 	gdImageDestroy (ref);
 #else
-	fprintf (stderr, "No PNG library support.\n");
+	fprintf(stderr, "No PNG library support.\n");
 #endif /* HAVE_LIBPNG */
 
 	return 0;

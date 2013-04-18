@@ -495,10 +495,6 @@ fontFetch (char **error, void *key)
 		return NULL;
 	}
 
-#if 0
-	fprintf(stderr,"fontpathname=%s\n",fullname);
-#endif
-
 	err = FT_New_Face(*b->library, a->fontpath, 0, &a->face);
 
 	/* Read kerning metrics for Postscript fonts. */
@@ -1033,10 +1029,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	} else {
 		next = string;
 	}
-#endif
-
-#if 0
-	fprintf(stderr,"dpi=%d,%d metric_res=%d ptsize=%g\n",hdpi,vdpi,METRIC_RES,ptsize);
 #endif
 
 	oldpenf.x = oldpenf.y = 0; /* for postscript xshow operator */

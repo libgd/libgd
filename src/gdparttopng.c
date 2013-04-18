@@ -26,7 +26,7 @@ main (int argc, char **argv)
 	}
 	in = fopen (argv[1], "rb");
 	if (!in) {
-		fprintf (stderr, "Input file does not exist!\n");
+		fprintf(stderr, "Input file does not exist!\n");
 		exit (1);
 	}
 
@@ -40,19 +40,19 @@ main (int argc, char **argv)
 	im = gdImageCreateFromGd2Part (in, x, y, w, h);
 	fclose (in);
 	if (!im) {
-		fprintf (stderr, "Input is not in GD2 format!\n");
+		fprintf(stderr, "Input is not in GD2 format!\n");
 		exit (1);
 	}
 	out = fopen (argv[2], "wb");
 	if (!out) {
-		fprintf (stderr, "Output file cannot be written to!\n");
+		fprintf(stderr, "Output file cannot be written to!\n");
 		gdImageDestroy (im);
 		exit (1);
 	}
 #ifdef HAVE_LIBPNG
 	gdImagePng (im, out);
 #else
-	fprintf (stderr, "No PNG library support.\n");
+	fprintf(stderr, "No PNG library support.\n");
 #endif
 	fclose (out);
 	gdImageDestroy (im);

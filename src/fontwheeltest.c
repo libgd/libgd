@@ -135,7 +135,7 @@ main (int argc, char **argv)
 	dotest ("arial", 16, 90.0, 400, 400, "Hello\nthere!",
 	        "fontwheeltest4.jpeg");
 #else
-	fprintf (stderr, "no PNG or JPEG support\n");
+	fprintf(stderr, "no PNG or JPEG support\n");
 #endif
 
 	return 0;

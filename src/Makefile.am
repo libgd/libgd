@@ -18,7 +18,7 @@ check_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testa
 
 EXTRA_DIST = bdftogd demoin.png entities.html entities.tcl CMakeLists.txt
 
-include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h entities.h gd_color_map.h
+include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h entities.h gd_color_map.h gd_errors.h
 
 lib_LTLIBRARIES = libgd.la
 
