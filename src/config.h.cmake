@@ -39,9 +39,6 @@
 /* Define if you have the png library. */
 #cmakedefine HAVE_LIBPNG
 
-/* Define to 1 if you have the <libpng/png.h> header file. */
-#cmakedefine HAVE_LIBPNG_PNG_H
-
 /* Define to 1 if you have the <libimagequant.h> header file. */
 #cmakedefine HAVE_LIBIMAGEQUANT_H
 
