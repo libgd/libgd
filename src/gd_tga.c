@@ -9,6 +9,7 @@
 
 #include "gd_tga.h"
 #include "gd.h"
+#include "gd_errors.h"
 #include "gdhelpers.h"
 
 /*!	\brief Creates a gdImage from a TGA file
