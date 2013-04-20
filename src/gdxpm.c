@@ -15,12 +15,13 @@
 #include "gd.h"
 #include "gdhelpers.h"
 #include "gd_color_map.h"
+#include "gd_errors.h"
 
 #ifndef HAVE_LIBXPM
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 {
 	(void)filename;
-	fprintf(stderr, "libgd was not built with xpm support\n");
+	gd_error_ex(GD_ERROR, "libgd was not built with xpm support\n");
 	return NULL;
 }
 #else

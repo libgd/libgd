@@ -9,6 +9,7 @@
 
 #include "gd_tga.h"
 #include "gd.h"
+#include "gd_errors.h"
 #include "gdhelpers.h"
 
 /*!	\brief Creates a gdImage from a TGA file
@@ -132,7 +133,7 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga)
 	unsigned char header[18];
 
 	if (gdGetBuf(header, sizeof(header), ctx) < 18) {
-		fprintf(stderr, "fail to read header");
+		gd_error("fail to read header");
 		return -1;
 	}
 
@@ -165,7 +166,7 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga)
 	case 32:
 		break;
 	default:
-		fprintf(stderr, "bps %i not supported", tga->bits);
+		gd_error("bps %i not supported", tga->bits);
 		return -1;
 		break;
 	}

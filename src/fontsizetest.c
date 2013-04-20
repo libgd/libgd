@@ -29,7 +29,7 @@ dosizes (gdImagePtr im, int color, char *fontfile,
 		                     buf);
 #endif
 		if (cp)
-			fprintf (stderr, "%s\n", cp);
+			fprintf(stderr, "%s\n", cp);
 		y += cursize + 4;
 
 		/* render the same fontsize with antialiasing turned off */
@@ -43,7 +43,7 @@ dosizes (gdImagePtr im, int color, char *fontfile,
 		                     y, buf);
 #endif
 		if (cp)
-			fprintf (stderr, "%s\n", cp);
+			fprintf(stderr, "%s\n", cp);
 		y += cursize + 4;
 	}
 }
@@ -90,7 +90,7 @@ main (int argc, char **argv)
 	dotest ("arial", 400, 600, ".....Hello, there!", "fontsizetest3.jpeg");
 	dotest ("luximr", 400, 600, ".....Hello, there!", "fontsizetest4.jpeg");
 #else
-	fprintf (stderr, "no PNG or JPEG support\n");
+	fprintf(stderr, "no PNG or JPEG support\n");
 #endif
 
 	return 0;

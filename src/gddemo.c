@@ -57,9 +57,9 @@ main (void)
 	   output image. */
 	in = fopen ("demoin.png", "rb");
 	if (!in) {
-		fprintf (stderr, "Can't load source image; this demo\n");
-		fprintf (stderr, "is much more impressive if demoin.png\n");
-		fprintf (stderr, "is available.\n");
+		fprintf(stderr, "Can't load source image; this demo\n");
+		fprintf(stderr, "is much more impressive if demoin.png\n");
+		fprintf(stderr, "is available.\n");
 		im_in = 0;
 	} else {
 		int a;
@@ -182,7 +182,7 @@ main (void)
 		gdImageDestroy (im_in);
 	}
 #else
-	fprintf (stderr, "No PNG library support.\n");
+	fprintf(stderr, "No PNG library support.\n");
 #endif /* HAVE_LIBPNG */
 	return 0;
 }

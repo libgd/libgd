@@ -10,6 +10,7 @@
 #include <string.h>
 #include "gd.h"
 #include "gdhelpers.h"
+#include "gd_errors.h"
 
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
@@ -94,34 +95,6 @@ iconv_close (iconv_t cd)
 #define ESC 27
 #define SS2 142
 
-static void
-debug (const char *format, ...)
-{
-#ifdef DEBUG
-	va_list args;
-
-	va_start (args, format);
-	fprintf (stdout, "%s: ", LIBNAME);
-	vfprintf (stdout, format, args);
-	fprintf (stdout, "\n");
-	va_end (args);
-#else
-	(void)format;
-#endif
-}
-
-static void
-error (const char *format, ...)
-{
-	va_list args;
-
-	va_start (args, format);
-	fprintf (stderr, "%s: ", LIBNAME);
-	vfprintf (stderr, format, args);
-	fprintf (stderr, "\n");
-	va_end (args);
-}
-
 /* DetectKanjiCode() derived from DetectCodeType() by Ken Lunde. */
 
 static int
@@ -200,11 +173,11 @@ DetectKanjiCode (unsigned char *str)
 
 #ifdef DEBUG
 	if (whatcode == ASCII)
-		debug ("Kanji code not included.");
+		gd_error_ex(GD_DEBUG, "Kanji code not included.");
 	else if (whatcode == EUCORSJIS)
-		debug ("Kanji code not detected.");
+		gd_error_ex(GD_DEBUG, "Kanji code not detected.");
 	else
-		debug ("Kanji code detected at %d byte.", i);
+		gd_error_ex(GD_DEBUG, "Kanji code detected at %d byte.", i);
 #endif
 
 	if (whatcode == EUCORSJIS && oldcode != ASCII)
@@ -367,7 +340,7 @@ do_convert (unsigned char **to_p, unsigned char **from_p, const char *code)
 	size_t from_len, to_len;
 
 	if ((cd = iconv_open (EUCSTR, code)) == (iconv_t) - 1) {
-		error ("iconv_open() error");
+		gd_error ("iconv_open() error");
 #ifdef HAVE_ERRNO_H
 		if (errno == EINVAL)
 			error ("invalid code specification: \"%s\" or \"%s\"", EUCSTR, code);
@@ -383,20 +356,20 @@ do_convert (unsigned char **to_p, unsigned char **from_p, const char *code)
 	        == -1) {
 #ifdef HAVE_ERRNO_H
 		if (errno == EINVAL)
-			error ("invalid end of input string");
+			gd_error ("invalid end of input string");
 		else if (errno == EILSEQ)
-			error ("invalid code in input string");
+			gd_error ("invalid code in input string");
 		else if (errno == E2BIG)
-			error ("output buffer overflow at do_convert()");
+			gd_error ("output buffer overflow at do_convert()");
 		else
 #endif
-			error ("something happen");
+			gd_error ("something happen");
 		ustrcpy (to, from);
 		return;
 	}
 
 	if (iconv_close (cd) != 0) {
-		error ("iconv_close() error");
+		gd_error ("iconv_close() error");
 	}
 #else
 	int p1, p2, i, j;
@@ -447,12 +420,12 @@ do_convert (unsigned char **to_p, unsigned char **from_p, const char *code)
 			}
 		}
 	} else {
-		error ("invalid code specification: \"%s\"", code);
+		gd_error ("invalid code specification: \"%s\"", code);
 		return;
 	}
 
 	if (j >= BUFSIZ) {
-		error ("output buffer overflow at do_convert()");
+		gd_error ("output buffer overflow at do_convert()");
 		ustrcpy (to, from);
 	} else
 		to[j] = '\0';
@@ -469,44 +442,43 @@ do_check_and_conv (unsigned char *to, unsigned char *from)
 
 	switch (DetectKanjiCode (from)) {
 	case NEW:
-		debug ("Kanji code is New JIS.");
+		gd_error_ex(GD_DEBUG, "Kanji code is New JIS.");
 		do_convert (&tmp_p, &from, NEWJISSTR);
 		break;
 	case OLD:
-		debug ("Kanji code is Old JIS.");
+		gd_error_ex(GD_DEBUG, "Kanji code is Old JIS.");
 		do_convert (&tmp_p, &from, OLDJISSTR);
 		break;
 	case ESCI:
-		debug
-		("This string includes Hankaku-Kana (jisx0201) escape sequence [ESC] + ( + I.");
+		gd_error_ex(GD_DEBUG, "This string includes Hankaku-Kana (jisx0201) escape sequence [ESC] + ( + I.");
 		do_convert (&tmp_p, &from, NEWJISSTR);
 		break;
 	case NEC:
-		debug ("Kanji code is NEC Kanji.");
-		error ("cannot convert NEC Kanji.");
+		gd_error_ex(GD_DEBUG, "Kanji code is NEC Kanji.");
+		gd_error("cannot convert NEC Kanji.");
 		ustrcpy (tmp, from);
 		kanji = FALSE;
 		break;
 	case EUC:
-		debug ("Kanji code is EUC.");
+		gd_error_ex(GD_DEBUG, "Kanji code is EUC.");
 		ustrcpy (tmp, from);
 		break;
 	case SJIS:
-		debug ("Kanji code is SJIS.");
+		gd_error_ex(GD_DEBUG, "Kanji code is SJIS.");
 		do_convert (&tmp_p, &from, SJISSTR);
 		break;
 	case EUCORSJIS:
-		debug ("Kanji code is EUC or SJIS.");
+		gd_error_ex(GD_DEBUG, "Kanji code is EUC or SJIS.");
 		ustrcpy (tmp, from);
 		kanji = FALSE;
 		break;
 	case ASCII:
-		debug ("This is ASCII string.");
+		gd_error_ex(GD_DEBUG, "This is ASCII string.");
 		ustrcpy (tmp, from);
 		kanji = FALSE;
 		break;
 	default:
-		debug ("This string includes unknown code.");
+		gd_error_ex(GD_DEBUG, "This string includes unknown code.");
 		ustrcpy (tmp, from);
 		kanji = FALSE;
 		break;
@@ -535,7 +507,7 @@ do_check_and_conv (unsigned char *to, unsigned char *from)
 		}
 
 		if (j >= BUFSIZ) {
-			error ("output buffer overflow at Hankaku --> Zenkaku");
+			gd_error("output buffer overflow at Hankaku --> Zenkaku");
 			ustrcpy (to, tmp);
 		} else
 			to[j] = '\0';
@@ -552,18 +524,18 @@ any2eucjp (unsigned char *dest, unsigned char *src, unsigned int dest_max)
 	int ret;
 
 	if (strlen ((const char *) src) >= BUFSIZ) {
-		error ("input string too large");
+		gd_error("input string too large");
 		return -1;
 	}
 	if (dest_max > BUFSIZ) {
-		error
+		gd_error
 		("invalid maximum size of destination\nit should be less than %d.",
 		 BUFSIZ);
 		return -1;
 	}
 	ret = do_check_and_conv (tmp_dest, src);
 	if (strlen ((const char *) tmp_dest) >= dest_max) {
-		error ("output buffer overflow");
+		gd_error("output buffer overflow");
 		ustrcpy (dest, src);
 		return -1;
 	}

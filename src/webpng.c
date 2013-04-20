@@ -53,14 +53,14 @@ main (int argc, char **argv)
 		in = fopen (argv[argc - 1], "rb");
 	}
 	if (!in) {
-		fprintf (stderr, "Error: can't open file %s.\n", argv[argc - 1]);
+		fprintf(stderr, "can't open file %s.\n", argv[argc - 1]);
 		exit (1);
 	}
 	/* Now load the image. */
 #ifdef HAVE_LIBPNG
 	im = gdImageCreateFromPng (in);
 #else
-	fprintf (stderr, "No PNG library support.\n");
+	fprintf(stderr, "No PNG library support.\n");
 #endif
 	fclose (in);
 	/* If the load failed, it must not be a PNG file. */
@@ -78,7 +78,7 @@ main (int argc, char **argv)
 			goto usage;
 		} else if (!strcmp (argv[i], "-i")) {
 			if (i == (argc - 2)) {
-				fprintf (stderr, "Error: -i specified without y or n.\n");
+				fprintf(stderr, "-i specified without y or n.\n");
 				no = 1;
 				goto usage;
 			}
@@ -89,7 +89,7 @@ main (int argc, char **argv)
 				/* Clear interlace. */
 				gdImageInterlace (im, 0);
 			} else {
-				fprintf (stderr, "Error: -i specified without y or n.\n");
+				fprintf(stderr, "Error: -i specified without y or n.\n");
 				no = 1;
 				goto usage;
 			}
@@ -184,7 +184,7 @@ main (int argc, char **argv)
 			printf ("%d alpha channels\n", nalpha);
 
 		} else {
-			fprintf (stderr, "Unknown argument: %s\n", argv[i]);
+			fprintf(stderr, "Unknown argument: %s\n", argv[i]);
 			break;
 		}
 	}
@@ -212,7 +212,7 @@ usage:
 			out = fopen (outFn, "wb");
 
 			if (!out) {
-				fprintf (stderr, "Unable to write to %s -- exiting\n", outFn);
+				fprintf(stderr, "Unable to write to %s -- exiting\n", outFn);
 				exit (1);
 			}
 		}
@@ -221,7 +221,7 @@ usage:
 #ifdef HAVE_LIBPNG
 		gdImagePng (im, out);
 #else
-		fprintf (stderr, "No PNG library support.\n");
+		fprintf(stderr, "No PNG library support.\n");
 #endif
 		if (!useStdinStdout) {
 			fclose (out);

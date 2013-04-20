@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -8,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gd_errors.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -41,13 +41,13 @@ BGD_DECLARE(void) gdImagePngToSink (gdImagePtr im, gdSinkPtr outSink)
 {
 	(void)im;
 	(void)outSink;
-	fprintf (stderr, "PNG support is not available\n");
+	gd_error("PNG support is not available\n");
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngSource (gdSourcePtr inSource)
 {
 	(void)inSource;
-	fprintf (stderr, "PNG support is not available\n");
+	gd_error("PNG support is not available\n");
 	return NULL;
 }
 #endif /* HAVE_LIBPNG */

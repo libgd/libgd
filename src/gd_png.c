@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gd_errors.h"
 
 /* JCE: Arrange HAVE_LIBPNG so that it can be set in gd.h */
 #ifdef HAVE_LIBPNG
@@ -61,12 +62,12 @@ gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 	 * regardless of whether _BSD_SOURCE or anything else has (or has not)
 	 * been defined. */
 
-	fprintf (stderr, "gd-png:  fatal libpng error: %s\n", msg);
+	gd_error("gd-png:  fatal libpng error: %s\n", msg);
 	fflush (stderr);
 
 	jmpbuf_ptr = png_get_error_ptr (png_ptr);
 	if (jmpbuf_ptr == NULL) {				/* we are completely hosed now */
-		fprintf (stderr, "gd-png:  EXTREMELY fatal error: jmpbuf unrecoverable; terminating.\n");
+		gd_error("gd-png:  EXTREMELY fatal error: jmpbuf unrecoverable; terminating.\n");
 		fflush (stderr);
 		exit (99);
 	}
@@ -163,13 +164,13 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 #endif
 	if (png_ptr == NULL) {
-		fprintf (stderr, "gd-png error: cannot allocate libpng main struct\n");
+		gd_error("gd-png error: cannot allocate libpng main struct\n");
 		return NULL;
 	}
 
 	info_ptr = png_create_info_struct (png_ptr);
 	if (info_ptr == NULL) {
-		fprintf (stderr, "gd-png error: cannot allocate libpng info struct\n");
+		gd_error("gd-png error: cannot allocate libpng info struct\n");
 		png_destroy_read_struct (&png_ptr, NULL, NULL);
 
 		return NULL;
@@ -184,7 +185,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	 * PNG-reading libpng function */
 #ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(jbw.jmpbuf)) {
-		fprintf (stderr, "gd-png error: setjmp returns error condition 1\n");
+		gd_error("gd-png error: setjmp returns error condition 1\n");
 		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
 
 		return NULL;
@@ -204,7 +205,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 		im = gdImageCreate ((int) width, (int) height);
 	}
 	if (im == NULL) {
-		fprintf (stderr, "gd-png error: cannot allocate gdImage struct\n");
+		gd_error("gd-png error: cannot allocate gdImage struct\n");
 		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
 
 		return NULL;
@@ -221,7 +222,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	 */
 #ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(jbw.jmpbuf)) {
-		fprintf(stderr, "gd-png error: setjmp returns error condition 2\n");
+		gd_error("gd-png error: setjmp returns error condition 2\n");
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		gdFree(image_data);
 		gdFree(row_pointers);
@@ -250,7 +251,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	case PNG_COLOR_TYPE_PALETTE:
 		png_get_PLTE (png_ptr, info_ptr, &palette, &num_palette);
 #ifdef DEBUG
-		fprintf (stderr, "gd-png color_type is palette, colors: %d\n", num_palette);
+		gd_error("gd-png color_type is palette, colors: %d\n", num_palette);
 #endif /* DEBUG */
 		if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS)) {
 			/* gd 2.0: we support this rather thoroughly now. Grab the
@@ -275,7 +276,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	case PNG_COLOR_TYPE_GRAY:
 		/* create a fake palette and check for single-shade transparency */
 		if ((palette = (png_colorp) gdMalloc (256 * sizeof (png_color))) == NULL) {
-			fprintf (stderr, "gd-png error: cannot allocate gray palette\n");
+			gd_error("gd-png error: cannot allocate gray palette\n");
 			png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
 			return NULL;
 		}
@@ -345,7 +346,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	}
 	image_data = (png_bytep) gdMalloc (rowbytes * height);
 	if (!image_data) {
-		fprintf (stderr, "gd-png error: cannot allocate image data\n");
+		gd_error("gd-png error: cannot allocate image data\n");
 		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
 		if (im) {
 			gdImageDestroy(im);
@@ -363,7 +364,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 
 	row_pointers = (png_bytepp) gdMalloc (height * sizeof (png_bytep));
 	if (!row_pointers) {
-		fprintf (stderr, "gd-png error: cannot allocate row pointers\n");
+		gd_error("gd-png error: cannot allocate row pointers\n");
 		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
 		if (im) {
 			gdImageDestroy(im);
@@ -544,20 +545,20 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 #endif
 	if (png_ptr == NULL) {
-		fprintf (stderr, "gd-png error: cannot allocate libpng main struct\n");
+		gd_error("gd-png error: cannot allocate libpng main struct\n");
 		return;
 	}
 
 	info_ptr = png_create_info_struct (png_ptr);
 	if (info_ptr == NULL) {
-		fprintf (stderr, "gd-png error: cannot allocate libpng info struct\n");
+		gd_error("gd-png error: cannot allocate libpng info struct\n");
 		png_destroy_write_struct (&png_ptr, (png_infopp) NULL);
 		return;
 	}
 
 #ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(jbw.jmpbuf)) {
-		fprintf (stderr, "gd-png error: setjmp returns error condition\n");
+		gd_error("gd-png error: setjmp returns error condition\n");
 		png_destroy_write_struct (&png_ptr, &info_ptr);
 		return;
 	}
@@ -610,7 +611,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 			}
 		}
 		if (colors == 0) {
-			fprintf(stderr, "gd-png error: no colors in palette\n");
+			gd_error("gd-png error: no colors in palette\n");
 			goto bail;
 		}
 		if (colors < im->colorsTotal) {
@@ -746,14 +747,14 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		}
 		row_pointers = gdMalloc (sizeof (png_bytep) * height);
 		if (row_pointers == NULL) {
-			fprintf (stderr, "gd-png error: unable to allocate row_pointers\n");
+			gd_error("gd-png error: unable to allocate row_pointers\n");
 			goto bail;
 		}
 		prow_pointers = row_pointers;
 		for (j = 0; j < height; ++j) {
 			if (overflow2(width, channels) || ((*prow_pointers =
 			                                        (png_bytep) gdMalloc (width * channels)) == NULL)) {
-				fprintf (stderr, "gd-png error: unable to allocate rows\n");
+				gd_error("gd-png error: unable to allocate rows\n");
 				for (i = 0; i < j; ++i)
 					gdFree (row_pointers[i]);
 				/* 2.0.29: memory leak TBB */
@@ -795,12 +796,12 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 			}
 			row_pointers = gdMalloc (sizeof (png_bytep) * height);
 			if (row_pointers == NULL) {
-				fprintf (stderr, "gd-png error: unable to allocate row_pointers\n");
+				gd_error("gd-png error: unable to allocate row_pointers\n");
 				goto bail;
 			}
 			for (j = 0; j < height; ++j) {
 				if ((row_pointers[j] = (png_bytep) gdMalloc (width)) == NULL) {
-					fprintf (stderr, "gd-png error: unable to allocate rows\n");
+					gd_error("gd-png error: unable to allocate rows\n");
 					for (i = 0; i < j; ++i)
 						gdFree (row_pointers[i]);
 					/* TBB: memory leak */

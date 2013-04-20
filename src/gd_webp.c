@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gd_errors.h"
 
 #ifdef HAVE_LIBVPX
 #include "webpimg.h"
@@ -50,7 +51,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
 		if (Y) free(Y);
 		if (U) free(U);
 		if (V) free(V);
-		fprintf(stderr, "WebP decode: fail to decode input data");
+		gd_error("WebP decode: fail to decode input data");
 		return NULL;
 	}
 	im = gdImageCreateTrueColor(width, height);
@@ -79,7 +80,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 
 	filedata = gdMalloc(size);
 	if  (!filedata) {
-		fprintf(stderr, "WebP decode: alloc failed");
+		gd_error("WebP decode: alloc failed");
 		return NULL;
 	}
 	gdGetBuf(filedata, size, infile);
@@ -89,7 +90,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 		if (Y) free(Y);
 		if (U) free(U);
 		if (V) free(V);
-		fprintf(stderr, "WebP decode: fail to decode input data");
+		gd_error("WebP decode: fail to decode input data");
 		return NULL;
 	}
 	im = gdImageCreateTrueColor(width, height);
@@ -144,7 +145,7 @@ int mapQualityToVP8QP(int quality) {
 	const float vp8qp =
 	scale * (MAX_QUALITY - quality) / (MAX_QUALITY - MIN_QUALITY) + MIN_VP8QP;
 	if (quality < MIN_QUALITY || quality > MAX_QUALITY) {
-		fprintf(stderr, "Wrong quality value %d.", quality);
+		gd_error("Wrong quality value %d.", quality);
 		return -1;
 	}
 
@@ -175,7 +176,7 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantiza
 	yuv_nbytes = width * height + 2 * yuv_width * yuv_height;
 
 	if ((Y = (unsigned char *)gdCalloc(yuv_nbytes, sizeof(unsigned char))) == NULL) {
-		fprintf(stderr, "gd-webp error: cannot allocate Y buffer");
+		gd_error("gd-webp error: cannot allocate Y buffer");
 		return;
 	}
 	vp8_quality = mapQualityToVP8QP(quantization);
@@ -193,7 +194,7 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantiza
 		if (filedata) {
 			free(filedata);
 		}
-		fprintf(stderr, "gd-webp error: WebP Encoder failed");
+		gd_error("gd-webp error: WebP Encoder failed");
 		return;
 	}
 

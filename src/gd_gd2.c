@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gd_errors.h"
 #include "gdhelpers.h"
 
 /* 2.03: gd2 is no longer mandatory */
@@ -602,7 +603,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int
 				/* gd 2.0.11: gdSeek returns TRUE on success, not 0.
 				   Longstanding bug. 01/16/03 */
 				if (!gdSeek (in, dpos)) {
-					fprintf (stderr, "Seek error\n");
+					gd_error("Seek error\n");
 					goto fail2;
 				};
 				GD2_DBG (printf
@@ -875,7 +876,7 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 					          chunkIdx[chunkNum - 1].offset));
 
 					if (gdPutBuf (compData, compLen, out) <= 0) {
-						fprintf(stderr, "gd write error\n");
+						gd_error("gd write error\n");
 					};
 				};
 			};
@@ -938,13 +939,13 @@ BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
 #else /* no HAVE_LIBZ */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2 (FILE * inFile)
 {
-	fprintf (stderr, "GD2 support is not available - no libz\n");
+	gd_error("GD2 support is not available - no libz\n");
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 {
-	fprintf (stderr, "GD2 support is not available - no libz\n");
+	gd_error("GD2 support is not available - no libz\n");
 	return NULL;
 }
 #endif /* HAVE_LIBZ */

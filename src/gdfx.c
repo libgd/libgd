@@ -3,6 +3,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "gd.h"
+#include "gd_errors.h"
 #include <math.h>
 
 /* In tests this is sufficient to prevent obvious artifacts */
@@ -231,7 +232,7 @@ main (int argc, char *argv[])
 	                       "bottom text", gdTrueColorAlpha (240, 240, 255, 32));
 	out = fopen ("gdfx.png", "wb");
 	if (!out) {
-		fprintf (stderr, "Can't create gdfx.png\n");
+		gd_error("Can't create gdfx.png\n");
 		return 1;
 	}
 	gdImagePng (im, out);

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -13,6 +14,7 @@
 #include "gd.h"
 #include "gdhelpers.h"
 #include "gd_color.h"
+#include "gd_errors.h"
 
 /* 2.0.12: this now checks the clipping rectangle */
 #define gdImageBoundsSafeMacro(im, x, y) (!((((y) < (im)->cy1) || ((y) > (im)->cy2)) || (((x) < (im)->cx1) || ((x) > (im)->cx2))))
@@ -66,6 +68,65 @@ static const unsigned char gd_toascii[256] = {
 
 extern const int gdCosT[];
 extern const int gdSinT[];
+
+void gd_stderr_error(int priority, const char *format, ...)
+{
+	va_list args;
+
+	va_start(args, format);
+	switch (priority) {
+	case GD_ERROR:
+		fputs("GD Error: ", stderr);
+		break;
+	case GD_WARNING:
+		fputs("GD Warning: ", stderr);
+		break;
+	case GD_NOTICE:
+		fputs("GD Notice: ", stderr);
+		break;
+	case GD_INFO:
+		fputs("GD Info: ", stderr);
+		break;
+	case GD_DEBUG:
+		fputs("GD Debug: ", stderr);
+		break;
+	}
+	va_start(args, format);
+	fprintf(stderr, format, args);
+	va_end(args);
+	fflush(stderr);
+}
+
+static gdErrorMethod gd_error_method = gd_stderr_error;
+
+void gd_error(const char *format, ...)
+{
+	va_list args;
+
+	va_start(args, format);
+	gd_error_ex(GD_WARNING, format, args);
+	va_end(args);
+}
+void gd_error_ex(int priority, const char *format, ...)
+{
+	va_list args;
+
+	va_start(args, format);
+	if (gd_error_method) {
+		gd_error_method(priority, format, args);
+	}
+	va_end(args);
+}
+
+BGD_DECLARE(void) gdSetErrorMethod(gdErrorMethod error_method)
+{
+	gd_error_method = error_method;
+}
+
+BGD_DECLARE(void) gdClearErrorMethod(void)
+{
+	gd_error_method = gd_stderr_error;
+}
 
 static void gdImageBrushApply (gdImagePtr im, int x, int y);
 static void gdImageTileApply (gdImagePtr im, int x, int y);
@@ -1292,7 +1353,7 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 
 }
 static void dashedSet (gdImagePtr im, int x, int y, int color,
-                       int *onP, int *dashStepP, int wid, int vert);
+					   int *onP, int *dashStepP, int wid, int vert);
 
 BGD_DECLARE(void) gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
@@ -1409,7 +1470,7 @@ BGD_DECLARE(void) gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int 
 
 static void
 dashedSet (gdImagePtr im, int x, int y, int color,
-           int *onP, int *dashStepP, int wid, int vert)
+		   int *onP, int *dashStepP, int wid, int vert)
 {
 	int dashStep = *dashStepP;
 	int on = *onP;
@@ -1493,7 +1554,7 @@ BGD_DECLARE(void) gdImageCharUp (gdImagePtr im, gdFontPtr f, int x, int y, int c
 }
 
 BGD_DECLARE(void) gdImageString (gdImagePtr im, gdFontPtr f,
-                                 int x, int y, unsigned char *s, int color)
+								 int x, int y, unsigned char *s, int color)
 {
 	int i;
 	int l;
@@ -1505,7 +1566,7 @@ BGD_DECLARE(void) gdImageString (gdImagePtr im, gdFontPtr f,
 }
 
 BGD_DECLARE(void) gdImageStringUp (gdImagePtr im, gdFontPtr f,
-                                   int x, int y, unsigned char *s, int color)
+								   int x, int y, unsigned char *s, int color)
 {
 	int i;
 	int l;
@@ -1519,7 +1580,7 @@ BGD_DECLARE(void) gdImageStringUp (gdImagePtr im, gdFontPtr f,
 static int strlen16 (unsigned short *s);
 
 BGD_DECLARE(void) gdImageString16 (gdImagePtr im, gdFontPtr f,
-                                   int x, int y, unsigned short *s, int color)
+								   int x, int y, unsigned short *s, int color)
 {
 	int i;
 	int l;
@@ -1531,7 +1592,7 @@ BGD_DECLARE(void) gdImageString16 (gdImagePtr im, gdFontPtr f,
 }
 
 BGD_DECLARE(void) gdImageStringUp16 (gdImagePtr im, gdFontPtr f,
-                                     int x, int y, unsigned short *s, int color)
+									 int x, int y, unsigned short *s, int color)
 {
 	int i;
 	int l;
@@ -1573,13 +1634,13 @@ lsqrt (long n)
    seem to be bug-free yet. */
 
 BGD_DECLARE(void) gdImageArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
-                              int color)
+							  int color)
 {
 	gdImageFilledArc (im, cx, cy, w, h, s, e, color, gdNoFill);
 }
 
 BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
-                                    int color, int style)
+									int color, int style)
 {
 	gdPoint pts[3];
 	int i;
@@ -1886,11 +1947,11 @@ struct seg {
 /* max depth of stack */
 #define FILL_MAX ((int)(im->sy*im->sx)/4)
 #define FILL_PUSH(Y, XL, XR, DY) \
-    if (sp<stack+FILL_MAX && Y+(DY)>=0 && Y+(DY)<wy2) \
-    {sp->y = Y; sp->xl = XL; sp->xr = XR; sp->dy = DY; sp++;}
+	if (sp<stack+FILL_MAX && Y+(DY)>=0 && Y+(DY)<wy2) \
+	{sp->y = Y; sp->xl = XL; sp->xr = XR; sp->dy = DY; sp++;}
 
 #define FILL_POP(Y, XL, XR, DY) \
-    {sp--; Y = sp->y+(DY = sp->dy); XL = sp->xl; XR = sp->xr;}
+	{sp--; Y = sp->y+(DY = sp->dy); XL = sp->xl; XR = sp->xr;}
 
 static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc);
 BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
@@ -2175,7 +2236,7 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 }
 
 BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
-        int color)
+		int color)
 {
 	int x, y;
 
@@ -2220,7 +2281,7 @@ BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2,
 }
 
 BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
-                               int srcY, int w, int h)
+							   int srcY, int w, int h)
 {
 	int c;
 	int x, y;
@@ -2309,7 +2370,7 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 /* This function is a substitute for real alpha channel operations,
    so it doesn't pay attention to the alpha channel. */
 BGD_DECLARE(void) gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
-                                    int srcX, int srcY, int w, int h, int pct)
+									int srcX, int srcY, int w, int h, int pct)
 {
 
 	int c, dc;
@@ -2353,7 +2414,7 @@ BGD_DECLARE(void) gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, in
 /* This function is a substitute for real alpha channel operations,
    so it doesn't pay attention to the alpha channel. */
 BGD_DECLARE(void) gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
-                                        int srcX, int srcY, int w, int h, int pct)
+										int srcX, int srcY, int w, int h, int pct)
 {
 
 	int c, dc;
@@ -2411,8 +2472,8 @@ BGD_DECLARE(void) gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX
 }
 
 BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
-                                      int srcX, int srcY, int dstW, int dstH, int srcW,
-                                      int srcH)
+									  int srcX, int srcY, int dstW, int dstH, int srcW,
+									  int srcH)
 {
 	int c;
 	int x, y;
@@ -2541,16 +2602,16 @@ BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, 
 /* gd 2.0.8: gdImageCopyRotated is added. Source
 	is a rectangle, with its upper left corner at
 	srcX and srcY. Destination is the *center* of
-        the rotated copy. Angle is in degrees, same as
-        gdImageArc. Floating point destination center
+		the rotated copy. Angle is in degrees, same as
+		gdImageArc. Floating point destination center
 	coordinates allow accurate rotation of
 	objects of odd-numbered width or height. */
 
 BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
-                                      gdImagePtr src,
-                                      double dstX, double dstY,
-                                      int srcX, int srcY,
-                                      int srcWidth, int srcHeight, int angle)
+									  gdImagePtr src,
+									  double dstX, double dstY,
+									  int srcX, int srcY,
+									  int srcWidth, int srcHeight, int angle)
 {
 	double dx, dy;
 	double radius = sqrt (srcWidth * srcWidth + srcHeight * srcHeight);
@@ -2630,10 +2691,10 @@ BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
 /*#define floor2(exp) floor(exp)*/
 
 BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
-                                        gdImagePtr src,
-                                        int dstX, int dstY,
-                                        int srcX, int srcY,
-                                        int dstW, int dstH, int srcW, int srcH)
+										gdImagePtr src,
+										int dstX, int dstY,
+										int srcX, int srcY,
+										int dstW, int dstH, int srcW, int srcH)
 {
 	int x, y;
 	double sy1, sy2, sx1, sx2;
@@ -2840,7 +2901,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm (FILE * fd)
 		}
 	}
 	/* Shouldn't happen */
-	fprintf (stderr, "Error: bug in gdImageCreateFromXbm!\n");
+	gd_error("Error: bug in gdImageCreateFromXbm!\n");
 fail:
 	gdImageDestroy (im);
 	return 0;
