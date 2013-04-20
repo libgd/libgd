@@ -1,4 +1,4 @@
-/* config.hin.  Generated from configure.ac by autoheader.  */
+/* config.hin.  Generated from config.h.cmake by cmake  */
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine HAVE_DLFCN_H
