@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gd_errors.h"
 
 /* JCE: Arrange HAVE_LIBPNG so that it can be set in gd.h */
 #ifdef HAVE_LIBPNG

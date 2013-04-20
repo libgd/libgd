@@ -14,11 +14,9 @@ AC_CANONICAL_HOST
 GDLIB_MAJOR=2
 GDLIB_MINOR=1
 GDLIB_REVISION=0
-GDLIBNAME=gd
 AC_SUBST(GDLIB_MAJOR)
 AC_SUBST(GDLIB_MINOR)
 AC_SUBST(GDLIB_REVISION)
-AC_SUBST(GDLIBNAME)
 
 # Dynamic library version information
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info

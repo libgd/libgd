@@ -3,6 +3,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "gd.h"
+#include "gd_errors.h"
 #include <math.h>
 
 /* In tests this is sufficient to prevent obvious artifacts */

@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gd_errors.h"
 
 #ifdef HAVE_LIBVPX
 #include "webpimg.h"

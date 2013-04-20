@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gd_errors.h"
 #include "gdhelpers.h"
 
 /* 2.03: gd2 is no longer mandatory */

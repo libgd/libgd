@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -8,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gd_errors.h"
 
 #define TRUE 1
 #define FALSE 0
