@@ -190,6 +190,7 @@ if test "$with_freetype" = yes; then
   AC_DEFINE(HAVE_LIBFREETYPE, 1, [Define if you have the freetype library.])
   AC_DEFINE(HAVE_FT2BUILD_H, 1, [Define if you have the ft2build.h header.])
 fi
+AM_CONDITIONAL([HAVE_FREETYPE], test "$with_freetype" = yes)
 
 dnl check for libfontconfig by default
 AC_ARG_WITH(fontconfig,dnl
