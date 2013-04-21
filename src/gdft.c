@@ -11,13 +11,13 @@
 #include <string.h>
 #include <math.h>
 
-#include "gd.h"
-#include "gdhelpers.h"
-#include "entities.h"
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
+#include "gd.h"
+#include "gdhelpers.h"
+#include "entities.h"
 
 /* 2.0.10: WIN32, not MSWIN32 */
 #if !defined(WIN32) && !defined(_WIN32_WCE)
