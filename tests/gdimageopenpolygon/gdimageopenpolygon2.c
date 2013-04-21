@@ -15,7 +15,7 @@ main(void)
 	white = gdImageColorAllocate(im, 0xff, 0xff, 0xff);
 	black = gdImageColorAllocate(im, 0, 0, 0);
 	gdImageFilledRectangle(im, 0, 0, 99, 99, white);
-	points = (gdPointPtr)gdCalloc(3, sizeof(gdPoint));
+	points = (gdPointPtr)calloc(3, sizeof(gdPoint));
 	if (!points) {
 		gdImageDestroy(im);
 		exit(EXIT_FAILURE);
@@ -26,7 +26,7 @@ main(void)
 	points[1].y = 70;
 	gdImageOpenPolygon(im, points, 2, black);
 	r = gdAssertImageEqualsToFile(GDTEST_TOP_DIR "/gdimageopenpolygon/gdimageopenpolygon2.png", im);
-	gdFree(points);
+	free(points);
 	gdImageDestroy(im);
 	if (!r) exit(EXIT_FAILURE);
 	return EXIT_SUCCESS;
