@@ -762,7 +762,7 @@ static const gdColorMapEntry GD_COLOR_MAP_X11_ENTRIES[] = {
 	{"yellow4", 139, 139, 0},
 };
 
-BGD_EXPORT_DATA_IMPL gdColorMap GD_COLOR_MAP_X11 = {
+BGD_EXPORT_DATA_PROT gdColorMap GD_COLOR_MAP_X11 = {
 	sizeof(GD_COLOR_MAP_X11_ENTRIES)/sizeof(gdColorMapEntry),
 	(gdColorMapEntry *)GD_COLOR_MAP_X11_ENTRIES
 };
