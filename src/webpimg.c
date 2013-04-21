@@ -35,6 +35,7 @@
 #endif
 
 #include "gd.h"
+#include "gd_errors.h"
 #ifdef HAVE_LIBVPX
 #include "webpimg.h"
 
@@ -290,7 +291,7 @@ int SkipRiffHeader(const uint8** data_ptr, int *data_size_ptr) {
  *    the row.
  *    4. y_width: width of the Y image plane (aka image width)
  * Output:
- *    5. rgb_sat: pointer to the output rgb row. We reuse this variable, it
+ *    5. rgb_dst: pointer to the output rgb row. We reuse this variable, it
  *    iterates over all pixels in the row.
  */
 static void YUV420toRGBLine(uint8* y_src,
@@ -383,7 +384,7 @@ void gd_YUV420toRGBA(uint8* Y,
                     U + (y >> 1) * uv_stride,
                     V + (y >> 1) * uv_stride,
                     width,
-                    im->tpixels[y]);
+                    (uint32 *)im->tpixels[y]);
   }
 }
 
@@ -564,8 +565,8 @@ void gd_RGBAToYUV420(gdImagePtr im2,
   	im = im2;
   }
   for (y = 0; y < (y_height >> 1); ++y) {
-	RGBALinepairToYUV420(im->tpixels[2 * y],
-						 im->tpixels[2 * y + 1],
+	RGBALinepairToYUV420((uint32 *)im->tpixels[2 * y],
+						 (uint32 *)im->tpixels[2 * y + 1],
 						 y_width,
 						 Y + 2 * y * y_stride,
 						 Y + (2 * y + 1) * y_stride,
@@ -573,8 +574,8 @@ void gd_RGBAToYUV420(gdImagePtr im2,
 						 V + y * uv_stride);
   }
   if (y_height & 1) {
-	RGBALinepairToYUV420(im->tpixels[y_height - 1],
-						 im->tpixels[y_height - 1],
+	RGBALinepairToYUV420((uint32 *)im->tpixels[y_height - 1],
+						 (uint32 *)im->tpixels[y_height - 1],
 						 y_width,
 						 Y + (y_height - 1) * y_stride,
 						 Y + (y_height - 1) * y_stride,
