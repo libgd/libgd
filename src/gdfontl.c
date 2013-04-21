@@ -4634,7 +4634,7 @@ gdFont gdFontLargeRep = {
 	gdFontLargeData
 };
 
-BGD_EXPORT_DATA_IMPL gdFontPtr gdFontLarge = &gdFontLargeRep;
+BGD_EXPORT_DATA_PROT gdFontPtr gdFontLarge = &gdFontLargeRep;
 
 BGD_DECLARE(gdFontPtr)
 gdFontGetLarge (void)
