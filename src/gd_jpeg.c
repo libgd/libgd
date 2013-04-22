@@ -61,7 +61,7 @@ typedef struct _jmpbuf_wrapper {
 }
 jmpbuf_wrapper;
 
-static long jpeg_emit_message(j_common_ptr jpeg_info, int level)
+static void jpeg_emit_message(j_common_ptr jpeg_info, int level)
 {
 	char message[JMSG_LENGTH_MAX];
 	jmpbuf_wrapper *jmpbufw;
@@ -95,7 +95,6 @@ static long jpeg_emit_message(j_common_ptr jpeg_info, int level)
 			}
 		}
 	}
-	return 1;
 }
 
 /* Called by the IJG JPEG library upon encountering a fatal error */
