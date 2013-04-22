@@ -1,3 +1,4 @@
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -25,32 +26,37 @@ extern "C" {
    wish to build gd as a static library or by directly including
    the gd sources in a project. */
 
-#if !defined(WIN32) && !defined(_WIN32_WCE)
+#if !defined(WIN32) && !defined(_WIN32_WCE) && !defined(CYGWIN)
 #define NONDLL 1
 #endif /* WIN32 */
 
 /* http://gcc.gnu.org/wiki/Visibility */
-#ifdef NONDLL
+#if defined(WIN32) || defined(CYGWIN) || defined(_WIN32_WCE)
+# if !defined(NONDLL) || defined(BUILDING_DLL)
+#  ifdef __GNUC__
+#   define BGD_EXPORT_DATA_PROT __attribute__ ((dllexport))
+#  else
+#   define BGD_EXPORT_DATA_PROT __declspec(dllexport)
+#  endif
+# else
+#  ifdef __GNUC__
+#   define BGD_EXPORT_DATA_PROT __attribute__ ((dllimport))
+#  else
+#   define BGD_EXPORT_DATA_PROT __declspec(dllimport)
+#  endif
+# endif
+# define BGD_EXPORT_DATA_IMPL
+# define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt __stdcall
+#else
 # ifdef HAVE_VISIBILITY
-#  define BGD_DECLARE(rt) __attribute__ ((visibility ("default"))) extern rt
 #  define BGD_EXPORT_DATA_PROT __attribute__ ((visibility ("default")))
 #  define BGD_EXPORT_DATA_IMPL __attribute__ ((visibility ("hidden")))
 # else
-#  define BGD_DECLARE(rt) extern rt
 #  define BGD_EXPORT_DATA_PROT
 #  define BGD_EXPORT_DATA_IMPL
 # endif
-#else
-# ifdef BGDWIN32
-#  define BGD_DECLARE(rt) __declspec(dllexport) rt __stdcall
-#  define BGD_EXPORT_DATA_PROT __declspec(dllexport) extern
-#  define BGD_EXPORT_DATA_IMPL __declspec(dllexport)
-# else
-#  define BGD_DECLARE(rt) __declspec(dllimport) rt _stdcall
-#  define BGD_EXPORT_DATA_PROT __declspec(dllimport) extern
-#  define BGD_EXPORT_DATA_IMPL __declspec(dllimport)
-# endif /* BGDWIN32 */
-#endif /* NONDLL */
+# define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt
+#endif
 
 #ifdef __cplusplus
 	extern "C"
