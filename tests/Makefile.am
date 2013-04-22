@@ -119,11 +119,14 @@ check_PROGRAMS += \
 endif
 
 if HAVE_LIBPNG
+if HAVE_LIBZ
+check_PROGRAMS += \
+	gd2/gd2_read \
+	gd2/gd2_im2im \
+	gdtiled/bug00032
+endif
 check_PROGRAMS += \
 	gdimagestringft/gdimagestringft_bbox \
-	gdtiled/bug00032 \
-	gd2/gd2_im2im \
-	gd2/gd2_read \
 	gdimagearc/bug00079 \
 	gdimageline/gdimageline_aa \
 	gdimageline/bug00072 \
