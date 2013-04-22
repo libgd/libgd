@@ -1,16 +1,29 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-
 
 bin_PROGRAMS = gdcmpgif
+check_PROGRAMS = gifanimtest gd_color_map_test
 
 if HAVE_LIBPNG
 bin_PROGRAMS += gdtopng pngtogd webpng
+check_PROGRAMS += circletexttest fontsizetest fontwheeltest gdtest gddemo testac
 if HAVE_LIBZ
 bin_PROGRAMS += gdparttopng gd2topng pngtogd2
 endif
 endif
 
+if HAVE_LIBJPEG
+if !HAVE_LIBPNG
+check_PROGRAMS += fontsizetest fontwheeltest
+endif
+endif
+
+if HAVE_LIBFONTCONFIG
+check_PROGRAMS += fontconfigtest
+endif
+
 if HAVE_LIBFREETYPE
 bin_PROGRAMS += annotate
+check_PROGRAMS += gdtestft testtr
 endif
 
 if HAVE_LIBZ
@@ -18,8 +31,6 @@ bin_PROGRAMS += gd2copypal gd2togif giftogd2
 endif
 
 bin_SCRIPTS = bdftogd
-
-check_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gdtestft testac circletexttest testtr fontconfigtest gifanimtest gd_color_map_test
 
 if HAVE_LIBZ
 check_PROGRAMS += gd2time
