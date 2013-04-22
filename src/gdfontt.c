@@ -2585,7 +2585,7 @@ gdFont gdFontTinyRep = {
 	gdFontTinyData
 };
 
-BGD_EXPORT_DATA_IMPL gdFontPtr gdFontTiny = &gdFontTinyRep;
+BGD_EXPORT_DATA_PROT gdFontPtr gdFontTiny = &gdFontTinyRep;
 
 BGD_DECLARE(gdFontPtr)
 gdFontGetTiny (void)
