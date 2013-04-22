@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	/* 2.0.22: can't depend on PNG either  */
 #ifndef HAVE_LIBPNG
 	fprintf(stderr, "Requires PNG support, gd was compiled without it\n");
-	exit(0);
+	return 0;
 #else
 	char *error;
 	FILE *in = 0;
