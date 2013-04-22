@@ -360,6 +360,7 @@ static double filter_generalized_cubic(const double t)
 	return 0;
 }
 
+#ifdef FUNCTION_NOT_USED_YET
 /* CubicSpline filter, default radius 2 */
 static double filter_cubic_spline(const double x1)
 {
@@ -375,7 +376,9 @@ static double filter_cubic_spline(const double x1)
 	}
 	return 0;
 }
+#endif
 
+#ifdef FUNCTION_NOT_USED_YET
 /* CubicConvolution filter, default radius 3 */
 static double filter_cubic_convolution(const double x1)
 {
@@ -388,6 +391,7 @@ static double filter_cubic_convolution(const double x1)
 	if (x <= 3.0) return ( (1.0/12.0) * x2_x - (2.0 / 3.0) * x2 + 1.75 * x - 1.5);
 	return 0;
 }
+#endif
 
 static double filter_box(double x) {
 	if (x < - DEFAULT_FILTER_BOX)
@@ -412,6 +416,7 @@ static double filter_catmullrom(const double x)
 	return(0.0f);
 }
 
+#ifdef FUNCTION_NOT_USED_YET
 static double filter_filter(double t)
 {
 	/* f(t) = 2|t|^3 - 3|t|^2 + 1, -1 <= t <= 1 */
@@ -419,8 +424,9 @@ static double filter_filter(double t)
 	if(t < 1.0) return((2.0 * t - 3.0) * t * t + 1.0);
 	return(0.0);
 }
+#endif
 
-
+#ifdef FUNCTION_NOT_USED_YET
 /* Lanczos8 filter, default radius 8 */
 static double filter_lanczos8(const double x1)
 {
@@ -435,8 +441,9 @@ static double filter_lanczos8(const double x1)
 	return 0.0;
 #undef R
 }
+#endif
 
-
+#ifdef FUNCTION_NOT_USED_YET
 /* Lanczos3 filter, default radius 3 */
 static double filter_lanczos3(const double x1)
 {
@@ -452,6 +459,7 @@ static double filter_lanczos3(const double x1)
 	return 0.0;
 #undef R
 }
+#endif
 
 /* Hermite filter, default radius 1 */
 static double filter_hermite(const double x1)
@@ -509,6 +517,7 @@ static double filter_mitchell(const double x)
 
 
 
+#ifdef FUNCTION_NOT_USED_YET
 /* Cosine filter, default radius 1 */
 static double filter_cosine(const double x)
 {
@@ -516,6 +525,7 @@ static double filter_cosine(const double x)
 
 	return 0;
 }
+#endif
 
 /* Quadratic filter, default radius 1.5 */
 static double filter_quadratic(const double x1)
@@ -547,6 +557,7 @@ static double filter_bspline(const double x)
 	}
 }
 
+#ifdef FUNCTION_NOT_USED_YET
 /* QuadraticBSpline filter, default radius 1.5 */
 static double filter_quadratic_bspline(const double x1)
 {
@@ -556,6 +567,7 @@ static double filter_quadratic_bspline(const double x1)
 	if (x <= 1.5) return (0.5 * x * x - 1.5 * x + 1.125);
 	return 0.0;
 }
+#endif
 
 static double filter_gaussian(const double x)
 {
@@ -597,6 +609,7 @@ static double filter_sinc(const double x)
 	return (sin(M_PI * (double) x) / (M_PI * (double) x));
 }
 
+#ifdef FUNCTION_NOT_USED_YET
 static double filter_welsh(const double x)
 {
 	/* Welsh parabolic windowing filter */
@@ -604,7 +617,7 @@ static double filter_welsh(const double x)
 		return(1 - x*x);
 	return(0.0);
 }
-
+#endif
 
 /* Copied from upstream's libgd */
 static inline int _color_blend (const int dst, const int src)
@@ -980,7 +993,7 @@ static inline void _gdScaleRow(gdImagePtr pSrc,  unsigned int src_width, gdImage
 
 		/* Accumulate each channel */
         for (i = left; i <= right; i++) {
-			const left_channel = i - left;
+			const int left_channel = i - left;
             r += (unsigned char)(contrib->ContribRow[x].Weights[left_channel] * (double)(gdTrueColorGetRed(p_src_row[i])));
             g += (unsigned char)(contrib->ContribRow[x].Weights[left_channel] * (double)(gdTrueColorGetGreen(p_src_row[i])));
             b += (unsigned char)(contrib->ContribRow[x].Weights[left_channel] * (double)(gdTrueColorGetBlue(p_src_row[i])));
@@ -1022,7 +1035,6 @@ static inline void _gdScaleCol (gdImagePtr pSrc,  unsigned int src_width, gdImag
 		const int iLeft = contrib->ContribRow[y].Left;
 		const int iRight = contrib->ContribRow[y].Right;
 		int i;
-		int *row = pRes->tpixels[y];
 
 		/* Accumulate each channel */
 		for (i = iLeft; i <= iRight; i++) {
@@ -1305,7 +1317,6 @@ static gdImagePtr gdImageScaleBilinearTC(gdImagePtr im, const unsigned int new_w
 
 	int dst_offset_h;
 	int dst_offset_v = 0;
-	int dwSrcTotalOffset;
 	long i;
 	gdImagePtr new_img;
 
@@ -1340,7 +1351,6 @@ static gdImagePtr gdImageScaleBilinearTC(gdImagePtr im, const unsigned int new_w
 					f_g1, f_g2, f_g3, f_g4,
 					f_b1, f_b2, f_b3, f_b4,
 					f_a1, f_a2, f_a3, f_a4;
-			dwSrcTotalOffset = m + n;
 			/* 0 for bgColor, nothing gets outside anyway */
 			pixel1 = getPixelOverflowTC(im, n, m, 0);
 			pixel2 = getPixelOverflowTC(im, n + 1, m, 0);
@@ -1717,7 +1727,6 @@ gdImagePtr gdImageRotateNearestNeighbour(gdImagePtr src, const float degrees, co
 gdImagePtr gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
 {
 	float _angle = ((float) (-degrees / 180.0f) * (float)M_PI);
-	const int angle_rounded = (int)floor(degrees * 100);
 	const int src_w  = gdImageSX(src);
 	const int src_h = gdImageSY(src);
 	const unsigned int new_width = (unsigned int)(abs((int)(src_w * cos(_angle))) + abs((int)(src_h * sin(_angle))) + 0.5f);
@@ -1770,7 +1779,6 @@ gdImagePtr gdImageRotateGeneric(gdImagePtr src, const float degrees, const int b
 			if ((n <= 0) || (m <= 0) || (m >= src_h) || (n >= src_w)) {
 				dst->tpixels[dst_offset_y][dst_offset_x++] = bgColor;
 			} else if ((n <= 1) || (m <= 1) || (m >= src_h - 1) || (n >= src_w - 1)) {
-				gdFixed f_127 = gd_itofx(127);
 				register int c = getPixelInterpolated(src, n, m, bgColor);
 				c = c | (( gdTrueColorGetAlpha(c) + ((int)(127* gd_fxtof(f_slop)))) << 24);
 
@@ -2347,12 +2355,10 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 	gdRect bbox;
 	int end_x, end_y;
 	gdInterpolationMethod interpolation_id_bak = GD_DEFAULT;
-	interpolation_method interpolation_bak;
 
 	/* These methods use special implementations */
 	if (src->interpolation_id == GD_BILINEAR_FIXED || src->interpolation_id == GD_BICUBIC_FIXED || src->interpolation_id == GD_NEAREST_NEIGHBOUR) {
 		interpolation_id_bak = src->interpolation_id;
-		interpolation_bak = src->interpolation;
 		
 		gdImageSetInterpolationMethod(src, GD_BICUBIC);
 	}

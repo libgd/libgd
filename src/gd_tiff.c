@@ -233,9 +233,9 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	int transparentColorG = -1;
 	int transparentColorB = -1;
 	uint16 extraSamples[1];
-	uint16 *colorMapRed;
-	uint16 *colorMapGreen;
-	uint16 *colorMapBlue;
+	uint16 *colorMapRed = NULL;
+	uint16 *colorMapGreen = NULL;
+	uint16 *colorMapBlue = NULL;
 
 	tiff_handle *th;
 
@@ -290,10 +290,13 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 		}
 		colorMapGreen = (uint16 *) gdMalloc(3 * (1 << bitsPerSample));
 		if (!colorMapGreen) {
+			gdFree(colorMapRed);
 			return;
 		}
 		colorMapBlue  = (uint16 *) gdMalloc(3 *  (1 << bitsPerSample));
 		if (!colorMapBlue) {
+			gdFree(colorMapRed);
+			gdFree(colorMapGreen);
 			return;
 		}
 

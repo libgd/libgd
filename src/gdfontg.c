@@ -4377,7 +4377,7 @@ gdFont gdFontGiantRep = {
 	gdFontGiantData
 };
 
-BGD_EXPORT_DATA_IMPL gdFontPtr gdFontGiant = &gdFontGiantRep;
+BGD_EXPORT_DATA_PROT gdFontPtr gdFontGiant = &gdFontGiantRep;
 
 BGD_DECLARE(gdFontPtr) gdFontGetGiant (void)
 {

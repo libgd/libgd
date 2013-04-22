@@ -3862,7 +3862,7 @@ gdFont gdFontSmallRep = {
 	gdFontSmallData
 };
 
-BGD_EXPORT_DATA_IMPL gdFontPtr gdFontSmall = &gdFontSmallRep;
+BGD_EXPORT_DATA_PROT gdFontPtr gdFontSmall = &gdFontSmallRep;
 
 BGD_DECLARE(gdFontPtr)
 gdFontGetSmall (void)
