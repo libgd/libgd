@@ -31,6 +31,8 @@ int main()
 {
 	gdIOCtxPtr ctx;
 
+	gdSetErrorMethod(gdSilence);
+
 	im = gdImageCreate(100, 100);
 	ctx = (gdIOCtxPtr)gdMalloc(sizeof(gdIOCtx));
 	ctx->putC   = failPutC;

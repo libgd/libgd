@@ -11,10 +11,9 @@ int main()
 	char path[2048];
 
 	sprintf(path, "%s/png/emptyfile", GDTEST_TOP_DIR);
-	printf("opening %s\n", path);
 	fp = fopen(path, "rb");
 	if (!fp) {
-		printf("failed, cannot open file\n");
+		fprintf(stderr, "failed, cannot open file: %s\n", path);
 		return 1;
 	}
 	im = gdImageCreateFromPng(fp);

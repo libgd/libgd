@@ -7,6 +7,11 @@
 int main()
 {
 	gdImagePtr im, tile;
+	char path[1024];
+
+	gdSetErrorMethod(gdSilence);
+
+	snprintf(path, 1023, "%s/gdtiled/%s", GDTEST_TOP_DIR, exp_img);
 
 	tile = gdImageCreateTrueColor(10, 10);
 	gdImageFill(tile, 0, 0, 0xFFFFFF);
@@ -19,7 +24,7 @@ int main()
 	gdImageSetTile(im, tile);
 	gdImageFilledRectangle(im, 10, 10, 49, 49, gdTiled);
 
-	gdAssertImageEqualsToFile(exp_img, im);
+	gdAssertImageEqualsToFile(path, im);
 
 	/* Destroy it */
 	gdImageDestroy(im);

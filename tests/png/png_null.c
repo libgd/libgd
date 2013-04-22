@@ -1,8 +1,11 @@
 #include "gd.h"
+#include "gdtest.h"
 
 int main()
 {
 	gdImagePtr im;
+
+	gdSetErrorMethod(gdSilence);
 
 	im = gdImageCreateFromPng(NULL);
 	if (im != NULL) {

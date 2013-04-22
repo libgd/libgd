@@ -34,7 +34,6 @@ int main()
 	}
 
 	trans_c_f =gdImageGetTransparent(im);
-	printf("c_f: %i\n", trans_c_f);
 	if (gdTestAssert(trans_c_f == 1)) {
 		r_f = gdImageRed(im, trans_c_f);
 		g_f = gdImageGreen(im, trans_c_f);

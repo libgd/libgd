@@ -134,6 +134,8 @@ int main()
 	gdImagePtr im;
 	int error = 0;
 
+	gdSetErrorMethod(gdSilence);
+
 	/* true color */
 	im = gdImageCreateTrueColor(5, 5);
 	run_tests(im, &error);

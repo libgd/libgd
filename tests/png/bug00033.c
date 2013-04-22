@@ -10,6 +10,8 @@ int main()
 	FILE *fp;
 	char path[1024];
 
+	gdSetErrorMethod(gdSilence);
+
 	sprintf(path, "%s/png/bug00033.png", GDTEST_TOP_DIR);
 	fp = fopen(path, "rb");
 	if (!fp) {
