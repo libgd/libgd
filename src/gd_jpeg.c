@@ -67,19 +67,17 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 
 	gd_error("gd-jpeg: JPEG library reports unrecoverable error: ");
 	(*cinfo->err->output_message)(cinfo);
-	fflush(stderr);
 
 	jmpbufw = (jmpbuf_wrapper *)cinfo->client_data;
 	jpeg_destroy(cinfo);
 
 	if(jmpbufw != 0) {
 		longjmp(jmpbufw->jmpbuf, 1);
-		gd_error("gd-jpeg: EXTREMELY fatal error: longjmp returned control; terminating\n");
+		gd_error_ex(GD_ERROR, "gd-jpeg: EXTREMELY fatal error: longjmp returned control; terminating\n");
 	} else {
-		gd_error("gd-jpeg: EXTREMELY fatal error: jmpbuf unrecoverable; terminating\n");
+		gd_error_ex(GD_ERROR, "gd-jpeg: EXTREMELY fatal error: jmpbuf unrecoverable; terminating\n");
 	}
 
-	fflush(stderr);
 	exit(99);
 }
 
