@@ -73,6 +73,10 @@ Makefile.in
 /src/webpng
 
 # Tests artifacts
+/config/test-driver
+/tests/*.log
+/tests/*/*.log
+/tests/*/*.trs
 /tests/a.png
 /tests/bmp_im2im_dst.bmp
 /tests/bmp_im2im_src.bmp
