@@ -2445,7 +2445,7 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
  * Returns:
  *  GD_TRUE if the affine is rectilinear or GD_FALSE
  */
-int gdTransformAffineBoundingBox(gdRectPtr src, const double affine[6], gdRectPtr bbox)
+BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine[6], gdRectPtr bbox)
 {
 	gdPointF extent[4], min, max, point;
 	int i;
@@ -2485,7 +2485,7 @@ int gdTransformAffineBoundingBox(gdRectPtr src, const double affine[6], gdRectPt
 	return GD_TRUE;
 }
 
-int gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMethod id)
+BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMethod id)
 {
 	if (im == NULL || id < 0 || id > GD_METHOD_COUNT) {
 		return 0;
