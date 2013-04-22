@@ -17,8 +17,12 @@ int main()
 	gdImageDestroy(im);
 
 	im = gdImageCreateFromPngPtr(size, data);
-	gdTestAssert(gdImageResolutionX(im) == 72);
-	gdTestAssert(gdImageResolutionY(im) == 300);
+	if (gdTestAssert(gdImageResolutionX(im) == 72) || gdTestAssert(gdImageResolutionY(im) == 300)) {
+		gdFree(data);
+		gdImageDestroy(im);
+		return 1;
+	}
+		
 	gdFree(data);
 	gdImageDestroy(im);
 	return 0;
