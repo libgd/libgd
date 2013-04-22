@@ -104,10 +104,13 @@ endif
 if HAVE_LIBJPEG
 check_PROGRAMS += \
 	jpeg/jpeg_empty_file \
-	jpeg/jpeg_resolution \
 	jpeg/jpeg_im2im \
-	jpeg/jpeg_null \
+	jpeg/jpeg_null
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	jpeg/jpeg_resolution \
 	jpeg/jpeg_read
+endif
 endif
 
 if HAVE_LIBZ
