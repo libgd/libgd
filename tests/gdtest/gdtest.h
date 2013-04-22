@@ -18,15 +18,15 @@ gdImagePtr gdTestImageFromPng(const char *filename);
 void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
                      gdImagePtr buf_diff, CuTestImageResult *result_ret);
 
-int gdTestImageCompareToImage(const char* file, int line, const char* message,
+int gdTestImageCompareToImage(const char* file, unsigned int line, const char* message,
                               gdImagePtr expected, gdImagePtr actual);
 
-int gdTestImageCompareToFile(const char* file, int line, const char* message,
+int gdTestImageCompareToFile(const char* file, unsigned int line, const char* message,
                              const char *expected_file, gdImagePtr actual);
 
-int _gdTestAssert(const char* file, int line, const char* message, int condition);
+int _gdTestAssert(const char* file, unsigned int line, const char* message, int condition);
 
-int _gdTestErrorMsg(const char* file, int line, const char* string, ...);
+int _gdTestErrorMsg(const char* file, unsigned int line, const char* string, ...);
 
 /* public assert functions */
 #define gdAssertImageEqualsToFile(ex,ac) gdTestImageCompareToFile(__FILE__,__LINE__,NULL,(ex),(ac))
