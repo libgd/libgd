@@ -184,7 +184,7 @@ check_PROGRAMS +=
 endif
 
 LDADD = ../src/libgd.la libgdtest.a
-AM_CPPFLAGS = -I../src -I gdtest
+AM_CPPFLAGS = -I$(top_srcdir)/src -I $(top_srcdir)/tests/gdtest
 
 TESTS = $(check_PROGRAMS)
 
