@@ -39,4 +39,6 @@ int _gdTestErrorMsg(const char* file, int line, const char* string, ...);
 
 #define gdTestErrorMsg(format, ...) _gdTestErrorMsg(__FILE__, __LINE__, format, ## __VA_ARGS__)
 
+void gdSilence(int priority, const char *format, ...);
+
 #endif /* GD_TEST_H */

@@ -9,6 +9,10 @@
 #include "gdtest.h"
 #include "test_config.h"
 
+void gdSilence(int priority, const char *format, ...)
+{
+	return;
+}
 
 gdImagePtr gdTestImageFromPng(const char *filename)
 {

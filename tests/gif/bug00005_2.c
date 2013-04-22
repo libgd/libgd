@@ -446,13 +446,10 @@ static const unsigned char gifdata[8994] = {71,73,70,56,55,97,20,1,110,
 int main(void)
 {
 	gdImagePtr im;
-	if ( ( im = gdImageCreateFromGifPtr(8994,
-	                                    (char*) &gifdata[0]) ) != NULL) {
-		fprintf(stderr, "success!\n");
+	if ((im = gdImageCreateFromGifPtr(8994, (char*) &gifdata[0])) != NULL) {
 		gdImageDestroy(im);
 		return 0;
 	} else {
-		fprintf(stderr, "failed!\n");
 		return 1;
 	}
 }

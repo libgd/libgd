@@ -9,7 +9,7 @@ int main()
 	int x,y, error = 0;
 	char path[1024];
 
-	fputs("flag 0\n", stdout);
+/*	fputs("flag 0\n", stdout); */
 	im = gdImageCreate(150, 150);
 	tile = gdImageCreate(36, 36);
 	gdImageColorAllocate(tile,255,255,255); /* allocate white for background color */
@@ -31,11 +31,11 @@ int main()
 	gdImageFill(im, 11,12, gdTiled);
 
 
-	fputs("flag 1\n", stdout);
+/*	fputs("flag 1\n", stdout); */
 	gdImageFill(im, 0, 0, 0xffffff);
-	fputs("flag 2\n", stdout);
+/*	fputs("flag 2\n", stdout); */
 	gdImageFill(im, 0, 0, 0xffffff);
-	fputs("flag 2\n", stdout);
+/*	fputs("flag 2\n", stdout); */
 
 
 	sprintf(path, "%s/gdimagefill/bug00002_2_exp.png", GDTEST_TOP_DIR);
