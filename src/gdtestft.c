@@ -152,33 +152,33 @@ main (int argc, char *argv[])
 	}
 	/* TBB: Write img to test/fttest.jpg or test/fttest.png */
 	if (im->trueColor) {
+#ifdef HAVE_LIBJPEG
 		out = fopen ("test/fttest.jpg", "wb");
 		if (!out) {
 			fprintf(stderr, "Can't create test/fttest.jpg\n");
 			exit (1);
 		}
 		/* Fairly high JPEG quality setting */
-#ifdef HAVE_LIBJPEG
 		gdImageJpeg (im, out, 90);
-#else
-		fprintf(stderr, "No JPEG library support.\n");
-#endif
 		fclose (out);
 		fprintf(stderr, "Test image written to test/fttest.jpg\n");
+#else
+		fprintf(stderr, "Test image not written; No JPEG library support.\n");
+#endif
 	} else {
+#ifdef HAVE_LIBPNG
 		out = fopen ("test/fttest.png", "wb");
 		if (!out) {
 			fprintf(stderr, "Can't create test/fttest.png\n");
 			exit (1);
 		}
 		/* 2.0.10: correct ifdef, thanks to Gabriele Verzeletti */
-#ifdef HAVE_LIBPNG
 		gdImagePng (im, out);
-#else
-		fprintf(stderr, "No PNG library support.\n");
-#endif
 		fclose (out);
 		fprintf(stderr, "Test image written to test/fttest.png\n");
+#else
+		fprintf(stderr, "Test image not written; No PNG library support.\n");
+#endif
 	}
 	/* Destroy it */
 	gdImageDestroy (im);
