@@ -127,7 +127,7 @@ yes|"")
     with_png=yes
   ],[
     if test "$with_png" = yes; then
-      AC_MSG_ERROR([png support requested, but not found])
+      AC_MSG_ERROR([png support requested, but not found - see http://www.libpng.org/pub/png/])
     fi
     with_png=no
   ])
@@ -139,13 +139,11 @@ yes|"")
     LIBPNG_LIBS=`$LIBPNG_CONFIG --libs`
     with_png=yes
   else
-    AC_MSG_ERROR([png support requested, but not found: $LIBPNG_CONFIG])
+    AC_MSG_ERROR([png support requested, but not found at requested location: $LIBPNG_CONFIG])
   fi
   ;;
 esac
-if test "$with_png" = no; then
-  AC_MSG_WARN([libpng is required for PNG files - see http://www.libpng.org/pub/png/])
-else
+if test "$with_png" != no; then
   CPPFLAGS="$CPPFLAGS $LIBPNG_CFLAGS"
   LIBS="$LIBS $LIBPNG_LIBS"
   FEATURES="GD_PNG $FEATURES"
