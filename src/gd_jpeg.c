@@ -101,9 +101,10 @@ static void jpeg_emit_message(j_common_ptr jpeg_info, int level)
 static void fatal_jpeg_error(j_common_ptr cinfo)
 {
 	jmpbuf_wrapper *jmpbufw;
+	char buffer[JMSG_LENGTH_MAX];
 
-	gd_error("gd-jpeg: JPEG library reports unrecoverable error: ");
-	(*cinfo->err->output_message)(cinfo);
+	(*cinfo->err->format_message)(cinfo, buffer);
+	gd_error(GD_ERROR, "gd-jpeg: JPEG library reports unrecoverable error: %s", buffer);
 
 	jmpbufw = (jmpbuf_wrapper *)cinfo->client_data;
 	jpeg_destroy(cinfo);
@@ -186,6 +187,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 		return;
 	}
 
+	cinfo.err->emit_message = jpeg_emit_message;
 	cinfo.err->error_exit = fatal_jpeg_error;
 
 	jpeg_create_compress(&cinfo);
