@@ -107,10 +107,9 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 	}
 }
 
-int gdTestImageCompareToImage(const char* file, int line, const char* message,
+int gdTestImageCompareToImage(const char* file, unsigned int line, const char* message,
                               gdImagePtr expected, gdImagePtr actual)
 {
-	char buf[GDTEST_STRING_MAX];
 	unsigned int width_a, height_a;
 	unsigned int width_b, height_b;
 	gdImagePtr surface_diff = NULL;
@@ -119,7 +118,7 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 	(void)message;
 
 	if (!actual) {
-		fprintf(stderr, "Image is NULL\n");
+		_gdTestErrorMsg(file, line, "Image is NULL\n");
 		goto fail;
 	}
 
@@ -129,10 +128,11 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 	height_b = gdImageSY(actual);
 
 	if (width_a  != width_b  || height_a != height_b) {
-		fprintf(stderr, "Image size mismatch: (%ux%u) vs. (%ux%u)\n       for %s vs. buffer\n",
-		        width_a, height_a,
-		        width_b, height_b,
-		        file);
+		_gdTestErrorMsg(file, line,
+				"Image size mismatch: (%ux%u) vs. (%ux%u)\n       for %s vs. buffer\n",
+				width_a, height_a,
+				width_b, height_b,
+				file);
 		goto fail;
 	}
 
@@ -145,10 +145,11 @@ int gdTestImageCompareToImage(const char* file, int line, const char* message,
 		FILE *fp;
 		int len, p;
 
-		sprintf(buf, "Total pixels changed: %d with a maximum channel difference of %d.\n",
-		        result.pixels_changed,
-		        result.max_diff
-		       );
+		_gdTestErrorMsg(file, line,
+				"Total pixels changed: %d with a maximum channel difference of %d.\n",
+				result.pixels_changed,
+				result.max_diff
+			);
 
 		p = len = strlen(file);
 		p--;
@@ -184,7 +185,7 @@ fail:
 	return 0;
 }
 
-int gdTestImageCompareToFile(const char* file, int line, const char* message,
+int gdTestImageCompareToFile(const char* file, unsigned int line, const char* message,
                              const char *expected_file, gdImagePtr actual)
 {
 	gdImagePtr expected;
@@ -193,7 +194,7 @@ int gdTestImageCompareToFile(const char* file, int line, const char* message,
 	expected = gdTestImageFromPng(expected_file);
 
 	if (!expected) {
-		gdTestErrorMsg("Cannot open PNG <%s>", expected_file, file, line);
+		_gdTestErrorMsg(file, line, "Cannot open PNG <%s>", expected_file, file, line);
 		res = 0;
 	} else {
 		res = gdTestImageCompareToImage(file, line, message, expected, actual);
@@ -202,27 +203,23 @@ int gdTestImageCompareToFile(const char* file, int line, const char* message,
 	return res;
 }
 
-int _gdTestAssert(const char* file, int line, const char* message, int condition)
+int _gdTestAssert(const char* file, unsigned int line, const char* message, int condition)
 {
 	if (condition) return 1;
-	gdTestErrorMsg(message, file, line);
+	_gdTestErrorMsg(file, line, "%s", message);
 	return 0;
 }
 
-int _gdTestErrorMsg(const char* file, int line, const char* format, ...) /* {{{ */
+int _gdTestErrorMsg(const char* file, unsigned int line, const char* format, ...) /* {{{ */
 {
-	char output_buf[512];
 	va_list args;
+	char output_buf[GDTEST_STRING_MAX];
 
-	(void)file;
-	(void)line;
-
-	va_start (args, format);
-	vsnprintf (output_buf, sizeof (output_buf), format, args);
-	va_end (args);
-
-	fputs (output_buf, stderr);
-	fflush (stderr);
+	va_start(args, format);
+	vsnprintf(output_buf, sizeof(output_buf), format, args);
+	va_end(args);
+	fprintf(stderr, "%s:%u: %s", file, line, output_buf);
+	fflush(stderr);
 	return 0;
 }
 /* }}} */

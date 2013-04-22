@@ -6,31 +6,30 @@
 
 int main()
 {
-	int error;
 	gdImagePtr im;
 	FILE *fp;
 	char path[1024];
 
-	sprintf(path, "%s/jpeg/conv_test.jpeg", GDTEST_TOP_DIR);
+	snprintf(path, sizeof(path), "%s/jpeg/conv_test.jpeg", GDTEST_TOP_DIR);
 	fp = fopen(path, "rb");
 	if (!fp) {
-		printf("failed, cannot open file\n");
+		gdTestErrorMsg("failed, cannot open file: %s\n", path);
 		return 1;
 	}
 
 	im = gdImageCreateFromJpeg(fp);
 	fclose(fp);
 
-	sprintf(path, "%s/jpeg/conv_test_exp.png", GDTEST_TOP_DIR);
-	if (!gdAssertImageEqualsToFile(path, im)) {
-		error = 1;
-	} else {
-		if (im) {
-			gdImageDestroy(im);
-			error = 0;
-		} else {
-			error = 1;
-		}
+	if (im == NULL) {
+		gdTestErrorMsg("gdImageCreateFromJpeg failed.\n");
+		return 1;
 	}
-	return error;
+	snprintf(path, sizeof(path), "%s/jpeg/conv_test_exp.png", GDTEST_TOP_DIR);
+	if (!gdAssertImageEqualsToFile(path, im)) {
+		gdTestErrorMsg("gdAssertImageEqualsToFile failed.\n");
+		gdImageDestroy(im);
+		return 1;
+	}
+
+	return 0;
 }
