@@ -53,6 +53,7 @@ m4_ifndef([AM_PROG_AR],[m4_define([AM_PROG_AR],[:])])
 AM_PROG_AR
 
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_LN_S
@@ -209,6 +210,7 @@ if test "$withval" != no; then
 else
   ac_cv_lib_fontconfig_FcInit=no
 fi
+AM_CONDITIONAL([HAVE_LIBFONTCONFIG], test "$ac_cv_lib_fontconfig_FcInit" = yes)
 
 dnl check for libjpeg by default
 AC_ARG_WITH(jpeg,dnl
@@ -227,6 +229,7 @@ if test "$withval" != no; then
 else
   ac_cv_lib_jpeg_jpeg_set_defaults=no
 fi
+AM_CONDITIONAL([HAVE_LIBJPEG], test "$ac_cv_lib_jpeg_jpeg_set_defaults" = yes)
 
 dnl check for libXpm by default
 AC_ARG_WITH(xpm,dnl
@@ -245,8 +248,7 @@ if test "$withval" != no; then
 else
   ac_cv_lib_Xpm_XpmReadFileToXpmImage=no
 fi
-
-
+AM_CONDITIONAL([HAVE_LIBXPM], test "$ac_cv_lib_Xpm_XpmReadFileToXpmImage" = yes)
 
 dnl check for libvpx by default
 AC_ARG_WITH(vpx,dnl
@@ -265,7 +267,7 @@ if test "$withval" != no; then
 else
   ac_cv_lib_vpx_vpx_codec_destroy=no
 fi
-
+AM_CONDITIONAL([HAVE_LIBVPX], test "$ac_cv_lib_vpx_vpx_codec_destroy" = yes)
 
 dnl check for libtiff by default
 AC_ARG_WITH(tiff,dnl
@@ -284,6 +286,7 @@ if test "$withval" != no; then
 else
   ac_cv_lib_tiff_TIFFClientOpen=no
 fi
+AM_CONDITIONAL([HAVE_LIBTIFF], test "$ac_cv_lib_tiff_TIFFClientOpen" = yes)
 
 gl_VISIBILITY()
 CFLAGS="$CFLAGS $CFLAG_VISIBILITY"
@@ -307,6 +310,8 @@ AC_MSG_RESULT([
 
 AC_CONFIG_FILES([Makefile
                 src/Makefile
+		tests/Makefile
+		tests/gdtest/test_config.h
                 config/Makefile
                 config/gdlib-config
 		config/gdlib.pc])

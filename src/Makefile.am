@@ -19,7 +19,11 @@ endif
 
 bin_SCRIPTS = bdftogd
 
-check_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gd2time gdtestft testac circletexttest testtr fontconfigtest gifanimtest gd_color_map_test
+check_PROGRAMS = fontsizetest fontwheeltest gdtest gddemo gdtestft testac circletexttest testtr fontconfigtest gifanimtest gd_color_map_test
+
+if HAVE_LIBZ
+check_PROGRAMS += gd2time
+endif
 
 EXTRA_DIST = bdftogd demoin.png entities.html entities.tcl CMakeLists.txt
 
