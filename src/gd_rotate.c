@@ -346,7 +346,6 @@ gdImagePtr gdImageRotate270 (gdImagePtr src, int ignoretransparent)
 gdImagePtr gdImageRotate45 (gdImagePtr src, double dAngle, int clrBack, int ignoretransparent)
 {
 	gdImagePtr dst1,dst2,dst3;
-	FuncPtr f;
 	double dRadAngle, dSinE, dTan, dShear;
 	double dOffset;     /* Variable skew offset */
 	int u, iShear, newx, newy;
@@ -361,12 +360,6 @@ gdImagePtr gdImageRotate45 (gdImagePtr src, double dAngle, int clrBack, int igno
 	newy = src->sy;
 
 	/* 1st shear */
-	if (src->trueColor) {
-		f = gdImageGetTrueColorPixel;
-	} else {
-		f = gdImageGetPixel;
-	}
-
 	dst1 = gdImageCreateTrueColor(newx, newy);
 	/******* Perform 1st shear (horizontal) ******/
 	if (dst1 == NULL) {
@@ -431,11 +424,6 @@ gdImagePtr gdImageRotate45 (gdImagePtr src, double dAngle, int clrBack, int igno
 
 	newy = (int) ((double) src->sx * fabs( dSinE ) + (double) src->sy * cos (dRadAngle))+1;
 
-	if (src->trueColor) {
-		f = gdImageGetTrueColorPixel;
-	} else {
-		f = gdImageGetPixel;
-	}
 	dst2 = gdImageCreateTrueColor(newx, newy);
 	if (dst2 == NULL) {
 		gdImageDestroy(dst1);
@@ -463,11 +451,6 @@ gdImagePtr gdImageRotate45 (gdImagePtr src, double dAngle, int clrBack, int igno
 	newx = (int) ((double)src->sy * fabs (dSinE) + (double)src->sx * cos (dRadAngle)) + 1;
 	newy = dst2->sy;
 
-	if (src->trueColor) {
-		f = gdImageGetTrueColorPixel;
-	} else {
-		f = gdImageGetPixel;
-	}
 	dst3 = gdImageCreateTrueColor(newx, newy);
 	if (dst3 == NULL) {
 		gdImageDestroy(dst2);
