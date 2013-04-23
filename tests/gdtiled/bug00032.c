@@ -4,6 +4,10 @@
 
 #define exp_img "bug00032_exp.png"
 
+#ifdef _MSC_VER
+# define snprintf _snprintf
+#endif
+
 int main()
 {
 	gdImagePtr im, tile;
