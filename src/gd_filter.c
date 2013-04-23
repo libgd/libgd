@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-typedef int (GD_STDCALL *FuncPtr)(gdImagePtr, int, int);
+typedef int (BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
 
 #define GET_PIXEL_FUNCTION(src)(src->trueColor?gdImageGetTrueColorPixel:gdImageGetPixel)
 #define MIN(a,b) ((a)<(b)?(a):(b))
