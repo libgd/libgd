@@ -32,7 +32,7 @@ extern "C" {
 #   ifdef __GNUC__
 #    define BGD_EXPORT_DATA_PROT __attribute__ ((dllimport))
 #   else
-#    define BGD_EXPORT_DATA_PROT __declspec(dllimport)
+#    define BGD_EXPORT_DATA_PROT
 #   endif
 #  else
 #   ifdef __GNUC__
