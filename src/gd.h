@@ -29,11 +29,7 @@ extern "C" {
 #if defined(_WIN32) || defined(CYGWIN) || defined(_WIN32_WCE)
 # if BGDWIN32
 #  ifdef NONDLL
-#   ifdef __GNUC__
-#    define BGD_EXPORT_DATA_PROT __attribute__ ((dllimport))
-#   else
-#    define BGD_EXPORT_DATA_PROT
-#   endif
+#   define BGD_EXPORT_DATA_PROT
 #  else
 #   ifdef __GNUC__
 #    define BGD_EXPORT_DATA_PROT __attribute__ ((dllexport))
@@ -42,7 +38,11 @@ extern "C" {
 #   endif
 #  endif
 # else
-#  define BGD_EXPORT_DATA_PROT
+#  ifdef __GNUC__
+#   define BGD_EXPORT_DATA_PROT __attribute__ ((dllimport))
+#  else
+#   define BGD_EXPORT_DATA_PROT __declspec(dllimport)
+#  endif
 # endif
 # define BGD_STDCALL __stdcall
 # define BGD_EXPORT_DATA_IMPL
