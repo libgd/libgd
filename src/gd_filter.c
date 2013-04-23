@@ -4,7 +4,7 @@
 
 #include "gd.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 # include <windows.h>
 #else
 # include <unistd.h>
@@ -18,7 +18,7 @@ typedef int (BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define MAX(a,b) ((a)<(b)?(b):(a))
 
-#ifdef WIN32
+#ifdef _WIN32
 # define GD_SCATTER_SEED() (unsigned int)(time(0) * GetCurrentProcessId())
 #else
 # define GD_SCATTER_SEED() (unsigned int)(time(0) * getpid())

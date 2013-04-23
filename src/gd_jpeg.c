@@ -39,7 +39,7 @@
 #ifdef HAVE_LIBJPEG
 #include "gdhelpers.h"
 
-#if defined(WIN32) && defined(__MINGW32__)
+#if defined(_WIN32) && defined(__MINGW32__)
 # define HAVE_BOOLEAN
 #endif
 

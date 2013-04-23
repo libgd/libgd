@@ -26,7 +26,7 @@ extern "C" {
    the gd sources in a project. */
 
 /* http://gcc.gnu.org/wiki/Visibility */
-#if defined(WIN32) || defined(CYGWIN) || defined(_WIN32_WCE)
+#if defined(_WIN32) || defined(CYGWIN) || defined(_WIN32_WCE)
 # if BGDWIN32
 #  ifdef NONDLL
 #   ifdef __GNUC__

@@ -1,7 +1,7 @@
 #ifndef GD_ERRORS_H
 #define GD_ERRORS_H
 
-#ifndef WIN32
+#ifndef _WIN32
 # include <syslog.h>
 #else
 /*
@@ -21,7 +21,6 @@
 # define LOG_NOTICE      5       /* normal but significant condition */
 # define LOG_INFO        6       /* informational */
 # define LOG_DEBUG       7       /* debug-level messages */
-
 #endif
 
 /*
