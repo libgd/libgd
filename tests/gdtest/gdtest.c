@@ -9,7 +9,7 @@
 #include "gdtest.h"
 #include "test_config.h"
 
-void gdSilence(int priority, const char *format, ...)
+void gdSilence(int priority, const char *format, va_list args)
 {
 	return;
 }

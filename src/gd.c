@@ -69,11 +69,8 @@ static const unsigned char gd_toascii[256] = {
 extern const int gdCosT[];
 extern const int gdSinT[];
 
-void gd_stderr_error(int priority, const char *format, ...)
+void gd_stderr_error(int priority, const char *format, va_list args)
 {
-	va_list args;
-
-	va_start(args, format);
 	switch (priority) {
 	case GD_ERROR:
 		fputs("GD Error: ", stderr);
@@ -91,9 +88,7 @@ void gd_stderr_error(int priority, const char *format, ...)
 		fputs("GD Debug: ", stderr);
 		break;
 	}
-	va_start(args, format);
-	fprintf(stderr, format, args);
-	va_end(args);
+	vfprintf(stderr, format, args);
 	fflush(stderr);
 }
 
