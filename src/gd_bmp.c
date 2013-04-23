@@ -266,7 +266,7 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 
 cleanup:
 	if (tmpfile_for_compression) {
-#ifdef WIN32
+#ifdef _WIN32
 		_rmtmp();
 #else
 		fclose(tmpfile_for_compression);

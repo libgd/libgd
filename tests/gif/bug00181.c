@@ -11,17 +11,33 @@ int main()
 
 	/* GIFEncode */
 	im = gdImageCreate(100, 100);
+        if (!im) {
+                gdTestErrorMsg("Cannot create image.\n");
+                return 1;
+        }
 	im->interlace = 1;
 	fp = fopen("bug00181.gif", "wb");
+	if (!fp) {
+		gdTestErrorMsg("Cannot open <%s> for writing.\n", "bug00181.gif");
+		return 1;
+	}
 	gdImageGif(im, fp);
 	gdImageDestroy(im);
 	fclose(fp);
 
 	fp = fopen("bug00181.gif", "rb");
+	if (!fp) {
+		gdTestErrorMsg("Cannot open <%s> for reading.\n", "bug00181.gif");
+		return 1;
+	}
 	im = gdImageCreateFromGif(fp);
+	fclose(fp);
+        if (!im) {
+                gdTestErrorMsg("Cannot create image from <%s>\n", "bug00181.gif");
+                return 1;
+        }
 	error = !im->interlace;
 	gdImageDestroy(im);
-	fclose(fp);
 
 	if (error) return error;
 
@@ -33,6 +49,10 @@ int main()
 	trans = gdImageColorAllocate(im, 1, 1, 1);
 	gdImageRectangle(im, 0, 0, 10, 10, black);
 	fp = fopen("bug00181a.gif", "wb");
+	if (!fp) {
+		gdTestErrorMsg("Cannot open <%s> for writing.\n", "bug00181a.gif");
+		return 1;
+	}
 	gdImageGifAnimBegin(im, fp, 1, 3);
 	gdImageGifAnimAdd(im, fp, 0, 0, 0, 100, 1, NULL);
 	im2 = gdImageCreate(100, 100);
@@ -56,10 +76,18 @@ int main()
 	gdImageDestroy(im3);
 
 	fp = fopen("bug00181a.gif", "rb");
+	if (!fp) {
+		gdTestErrorMsg("Cannot open <%s> for reading.\n", "bug00181a.gif");
+		return 1;
+	}
 	im = gdImageCreateFromGif(fp);
+	fclose(fp);
+        if (!im) {
+                gdTestErrorMsg("Cannot create image from <%s>\n", "bug00181a.gif");
+                return 1;
+        }
 	error = !im->interlace;
 	gdImageDestroy(im);
-	fclose(fp);
 
 	return error;
 }

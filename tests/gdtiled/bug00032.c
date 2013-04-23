@@ -4,14 +4,18 @@
 
 #define exp_img "bug00032_exp.png"
 
+#ifdef _MSC_VER
+# define snprintf _snprintf
+#endif
+
 int main()
 {
 	gdImagePtr im, tile;
-	char path[1024];
+	char path[GDTEST_STRING_MAX];
 
 	gdSetErrorMethod(gdSilence);
 
-	snprintf(path, 1023, "%s/gdtiled/%s", GDTEST_TOP_DIR, exp_img);
+	snprintf(path, GDTEST_STRING_MAX - 1, "%s/gdtiled/%s", GDTEST_TOP_DIR, exp_img);
 
 	tile = gdImageCreateTrueColor(10, 10);
 	gdImageFill(tile, 0, 0, 0xFFFFFF);
@@ -24,9 +28,12 @@ int main()
 	gdImageSetTile(im, tile);
 	gdImageFilledRectangle(im, 10, 10, 49, 49, gdTiled);
 
-	gdAssertImageEqualsToFile(path, im);
+	if (!gdAssertImageEqualsToFile(path, im)) {
+		gdImageDestroy(im);
+		gdImageDestroy(tile);
+		return 1;
+	}
 
-	/* Destroy it */
 	gdImageDestroy(im);
 	gdImageDestroy(tile);
 	return 0;

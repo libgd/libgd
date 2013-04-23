@@ -25,32 +25,39 @@ extern "C" {
    wish to build gd as a static library or by directly including
    the gd sources in a project. */
 
-#if !defined(WIN32) && !defined(_WIN32_WCE)
-#define NONDLL 1
-#endif /* WIN32 */
-
 /* http://gcc.gnu.org/wiki/Visibility */
-#ifdef NONDLL
+#if defined(_WIN32) || defined(CYGWIN) || defined(_WIN32_WCE)
+# if BGDWIN32
+#  ifdef NONDLL
+#   define BGD_EXPORT_DATA_PROT
+#  else
+#   ifdef __GNUC__
+#    define BGD_EXPORT_DATA_PROT __attribute__ ((dllexport))
+#   else
+#    define BGD_EXPORT_DATA_PROT __declspec(dllexport)
+#   endif
+#  endif
+# else
+#  ifdef __GNUC__
+#   define BGD_EXPORT_DATA_PROT __attribute__ ((dllimport))
+#  else
+#   define BGD_EXPORT_DATA_PROT __declspec(dllimport)
+#  endif
+# endif
+# define BGD_STDCALL __stdcall
+# define BGD_EXPORT_DATA_IMPL
+#else
 # ifdef HAVE_VISIBILITY
-#  define BGD_DECLARE(rt) __attribute__ ((visibility ("default"))) extern rt
 #  define BGD_EXPORT_DATA_PROT __attribute__ ((visibility ("default")))
 #  define BGD_EXPORT_DATA_IMPL __attribute__ ((visibility ("hidden")))
 # else
-#  define BGD_DECLARE(rt) extern rt
 #  define BGD_EXPORT_DATA_PROT
 #  define BGD_EXPORT_DATA_IMPL
 # endif
-#else
-# ifdef BGDWIN32
-#  define BGD_DECLARE(rt) __declspec(dllexport) rt __stdcall
-#  define BGD_EXPORT_DATA_PROT __declspec(dllexport) extern
-#  define BGD_EXPORT_DATA_IMPL __declspec(dllexport)
-# else
-#  define BGD_DECLARE(rt) __declspec(dllimport) rt _stdcall
-#  define BGD_EXPORT_DATA_PROT __declspec(dllimport) extern
-#  define BGD_EXPORT_DATA_IMPL __declspec(dllimport)
-# endif /* BGDWIN32 */
-#endif /* NONDLL */
+# define BGD_STDCALL
+#endif
+
+#define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt BGD_STDCALL
 
 #ifdef __cplusplus
 	extern "C"
@@ -70,6 +77,7 @@ extern "C" {
 
 /* stdio is needed for file I/O. */
 #include <stdio.h>
+#include <stdarg.h>
 #include "gd_io.h"
 
 /* The maximum number of palette entries in palette-based images.
@@ -109,6 +117,10 @@ extern "C" {
 #define gdTrueColorGetRed(c) (((c) & 0xFF0000) >> 16)
 #define gdTrueColorGetGreen(c) (((c) & 0x00FF00) >> 8)
 #define gdTrueColorGetBlue(c) ((c) & 0x0000FF)
+#define gdEffectReplace 0
+#define gdEffectAlphaBlend 1
+#define gdEffectNormal 2
+#define gdEffectOverlay 3
 
 #define GD_TRUE 1
 #define GD_FALSE 0
@@ -335,7 +347,7 @@ gdFont;
 /* Text functions take these. */
 typedef gdFont *gdFontPtr;
 
-typedef void(*gdErrorMethod)(int, const char *, ...);
+typedef void(*gdErrorMethod)(int, const char *, va_list);
 
 BGD_DECLARE(void) gdSetErrorMethod(gdErrorMethod);
 BGD_DECLARE(void) gdClearErrorMethod(void);
@@ -386,8 +398,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx (gdIOCtx * infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg (FILE * infile);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx (FILE * infile, int ignore_warning);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx (gdIOCtx * infile);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx (gdIOCtx * infile, int ignore_warning);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr (int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx (int size, void *data, int ignore_warning);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile);
@@ -434,6 +449,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartPtr (int size, void *data, int s
 						     int w, int h);
 /* 2.0.10: prototype was missing */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm (FILE * in);
+BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOCtx * out);
 
 /* NOTE: filename, not FILE */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm (char *filename);
@@ -668,6 +684,12 @@ BGD_DECLARE(int) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
 					    int colorsWanted);
 
 BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src);
+
+/* An attempt at getting the results of gdImageTrueColorToPalette to
+ * look a bit more like the original (im1 is the original and im2 is
+ * the palette version */
+
+BGD_DECLARE(int) gdImageColorMatch(gdImagePtr im1, gdImagePtr im2);
 
 /* Selects quantization method used for subsequent gdImageTrueColorToPalette calls.
    See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT, GD_QUANT_LIQ).

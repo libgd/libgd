@@ -4,7 +4,7 @@
 
 #include "gd.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 # include <windows.h>
 #else
 # include <unistd.h>
@@ -12,17 +12,13 @@
 #include <stdlib.h>
 #include <time.h>
 
-#ifdef NONDLL
-#define __stdcall
-#endif
-
-typedef int (__stdcall *FuncPtr)(gdImagePtr, int, int);
+typedef int (BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
 
 #define GET_PIXEL_FUNCTION(src)(src->trueColor?gdImageGetTrueColorPixel:gdImageGetPixel)
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define MAX(a,b) ((a)<(b)?(b):(a))
 
-#ifdef WIN32
+#ifdef _WIN32
 # define GD_SCATTER_SEED() (unsigned int)(time(0) * GetCurrentProcessId())
 #else
 # define GD_SCATTER_SEED() (unsigned int)(time(0) * getpid())

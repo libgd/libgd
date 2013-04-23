@@ -15,11 +15,7 @@
 #undef ROTATE_PI
 #endif /* ROTATE_PI */
 
-#ifdef NONDLL
-#define __stdcall
-#endif
-
-typedef int (__stdcall *FuncPtr)(gdImagePtr, int, int);
+typedef int (BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
 
 #define ROTATE_DEG2RAD  3.1415926535897932384626433832795/180
 void gdImageSkewX (gdImagePtr dst, gdImagePtr src, int uRow, int iOffset, double dWeight, int clrBack, int ignoretransparent)

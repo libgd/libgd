@@ -291,6 +291,12 @@ CFLAGS="$CFLAGS $CFLAG_VISIBILITY"
 
 AX_PTHREAD()
 
+MINGW_AC_WIN32_NATIVE_HOST()
+
+if test "$ac_cv_mingw_cv_win32_host" = yes; then
+AC_DEFINE([BGDWIN32], [], [Define is you are building for Win32 API])
+fi
+
 dnl report configuration
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE $VERSION:

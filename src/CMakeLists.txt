@@ -60,6 +60,7 @@ SET (LIBGD_SRC_FILES
 	wbmp.h
 	gd_webp.c
 	webpimg.c
+	gd_xbm.c
 )
 
 add_library(${GD_LIB} ${LIBGD_SRC_FILES})

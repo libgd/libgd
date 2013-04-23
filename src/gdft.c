@@ -20,7 +20,7 @@
 #include "entities.h"
 
 /* 2.0.10: WIN32, not MSWIN32 */
-#if !defined(WIN32) && !defined(_WIN32_WCE)
+#if !defined(_WIN32) && !defined(_WIN32_WCE)
 #include <unistd.h>
 #elif defined(_WIN32_WCE)
 #include <wce_stdlib.h> /* getenv() */

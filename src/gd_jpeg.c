@@ -39,7 +39,7 @@
 #ifdef HAVE_LIBJPEG
 #include "gdhelpers.h"
 
-#if defined(WIN32) && defined(__MINGW32__)
+#if defined(_WIN32) && defined(__MINGW32__)
 # define HAVE_BOOLEAN
 #endif
 
@@ -57,16 +57,54 @@ static const char *const GD_JPEG_VERSION = "1.0";
 
 typedef struct _jmpbuf_wrapper {
 	jmp_buf jmpbuf;
+        int ignore_warning;
 }
 jmpbuf_wrapper;
+
+static void jpeg_emit_message(j_common_ptr jpeg_info, int level)
+{
+	char message[JMSG_LENGTH_MAX];
+	jmpbuf_wrapper *jmpbufw;
+	int ignore_warning = 0;
+
+	jmpbufw = (jmpbuf_wrapper *) jpeg_info->client_data;
+
+	if (jmpbufw != 0) {
+		ignore_warning = jmpbufw->ignore_warning;
+	}
+
+	(jpeg_info->err->format_message)(jpeg_info,message);
+
+	/* It is a warning message */
+	if (level < 0) {
+		/* display only the 1st warning, as would do a default libjpeg
+		 * unless strace_level >= 3
+		 */
+		if ((jpeg_info->err->num_warnings == 0) || (jpeg_info->err->trace_level >= 3)) {
+			if (!ignore_warning) {
+				gd_error("gd-jpeg, libjpeg: recoverable error: %s\n", message);
+			}
+		}
+
+		jpeg_info->err->num_warnings++;
+	} else {
+		/* strace msg, Show it if trace_level >= level. */
+		if (jpeg_info->err->trace_level >= level) {
+			if (!ignore_warning) {
+				gd_error("gd-jpeg, libjpeg: strace message: %s\n", message);
+			}
+		}
+	}
+}
 
 /* Called by the IJG JPEG library upon encountering a fatal error */
 static void fatal_jpeg_error(j_common_ptr cinfo)
 {
 	jmpbuf_wrapper *jmpbufw;
+	char buffer[JMSG_LENGTH_MAX];
 
-	gd_error("gd-jpeg: JPEG library reports unrecoverable error: ");
-	(*cinfo->err->output_message)(cinfo);
+	(*cinfo->err->format_message)(cinfo, buffer);
+	gd_error_ex(GD_ERROR, "gd-jpeg: JPEG library reports unrecoverable error: %s", buffer);
 
 	jmpbufw = (jmpbuf_wrapper *)cinfo->client_data;
 	jpeg_destroy(cinfo);
@@ -124,12 +162,12 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	char comment[255];
 
 #ifdef JPEG_DEBUG
-	printf("gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
-	printf("gd-jpeg: JPEG library version %d, %d-bit sample values\n", JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
+	gd_error_ex(GD_DEBUG, "gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
+	gd_error_ex(GD_DEBUG, "gd-jpeg: JPEG library version %d, %d-bit sample values\n", JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
 	if (!im->trueColor) {
 		for(i = 0; i < im->colorsTotal; i++) {
 			if(!im->open[i]) {
-				printf ("gd-jpeg: gd colormap index %d: (%d, %d, %d)\n", i, im->red[i], im->green[i], im->blue[i]);
+				gd_error_ex(GD_DEBUG, "gd-jpeg: gd colormap index %d: (%d, %d, %d)\n", i, im->red[i], im->green[i], im->blue[i]);
 			}
 		}
 	}
@@ -149,6 +187,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 		return;
 	}
 
+	cinfo.err->emit_message = jpeg_emit_message;
 	cinfo.err->error_exit = fatal_jpeg_error;
 
 	jpeg_create_compress(&cinfo);
@@ -171,7 +210,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	/* If user requests interlace, translate that to progressive JPEG */
 	if(gdImageGetInterlaced(im)) {
 #ifdef JPEG_DEBUG
-		printf("gd-jpeg: interlace set, outputting progressive JPEG image\n");
+		gd_error_ex(GD_DEBUG, "gd-jpeg: interlace set, outputting progressive JPEG image\n");
 #endif
 		jpeg_simple_progression(&cinfo);
 	}
@@ -263,22 +302,30 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *inFile)
 {
+	return gdImageCreateFromJpegEx(inFile, 1);
+}
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx(FILE *inFile, int ignore_warning)
+{
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
 	if (in == NULL) return NULL;
-	im = gdImageCreateFromJpegCtx(in);
+	im = gdImageCreateFromJpegCtxEx(in, ignore_warning);
 	in->gd_free(in);
 	return im;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data)
 {
+	return gdImageCreateFromJpegPtrEx(size, data, 1);
+}
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx(int size, void *data, int ignore_warning)
+{
 	gdImagePtr im;
 	gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
 	if(!in) {
 		return 0;
 	}
-	im = gdImageCreateFromJpegCtx(in);
+	im = gdImageCreateFromJpegCtxEx(in, ignore_warning);
 	in->gd_free(in);
 	return im;
 }
@@ -292,6 +339,10 @@ static int CMYKToRGB(int c, int m, int y, int k, int inverted);
  * image, or NULL upon error.
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
+{
+	return gdImageCreateFromJpegCtxEx(infile, 1);
+}
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning)
 {
 	struct jpeg_decompress_struct cinfo;
 	struct jpeg_error_mgr jerr;
@@ -307,16 +358,20 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	int inverted = 0;
 
 #ifdef JPEG_DEBUG
-	printf("gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
-	printf("gd-jpeg: JPEG library version %d, %d-bit sample values\n", JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
-	printf("sizeof: %d\n", sizeof(struct jpeg_decompress_struct));
+	gd_error_ex(GD_DEBUG, "gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
+	gd_error_ex(GD_DEBUG, "gd-jpeg: JPEG library version %d, %d-bit sample values\n", JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
+	gd_error_ex(GD_DEBUG, "sizeof: %d\n", sizeof(struct jpeg_decompress_struct));
 #endif
 
 	memset(&cinfo, 0, sizeof(cinfo));
 	memset(&jerr, 0, sizeof(jerr));
 
+	jmpbufw.ignore_warning = ignore_warning;
+
 	cinfo.err = jpeg_std_error(&jerr);
 	cinfo.client_data = &jmpbufw;
+
+	cinfo.err->emit_message = jpeg_emit_message;
 
 	if(setjmp(jmpbufw.jmpbuf) != 0) {
 		/* we're here courtesy of longjmp */
@@ -392,49 +447,49 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	}
 
 #ifdef JPEG_DEBUG
-	printf("gd-jpeg: JPEG image information:");
+	gd_error_ex(GD_DEBUG, "gd-jpeg: JPEG image information:");
 	if(cinfo.saw_JFIF_marker) {
-		printf(" JFIF version %d.%.2d", (int)cinfo.JFIF_major_version, (int)cinfo.JFIF_minor_version);
+		gd_error_ex(GD_DEBUG, " JFIF version %d.%.2d", (int)cinfo.JFIF_major_version, (int)cinfo.JFIF_minor_version);
 	} else if(cinfo.saw_Adobe_marker) {
-		printf(" Adobe format");
+		gd_error_ex(GD_DEBUG, " Adobe format");
 	} else {
-		printf(" UNKNOWN format");
+		gd_error_ex(GD_DEBUG, " UNKNOWN format");
 	}
 
-	printf(" %ux%u (raw) / %ux%u (scaled) %d-bit", cinfo.image_width,
-	       cinfo.image_height, cinfo.output_width,
-	       cinfo.output_height, cinfo.data_precision
-	      );
-	printf(" %s", (cinfo.progressive_mode ? "progressive" : "baseline"));
-	printf(" image, %d quantized colors, ", cinfo.actual_number_of_colors);
+	gd_error_ex(GD_DEBUG, " %ux%u (raw) / %ux%u (scaled) %d-bit", cinfo.image_width,
+		    cinfo.image_height, cinfo.output_width,
+		    cinfo.output_height, cinfo.data_precision
+		);
+	gd_error_ex(GD_DEBUG, " %s", (cinfo.progressive_mode ? "progressive" : "baseline"));
+	gd_error_ex(GD_DEBUG, " image, %d quantized colors, ", cinfo.actual_number_of_colors);
 
 	switch(cinfo.jpeg_color_space) {
 	case JCS_GRAYSCALE:
-		printf("grayscale");
+		gd_error_ex(GD_DEBUG, "grayscale");
 		break;
 
 	case JCS_RGB:
-		printf("RGB");
+		gd_error_ex(GD_DEBUG, "RGB");
 		break;
 
 	case JCS_YCbCr:
-		printf("YCbCr (a.k.a. YUV)");
+		gd_error_ex(GD_DEBUG, "YCbCr (a.k.a. YUV)");
 		break;
 
 	case JCS_CMYK:
-		printf("CMYK");
+		gd_error_ex(GD_DEBUG, "CMYK");
 		break;
 
 	case JCS_YCCK:
-		printf("YCbCrK");
+		gd_error_ex(GD_DEBUG, "YCbCrK");
 		break;
 
 	default:
-		printf("UNKNOWN (value: %d)", (int)cinfo.jpeg_color_space);
+		gd_error_ex(GD_DEBUG, "UNKNOWN (value: %d)", (int)cinfo.jpeg_color_space);
 		break;
 	}
 
-	printf(" colorspace\n");
+	gd_error_ex(GD_DEBUG, " colorspace\n");
 	fflush(stdout);
 #endif /* JPEG_DEBUG */
 
