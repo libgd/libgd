@@ -1013,7 +1013,7 @@ BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop);
 BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode);
 BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int color, const float threshold);
 
-int gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMethod id);
+BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMethod id);
 
 gdImagePtr gdImageScaleBilinear(gdImagePtr im, const unsigned int new_width, const unsigned int new_height);
 gdImagePtr gdImageScaleBicubic(gdImagePtr src_img, const unsigned int new_width, const unsigned int new_height);
@@ -1060,7 +1060,7 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
 		      const gdImagePtr src, int src_width, int src_height,
 		      const double affine[6]);
 */
-int gdTransformAffineBoundingBox(gdRectPtr src, const double affine[6], gdRectPtr bbox);
+BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine[6], gdRectPtr bbox);
 
 #define GD_CMP_IMAGE		1	/* Actual image IS different */
 #define GD_CMP_NUM_COLORS	2	/* Number of Colours in pallette differ */
