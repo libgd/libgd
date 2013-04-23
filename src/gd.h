@@ -77,6 +77,7 @@ extern "C" {
 
 /* stdio is needed for file I/O. */
 #include <stdio.h>
+#include <stdarg.h>
 #include "gd_io.h"
 
 /* The maximum number of palette entries in palette-based images.
