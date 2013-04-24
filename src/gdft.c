@@ -1486,7 +1486,8 @@ static char * font_path(char **fontpath, char *name_list)
 	int font_found = 0;
 	char *fontsearchpath, *fontlist;
 	char *fullname = NULL;
-	char *name, *path, *dir;
+	char *name, *dir;
+	char path[MAX_PATH];
 	char *strtok_ptr = NULL;
 
 	/*
@@ -1506,7 +1507,7 @@ static char * font_path(char **fontpath, char *name_list)
 		char *path_ptr = NULL;
 
 		/* make a fresh copy each time - strtok corrupts it. */
-		path = strdup (fontsearchpath);
+		sprintf (path, "%s", fontsearchpath);
 		/*
 		 * Allocate an oversized buffer that is guaranteed to be
 		 * big enough for all paths to be tested.
@@ -1515,7 +1516,6 @@ static char * font_path(char **fontpath, char *name_list)
 		fullname = gdRealloc (fullname,
 		                      strlen (fontsearchpath) + strlen (name) + 8);
 		if (!fullname) {
-			free (path);
 			free (fontlist);
 			return "could not alloc full path of font";
 		}
@@ -1532,8 +1532,6 @@ static char * font_path(char **fontpath, char *name_list)
 			sprintf (fullname, "%s", name);
 			if (access (fullname, R_OK) == 0) {
 				font_found++;
-				/* 2.0.16: memory leak fixed, Gustavo Scotti */
-				free (path);
 				break;
 			}
 		}
@@ -1569,11 +1567,14 @@ static char * font_path(char **fontpath, char *name_list)
 				break;
 			}
 		}
-		free (path);
+
 		if (font_found)
 			break;
 	}
-	free (fontlist);
+	if (fontlist != NULL) {
+		free (fontlist);
+		fontlist = NULL;
+	}
 	if (!font_found) {
 		gdFree (fullname);
 		return "Could not find/open font";
