@@ -216,7 +216,6 @@ set(CPACK_SOURCE_GENERATOR TGZ)
 set(CPACK_SOURCE_IGNORE_FILES
 "~$"
 "\\\\.swp$"
-"\\\\.hgignore$"
 "\\\\.gitignore$"
 "^${PROJECT_SOURCE_DIR}/debian/"
 "^${PROJECT_SOURCE_DIR}/old/"
