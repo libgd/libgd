@@ -1,6 +1,6 @@
 #!/bin/sh --
 # $Id$
-# Small shell script to build gd from CVS
+# Small shell script to build gd from source
 
 # allow importing from the environment, e.g.
 # "AUTOCONF=autoconf259 ... ./bootstrap.sh"
