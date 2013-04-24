@@ -6,7 +6,7 @@
 static gdImagePtr im;
 
 #define TERMINATE(ctx, status) do {				\
-		gdFree(ctx);							\
+		free(ctx);							\
 		gdImageDestroy(im);						\
 		exit(status);							\
 	} while (0)
@@ -34,7 +34,7 @@ int main()
 	gdSetErrorMethod(gdSilence);
 
 	im = gdImageCreate(100, 100);
-	ctx = (gdIOCtxPtr)gdMalloc(sizeof(gdIOCtx));
+	ctx = (gdIOCtxPtr)malloc(sizeof(gdIOCtx));
 	ctx->putC   = failPutC;
 	ctx->putBuf = failPutBuf;
 	gdImagePngCtx(im, ctx);
