@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include "gdtest.h"
 
+#ifdef _MSC_VER
+# define snprintf _snprintf
+#endif
+
 int main()
 {
 	gdImagePtr im;
