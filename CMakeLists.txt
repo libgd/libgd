@@ -28,6 +28,25 @@ endif(BUILD_TEST)
 IF(CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
+SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY 
+  ${PROJECT_BINARY_DIR}/Bin 
+  CACHE PATH 
+  "Single Directory for all Libraries" 
+  )
+
+# --------- Setup the Executable output Directory ------------- 
+SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY 
+  ${PROJECT_BINARY_DIR}/Bin 
+  CACHE PATH 
+  "Single Directory for all Executables." 
+  )
+
+# --------- Setup the Executable output Directory ------------- 
+SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY 
+  ${PROJECT_BINARY_DIR}/Bin 
+  CACHE PATH 
+  "Single Directory for all static libraries." 
+  )
 
 if (USE_EXT_GD)
 	message("Using GD at: ${USE_EXT_GD}")
@@ -161,7 +180,7 @@ else (USE_EXT_GD)
 	set(BUILD_SHARED_LIBS On)
 
 	if (WIN32)
-		SET(GD_LIB bgd)
+		SET(GD_LIB libgd)
 		ADD_DEFINITIONS( -DWIN32 -D_WIN32 -DMSWIN32 -DBGDWIN32 -DWINVER=0x0500  -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0600)
 
 		if(NOT MINGW AND MSVC_VERSION GREATER 1399)
