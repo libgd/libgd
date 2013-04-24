@@ -2,6 +2,7 @@
 #	include "config.h"
 #endif
 
+#include <ctype.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
