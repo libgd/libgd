@@ -8,12 +8,10 @@ int main (int argc, char *argv[])
 {
 	gdImagePtr im;
 	gdImagePtr last, cim;
-	int black;
 	int blue;
 	FILE *out;
 	int i;
 	im = gdImageCreate(100, 100);
-	black = gdImageColorAllocate(im, 0, 0, 0);
 	blue = gdImageColorAllocate(im, 0, 0, 255);
 	out = fopen("gifanim.gif", "wb");
 	gdImageGifAnimBegin(im, out, 1, 10);
