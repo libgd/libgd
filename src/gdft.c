@@ -28,7 +28,6 @@
 #include <wce_unistd.h> /* access() */
 #define getenv wceex_getenv
 #define access wceex_access
-#define strdup _strdup
 #else /* _WIN32_WCE */
 #include <io.h>
 #ifndef R_OK
@@ -93,7 +92,6 @@ static char *font_path(char **fontpath, char *name_list);
 #define TRUE !FALSE
 #endif
 
-#define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
 
 
@@ -469,6 +467,7 @@ fontFetch (char **error, void *key)
 	fontkey_t *b = (fontkey_t *) key;
 	char *suffix;
 	FT_Error err;
+	const unsigned int b_font_list_len = strlen(b->fontlist);
 
 	*error = NULL;
 
@@ -477,7 +476,13 @@ fontFetch (char **error, void *key)
 		return NULL;
 	}
 
-	a->fontlist = strdup (b->fontlist);
+	a->fontlist = (char *) gdMalloc(b_font_list_len + 1);
+	if (a->fontlist == NULL) {
+		return "could not alloc full list of fonts";
+	}
+	strncpy(a->fontlist, b->fontlist, b_font_list_len);
+	a->fontlist[b_font_list_len] = 0;
+
 	a->flags = b->flags;
 	a->library = b->library;
 	a->fontpath = NULL;
@@ -922,8 +927,16 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 			encoding = strex->charmap;
 		}
 		/* 2.0.29: we can return the font path if desired */
-		if (strex->flags & gdFTEX_RETURNFONTPATHNAME)
-			strex->fontpath = strdup(font->fontpath);
+		if (strex->flags & gdFTEX_RETURNFONTPATHNAME) {
+			const unsigned int fontpath_len = strlen(font->fontpath);
+
+			strex->fontpath = (char *) gdMalloc(fontpath_len + 1);
+			if (strex->fontpath == NULL) {
+				return "could not alloc full list of fonts";
+			}
+			strncpy(strex->fontpath, font->fontpath, fontpath_len);
+			strex->fontpath[fontpath_len] = 0;
+		}
 	}
 
 	matrix.xx = (FT_Fixed) (cos_a * (1 << 16));
@@ -1470,10 +1483,16 @@ static char * font_pattern(char **fontpath, char *fontpattern)
 	if (FcPatternGetString(font, FC_FILE, 0, &file) != FcResultMatch) {
 		FcPatternDestroy(font);
 		return "fontconfig: Couldn't retrieve font file name.";
+	} else {
+		const unsigned int file_len = strlen(file);
+
+		fontpath = (char *) gdMalloc(file_len + 1);
+		if (fontpath == NULL) {
+			return "could not alloc font path";
+		}
+		strncpy(fontpath, file, file_len);
+		fontpath[file_len] = 0;
 	}
-
-	*fontpath = strdup((const char *)file);
-
 	FcPatternDestroy(font);
 
 	return NULL;
@@ -1490,6 +1509,7 @@ static char * font_path(char **fontpath, char *name_list)
 	char *name, *dir;
 	char path[MAX_PATH];
 	char *strtok_ptr = NULL;
+	const unsigned int name_list_len = strlen(name_list);
 
 	/*
 	 * Search the pathlist for any of a list of font names.
@@ -1498,7 +1518,13 @@ static char * font_path(char **fontpath, char *name_list)
 	fontsearchpath = getenv ("GDFONTPATH");
 	if (!fontsearchpath)
 		fontsearchpath = DEFAULT_FONTPATH;
-	fontlist = strdup (name_list);
+
+	fontlist = (char *) gdMalloc(name_list_len + 1);
+	if (fontlist == NULL) {
+		return "could not alloc full list of fonts";
+	}
+	strncpy(fontlist, name_list, name_list_len);
+	fontlist[name_list_len] = 0;
 
 	/*
 	 * Must use gd_strtok_r else pointer corrupted by strtok in nested loop.
@@ -1517,7 +1543,7 @@ static char * font_path(char **fontpath, char *name_list)
 		fullname = gdRealloc (fullname,
 		                      strlen (fontsearchpath) + strlen (name) + 8);
 		if (!fullname) {
-			free (fontlist);
+			gdFree(fontlist);
 			return "could not alloc full path of font";
 		}
 		/* if name is an absolute or relative pathname then test directly */
@@ -1573,7 +1599,7 @@ static char * font_path(char **fontpath, char *name_list)
 			break;
 	}
 	if (fontlist != NULL) {
-		free (fontlist);
+		gdFree (fontlist);
 		fontlist = NULL;
 	}
 	if (!font_found) {
