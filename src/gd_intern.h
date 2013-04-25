@@ -20,7 +20,7 @@
 # elif defined(MAX_PATH)
 #  define MAXPATHLEN MAX_PATH
 # else
-#  define MAXPATHLEN 256    /* Should be safe for any weird systems that do not define it */
+#  define MAXPATHLEN 4096    /* Should be safe for any weird systems that do not define it */
 # endif
 #endif
 
