@@ -18,6 +18,7 @@
 #include "gd.h"
 #include "gdhelpers.h"
 #include "entities.h"
+#include "gd_intern.h"
 
 /* 2.0.10: WIN32, not MSWIN32 */
 #if !defined(_WIN32) && !defined(_WIN32_WCE)
