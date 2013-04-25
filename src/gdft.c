@@ -92,9 +92,6 @@ static char *font_path(char **fontpath, char *name_list);
 #define TRUE !FALSE
 #endif
 
-#define MIN(a,b) ((a)<(b)?(a):(b))
-
-
 BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
                                       double ptsize, double angle, int x, int y, char *string)
 {
@@ -1507,7 +1504,7 @@ static char * font_path(char **fontpath, char *name_list)
 	char *fontsearchpath, *fontlist;
 	char *fullname = NULL;
 	char *name, *dir;
-	char path[MAX_PATH];
+	char path[MAXPATHLEN];
 	char *strtok_ptr = NULL;
 	const unsigned int name_list_len = strlen(name_list);
 
