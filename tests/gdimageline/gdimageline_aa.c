@@ -36,7 +36,7 @@ int gen_image(const char* filename, int idx, int reverse_x, int width, int heigh
 	gdImageLine(im, 0, im->sy - 1, im->sx, im->sy - 1, 0x40FF0000);
 
 	if (!gdAssertImageEqualsToFile(filename, im)) {
-		printf("%s failed\n", filename);
+		gdTestErrorMsg("gdAssertImageEqualsToFile failed: <%s>\n", filename);
 		error = 1;
 	}
 	gdImageDestroy(im);
@@ -48,25 +48,25 @@ int main()
 	int error = 0;
 	char path[1024];
 
-	sprintf(path, "%s/gdimageline/gdimageline_aa_a_0_exp.png", GDTEST_TOP_DIR);
+	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_a_0_exp.png", GDTEST_TOP_DIR);
 	error |= gen_image(path,0,1,10,100, 1);
 
-	sprintf(path, "%s/gdimageline/gdimageline_aa_a_1_exp.png", GDTEST_TOP_DIR);
+	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_a_1_exp.png", GDTEST_TOP_DIR);
 	error |= gen_image(path,1,1,10,100, 2);
 
-	sprintf(path, "%s/gdimageline/gdimageline_aa_b_0_exp.png", GDTEST_TOP_DIR);
+	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_b_0_exp.png", GDTEST_TOP_DIR);
 	error |= gen_image(path,2,-1,10,100, 1);
-	sprintf(path, "%s/gdimageline/gdimageline_aa_b_1_exp.png", GDTEST_TOP_DIR);
+	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_b_1_exp.png", GDTEST_TOP_DIR);
 	error |= gen_image(path,1,-1,10,100, 2);
 
-	sprintf(path, "%s/gdimageline/gdimageline_aa_c_0_exp.png", GDTEST_TOP_DIR);
+	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_c_0_exp.png", GDTEST_TOP_DIR);
 	error |= gen_image(path,0,1,100,10, 1);
-	sprintf(path, "%s/gdimageline/gdimageline_aa_c_1_exp.png", GDTEST_TOP_DIR);
+	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_c_1_exp.png", GDTEST_TOP_DIR);
 	error |= gen_image(path,1,1,100,10, 2);
 
-	sprintf(path, "%s/gdimageline/gdimageline_aa_d_0_exp.png", GDTEST_TOP_DIR);
+	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_d_0_exp.png", GDTEST_TOP_DIR);
 	error |= gen_image(path,2,-1,100,10, 1);
-	sprintf(path, "%s/gdimageline/gdimageline_aa_d_1_exp.png", GDTEST_TOP_DIR);
+	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_d_1_exp.png", GDTEST_TOP_DIR);
 	error |= gen_image(path,1,-1,100,10, 2);
 
 	return error;

@@ -14,7 +14,7 @@ int main()
 	FILE *fp;
 	char path[1024];
 
-	snprintf(path, sizeof(path), "%s/jpeg/conv_test.jpeg", GDTEST_TOP_DIR);
+	snprintf(path, sizeof(path)-1, "%s/jpeg/conv_test.jpeg", GDTEST_TOP_DIR);
 	fp = fopen(path, "rb");
 	if (!fp) {
 		gdTestErrorMsg("failed, cannot open file: %s\n", path);
@@ -30,7 +30,7 @@ int main()
 	}
 	snprintf(path, sizeof(path), "%s/jpeg/conv_test_exp.png", GDTEST_TOP_DIR);
 	if (!gdAssertImageEqualsToFile(path, im)) {
-		gdTestErrorMsg("gdAssertImageEqualsToFile failed.\n");
+		gdTestErrorMsg("gdAssertImageEqualsToFile failed: <%s>.\n", path);
 		gdImageDestroy(im);
 		return 1;
 	}
