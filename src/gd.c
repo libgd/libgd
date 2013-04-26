@@ -902,7 +902,7 @@ clip_1d (int *x0, int *y0, int *x1, int *y1, int mindim, int maxdim)
 		*x0 = maxdim;
 		/* now, perhaps, adjust the end of the line */
 		if (*x1 < mindim) {
-			*y1 -= (int)(m * (*x1 - mindim))
+			*y1 -= (int)(m * (*x1 - mindim));
 			*x1 = mindim;
 		}
 		return 1;
