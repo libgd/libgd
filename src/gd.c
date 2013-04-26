@@ -882,7 +882,7 @@ clip_1d (int *x0, int *y0, int *x1, int *y1, int mindim, int maxdim)
 			return 0;
 		m = (*y1 - *y0) / (double) (*x1 - *x0);	/* calculate the slope of the line */
 		/* adjust x0 to be on the left boundary (ie to be zero), and y0 to match */
-		*y0 -= m * (*x0 - mindim);
+		*y0 -= (int)(m * (*x0 - mindim));
 		*x0 = mindim;
 		/* now, perhaps, adjust the far end of the line as well */
 		if (*x1 > maxdim) {
@@ -897,12 +897,12 @@ clip_1d (int *x0, int *y0, int *x1, int *y1, int mindim, int maxdim)
 		if (*x1 > maxdim)		/* as is the end, so the line misses the window */
 			return 0;
 		m = (*y1 - *y0) / (double) (*x1 - *x0);	/* calculate the slope of the line */
-		*y0 += m * (maxdim - *x0);	/* adjust so point is on the right
-					   boundary */
+		*y0 += (int)(m * (maxdim - *x0));	/* adjust so point is on the right
+							   boundary */
 		*x0 = maxdim;
 		/* now, perhaps, adjust the end of the line */
 		if (*x1 < mindim) {
-			*y1 -= m * (*x1 - mindim);
+			*y1 -= (int)(m * (*x1 - mindim))
 			*x1 = mindim;
 		}
 		return 1;
@@ -911,14 +911,14 @@ clip_1d (int *x0, int *y0, int *x1, int *y1, int mindim, int maxdim)
 	if (*x1 > maxdim) {
 		/* other end is outside to the right */
 		m = (*y1 - *y0) / (double) (*x1 - *x0);	/* calculate the slope of the line */
-		*y1 += m * (maxdim - *x1);
+		*y1 += (int)(m * (maxdim - *x1));
 		*x1 = maxdim;
 		return 1;
 	}
 	if (*x1 < mindim) {
 		/* other end is outside to the left */
 		m = (*y1 - *y0) / (double) (*x1 - *x0);	/* calculate the slope of the line */
-		*y1 -= m * (*x1 - mindim);
+		*y1 -= (int)(m * (*x1 - mindim));
 		*x1 = mindim;
 		return 1;
 	}
@@ -3251,7 +3251,7 @@ static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t
 	BLEND_COLOR(t, dr, r, dr);
 	BLEND_COLOR(t, dg, g, dg);
 	BLEND_COLOR(t, db, b, db);
-	im->tpixels[y][x] = gdTrueColorAlpha(dr, dg, db,  gdAlphaOpaque);
+	im->tpixels[y][x] = gdTrueColorAlpha(dr, dg, db, gdAlphaOpaque);
 }
 
 static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int col)
@@ -3307,7 +3307,7 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 		/* TBB: set the last pixel for consistency (<=) */
 		while ((x >> 16) <= x2) {
 			gdImageSetAAPixelColor(im, x >> 16, y >> 16, col, (y >> 8) & 0xFF);
-			gdImageSetAAPixelColor(im, x >> 16, (y >> 16) + 1,col, (~y >> 8) & 0xFF);
+			gdImageSetAAPixelColor(im, x >> 16, (y >> 16) + 1, col, (~y >> 8) & 0xFF);
 			x += (1 << 16);
 			y += inc;
 		}
@@ -3326,11 +3326,11 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 		y = y1 << 16;
 		inc = (dx * 65536) / dy;
 		/* TBB: set the last pixel for consistency (<=) */
-		while ((y>>16) <= y2) {
+		while ((y >> 16) <= y2) {
 			gdImageSetAAPixelColor(im, x >> 16, y >> 16, col, (x >> 8) & 0xFF);
-			gdImageSetAAPixelColor(im, (x >> 16) + 1, (y >> 16),col, (~x >> 8) & 0xFF);
+			gdImageSetAAPixelColor(im, (x >> 16) + 1, (y >> 16), col, (~x >> 8) & 0xFF);
 			x += inc;
-			y += (1<<16);
+			y += (1 << 16);
 		}
 	}
 }
