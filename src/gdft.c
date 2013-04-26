@@ -1481,13 +1481,13 @@ static char * font_pattern(char **fontpath, char *fontpattern)
 		FcPatternDestroy(font);
 		return "fontconfig: Couldn't retrieve font file name.";
 	} else {
-		const unsigned int file_len = strlen(file);
+		const unsigned int file_len = strlen((const char *)file);
 
-		fontpath = (char *) gdMalloc(file_len + 1);
-		if (fontpath == NULL) {
+		*fontpath = (char *) gdMalloc(file_len + 1);
+		if (*fontpath == NULL) {
 			return "could not alloc font path";
 		}
-		strncpy(fontpath, file, file_len);
+		strncpy(*fontpath, (const char *)file, file_len);
 		fontpath[file_len] = 0;
 	}
 	FcPatternDestroy(font);
