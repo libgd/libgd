@@ -117,5 +117,11 @@
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS
 
+/* Define to 1 if you have the stdint.h header file. */
+#cmakedefine HAVE_STDINT_H
+
+/* Define to 1 if you have the inttypes.h header file. */
+#cmakedefine HAVE_INTTYPES_H
+
 /* Version number of package */
 
