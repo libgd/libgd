@@ -265,19 +265,19 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	 * correct areas of file opened and modifieable by the gdIOCtx functions
 	 */
 	tiff = TIFFClientOpen("", "w", th,	tiff_readproc,
-	                      tiff_writeproc,
-	                      tiff_seekproc,
-	                      tiff_closeproc,
-	                      tiff_sizeproc,
-	                      tiff_mapproc,
-	                      tiff_unmapproc);
+			      tiff_writeproc,
+			      tiff_seekproc,
+			      tiff_closeproc,
+			      tiff_sizeproc,
+			      tiff_mapproc,
+			      tiff_unmapproc);
 
 	TIFFSetField(tiff, TIFFTAG_IMAGEWIDTH, width);
 	TIFFSetField(tiff, TIFFTAG_IMAGELENGTH, height);
 	TIFFSetField(tiff, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
 	TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 	TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC,
-	             (bitDepth == 24) ? PHOTOMETRIC_RGB : PHOTOMETRIC_PALETTE);
+		     (bitDepth == 24) ? PHOTOMETRIC_RGB : PHOTOMETRIC_PALETTE);
 
 	bitsPerSample = (bitDepth == 24 || bitDepth == 8) ? 8 : 1;
 	TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, bitsPerSample);
@@ -307,13 +307,13 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 		}
 
 		TIFFSetField(tiff, TIFFTAG_COLORMAP, colorMapRed, colorMapGreen,
-		             colorMapBlue);
+			     colorMapBlue);
 		samplesPerPixel = 1;
 	}
 
 	/* here, we check if the 'save alpha' flag is set on the source gd image */
-	if(	(bitDepth == 24) &&
-	        (image->saveAlphaFlag || image->transparent != -1)) {
+	if ((bitDepth == 24) &&
+	    (image->saveAlphaFlag || image->transparent != -1)) {
 		/* so, we need to store the alpha values too!
 		 * Also, tell TIFF what the extra sample means (associated alpha) */
 		samplesPerPixel = 4;
@@ -347,10 +347,9 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 
 			/* if this pixel has the same RGB as the transparent colour,
 			 * then set alpha fully transparent */
-			if(	transparentColorR == r &&
-			        transparentColorG == g &&
-			        transparentColorB == b
-			  ) {
+			if (transparentColorR == r &&
+			    transparentColorG == g &&
+			    transparentColorB == b) {
 				a = 0x00;
 			}
 
@@ -490,15 +489,15 @@ static int readTiffColorMap(gdImagePtr im, TIFF *tif, char is_bw, int photometri
 }
 
 static void readTiffBw (const unsigned char *src,
-                        gdImagePtr im,
-                        uint16       photometric,
-                        int          startx,
-                        int          starty,
-                        int          width,
-                        int          height,
-                        char         has_alpha,
-                        int          extra,
-                        int          align)
+			gdImagePtr im,
+			uint16       photometric,
+			int          startx,
+			int          starty,
+			int          width,
+			int          height,
+			char         has_alpha,
+			int          extra,
+			int          align)
 {
 	int x = startx, y = starty;
 	int src_x, src_y;

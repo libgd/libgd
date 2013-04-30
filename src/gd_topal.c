@@ -531,7 +531,7 @@ have_c2max:
 
 LOCAL (int)
 median_cut (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize,
-            boxptr boxlist, int numboxes, int desired_colors)
+	    boxptr boxlist, int numboxes, int desired_colors)
 /* Repeatedly select and split the largest box until we have enough boxes */
 {
 	int n, lb;
@@ -622,7 +622,7 @@ median_cut (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize,
 
 LOCAL (void)
 compute_color (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize,
-               boxptr boxp, int icolor)
+	       boxptr boxp, int icolor)
 {
 	hist3d histogram = cquantize->histogram;
 	histptr histp;
@@ -1059,7 +1059,7 @@ fill_inverse_cmap (
 	numcolors =
 	    find_nearby_colors (oim, nim, cquantize, minc0, minc1, minc2, colorlist);
 	find_best_colors (oim, nim, cquantize, minc0, minc1, minc2, numcolors,
-	                  colorlist, bestcolor);
+			  colorlist, bestcolor);
 
 	/* Save the best color numbers (plus 1) in the main cache array */
 	c0 <<= BOX_C0_LOG;		/* convert ID back to base cell indexes */
@@ -1229,7 +1229,7 @@ pass2_fs_dither (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize)
 			/* entry and update the cache */
 			if (*cachep == 0)
 				fill_inverse_cmap (oim, nim, cquantize, cur0 >> C0_SHIFT,
-				                   cur1 >> C1_SHIFT, cur2 >> C2_SHIFT);
+						   cur1 >> C1_SHIFT, cur2 >> C2_SHIFT);
 			/* Now emit the colormap index for this cell */
 			{
 				register int pixcode = *cachep - 1;

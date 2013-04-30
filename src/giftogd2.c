@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 
 	if (argc != 5) {
 		fprintf(stderr, "Usage: giftogd2 filename.gif filename.gd2 cs fmt\n");
-		fprintf(stderr, "    where cs is the chunk size\n");
-		fprintf(stderr, "          fmt is 1 for raw, 2 for compressed\n");
+		fprintf(stderr, "       where cs is the chunk size\n");
+		fprintf(stderr, "	fmt is 1 for raw, 2 for compressed\n");
 		exit(1);
 	}
 	in = fopen(argv[1], "rb");

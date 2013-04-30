@@ -21,15 +21,15 @@ main (int argc, char *argv[])
 	black =  gdImageColorResolveAlpha(im, 0, 0, 0, gdAlphaOpaque);
 	green =  gdImageColorResolveAlpha(im, 0, gdGreenMax, 0, gdAlphaOpaque);
 	transparent = gdImageColorResolveAlpha(im,
-	                                       gdRedMax-1, gdGreenMax, gdBlueMax, gdAlphaTransparent);
+					       gdRedMax-1, gdGreenMax, gdBlueMax, gdAlphaTransparent);
 	gdImageColorTransparent(im, transparent);
 
 	/* Blending must be off to lay a transparent basecolor.
-	            Nothing to blend with anyway. */
+		    Nothing to blend with anyway. */
 	gdImageAlphaBlending(im, FALSE);
 	gdImageFill (im, im->sx/2, im->sy/2, transparent);
 	/* Blend everything else together,
-	        especially fonts over non-transparent backgrounds */
+		especially fonts over non-transparent backgrounds */
 	gdImageAlphaBlending(im, TRUE);
 
 	gdImageFilledRectangle (im, 30, 30, 70, 70, green);

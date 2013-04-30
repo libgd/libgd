@@ -110,15 +110,15 @@ typedef long gdFixed;
 
 typedef struct
 {
-   double *Weights;  /* Normalized weights of neighboring pixels */
-   int Left,Right;   /* Bounds of source pixels window */
+	double *Weights;  /* Normalized weights of neighboring pixels */
+	int Left,Right;   /* Bounds of source pixels window */
 } ContributionType;  /* Contirbution information for a single pixel */
 
 typedef struct
 {
-   ContributionType *ContribRow; /* Row (or column) of contribution weights */
-   unsigned int WindowSize,      /* Filter window size (of affecting source pixels) */
-				LineLength;      /* Length of line (no. or rows / cols) */
+	ContributionType *ContribRow; /* Row (or column) of contribution weights */
+	unsigned int WindowSize,      /* Filter window size (of affecting source pixels) */
+		     LineLength;      /* Length of line (no. or rows / cols) */
 } LineContribType;
 
 /* Each core filter has its own radius */
@@ -291,7 +291,7 @@ static double KernelBessel_Q1(const double x)
 static double KernelBessel_Order1(double x)
 {
 	double p, q;
-
+	
 	if (x == 0.0)
 		return (0.0f);
 	p = x;
@@ -332,11 +332,11 @@ static double filter_blackman(const double x)
  */
 static double filter_bicubic(const double t)
 {
-  const double abs_t = (double)fabs(t);
-  const double abs_t_sq = abs_t * abs_t;
-  if (abs_t<1) return 1-2*abs_t_sq+abs_t_sq*abs_t;
-  if (abs_t<2) return 4 - 8*abs_t +5*abs_t_sq - abs_t_sq*abs_t;
-  return 0;
+	const double abs_t = (double)fabs(t);
+	const double abs_t_sq = abs_t * abs_t;
+	if (abs_t<1) return 1-2*abs_t_sq+abs_t_sq*abs_t;
+	if (abs_t<2) return 4 - 8*abs_t +5*abs_t_sq - abs_t_sq*abs_t;
+	return 0;
 }
 
 /**
@@ -622,9 +622,9 @@ static double filter_welsh(const double x)
 /* Copied from upstream's libgd */
 static inline int _color_blend (const int dst, const int src)
 {
-    const int src_alpha = gdTrueColorGetAlpha(src);
+	const int src_alpha = gdTrueColorGetAlpha(src);
 
-    if( src_alpha == gdAlphaOpaque ) {
+	if( src_alpha == gdAlphaOpaque ) {
 		return src;
 	} else {
 		const int dst_alpha = gdTrueColorGetAlpha(dst);
@@ -896,20 +896,20 @@ int getPixelInterpolated(gdImagePtr im, const double x, const double y, const in
 static inline LineContribType * _gdContributionsAlloc(unsigned int line_length, unsigned int windows_size)
 {
 	unsigned int u = 0;
-    LineContribType *res;
+	LineContribType *res;
 
 	res = (LineContribType *) gdMalloc(sizeof(LineContribType));
 	if (!res) {
 		return NULL;
 	}
-    res->WindowSize = windows_size;
-    res->LineLength = line_length;
-    res->ContribRow = (ContributionType *) gdMalloc(line_length * sizeof(ContributionType));
+	res->WindowSize = windows_size;
+	res->LineLength = line_length;
+	res->ContribRow = (ContributionType *) gdMalloc(line_length * sizeof(ContributionType));
 
-    for (u = 0 ; u < line_length ; u++) {
-        res->ContribRow[u].Weights = (double *) gdMalloc(windows_size * sizeof(double));
-    }
-    return res;
+	for (u = 0 ; u < line_length ; u++) {
+		res->ContribRow[u].Weights = (double *) gdMalloc(windows_size * sizeof(double));
+	}
+	return res;
 }
 
 static inline void _gdContributionsFree(LineContribType * p)
@@ -924,83 +924,83 @@ static inline void _gdContributionsFree(LineContribType * p)
 
 static inline LineContribType *_gdContributionsCalc(unsigned int line_size, unsigned int src_size, double scale_d,  const interpolation_method pFilter)
 {
-    double width_d;
-    double scale_f_d = 1.0;
-    const double filter_width_d = DEFAULT_BOX_RADIUS;
+	double width_d;
+	double scale_f_d = 1.0;
+	const double filter_width_d = DEFAULT_BOX_RADIUS;
 	int windows_size;
 	unsigned int u;
 	LineContribType *res;
 
-    if (scale_d < 1.0) {
-        width_d = filter_width_d / scale_d;
-        scale_f_d = scale_d;
-    }  else {
-        width_d= filter_width_d;
-    }
+	if (scale_d < 1.0) {
+		width_d = filter_width_d / scale_d;
+		scale_f_d = scale_d;
+	}  else {
+		width_d= filter_width_d;
+	}
 
-    windows_size = 2 * (int)ceil(width_d) + 1;
-    res = _gdContributionsAlloc(line_size, windows_size);
+	windows_size = 2 * (int)ceil(width_d) + 1;
+	res = _gdContributionsAlloc(line_size, windows_size);
 
-    for (u = 0; u < line_size; u++) {
-        const double dCenter = (double)u / scale_d;
-        /* get the significant edge points affecting the pixel */
-        register int iLeft = MAX(0, (int)floor (dCenter - width_d));
-        int iRight = MIN((int)ceil(dCenter + width_d), (int)src_size - 1);
-        double dTotalWeight = 0.0;
+	for (u = 0; u < line_size; u++) {
+		const double dCenter = (double)u / scale_d;
+		/* get the significant edge points affecting the pixel */
+		register int iLeft = MAX(0, (int)floor (dCenter - width_d));
+		int iRight = MIN((int)ceil(dCenter + width_d), (int)src_size - 1);
+		double dTotalWeight = 0.0;
 		int iSrc;
 
-        res->ContribRow[u].Left = iLeft;
-        res->ContribRow[u].Right = iRight;
+		res->ContribRow[u].Left = iLeft;
+		res->ContribRow[u].Right = iRight;
 
-        /* Cut edge points to fit in filter window in case of spill-off */
-        if (iRight - iLeft + 1 > windows_size)  {
-            if (iLeft < ((int)src_size - 1 / 2))  {
-                iLeft++;
-            } else {
-                iRight--;
-            }
-        }
+		/* Cut edge points to fit in filter window in case of spill-off */
+		if (iRight - iLeft + 1 > windows_size)  {
+			if (iLeft < ((int)src_size - 1 / 2))  {
+				iLeft++;
+			} else {
+				iRight--;
+			}
+		}
 
-        for (iSrc = iLeft; iSrc <= iRight; iSrc++) {
-            dTotalWeight += (res->ContribRow[u].Weights[iSrc-iLeft] =  scale_f_d * (*pFilter)(scale_f_d * (dCenter - (double)iSrc)));
-        }
+		for (iSrc = iLeft; iSrc <= iRight; iSrc++) {
+			dTotalWeight += (res->ContribRow[u].Weights[iSrc-iLeft] =  scale_f_d * (*pFilter)(scale_f_d * (dCenter - (double)iSrc)));
+		}
 
 		if (dTotalWeight < 0.0) {
 			_gdContributionsFree(res);
 			return NULL;
 		}
 
-        if (dTotalWeight > 0.0) {
-            for (iSrc = iLeft; iSrc <= iRight; iSrc++) {
-                res->ContribRow[u].Weights[iSrc-iLeft] /= dTotalWeight;
-            }
-        }
-   }
-   return res;
+		if (dTotalWeight > 0.0) {
+			for (iSrc = iLeft; iSrc <= iRight; iSrc++) {
+				res->ContribRow[u].Weights[iSrc-iLeft] /= dTotalWeight;
+			}
+		}
+	}
+	return res;
 }
 
 static inline void _gdScaleRow(gdImagePtr pSrc,  unsigned int src_width, gdImagePtr dst, unsigned int dst_width, unsigned int row, LineContribType *contrib)
 {
-    int *p_src_row = pSrc->tpixels[row];
-    int *p_dst_row = dst->tpixels[row];
+	int *p_src_row = pSrc->tpixels[row];
+	int *p_dst_row = dst->tpixels[row];
 	unsigned int x;
 
-    for (x = 0; x < dst_width - 1; x++) {
+	for (x = 0; x < dst_width - 1; x++) {
 		register unsigned char r = 0, g = 0, b = 0, a = 0;
-        const int left = contrib->ContribRow[x].Left;
-        const int right = contrib->ContribRow[x].Right;
+		const int left = contrib->ContribRow[x].Left;
+		const int right = contrib->ContribRow[x].Right;
 		int i;
 
 		/* Accumulate each channel */
-        for (i = left; i <= right; i++) {
+		for (i = left; i <= right; i++) {
 			const int left_channel = i - left;
-            r += (unsigned char)(contrib->ContribRow[x].Weights[left_channel] * (double)(gdTrueColorGetRed(p_src_row[i])));
-            g += (unsigned char)(contrib->ContribRow[x].Weights[left_channel] * (double)(gdTrueColorGetGreen(p_src_row[i])));
-            b += (unsigned char)(contrib->ContribRow[x].Weights[left_channel] * (double)(gdTrueColorGetBlue(p_src_row[i])));
+			r += (unsigned char)(contrib->ContribRow[x].Weights[left_channel] * (double)(gdTrueColorGetRed(p_src_row[i])));
+			g += (unsigned char)(contrib->ContribRow[x].Weights[left_channel] * (double)(gdTrueColorGetGreen(p_src_row[i])));
+			b += (unsigned char)(contrib->ContribRow[x].Weights[left_channel] * (double)(gdTrueColorGetBlue(p_src_row[i])));
 			a += (unsigned char)(contrib->ContribRow[x].Weights[left_channel] * (double)(gdTrueColorGetAlpha(p_src_row[i])));
-        }
-        p_dst_row[x] = gdTrueColorAlpha(r, g, b, a);
-    }
+		}
+		p_dst_row[x] = gdTrueColorAlpha(r, g, b, a);
+	}
 }
 
 static inline void _gdScaleHoriz(gdImagePtr pSrc, unsigned int src_width, unsigned int src_height, gdImagePtr pDst,  unsigned int dst_width, unsigned int dst_height)

@@ -173,7 +173,7 @@ int readwbmp(int (*getin) (void *in), void *in, Wbmp **return_wbmp)
 #endif
 
 	if(	overflow2(sizeof(int), wbmp->width) ||
-	        overflow2(sizeof(int) * wbmp->width, wbmp->height)) {
+		overflow2(sizeof(int) * wbmp->width, wbmp->height)) {
 		gdFree(wbmp);
 		return -1;
 	}
