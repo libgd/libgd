@@ -27,7 +27,7 @@ extern "C" {
 
 /* http://gcc.gnu.org/wiki/Visibility */
 #if defined(_WIN32) || defined(CYGWIN) || defined(_WIN32_WCE)
-# if BGDWIN32
+# ifdef BGDWIN32
 #  ifdef NONDLL
 #   define BGD_EXPORT_DATA_PROT
 #  else
