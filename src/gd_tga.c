@@ -195,13 +195,13 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 {
 	int pixel_block_size = (tga->bits / 8);
 	int image_block_size = (tga->width * tga->height) * pixel_block_size;
-	byte* decompression_buffer = NULL;
+	uint8_t* decompression_buffer = NULL;
 	unsigned char* conversion_buffer = NULL;
 	int buffer_caret = 0;
 	int bitmap_caret = 0;
 	int i = 0;
 	int j = 0;
-	byte encoded_pixels;
+	uint8_t encoded_pixels;
 
 	if(overflow2(tga->width, tga->height)) {
 		return -1;
@@ -211,14 +211,14 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 		return -1;
 	}
 
-	if(overflow2(image_block_size, sizeof(byte))) {
+	if(overflow2(image_block_size, sizeof(uint8_t))) {
 		return -1;
 	}
 
 	/*!	\brief Allocate memmory for image block
 	 *  Allocate a chunk of memory for the image block to be passed into.
 	 */
-	tga->bitmap = (int *) gdMalloc(image_block_size * sizeof(byte));
+	tga->bitmap = (int *) gdMalloc(image_block_size * sizeof(uint8_t));
 	if (tga->bitmap == NULL) {
 		return -1;
 	}
@@ -261,7 +261,7 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 	 *  Chunk load the pixel data from an RLE compressed RGB type TGA.
 	 */
 	if (tga->imagetype == TGA_TYPE_RGB_RLE) {
-		decompression_buffer = (byte*) gdMalloc(image_block_size * sizeof(byte));
+		decompression_buffer = (uint8_t*) gdMalloc(image_block_size * sizeof(uint8_t));
 		if (decompression_buffer == NULL) {
 			gdFree( decompression_buffer );
 			return -1;

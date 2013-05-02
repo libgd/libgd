@@ -25,38 +25,37 @@
 #include "config.h"
 #endif
 
+#if HAVE_STDINT_H
+#include <stdint.h>
+#else
+#include "msinttypes/stdint.h"
+#endif
+#if  HAVE_INTTYPES_H
+#include <inttypes.h>
+#else
+#include "msinttypes/inttypes.h"
+#endif
+
 #include "gd.h"
 #include "gdhelpers.h"
 
-#ifndef BGDWIN32
-#ifndef O_BYTE
-#define O_BYTE	1
-typedef int byte;
-#endif
-#endif
-
-#ifndef O_SHORT_INT
-#define O_SHORT_INT	1
-typedef int short_int;
-#endif
-
 typedef struct oTga_ {
-	byte  identsize;	// size of ID field that follows 18 byte header (0 usually)
-	byte  colormaptype;	// type of colour map 0=none, 1=has palette					[IGNORED] Adrian requested no support
-	byte  imagetype;	// type of image 0=none,1=indexed,2=rgb,3=grey,+8=rle packed
+	uint8_t  identsize;	// size of ID field that follows 18 uint8_t header (0 usually)
+	uint8_t  colormaptype;	// type of colour map 0=none, 1=has palette					[IGNORED] Adrian requested no support
+	uint8_t  imagetype;	// type of image 0=none,1=indexed,2=rgb,3=grey,+8=rle packed
 
 	int colormapstart;	// first colour map entry in palette						[IGNORED] Adrian requested no support
 	int colormaplength;	// number of colours in palette								[IGNORED] Adrian requested no support
-	byte  colormapbits;	// number of bits per palette entry 15,16,24,32				[IGNORED] Adrian requested no support
+	uint8_t  colormapbits;	// number of bits per palette entry 15,16,24,32				[IGNORED] Adrian requested no support
 
 	int xstart;			// image x origin
 	int ystart;			// image y origin
 	int width;			// image width in pixels
 	int height;			// image height in pixels
-	byte  bits;			// image bits per pixel 8,16,24,32
-	byte alphabits;		// alpha bits (low 4bits of header 17)
-	byte fliph;			// horizontal or vertical
-	byte flipv;			// flip
+	uint8_t  bits;			// image bits per pixel 8,16,24,32
+	uint8_t alphabits;		// alpha bits (low 4bits of header 17)
+	uint8_t fliph;			// horizontal or vertical
+	uint8_t flipv;			// flip
 	char *ident;		// identifcation tag string
 	int *bitmap;		// bitmap data
 
