@@ -25,19 +25,10 @@
 #include "config.h"
 #endif
 
-#if HAVE_STDINT_H
-#include <stdint.h>
-#else
-#include "msinttypes/stdint.h"
-#endif
-#if  HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
-#include "msinttypes/inttypes.h"
-#endif
-
 #include "gd.h"
 #include "gdhelpers.h"
+
+#include "gd_intern.h"
 
 typedef struct oTga_ {
 	uint8_t  identsize;	// size of ID field that follows 18 uint8_t header (0 usually)
