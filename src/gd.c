@@ -10,16 +10,7 @@
 #include "config.h"
 #endif
 
-#if HAVE_STDINT_H
-#include <stdint.h>
-#else
-#include "msinttypes/stdint.h"
-#endif
-#if  HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
-#include "msinttypes/inttypes.h"
-#endif
+#include "gd_intern.h"
 
 /* 2.03: don't include zlib here or we can't build without PNG */
 #include "gd.h"
