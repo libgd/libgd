@@ -3,6 +3,9 @@
 #include "gd.h"
 #include "gdtest.h"
 
+#ifdef _MSC_VER
+# define snprintf _snprintf
+#endif
 
 int gen_image(const char* filename, int idx, int reverse_x, int width, int height, int bgd)
 {
