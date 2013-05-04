@@ -1,6 +1,9 @@
 noinst_LIBRARIES = libgdtest.a
 
-libgdtest_a_SOURCES = gdtest/gdtest.c ../src/gdhelpers.c
+libgdtest_a_SOURCES = \
+	gdtest/gdtest.c \
+	gdtest/gdtest.h \
+	../src/gdhelpers.c
 
 check_PROGRAMS = \
 	gd2/gd2_empty_file \
@@ -193,6 +196,112 @@ LDADD = ../src/libgd.la libgdtest.a
 AM_CPPFLAGS = -I$(top_srcdir)/src -I $(top_srcdir)/tests/gdtest
 
 TESTS = $(check_PROGRAMS)
+
+EXTRA_DIST = \
+	gdtest/test_config.h.cmake \
+	xpm/bug00166.xpm \
+	xpm/bug00185.xpm \
+	xpm/bug00185_damaged.xpm \
+	xpm/color_name.xpm \
+	gdtiled/bug00032_exp.png \
+	jpeg/conv_test.jpeg \
+	jpeg/conv_test_exp.png \
+	jpeg/empty.jpeg \
+	gd2/conv_test.gd2 \
+	gd2/conv_gd2_exp.gd2 \
+	gd2/empty.gd2 \
+	gd2/conv_test_exp.png \
+	gdimagearc/bug00079_exp.png \
+	png/bug00088_2.png \
+	png/bug00088_1_exp.png \
+	png/bug00033.png \
+	png/bug00088_2_exp.png \
+	png/bug00088_1.png \
+	png/emptyfile \
+	gdimageline/gdimageline_aa_b_0_exp.png \
+	gdimageline/gdimageline_aa_c_0_exp.png \
+	gdimageline/gdimageline_aa_d_1_exp.png \
+	gdimageline/gdimageline_aa_a_1_exp.png \
+	gdimageline/gdimageline_aa_d_0_exp.png \
+	gdimageline/bug00111_exp.png \
+	gdimageline/gdimageline_aa_c_1_exp.png \
+	gdimageline/gdimageline_aa_a_0_exp.png \
+	gdimageline/gdimageline_aa_b_1_exp.png \
+	gdimageline/bug00072_exp.png \
+	gdimageline/bug00077_exp.png \
+	gdimageopenpolygon/gdimageopenpolygon0.png \
+	gdimageopenpolygon/gdimageopenpolygon1.png \
+	gdimageopenpolygon/gdimageopenpolygon2.png \
+	gdimageopenpolygon/gdimageopenpolygon3.png \
+	gd/crafted_num_colors.gd \
+	gdimagecopy/bug00081_exp.png \
+	gdimagecopyrotated/bug00020_exp.png \
+	gdimagepolygon/gdimagepolygon1.png \
+	gdimagepolygon/gdimagepolygon3.png \
+	gdimagepolygon/gdimagepolygon0.png \
+	gdimagepolygon/gdimagepolygon2.png \
+	gdimagefilledpolygon/gdimagefilledpolygon0.png \
+	gdimagefilledpolygon/gdimagefilledpolygon1.png \
+	gdimagefilledpolygon/gdimagefilledpolygon3.png \
+	gdimagefilledpolygon/gdimagefilledpolygon2.png \
+	gdimagefilledpolygon/bug00100.png \
+	gdimagefill/bug00002_3_exp.png \
+	gdimagefill/bug00002_2_exp.png \
+	gdimagefill/bug00002_1_exp.png \
+	gdimagefill/bug00002_4_exp.png \
+	gif/bug00005_0.gif \
+	gif/bug00005_1.gif \
+	gif/bug00005_3.gif \
+	gif/bug00005_2.gif \
+	gif/bug00060.gif \
+	gif/bug00066_exp.png \
+	gif/bug00005_2_exp.png \
+	gif/bug00066.gif \
+	gdimagefilledellipse/bug00191.png \
+	gdimagefilledellipse/bug00010_exp.png \
+	gdimagescatterex/bug00208_2.png \
+	gdimagescatterex/bug00208.png \
+	gdimagescatterex/bug00208_1.png \
+	freetype/bug00132_exp.png \
+	freetype/DejaVuSans.ttf \
+	gdimagestringft/CMakeLists.txt \
+	gdtest/CMakeLists.txt \
+	xpm/CMakeLists.txt \
+	gdtiled/CMakeLists.txt \
+	jpeg/CMakeLists.txt \
+	gd2/CMakeLists.txt \
+	gdimagesetpixel/CMakeLists.txt \
+	gdimagearc/CMakeLists.txt \
+	png/CMakeLists.txt \
+	gdimagestringftex/CMakeLists.txt \
+	gdimageline/CMakeLists.txt \
+	gdimageopenpolygon/CMakeLists.txt \
+	gdimagerectangle/CMakeLists.txt \
+	gd/CMakeLists.txt \
+	tga/CMakeLists.txt \
+	gdimagepixelate/CMakeLists.txt \
+	tiff/CMakeLists.txt \
+	gdimagecopy/CMakeLists.txt \
+	CMakeLists.txt \
+	gdnewfilectx/CMakeLists.txt \
+	gdimagefilledrectangle/CMakeLists.txt \
+	gdimagecopyrotated/CMakeLists.txt \
+	gdimagepolygon/CMakeLists.txt \
+	gdimagecolordeallocate/CMakeLists.txt \
+	wbmp/CMakeLists.txt \
+	gdimagecolorresolve/CMakeLists.txt \
+	gdimagefilledpolygon/CMakeLists.txt \
+	gdimagecolorreplace/CMakeLists.txt \
+	gdimagefill/CMakeLists.txt \
+	gdimagecolorclosest/CMakeLists.txt \
+	gdimagecolortransparent/CMakeLists.txt \
+	gif/CMakeLists.txt \
+	gdimagecolorexact/CMakeLists.txt \
+	gdimagefilledellipse/CMakeLists.txt \
+	bmp/CMakeLists.txt \
+	gdimagescatterex/CMakeLists.txt \
+	gdimagefilltoborder/CMakeLists.txt \
+	freetype/CMakeLists.txt
 
 CLEANFILES = \
 	a.png \
