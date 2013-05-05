@@ -21,7 +21,7 @@ extern "C"
 
 #include "gd.h"
 
-BGD_EXPORT_DATA_PROT gdFontPtr gdFontSmall;
+extern BGD_EXPORT_DATA_PROT gdFontPtr gdFontSmall;
 BGD_DECLARE(gdFontPtr) gdFontGetSmall(void);
 
 #ifdef __cplusplus

@@ -22,7 +22,7 @@ extern "C"
 
 #include "gd.h"
 
-BGD_EXPORT_DATA_PROT gdFontPtr gdFontGiant;
+extern BGD_EXPORT_DATA_PROT gdFontPtr gdFontGiant;
 BGD_DECLARE(gdFontPtr) gdFontGetGiant(void);
 
 #ifdef __cplusplus

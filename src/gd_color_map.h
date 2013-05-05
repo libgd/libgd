@@ -23,7 +23,7 @@ typedef struct {
 	gdColorMapEntry *entries;
 } gdColorMap;
 
-BGD_EXPORT_DATA_PROT gdColorMap GD_COLOR_MAP_X11;
+extern BGD_EXPORT_DATA_PROT gdColorMap GD_COLOR_MAP_X11;
 
 BGD_DECLARE(int) gdColorMapLookup(const gdColorMap color_map, const char *color_name, int *r, int *g, int *b);
 
