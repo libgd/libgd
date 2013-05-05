@@ -11,21 +11,21 @@
 extern "C" {
 #endif
 
-	typedef struct {
-		char *color_name;
-		int red;
-		int green;
-		int blue;
-	} gdColorMapEntry;
+typedef struct {
+	char *color_name;
+	int red;
+	int green;
+	int blue;
+} gdColorMapEntry;
 
-	typedef struct {
-		int num_entries;
-		gdColorMapEntry *entries;
-	} gdColorMap;
+typedef struct {
+	int num_entries;
+	gdColorMapEntry *entries;
+} gdColorMap;
 
-	BGD_EXPORT_DATA_PROT gdColorMap GD_COLOR_MAP_X11;
+BGD_EXPORT_DATA_PROT gdColorMap GD_COLOR_MAP_X11;
 
-	BGD_DECLARE(int) gdColorMapLookup(const gdColorMap color_map, const char *color_name, int *r, int *g, int *b);
+BGD_DECLARE(int) gdColorMapLookup(const gdColorMap color_map, const char *color_name, int *r, int *g, int *b);
 
 #ifdef __cplusplus
 }

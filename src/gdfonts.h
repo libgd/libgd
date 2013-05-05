@@ -6,14 +6,14 @@ extern "C"
 {
 #endif
 
-	/*
-		This is a header file for gd font, generated using
-		bdftogd version 0.5 by Jan Pazdziora, adelton@fi.muni.cz
-		from bdf font
-		-misc-fixed-medium-r-semicondensed-sans-12-116-75-75-c-60-iso8859-2
-		at Thu Jan  8 14:13:20 1998.
-		No copyright info was found in the original bdf.
-	 */
+/*
+	This is a header file for gd font, generated using
+	bdftogd version 0.5 by Jan Pazdziora, adelton@fi.muni.cz
+	from bdf font
+	-misc-fixed-medium-r-semicondensed-sans-12-116-75-75-c-60-iso8859-2
+	at Thu Jan  8 14:13:20 1998.
+	No copyright info was found in the original bdf.
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -21,8 +21,8 @@ extern "C"
 
 #include "gd.h"
 
-	BGD_EXPORT_DATA_PROT gdFontPtr gdFontSmall;
-	BGD_DECLARE(gdFontPtr) gdFontGetSmall(void);
+BGD_EXPORT_DATA_PROT gdFontPtr gdFontSmall;
+BGD_DECLARE(gdFontPtr) gdFontGetSmall(void);
 
 #ifdef __cplusplus
 }

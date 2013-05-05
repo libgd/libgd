@@ -6,15 +6,15 @@ extern "C"
 {
 #endif
 
-	/*
-		This is a header file for gd font, generated using
-		bdftogd version 0.51 by Jan Pazdziora, adelton@fi.muni.cz
-		from bdf font
-		-Misc-Fixed-Bold-R-Normal-Sans-15-140-75-75-C-90-ISO8859-2
-		at Mon Jan 26 14:45:58 1998.
-		The original bdf was holding following copyright:
-		"Libor Skarvada, libor@informatics.muni.cz"
-	 */
+/*
+	This is a header file for gd font, generated using
+	bdftogd version 0.51 by Jan Pazdziora, adelton@fi.muni.cz
+	from bdf font
+	-Misc-Fixed-Bold-R-Normal-Sans-15-140-75-75-C-90-ISO8859-2
+	at Mon Jan 26 14:45:58 1998.
+	The original bdf was holding following copyright:
+	"Libor Skarvada, libor@informatics.muni.cz"
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,8 +22,8 @@ extern "C"
 
 #include "gd.h"
 
-	BGD_EXPORT_DATA_PROT gdFontPtr gdFontGiant;
-	BGD_DECLARE(gdFontPtr) gdFontGetGiant(void);
+BGD_EXPORT_DATA_PROT gdFontPtr gdFontGiant;
+BGD_DECLARE(gdFontPtr) gdFontGetGiant(void);
 
 #ifdef __cplusplus
 }
