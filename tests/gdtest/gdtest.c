@@ -11,7 +11,9 @@
 
 void gdSilence(int priority, const char *format, va_list args)
 {
-	return;
+	(void)priority;
+	(void)format;
+	(void)args;
 }
 
 gdImagePtr gdTestImageFromPng(const char *filename)

@@ -11,14 +11,14 @@
 
 int main()
 {
-	gdImagePtr im;
-	FILE *fp;
-	char path[1024];
-
 #if defined(JPEG_LIB_VERSION_MAJOR) && JPEG_LIB_VERSION_MAJOR >= 8
 	printf("skip, JPEG Major version too high (%i)\n", JPEG_LIB_VERSION_MAJOR);
 	return 0;
 #else
+	gdImagePtr im;
+	FILE *fp;
+	char path[1024];
+
 	snprintf(path, sizeof(path)-1, "%s/jpeg/conv_test.jpeg", GDTEST_TOP_DIR);
 	fp = fopen(path, "rb");
 	if (!fp) {
