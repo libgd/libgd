@@ -36,18 +36,6 @@ AC_SUBST(FEATURES)
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
-AC_MSG_CHECKING([if we are building a Cygwin target])
-case "$target" in
-  *-*-cygwin*) XTRA_LDFLAGS="-no-undefined"
-               os_cygwin=yes
-               ;;
-           *)  XTRA_LDFLAGS=
-               os_cygwin=no
-               ;;
-esac
-AC_MSG_RESULT([$os_cygwin])
-AC_SUBST([XTRA_LDFLAGS])
-
 dnl newer automake wants this, but we still want to work with older
 m4_ifndef([AM_PROG_AR],[m4_define([AM_PROG_AR],[:])])
 AM_PROG_AR
@@ -58,7 +46,7 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-LT_INIT
+LT_INIT([win32-dll])
 PKG_PROG_PKG_CONFIG
 
 dnl may be required for freetype and Xpm
