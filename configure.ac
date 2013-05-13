@@ -1,22 +1,34 @@
 # Process this file with autoconf to produce a configure script.
 # Configure template for gd library
 
-#
 AC_PREREQ(2.54)
 
-#HEY! Change BOTH the version number and the GDLIB_REVISION setting!
-AC_INIT([GD], [2.1.0], [https://bitbucket.org/libgd/gd-libgd/issues])
+# Some m4 magic to have correct version number everywhere
+m4_define([gd_MAJOR],[2])dnl
+m4_define([gd_MINOR],[1])dnl
+m4_define([gd_REVISION],[0])dnl
+m4_define([gd_EXTRA],[alpha1])dnl
+
+m4_ifdef([gd_EXTRA],
+  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION-gd_EXTRA])],
+  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION])]
+)dnl
+
+AC_INIT([GD], gd_PKG_VERSION, [https://bitbucket.org/libgd/gd-libgd/issues], [libgd], [http://lib.gd])
 AC_CONFIG_SRCDIR([src/gd.c])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 
-GDLIB_MAJOR=2
-GDLIB_MINOR=1
-GDLIB_REVISION=0
+# This is not used anywhere
+GDLIB_MAJOR=gd_MAJOR
+GDLIB_MINOR=gd_MINOR
+GDLIB_REVISION=gd_REVISION
+GDLIB_EXTRA=gd_EXTRA
 AC_SUBST(GDLIB_MAJOR)
 AC_SUBST(GDLIB_MINOR)
 AC_SUBST(GDLIB_REVISION)
+AC_SUBST(GDLIB_EXTRA)
 
 # Dynamic library version information
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
