@@ -21,10 +21,6 @@
 #ifndef __TGA_H
 #define __TGA_H	1
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "gd.h"
 #include "gdhelpers.h"
 

@@ -14,6 +14,11 @@
 	as an input stream has no need of output methods, and vice-versa.
 */
 #ifdef __cplusplus
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "gd_io_stream.h"
 
 /**	Read into buffer from stream

@@ -44,10 +44,6 @@ extern "C" {
 	/* header                                                */
 	/*********************************************************/
 
-#ifdef HAVE_CONFIG_H
-#	include "config.h"
-#endif
-
 #include <stdlib.h>
 #ifndef NULL
 #	define NULL (void *)0

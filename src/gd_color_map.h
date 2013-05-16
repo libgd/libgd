@@ -1,10 +1,6 @@
 #ifndef GD_COLOR_MAP_H
 #define GD_COLOR_MAP_H 1
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "gd.h"
 
 #ifdef __cplusplus

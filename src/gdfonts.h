@@ -15,10 +15,6 @@ extern "C"
 	No copyright info was found in the original bdf.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "gd.h"
 
 extern BGD_EXPORT_DATA_PROT gdFontPtr gdFontSmall;
