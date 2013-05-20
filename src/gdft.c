@@ -475,6 +475,7 @@ fontFetch (char **error, void *key)
 
 	a->fontlist = (char *) gdMalloc(b_font_list_len + 1);
 	if (a->fontlist == NULL) {
+		gdFree(a);
 		return "could not alloc full list of fonts";
 	}
 	strncpy(a->fontlist, b->fontlist, b_font_list_len);
@@ -493,13 +494,12 @@ fontFetch (char **error, void *key)
 	*error = font_path(&(a->fontpath), a->fontlist);
 #endif /* HAVE_LIBFONTCONFIG */
 	if (*error || !a->fontpath || !a->fontpath[0]) {
-		/* 2.0.12: TBB: free these. Thanks to Frank Faubert. */
-		free (a->fontlist);
+		gdFree(a->fontlist);
 		if (a->fontpath)
-			free (a->fontpath);
-		gdFree (a);
+			free(a->fontpath);
+		gdFree(a);
 
-		if (! *error)
+		if (!*error)
 			*error = "font_path() returned an empty font pathname";
 
 		return NULL;
@@ -517,10 +517,9 @@ fontFetch (char **error, void *key)
 	}
 
 	if (err) {
-		/* 2.0.12: TBB: free these. Thanks to Frank Faubert. */
-		free (a->fontlist);
-		free (a->fontpath);
-		gdFree (a);
+		gdFree (a->fontlist);
+		free(a->fontpath);
+		gdFree(a);
 		*error = "Could not read font";
 		return NULL;
 	}
