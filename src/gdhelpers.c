@@ -61,22 +61,31 @@ gd_strtok_r (char *s, char *sep, char **state)
 	return result;
 }
 
-void *
+inline void *
 gdCalloc (size_t nmemb, size_t size)
 {
 	return calloc (nmemb, size);
 }
 
-void *
+inline void *
 gdMalloc (size_t size)
 {
 	return malloc (size);
 }
 
-void *
+inline void *
 gdRealloc (void *ptr, size_t size)
 {
 	return realloc (ptr, size);
+}
+
+inline void *
+gdReallocEx (void *ptr, size_t size)
+{
+	void *newPtr = gdRealloc (ptr, size);
+	if (!newPtr && ptr)
+		gdFree(ptr);
+	return newPtr;
 }
 
 BGD_DECLARE(void) gdFree (void *ptr)

@@ -1185,7 +1185,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 				xshow_pos = 0;
 			} else if (xshow_pos + 20 > xshow_alloc) {
 				xshow_alloc += 100;
-				strex->xshow = gdRealloc(strex->xshow, xshow_alloc);
+				strex->xshow = gdReallocEx(strex->xshow, xshow_alloc);
 				if (!strex->xshow) {
 					if (tmpstr)
 						gdFree (tmpstr);
@@ -1536,7 +1536,7 @@ static char * font_path(char **fontpath, char *name_list)
 		 * big enough for all paths to be tested.
 		 */
 		/* 2.0.22: Thorben Kundinger: +8 is needed, not +6. */
-		fullname = gdRealloc (fullname,
+		fullname = gdReallocEx(fullname,
 		                      strlen (fontsearchpath) + strlen (name) + 8);
 		if (!fullname) {
 			gdFree(fontlist);

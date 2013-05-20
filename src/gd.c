@@ -2864,8 +2864,8 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
 		if (overflow2(sizeof (int), im->polyAllocated)) {
 			return;
 		}
-		im->polyInts = (int *) gdRealloc (im->polyInts,
-		                                  sizeof (int) * im->polyAllocated);
+		im->polyInts = (int *) gdReallocEx (im->polyInts,
+						    sizeof (int) * im->polyAllocated);
 		if (!im->polyInts) {
 			return;
 		}
