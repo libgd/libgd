@@ -500,34 +500,23 @@ static void readTiffBw (const unsigned char *src,
 			int          align)
 {
 	int x = startx, y = starty;
-	int src_x, src_y;
-	int k;
 
 	(void)has_alpha;
 	(void)extra;
 	(void)align;
 
-	for (src_y = 0; src_y < height; ++src_y) {
-		k = 0;
-		while (k < width) {
+	for (y = starty; y < starty + height; y++) {
+		for (x = startx; x < startx + width; x++) {
 			register unsigned char curr = *src++;
 			register unsigned char mask;
 
 			if (photometric == PHOTOMETRIC_MINISWHITE) {
 				curr = ~curr;
 			}
-			for (mask = 0x80; mask != 0 && k < width; mask >>= 1) {
-				if((curr & mask) != 0) {
-					gdImageSetPixel(im, x, y, 0);
-				} else {
-					gdImageSetPixel(im, x, y, 1);
-				}
-				++x;
-				++k;
+			for (mask = 0x80; mask != 0 && x < startx + width; mask >>= 1) {
+				gdImageSetPixel(im, x, y, ((curr & mask) != 0)?0:1);
 			}
-			++src_x;
 		}
-		y++;
 	}
 }
 
