@@ -63,7 +63,7 @@ main (int argc, char *argv[])
 		fprintf(stderr, "Usage: gdtestft fontfilename\n"
 			 "If fontfilename is not a full or relative path, GDFONTPATH is searched for\n"
 		         "it. If GDFONTPATH is not set, /usr/share/fonts/truetype is searched.\n");
-		exit (1);
+		return 1;
 	}
 	/* obtain brect so that we can size the image */
 	err =
@@ -93,16 +93,18 @@ main (int argc, char *argv[])
 	/* Load a pretty background and resample it to cover the entire image */
 	{
 		FILE *in = fopen ("eleanor.jpg", "rb");
-		gdImagePtr imb;
+		gdImagePtr imb = NULL;
 		if (in) {
 #ifdef HAVE_LIBJPEG
 			imb = gdImageCreateFromJpeg (in);
 #else
 			fprintf(stderr, "No JPEG library support.\n");
 #endif
+			fclose(in);
+
 			if (!imb) {
 				fprintf(stderr, "gdImageCreateFromJpeg failed\n");
-				exit (1);
+				return 1;
 			}
 			if (!im->trueColor) {
 				/* If destination is not truecolor, convert the JPEG to a
