@@ -193,22 +193,49 @@ AM_CONDITIONAL([HAVE_LIBFREETYPE], test "$with_freetype" = yes)
 
 dnl check for libfontconfig by default
 AC_ARG_WITH(fontconfig,dnl
-[  --with-fontconfig=DIR         where to find the fontconfig library],
-  [if test -d "$withval"; then
-     LDFLAGS="$LDFLAGS -L$withval/lib"
-     CFLAGS="$CFLAGS -I$withval/include"
-   fi],
-  withval=yes)
+[  --with-fontconfig=DIR         where to find the fontconfig library])
 
-if test "$withval" != no; then
-  AC_CHECK_LIB(fontconfig,FcInit,
-    [LIBS="-lfontconfig $LIBS" 
-     FEATURES="GD_FONTCONFIG $FEATURES"
-     AC_DEFINE(HAVE_LIBFONTCONFIG, 1, [ Define if you have the fontconfig library. ])])
-else
-  ac_cv_lib_fontconfig_FcInit=no
+case $with_fontconfig in
+no) ;;
+yes|"")
+  PKG_CHECK_MODULES([LIBFONTCONFIG], fontconfig, [with_fontconfig=yes], [:])
+  ;;
+esac
+
+if test "$with_fontconfig" != no; then
+  save_LIBS="$LIBS"
+  save_CPPFLAGS="$CPPFLAGS"
+
+  if test -d "$with_fontconfig"; then
+    LIBFONTCONFIG_CFLAGS="-I$with_fontconfig/include"
+    LIBFONTCONFIG_LIBS="-L$with_fontconfig/lib -lfontconfig"
+  fi
+
+  CPPFLAGS="$CPPFLAGS $LIBFONTCONFIG_CFLAGS"
+  LIBS="$LIBS $LIBFONTCONFIG_LIBS"
+
+  AC_CHECK_LIB(fontconfig, FcInit,
+    [
+      with_fontconfig=yes
+    ],[
+      if test "$with_fontconfig" != ""; then
+        AC_MSG_ERROR([fontconfig support requested, but not found])
+      else
+        with_fontconfig=no
+      fi
+    ])
+
+  CPPFLAGS="$save_CPPFLAGS"
+  LIBS="$save_LIBS"
 fi
-AM_CONDITIONAL([HAVE_LIBFONTCONFIG], test "$ac_cv_lib_fontconfig_FcInit" = yes)
+
+if test "$with_fontconfig" != no; then
+  CPPFLAGS="$CPPFLAGS $LIBFONTCONFIG_CFLAGS"
+  LIBS="$LIBS $LIBFONTCONFIG_LIBS"
+  FEATURES="GD_FONTCONFIG $FEATURES"
+  AC_DEFINE(HAVE_LIBFONTCONFIG, 1, [ Define if you have the fontconfig library. ])
+fi
+AM_CONDITIONAL([HAVE_LIBFONTCONFIG], test "$with_fontconfig" = yes)
 
 dnl check for libjpeg by default
 AC_ARG_WITH(jpeg,dnl
@@ -231,60 +258,147 @@ AM_CONDITIONAL([HAVE_LIBJPEG], test "$ac_cv_lib_jpeg_jpeg_set_defaults" = yes)
 
 dnl check for libXpm by default
 AC_ARG_WITH(xpm,dnl
-[  --with-xpm=DIR          where to find the xpm library],
-  [if test -d "$withval"; then
-     LDFLAGS="$LDFLAGS -L$withval/lib"
-     CFLAGS="$CFLAGS -I$withval/include"
-   fi],
-  withval=yes)
+[  --with-xpm=DIR          where to find the xpm library])
 
-if test "$withval" != no; then
+case $with_xpm in
+no) ;;
+yes|"")
+  PKG_CHECK_MODULES([LIBXPM], xpm, [with_xpm=yes], [:])
+  ;;
+esac
+
+if test "$with_xpm" != no; then
+  save_LIBS="$LIBS"
+  save_CPPFLAGS="$CPPFLAGS"
+
+  if test -d "$with_xpm"; then
+    LIBXPM_CFLAGS="-I$with_xpm/include"
+    LIBXPM_LIBS="-L$with_xpm/lib -lXpm"
+  fi
+
+  CPPFLAGS="$CPPFLAGS $LIBXPM_CFLAGS"
+  LIBS="$LIBS $LIBXPM_LIBS"
+
   AC_CHECK_LIB(Xpm,XpmReadFileToXpmImage,
-    [LIBS="-lXpm $LIBS"
-     FEATURES="GD_XPM $FEATURES"
-     AC_DEFINE(HAVE_LIBXPM, 1, [ Define if you have the Xpm library. ])])
-else
-  ac_cv_lib_Xpm_XpmReadFileToXpmImage=no
+    [
+      if test -z "$LIBXPM_LIBS"; then
+        LIBXPM_LIBS="-lXpm"
+      fi
+      with_xpm=yes
+    ],[
+      if test "$with_xpm" != ""; then
+        AC_MSG_ERROR([Xpm support requested, but not found])
+      else
+        with_xpm=no
+      fi
+    ])
+
+  CPPFLAGS="$save_CPPFLAGS"
+  LIBS="$save_LIBS"
 fi
-AM_CONDITIONAL([HAVE_LIBXPM], test "$ac_cv_lib_Xpm_XpmReadFileToXpmImage" = yes)
+
+if test "$with_xpm" != no; then
+  CPPFLAGS="$CPPFLAGS $LIBXPM_CFLAGS"
+  LIBS="$LIBS $LIBXPM_LIBS"
+  FEATURES="GD_XPM $FEATURES"
+  AC_DEFINE(HAVE_LIBXPM, 1, [ Define if you have the Xpm library. ])
+fi
+AM_CONDITIONAL([HAVE_LIBXPM], test "$with_xpm" = yes)
 
 dnl check for libvpx by default
 AC_ARG_WITH(vpx,dnl
-[  --with-vpx=DIR         where to find the vpx library],
-  [if test -d "$withval"; then
-     LDFLAGS="$LDFLAGS -L$withval/lib"
-     CFLAGS="$CFLAGS -I$withval/include"
-   fi],
-  withval=yes)
+[  --with-vpx=DIR         where to find the vpx library])
 
-if test "$withval" != no; then
+case $with_vpx in
+no) ;;
+yes|"")
+  PKG_CHECK_MODULES([LIBVPX], vpx, [with_vpx=yes], [:])
+  ;;
+esac
+
+if test "$with_vpx" != no; then
+  save_LIBS="$LIBS"
+  save_CPPFLAGS="$CPPFLAGS"
+
+  if test -d "$with_vpx"; then
+    LIBVPX_CFLAGS="-I$with_vpx/include"
+    LIBVPX_LIBS="-L$with_vpx/lib -lvpx"
+  fi
+
+  CPPFLAGS="$CPPFLAGS $LIBVPX_CFLAGS"
+  LIBS="$LIBS $LIBVPX_LIBS"
+
   AC_CHECK_LIB(vpx,vpx_codec_destroy,
-    [LIBS="-lvpx $LIBS" 
-     FEATURES="GD_VPX $FEATURES"
-     AC_DEFINE(HAVE_LIBVPX, 1, [ Define if you have the vpx library. ])])
-else
-  ac_cv_lib_vpx_vpx_codec_destroy=no
+    [
+      if test -z "$LIBVPX_LIBS"; then
+        LIBVPX_LIBS="-lvpx"
+      fi
+      with_vpx=yes
+    ],[
+      if test "$with_vpx" != ""; then
+        AC_MSG_ERROR([vpx support requested, but not found])
+      else
+        with_vpx=no
+      fi
+    ])
+
+  CPPFLAGS="$save_CPPFLAGS"
+  LIBS="$save_LIBS"
 fi
-AM_CONDITIONAL([HAVE_LIBVPX], test "$ac_cv_lib_vpx_vpx_codec_destroy" = yes)
+
+if test "$with_vpx" != no; then
+  CPPFLAGS="$CPPFLAGS $LIBVPX_CFLAGS"
+  LIBS="$LIBS $LIBVPX_LIBS"
+  FEATURES="GD_VPX $FEATURES"
+  AC_DEFINE(HAVE_LIBVPX, 1, [ Define if you have the VPX library. ])
+fi
+AM_CONDITIONAL([HAVE_LIBVPX], test "$with_vpx" = yes)
 
 dnl check for libtiff by default
 AC_ARG_WITH(tiff,dnl
-[  --with-tiff=DIR         where to find the TIFF library],
-  [if test -d "$withval"; then
-     LDFLAGS="$LDFLAGS -L$withval/lib"
-     CFLAGS="$CFLAGS -I$withval/include"
-   fi],
-  withval=yes)
+[  --with-tiff=DIR         where to find the TIFF library])
 
-if test "$withval" != no; then
+case $with_tiff in
+no) ;;
+yes|"")
+  PKG_CHECK_MODULES([LIBTIFF], libtiff-4, [with_tiff=yes], [:])
+  ;;
+esac
+
+if test "$with_tiff" != no; then
+  save_CPPFLAGS="$CPPFLAGS"
+  save_LIBS="$LIBS"
+
+  if test -d "$with_tiff"; then
+    LIBTIFF_CFLAGS="-I$with_tiff/include"
+    LIBTIFF_LIBS="-L$with_tiff/lib -ltiff"
+  fi
+
+  CPPFLAGS="$CPPFLAGS $LIBTIFF_CFLAGS"
+  LIBS="$LIBS $LIBTIFF_LIBS"
+
   AC_CHECK_LIB(tiff,TIFFClientOpen,
-    [LIBS="-ltiff $LIBS" 
-     FEATURES="GD_TIFF $FEATURES"
-     AC_DEFINE(HAVE_LIBTIFF, 1, [ Define if you have the TIFF library. ])])
-else
-  ac_cv_lib_tiff_TIFFClientOpen=no
+    [
+      with_tiff=yes
+    ],[
+      if test "$with_tiff" != ""; then
+        AC_MSG_ERROR([tiff support requested, but not found])
+      else
+        with_tiff=no
+      fi
+    ])
+
+  CPPFLAGS="$save_CPPFLAGS"
+  LIBS="$save_LIBS"
 fi
-AM_CONDITIONAL([HAVE_LIBTIFF], test "$ac_cv_lib_tiff_TIFFClientOpen" = yes)
+
+if test "$with_tiff" != no; then
+  CPPFLAGS="$CPPFLAGS $LIBTIFF_CFLAGS"
+  LIBS="$LIBS $LIBTIFF_LIBS"
+  FEATURES="GD_TIFF $FEATURES"
+  AC_DEFINE(HAVE_LIBTIFF, 1, [ Define if you have the Tiff library. ])
+fi
+AM_CONDITIONAL([HAVE_LIBTIFF], test "$with_tiff" = yes)
 
 gl_VISIBILITY()
 CFLAGS="$CFLAGS $CFLAG_VISIBILITY"
@@ -304,11 +418,11 @@ AC_MSG_RESULT([
    Support for Zlib:                 $with_zlib
    Support for PNG library:          $with_png
    Support for JPEG library:         $ac_cv_lib_jpeg_jpeg_set_defaults
-   Support for VPX library:          $ac_cv_lib_vpx_vpx_codec_destroy
-   Support for TIFF library:         $ac_cv_lib_tiff_TIFFClientOpen
+   Support for VPX library:          $with_vpx
+   Support for TIFF library:         $with_tiff
    Support for Freetype 2.x library: $with_freetype
-   Support for Fontconfig library:   $ac_cv_lib_fontconfig_FcInit
-   Support for Xpm library:          $ac_cv_lib_Xpm_XpmReadFileToXpmImage
+   Support for Fontconfig library:   $with_fontconfig
+   Support for Xpm library:          $with_xpm
    Support for pthreads:             $ax_pthread_ok
 ])
 
