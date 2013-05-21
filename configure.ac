@@ -198,17 +198,21 @@ AC_ARG_WITH(fontconfig,dnl
 case $with_fontconfig in
 no) ;;
 yes|"")
-  PKG_CHECK_MODULES([LIBFONTCONFIG], fontconfig, [with_fontconfig=yes], [:])
+  PKG_CHECK_MODULES([LIBFONTCONFIG], fontconfig, [with_fontconfig=yes],
+  [
+    if test "$with_fontconfig" = yes; then
+      AC_MSG_ERROR([fontconfig support requested, but not found])
+    fi
+    with_fontconfig=no
+  ])
   ;;
-esac
-
-if test "$with_fontconfig" != no; then
+*)
   save_LIBS="$LIBS"
   save_CPPFLAGS="$CPPFLAGS"
 
   if test -d "$with_fontconfig"; then
     LIBFONTCONFIG_CFLAGS="-I$with_fontconfig/include"
-    LIBFONTCONFIG_LIBS="-L$with_fontconfig/lib -lfontconfig"
+    LIBFONTCONFIG_LIBS="-L$with_fontconfig/lib"
   fi
 
   CPPFLAGS="$CPPFLAGS $LIBFONTCONFIG_CFLAGS"
@@ -216,6 +220,7 @@ if test "$with_fontconfig" != no; then
 
   AC_CHECK_LIB(fontconfig, FcInit,
     [
+      LIBFONTCONFIG_LIBS="$LIBFONTCONFIG_LIBS -lfontconfig"
       with_fontconfig=yes
     ],[
       if test "$with_fontconfig" != ""; then
@@ -227,11 +232,12 @@ if test "$with_fontconfig" != no; then
 
   CPPFLAGS="$save_CPPFLAGS"
   LIBS="$save_LIBS"
-fi
+  ;;
+esac
 
 if test "$with_fontconfig" != no; then
   CPPFLAGS="$CPPFLAGS $LIBFONTCONFIG_CFLAGS"
-  LIBS="$LIBS $LIBFONTCONFIG_LIBS"
+  LIBS="$LIBS $LIBFONTCONFIG_LIBS -lfontconfig"
   FEATURES="GD_FONTCONFIG $FEATURES"
   AC_DEFINE(HAVE_LIBFONTCONFIG, 1, [ Define if you have the fontconfig library. ])
 fi
@@ -263,11 +269,15 @@ AC_ARG_WITH(xpm,dnl
 case $with_xpm in
 no) ;;
 yes|"")
-  PKG_CHECK_MODULES([LIBXPM], xpm, [with_xpm=yes], [:])
+  PKG_CHECK_MODULES([LIBXPM], xpm, [with_xpm=yes],
+  [
+    if test "$with_xpm" = yes; then
+      AC_MSG_ERROR([Xpm support requested, but not found])
+    fi
+    with_xpm=no
+  ])
   ;;
-esac
-
-if test "$with_xpm" != no; then
+*)
   save_LIBS="$LIBS"
   save_CPPFLAGS="$CPPFLAGS"
 
@@ -295,7 +305,8 @@ if test "$with_xpm" != no; then
 
   CPPFLAGS="$save_CPPFLAGS"
   LIBS="$save_LIBS"
-fi
+  ;;
+esac
 
 if test "$with_xpm" != no; then
   CPPFLAGS="$CPPFLAGS $LIBXPM_CFLAGS"
@@ -312,11 +323,15 @@ AC_ARG_WITH(vpx,dnl
 case $with_vpx in
 no) ;;
 yes|"")
-  PKG_CHECK_MODULES([LIBVPX], vpx, [with_vpx=yes], [:])
+  PKG_CHECK_MODULES([LIBVPX], vpx, [with_vpx=yes],
+  [
+    if test "$with_vpx" = yes; then
+      AC_MSG_ERROR([VPX support requested, but not found])
+    fi
+    with_vpx=no
+  ])
   ;;
-esac
-
-if test "$with_vpx" != no; then
+*)
   save_LIBS="$LIBS"
   save_CPPFLAGS="$CPPFLAGS"
 
@@ -344,7 +359,8 @@ if test "$with_vpx" != no; then
 
   CPPFLAGS="$save_CPPFLAGS"
   LIBS="$save_LIBS"
-fi
+  ;;
+esac
 
 if test "$with_vpx" != no; then
   CPPFLAGS="$CPPFLAGS $LIBVPX_CFLAGS"
@@ -361,17 +377,21 @@ AC_ARG_WITH(tiff,dnl
 case $with_tiff in
 no) ;;
 yes|"")
-  PKG_CHECK_MODULES([LIBTIFF], libtiff-4, [with_tiff=yes], [:])
+  PKG_CHECK_MODULES([LIBTIFF], libtiff-4, [with_tiff=yes],
+  [
+    if test "$with_tiff" = yes; then
+      AC_MSG_ERROR([TIFF support requested, but not found])
+    fi
+    with_tiff=no
+  ])
   ;;
-esac
-
-if test "$with_tiff" != no; then
+*)
   save_CPPFLAGS="$CPPFLAGS"
   save_LIBS="$LIBS"
 
   if test -d "$with_tiff"; then
     LIBTIFF_CFLAGS="-I$with_tiff/include"
-    LIBTIFF_LIBS="-L$with_tiff/lib -ltiff"
+    LIBTIFF_LIBS="-L$with_tiff/lib"
   fi
 
   CPPFLAGS="$CPPFLAGS $LIBTIFF_CFLAGS"
@@ -379,6 +399,7 @@ if test "$with_tiff" != no; then
 
   AC_CHECK_LIB(tiff,TIFFClientOpen,
     [
+      LIBTIFF_LIBS="$LIBTIFF_LIBS -ltiff"
       with_tiff=yes
     ],[
       if test "$with_tiff" != ""; then
@@ -390,7 +411,8 @@ if test "$with_tiff" != no; then
 
   CPPFLAGS="$save_CPPFLAGS"
   LIBS="$save_LIBS"
-fi
+  ;;
+esac
 
 if test "$with_tiff" != no; then
   CPPFLAGS="$CPPFLAGS $LIBTIFF_CFLAGS"
