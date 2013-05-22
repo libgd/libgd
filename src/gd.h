@@ -1058,7 +1058,7 @@ typedef enum {
 	GD_AFFINE_SCALE,
 	GD_AFFINE_ROTATE,
 	GD_AFFINE_SHEAR_HORIZONTAL,
-	GD_AFFINE_SHEAR_VERTICAL,
+	GD_AFFINE_SHEAR_VERTICAL
 } gdAffineStandardMatrix;
 
 BGD_DECLARE(int) gdAffineApplyToPointF (gdPointFPtr dst, const gdPointFPtr src, const double affine[6]);
