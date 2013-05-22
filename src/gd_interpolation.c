@@ -1844,20 +1844,21 @@ gdImagePtr gdImageRotateBilinear(gdImagePtr src, const float degrees, const int 
 				const gdFixed f_w3 = gd_mulfx(f_f, f_1-f_g);
 				const gdFixed f_w4 = gd_mulfx(f_f, f_g);
 
-				if (n < src_w - 1) {
-					src_offset_x = m + 1;
-					src_offset_y = n;
-				}
+				/* The last condition is always true because the if ^^^ */
+				/* if (n < src_w - 1) { */
+				/* 	src_offset_x = m + 1; */
+				/* 	src_offset_y = n; */
+				/* } */
 
-				if (m < src_h-1) {
-					src_offset_x = m;
-					src_offset_y = n + 1;
-				}
+				/* if (m < src_h - 1) { */
+				/* 	src_offset_x = m; */
+				/* 	src_offset_y = n + 1; */
+				/* } */
 
-				if (!((n >= src_w-1) || (m >= src_h-1))) {
+				/* if (!((n >= src_w - 1) || (m >= src_h - 1))) { */
 					src_offset_x = m + 1;
 					src_offset_y = n + 1;
-				}
+				/* } */
 				{
 					const int pixel1 = src->tpixels[src_offset_y][src_offset_x];
 					register int pixel2, pixel3, pixel4;
