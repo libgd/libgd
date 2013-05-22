@@ -332,6 +332,16 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 			}
 		}
 		break;
+	default:
+		gd_error("gd-png color_type is unknown: %d\n", color_type);
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		gdFree(image_data);
+		gdFree(row_pointers);
+		if (im) {
+			gdImageDestroy(im);
+		}
+		return NULL;
+		break;
 	}
 
 	png_read_update_info (png_ptr, info_ptr);
