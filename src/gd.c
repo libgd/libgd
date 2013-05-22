@@ -2083,7 +2083,6 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 		return;
 	}
 
-	nc =  gdImageTileGet(im,x,y);
 	pts = (char *) gdCalloc(im->sy * im->sx, sizeof(char));
 	if (!pts) {
 		return;
