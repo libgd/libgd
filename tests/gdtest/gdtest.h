@@ -37,7 +37,7 @@ int _gdTestErrorMsg(const char* file, unsigned int line, const char* string, ...
 
 #define gdTestAssert(cond) _gdTestAssert(__FILE__, __LINE__, "assert failed in <%s:%i>\n", (cond))
 
-#define gdTestErrorMsg(format, ...) _gdTestErrorMsg(__FILE__, __LINE__, format, ## __VA_ARGS__)
+#define gdTestErrorMsg(...) _gdTestErrorMsg(__FILE__, __LINE__, __VA_ARGS__)
 
 void gdSilence(int priority, const char *format, va_list args);
 
