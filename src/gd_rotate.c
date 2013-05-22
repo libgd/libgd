@@ -348,9 +348,6 @@ gdImagePtr gdImageRotate45 (gdImagePtr src, double dAngle, int clrBack, int igno
 	int clrBackR, clrBackG, clrBackB, clrBackA;
 
 	/* See GEMS I for the algorithm details */
-	dRadAngle = dAngle * ROTATE_DEG2RAD; /* Angle in radians */
-	dSinE = sin (dRadAngle);
-	dTan = tan (dRadAngle / 2.0);
 
 	newx = (int)(src->sx + src->sy * fabs(dTan));
 	newy = src->sy;
