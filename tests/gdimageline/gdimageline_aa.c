@@ -33,7 +33,7 @@ int gen_image(const char* filename, int idx, int reverse_x, int width, int heigh
 	x2 = floor(reverse_x *  width*2 + 0.5);
 	y2 = floor((offset+width*2) * gradient + 0.5);
 
-	// draw an AA line
+	/* draw an AA line */
 	gdImageLine(im, x1, y1, x2, y2, gdAntiAliased);
 
 	gdImageLine(im, 0, im->sy - 1, im->sx, im->sy - 1, 0x40FF0000);

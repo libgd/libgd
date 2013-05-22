@@ -21,7 +21,7 @@ int main()
 	gdImageAlphaBlending(dst_tc, 0);
 	gdImageCopy(dst_tc, src, 0,0, 0,0, gdImageSX(src), gdImageSY(src));
 
-	//CuAssertImageEquals(tc, src, dst_tc);
+	/* CuAssertImageEquals(tc, src, dst_tc); */
 
 	/* Destroy it */
 	gdImageDestroy(dst_tc);

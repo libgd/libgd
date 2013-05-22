@@ -13,7 +13,7 @@ main(void)
 	gdPoint diamond[4];
 	int d, x, y, top, bot, left, right, r;
 
-	//                              R    G    B
+	/*                              R    G    B */
 	int white   = gdTrueColorAlpha(255, 255, 255, 10);
 	int black   = gdTrueColorAlpha(  0,   0,   0, 10);
 	int red     = gdTrueColorAlpha(255,   0,   0, 10);
@@ -29,7 +29,7 @@ main(void)
 
 	gdImageFilledRectangle(im, 0, 0, 256, 256, white);
 
-	// M (bridge)
+	/* M (bridge) */
 	top = 240;
 	bot = 255;
 	d = 30;
@@ -46,7 +46,7 @@ main(void)
 	pointy[4].y = bot;
 	gdImageFilledPolygon(im, pointy, 5, yellow);
 
-	// left-facing M not on baseline
+	/* left-facing M not on baseline */
 	top = 40;
 	bot = 70;
 	left = 120;
@@ -63,7 +63,7 @@ main(void)
 	pointy[4].y = (top+bot)/2;
 	gdImageFilledPolygon(im, pointy, 5, purple);
 
-	// left-facing M on baseline
+	/* left-facing M on baseline */
 	top = 240;
 	bot = 270;
 	left = 20;
@@ -80,7 +80,7 @@ main(void)
 	pointy[4].y = (top+bot)/2;
 	gdImageFilledPolygon(im, pointy, 5, magenta);
 
-	// left-facing M on ceiling
+	/* left-facing M on ceiling */
 	top = -15;
 	bot = 15;
 	left = 20;
@@ -134,7 +134,7 @@ main(void)
 	diamond[3].y = y-d;
 	gdImageFilledPolygon(im, diamond, 4, cyan);
 
-	// M (bridge) not touching bottom boundary
+	/* M (bridge) not touching bottom boundary */
 	top = 100;
 	bot = 150;
 	x = 30;
