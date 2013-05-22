@@ -1927,7 +1927,6 @@ static int gdImageTileGet (gdImagePtr im, int x, int y)
 		if (im->tile->trueColor) {
 			tileColor = gdImageColorResolveAlpha(im, gdTrueColorGetRed (p), gdTrueColorGetGreen (p), gdTrueColorGetBlue (p), gdTrueColorGetAlpha (p));
 		} else {
-			tileColor = p;
 			tileColor = gdImageColorResolveAlpha(im, gdImageRed (im->tile,p), gdImageGreen (im->tile,p), gdImageBlue (im->tile,p), gdImageAlpha (im->tile,p));
 		}
 	}
