@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "gd.h"
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	/* 2.0.22: can't depend on PNG either  */
 #ifndef HAVE_LIBPNG

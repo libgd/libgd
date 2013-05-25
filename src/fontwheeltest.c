@@ -113,7 +113,7 @@ dotest (char *font, int size, double incr,
 }
 
 int
-main (int argc, char **argv)
+main(void)
 {
 
 #if defined(HAVE_LIBPNG)

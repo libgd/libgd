@@ -76,7 +76,7 @@ dotest (char *font, int w, int h, char *string, const char *filename)
 }
 
 int
-main (int argc, char **argv)
+main(void)
 {
 
 #if defined(HAVE_LIBPNG)

@@ -7,7 +7,7 @@
 #include "gd_color_map.h"
 
 int
-main(int argc, char *argv[])
+main(void)
 {
 	int r, g, b;
 	int i;

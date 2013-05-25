@@ -9,7 +9,7 @@
 #define TRUE (!FALSE)
 
 int
-main (int argc, char *argv[])
+main(void)
 {
 #ifdef HAVE_LIBFREETYPE
 	FILE *out;
