@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
 	im = gdImageCreateFromJpeg(in);
 #else
 	fprintf(stderr, "No JPEG library support available.\n");
+	exit(1);
 #endif
 
 	fclose(in);
