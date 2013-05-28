@@ -96,7 +96,8 @@ EXTRA_PROGRAMS = \
 	gdimagescatterex/bug00208_1 \
 	gdimagescatterex/bug00208_2 \
 	gdimagefilltoborder/bug00037 \
-	gdimagerotate/php_bug_64898
+	gdimagerotate/php_bug_64898 \
+	gdimagerotate/bug00067
 
 if HAVE_LIBXPM
 check_PROGRAMS += \
@@ -180,7 +181,8 @@ check_PROGRAMS += \
 	gdimagescatterex/bug00208_1 \
 	gdimagescatterex/bug00208_2 \
 	gdimagefilltoborder/bug00037 \
-	gdimagerotate/php_bug_64898
+	gdimagerotate/php_bug_64898 \
+	gdimagerotate/bug00067
 endif
 
 if HAVE_LIBTIFF
@@ -305,7 +307,21 @@ EXTRA_DIST = \
 	gdimagefilltoborder/CMakeLists.txt \
 	freetype/CMakeLists.txt \
 	gdimagerotate/php_bug_64898.png \
-	gdimagerotate/php_bug_64898_exp.png
+	gdimagerotate/php_bug_64898_exp.png \
+	gdimagerotate/remirh128.jpg \
+	gdimagerotate/php_bug_64898_000_exp.png \
+	gdimagerotate/php_bug_64898_015_exp.png \
+	gdimagerotate/php_bug_64898_030_exp.png \
+	gdimagerotate/php_bug_64898_045_exp.png \
+	gdimagerotate/php_bug_64898_060_exp.png \
+	gdimagerotate/php_bug_64898_075_exp.png \
+	gdimagerotate/php_bug_64898_090_exp.png \
+	gdimagerotate/php_bug_64898_105_exp.png \
+	gdimagerotate/php_bug_64898_120_exp.png \
+	gdimagerotate/php_bug_64898_135_exp.png \
+	gdimagerotate/php_bug_64898_150_exp.png \
+	gdimagerotate/php_bug_64898_165_exp.png \
+	gdimagerotate/php_bug_64898_180_exp.png
 
 CLEANFILES = \
 	a.png \
