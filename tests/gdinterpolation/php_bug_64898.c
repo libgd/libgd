@@ -62,7 +62,5 @@ int main()
 	gdImageDestroy(exp);
 	gdImageDestroy(im);
 
-	gdFree(im);
-
 	return 0;
 }
