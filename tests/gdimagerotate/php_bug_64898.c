@@ -35,7 +35,7 @@ int main()
 
 	if (color < 0) {
 		gdTestErrorMsg("allocation color from image failed.\n");
-		gdFree(im);
+		gdImageDestroy(im);
 		return 1;
 	}
 
@@ -46,7 +46,7 @@ int main()
 
 	if (!exp) {
 		gdTestErrorMsg("rotating image failed.\n");
-		gdFree(im);
+		gdImageDestroy(im);
 		return 1;
 	}
 
@@ -54,8 +54,8 @@ int main()
 
 	if (!gdAssertImageEqualsToFile(path, exp)) {
 		printf("comparing rotated image to %s failed.\n", path);
-		gdFree(im);
-		gdFree(exp);
+		gdImageDestroy(im);
+		gdImageDestroy(exp);
 		return 1;
 	}
 
