@@ -8,8 +8,8 @@ int main()
 {
 	gdImagePtr im, exp;
 	char path[2048];
-	const char *file_im = "gdinterpolation/php_bug_64898.png";
-	const char *file_exp = "gdinterpolation/php_bug_64898_exp.png";
+	const char *file_im = "gdimagerotate/php_bug_64898.png";
+	const char *file_exp = "gdimagerotate/php_bug_64898_exp.png";
 	FILE *fp;
 	int color;
 

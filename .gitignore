@@ -197,6 +197,6 @@ Makefile.in
 /tests/jpeg_read.c_28_diff.png
 /tests/jpeg_read.c_28_out.png
 /tests/test_config.h
-/tests/gdinterpolation/php_bug_64898
+/tests/gdimagerotate/php_bug_64898
 /tests/php_bug_64898.c_55_diff.png
 /tests/php_bug_64898.c_55_out.png
