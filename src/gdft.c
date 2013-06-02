@@ -1487,7 +1487,7 @@ static char * font_pattern(char **fontpath, char *fontpattern)
 			return "could not alloc font path";
 		}
 		strncpy(*fontpath, (const char *)file, file_len);
-		fontpath[file_len] = 0;
+		(*fontpath)[file_len] = 0;
 	}
 	FcPatternDestroy(font);
 
