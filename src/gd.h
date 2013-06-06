@@ -889,6 +889,8 @@ BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
                                       int srcX, int srcY,
                                       int srcWidth, int srcHeight, int angle);
 
+BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src);
+
 BGD_DECLARE(void) gdImageSetBrush (gdImagePtr im, gdImagePtr brush);
 BGD_DECLARE(void) gdImageSetTile (gdImagePtr im, gdImagePtr tile);
 BGD_DECLARE(void) gdImageSetAntiAliased (gdImagePtr im, int c);

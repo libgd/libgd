@@ -46,7 +46,7 @@ int main()
 		exp = gdImageRotateInterpolated(im, angle, color);
 
 		if (!exp) {
-			gdTestErrorMsg("rotating image failed.\n");
+			gdTestErrorMsg("rotating image failed for %03d.\n", angle);
 			gdImageDestroy(im);
 			return 1;
 		}
