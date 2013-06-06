@@ -22,27 +22,19 @@ int main()
 		return 1;
 	}
 
-	im = gdImageCreateFromPng(fp);
-
-	fclose(fp);
+	im = gdImageCreateTrueColor(141, 200);
 
 	if (!im) {
 		gdTestErrorMsg("loading %s failed.\n", path);
 		return 1;
 	}
 
-	color = gdImageColorAllocate(im, 255, 255, 255);
-
-	if (color < 0) {
-		gdTestErrorMsg("allocation color from image failed.\n");
-		gdImageDestroy(im);
-		return 1;
-	}
+	gdImageFilledRectangle(im, 0, 0, 140, 199, 0x00ffffff);
 
 /*	Try default interpolation method, but any non-optimized fails */
 /*	gdImageSetInterpolationMethod(im, GD_BICUBIC_FIXED); */
 
-	exp = gdImageRotateInterpolated(im, 45, color);
+	exp = gdImageRotateInterpolated(im, 45, 0x0);
 
 	if (!exp) {
 		gdTestErrorMsg("rotating image failed.\n");
