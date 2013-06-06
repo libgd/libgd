@@ -2200,7 +2200,9 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 	/* no interpolation needed here */
 	switch (angle_rounded) {
 
-		case 0: {
+		case  36000:
+		case -36000:
+		case      0: {
 			gdImagePtr dst = gdImageClone(src);
 
 			if (dst == NULL) {
@@ -2212,10 +2214,15 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 			return dst;
 		}
 
-		case 9000:
+		case -27000:
+		case   9000:
 			return gdImageRotate90(src, 0);
-		case 18000:
+
+		case -18000:
+		case  18000:
 			return gdImageRotate180(src, 0);
+
+		case -9000:
 		case 27000:
 			return gdImageRotate270(src, 0);
 	}
