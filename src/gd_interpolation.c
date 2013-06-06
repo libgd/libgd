@@ -2191,7 +2191,7 @@ gdImagePtr gdImageRotateBicubicFixed(gdImagePtr src, const float degrees, const 
 
 BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const float angle, int bgcolor)
 {
-	const int angle_rounded = (int)floor(angle * 100);
+	const int angle_rounded = (int)floor(angle);
 	
 	if (bgcolor < 0) {
 		return NULL;
@@ -2200,9 +2200,9 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 	/* no interpolation needed here */
 	switch (angle_rounded) {
 
-		case  36000:
-		case -36000:
-		case      0: {
+		case  360:
+		case -360:
+		case    0: {
 			gdImagePtr dst = gdImageClone(src);
 
 			if (dst == NULL) {
@@ -2214,16 +2214,16 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 			return dst;
 		}
 
-		case -27000:
-		case   9000:
+		case -270:
+		case   90:
 			return gdImageRotate90(src, 0);
 
-		case -18000:
-		case  18000:
+		case -180:
+		case  180:
 			return gdImageRotate180(src, 0);
 
-		case -9000:
-		case 27000:
+		case  -90:
+		case  270:
 			return gdImageRotate270(src, 0);
 	}
 
