@@ -311,19 +311,19 @@ EXTRA_DIST = \
 	gdimagerotate/php_bug_64898.png \
 	gdimagerotate/php_bug_64898_exp.png \
 	gdimagerotate/remirh128.jpg \
-	gdimagerotate/php_bug_64898_000_exp.png \
-	gdimagerotate/php_bug_64898_015_exp.png \
-	gdimagerotate/php_bug_64898_030_exp.png \
-	gdimagerotate/php_bug_64898_045_exp.png \
-	gdimagerotate/php_bug_64898_060_exp.png \
-	gdimagerotate/php_bug_64898_075_exp.png \
-	gdimagerotate/php_bug_64898_090_exp.png \
-	gdimagerotate/php_bug_64898_105_exp.png \
-	gdimagerotate/php_bug_64898_120_exp.png \
-	gdimagerotate/php_bug_64898_135_exp.png \
-	gdimagerotate/php_bug_64898_150_exp.png \
-	gdimagerotate/php_bug_64898_165_exp.png \
-	gdimagerotate/php_bug_64898_180_exp.png
+	gdimagerotate/bug00067_000_exp.png \
+	gdimagerotate/bug00067_015_exp.png \
+	gdimagerotate/bug00067_030_exp.png \
+	gdimagerotate/bug00067_045_exp.png \
+	gdimagerotate/bug00067_060_exp.png \
+	gdimagerotate/bug00067_075_exp.png \
+	gdimagerotate/bug00067_090_exp.png \
+	gdimagerotate/bug00067_105_exp.png \
+	gdimagerotate/bug00067_120_exp.png \
+	gdimagerotate/bug00067_135_exp.png \
+	gdimagerotate/bug00067_150_exp.png \
+	gdimagerotate/bug00067_165_exp.png \
+	gdimagerotate/bug00067_180_exp.png
 
 CLEANFILES = \
 	a.png \
