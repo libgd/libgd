@@ -42,6 +42,7 @@ EXTRA_PROGRAMS = \
 	gdimageline/bug00077 \
 	gdimageline/bug00111 \
 	gdimageline/gdimageline_bug5 \
+	gdimageline/gdImageAALine_thickness \
 	gdimageopenpolygon/gdimageopenpolygon2 \
 	gdimageopenpolygon/gdimageopenpolygon1 \
 	gdimageopenpolygon/gdimageopenpolygon0 \
@@ -139,6 +140,7 @@ check_PROGRAMS += \
 	gdimageline/bug00077 \
 	gdimageline/bug00111 \
 	gdimageline/gdimageline_bug5 \
+	gdimageline/gdImageAALine_thickness \
 	gdimageopenpolygon/gdimageopenpolygon2 \
 	gdimageopenpolygon/gdimageopenpolygon1 \
 	gdimageopenpolygon/gdimageopenpolygon0 \
