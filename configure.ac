@@ -45,7 +45,7 @@ AC_SUBST(GDLIB_AGE)
 FEATURES="GD_GIF GD_GIFANIM GD_OPENPOLYGON"
 AC_SUBST(FEATURES)
 
-AM_INIT_AUTOMAKE([foreign -Wall -Werror])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 dist-xz -Wall -Werror])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
 dnl newer automake wants this, but we still want to work with older
