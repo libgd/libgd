@@ -41,6 +41,7 @@ EXTRA_PROGRAMS = \
 	gdimageline/bug00072 \
 	gdimageline/bug00077 \
 	gdimageline/bug00111 \
+	gdimageline/gdimageline_bug5 \
 	gdimageopenpolygon/gdimageopenpolygon2 \
 	gdimageopenpolygon/gdimageopenpolygon1 \
 	gdimageopenpolygon/gdimageopenpolygon0 \
@@ -137,6 +138,7 @@ check_PROGRAMS += \
 	gdimageline/bug00072 \
 	gdimageline/bug00077 \
 	gdimageline/bug00111 \
+	gdimageline/gdimageline_bug5 \
 	gdimageopenpolygon/gdimageopenpolygon2 \
 	gdimageopenpolygon/gdimageopenpolygon1 \
 	gdimageopenpolygon/gdimageopenpolygon0 \
