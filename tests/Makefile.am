@@ -325,7 +325,8 @@ EXTRA_DIST = \
 	gdimagerotate/bug00067_135_exp.png \
 	gdimagerotate/bug00067_150_exp.png \
 	gdimagerotate/bug00067_165_exp.png \
-	gdimagerotate/bug00067_180_exp.png
+	gdimagerotate/bug00067_180_exp.png \
+	gdimageline/gdImageAALine_thickness_exp.png
 
 CLEANFILES = \
 	a.png \
