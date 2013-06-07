@@ -201,3 +201,5 @@ Makefile.in
 /tests/php_bug_64898.c_55_diff.png
 /tests/php_bug_64898.c_55_out.png
 /tests/gdimagerotate/bug00067
+/tests/gdimageline/gdImageAALine_thickness
+/tests/gdimageline/gdimageline_bug5
