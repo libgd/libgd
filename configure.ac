@@ -7,7 +7,7 @@ AC_PREREQ(2.54)
 m4_define([gd_MAJOR],[2])dnl
 m4_define([gd_MINOR],[1])dnl
 m4_define([gd_REVISION],[0])dnl
-m4_define([gd_EXTRA],[rc1])dnl
+m4_define([gd_EXTRA],[rc2])dnl
 
 m4_ifdef([gd_EXTRA],
   [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION-gd_EXTRA])],
@@ -45,7 +45,7 @@ AC_SUBST(GDLIB_AGE)
 FEATURES="GD_GIF GD_GIFANIM GD_OPENPOLYGON"
 AC_SUBST(FEATURES)
 
-AM_INIT_AUTOMAKE([foreign -Wall -Werror])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 dist-xz -Wall -Werror])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
 dnl newer automake wants this, but we still want to work with older

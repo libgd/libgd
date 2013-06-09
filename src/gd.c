@@ -3337,6 +3337,8 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 	/* keep them as 32bits */
 	long x, y, inc;
 	long dx, dy,tmp;
+	int w, wid, wstart; 
+	int thick = im->thick; 
 
 	if (!im->trueColor) {
 		/* TBB: don't crash when the image is of the wrong type */
@@ -3357,6 +3359,17 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 		/* TBB: allow setting points */
 		gdImageSetAAPixelColor(im, x1, y1, col, 0xFF);
 		return;
+	} else {
+		double ag;
+		ag = (abs(dy) < abs(dx)) ? cos(atan2(dy, dx)) : sin(atan2(dy, dx));
+		if (ag != 0) {
+			wid = abs(thick / ag);
+		} else {
+			wid = 1;
+		}
+		if (wid == 0) {
+			wid = 1;
+		}
 	}
 
 	/* Axis aligned lines */
@@ -3384,8 +3397,11 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 		inc = (dy * 65536) / dx;
 		/* TBB: set the last pixel for consistency (<=) */
 		while ((x >> 16) <= x2) {
-			gdImageSetAAPixelColor(im, x >> 16, y >> 16, col, (y >> 8) & 0xFF);
-			gdImageSetAAPixelColor(im, x >> 16, (y >> 16) + 1, col, (~y >> 8) & 0xFF);
+			wstart = (y >> 16) - wid / 2;
+			for (w = wstart; w < wstart + wid; w++) {
+			    gdImageSetAAPixelColor(im, (x >> 16) , w , col , (y >> 8) & 0xFF);
+			    gdImageSetAAPixelColor(im, (x >> 16) , w + 1 , col, (~y >> 8) & 0xFF);
+			}
 			x += (1 << 16);
 			y += inc;
 		}
@@ -3405,8 +3421,11 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 		inc = (dx * 65536) / dy;
 		/* TBB: set the last pixel for consistency (<=) */
 		while ((y >> 16) <= y2) {
-			gdImageSetAAPixelColor(im, x >> 16, y >> 16, col, (x >> 8) & 0xFF);
-			gdImageSetAAPixelColor(im, (x >> 16) + 1, (y >> 16), col, (~x >> 8) & 0xFF);
+			wstart = (x >> 16) - wid / 2;
+			for (w = wstart; w < wstart + wid; w++) {
+			    gdImageSetAAPixelColor(im, w , y >> 16  , col, (x >> 8) & 0xFF);
+			    gdImageSetAAPixelColor(im, w + 1, y >> 16, col, (~x >> 8) & 0xFF);
+			}
 			x += inc;
 			y += (1 << 16);
 		}
