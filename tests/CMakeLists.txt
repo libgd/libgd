@@ -41,6 +41,7 @@ if (BUILD_TEST)
 		gdimagepixelate
 		gdimagepolygon
 		gdimagerectangle
+		gdimagerotate
 		gdimagescatterex
 		gdimagesetpixel
 		gdnewfilectx
