@@ -61,25 +61,24 @@ gd_strtok_r (char *s, char *sep, char **state)
 	return result;
 }
 
-inline void *
-gdCalloc (size_t nmemb, size_t size)
+const  void * gdCalloc (size_t nmemb, size_t size)
 {
 	return calloc (nmemb, size);
 }
 
-inline void *
+const  void *
 gdMalloc (size_t size)
 {
 	return malloc (size);
 }
 
-inline void *
+const  void *
 gdRealloc (void *ptr, size_t size)
 {
 	return realloc (ptr, size);
 }
 
-inline void *
+const  void *
 gdReallocEx (void *ptr, size_t size)
 {
 	void *newPtr = gdRealloc (ptr, size);
