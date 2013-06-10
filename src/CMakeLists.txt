@@ -22,14 +22,17 @@ SET (LIBGD_SRC_FILES
 	gd_io_stream.cxx
 	gd_io_stream.h
 	gd_io_dp.c
+	gd_interpolation.c
 	gd_gif_in.c
 	gd_gif_out.c
 	gd_io_file.c
 	gd_io_ss.c
 	gd_jpeg.c
+	gd_matrix.c
 	gd_nnquant.c
 	gd_nnquant.h
 	gd_png.c
+	gd_rotate.c
 	gd_tiff.c
 	gd_tga.c
 	gd_tga.h
