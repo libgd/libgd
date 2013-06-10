@@ -619,6 +619,10 @@ static double filter_welsh(const double x)
 }
 #endif
 
+#if defined(_MSC_VER) && !defined(inline)
+# define inline __inline
+#endif 
+
 /* Copied from upstream's libgd */
 static inline int _color_blend (const int dst, const int src)
 {
@@ -2195,7 +2199,7 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 	   case later. Keep the two decimal precisions so smaller rotation steps can be done, useful for
 	   slow animations, f.e. */
 	const int angle_rounded = fmod((int) floorf(angle * 100), 360 * 100);
-	
+
 	if (bgcolor < 0) {
 		return NULL;
 	}
