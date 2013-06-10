@@ -3392,17 +3392,17 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 			dx = x2 - x1;
 			dy = y2 - y1;
 		}
-		x = x1 << 16;
+		x = x1;
 		y = y1 << 16;
 		inc = (dy * 65536) / dx;
 		/* TBB: set the last pixel for consistency (<=) */
-		while ((x >> 16) <= x2) {
+		while (x <= x2) {
 			wstart = (y >> 16) - wid / 2;
 			for (w = wstart; w < wstart + wid; w++) {
-			    gdImageSetAAPixelColor(im, (x >> 16) , w , col , (y >> 8) & 0xFF);
-			    gdImageSetAAPixelColor(im, (x >> 16) , w + 1 , col, (~y >> 8) & 0xFF);
+			    gdImageSetAAPixelColor(im, x , w , col , (y >> 8) & 0xFF);
+			    gdImageSetAAPixelColor(im, x , w + 1 , col, (~y >> 8) & 0xFF);
 			}
-			x += (1 << 16);
+			x++;
 			y += inc;
 		}
 	} else {
@@ -3417,17 +3417,17 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 			dy = y2 - y1;
 		}
 		x = x1 << 16;
-		y = y1 << 16;
+		y = y1;
 		inc = (dx * 65536) / dy;
 		/* TBB: set the last pixel for consistency (<=) */
-		while ((y >> 16) <= y2) {
+		while (y <= y2) {
 			wstart = (x >> 16) - wid / 2;
 			for (w = wstart; w < wstart + wid; w++) {
-			    gdImageSetAAPixelColor(im, w , y >> 16  , col, (x >> 8) & 0xFF);
-			    gdImageSetAAPixelColor(im, w + 1, y >> 16, col, (~x >> 8) & 0xFF);
+			    gdImageSetAAPixelColor(im, w , y  , col, (x >> 8) & 0xFF);
+			    gdImageSetAAPixelColor(im, w + 1, y, col, (~x >> 8) & 0xFF);
 			}
 			x += inc;
-			y += (1 << 16);
+			y++;
 		}
 	}
 }
