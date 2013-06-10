@@ -2275,11 +2275,11 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 	if (src->trueColor == 0) {
 		dst->colorsTotal = src->colorsTotal;
 		for (i = 0; i < gdMaxColors; i++) {
-			dst->red[gdMaxColors]   = src->red[gdMaxColors];
-			dst->green[gdMaxColors] = src->green[gdMaxColors];
-			dst->blue[gdMaxColors]  = src->blue[gdMaxColors];
-			dst->alpha[gdMaxColors] = src->alpha[gdMaxColors];
-			dst->open[gdMaxColors]  = src->open[gdMaxColors];
+			dst->red[i]   = src->red[i];
+			dst->green[i] = src->green[i];
+			dst->blue[i]  = src->blue[i];
+			dst->alpha[i] = src->alpha[i];
+			dst->open[i]  = src->open[i];
 		}
 		for (i = 0; i < src->sy; i++) {
 			for (x = 0; x < src->sx; x++) {
