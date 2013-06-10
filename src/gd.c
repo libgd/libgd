@@ -3335,9 +3335,9 @@ static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t
 static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int col)
 {
 	/* keep them as 32bits */
-	long x, y, inc;
-	long dx, dy,tmp;
-	int w, wid, wstart; 
+	uint32_t x, y;
+	int32_t dx, dy, inc;
+	int tmp, w, wid, wstart; 
 	int thick = im->thick; 
 
 	if (!im->trueColor) {
@@ -3392,8 +3392,8 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 			dx = x2 - x1;
 			dy = y2 - y1;
 		}
-		x = x1;
-		y = y1 << 16;
+		x = (uint32_t)x1;
+		y = (uint32_t)y1 << 16;
 		inc = (dy * 65536) / dx;
 		/* TBB: set the last pixel for consistency (<=) */
 		while (x <= x2) {
@@ -3416,8 +3416,8 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 			dx = x2 - x1;
 			dy = y2 - y1;
 		}
-		x = x1 << 16;
-		y = y1;
+		x = (uint32_t)x1 << 16;
+		y = (uint32_t)y1;
 		inc = (dx * 65536) / dy;
 		/* TBB: set the last pixel for consistency (<=) */
 		while (y <= y2) {
