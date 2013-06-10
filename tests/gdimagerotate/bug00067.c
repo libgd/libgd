@@ -12,6 +12,8 @@ int main()
 	const char *file_exp = "gdimagerotate/bug00067";
 	FILE *fp;
 	int color;
+	int error = 0;
+	int angle;
 
 	sprintf(path, "%s/%s", GDTEST_TOP_DIR, file_im);
 
@@ -39,9 +41,7 @@ int main()
 		return 1;
 	}
 
-	int error = 0;
-
-	for (int angle = 0; angle <= 180; angle += 15) {
+	for (angle = 0; angle <= 180; angle += 15) {
 
 		exp = gdImageRotateInterpolated(im, angle, color);
 
