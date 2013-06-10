@@ -3335,7 +3335,7 @@ static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t
 static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int col)
 {
 	/* keep them as 32bits */
-	long x, y, inc;
+	long x, y, inc, frac;
 	long dx, dy,tmp;
 	int w, wid, wstart; 
 	int thick = im->thick; 
@@ -3392,18 +3392,24 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 			dx = x2 - x1;
 			dy = y2 - y1;
 		}
-		x = x1;
-		y = y1 << 16;
+		y = y1;
 		inc = (dy * 65536) / dx;
+		frac = 0;
 		/* TBB: set the last pixel for consistency (<=) */
-		while (x <= x2) {
-			wstart = (y >> 16) - wid / 2;
+		for (x = x1 ; x <= x2 ; x++) {
+			wstart = y - wid / 2;
 			for (w = wstart; w < wstart + wid; w++) {
-			    gdImageSetAAPixelColor(im, x , w , col , (y >> 8) & 0xFF);
-			    gdImageSetAAPixelColor(im, x , w + 1 , col, (~y >> 8) & 0xFF);
+			    gdImageSetAAPixelColor(im, x , w , col , (frac >> 8) & 0xFF);
+			    gdImageSetAAPixelColor(im, x , w + 1 , col, (~frac >> 8) & 0xFF);
 			}
-			x++;
-			y += inc;
+			frac += inc;
+			if (frac >= 65536) {
+				frac -= 65536;
+				y++;
+			} else if (frac < 0) {
+				frac += 65536;
+				y--;
+			}
 		}
 	} else {
 		if (dy < 0) {
@@ -3416,18 +3422,24 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 			dx = x2 - x1;
 			dy = y2 - y1;
 		}
-		x = x1 << 16;
-		y = y1;
+		x = x1;
 		inc = (dx * 65536) / dy;
+		frac = 0;
 		/* TBB: set the last pixel for consistency (<=) */
-		while (y <= y2) {
-			wstart = (x >> 16) - wid / 2;
+		for (y = y1 ; y <= y2 ; y++) {
+			wstart = x - wid / 2;
 			for (w = wstart; w < wstart + wid; w++) {
-			    gdImageSetAAPixelColor(im, w , y  , col, (x >> 8) & 0xFF);
-			    gdImageSetAAPixelColor(im, w + 1, y, col, (~x >> 8) & 0xFF);
+			    gdImageSetAAPixelColor(im, w , y  , col, (frac >> 8) & 0xFF);
+			    gdImageSetAAPixelColor(im, w + 1, y, col, (~frac >> 8) & 0xFF);
 			}
-			x += inc;
-			y++;
+			frac += inc;
+			if (frac >= 65536) {
+				frac -= 65536;
+				x++;
+			} else if (frac < 0) {
+				frac += 65536;
+				x--;
+			}
 		}
 	}
 }
