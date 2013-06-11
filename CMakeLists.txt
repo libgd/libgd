@@ -233,7 +233,29 @@ IF (ENABLE_LIQ AND LIQ_BUILD)
 ENDIF(ENABLE_LIQ AND LIQ_BUILD)
 
 
-INSTALL_FILES("docs" "examples" DESTINATION "gd-docs")
+INSTALL(FILES docs/INSTALL DESTINATION share/docs)
+INSTALL(FILES docs/README.JPN DESTINATION share/docs)
+INSTALL(FILES docs/README.CMAKE DESTINATION share/docs)
+INSTALL(FILES docs/README.TESTING DESTINATION share/docs)
+INSTALL(FILES docs/README.TXT DESTINATION share/docs)
+
+
+INSTALL(FILES examples/arc.c DESTINATION share/docs)
+INSTALL(FILES examples/copyrotated.c DESTINATION share/docs)
+INSTALL(FILES examples/crop.c DESTINATION share/docs)
+INSTALL(FILES examples/flip.c DESTINATION share/docs)
+INSTALL(FILES examples/gif.c DESTINATION share/docs)
+INSTALL(FILES examples/nnquant.c DESTINATION share/docs)
+INSTALL(FILES examples/noIcon.pic DESTINATION share/docs)
+INSTALL(FILES examples/noIcon.sgi DESTINATION share/docs)
+INSTALL(FILES examples/noIcon.tga DESTINATION share/docs)
+INSTALL(FILES examples/noIconAlpha.tga DESTINATION share/docs)
+INSTALL(FILES examples/test_crop_threshold.png DESTINATION share/docs)
+INSTALL(FILES examples/tgaread.c DESTINATION share/docs)
+INSTALL(FILES examples/tiffread.c DESTINATION share/docs)
+INSTALL(FILES examples/windows.c DESTINATION share/docs)
+
+
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
 
 set(CPACK_SOURCE_GENERATOR TGZ)
