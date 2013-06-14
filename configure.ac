@@ -325,7 +325,7 @@ no) ;;
 yes|"")
   PKG_CHECK_MODULES([LIBVPX], vpx, [with_vpx=yes],
   [
-    PKG_CHECK_MODULES([LIBVPX], vpx, [with_vpx=yes],
+    PKG_CHECK_MODULES([LIBVPX], libvpx, [with_vpx=yes],
     [
       if test "$with_vpx" = yes; then
         AC_MSG_ERROR([VPX support requested, but not found])
