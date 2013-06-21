@@ -133,11 +133,13 @@ yes|"")
   ])
   ;;
 *)
+  AC_MSG_CHECKING([libpng-config script])
   LIBPNG_CONFIG=$with_png/bin/libpng-config
   if test -e "$LIBPNG_CONFIG"; then
     LIBPNG_CFLAGS=`$LIBPNG_CONFIG --cflags`
-    LIBPNG_LIBS=`$LIBPNG_CONFIG --libs`
+    LIBPNG_LIBS=`$LIBPNG_CONFIG --ldflags`
     with_png=yes
+    AC_MSG_RESULT([$LIBPNG_CONFIG, cflags: $LIBPNG_CFLAGS, libs: $LIBPNG_LIBS])
   else
     AC_MSG_ERROR([png support requested, but not found at requested location: $LIBPNG_CONFIG])
   fi
