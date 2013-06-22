@@ -34,7 +34,7 @@
 # if defined(HAVE_INTTYPES_H)
 #  include <inttypes.h>
 # else
-#  error Support for C99 Fixed-width integer types (stdint.h or inttypes.h) needed to compile GD library
+#  include "msinttypes/inttypes.h"
 # endif
 #endif
 
