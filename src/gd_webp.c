@@ -66,24 +66,35 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 {
 	int	width, height, ret;
 	unsigned char   *filedata;
-	unsigned char   dummy[1024];
+	unsigned char   *read, *temp;
 	unsigned char   *Y = NULL;
 	unsigned char   *U = NULL;
 	unsigned char   *V = NULL;
 	size_t size = 0, n;
 	gdImagePtr im;
 
-	do {
-		n = gdGetBuf(dummy, 1024, infile);
-		size += n;
-	} while (n != EOF);
-
-	filedata = gdMalloc(size);
-	if  (!filedata) {
+	filedata = gdMalloc(1024);
+	if (!filedata) {
 		gd_error("WebP decode: alloc failed");
 		return NULL;
 	}
-	gdGetBuf(filedata, size, infile);
+	read = filedata;
+	do {
+		n = gdGetBuf(read, 1024, infile);
+		size += n;
+		if (n) {
+			temp = gdRealloc(filedata, size+1024);
+			if (temp) {
+				filedata = temp;
+				read = temp + size;
+			} else {
+				gdFree(filedata);
+				gd_error("WebP decode: realloc failed");
+				return NULL;
+			}
+		}
+	} while (n>0);
+
 	ret = WebPDecode(filedata, size, &Y, &U, &V, &width, &height);
 	gdFree(filedata);
 	if (ret != webp_success) {
