@@ -81,8 +81,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 	read = filedata;
 	do {
 		n = gdGetBuf(read, 1024, infile);
-		size += n;
-		if (n) {
+		if (n>0) {
+			size += n;
 			temp = gdRealloc(filedata, size+1024);
 			if (temp) {
 				filedata = temp;
