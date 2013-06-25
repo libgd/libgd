@@ -7,7 +7,7 @@ AC_PREREQ(2.54)
 m4_define([gd_MAJOR],[2])dnl
 m4_define([gd_MINOR],[1])dnl
 m4_define([gd_REVISION],[0])dnl
-m4_define([gd_EXTRA],[rc2])dnl
+dnl m4_define([gd_EXTRA],[rc2])
 
 m4_ifdef([gd_EXTRA],
   [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION-gd_EXTRA])],
