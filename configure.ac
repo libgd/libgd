@@ -6,12 +6,12 @@ AC_PREREQ(2.54)
 # Some m4 magic to have correct version number everywhere
 m4_define([gd_MAJOR],[2])dnl
 m4_define([gd_MINOR],[1])dnl
-m4_define([gd_REVISION],[0])dnl
-m4_define([gd_EXTRA],[])dnl
+m4_define([gd_REVISION],[1])dnl
+m4_define([gd_EXTRA],[dev])dnl
 
-m4_ifdef([gd_EXTRA],
-  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION-gd_EXTRA])],
-  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION])]
+m4_if(m4_len(gd_EXTRA), 0,dnl
+  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION])],dnl
+  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION-gd_EXTRA])]dnl
 )dnl
 
 AC_INIT([GD], gd_PKG_VERSION, [https://bitbucket.org/libgd/gd-libgd/issues], [libgd], [http://lib.gd])
