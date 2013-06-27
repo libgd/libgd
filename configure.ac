@@ -6,12 +6,12 @@ AC_PREREQ(2.54)
 # Some m4 magic to have correct version number everywhere
 m4_define([gd_MAJOR],[2])dnl
 m4_define([gd_MINOR],[1])dnl
-m4_define([gd_REVISION],[0])dnl
-dnl m4_define([gd_EXTRA],[rc2])
+m4_define([gd_REVISION],[1])dnl
+m4_define([gd_EXTRA],[dev])dnl
 
-m4_ifdef([gd_EXTRA],
-  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION-gd_EXTRA])],
-  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION])]
+m4_if(m4_len(gd_EXTRA), 0,dnl
+  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION])],dnl
+  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION-gd_EXTRA])]dnl
 )dnl
 
 AC_INIT([GD], gd_PKG_VERSION, [https://bitbucket.org/libgd/gd-libgd/issues], [libgd], [http://lib.gd])
@@ -25,10 +25,12 @@ GDLIB_MAJOR=gd_MAJOR
 GDLIB_MINOR=gd_MINOR
 GDLIB_REVISION=gd_REVISION
 GDLIB_EXTRA=gd_EXTRA
+GDLIB_VERSION=gd_PKG_VERSION
 AC_SUBST(GDLIB_MAJOR)
 AC_SUBST(GDLIB_MINOR)
 AC_SUBST(GDLIB_REVISION)
 AC_SUBST(GDLIB_EXTRA)
+AC_SUBST(GDLIB_VERSION)
 
 # Dynamic library version information
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
@@ -455,6 +457,7 @@ AC_MSG_RESULT([
 
 AC_CONFIG_FILES([Makefile
                 src/Makefile
+		src/gd.h
 		tests/Makefile
 		tests/test_config.h
                 config/Makefile
