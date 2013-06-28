@@ -8,8 +8,8 @@ extern "C" {
 #define GD_MAJOR_VERSION @GDLIB_MAJOR@
 #define GD_MINOR_VERSION @GDLIB_MINOR@
 #define GD_RELEASE_VERSION @GDLIB_REVISION@
-#define GD_EXTRA_VERSION @GDLIB_EXTRA@
-#define GD_VERSION_STRING @GDLIB_VERSION@
+#define GD_EXTRA_VERSION "@GDLIB_EXTRA@"
+#define GD_VERSION_STRING "@GDLIB_VERSION@"
 
 /* Do the DLL dance: dllexport when building the DLL,
    dllimport when importing from it, nothing when
