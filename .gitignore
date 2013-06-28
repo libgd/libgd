@@ -53,6 +53,7 @@ Makefile.in
 /src/fontconfigtest
 /src/fontsizetest
 /src/fontwheeltest
+/src/gd.h
 /src/gd2copypal
 /src/gd2time
 /src/gd2togif
