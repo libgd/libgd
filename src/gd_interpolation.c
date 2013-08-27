@@ -1083,6 +1083,7 @@ gdImagePtr gdImageScaleTwoPass(const gdImagePtr src, const unsigned int src_widt
 	if (tmp_im == NULL) {
 		return NULL;
 	}
+	gdImageSetInterpolationMethod(tmp_im, src->interpolation_id);
 	_gdScaleHoriz(src, src_width, src_height, tmp_im, new_width, src_height);
 
 	dst = gdImageCreateTrueColor(new_width, new_height);
