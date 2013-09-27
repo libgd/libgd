@@ -149,8 +149,6 @@ typedef struct
 #define DEFAULT_SINC_RADIUS					1.0
 #define DEFAULT_WELSH_RADIUS				1.0
 
-typedef enum GD_RESIZE_FILTER_TYPE gdResizeFilterType;
-
 static double KernelBessel_J1(const double x)
 {
 	double p, q;
