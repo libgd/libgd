@@ -1002,7 +1002,7 @@ _gdScaleOneAxis(gdImagePtr pSrc, gdImagePtr dst,
 {
 	unsigned int ndx;
 
-	for (ndx = 0; ndx < dst_len - 1; ndx++) {
+	for (ndx = 0; ndx < dst_len; ndx++) {
 		register unsigned char r = 0, g = 0, b = 0, a = 0;
 		const int left = contrib->ContribRow[ndx].Left;
 		const int right = contrib->ContribRow[ndx].Right;
@@ -1050,7 +1050,7 @@ _gdScalePass(const gdImagePtr pSrc, const unsigned int src_len,
 	}
 
 	/* Scale each line */
-    for (line_ndx = 0; line_ndx < num_lines - 1; line_ndx++) {
+    for (line_ndx = 0; line_ndx < num_lines; line_ndx++) {
         _gdScaleOneAxis(pSrc, pDst, dst_len, line_ndx, contrib, axis);
 	}
 	_gdContributionsFree (contrib);
@@ -1664,6 +1664,7 @@ BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int ne
 			im_scaled = gdImageScaleTwoPass(src, new_width, new_height);
 			break;
 	}
+
 	return im_scaled;
 }
 
