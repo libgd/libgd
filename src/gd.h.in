@@ -1044,7 +1044,6 @@ gdImagePtr gdImageScaleBilinear(gdImagePtr im, const unsigned int new_width, con
 gdImagePtr gdImageScaleBicubic(gdImagePtr src_img, const unsigned int new_width, const unsigned int new_height);
 gdImagePtr gdImageScaleBicubicFixed(gdImagePtr src, const unsigned int width, const unsigned int height);
 gdImagePtr gdImageScaleNearestNeighbour(gdImagePtr im, const unsigned int width, const unsigned int height);
-gdImagePtr gdImageScaleTwoPass(const gdImagePtr pOrigImage, const unsigned int uOrigWidth, const unsigned int uOrigHeight, const unsigned int uNewWidth, const unsigned int uNewHeight);
 BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int new_width, const unsigned int new_height);
 
 gdImagePtr gdImageRotate90(gdImagePtr src, int ignoretransparent);
