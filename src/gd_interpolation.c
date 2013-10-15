@@ -966,37 +966,68 @@ static inline LineContribType *_gdContributionsCalc(unsigned int line_size, unsi
 }
 
 
+/* Convert a double to an unsigned char, rounding to the nearest
+ * integer and clamping the result between 0 and 255.  The absolute
+ * value of clr must be less than the maximum value of an unsigned
+ * short. */
+static inline unsigned char
+uchar_clamp(double clr) {
+	unsigned short result;
+
+	assert(fabs(clr) <= SHRT_MAX);
+
+	/* Casting a negative float to an unsigned short is undefined.
+	 * However, casting a float to a signed truncates toward zero and
+	 * casting a negative signed value to an unsigned of the same size
+	 * results in a bit-identical value (assuming twos-complement
+	 * arithmetic).	 This is what we want: all legal negative values
+	 * for clr will be greater than 255. */
+
+	/* Convert and clamp. */
+	result = (unsigned short)(short)(clr + 0.5);
+	if (result > 255) {
+		result = (clr < 0) ? 0 : 255;
+	}/* if */
+
+	return result;
+}/* uchar_clamp*/
+
 static inline void
 _gdScaleOneAxis(gdImagePtr pSrc, gdImagePtr dst,
-                unsigned int dst_len, unsigned int row, LineContribType *contrib,
-                gdAxis axis)
+				unsigned int dst_len, unsigned int row, LineContribType *contrib,
+				gdAxis axis)
 {
 	unsigned int ndx;
 
 	for (ndx = 0; ndx < dst_len; ndx++) {
-		register unsigned char r = 0, g = 0, b = 0, a = 0;
+		double r = 0, g = 0, b = 0, a = 0;
 		const int left = contrib->ContribRow[ndx].Left;
 		const int right = contrib->ContribRow[ndx].Right;
-        int *dest = (axis == HORIZONTAL) ? 
-            &dst->tpixels[row][ndx] : 
-            &dst->tpixels[ndx][row];
+		int *dest = (axis == HORIZONTAL) ? 
+			&dst->tpixels[row][ndx] : 
+			&dst->tpixels[ndx][row];
 
 		int i;
 
 		/* Accumulate each channel */
 		for (i = left; i <= right; i++) {
 			const int left_channel = i - left;
-            const int srcpx = (axis == HORIZONTAL) ?
-                pSrc->tpixels[row][i] : 
-                pSrc->tpixels[i][row];
+			const int srcpx = (axis == HORIZONTAL) ?
+				pSrc->tpixels[row][i] : 
+				pSrc->tpixels[i][row];
 
-			r += (unsigned char)(contrib->ContribRow[ndx].Weights[left_channel] * (double)(gdTrueColorGetRed(srcpx)));
-			g += (unsigned char)(contrib->ContribRow[ndx].Weights[left_channel] * (double)(gdTrueColorGetGreen(srcpx)));
-			b += (unsigned char)(contrib->ContribRow[ndx].Weights[left_channel] * (double)(gdTrueColorGetBlue(srcpx)));
-			a += (unsigned char)(contrib->ContribRow[ndx].Weights[left_channel] * (double)(gdTrueColorGetAlpha(srcpx)));
+			r += contrib->ContribRow[ndx].Weights[left_channel]
+				* (double)(gdTrueColorGetRed(srcpx));
+			g += contrib->ContribRow[ndx].Weights[left_channel]
+				* (double)(gdTrueColorGetGreen(srcpx));
+			b += contrib->ContribRow[ndx].Weights[left_channel]
+				* (double)(gdTrueColorGetBlue(srcpx));
+			a += contrib->ContribRow[ndx].Weights[left_channel]
+				* (double)(gdTrueColorGetAlpha(srcpx));
 		}/* for */
 
-        *dest = gdTrueColorAlpha(r, g, b, a);
+		*dest = gdTrueColorAlpha(uchar_clamp(r), uchar_clamp(g),uchar_clamp(b),
+								 uchar_clamp(a));
 	}/* for */
 }/* _gdScaleOneAxis*/
 
