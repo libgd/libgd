@@ -4,10 +4,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <limits.h>
 #include "gd.h"
 
 #include "gdtest.h"
 #include "test_config.h"
+
+static inline int max(int a, int b) {return a > b ? a : b;}
 
 void gdSilence(int priority, const char *format, va_list args)
 {
@@ -44,6 +47,7 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 {
 	int x, y;
 	int c1, c2;
+#   define UP_DIFF(var) result_ret->max_diff = max((var), result_ret->max_diff)
 
 	for (y = 0; y < gdImageSY(buf_a); y++) {
 		for (x = 0; x < gdImageSX(buf_a); x++) {
@@ -81,6 +85,7 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 				g1 = gdTrueColorGetGreen(c1);
 				g2 = gdTrueColorGetGreen(c2);
 				diff_g = abs (g1 - g2);
+
 				diff_g *= 4;  /* emphasize */
 				if (diff_g) {
 					diff_g += gdGreenMax/2; /* make sure it's visible */
@@ -107,7 +112,38 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 			}
 		}
 	}
+#   undef UP_DIFF
 }
+
+
+/* Return the largest difference between two corresponding pixels and
+ * channels. */
+unsigned int gdMaxPixelDiff(gdImagePtr a, gdImagePtr b)
+{
+    int diff = 0;
+    int x, y;
+
+    if (a == NULL || b == NULL || a->sx != b->sx || a->sy != b->sy)
+        return UINT_MAX;
+
+    for (x = 0; x < a->sx; x++) {
+        for (y = 0; y < a->sy; y++) {
+            int c1, c2;
+
+			c1 = gdImageGetTrueColorPixel(a, x, y);
+			c2 = gdImageGetTrueColorPixel(b, x, y);
+            if (c1 == c2) continue;
+
+            diff = max(diff, abs(gdTrueColorGetAlpha(c1) - gdTrueColorGetAlpha(c2)));
+            diff = max(diff, abs(gdTrueColorGetRed(c1)   - gdTrueColorGetRed(c2)));
+            diff = max(diff, abs(gdTrueColorGetGreen(c1) - gdTrueColorGetGreen(c2)));
+            diff = max(diff, abs(gdTrueColorGetBlue(c1)  - gdTrueColorGetBlue(c2)));
+        }/* for */
+    }/* for */
+
+    return diff;
+}
+
 
 int gdTestImageCompareToImage(const char* file, unsigned int line, const char* message,
                               gdImagePtr expected, gdImagePtr actual)
@@ -205,10 +241,20 @@ int gdTestImageCompareToFile(const char* file, unsigned int line, const char* me
 	return res;
 }
 
+
+static int failureCount = 0;
+
+int gdNumFailures() {
+    return failureCount;
+}
+
 int _gdTestAssert(const char* file, unsigned int line, const char* message, int condition)
 {
 	if (condition) return 1;
 	_gdTestErrorMsg(file, line, "%s", message);
+
+    ++failureCount;
+
 	return 0;
 }
 
@@ -222,6 +268,9 @@ int _gdTestErrorMsg(const char* file, unsigned int line, const char* format, ...
 	va_end(args);
 	fprintf(stderr, "%s:%u: %s", file, line, output_buf);
 	fflush(stderr);
+
+    ++failureCount;
+
 	return 0;
 }
 /* }}} */
