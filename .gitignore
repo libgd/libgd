@@ -204,3 +204,6 @@ Makefile.in
 /tests/gdimagerotate/bug00067
 /tests/gdimageline/gdImageAALine_thickness
 /tests/gdimageline/gdimageline_bug5
+/tests/gdinterpolatedscale/gdTrivialResize
+/tests/gdinterpolatedscale/gdModesAndPalettes
+

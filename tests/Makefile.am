@@ -29,7 +29,8 @@ check_PROGRAMS = \
 	gif/bug00181 \
 	gif/bug00227 \
 	bmp/bmp_null \
-	gdinterpolatedscale/gdTrivialResize
+	gdinterpolatedscale/gdTrivialResize \
+	gdinterpolatedscale/gdModesAndPalettes
 
 EXTRA_PROGRAMS = \
 	gdimagestringft/gdimagestringft_bbox \
