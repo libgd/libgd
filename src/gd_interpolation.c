@@ -1075,6 +1075,11 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
         return gdImageClone(src);
     }/* if */
 
+	/* Convert to truecolor if it isn't; this code requires it. */
+	if (!src->trueColor) {
+		gdImagePaletteToTrueColor(src);
+	}/* if */
+
     /* Scale horizontally unless sizes are the same. */
     if (src_width == new_width) {
         tmp_im = src;
