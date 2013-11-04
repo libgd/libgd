@@ -3,6 +3,7 @@ SET(TESTS_FILES
 	gd_im2im
 	gd_null
 	gd_num_colors
+	gd_versiontest
 )
 
 FOREACH(test_name ${TESTS_FILES})
