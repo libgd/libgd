@@ -5,12 +5,29 @@ extern "C" {
 #ifndef GD_H
 #define GD_H 1
 
-#define GD_MAJOR_VERSION @GDLIB_MAJOR@
-#define GD_MINOR_VERSION @GDLIB_MINOR@
-#define GD_RELEASE_VERSION @GDLIB_REVISION@
-#define GD_EXTRA_VERSION "@GDLIB_EXTRA@"
-#define GD_VERSION_STRING "@GDLIB_VERSION@"
+/* Version information.  This gets parsed by build scripts as well as
+ * gcc so each #define line in this group must also be splittable on
+ * whitespace, take the form GD_*_VERSION and contain the magical
+ * trailing comment. */
+#define GD_MAJOR_VERSION    2           /*version605b5d1778*/
+#define GD_MINOR_VERSION    1           /*version605b5d1778*/
+#define GD_RELEASE_VERSION  1           /*version605b5d1778*/
+#define GD_EXTRA_VERSION    "-dev"      /*version605b5d1778*/
+/* End parsable section. */
 
+/* The version string.  This is constructed from the version number
+ * parts above via macro abuse^Wtrickery. */
+#define GDXXX_VERSION_STR(mjr, mnr, rev, ext) mjr "." mnr "." rev ext
+#define GDXXX_STR(s) GDXXX_SSTR(s)  /* Two levels needed to expand args. */
+#define GDXXX_SSTR(s) #s
+
+#define GD_VERSION_STRING                                               \
+    GDXXX_VERSION_STR(GDXXX_STR(GD_MAJOR_VERSION),                      \
+                      GDXXX_STR(GD_MINOR_VERSION),                      \
+                      GDXXX_STR(GD_RELEASE_VERSION),                    \
+                      GD_EXTRA_VERSION)
+
+    
 /* Do the DLL dance: dllexport when building the DLL,
    dllimport when importing from it, nothing when
    not on Silly Silly Windows (tm Aardman Productions). */
@@ -1097,6 +1114,15 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 
 /* resolution affects ttf font rendering, particularly hinting */
 #define GD_RESOLUTION           96      /* pixels per inch */
+
+
+/* Version information functions */
+BGD_DECLARE(int) gdMajorVersion(void);
+BGD_DECLARE(int) gdMinorVersion(void);
+BGD_DECLARE(int) gdReleaseVersion(void);
+BGD_DECLARE(const char *) gdExtraVersion(void);
+BGD_DECLARE(const char *) gdVersionString(void);
+
 
 #ifdef __cplusplus
 }
