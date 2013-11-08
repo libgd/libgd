@@ -4,6 +4,10 @@
 
 # allow importing from the environment, e.g.
 # "AUTOCONF=autoconf259 ... ./bootstrap.sh"
+if [[ $OSTYPE == darwin* ]]; then 
+	echo Having trouble on OS X? Try brew install autoconf libtool automake gettext apple-gcc42 pkg-config cmake
+	LIBTOOLIZE=${LIBTOOLIZE:-glibtoolize}
+fi
 ACLOCAL=${ACLOCAL:-aclocal}
 AUTOCONF=${AUTOCONF:-autoconf}
 AUTOHEADER=${AUTOHEADER:-autoheader}
