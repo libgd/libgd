@@ -1,8 +1,7 @@
 #!/usr/bin/env perl
 
-# Simple script to extract the version number parts from
-# src/version.h.  This must be run in the project root.  It is used by
-# configure.ac
+# Simple script to extract the version number parts from src/gd.h.
+# This must be run in the project root.  It is used by configure.ac
 
 use strict;
 
