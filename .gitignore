@@ -115,6 +115,7 @@ Makefile.in
 /tests/gdimagerectangle/bug00106_gdimagerectangle
 /tests/gd/gd_null
 /tests/gd/gd_num_colors
+/tests/gd/gd_versiontest
 /tests/tga/tga_null
 /tests/gdimagepixelate/gdimagepixelate
 /tests/gdimagecopy/bug00007
