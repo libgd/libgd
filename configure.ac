@@ -3,16 +3,14 @@
 
 AC_PREREQ(2.54)
 
-# Some m4 magic to have correct version number everywhere
-m4_define([gd_MAJOR],[2])dnl
-m4_define([gd_MINOR],[1])dnl
-m4_define([gd_REVISION],[1])dnl
-m4_define([gd_EXTRA],[dev])dnl
+# We extract version numbers from src/versions.h
+define([gv],[perl config/getver.pl ]$1)
 
-m4_if(m4_len(gd_EXTRA), 0,dnl
-  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION])],dnl
-  [m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION-gd_EXTRA])]dnl
-)dnl
+m4_define([gd_MAJOR],esyscmd(gv(MAJOR)))dnl
+m4_define([gd_MINOR],esyscmd(gv(MINOR)))dnl
+m4_define([gd_REVISION],esyscmd(gv(RELEASE)))dnl
+m4_define([gd_EXTRA],esyscmd(gv(EXTRA)))dnl
+m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION]gd_EXTRA)]dnl
 
 AC_INIT([GD], gd_PKG_VERSION, [https://bitbucket.org/libgd/gd-libgd/issues], [libgd], [http://lib.gd])
 AC_CONFIG_SRCDIR([src/gd.c])
@@ -20,20 +18,19 @@ AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 
-# This is not used anywhere
+# This is not used anywhere.  However, Makefile.netware searches
+# through configure for these definitions to find the version numbers.
+# (Assuming anyone still uses Netware, that should be changed to use
+# gd.h via getver.pl instead.)
 GDLIB_MAJOR=gd_MAJOR
 GDLIB_MINOR=gd_MINOR
 GDLIB_REVISION=gd_REVISION
 GDLIB_EXTRA=gd_EXTRA
 GDLIB_VERSION=gd_PKG_VERSION
-AC_SUBST(GDLIB_MAJOR)
-AC_SUBST(GDLIB_MINOR)
-AC_SUBST(GDLIB_REVISION)
-AC_SUBST(GDLIB_EXTRA)
-AC_SUBST(GDLIB_VERSION)
 
 # Dynamic library version information
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
+
 GDLIB_CURRENT=3
 GDLIB_REVISION=0
 GDLIB_AGE=0
@@ -457,11 +454,10 @@ AC_MSG_RESULT([
 
 AC_CONFIG_FILES([Makefile
                 src/Makefile
-		src/gd.h
-		tests/Makefile
-		tests/test_config.h
+                tests/Makefile
+        		tests/test_config.h
                 config/Makefile
                 config/gdlib-config
-		config/gdlib.pc])
+                config/gdlib.pc])
 
 AC_OUTPUT
