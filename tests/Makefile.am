@@ -30,7 +30,8 @@ check_PROGRAMS = \
 	gif/bug00227 \
 	bmp/bmp_null \
 	gdinterpolatedscale/gdTrivialResize \
-	gdinterpolatedscale/gdModesAndPalettes
+	gdinterpolatedscale/gdModesAndPalettes \
+	gd/gd_versiontest
 
 EXTRA_PROGRAMS = \
 	gdimagestringft/gdimagestringft_bbox \
@@ -202,7 +203,7 @@ check_PROGRAMS +=
 	freetype/bug00132
 endif
 
-LDADD = ../src/libgd.la libgdtest.a
+LDADD = libgdtest.a ../src/libgd.la
 AM_CPPFLAGS = -I$(top_srcdir)/src -I $(top_srcdir)/tests/gdtest
 
 TESTS = $(check_PROGRAMS)

@@ -350,9 +350,9 @@ $(OBJDIR)/%.o: %.c
 #	@echo Compiling $<
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJDIR)/version.inc: ../configure.ac $(OBJDIR)
+$(OBJDIR)/version.inc: ../configure $(OBJDIR)
 	@echo Creating $@
-	@$(AWK) -f get_ver.awk $< > $@
+	@$(AWK) -f get_ver.awk $< > $@  # TODO: get version info from src/gd.h
 
 dist: all
 	-$(RM) -r $(OBJDIR)*
