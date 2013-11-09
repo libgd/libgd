@@ -25,4 +25,6 @@ int main(int argc, char **argv)
 	}
 
 	gdImageDestroy(im);
+
+    return 0;
 }

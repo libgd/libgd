@@ -4,7 +4,7 @@
 
 int main() {
 	/* Declare the image */
-	gdImagePtr im;
+	gdImagePtr im, ref;
 
 	/* Declare output files */
 	/* FILE *pngout; */
@@ -20,20 +20,35 @@ int main() {
 	/* white background */
 	gdImageFill(im, 1, 1, white);
 
+    /* Make a reference copy. */
+    ref = gdImageClone(im);
+
 	gdImageSetAntiAliased(im, black);
 
-	/* This line fails! */
+	/* This line used to fail. */
 	gdImageLine(im, 28562, 631, 34266, 750, gdAntiAliased);
 
-	/* Open a file for writing. "wb" means "write binary", important under MSDOS, harmless under Unix. */
-	/* pngout = fopen("test.png", "wb"); */
+    gdTestAssert(gdMaxPixelDiff(im, ref) > 0);
 
-	/* Output the image to the disk file in PNG format. */
-	/* gdImagePng(im, pngout); */
+#if 0
+    {
+        FILE *pngout;
 
-	/* Close the files. */
-	/* fclose(pngout); */
+        /* Open a file for writing. "wb" means "write binary",
+         * important under MSDOS, harmless under Unix. */
+        pngout = fopen("test.png", "wb");
+
+        /* Output the image to the disk file in PNG format. */
+        gdImagePng(im, pngout);
+
+        /* Close the files. */
+        fclose(pngout);
+    }
+#endif
 
 	/* Destroy the image in memory. */
 	gdImageDestroy(im);
+    gdImageDestroy(ref);
+
+    return gdNumFailures();
 }
