@@ -2,6 +2,18 @@
 # $Id$
 # Small shell script to build gd from source
 
+# Generate the manual (unless naturaldocs isn't installed).  Source
+# dists should include the docs so that end users don't need to
+# install naturaldocs.  At the same time, we tolerate it being missing
+# so that random hackers don't need it just to build the code.
+if which naturaldocs > /dev/null; then
+    echo "Generation user docs:"
+    (cd docs/naturaldocs; bash run_docs.sh)
+else
+    echo "Can't find naturaldocs; not generating user manual."
+fi
+
+
 # allow importing from the environment, e.g.
 # "AUTOCONF=autoconf259 ... ./bootstrap.sh"
 ACLOCAL=${ACLOCAL:-aclocal}
