@@ -129,6 +129,34 @@ static void gdImageBrushApply (gdImagePtr im, int x, int y);
 static void gdImageTileApply (gdImagePtr im, int x, int y);
 BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 
+
+/*
+    Function: gdImageCreate
+
+    gdImageCreate is called to create palette-based images, with no
+    more than 256 colors. The image must eventually be destroyed using
+    gdImageDestroy().
+
+    >   ... inside a function ...
+    >   gdImagePtr im;
+    >   im = gdImageCreate(64, 64);
+    >   // ... Use the image ...
+    >   gdImageDestroy(im);
+
+    Parameters:
+
+        sx - The image width.
+        sy - The image height.
+
+    Returns:
+
+        A pointer to the new image or NULL if an error occurred.
+
+    See Also:
+
+        <gdImageCreateTrueColor>        
+
+ */
 BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 {
 	int i;
