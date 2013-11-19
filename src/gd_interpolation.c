@@ -967,11 +967,11 @@ static inline LineContribType *_gdContributionsCalc(unsigned int line_size, unsi
 
 
 /* Convert a double to an unsigned char, rounding to the nearest
- * integer and clamping the result between 0 and 255.  The absolute
+ * integer and clamping the result between 0 and max.  The absolute
  * value of clr must be less than the maximum value of an unsigned
  * short. */
 static inline unsigned char
-uchar_clamp(double clr) {
+uchar_clamp(double clr, unsigned char max) {
 	unsigned short result;
 
 	assert(fabs(clr) <= SHRT_MAX);
@@ -985,8 +985,8 @@ uchar_clamp(double clr) {
 
 	/* Convert and clamp. */
 	result = (unsigned short)(short)(clr + 0.5);
-	if (result > 255) {
-		result = (clr < 0) ? 0 : 255;
+	if (result > max) {
+		result = (clr < 0) ? 0 : max;
 	}/* if */
 
 	return result;
@@ -1026,8 +1026,9 @@ _gdScaleOneAxis(gdImagePtr pSrc, gdImagePtr dst,
 				* (double)(gdTrueColorGetAlpha(srcpx));
 		}/* for */
 
-		*dest = gdTrueColorAlpha(uchar_clamp(r), uchar_clamp(g),uchar_clamp(b),
-								 uchar_clamp(a));
+		*dest = gdTrueColorAlpha(uchar_clamp(r, 0xFF), uchar_clamp(g, 0xFF),
+                                 uchar_clamp(b, 0xFF),
+                                 uchar_clamp(a, 0x7F)); /* alpha is 0..127 */
 	}/* for */
 }/* _gdScaleOneAxis*/
 
