@@ -1,0 +1,95 @@
+Title: About LibGD @VERSION@
+
+What is gd?:
+
+gd is a graphics library. It allows your code to quickly draw images
+complete with lines, arcs, text, multiple colors, cut and paste from
+other images, and flood fills, and write out the result as a PNG or
+JPEG file. This is particularly useful in World Wide Web applications,
+where PNG and JPEG are two of the formats accepted for inline images
+by most browsers.
+
+gd is not a paint program. If you are looking for a paint program, you
+are looking in the wrong place. If you are not a programmer, you are
+looking in the wrong place, unless you are installing a required
+library in order to run an application.
+
+gd does not provide for every possible desirable graphics
+operation. It is not necessary or desirable for gd to become a
+kitchen-sink graphics package, but version 2.0 does include most
+frequently requested features, including both truecolor and palette
+images, resampling (smooth resizing of truecolor images) and so forth.
+
+gd basics: using gd in your program:
+
+gd lets you create PNG or JPEG images on the fly. To use gd in your
+program, include the file gd.h, and link with the gd library and the
+other required libraries; the syntax for most Unix flavors is:
+
+> -lgd -lpng -lz -ljpeg -lfreetype -lm
+
+Assuming that all of these libraries are available.
+
+If you want to use the provided simple fonts, include gdfontt.h,
+gdfonts.h, gdfontmb.h, gdfontl.h and/or gdfontg.h. For more impressive
+results, install FreeType 2.x and use the gdImageStringFT function. If
+you are not using the provided Makefile and/or a library-based
+approach, be sure to include the source modules as well in your
+project.
+
+Here is a short example program. (For a more advanced example, see
+gddemo.c, included in the distribution. gddemo.c is NOT the same
+program; it demonstrates additional features!)
+
+>/* Bring in gd library functions */
+>#include "gd.h"
+>
+>/* Bring in standard I/O so we can output the PNG to a file */
+>#include <stdio.h>
+>
+>int main() {
+>  /* Declare the image */
+>  gdImagePtr im;
+>  /* Declare output files */
+>  FILE *pngout, *jpegout;
+>  /* Declare color indexes */
+>  int black;
+>  int white;
+>
+>  /* Allocate the image: 64 pixels across by 64 pixels tall */
+>  im = gdImageCreate(64, 64);
+>
+>  /* Allocate the color black (red, green and blue all minimum).
+>    Since this is the first color in a new image, it will
+>    be the background color. */
+>  black = gdImageColorAllocate(im, 0, 0, 0);  
+>
+>  /* Allocate the color white (red, green and blue all maximum). */
+>  white = gdImageColorAllocate(im, 255, 255, 255);  
+>  
+>  /* Draw a line from the upper left to the lower right,
+>    using white color index. */
+>  gdImageLine(im, 0, 0, 63, 63, white);  
+>
+>  /* Open a file for writing. "wb" means "write binary", important
+>    under MSDOS, harmless under Unix. */
+>  pngout = fopen("test.png", "wb");
+>
+>  /* Do the same for a JPEG-format file. */
+>  jpegout = fopen("test.jpg", "wb");
+>
+>  /* Output the image to the disk file in PNG format. */
+>  gdImagePng(im, pngout);
+>
+>  /* Output the same image in JPEG format, using the default
+>    JPEG quality setting. */
+>  gdImageJpeg(im, jpegout, -1);
+>
+>  /* Close the files. */
+>  fclose(pngout);
+>  fclose(jpegout);
+>
+>  /* Destroy the image in memory. */
+>  gdImageDestroy(im);
+>}
+>

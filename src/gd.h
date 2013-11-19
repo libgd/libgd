@@ -2,6 +2,7 @@
 extern "C" {
 #endif
 
+
 #ifndef GD_H
 #define GD_H 1
 
@@ -165,7 +166,7 @@ enum gdPaletteQuantizationMethod {
  * Group: Transform
  *
  * Constants: gdInterpolationMethod
-
+ *
  *  GD_BELL				 - Bell
  *  GD_BESSEL			 - Bessel
  *  GD_BILINEAR_FIXED 	 - fixed point bilinear 
@@ -222,6 +223,27 @@ typedef enum {
 /* Interpolation function ptr */
 typedef double (* interpolation_method )(double);
 
+
+/*
+   Group: Types
+ 
+   typedef: gdImage
+
+   typedef: gdImagePtr
+
+   The data structure in which gd stores images. <gdImageCreate>,
+   <gdImageCreateTrueColor> and the various image file-loading functions
+   return a pointer to this type, and the other functions expect to
+   receive a pointer to this type as their first argument.
+
+   *gdImagePtr* is a pointer to *gdImage*.
+
+   (Previous versions of this library encouraged directly manipulating
+   the contents ofthe struct but we are attempting to move away from
+   this practice so the fields are no longer documented here.  If you
+   need to poke at the internals of this struct, feel free to look at
+   *gd.h*.)
+*/
 typedef struct gdImageStruct {
 	/* Palette-based image pixels */
 	unsigned char **pixels;

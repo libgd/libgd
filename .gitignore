@@ -208,3 +208,6 @@ Makefile.in
 /tests/gdinterpolatedscale/gdTrivialResize
 /tests/gdinterpolatedscale/gdModesAndPalettes
 
+# Doc artifacts
+/docs/naturaldocs/html/
+/docs/naturaldocs/project/Data/
