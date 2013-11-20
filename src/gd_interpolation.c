@@ -68,6 +68,7 @@ TODO:
 
 #include "gd.h"
 #include "gdhelpers.h"
+#include "gd_intern.h"
 
 #ifdef _MSC_VER
 # pragma optimize("t", on)
@@ -872,13 +873,6 @@ int getPixelInterpolated(gdImagePtr im, const double x, const double y, const in
 	return gdTrueColorAlpha(((int)new_r), ((int)new_g), ((int)new_b), ((int)new_a));
 }
 
-
-typedef enum {
-    HORIZONTAL,
-    VERTICAL,
-} gdAxis;
-
-
 static inline LineContribType * _gdContributionsAlloc(unsigned int line_length, unsigned int windows_size)
 {
 	unsigned int u = 0;
@@ -965,32 +959,6 @@ static inline LineContribType *_gdContributionsCalc(unsigned int line_size, unsi
 	return res;
 }
 
-
-/* Convert a double to an unsigned char, rounding to the nearest
- * integer and clamping the result between 0 and max.  The absolute
- * value of clr must be less than the maximum value of an unsigned
- * short. */
-static inline unsigned char
-uchar_clamp(double clr, unsigned char max) {
-	unsigned short result;
-
-	assert(fabs(clr) <= SHRT_MAX);
-
-	/* Casting a negative float to an unsigned short is undefined.
-	 * However, casting a float to a signed truncates toward zero and
-	 * casting a negative signed value to an unsigned of the same size
-	 * results in a bit-identical value (assuming twos-complement
-	 * arithmetic).	 This is what we want: all legal negative values
-	 * for clr will be greater than 255. */
-
-	/* Convert and clamp. */
-	result = (unsigned short)(short)(clr + 0.5);
-	if (result > max) {
-		result = (clr < 0) ? 0 : max;
-	}/* if */
-
-	return result;
-}/* uchar_clamp*/
 
 static inline void
 _gdScaleOneAxis(gdImagePtr pSrc, gdImagePtr dst,

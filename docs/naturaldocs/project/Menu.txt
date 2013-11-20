@@ -48,6 +48,7 @@ Format: 1.51
 
 File: About LibGD 2.1.1-dev  (preamble.txt)
 File: gd.h  (gd.h)
+File: gd_filter.c  (gd_filter.c)
 File: gd_interpolation.c  (gd_interpolation.c)
 File: gdImageCreate  (gd.c)
 File: License  (license.txt)
