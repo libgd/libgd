@@ -75,14 +75,25 @@ TODO:
 # include <emmintrin.h>
 #endif
 
-#ifndef MIN
-#define MIN(a,b) ((a)<(b)?(a):(b))
-#endif
-#define MIN3(a,b,c) ((a)<(b)?(MIN(a,c)):(MIN(b,c)))
-#ifndef MAX
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#endif
-#define MAX3(a,b,c) ((a)<(b)?(MAX(b,c)):(MAX(a,c)))
+static gdImagePtr gdImageScaleBilinear(gdImagePtr im, 
+                                       const unsigned int new_width,
+                                       const unsigned int new_height);
+static gdImagePtr gdImageScaleBicubicFixed(gdImagePtr src,
+                                           const unsigned int width,
+                                           const unsigned int height);
+static gdImagePtr gdImageScaleNearestNeighbour(gdImagePtr im,
+                                               const unsigned int width,
+                                               const unsigned int height);
+static gdImagePtr gdImageRotateNearestNeighbour(gdImagePtr src,
+                                                const float degrees,
+                                                const int bgColor);
+static gdImagePtr gdImageRotateBilinear(gdImagePtr src, const float degrees,
+                                        const int bgColor);
+static gdImagePtr gdImageRotateBicubicFixed(gdImagePtr src, const float degrees,
+                                            const int bgColor);
+static gdImagePtr gdImageRotateGeneric(gdImagePtr src, const float degrees,
+                                       const int bgColor);
+
 
 #define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
 
@@ -1084,12 +1095,17 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
 
 
 /*
-	BilinearFixed, BicubicFixed and nearest implementations are rewamped versions of the implementation in CBitmapEx
+	BilinearFixed, BicubicFixed and nearest implementations are
+	rewamped versions of the implementation in CBitmapEx
+
 	http://www.codeproject.com/Articles/29121/CBitmapEx-Free-C-Bitmap-Manipulation-Class
-	Integer only implementation, good to have for common usages like pre scale very large
-	images before using another interpolation methods for the last step.
+
+	Integer only implementation, good to have for common usages like
+	pre scale very large images before using another interpolation
+	methods for the last step.
 */
-gdImagePtr gdImageScaleNearestNeighbour(gdImagePtr im, const unsigned int width, const unsigned int height)
+static gdImagePtr
+gdImageScaleNearestNeighbour(gdImagePtr im, const unsigned int width, const unsigned int height)
 {
 	const unsigned long new_width = MAX(1, width);
 	const unsigned long new_height = MAX(1, height);
@@ -1365,7 +1381,9 @@ static gdImagePtr gdImageScaleBilinearTC(gdImagePtr im, const unsigned int new_w
 	return new_img;
 }
 
-gdImagePtr gdImageScaleBilinear(gdImagePtr im, const unsigned int new_width, const unsigned int new_height)
+static gdImagePtr
+gdImageScaleBilinear(gdImagePtr im, const unsigned int new_width,
+                     const unsigned int new_height)
 {
 	if (im->trueColor) {
 		return gdImageScaleBilinearTC(im, new_width, new_height);
@@ -1374,7 +1392,9 @@ gdImagePtr gdImageScaleBilinear(gdImagePtr im, const unsigned int new_width, con
 	}
 }
 
-gdImagePtr gdImageScaleBicubicFixed(gdImagePtr src, const unsigned int width, const unsigned int height)
+static gdImagePtr
+gdImageScaleBicubicFixed(gdImagePtr src, const unsigned int width,
+                         const unsigned int height)
 {
 	const long new_width = MAX(1, width);
 	const long new_height = MAX(1, height);
@@ -1644,7 +1664,9 @@ BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int ne
 	return im_scaled;
 }
 
-gdImagePtr gdImageRotateNearestNeighbour(gdImagePtr src, const float degrees, const int bgColor)
+static gdImagePtr 
+gdImageRotateNearestNeighbour(gdImagePtr src, const float degrees,
+                              const int bgColor)
 {
 	float _angle = ((float) (-degrees / 180.0f) * (float)M_PI);
 	const int src_w  = gdImageSX(src);
@@ -1700,7 +1722,8 @@ gdImagePtr gdImageRotateNearestNeighbour(gdImagePtr src, const float degrees, co
 	return dst;
 }
 
-gdImagePtr gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
+static gdImagePtr
+gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
 {
 	float _angle = ((float) (-degrees / 180.0f) * (float)M_PI);
 	const int src_w  = gdImageSX(src);
@@ -1768,7 +1791,8 @@ gdImagePtr gdImageRotateGeneric(gdImagePtr src, const float degrees, const int b
 	return dst;
 }
 
-gdImagePtr gdImageRotateBilinear(gdImagePtr src, const float degrees, const int bgColor)
+static gdImagePtr
+gdImageRotateBilinear(gdImagePtr src, const float degrees, const int bgColor)
 {
 	float _angle = (float)((- degrees / 180.0f) * M_PI);
 	const unsigned int src_w = gdImageSX(src);
@@ -1890,7 +1914,8 @@ gdImagePtr gdImageRotateBilinear(gdImagePtr src, const float degrees, const int 
 	return dst;
 }
 
-gdImagePtr gdImageRotateBicubicFixed(gdImagePtr src, const float degrees, const int bgColor)
+static gdImagePtr
+gdImageRotateBicubicFixed(gdImagePtr src, const float degrees,const int bgColor)
 {
 	const float _angle = (float)((- degrees / 180.0f) * M_PI);
 	const int src_w = gdImageSX(src);
