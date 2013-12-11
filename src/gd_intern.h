@@ -5,6 +5,33 @@
 #include <limits.h>
 #endif
 
+
+#ifndef MAXPATHLEN
+# ifdef PATH_MAX
+#  define MAXPATHLEN PATH_MAX
+# elif defined(MAX_PATH)
+#  define MAXPATHLEN MAX_PATH
+# else
+#  if defined(__GNU__)
+#   define MAXPATHLEN 4096
+#  else
+#   define MAXPATHLEN 256    /* Should be safe for any weird systems that do not define it */
+#  endif
+# endif
+#endif
+
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#else
+# if defined(HAVE_INTTYPES_H)
+#  include <inttypes.h>
+# else
+#  include "msinttypes/inttypes.h"
+# endif
+#endif
+
+#include "gd.h"
+
 #ifndef MIN
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #endif
@@ -47,30 +74,17 @@ uchar_clamp(double clr, unsigned char max) {
 }/* uchar_clamp*/
 
 
+/* Internal prototypes: */
 
-#ifndef MAXPATHLEN
-# ifdef PATH_MAX
-#  define MAXPATHLEN PATH_MAX
-# elif defined(MAX_PATH)
-#  define MAXPATHLEN MAX_PATH
-# else
-#  if defined(__GNU__)
-#   define MAXPATHLEN 4096
-#  else
-#   define MAXPATHLEN 256    /* Should be safe for any weird systems that do not define it */
-#  endif
-# endif
-#endif
+/* gd_rotate.c */
+gdImagePtr gdImageRotate90(gdImagePtr src, int ignoretransparent);
+gdImagePtr gdImageRotate180(gdImagePtr src, int ignoretransparent);
+gdImagePtr gdImageRotate270(gdImagePtr src, int ignoretransparent);
 
-#ifdef HAVE_STDINT_H
-# include <stdint.h>
-#else
-# if defined(HAVE_INTTYPES_H)
-#  include <inttypes.h>
-# else
-#  include "msinttypes/inttypes.h"
-# endif
-#endif
+
+
+
+
 
 #endif
 

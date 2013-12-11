@@ -1083,19 +1083,8 @@ BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int c
 BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMethod id);
 BGD_DECLARE(gdInterpolationMethod) gdImageGetInterpolationMethod(gdImagePtr im);
 
-gdImagePtr gdImageScaleBilinear(gdImagePtr im, const unsigned int new_width, const unsigned int new_height);
-gdImagePtr gdImageScaleBicubic(gdImagePtr src_img, const unsigned int new_width, const unsigned int new_height);
-gdImagePtr gdImageScaleBicubicFixed(gdImagePtr src, const unsigned int width, const unsigned int height);
-gdImagePtr gdImageScaleNearestNeighbour(gdImagePtr im, const unsigned int width, const unsigned int height);
 BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int new_width, const unsigned int new_height);
 
-gdImagePtr gdImageRotate90(gdImagePtr src, int ignoretransparent);
-gdImagePtr gdImageRotate180(gdImagePtr src, int ignoretransparent);
-gdImagePtr gdImageRotate270(gdImagePtr src, int ignoretransparent);
-gdImagePtr gdImageRotateNearestNeighbour(gdImagePtr src, const float degrees, const int bgColor);
-gdImagePtr gdImageRotateBilinear(gdImagePtr src, const float degrees, const int bgColor);
-gdImagePtr gdImageRotateBicubicFixed(gdImagePtr src, const float degrees, const int bgColor);
-gdImagePtr gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor);
 BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const float angle, int bgcolor);
 
 typedef enum {
