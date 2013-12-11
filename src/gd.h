@@ -976,6 +976,10 @@ BGD_DECLARE(int) gdImageBrightness(gdImagePtr src, int brightness);
 BGD_DECLARE(int) gdImageGrayScale(gdImagePtr src);
 BGD_DECLARE(int) gdImageNegate(gdImagePtr src);
 
+BGD_DECLARE(gdImagePtr) gdImageCopyGaussianBlurred(gdImagePtr src, int radius,
+                                                   double sigma);
+
+
 /* Macros to access information about images. */
 
 /* Returns nonzero if the image is a truecolor image,
