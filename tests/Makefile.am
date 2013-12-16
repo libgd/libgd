@@ -32,7 +32,8 @@ check_PROGRAMS = \
 	gdinterpolatedscale/gdTrivialResize \
 	gdinterpolatedscale/gdModesAndPalettes \
 	gd/gd_versiontest \
-	gdimagefilter/gdCopyBlurred
+	gdimagefilter/gdCopyBlurred \
+	gdimagefile/gdnametest
 
 EXTRA_PROGRAMS = \
 	gdimagestringft/gdimagestringft_bbox \
