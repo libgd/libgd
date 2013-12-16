@@ -207,6 +207,8 @@ Makefile.in
 /tests/gdimageline/gdimageline_bug5
 /tests/gdinterpolatedscale/gdTrivialResize
 /tests/gdinterpolatedscale/gdModesAndPalettes
+/tests/gdimagefile/gdnametest
+/tests/gdimagefilter/gdCopyBlurred
 
 # Doc artifacts
 /docs/naturaldocs/html/
