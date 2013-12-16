@@ -457,6 +457,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmp (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx (gdIOCtxPtr infile);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromFile(const char *filename);
 
 /* A custom data source. */
 /* The source function must return -1 on error, otherwise the number
@@ -789,6 +790,10 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * out, int level);
 
 BGD_DECLARE(void) gdImageWBMP (gdImagePtr image, int fg, FILE * out);
 BGD_DECLARE(void) gdImageWBMPCtx (gdImagePtr image, int fg, gdIOCtx * out);
+
+BGD_DECLARE(int) gdImageFile(gdImagePtr im, const char *filename);
+BGD_DECLARE(int) gdSupportsFileType(const char *filename, int writing);
+
 
 /* Guaranteed to correctly free memory returned by the gdImage*Ptr
    functions */
