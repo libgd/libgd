@@ -25,6 +25,12 @@ BGD_DECLARE(void) gdImagePngToSink (gdImagePtr im, gdSinkPtr outSink)
 	out->gd_free (out);
 }
 
+/*
+  Function: gdImageCreateFromPngSource
+
+  See <gdImageCreateFromPng> for documentation.  This is obsolete; use
+  <gdImageCreateFromPngCtx> instead.
+ */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngSource (gdSourcePtr inSource)
 {
 	gdIOCtx *in = gdNewSSCtx (inSource, NULL);

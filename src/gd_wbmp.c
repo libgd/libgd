@@ -32,7 +32,7 @@
  *
  *--------------------------------------------------------------------------
  *
- * Parts od this code are inspired by  'pbmtowbmp.c' and 'wbmptopbm.c' by
+ * Parts of this code are inspired by  'pbmtowbmp.c' and 'wbmptopbm.c' by
  * Terje Sannum <terje@looplab.com>.
  *
  ** Permission to use, copy, modify, and distribute this software and its
@@ -122,10 +122,12 @@ BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out)
 	freewbmp(wbmp);
 }
 
-/* gdImageCreateFromWBMPCtx
- * ------------------------
- * Create a gdImage from a WBMP file input from an gdIOCtx
- */
+/*
+  Function: gdImageCreateFromWBMPCtx
+
+  Reads in a WBMP image via a <gdIOCtx> struct.  See
+  <gdImageCreateFromWBMP>.  
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx(gdIOCtx *infile)
 {
 	Wbmp *wbmp;
@@ -165,8 +167,48 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx(gdIOCtx *infile)
 }
 
 
-/* gdImageCreateFromWBMP
- */
+/*
+  Function: gdImageCreateFromWBMP
+
+    <gdImageCreateFromWBMP> is called to load images from WBMP format
+    files. Invoke <gdImageCreateFromWBMP> with an already opened
+    pointer to a file containing the desired
+    image. <gdImageCreateFromWBMP> returns a gdImagePtr to the new
+    image, or NULL if unable to load the image (most often because the
+    file is corrupt or does not contain a WBMP
+    image). <gdImageCreateFromWBMP> does not close the file. You can
+    inspect the sx and sy members of the image to determine its
+    size. The image must eventually be destroyed using
+    <gdImageDestroy>.
+
+  Variants:
+
+    <gdImageCreateFromWBMPPtr> creates an image from WBMP data (i.e. the
+    contents of a WBMP file) already in memory.
+
+    <gdImageCreateFromWBMPCtx> reads in an image using the functions in
+    a <gdIOCtx> struct.
+
+  Parameters:
+
+    infile - The input FILE pointer
+
+  Returns:
+
+    A pointer to the new image or NULL if an error occurred.
+
+  Example:
+
+    > gdImagePtr im;
+    > FILE *in;
+    > in = fopen("mywbmp.wbmp", "rb");
+    > im = gdImageCreateFromWBMP(in);
+    > fclose(in);
+    > // ... Use the image ...
+    > gdImageDestroy(im);
+
+*/
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP(FILE *inFile)
 {
 	gdImagePtr im;
@@ -177,6 +219,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP(FILE *inFile)
 	return im;
 }
 
+
+/*
+  Function: gdImageCreateFromWBMPPtr
+
+  Parameters:
+
+    size - size of WBMP data in bytes.
+    data - WBMP data (i.e. contents of a WBMP file).
+
+  See <gdImageCreateFromWBMP>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr(int size, void *data)
 {
 	gdImagePtr im;

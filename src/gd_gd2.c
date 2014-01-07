@@ -250,6 +250,52 @@ _gd2ReadChunk (int offset, char *compBuf, int compSize, char *chunkBuf,
 	return TRUE;
 }
 
+
+/*
+  Function: gdImageCreateFromGd2
+
+    <gdImageCreateFromGd2> is called to load images from gd2 format
+    files. Invoke <gdImageCreateFromGd2> with an already opened
+    pointer to a file containing the desired image in the gd2 file
+    format, which is specific to gd2 and intended for fast loading of
+    parts of large images. (It is a compressed format, but generally
+    not as good as maximum compression of the entire image would be.)
+
+    <gdImageCreateFromGd2> returns a <gdImagePtr> to the new image, or
+    NULL if unable to load the image (most often because the file is
+    corrupt or does not contain a gd format
+    image). <gdImageCreateFromGd2> does not close the file. You can
+    inspect the sx and sy members of the image to determine its
+    size. The image must eventually be destroyed using
+    <gdImageDestroy>.
+
+
+  Variants:
+
+    <gdImageCreateFromGd2Ptr> creates an image from GD data (i.e. the
+    contents of a GD2 file) already in memory.
+
+    <gdImageCreateFromGd2Ctx> reads in an image using the functions in
+    a <gdIOCtx> struct.
+
+  Parameters:
+
+    infile - The input FILE pointer
+
+  Returns:
+
+    A pointer to the new image or NULL if an error occurred.
+
+  Example:
+
+    > gdImagePtr im;
+    > FILE *in;
+    > in = fopen("mygd.gd2", "rb");
+    > im = gdImageCreateFromGd2(in);
+    > fclose(in);
+    > // ... Use the image ...
+    > gdImageDestroy(im);
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2 (FILE * inFile)
 {
 	gdIOCtx *in = gdNewFileCtx (inFile);
@@ -263,6 +309,16 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2 (FILE * inFile)
 	return im;
 }
 
+/*
+  Function: gdImageCreateFromGd2Ptr
+
+  Parameters:
+
+    size - size of GD2 data in bytes.
+    data - GD2 data (i.e. contents of a GIF file).
+
+  See <gdImageCreateFromGd2>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ptr (int size, void *data)
 {
 	gdImagePtr im;
@@ -274,6 +330,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ptr (int size, void *data)
 	return im;
 }
 
+/*
+  Function: gdImageCreateFromGd2Ctx
+
+  Reads in a GD2 image via a <gdIOCtx> struct.  See
+  <gdImageCreateFromGd2>.  
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 {
 	int sx, sy;
@@ -438,6 +500,37 @@ fail:
 	return 0;
 }
 
+
+/*
+  Function: gdImageCreateFromGd2Part
+
+    <gdImageCreateFromGd2Part> is called to load parts of images from
+    gd2 format files. Invoked in the same way as <gdImageCreateFromGd2>,
+    but with extra parameters indicating the source (x, y) and
+    width/height of the desired image. <gdImageCreateFromGd2Part>
+    returns a <gdImagePtr> to the new image, or NULL if unable to load
+    the image. The image must eventually be destroyed using
+    <gdImageDestroy>.
+
+  Variants:
+
+    <gdImageCreateFromGd2PartPtr> creates an image from GD2 data
+    (i.e. the contents of a GD2 file) already in memory.
+
+    <gdImageCreateFromGd2Ctx> reads in an image using the functions in
+    a <gdIOCtx> struct.
+
+  Parameters:
+
+    infile      - The input FILE pointer
+    srcx, srcy  - The source X and Y coordinates
+    w, h        - The resulting image's width and height
+
+  Returns:
+
+    A pointer to the new image or NULL if an error occurred.
+
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Part (FILE * inFile, int srcx, int srcy, int w, int h)
 {
 	gdImagePtr im;
@@ -451,6 +544,19 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Part (FILE * inFile, int srcx, int s
 	return im;
 }
 
+/*
+  Function: gdImageCreateFromGd2PartPtr
+
+  Parameters:
+
+    size        - size of GD data in bytes.
+    data        - GD data (i.e. contents of a GIF file).
+    srcx, srcy  - The source X and Y coordinates
+    w, h        - The resulting image's width and height
+
+  Reads in part of a GD2 image file stored from memory. See
+  <gdImageCreateFromGd2Part>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartPtr (int size, void *data, int srcx, int srcy, int w,
         int h)
 {
@@ -463,6 +569,19 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartPtr (int size, void *data, int s
 	return im;
 }
 
+
+/*
+  Function: gdImageCreateFromGd2PartCtx
+
+  Parameters:
+
+    in          - The data source.
+    srcx, srcy  - The source X and Y coordinates
+    w, h        - The resulting image's width and height
+
+  Reads in part of a GD2 data image file via a <gdIOCtx> struct.  See
+  <gdImageCreateFromGd2Part>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 {
 	int scx, scy, ecx, ecy, fsx, fsy;

@@ -93,6 +93,33 @@ static void char_init(GifCtx *ctx);
 static void char_out(int c, GifCtx *ctx);
 static void flush_char(GifCtx *ctx);
 
+
+
+
+/*
+  Function: gdImageGifPtr
+
+    Identical to <gdImageGif> except that it returns a pointer to a
+    memory area with the GIF data. This memory must be freed by the
+    caller when it is no longer needed.
+
+    The caller *must* invoke <gdFree>, not _free()_.  This is because
+    it is not guaranteed that libgd will use the same implementation
+    of malloc, free, etc. as your proggram.
+
+    The 'size' parameter receives the total size of the block of
+    memory.
+
+  Parameters:
+
+    im      - The image to write
+    size    - Output: the size of the resulting image.
+
+  Returns:
+
+    A pointer to the GIF data or NULL if an error occurred.
+
+*/
 BGD_DECLARE(void *) gdImageGifPtr(gdImagePtr im, int *size)
 {
 	void *rv;
@@ -104,6 +131,65 @@ BGD_DECLARE(void *) gdImageGifPtr(gdImagePtr im, int *size)
 	return rv;
 }
 
+/*
+  Function: gdImageGif
+
+    <gdImageGif> outputs the specified image to the specified file in
+    GIF format. The file must be open for binary writing. (Under MSDOS
+    and all versions of Windows, it is important to use "wb" as
+    opposed to simply "w" as the mode when opening the file; under
+    Unix there is no penalty for doing so). <gdImageGif> does not close
+    the file; your code must do so.
+
+    GIF does not support true color; GIF images can contain a maximum
+    of 256 colors. If the image to be written is a truecolor image,
+    such as those created with gdImageCreateTrueColor or loaded from a
+    JPEG or a truecolor PNG image file, a palette-based temporary
+    image will automatically be created internally using the
+    <gdImageCreatePaletteFromTrueColor> function. The original image
+    pixels are not modified. This conversion produces high quality
+    palettes but does require some CPU time. If you are regularly
+    converting truecolor to palette in this way, you should consider
+    creating your image as a palette-based image in the first place.
+
+  Variants:
+
+    <gdImageGifCtx> outputs the image via a <gdIOCtx> struct.
+
+    <gdImageGifPtr> stores the image in a large array of bytes.
+
+  Parameters:
+
+    im      - The image to write
+    outFile - The FILE pointer to write the image to.
+
+  Returns:
+
+    Nothing
+
+  Example:
+
+    > gdImagePtr im;
+    > int black, white;
+    > FILE *out;
+    > // Create the image
+    > im = gdImageCreate(100, 100);
+    > // Allocate background
+    > white = gdImageColorAllocate(im, 255, 255, 255);
+    > // Allocate drawing color
+    > black = gdImageColorAllocate(im, 0, 0, 0);
+    > // Draw rectangle
+    > gdImageRectangle(im, 0, 0, 99, 99, black);
+    > // Open output file in binary mode
+    > out = fopen("rect.gif", "wb");
+    > // Write GIF
+    > gdImageGif(im, out);
+    > // Close file
+    > fclose(out);
+    > // Destroy image
+    > gdImageDestroy(im);
+
+*/
 BGD_DECLARE(void) gdImageGif(gdImagePtr im, FILE *outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
@@ -112,6 +198,21 @@ BGD_DECLARE(void) gdImageGif(gdImagePtr im, FILE *outFile)
 	out->gd_free(out);
 }
 
+/*
+  Function: gdImageGifCtx
+
+    Writes a GIF image via a <gdIOCtx>.  See <gdImageGif>.
+
+  Parameters:
+
+    im      - The image to write
+    out     - The <gdIOCtx> struct used to do the writing.
+
+  Returns:
+
+    Nothing.
+
+*/
 BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out)
 {
 	gdImagePtr pim = 0, tim = im;
@@ -142,6 +243,37 @@ BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out)
 	}
 }
 
+
+/*
+  Function: gdImageGifAnimBeginPtr
+
+    Like <gdImageGifAnimBegin> except that it outputs to a memory
+    buffer.  See <gdImageGifAnimBegin>.
+
+    The returned memory must be freed by the caller when it is no
+    longer needed. **The caller must invoke <gdFree>(), not free()**,
+    unless the caller is absolutely certain that the same
+    implementations of malloc, free, etc. are used both at library
+    build time and at application build time (but don't; it could
+    always change).
+
+    The 'size' parameter receives the total size of the block of
+    memory.
+
+  Parameters:
+
+    im          - The reference image
+    size        - Output: the size in bytes of the result.
+    GlobalCM    - Global colormap flag: 1 -> yes, 0 -> no, -1 -> do default
+    Loops       - Loop count; 0 -> infinite, -1 means no loop
+
+  Returns:
+
+   A pointer to the resulting data (the contents of the start of the
+   GIF) or NULL if an error occurred.
+
+*/
+
 BGD_DECLARE(void *) gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalCM, int Loops)
 {
 	void *rv;
@@ -153,6 +285,57 @@ BGD_DECLARE(void *) gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalC
 	return rv;
 }
 
+
+/*
+  Function: gdImageGifAnimBegin
+
+    This function must be called as the first function when creating a
+    GIF animation. It writes the correct GIF file headers to selected
+    file output, and prepares for frames to be added for the
+    animation. The image argument is not used to produce an image
+    frame to the file, it is only used to establish the GIF animation
+    frame size, interlacing options and the color
+    palette. <gdImageGifAnimAdd> is used to add the first and
+    subsequent frames to the animation, and the animation must be
+    terminated by writing a semicolon character (;) to it or by using
+    gdImageGifAnimEnd to do that.
+
+    The GlobalCM flag indicates if a global color map (or palette) is
+    used in the GIF89A header. A nonzero value specifies that a global
+    color map should be used to reduce the size of the animation. Of
+    course, if the color maps of individual frames differ greatly, a
+    global color map may not be a good idea. GlobalCM=1 means write
+    global color map, GlobalCM=0 means do not, and GlobalCM=-1 means
+    to do the default, which currently is to use a global color map.
+
+    If Loops is 0 or greater, the Netscape 2.0 extension for animation
+    loop count is written. 0 means infinite loop count. -1 means that
+    the extension is not added which results in no looping. -1 is the
+    default.
+
+  Variants:
+
+    <gdImageGifAnimBeginCtx> outputs the image via a <gdIOCtx> struct.
+
+    <gdImageGifAnimBeginPtr> stores the image in a large array of bytes.
+
+  Parameters:
+
+    im          - The reference image
+    outfile     - The output FILE*.
+    GlobalCM    - Global colormap flag: 1 -> yes, 0 -> no, -1 -> do default
+    Loops       - Loop count; 0 -> infinite, -1 means no loop
+
+  Returns:
+
+    Nothing.
+
+  Example:
+
+    See <gdImageGifAnimBegin>.
+
+*/
+
 BGD_DECLARE(void) gdImageGifAnimBegin(gdImagePtr im, FILE *outFile, int GlobalCM, int Loops)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
@@ -161,6 +344,26 @@ BGD_DECLARE(void) gdImageGifAnimBegin(gdImagePtr im, FILE *outFile, int GlobalCM
 	out->gd_free(out);
 }
 
+
+
+/*
+  Function: gdImageGifAnimBeginCtx
+
+    Like <gdImageGifAnimBegin> except that it outputs to <gdIOCtx>.
+    See <gdImageGifAnimBegin>.
+
+  Parameters:
+
+    im          - The reference image
+    out         - Pointer to the output <gdIOCtx>.
+    GlobalCM    - Global colormap flag: 1 -> yes, 0 -> no, -1 -> do default
+    Loops       - Loop count; 0 -> infinite, -1 means no loop
+
+  Returns:
+
+    Nothing.
+
+*/
 BGD_DECLARE(void) gdImageGifAnimBeginCtx(gdImagePtr im, gdIOCtxPtr out, int GlobalCM, int Loops)
 {
 	int B;
@@ -225,7 +428,43 @@ BGD_DECLARE(void) gdImageGifAnimBeginCtx(gdImagePtr im, gdIOCtxPtr out, int Glob
 	}
 }
 
-BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)
+
+
+/*
+  Function: gdImageGifAnimAddPtr
+
+    Like <gdImageGifAnimAdd> (which contains more information) except
+    that it stores the data to write into memory and returns a pointer
+    to it.
+
+    This memory must be freed by the caller when it is no longer
+    needed. **The caller must invoke <gdFree>(), not free(),** unless
+    the caller is absolutely certain that the same implementations of
+    malloc, free, etc. are used both at library build time and at
+    application build time (but don't; it could always change).
+
+    The 'size' parameter receives the total size of the block of
+    memory.
+
+  Parameters:
+
+    im          - The image to add.
+    size        - Output: the size of the resulting buffer.
+    LocalCM     - Flag.  If 1, use a local color map for this frame.
+    LeftOfs     - Left offset of image in frame.
+    TopOfs      - Top offset of image in frame.
+    Delay       - Delay before next frame (in 1/100 seconds)
+    Disposal    - MODE: How to treat this frame when the next one loads.
+    previm      - NULL or a pointer to the previous image written.
+
+  Returns:
+
+    Pointer to the resulting data or NULL if an error occurred.
+
+*/
+BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM,
+                                         int LeftOfs, int TopOfs, int Delay,
+                                         int Disposal, gdImagePtr previm)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
@@ -236,7 +475,114 @@ BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, 
 	return rv;
 }
 
-BGD_DECLARE(void) gdImageGifAnimAdd(gdImagePtr im, FILE *outFile, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)
+
+/*
+  Function: gdImageGifAnimAdd
+
+    This function writes GIF animation frames to GIF animation, which
+    was initialized with <gdImageGifAnimBegin>. With _LeftOfs_ and
+    _TopOfs_ you can place this frame in different offset than (0,0)
+    inside the image screen as defined in <gdImageGifAnimBegin>. Delay
+    between the previous frame and this frame is in 1/100s
+    units. _Disposal_ is usually <gdDisposalNone>, meaning that the
+    pixels changed by this frame should remain on the display when the
+    next frame begins to render, but can also be <gdDisposalUnknown>
+    (not recommended), <gdDisposalRestoreBackground> (restores the
+    first allocated color of the global palette), or
+    <gdDisposalRestorePrevious> (restores the appearance of the
+    affected area before the frame was rendered). Only
+    <gdDisposalNone> is a sensible choice for the first frame. If
+    _previm_ is passed, the built-in GIF optimizer will always use
+    <gdDisposalNone> regardless of the Disposal parameter.
+
+    Setting the _LocalCM_ flag to 1 adds a local palette for this
+    image to the animation. Otherwise the global palette is assumed
+    and the user must make sure the palettes match. Use
+    <gdImagePaletteCopy> to do that.
+
+    Automatic optimization is activated by giving the previous image
+    as a parameter. This function then compares the images and only
+    writes the changed pixels to the new frame in animation. The
+    _Disposal_ parameter for optimized animations must be set to 1,
+    also for the first frame. _LeftOfs_ and _TopOfs_ parameters are
+    ignored for optimized frames. To achieve good optimization, it is
+    usually best to use a single global color map. To allow
+    <gdImageGifAnimAdd> to compress unchanged pixels via the use of a
+    transparent color, the image must include a transparent color.
+
+
+  Variants:
+
+    <gdImageGifAnimAddCtx> outputs its data via a <gdIOCtx> struct.
+
+    <gdImageGifAnimAddPtr> outputs its data to a memory buffer which
+    it returns.
+
+  Parameters:
+
+    im          - The image to add.
+    outfile     - The output FILE* being written.
+    LocalCM     - Flag.  If 1, use a local color map for this frame.
+    LeftOfs     - Left offset of image in frame.
+    TopOfs      - Top offset of image in frame.
+    Delay       - Delay before next frame (in 1/100 seconds)
+    Disposal    - MODE: How to treat this frame when the next one loads.
+    previm      - NULL or a pointer to the previous image written.
+
+  Returns:
+
+    Nothing.
+
+  Example:
+
+    > {
+    > gdImagePtr im, im2, im3;
+    > int black, white, trans;
+    > FILE *out;
+    >
+    > im = gdImageCreate(100, 100);     // Create the image 
+    > white = gdImageColorAllocate(im, 255, 255, 255); // Allocate background
+    > black = gdImageColorAllocate(im, 0, 0, 0); // Allocate drawing color 
+    > trans = gdImageColorAllocate(im, 1, 1, 1); // trans clr for compression 
+    > gdImageRectangle(im, 0, 0, 10, 10, black); // Draw rectangle 
+    >
+    > out = fopen("anim.gif", "wb");// Open output file in binary mode
+    > gdImageGifAnimBegin(im, out, 1, 3);// Write GIF hdr, global clr map,loops
+    > // Write the first frame.  No local color map.  Delay = 1s 
+    > gdImageGifAnimAdd(im, out, 0, 0, 0, 100, 1, NULL);
+    >
+    > // construct the second frame 
+    > im2 = gdImageCreate(100, 100);
+    > (void)gdImageColorAllocate(im2, 255, 255, 255); // White background
+    > gdImagePaletteCopy (im2, im);  // Make sure the palette is identical
+    > gdImageRectangle(im2, 0, 0, 15, 15, black);    // Draw something 
+    > // Allow animation compression with transparent pixels 
+    > gdImageColorTransparent (im2, trans);
+    > gdImageGifAnimAdd(im2, out, 0, 0, 0, 100, 1, im);  // Add second frame 
+    >
+    > // construct the third frame 
+    > im3 = gdImageCreate(100, 100);
+    > (void)gdImageColorAllocate(im3, 255, 255, 255); // white background
+    > gdImagePaletteCopy (im3, im); // Make sure the palette is identical
+    > gdImageRectangle(im3, 0, 0, 15, 20, black); // Draw something 
+    > // Allow animation compression with transparent pixels 
+    > gdImageColorTransparent (im3, trans);
+    > // Add the third frame, compressing against the second one 
+    > gdImageGifAnimAdd(im3, out, 0, 0, 0, 100, 1, im2);
+    > gdImageGifAnimEnd(out);  // End marker, same as putc(';', out);
+    > fclose(out); // Close file 
+    >
+    > // Destroy images 
+    > gdImageDestroy(im);
+    > gdImageDestroy(im2);
+    > gdImageDestroy(im3);
+    > }
+
+*/
+
+BGD_DECLARE(void) gdImageGifAnimAdd(gdImagePtr im, FILE *outFile, int LocalCM,
+                                    int LeftOfs, int TopOfs, int Delay,
+                                    int Disposal, gdImagePtr previm)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
 	if (out == NULL) return;
@@ -257,7 +603,31 @@ static int comparewithmap(gdImagePtr im1, gdImagePtr im2, int c1, int c2, int *c
 	return (colorMap[c1] = gdImageColorExactAlpha(im2, im1->red[c1], im1->green[c1], im1->blue[c1], im1->alpha[c1])) == c2;
 }
 
-BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm)
+/*
+  Function: gdImageGifAnimAddCtx
+
+    Adds an animation frame via a <gdIOCtxPtr>.  See gdImageGifAnimAdd>.
+
+  Parameters:
+
+    im          - The image to add.
+    out         - The output <gdIOCtxPtr>.
+    LocalCM     - Flag.  If 1, use a local color map for this frame.
+    LeftOfs     - Left offset of image in frame.
+    TopOfs      - Top offset of image in frame.
+    Delay       - Delay before next frame (in 1/100 seconds)
+    Disposal    - MODE: How to treat this frame when the next one loads.
+    previm      - NULL or a pointer to the previous image written.
+
+  Returns:
+
+    Nothing.
+
+*/
+BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
+                                       int LocalCM, int LeftOfs, int TopOfs,
+                                       int Delay, int Disposal,
+                                       gdImagePtr previm)
 {
 	gdImagePtr pim = NULL, tim = im;
 	int interlace, transparent, BitsPerPixel;
@@ -456,6 +826,37 @@ fail_end:
 	}
 }
 
+
+
+/*
+  Function: gdImageGifAnimEnd
+
+    Terminates the GIF file properly.
+
+    (Previous versions of this function's documentation suggested just
+    manually writing a semicolon (';') instead since that is all this
+    function does.  While that has no longer changed, we now suggest
+    that you do not do this and instead always call
+    <gdImageGifAnimEnd> (or equivalent) since later versions could
+    possibly do more or different things.)
+
+  Variants:
+
+    <gdImageGifAnimEndCtx> outputs its data via a <gdIOCtx> struct.
+
+    <gdImageGifAnimEndPtr> outputs its data to a memory buffer which
+    it returns.
+
+  Parameters:
+
+    outfile     - the destination FILE*.
+
+  Returns:
+
+    Nothing.
+
+*/
+
 BGD_DECLARE(void) gdImageGifAnimEnd(FILE *outFile)
 {
 #if 1
@@ -468,6 +869,32 @@ BGD_DECLARE(void) gdImageGifAnimEnd(FILE *outFile)
 #endif
 }
 
+/*
+  Function: gdImageGifAnimEndPtr
+
+    Like <gdImageGifAnimEnd> (which contains more information) except
+    that it stores the data to write into memory and returns a pointer
+    to it.
+
+    This memory must be freed by the caller when it is no longer
+    needed. **The caller must invoke <gdFree>(), not free(),** unless
+    the caller is absolutely certain that the same implementations of
+    malloc, free, etc. are used both at library build time and at
+    application build time (but don't; it could always change).
+
+    The 'size' parameter receives the total size of the block of
+    memory.
+
+  Parameters:
+
+    size        - Output: the size of the resulting buffer.
+
+  Returns:
+
+    Pointer to the resulting data or NULL if an error occurred.
+
+*/
+
 BGD_DECLARE(void *) gdImageGifAnimEndPtr(int *size)
 {
 	char *rv = (char *) gdMalloc(1);
@@ -478,6 +905,21 @@ BGD_DECLARE(void *) gdImageGifAnimEndPtr(int *size)
 	*size = 1;
 	return (void *)rv;
 }
+
+/*
+  Function: gdImageGifAnimEndCtx
+
+    Like <gdImageGifAnimEnd>, but writes its data via a <gdIOCtx>.
+
+  Parameters:
+
+    out         - the destination <gdIOCtx>.
+
+  Returns:
+
+    Nothing.
+
+*/
 
 BGD_DECLARE(void) gdImageGifAnimEndCtx(gdIOCtx *out)
 {

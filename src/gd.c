@@ -133,15 +133,9 @@ BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 /*
     Function: gdImageCreate
 
-    gdImageCreate is called to create palette-based images, with no
-    more than 256 colors. The image must eventually be destroyed using
-    gdImageDestroy().
-
-    >   ... inside a function ...
-    >   gdImagePtr im;
-    >   im = gdImageCreate(64, 64);
-    >   // ... Use the image ...
-    >   gdImageDestroy(im);
+      gdImageCreate is called to create palette-based images, with no
+      more than 256 colors. The image must eventually be destroyed using
+      gdImageDestroy().
 
     Parameters:
 
@@ -151,6 +145,13 @@ BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
     Returns:
 
         A pointer to the new image or NULL if an error occurred.
+
+    Example:
+
+        >   gdImagePtr im;
+        >   im = gdImageCreate(64, 64);
+        >   // ... Use the image ...
+        >   gdImageDestroy(im);
 
     See Also:
 
@@ -222,6 +223,42 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 	return im;
 }
 
+
+
+/*
+    Function: gdImageCreateTrueColor
+
+      <gdImageCreateTrueColor> is called to create truecolor images,
+      with an essentially unlimited number of colors. Invoke
+      <gdImageCreateTrueColor> with the x and y dimensions of the
+      desired image. <gdImageCreateTrueColor> returns a <gdImagePtr>
+      to the new image, or NULL if unable to allocate the image. The
+      image must eventually be destroyed using <gdImageDestroy>().
+
+      Truecolor images are always filled with black at creation
+      time. There is no concept of a "background" color index.
+
+    Parameters:
+
+        sx - The image width.
+        sy - The image height.
+
+    Returns:
+
+        A pointer to the new image or NULL if an error occurred.
+
+    Example:
+
+        > gdImagePtr im;
+        > im = gdImageCreateTrueColor(64, 64);
+        > // ... Use the image ...
+        > gdImageDestroy(im);
+
+    See Also:
+
+        <gdImageCreateTrueColor>        
+
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 {
 	int i;
@@ -293,6 +330,31 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 	im->interpolation_id = GD_BILINEAR_FIXED;
 	return im;
 }
+
+/*
+  Function: gdImageDestroy
+
+    <gdImageDestroy> is used to free the memory associated with an
+    image. It is important to invoke <gdImageDestroy> before exiting
+    your program or assigning a new image to a <gdImagePtr> variable.
+
+  Parameters:
+
+    im  - Pointer to the gdImage to delete.
+
+  Returns:
+
+    Nothing.
+
+  Example:
+
+    > gdImagePtr im;
+    > im = gdImageCreate(10, 10);
+    > // ... Use the image ...
+    > // Now destroy it
+    > gdImageDestroy(im);
+
+*/
 
 BGD_DECLARE(void) gdImageDestroy (gdImagePtr im)
 {

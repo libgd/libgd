@@ -795,7 +795,7 @@ static int getPixelInterpolateWeight(gdImagePtr im, const double x, const double
 }
 
 /**
- * Function: getPixelInterpolated
+ * InternalFunction: getPixelInterpolated
  *  Returns the interpolated color value using the default interpolation
  *  method. The returned color is always in the ARGB format (truecolor).
  *
