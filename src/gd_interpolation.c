@@ -2594,6 +2594,15 @@ BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMet
 	return 1;
 }
 
+
+/* Return the interpolation mode set in 'im'.  This is here so that
+ * the value can be read via a language or VM with an FFI but no
+ * (portable) way to extract the value from the struct. */
+BGD_DECLARE(gdInterpolationMethod) gdImageGetInterpolationMethod(gdImagePtr im)
+{
+    return im->interpolation_id;
+}
+
 #ifdef _MSC_VER
 # pragma optimize("", on)
 #endif
