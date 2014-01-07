@@ -96,6 +96,64 @@ gdPngFlushData (png_structp png_ptr)
 	(void)png_ptr;
 }
 
+/*
+  Function: gdImageCreateFromPng
+
+    <gdImageCreateFromPng> is called to load images from PNG format
+    files. Invoke <gdImageCreateFromPng> with an already opened
+    pointer to a FILE containing the desired
+    image. <gdImageCreateFromPng> returns a <gdImagePtr> to the new
+    image, or NULL if unable to load the image (most often because the
+    file is corrupt or does not contain a PNG
+    image). <gdImageCreateFromPng> does not close the file. You can
+    inspect the sx and sy members of the image to determine its
+    size. The image must eventually be destroyed using
+    gdImageDestroy().
+
+    If the PNG image being loaded is a truecolor image, the resulting
+    gdImagePtr will refer to a truecolor image. If the PNG image being
+    loaded is a palette or grayscale image, the resulting gdImagePtr
+    will refer to a palette image. gd retains only 8 bits of
+    resolution for each of the red, green and blue channels, and only
+    7 bits of resolution for the alpha channel. The former restriction
+    affects only a handful of very rare 48-bit color and 16-bit
+    grayscale PNG images. The second restriction affects all
+    semitransparent PNG images, but the difference is essentially
+    invisible to the eye. 7 bits of alpha channel resolution is, in
+    practice, quite a lot.
+
+  Variants:
+
+    <gdImageCreateFromPngPtr> creates an image from PNG data (i.e. the
+    contents of a PNG file) already in memory.
+
+    <gdImageCreateFromPngCtx> reads in an image using the functions in
+    a <gdIOCtx> struct.
+
+    <gdImageCreateFromPngSource> is similar to
+    <gdImageCreateFromPngCtx> but uses the old <gdSource> interface.
+    It is *obsolete*.
+
+  Parameters:
+
+    infile - The input FILE pointer.
+
+  Returns:
+
+    A pointer to the new image or NULL if an error occurred.
+
+  Example:
+
+    > gdImagePtr im;
+    > ... inside a function ...
+    > FILE *in;
+    > in = fopen("mypng.png", "rb");
+    > im = gdImageCreateFromPng(in);
+    > fclose(in);
+    > // ... Use the image ...
+    > gdImageDestroy(im);
+
+ */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * inFile)
 {
 	gdImagePtr im;
@@ -106,6 +164,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * inFile)
 	return im;
 }
 
+/*
+  Function: gdImageCreateFromPngPtr
+
+  See <gdImageCreateFromPng>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data)
 {
 	gdImagePtr im;
@@ -117,9 +180,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data)
 	return im;
 }
 
+
+
 /* This routine is based in part on the Chapter 13 demo code in
  * "PNG: The Definitive Guide" (http://www.libpng.org/pub/png/book/).
  */
+
+/*
+  Function: gdImageCreateFromPngCtx
+
+  See <gdImageCreateFromPng>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 {
 	png_byte sig[8];
@@ -474,6 +545,61 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 }
 
 
+/*
+  Function: gdImagePngEx
+
+    <gdImagePngEx> outputs the specified image to the specified file in
+    PNG format. The file must be open for writing. Under MSDOS and all
+    versions of Windows, it is important to use "wb" as opposed to
+    simply "w" as the mode when opening the file, and under Unix there
+    is no penalty for doing so. <gdImagePngEx> does not close the file;
+    your code must do so.
+
+    In addition, <gdImagePngEx> allows the level of compression to be
+    specified. A compression level of 0 means "no compression." A
+    compression level of 1 means "compressed, but as quickly as
+    possible." A compression level of 9 means "compressed as much as
+    possible to produce the smallest possible file." A compression level
+    of -1 will use the default compression level at the time zlib was
+    compiled on your system.
+
+  Variants:
+
+    <gdImagePng> is equivalent to calling <gdImagePngEx> with
+    compression of -1.
+
+    <gdImagePngCtx> and <gdImagePngCtxEx> write via a <gdIOCtx>
+    instead of a file handle.
+
+    <gdImagePngPtr> and <gdImagePngPtrEx> store the image file to
+    memory.
+
+  Parameters:
+
+    im      - the image to write
+    outFile - the output FILE* object.
+    level   - compression level: 0 -> none, 1-9 -> level, -1 -> default
+
+  Returns:
+
+    Nothing.
+
+  Example:
+
+    > gdImagePtr im;
+    > int black, white;
+    > FILE *out;
+    > 
+    > im = gdImageCreate(100, 100);              // Create the image 
+    > white = gdImageColorAllocate(im, 255, 255, 255); // Alloc background 
+    > black = gdImageColorAllocate(im, 0, 0, 0); // Allocate drawing color 
+    > gdImageRectangle(im, 0, 0, 99, 99, black); // Draw rectangle 
+    > out = fopen("rect.png", "wb");             // Open output file (binary) 
+    > gdImagePngEx(im, out, 9);                  // Write PNG, max compression
+    > fclose(out);                               // Close file 
+    > gdImageDestroy(im);                        // Destroy image 
+
+*/
 BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
 {
 	gdIOCtx *out = gdNewFileCtx (outFile);
@@ -482,6 +608,20 @@ BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
 	out->gd_free (out);
 }
 
+/*
+  Function: gdImagePng
+
+    Equivalent to calling <gdImagePngEx> with compression of -1.
+
+  Parameters:
+
+    im      - the image to save.
+    outFile - the output FILE*.
+
+  Returns:
+
+    Nothing.
+*/
 BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * outFile)
 {
 	gdIOCtx *out = gdNewFileCtx (outFile);
@@ -490,6 +630,24 @@ BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * outFile)
 	out->gd_free (out);
 }
 
+
+/*
+  Function: gdImagePngPtr
+
+    Equivalent to calling <gdImagePngPtrEx> with compression of -1.
+
+    See <gdImagePngEx> for more information.
+
+  Parameters:
+
+    im      - the image to save.
+    size    - Output: size in bytes of the result.
+
+  Returns:
+
+    A pointer to memory containing the image data or NULL on error.
+
+*/
 BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size)
 {
 	void *rv;
@@ -501,6 +659,30 @@ BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size)
 	return rv;
 }
 
+/*
+  Function: gdImagePngPtrEx
+
+    Identical to <gdImagePngEx> except that it returns a pointer to a
+    memory area with the PNG data. This memory must be freed by the
+    caller when it is no longer needed. **The caller must invoke
+    gdFree(), not free()**
+
+    The 'size' parameter receives the total size of the block of
+    memory.
+
+    See <gdImagePngEx> for more information.
+
+  Parameters:
+
+    im      - the image to save.
+    size    - Output: size in bytes of the result.
+    level   - compression level: 0 -> none, 1-9 -> level, -1 -> default
+
+  Returns:
+
+    A pointer to memory containing the image data or NULL on error.
+
+*/
 BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 {
 	void *rv;
@@ -512,11 +694,50 @@ BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 	return rv;
 }
 
+
+
+/*
+  Function: gdImagePngCtx
+
+    Equivalent to calling <gdImagePngCtxEx> with compression of -1.
+    See <gdImagePngEx> for more information.
+
+  Parameters:
+
+    im      - the image to save.
+    outfile - the <gdIOCtx> to write to.
+
+  Returns:
+
+    Nothing.
+
+*/
 BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 {
 	/* 2.0.13: 'return' here was an error, thanks to Kevin Smith */
 	gdImagePngCtxEx (im, outfile, -1);
 }
+
+
+
+
+/*
+  Function: gdImagePngCtxEx
+
+    Outputs the given image as PNG data, but using a <gdIOCtx> instead
+    of a file.  See <gdIamgePnEx>.
+
+  Parameters:
+
+    im      - the image to save.
+    outfile - the <gdIOCtx> to write to.
+    level   - compression level: 0 -> none, 1-9 -> level, -1 -> default
+
+  Returns:
+
+    Nothing.
+
+*/
 
 /* This routine is based in part on code from Dale Lutz (Safe Software Inc.)
  *  and in part on demo code from Chapter 15 of "PNG: The Definitive Guide"

@@ -127,6 +127,71 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
  * library documentation for more details.
  */
 
+
+/*
+  Function: gdImageJpeg
+
+    <gdImageJpeg> outputs the specified image to the specified file in
+    JPEG format. The file must be open for writing. Under MSDOS and
+    all versions of Windows, it is important to use "wb" as opposed to
+    simply "w" as the mode when opening the file, and under Unix there
+    is no penalty for doing so. <gdImageJpeg> does not close the file;
+    your code must do so.
+
+    If _quality_ is negative, the default IJG JPEG quality value (which
+    should yield a good general quality / size tradeoff for most
+    situations) is used. Otherwise, for practical purposes, _quality_
+    should be a value in the range 0-95, higher quality values usually
+    implying both higher quality and larger image sizes.
+
+    If you have set image interlacing using <gdImageInterlace>, this
+    function will interpret that to mean you wish to output a
+    progressive JPEG. Some programs (e.g., Web browsers) can display
+    progressive JPEGs incrementally; this can be useful when browsing
+    over a relatively slow communications link, for
+    example. Progressive JPEGs can also be slightly smaller than
+    sequential (non-progressive) JPEGs.
+
+  Variants:
+
+    <gdImageJpegCtx> stores the image using a <gdIOCtx> struct.
+
+    <gdImageJpegPtr> stores the image to RAM.
+
+  Parameters:
+
+    im      - The image to save
+    outFile - The FILE pointer to write to.
+    quality - Compression quality (0-95, 0 means use the default).
+
+  Returns:
+
+    Nothing.
+
+  Example:
+
+    > gdImagePtr im;
+    > int black, white;
+    > FILE *out;
+    > // Create the image
+    > im = gdImageCreate(100, 100);
+    > // Allocate background
+    > white = gdImageColorAllocate(im, 255, 255, 255);
+    > // Allocate drawing color
+    > black = gdImageColorAllocate(im, 0, 0, 0);
+    > // Draw rectangle
+    > gdImageRectangle(im, 0, 0, 99, 99, black);
+    > // Open output file in binary mode
+    > out = fopen("rect.jpg", "wb");
+    > // Write JPEG using default quality
+    > gdImageJpeg(im, out, -1);
+    > // Close file
+    > fclose(out);
+    > // Destroy image
+    > gdImageDestroy(im);
+
+*/
+
 BGD_DECLARE(void) gdImageJpeg(gdImagePtr im, FILE *outFile, int quality)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
@@ -135,6 +200,31 @@ BGD_DECLARE(void) gdImageJpeg(gdImagePtr im, FILE *outFile, int quality)
 	out->gd_free(out);
 }
 
+/*
+  Function: gdImageJpegPtr
+
+    Identical to <gdImageJpeg> except that it returns a pointer to a
+    memory area with the JPEG data. This memory must be freed by the
+    caller when it is no longer needed.
+
+    The caller *must* invoke <gdFree>, not free().  This is because it
+    is not guaranteed that libgd will use the same implementation of
+    malloc, free, etc. as your proggram.
+
+    The 'size' parameter receives the total size of the block of
+    memory.
+
+  Parameters:
+
+    im      - The image to write
+    size    - Output: the size of the resulting image.
+    quality - Compression quality.
+
+  Returns:
+
+    A pointer to the JPEG data or NULL if an error occurred.
+
+*/
 BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
 {
 	void *rv;
@@ -148,6 +238,19 @@ BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
 
 void jpeg_gdIOCtx_dest(j_compress_ptr cinfo, gdIOCtx *outfile);
 
+/*
+  Function: gdImageJpegCtx
+
+    Write the image as JPEG data via a <gdIOCtx>. See <gdImageJpeg>
+    for more details.
+
+  Parameters:
+
+    im      - The image to write.
+    outfile - The output sink.
+    quality - Image quality. 
+
+*/
 BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 {
 	struct jpeg_compress_struct cinfo;
@@ -299,10 +402,73 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	gdFree(row);
 }
 
+
+
+
+/*
+  Function: gdImageCreateFromJpeg
+
+  See <gdImageCreateFromJpegEx>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *inFile)
 {
 	return gdImageCreateFromJpegEx(inFile, 1);
 }
+
+
+/*
+  Function: gdImageCreateFromJpegEx
+
+    <gdImageCreateFromJpegEx> is called to load truecolor images from
+    JPEG format files. Invoke <gdImageCreateFromJpegEx> with an
+    already opened pointer to a file containing the desired
+    image. <gdImageCreateFromJpegEx> returns a <gdImagePtr> to the new
+    truecolor image, or NULL if unable to load the image (most often
+    because the file is corrupt or does not contain a JPEG
+    image). <gdImageCreateFromJpegEx> does not close the file.
+
+    You can inspect the sx and sy members of the image to determine
+    its size. The image must eventually be destroyed using
+    <gdImageDestroy>.
+
+    *The returned image is always a truecolor image.*
+
+  Variants:
+
+    <gdImageCreateFromJpegPtrEx> creates an image from JPEG data
+    already in memory.
+
+    <gdImageCreateFromJpegCtxEx> reads its data via the function
+    pointers in a <gdIOCtx> structure.
+
+    <gdImageCreateFromJpeg>, <gdImageCreateFromJpegPtr> and
+    <gdImageCreateFromJpegCtx> are equivalent to calling their
+    _Ex_-named counterparts with an ignore_warning set to 1
+    (i.e. TRUE).
+
+  Parameters:
+
+    infile          - The input FILE pointer.
+    ignore_warning  - Flag.  If true, ignores recoverable warnings.
+
+  Returns:
+
+    A pointer to the new *truecolor* image.  This will need to be
+    destroyed with <gdImageDestroy> once it is no longer needed.
+
+    On error, returns NULL.
+
+  Example:
+
+    > gdImagePtr im;
+    > FILE *in;
+    > in = fopen("myjpeg.jpg", "rb");
+    > im = gdImageCreateFromJpegEx(in, GD_TRUE);
+    > fclose(in);
+    > // ... Use the image ...
+    > gdImageDestroy(im);
+
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx(FILE *inFile, int ignore_warning)
 {
 	gdImagePtr im;
@@ -313,10 +479,32 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx(FILE *inFile, int ignore_warning
 	return im;
 }
 
+/*
+  Function: gdImageCreateFromJpegPtr
+
+  Parameters:
+  
+    size    - size of JPEG data in bytes.
+    data    - pointer to JPEG data.
+
+  See <gdImageCreateFromJpegEx>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data)
 {
 	return gdImageCreateFromJpegPtrEx(size, data, 1);
 }
+
+/*
+  Function: gdImageCreateFromJpegPtrEx
+
+  Parameters:
+  
+    size            - size of JPEG data in bytes.
+    data            - pointer to JPEG data.
+    ignore_warning  - if true, ignore recoverable warnings
+
+  See <gdImageCreateFromJpegEx>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx(int size, void *data, int ignore_warning)
 {
 	gdImagePtr im;
@@ -334,13 +522,20 @@ void jpeg_gdIOCtx_src(j_decompress_ptr cinfo, gdIOCtx *infile);
 static int CMYKToRGB(int c, int m, int y, int k, int inverted);
 
 /*
- * Create a gd-format image from the JPEG-format INFILE.  Returns the
- * image, or NULL upon error.
- */
+  Function: gdImageCreateFromJpegCtx
+
+  See <gdImageCreateFromJpeg>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 {
 	return gdImageCreateFromJpegCtxEx(infile, 1);
 }
+
+/*
+  Function: gdImageCreateFromJpegCtxEx
+
+  See <gdImageCreateFromJpeg>.
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning)
 {
 	struct jpeg_decompress_struct cinfo;

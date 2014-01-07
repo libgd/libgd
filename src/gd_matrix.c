@@ -92,7 +92,7 @@ BGD_DECLARE(int) gdAffineInvert (double dst[6], const double src[6])
  *  flip_v - Whether or not to flip vertically
  *
  * Returns:
- *  GD_SUCCESS on success or GD_FAILURE
+ *  GD_TRUE on success or GD_FALSE
  */
 BGD_DECLARE(int) gdAffineFlip (double dst[6], const double src[6], const int flip_h, const int flip_v)
 {
@@ -120,7 +120,7 @@ BGD_DECLARE(int) gdAffineFlip (double dst[6], const double src[6], const int fli
  *  m2 - Second affine matrix
  *
  * Returns:
- *  GD_SUCCESS on success or GD_FAILURE
+ *  GD_TRUE on success or GD_FALSE
  */
 BGD_DECLARE(int) gdAffineConcat (double dst[6], const double m1[6], const double m2[6])
 {
@@ -149,7 +149,7 @@ BGD_DECLARE(int) gdAffineConcat (double dst[6], const double m1[6], const double
  * 	dst - Where to store the resulting affine transform
  *
  * Returns:
- *  GD_SUCCESS on success or GD_FAILURE
+ *  GD_TRUE on success or GD_FALSE
  */
 BGD_DECLARE(int) gdAffineIdentity (double dst[6])
 {
@@ -171,7 +171,7 @@ BGD_DECLARE(int) gdAffineIdentity (double dst[6])
  * 	scale_y - Y scale factor
  *
  * Returns:
- *  GD_SUCCESS on success or GD_FAILURE
+ *  GD_TRUE on success or GD_FALSE
  */
 BGD_DECLARE(int) gdAffineScale (double dst[6], const double scale_x, const double scale_y)
 {
@@ -196,7 +196,7 @@ BGD_DECLARE(int) gdAffineScale (double dst[6], const double scale_x, const doubl
  * 	angle - Rotation angle in degrees
  *
  * Returns:
- *  GD_SUCCESS on success or GD_FAILURE
+ *  GD_TRUE on success or GD_FALSE
  */
 BGD_DECLARE(int) gdAffineRotate (double dst[6], const double angle)
 {
@@ -221,7 +221,7 @@ BGD_DECLARE(int) gdAffineRotate (double dst[6], const double angle)
  * 	angle - Shear angle in degrees
  *
  * Returns:
- *  GD_SUCCESS on success or GD_FAILURE
+ *  GD_TRUE on success or GD_FALSE
  */
 BGD_DECLARE(int) gdAffineShearHorizontal(double dst[6], const double angle)
 {
@@ -243,7 +243,7 @@ BGD_DECLARE(int) gdAffineShearHorizontal(double dst[6], const double angle)
  * 	angle - Shear angle in degrees
  *
  * Returns:
- *  GD_SUCCESS on success or GD_FAILURE
+ *  GD_TRUE on success or GD_FALSE
  */
 BGD_DECLARE(int) gdAffineShearVertical(double dst[6], const double angle)
 {
@@ -266,7 +266,7 @@ BGD_DECLARE(int) gdAffineShearVertical(double dst[6], const double angle)
  * 	offset_y - Vertical translation amount
  *
  * Returns:
- *  GD_SUCCESS on success or GD_FAILURE
+ *  GD_TRUE on success or GD_FALSE
  */
 BGD_DECLARE(int) gdAffineTranslate (double dst[6], const double offset_x, const double offset_y)
 {
@@ -288,7 +288,7 @@ BGD_DECLARE(int) gdAffineTranslate (double dst[6], const double offset_x, const 
  * composed of scaling, rotation, shearing, and translation, returns
  * the amount of scaling.
  *
- *  GD_SUCCESS on success or GD_FAILURE
+ *  GD_TRUE on success or GD_FALSE
  **/
 BGD_DECLARE(double) gdAffineExpansion (const double src[6])
 {
@@ -322,7 +322,7 @@ BGD_DECLARE(int) gdAffineRectilinear (const double m[6])
  * 	m2 - The first affine transformation
  *
  * Returns:
- * 	GD_SUCCESS on success or GD_FAILURE
+ * 	GD_TRUE on success or GD_FALSE
  */
 BGD_DECLARE(int) gdAffineEqual (const double m1[6], const double m2[6])
 {
