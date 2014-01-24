@@ -70,6 +70,7 @@ do_test() {
         {"img-ref.xbm", 0, -1,  1},
         {"img-ref.tga", 0, -1,  1},
         {"img.webp",    0, -1,  0},
+        {"img.tiff",    0, -1,  0},
 
         {NULL, 0}
     };
