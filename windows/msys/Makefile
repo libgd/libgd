@@ -11,9 +11,10 @@ CDEFS=-DHAVE_ERRNO_H -DHAVE_ICONV -DHAVE_ICONV_H		\
 -DHAVE_ICONV_T_DEF -DHAVE_INTTYPES_H -DHAVE_LIMITS_H -DHAVE_STDDEF_H	\
 -DHAVE_STDINT_H -DHAVE_STDLIB_H -DHAVE_VISIBILITY -DICONV_CONST
 
-# GnuWin32 libs are all installed in one place
-GNUINC=-I/c/Progra~1/GnuWin32/include
-GNULIB=-L/c/Progra~1/GnuWin32/lib
+# GnuWin32 libs should all be installed in one place.
+GNUDIR=/c/tools/GnuWin32
+GNUINC=-I$(GNUDIR)/include
+GNULIB=-L$(GNUDIR)/lib
 
 # Various optional components.  Comment-out the ones you don't have
 # and edit the paths and options as needed if you do.  The default
@@ -78,7 +79,7 @@ gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c		\
 gdfonts.c gdfontt.c gdft.c gdhelpers.c gdkanji.c gdtables.c gdxpm.c	\
 wbmp.c gd_filter.c gd_nnquant.c gd_rotate.c gd_matrix.c				\
 gd_interpolation.c gd_crop.c webpimg.c gd_webp.c gd_tiff.c gd_tga.c	\
-gd_bmp.c gd_xbm.c gd_color_match.c gd_version.c
+gd_bmp.c gd_xbm.c gd_color_match.c gd_version.c gd_filename.c
 
 OBJ=$(SRC:.c=.o)
 
@@ -93,7 +94,7 @@ clean:
 	(cd ../../src; rm -f $(TARGET) $(OBJ) $(TARGET_A) deps.mk)
 
 check: all
-	bash run_tests.sh "$(INCLUDES)"
+	bash run_tests.sh "$(GNUDIR)/bin" "$(INCLUDES)"
 
 deps.mk:
 	[ -f gd.h ] # Sanity check: we're in src/, right?

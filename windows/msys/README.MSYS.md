@@ -16,7 +16,7 @@ use one of the other build systems (or add them yourself.)
 
 2. Install LibJpeg, LibPng, LibTiff, Zlib and FreeType from
    <http://gnuwin32.sourceforge.net> and install them all in
-   <c:/Program Files/GnuWin32>.  (You can get these libraries from other
+   `c:/tools/GnuWin32/`.  (You can get these libraries from other
    places and/or install them in different locations, but you'll need to
    edit the Makefile accordingly if you do.)
 
