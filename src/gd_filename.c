@@ -10,29 +10,29 @@
 
 #include "gd.h"
 
-typedef gdImagePtr (*ReadFn)(FILE *in);
-typedef void (*WriteFn)(gdImagePtr im, FILE *out);
-typedef gdImagePtr (*LoadFn)(char *filename);
+typedef gdImagePtr (BGD_STDCALL *ReadFn)(FILE *in);
+typedef void (BGD_STDCALL *WriteFn)(gdImagePtr im, FILE *out);
+typedef gdImagePtr (BGD_STDCALL *LoadFn)(char *filename);
 
 #ifdef HAVE_LIBZ
-static void writegd2(gdImagePtr im, FILE *out) {
+static void BGD_STDCALL writegd2(gdImagePtr im, FILE *out) {
     gdImageGd2(im, out, 0, GD2_FMT_COMPRESSED);
 }/* writegd*/
 #endif
 
 #ifdef HAVE_LIBJPEG
-static void writejpeg(gdImagePtr im, FILE *out) {
+static void BGD_STDCALL writejpeg(gdImagePtr im, FILE *out) {
     gdImageJpeg(im, out, -1);
 }/* writejpeg*/
 #endif
 
-static void writewbmp(gdImagePtr im, FILE *out) {
+static void BGD_STDCALL writewbmp(gdImagePtr im, FILE *out) {
     int fg = gdImageColorClosest(im, 0, 0, 0);
     
     gdImageWBMP(im, fg, out);
 }/* writejpeg*/
 
-static void writebmp(gdImagePtr im, FILE *out) {
+static void BGD_STDCALL writebmp(gdImagePtr im, FILE *out) {
     gdImageBmp(im, out, GD_TRUE);
 }/* writejpeg*/
 
@@ -44,38 +44,38 @@ static struct FileType {
     WriteFn writer;
     LoadFn loader;
 } Types[] = {
-    {".gif", gdImageCreateFromGif, gdImageGif, NULL},
-    {".gd",  gdImageCreateFromGd,  gdImageGd, NULL},
-    {".wbmp", gdImageCreateFromWBMP, writewbmp, NULL},
-    {".bmp", gdImageCreateFromBmp, writebmp, NULL},
+    {".gif",    gdImageCreateFromGif,   gdImageGif,     NULL},
+    {".gd",     gdImageCreateFromGd,    gdImageGd,      NULL},
+    {".wbmp",   gdImageCreateFromWBMP,  writewbmp,      NULL},
+    {".bmp",    gdImageCreateFromBmp,   writebmp,       NULL},
 
-    {".xbm", gdImageCreateFromXbm, NULL, NULL},
-    {".tga", gdImageCreateFromTga, NULL, NULL},
+    {".xbm",    gdImageCreateFromXbm,   NULL,           NULL},
+    {".tga",    gdImageCreateFromTga,   NULL,           NULL},
 
 #ifdef HAVE_LIBPNG
-    {".png", gdImageCreateFromPng, gdImagePng, NULL},
+    {".png",    gdImageCreateFromPng,   gdImagePng,     NULL},
 #endif
 
 #ifdef HAVE_LIBJPEG
-    {".jpg", gdImageCreateFromJpeg, writejpeg, NULL},
-    {".jpeg", gdImageCreateFromJpeg, writejpeg, NULL},
+    {".jpg",    gdImageCreateFromJpeg,  writejpeg,      NULL},
+    {".jpeg",   gdImageCreateFromJpeg,  writejpeg,      NULL},
 #endif
 
 #ifdef HAVE_LIBTIFF    
-    {".tiff", gdImageCreateFromTiff, gdImageTiff, NULL},
-    {".tif" , gdImageCreateFromTiff, gdImageTiff, NULL},
+    {".tiff",   gdImageCreateFromTiff,  gdImageTiff,    NULL},
+    {".tif" ,   gdImageCreateFromTiff,  gdImageTiff,    NULL},
 #endif
 
 #ifdef HAVE_LIBZ
-    {".gd2", gdImageCreateFromGd2, writegd2, NULL},
+    {".gd2",    gdImageCreateFromGd2,   writegd2,       NULL},
 #endif
 
 #ifdef HAVE_LIBVPX
-    {".webp", gdImageCreateFromWebp, gdImageWebp, NULL},
+    {".webp",   gdImageCreateFromWebp,  gdImageWebp,    NULL},
 #endif
 
 #ifdef HAVE_LIBXPM
-    {".xpm", NULL, NULL, gdImageCreateFromXpm},
+    {".xpm",    NULL,                   NULL,           gdImageCreateFromXpm},
 #endif
 
     {NULL, NULL, NULL}
@@ -88,7 +88,7 @@ ftype(const char *filename) {
     char *ext;
 
     /* Find the file extension (i.e. the last period in the string. */
-    ext = rindex(filename, '.');
+    ext = strrchr(filename, '.');
     if (!ext) return NULL;
     
     for (n = 0; Types[n].ext; n++) {
@@ -149,7 +149,7 @@ BGD_DECLARE(int)
 gdSupportsFileType(const char *filename, int writing) {
     struct FileType *entry = ftype(filename);
     return !!entry && (!writing || !!entry->writer);
-}/* gdSupportsFiletype*/
+}/* gdSupportsFileType*/
 
 
 /*

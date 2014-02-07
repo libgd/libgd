@@ -139,6 +139,7 @@ extern "C" {
 #define gdEffectAlphaBlend 1
 #define gdEffectNormal 2
 #define gdEffectOverlay 3
+#define gdEffectMultiply 4
 
 #define GD_TRUE 1
 #define GD_FALSE 0
@@ -154,7 +155,9 @@ extern "C" {
    The resulting color is opaque. */
 
 BGD_DECLARE(int) gdAlphaBlend (int dest, int src);
-
+BGD_DECLARE(int) gdLayerOverlay (int dest, int src);
+BGD_DECLARE(int) gdLayerMultiply (int dest, int src);
+	
 enum gdPaletteQuantizationMethod {
 	GD_QUANT_DEFAULT = 0,
 	GD_QUANT_JQUANT = 1,  /* libjpeg's old median cut. Fast, but only uses 16-bit color. */
@@ -565,7 +568,9 @@ BGD_DECLARE(void) gdImageDestroy (gdImagePtr im);
    alpha channel value of 'color'; default is to overwrite.
    Tiling and line styling are also implemented
    here. All other gd drawing functions pass through this call,
-   allowing for many useful effects. */
+   allowing for many useful effects. 
+   Overlay and multiply effects are used when gdImageAlphaBlending
+   is passed gdEffectOverlay and gdEffectMultiply */
 
 BGD_DECLARE(void) gdImageSetPixel (gdImagePtr im, int x, int y, int color);
 /* FreeType 2 text output with hook to extra flags */

@@ -3,14 +3,15 @@
 set -e
 
 # Parameters
-CFLAGS_EXTRA=$1     # Extra C flags
+DLLPATH_EXTRA=$1        # Path to supporting DLLs
+CFLAGS_EXTRA=$2         # Extra C flags
     
 
 LOG=run_tests.log
 
 CFLAGS="-g -Igdtest/ -I. -I../src/ -D_WIN32 $CFLAGS_EXTRA"
-LDFLAGS='-L../src -llibgd.3.0.1'
-DLLPATH=../src:/c/Progra~1/GnuWin32/bin
+LDFLAGS='-L../src -llibgd'
+DLLPATH=../src:$DLLPATH_EXTRA
 
 function run_gcc {
     if msg=`gcc $* 2>&1`; then
@@ -23,7 +24,7 @@ function run_gcc {
 }
 
 # Switch to the working directory
-PATH=$PATH:$DLLPATH
+export PATH=$PATH:$DLLPATH
 cd ../../tests
 
 # Initial setup

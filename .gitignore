@@ -2,6 +2,9 @@ syntax: glob
 *~
 *.[ao]
 .dirstamp
+*.exe
+*.obj
+*.dll
 
 Makefile
 CMakeCache.txt
@@ -13,6 +16,7 @@ CPackSourceConfig.cmake
 CTestTestfile.cmake
 libimagequant
 libimagequant-prefix
+src/deps.mk
 
 # Autotools related files.
 *.l[ao]
@@ -208,6 +212,7 @@ Makefile.in
 /tests/gdinterpolatedscale/gdTrivialResize
 /tests/gdinterpolatedscale/gdModesAndPalettes
 /tests/gdimagefile/gdnametest
+/tests/gdimagefile/img.png
 /tests/gdimagefilter/gdCopyBlurred
 
 # Doc artifacts

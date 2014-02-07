@@ -1627,7 +1627,7 @@ static char * font_path(char **fontpath, char *name_list)
 	char *fontsearchpath, *fontlist;
 	char *fullname = NULL;
 	char *name, *dir;
-	char path[MAXPATHLEN];
+	char *path;
 	char *strtok_ptr = NULL;
 	const unsigned int name_list_len = strlen(name_list);
 
@@ -1638,6 +1638,11 @@ static char * font_path(char **fontpath, char *name_list)
 	fontsearchpath = getenv ("GDFONTPATH");
 	if (!fontsearchpath)
 		fontsearchpath = DEFAULT_FONTPATH;
+	path = (char *) gdMalloc(sizeof(char) * strlen(fontsearchpath) + 1);
+	if( path == NULL ) {
+		return "could not alloc full list of fonts";
+	}
+	path[0] = 0;
 
 	fontlist = (char *) gdMalloc(name_list_len + 1);
 	if (fontlist == NULL) {
@@ -1718,6 +1723,7 @@ static char * font_path(char **fontpath, char *name_list)
 		if (font_found)
 			break;
 	}
+	gdFree (path);
 	if (fontlist != NULL) {
 		gdFree (fontlist);
 		fontlist = NULL;

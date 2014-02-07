@@ -83,6 +83,16 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
 	if(overflow2(sizeof(int), number)) {
 		goto done;
 	}
+	for(i = 0; i < number; i++) {
+		/*
+		   avoid NULL pointer dereference
+		   TODO better fix need to manage monochrome/monovisual
+		   see m_color or g4_color or g_color
+		*/
+		if (!image.colorTable[i].c_color) {
+			goto done;
+		}
+	}
 
 	colors = (int *)gdMalloc(sizeof(int) * number);
 	if(colors == NULL) {
