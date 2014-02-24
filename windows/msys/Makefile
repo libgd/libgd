@@ -15,6 +15,7 @@ CDEFS=-DHAVE_ERRNO_H -DHAVE_ICONV -DHAVE_ICONV_H		\
 GNUDIR=/c/tools/GnuWin32
 GNUINC=-I$(GNUDIR)/include
 GNULIB=-L$(GNUDIR)/lib
+GNUDLL=$(GNUDIR)/bin/
 
 # Various optional components.  Comment-out the ones you don't have
 # and edit the paths and options as needed if you do.  The default
@@ -23,21 +24,25 @@ JPEG_D=-DHAVE_LIBJPEG
 JPEG_L=-ljpeg
 JPEG_I=$(GNUINC)
 JPEG_LIBDIR=$(GNULIB)
+JPEG_DLLDIR=$(GNUDLL)
 
 PNG_D=-DHAVE_LIBPNG
 PNG_L=-lpng
 PNG_I=				#$(GNUINC)
 PNG_LIBDIR=			#$(GNULIB)
+PNG_DLLDIR=			#$(GNUDLL)
 
 TIFF_D=-DHAVE_LIBTIFF
 TIFF_L=-ltiff
 TIFF_I=				#$(GNUINC)
 TIFF_LIBDIR=		#$(GNULIB)
+TIFF_DLLDIR=		#$(GNUDLL)
 
 LIBZ_D=-DHAVE_LIBZ
 LIBZ_L=-lz
 LIBZ_I=				#$(GNUINC)
 LIBZ_LIBDIR=		#$(GNULIB)
+LIBZ_DLLDIR=		#$(GNUDLL)
 
 # LIBXPM_D=-DHAVE_LIBXPM
 # LIBXPM_L=-lxpm
@@ -48,6 +53,7 @@ FREETYPE_D=-DHAVE_LIBFREETYPE -DHAVE_FT2BUILD_H
 FREETYPE_L=-lfreetype
 FREETYPE_I=$(GNUINC)/freetype2/
 FREETYPE_LIBDIR=	#$(GNULIB)
+FREETYPE_DLLDIR=	#$(GNUDLL)
 
 # FONTCONFIG_D=-DHAVE_LIBFONTCONFIG
 # FONTCONFIG_L=
@@ -59,7 +65,8 @@ ALL_L=$(FREETYPE_L) $(JPEG_L) $(PNG_L) $(TIFF_L) $(LIBZ_L) $(LIBXPM_L)
 ALL_I=$(FREETYPE_I) $(JPEG_I) $(PNG_I) $(TIFF_I) $(LIBZ_I) $(LIBXPM_I)
 ALL_LIBDIR=$(FREETYPE_LIBDIR) $(JPEG_LIBDIR) $(PNG_LIBDIR) $(TIFF_LIBDIR) \
 	$(LIBZ_LIBDIR) $(LIBXPM_LIBDIR)
-
+ALL_DLLDIR=$(FREETYPE_DLLDIR) $(JPEG_DLLDIR) $(PNG_DLLDIR) $(TIFF_DLLDIR) \
+	$(LIBZ_DLLDIR) $(LIBXPM_DLLDIR)
 
 DEFS=$(CDEFS) $(ALL_D)
 INCLUDES=$(ALL_I)
@@ -70,6 +77,9 @@ CFLAGS=-g -O2 -I. -std=gnu99 -fvisibility=hidden -D_WIN32 -DBGDWIN32 $(DEFS) $(I
 LD=gcc
 LDFLAGS=-g -O2 -fvisibility=hidden $(ALL_LIBDIR)
 LIBS=-liconv $(ALL_L)
+
+ZIP=zip -j9
+DIST=libgd-win.zip
 
 # Get this list from c files in libgd_la_SOURCES in Makefile.mk
 SRC=gd.c gd_color.c gd_color_map.c gd_transform.c gdfx.c			\
@@ -83,14 +93,18 @@ gd_bmp.c gd_xbm.c gd_color_match.c gd_version.c gd_filename.c
 
 OBJ=$(SRC:.c=.o)
 
-TARGETBASE=libgd.$(LIBVER)
+TARGETBASE=libgd
 TARGET=$(TARGETBASE).dll
 TARGET_A=$(TARGETBASE).a
 
 all:
 	(cd ../../src; make -f ../windows/msys/Makefile $(TARGET))
 
+dist: all
+	(cd ../..; $(ZIP) $(DIST) src/*.dll src/*.a $$(for d in $(ALL_DLLDIR); do echo $$d/*.dll; done | sort -u) )
+
 clean:
+	-rm ../../$(DIST)
 	(cd ../../src; rm -f $(TARGET) $(OBJ) $(TARGET_A) deps.mk)
 
 check: all
@@ -101,7 +115,8 @@ deps.mk:
 	gcc -MM $(DEFS) $(INCLUDES) $(SRC) > deps.mk
 
 $(TARGET): $(OBJ)
-	gcc -shared -o $(TARGET) $(LDFLAGS) -Wl,--out-implib,$(TARGET_A) $(OBJ) $(LIBS)
+	gcc -shared -o $(TARGET) $(LDFLAGS) -Wl,--out-implib,$(TARGET_A) \
+		$(OBJ) $(LIBS)
 
 include deps.mk
 

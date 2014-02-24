@@ -12,7 +12,9 @@ use one of the other build systems (or add them yourself.)
 
 ## To build LibGD:
 
-1. Install MinGW and MSYS.
+1. Install MinGW and MSYS (see <http://www.mingw.org/wiki/Getting_Started>).
+   You will need to install zip and unzip as well as the 32-bit C compiler
+   and related tools.
 
 2. Install LibJpeg, LibPng, LibTiff, Zlib and FreeType from
    <http://gnuwin32.sourceforge.net> and install them all in
@@ -38,8 +40,17 @@ use one of the other build systems (or add them yourself.)
     here.  This is fine.  As long as most tests pass, you're probably
     okay.)
 
-5.  Copy the lib (in src/) to wherever it needs to go.  There's no
-    `make install` here.
+5.  Type
+
+       make dist
+
+    This will create libgd-win.zip, a zip file containing the new
+    library and its dependants.  Note that this step may pick up extra
+    DLLs; it sweeps up all of the DLLs in the directories pointed to
+    by *_DLLDIR Makefile variables.
+
+    Alternately, you can copy the lib (in src/) to wherever it needs
+    to go.
 
 
 ## Stuff that Doesn't Work
