@@ -105,7 +105,7 @@ dist: all
 
 clean:
 	-rm ../../$(DIST)
-	(cd ../../src; rm -f $(TARGET) $(OBJ) $(TARGET_A) deps.mk)
+	(cd ../../src; rm -f *.dll *.a $(OBJ) deps.mk; true)
 
 check: all
 	bash run_tests.sh "$(GNUDIR)/bin" "$(INCLUDES)"
