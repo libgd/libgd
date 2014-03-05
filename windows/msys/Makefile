@@ -72,7 +72,8 @@ DEFS=$(CDEFS) $(ALL_D)
 INCLUDES=$(ALL_I)
 
 CC=gcc
-CFLAGS=-g -O2 -I. -std=gnu99 -fvisibility=hidden -D_WIN32 -DBGDWIN32 $(DEFS) $(INCLUDES)
+CFLAGS=-g -O2 -I. -std=gnu99 -fvisibility=hidden -static-libgcc \
+	-D_WIN32 -DBGDWIN32 $(DEFS) $(INCLUDES)
 
 LD=gcc
 LDFLAGS=-g -O2 -fvisibility=hidden $(ALL_LIBDIR)
@@ -100,8 +101,11 @@ TARGET_A=$(TARGETBASE).a
 all:
 	(cd ../../src; make -f ../windows/msys/Makefile $(TARGET))
 
+# BUG: this sucks in all the DLLs in the lib installation directory,
+# including those you may not need.
 dist: all
 	(cd ../..; $(ZIP) $(DIST) src/*.dll src/*.a $$(for d in $(ALL_DLLDIR); do echo $$d/*.dll; done | sort -u) )
+
 
 clean:
 	-rm ../../$(DIST)
