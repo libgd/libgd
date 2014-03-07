@@ -68,6 +68,14 @@ ALL_LIBDIR=$(FREETYPE_LIBDIR) $(JPEG_LIBDIR) $(PNG_LIBDIR) $(TIFF_LIBDIR) \
 ALL_DLLDIR=$(FREETYPE_DLLDIR) $(JPEG_DLLDIR) $(PNG_DLLDIR) $(TIFF_DLLDIR) \
 	$(LIBZ_DLLDIR) $(LIBXPM_DLLDIR)
 
+# We need libiconv for internationalization.  We default to static
+# linking because that reduces the number of dependencies.  However,
+# libiconv is released under the GNU GPL which may impose extra
+# restrictions on redistribution.
+LIBICONV=/mingw/lib/libiconv.a
+#LIBICONV=-liconv
+
+
 DEFS=$(CDEFS) $(ALL_D)
 INCLUDES=$(ALL_I)
 
@@ -76,8 +84,8 @@ CFLAGS=-g -O2 -I. -std=gnu99 -fvisibility=hidden -static-libgcc \
 	-D_WIN32 -DBGDWIN32 $(DEFS) $(INCLUDES)
 
 LD=gcc
-LDFLAGS=-g -O2 -fvisibility=hidden $(ALL_LIBDIR)
-LIBS=-liconv $(ALL_L)
+LDFLAGS=-g -O2 -fvisibility=hidden -static-libgcc $(ALL_LIBDIR)
+LIBS=$(ALL_L) $(LIBICONV)
 
 ZIP=zip -j9
 DIST=libgd-win.zip
