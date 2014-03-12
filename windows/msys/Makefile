@@ -72,7 +72,7 @@ ALL_DLLDIR=$(FREETYPE_DLLDIR) $(JPEG_DLLDIR) $(PNG_DLLDIR) $(TIFF_DLLDIR) \
 # linking because that reduces the number of dependencies.  However,
 # libiconv is released under the GNU GPL which may impose extra
 # restrictions on redistribution.
-LIBICONV=/mingw/lib/libiconv.a
+LIBICONV=/c/MinGW/lib/libiconv.a
 #LIBICONV=-liconv
 
 
