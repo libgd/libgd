@@ -2521,10 +2521,7 @@ BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMet
 
 	switch (id) {
 		case GD_DEFAULT:
-			im->interpolation_id = GD_BILINEAR_FIXED;
-			im->interpolation = NULL;
-			break;
-
+			id = GD_BILINEAR_FIXED;
 		/* Optimized versions */
 		case GD_BILINEAR_FIXED:
 		case GD_BICUBIC_FIXED:
