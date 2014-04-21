@@ -1061,10 +1061,20 @@ BGD_DECLARE(void) gdImageSetPixel (gdImagePtr im, int x, int y, int color)
 	default:
 		if (gdImageBoundsSafeMacro (im, x, y)) {
 			if (im->trueColor) {
-				if (im->alphaBlendingFlag) {
-					im->tpixels[y][x] = gdAlphaBlend (im->tpixels[y][x], color);
-				} else {
-					im->tpixels[y][x] = color;
+				switch (im->alphaBlendingFlag) {
+					default:
+					case gdEffectReplace:
+						im->tpixels[y][x] = color;
+						break;
+					case gdEffectNormal:
+						im->tpixels[y][x] = gdAlphaBlend(im->tpixels[y][x], color);
+						break;
+					case gdEffectOverlay :
+						im->tpixels[y][x] = gdLayerOverlay(im->tpixels[y][x], color);
+						break;
+					case gdEffectMultiply :
+						im->tpixels[y][x] = gdLayerMultiply(im->tpixels[y][x], color);
+						break;
 				}
 			} else {
 				im->pixels[y][x] = color;
@@ -3328,6 +3338,55 @@ BGD_DECLARE(int) gdAlphaBlend (int dst, int src)
 	/*      Return merged result.                                           */
 	/* -------------------------------------------------------------------- */
 	return ((alpha << 24) + (red << 16) + (green << 8) + blue);
+}
+
+static int gdAlphaOverlayColor (int src, int dst, int max );
+BGD_DECLARE(int) gdLayerOverlay (int dst, int src)
+{
+	int a1, a2;
+	a1 = gdAlphaMax - gdTrueColorGetAlpha(dst);
+	a2 = gdAlphaMax - gdTrueColorGetAlpha(src);
+	return ( ((gdAlphaMax - a1*a2/gdAlphaMax) << 24) +
+		(gdAlphaOverlayColor( gdTrueColorGetRed(src), gdTrueColorGetRed(dst), gdRedMax ) << 16) +
+		(gdAlphaOverlayColor( gdTrueColorGetGreen(src), gdTrueColorGetGreen(dst), gdGreenMax ) << 8) +
+		(gdAlphaOverlayColor( gdTrueColorGetBlue(src), gdTrueColorGetBlue(dst), gdBlueMax ))
+		);
+}
+
+/* Apply 'overlay' effect - background pixels are colourised by the foreground colour */
+static int gdAlphaOverlayColor (int src, int dst, int max )
+{
+	dst = dst << 1;
+	if( dst > max ) {
+		/* in the "light" zone */
+		return dst + (src << 1) - (dst * src / max) - max;
+	} else {
+		/* in the "dark" zone */
+		return dst * src / max;
+	}
+}
+
+/* Apply 'multiply' effect */
+BGD_DECLARE(int) gdLayerMultiply (int dst, int src)
+{
+	int a1, a2, r1, r2, g1, g2, b1, b2;
+	a1 = gdAlphaMax - gdTrueColorGetAlpha(src);
+	a2 = gdAlphaMax - gdTrueColorGetAlpha(dst);
+
+	r1 = gdRedMax - (a1 * (gdRedMax - gdTrueColorGetRed(src))) / gdAlphaMax;
+	r2 = gdRedMax - (a2 * (gdRedMax - gdTrueColorGetRed(dst))) / gdAlphaMax;
+	g1 = gdGreenMax - (a1 * (gdGreenMax - gdTrueColorGetGreen(src))) / gdAlphaMax;
+	g2 = gdGreenMax - (a2 * (gdGreenMax - gdTrueColorGetGreen(dst))) / gdAlphaMax;
+	b1 = gdBlueMax - (a1 * (gdBlueMax - gdTrueColorGetBlue(src))) / gdAlphaMax;
+	b2 = gdBlueMax - (a2 * (gdBlueMax - gdTrueColorGetBlue(dst))) / gdAlphaMax ;
+
+	a1 = gdAlphaMax - a1;
+	a2 = gdAlphaMax - a2;
+	return ( ((a1*a2/gdAlphaMax) << 24) +
+			 ((r1*r2/gdRedMax) << 16) +
+			 ((g1*g2/gdGreenMax) << 8) +
+			 ((b1*b2/gdBlueMax))
+		);
 }
 
 BGD_DECLARE(void) gdImageAlphaBlending (gdImagePtr im, int alphaBlendingArg)
