@@ -1,5 +1,7 @@
 SET(TESTS_FILES
 	bug00186
+	gdeffectoverlay
+	gdeffectmultiply
 )
 
 FOREACH(test_name ${TESTS_FILES})
