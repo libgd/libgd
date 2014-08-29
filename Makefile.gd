@@ -23,7 +23,7 @@ CFLAGS_BD_EXT_GD_LIBGD= /Fd$(SDR) /Fp$(SDR) /FR$(SDR)
 CFLAGS_GD=/DHAVE_FT2BUILD_H=1  /DHAVE_GD_H=1 /DHAVE_PNG_H=1 /DHAVE_ICONV_H=1 /DHAVE_XPM_H=1 -Isrc -Ideps/include -Ideps/include/libpng15 -Ideps/include/vpx -Ideps/include/freetype /D HAVE_GD_DYNAMIC_CTX_EX=1 /D HAVE_GD_BUNDLED=1  /D HAVE_GD_GD2  /D HAVE_GD_GIF_READ=1  /D HAVE_GD_GIF_CREATE=1  /D HAVE_GDIMAGECOLORRESOLVE=1  /D HAVE_GD_IMAGESETBRUSH=1  /D HAVE_GD_IMAGESETTILE=1 /D HAVE_GD_FONTCACHESHUTDOWN=1 /D HAVE_GD_FONTMUTEX=1 /D HAVE_LIBFREETYPE=1 /D HAVE_GD_JPG  /D HAVE_GD_PNG  /D HAVE_GD_STRINGFTEX=1  /D HAVE_GD_STRINGTTF=1  /D HAVE_GD_WBMP  /D HAVE_GD_XBM  /D HAVE_GD_XPM  /D HAVE_GD_FREETYPE=1  /D HAVE_LIBGD13=1  /D HAVE_LIBGD15=1  /D HAVE_LIBGD20=1  /D HAVE_LIBGD204=1 /D HAVE_LIBJPEG  /D HAVE_LIBPNG  /D HAVE_XPM  /D HAVE_COLORCLOSESTHWB  /D USE_GD_IMGSTRTTF  /D USE_GD_IOCTX /D MSWIN32 		 
 
 
-SDR = $(SDR)
+SDR = $(BUILD_DIR)
 GD_GLOBAL_OBJS=$(SDR)gd.obj $(SDR)gd_color.obj $(SDR)gd_color_map.obj $(SDR)gd_transform.obj $(SDR)gdfx.obj $(SDR)gd_security.obj $(SDR)gd_gd.obj $(SDR)gd_gd2.obj $(SDR)gd_io.obj $(SDR)gd_io_dp.obj $(SDR)gd_gif_in.obj $(SDR)gd_gif_out.obj $(SDR)gd_io_file.obj $(SDR)gd_io_ss.obj $(SDR)gd_jpeg.obj $(SDR)gd_png.obj $(SDR)gd_ss.obj $(SDR)gd_topal.obj $(SDR)gd_wbmp.obj $(SDR)gdcache.obj $(SDR)gdfontg.obj $(SDR)gdfontl.obj $(SDR)gdfontmb.obj $(SDR)gdfonts.obj $(SDR)gdfontt.obj $(SDR)gdft.obj $(SDR)gdhelpers.obj $(SDR)gdkanji.obj $(SDR)gdtables.obj $(SDR)gdxpm.obj $(SDR)wbmp.obj $(SDR)gd_filter.obj $(SDR)gd_nnquant.obj $(SDR)gd_rotate.obj $(SDR)gd_matrix.obj $(SDR)gd_interpolation.obj $(SDR)gd_crop.obj $(SDR)webpimg.obj $(SDR)gd_webp.obj $(SDR)gd_tiff.obj $(SDR)gd_tga.obj $(SDR)gd_bmp.obj $(SDR)gd_xbm.obj $(SDR)gd_color_match.obj $(SDR)gd_version.obj $(SDR)gd_filename.obj
 
 
@@ -35,7 +35,7 @@ TARGET_A=$(TARGETBASE).a
 
 GD_DLL=libgd.dll
 
-DLL_LDFLAGS=/dll
+DLL_LDFLAGS=/DLL /D _USRDLL /D _WINDLL
 
 PHP_LDFLAGS=$(DLL_LDFLAGS) /nodefaultlib:libcmt 
 
@@ -66,9 +66,8 @@ $(BUILD_DIR) $(BUILD_DIRS_SUB):
 	@cd "$(SRC_DIR)"
 
 
-
 $(BUILD_DIR)\$(GD_DLL): $(GD_GLOBAL_OBJS) 
-	@$(CC)  $(GD_GLOBAL_OBJS) $(LIBS_GD)  $(LIBS) /link /out:$(BUILD_DIR)\$(GD_DLL)  $(PHP_LDFLAGS) $(LDFLAGS) $(LDFLAGS_GD) 
+	@$(CC) /D_USRDLL /D_WINDLL $(GD_GLOBAL_OBJS) $(LIBS_GD)  $(LIBS) /link /out:$(BUILD_DIR)\$(GD_DLL)  $(PHP_LDFLAGS) $(LDFLAGS) $(LDFLAGS_GD) 
 	-@$(_VC_MANIFEST_EMBED_DLL)
 
 
