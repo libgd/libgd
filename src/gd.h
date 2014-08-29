@@ -76,6 +76,10 @@ extern "C" {
 #endif
 
 #define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt BGD_STDCALL
+   
+#ifndef inline
+#  define inline __inline
+#endif
 
 #ifdef __cplusplus
 	extern "C"

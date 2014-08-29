@@ -17,7 +17,8 @@ CTestTestfile.cmake
 libimagequant
 libimagequant-prefix
 src/deps.mk
-
+deps
+Release_GD
 # Autotools related files.
 *.l[ao]
 .deps
