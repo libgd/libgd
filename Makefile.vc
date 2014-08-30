@@ -1,3 +1,8 @@
+
+# Download dependencies to the 'deps' folder from http://windows.php.net/downloads/php-sdk/deps-5.6-vc11-x86.7z
+# Adjust the linker path and the mt.exe path as needed
+# Run this using the Visual Studio 2013 Native (x86) Tools command prompt.
+
 SRC_DIR =C:\Users\nathanael\Documents\gd-libgd
 CC="cl.exe "
 LINK=C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\BIN\link.exe
