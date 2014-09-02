@@ -3,6 +3,8 @@ LD=link
 LIB=lib
 
 GD_DLL=libgd.dll
+GD_LIBA=libgd_a.lib
+
 LIBS=kernel32.lib ole32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib Dnsapi.lib Gdi32.Lib
 LIBS_GD=turbojpeg-static.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib
 
@@ -66,54 +68,54 @@ build_lib: build_obj
   @$(LD) /DLL /OUT:$(BUILD_DIR)\$(GD_DLL) $(GD_GLOBAL_OBJS) $(LIBS_GD) $(LIBS) $(LDFLAGS)
 
 build_liba: build_obj
-  @$(LIB) /OUT:$(BUILD_DIR)\$(GD_DLL) $(GD_GLOBAL_OBJS) $(LIBS_GD) $(LIBS) $(LDFLAGS)
+  @$(LIB) /OUT:$(BUILD_DIR)\$(GD_LIBA) $(GD_GLOBAL_OBJS) $(LIBS_GD) $(LIBS) $(LDFLAGS)
 
 build_obj: make_dirs
-	@$(CC) $(CFLAGS) /c src\gd.c /Fo$(SDR)gd.obj 
-	@$(CC) $(CFLAGS) /c src\gd_color.c /Fo$(SDR)gd_color.obj 
-	@$(CC) $(CFLAGS) /c src\gd_color_map.c /Fo$(SDR)gd_color_map.obj 
-	@$(CC) $(CFLAGS) /c src\gd_transform.c /Fo$(SDR)gd_transform.obj 
-	@$(CC) $(CFLAGS) /c src\gdfx.c /Fo$(SDR)gdfx.obj			
-	@$(CC) $(CFLAGS) /c src\gd_security.c /Fo$(SDR)gd_security.obj 
-	@$(CC) $(CFLAGS) /c src\gd_gd.c /Fo$(SDR)gd_gd.obj 
-	@$(CC) $(CFLAGS) /c src\gd_gd2.c /Fo$(SDR)gd_gd2.obj 
-	@$(CC) $(CFLAGS) /c src\gd_io.c /Fo$(SDR)gd_io.obj 
-	@$(CC) $(CFLAGS) /c src\gd_io_dp.c /Fo$(SDR)gd_io_dp.obj 
-	@$(CC) $(CFLAGS) /c src\gd_gif_in.c /Fo$(SDR)gd_gif_in.obj		
-	@$(CC) $(CFLAGS) /c src\gd_gif_out.c /Fo$(SDR)gd_gif_out.obj 
-	@$(CC) $(CFLAGS) /c src\gd_io_file.c /Fo$(SDR)gd_io_file.obj 
-	@$(CC) $(CFLAGS) /c src\gd_io_ss.c /Fo$(SDR)gd_io_ss.obj 
-	@$(CC) $(CFLAGS) /c src\gd_jpeg.c /Fo$(SDR)gd_jpeg.obj 
-	@$(CC) $(CFLAGS) /c src\gd_png.c /Fo$(SDR)gd_png.obj 
-	@$(CC) $(CFLAGS) /c src\gd_ss.c /Fo$(SDR)gd_ss.obj		
-	@$(CC) $(CFLAGS) /c src\gd_topal.c /Fo$(SDR)gd_topal.obj 
-	@$(CC) $(CFLAGS) /c src\gd_wbmp.c /Fo$(SDR)gd_wbmp.obj 
-	@$(CC) $(CFLAGS) /c src\gdcache.c /Fo$(SDR)gdcache.obj 
-	@$(CC) $(CFLAGS) /c src\gdfontg.c /Fo$(SDR)gdfontg.obj 
-	@$(CC) $(CFLAGS) /c src\gdfontl.c /Fo$(SDR)gdfontl.obj 
-	@$(CC) $(CFLAGS) /c src\gdfontmb.c /Fo$(SDR)gdfontmb.obj		
-	@$(CC) $(CFLAGS) /c src\gdfonts.c /Fo$(SDR)gdfonts.obj 
-	@$(CC) $(CFLAGS) /c src\gdfontt.c /Fo$(SDR)gdfontt.obj 
-	@$(CC) $(CFLAGS) /c src\gdft.c /Fo$(SDR)gdft.obj 
-	@$(CC) $(CFLAGS) /c src\gdhelpers.c /Fo$(SDR)gdhelpers.obj 
-	@$(CC) $(CFLAGS) /c src\gdkanji.c /Fo$(SDR)gdkanji.obj 
-	@$(CC) $(CFLAGS) /c src\gdtables.c /Fo$(SDR)gdtables.obj 
-	@$(CC) $(CFLAGS) /c src\gdxpm.c /Fo$(SDR)gdxpm.obj	
-	@$(CC) $(CFLAGS) /c src\wbmp.c /Fo$(SDR)wbmp.obj 
-	@$(CC) $(CFLAGS) /c src\gd_filter.c /Fo$(SDR)gd_filter.obj 
-	@$(CC) $(CFLAGS) /c src\gd_nnquant.c /Fo$(SDR)gd_nnquant.obj 
-	@$(CC) $(CFLAGS) /c src\gd_rotate.c /Fo$(SDR)gd_rotate.obj 
-	@$(CC) $(CFLAGS) /c src\gd_matrix.c /Fo$(SDR)gd_matrix.obj				
-	@$(CC) $(CFLAGS) /c src\gd_interpolation.c /Fo$(SDR)gd_interpolation.obj 
-	@$(CC) $(CFLAGS) /c src\gd_crop.c /Fo$(SDR)gd_crop.obj 
-	@$(CC) $(CFLAGS) /c src\webpimg.c /Fo$(SDR)webpimg.obj 
-	@$(CC) $(CFLAGS) /c src\gd_webp.c /Fo$(SDR)gd_webp.obj 
-	@$(CC) $(CFLAGS) /c src\gd_tiff.c /Fo$(SDR)gd_tiff.obj 
-	@$(CC) $(CFLAGS) /c src\gd_tga.c /Fo$(SDR)gd_tga.obj	
-	@$(CC) $(CFLAGS) /c src\gd_bmp.c /Fo$(SDR)gd_bmp.obj 
-	@$(CC) $(CFLAGS) /c src\gd_xbm.c /Fo$(SDR)gd_xbm.obj 
-	@$(CC) $(CFLAGS) /c src\gd_color_match.c /Fo$(SDR)gd_color_match.obj 
-	@$(CC) $(CFLAGS) /c src\gd_version.c /Fo$(SDR)gd_version.obj 
+  @$(CC) $(CFLAGS) /c src\gd.c /Fo$(SDR)gd.obj 
+  @$(CC) $(CFLAGS) /c src\gd_color.c /Fo$(SDR)gd_color.obj 
+  @$(CC) $(CFLAGS) /c src\gd_color_map.c /Fo$(SDR)gd_color_map.obj 
+  @$(CC) $(CFLAGS) /c src\gd_transform.c /Fo$(SDR)gd_transform.obj 
+  @$(CC) $(CFLAGS) /c src\gdfx.c /Fo$(SDR)gdfx.obj			
+  @$(CC) $(CFLAGS) /c src\gd_security.c /Fo$(SDR)gd_security.obj 
+  @$(CC) $(CFLAGS) /c src\gd_gd.c /Fo$(SDR)gd_gd.obj 
+  @$(CC) $(CFLAGS) /c src\gd_gd2.c /Fo$(SDR)gd_gd2.obj 
+  @$(CC) $(CFLAGS) /c src\gd_io.c /Fo$(SDR)gd_io.obj 
+  @$(CC) $(CFLAGS) /c src\gd_io_dp.c /Fo$(SDR)gd_io_dp.obj 
+  @$(CC) $(CFLAGS) /c src\gd_gif_in.c /Fo$(SDR)gd_gif_in.obj		
+  @$(CC) $(CFLAGS) /c src\gd_gif_out.c /Fo$(SDR)gd_gif_out.obj 
+  @$(CC) $(CFLAGS) /c src\gd_io_file.c /Fo$(SDR)gd_io_file.obj 
+  @$(CC) $(CFLAGS) /c src\gd_io_ss.c /Fo$(SDR)gd_io_ss.obj 
+  @$(CC) $(CFLAGS) /c src\gd_jpeg.c /Fo$(SDR)gd_jpeg.obj 
+  @$(CC) $(CFLAGS) /c src\gd_png.c /Fo$(SDR)gd_png.obj 
+  @$(CC) $(CFLAGS) /c src\gd_ss.c /Fo$(SDR)gd_ss.obj		
+  @$(CC) $(CFLAGS) /c src\gd_topal.c /Fo$(SDR)gd_topal.obj 
+  @$(CC) $(CFLAGS) /c src\gd_wbmp.c /Fo$(SDR)gd_wbmp.obj 
+  @$(CC) $(CFLAGS) /c src\gdcache.c /Fo$(SDR)gdcache.obj 
+  @$(CC) $(CFLAGS) /c src\gdfontg.c /Fo$(SDR)gdfontg.obj 
+  @$(CC) $(CFLAGS) /c src\gdfontl.c /Fo$(SDR)gdfontl.obj 
+  @$(CC) $(CFLAGS) /c src\gdfontmb.c /Fo$(SDR)gdfontmb.obj		
+  @$(CC) $(CFLAGS) /c src\gdfonts.c /Fo$(SDR)gdfonts.obj 
+  @$(CC) $(CFLAGS) /c src\gdfontt.c /Fo$(SDR)gdfontt.obj 
+  @$(CC) $(CFLAGS) /c src\gdft.c /Fo$(SDR)gdft.obj 
+  @$(CC) $(CFLAGS) /c src\gdhelpers.c /Fo$(SDR)gdhelpers.obj 
+  @$(CC) $(CFLAGS) /c src\gdkanji.c /Fo$(SDR)gdkanji.obj 
+  @$(CC) $(CFLAGS) /c src\gdtables.c /Fo$(SDR)gdtables.obj 
+  @$(CC) $(CFLAGS) /c src\gdxpm.c /Fo$(SDR)gdxpm.obj	
+  @$(CC) $(CFLAGS) /c src\wbmp.c /Fo$(SDR)wbmp.obj 
+  @$(CC) $(CFLAGS) /c src\gd_filter.c /Fo$(SDR)gd_filter.obj 
+  @$(CC) $(CFLAGS) /c src\gd_nnquant.c /Fo$(SDR)gd_nnquant.obj 
+  @$(CC) $(CFLAGS) /c src\gd_rotate.c /Fo$(SDR)gd_rotate.obj 
+  @$(CC) $(CFLAGS) /c src\gd_matrix.c /Fo$(SDR)gd_matrix.obj				
+  @$(CC) $(CFLAGS) /c src\gd_interpolation.c /Fo$(SDR)gd_interpolation.obj 
+  @$(CC) $(CFLAGS) /c src\gd_crop.c /Fo$(SDR)gd_crop.obj 
+  @$(CC) $(CFLAGS) /c src\webpimg.c /Fo$(SDR)webpimg.obj 
+  @$(CC) $(CFLAGS) /c src\gd_webp.c /Fo$(SDR)gd_webp.obj 
+  @$(CC) $(CFLAGS) /c src\gd_tiff.c /Fo$(SDR)gd_tiff.obj 
+  @$(CC) $(CFLAGS) /c src\gd_tga.c /Fo$(SDR)gd_tga.obj	
+  @$(CC) $(CFLAGS) /c src\gd_bmp.c /Fo$(SDR)gd_bmp.obj 
+  @$(CC) $(CFLAGS) /c src\gd_xbm.c /Fo$(SDR)gd_xbm.obj 
+  @$(CC) $(CFLAGS) /c src\gd_color_match.c /Fo$(SDR)gd_color_match.obj 
+  @$(CC) $(CFLAGS) /c src\gd_version.c /Fo$(SDR)gd_version.obj 
   @$(CC) $(CFLAGS) /c src\gd_filename.c /Fo$(SDR)gd_filename.obj
 
 build_tests: build_lib
