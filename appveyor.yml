@@ -1,18 +1,9 @@
 install:
-  # install wget & 7z
-  - cinst wget -x86
+  # install 7z
   - cinst 7zip.commandline -x86
   
-  
-  # fetch and extract deps
-  - wget -q http://windows.php.net/downloads/php-sdk/deps-5.6-vc11-x86.7z
-  - 7z x deps-5.6-vc11-x86.7z -y > nul
-  - ren deps deps_x86
-  
-  - wget -q http://windows.php.net/downloads/php-sdk/deps-5.6-vc11-x64.7z
-  - 7z x deps-5.6-vc11-x64.7z -y > nul
-  - ren deps deps_x64
-  
+  # fetch deps
+  - git clone https://github.com/imazen/gd-win-dependencies.git
   
   # generate test_config.h
   - set TEST_DIR=%CD:\=\\%\\tests
