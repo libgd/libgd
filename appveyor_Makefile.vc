@@ -61,8 +61,8 @@ build_libs: build_lib build_liba
 all: build_libs build_tests
 
 make_dirs:
-  @if not exist $(BUILD_DIR) do mkdir $(BUILD_DIR)
-  @if not exist $(SDR) do mkdir $(SDR)
+  @if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+  @if not exist $(SDR) mkdir $(SDR)
 
 build_lib: build_obj
   @$(LD) /DLL /OUT:$(BUILD_DIR)\$(GD_DLL) $(GD_GLOBAL_OBJS) $(LIBS_GD) $(LIBS) $(LDFLAGS)
