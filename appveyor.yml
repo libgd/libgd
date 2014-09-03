@@ -3,7 +3,7 @@ install:
   - cinst 7zip.commandline -x86
   
   # fetch deps
-  - git clone https://github.com/tostercx/gd-win-dependencies.git
+  - git clone https://github.com/imazen/gd-win-dependencies.git --branch september-2014 --depth 1
 
 
 build_script:
