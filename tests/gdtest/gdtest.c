@@ -10,8 +10,10 @@
 #include "gdtest.h"
 #include "test_config.h"
 
-//static inline int max(int a, int b) {return a > b ? a : b;}
-
+#ifndef max
+ static inline int max(int a, int b) {return a > b ? a : b;}
+#endif
+ 
 void gdSilence(int priority, const char *format, va_list args)
 {
 	(void)priority;
