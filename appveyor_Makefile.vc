@@ -2,6 +2,10 @@ CC=cl
 LD=link
 LB=lib
 
+!IFNDEF PLATFORM
+PLATFORM=86
+!ENDIF
+
 GD_DLL=libgd.dll
 GD_LIBA=libgd_a.lib
 
@@ -11,7 +15,7 @@ LIBS_GD=turbojpeg-static.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.
 BUILD_DIR=build_x$(PLATFORM)
 INCLUDES=/Isrc /Igd-win-dependencies\x$(PLATFORM)\include -Igd-win-dependencies\x$(PLATFORM)\include\libjpeg-turbo -Igd-win-dependencies\x$(PLATFORM)\include\libpng15 -Igd-win-dependencies\x$(PLATFORM)\include\freetype /Itests /Itests\gdtest
 
-SDR=$(BUILD_DIR)\obj\\
+SDR=$(BUILD_DIR)\obj^\
 GD_GLOBAL_OBJS=$(SDR)gd.obj $(SDR)gd_color.obj $(SDR)gd_color_map.obj $(SDR)gd_transform.obj $(SDR)gdfx.obj $(SDR)gd_security.obj $(SDR)gd_gd.obj $(SDR)gd_gd2.obj $(SDR)gd_io.obj $(SDR)gd_io_dp.obj $(SDR)gd_gif_in.obj $(SDR)gd_gif_out.obj $(SDR)gd_io_file.obj $(SDR)gd_io_ss.obj $(SDR)gd_jpeg.obj $(SDR)gd_png.obj $(SDR)gd_ss.obj $(SDR)gd_topal.obj $(SDR)gd_wbmp.obj $(SDR)gdcache.obj $(SDR)gdfontg.obj $(SDR)gdfontl.obj $(SDR)gdfontmb.obj $(SDR)gdfonts.obj $(SDR)gdfontt.obj $(SDR)gdft.obj $(SDR)gdhelpers.obj $(SDR)gdkanji.obj $(SDR)gdtables.obj $(SDR)gdxpm.obj $(SDR)wbmp.obj $(SDR)gd_filter.obj $(SDR)gd_nnquant.obj $(SDR)gd_rotate.obj $(SDR)gd_matrix.obj $(SDR)gd_interpolation.obj $(SDR)gd_crop.obj $(SDR)webpimg.obj $(SDR)gd_webp.obj $(SDR)gd_tiff.obj $(SDR)gd_tga.obj $(SDR)gd_bmp.obj $(SDR)gd_xbm.obj $(SDR)gd_color_match.obj $(SDR)gd_version.obj $(SDR)gd_filename.obj
 
 LDFLAGS=/nodefaultlib:libcmt /libpath:gd-win-dependencies\x$(PLATFORM)\lib /MACHINE:X$(PLATFORM)
@@ -55,7 +59,10 @@ CFLAGS=/MD /TC\
        $(INCLUDES)
 
 TEST_CFLAGS=$(CFLAGS) /FItest_config.h
-TEST_LDFLAGS=$(LDFLAGS) $(BUILD_DIR)\gdtest.obj $(BUILD_DIR)\libgd.lib
+TEST_LDFLAGS=$(LDFLAGS) $(SDR)gdtest.obj $(BUILD_DIR)\libgd.lib
+
+
+
 
 build_libs: build_lib build_liba
 all: build_libs build_tests
@@ -64,11 +71,15 @@ make_dirs:
   @if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
   @if not exist $(SDR) mkdir $(SDR)
 
+configure_tests:
+  @echo #define GDTEST_TOP_DIR "$(MAKEDIR:\=\\)\\tests" > tests\test_config.h
+  @echo #define snprintf sprintf_s >> tests\test_config.h
+
 build_lib: build_obj
   @$(LD) /DLL /OUT:$(BUILD_DIR)\$(GD_DLL) $(GD_GLOBAL_OBJS) $(LIBS_GD) $(LIBS) $(LDFLAGS)
 
 build_liba: build_obj
-  @$(LB) /OUT:$(BUILD_DIR)\$(GD_LIBA) $(GD_GLOBAL_OBJS) $(LIBS_GD) $(LIBS) $(LDFLAGS)
+  @$(LB) /OUT:$(BUILD_DIR)\$(GD_LIBA) $(GD_GLOBAL_OBJS) $(LDFLAGS)
 
 build_obj: make_dirs
   @$(CC) $(CFLAGS) /c src\gd.c /Fo$(SDR)gd.obj 
@@ -118,189 +129,189 @@ build_obj: make_dirs
   @$(CC) $(CFLAGS) /c src\gd_version.c /Fo$(SDR)gd_version.obj 
   @$(CC) $(CFLAGS) /c src\gd_filename.c /Fo$(SDR)gd_filename.obj
 
-build_tests: build_lib
-  @$(CC) $(CFLAGS) $(BASE_INCLUDES) /c tests\gdtest\gdtest.c /Fo$(BUILD_DIR)\gdtest.obj
-  @$(CC) $(TEST_CFLAGS) /c tests/bmp/bmp_im2im.c /Fo$(BUILD_DIR)\bmp_im2im.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bmp_im2im.obj /out:$(BUILD_DIR)\bmp_im2im.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/bmp/bmp_null.c /Fo$(BUILD_DIR)\bmp_null.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bmp_null.obj /out:$(BUILD_DIR)\bmp_null.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/freetype/bug00132.c /Fo$(BUILD_DIR)\bug00132.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00132.obj /out:$(BUILD_DIR)\bug00132.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gd/gd_im2im.c /Fo$(BUILD_DIR)\gd_im2im.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gd_im2im.obj /out:$(BUILD_DIR)\gd_im2im.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gd/gd_null.c /Fo$(BUILD_DIR)\gd_null.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gd_null.obj /out:$(BUILD_DIR)\gd_null.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gd/gd_num_colors.c /Fo$(BUILD_DIR)\gd_num_colors.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gd_num_colors.obj /out:$(BUILD_DIR)\gd_num_colors.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gd/gd_versiontest.c /Fo$(BUILD_DIR)\gd_versiontest.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gd_versiontest.obj /out:$(BUILD_DIR)\gd_versiontest.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gd2/gd2_empty_file.c /Fo$(BUILD_DIR)\gd2_empty_file.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gd2_empty_file.obj /out:$(BUILD_DIR)\gd2_empty_file.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gd2/gd2_im2im.c /Fo$(BUILD_DIR)\gd2_im2im.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gd2_im2im.obj /out:$(BUILD_DIR)\gd2_im2im.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gd2/gd2_null.c /Fo$(BUILD_DIR)\gd2_null.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gd2_null.obj /out:$(BUILD_DIR)\gd2_null.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gd2/gd2_read.c /Fo$(BUILD_DIR)\gd2_read.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gd2_read.obj /out:$(BUILD_DIR)\gd2_read.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagearc/bug00079.c /Fo$(BUILD_DIR)\bug00079.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00079.obj /out:$(BUILD_DIR)\bug00079.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolorclosest/gdimagecolorclosest.c /Fo$(BUILD_DIR)\gdimagecolorclosest.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagecolorclosest.obj /out:$(BUILD_DIR)\gdimagecolorclosest.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolordeallocate/gdimagecolordeallocate.c /Fo$(BUILD_DIR)\gdimagecolordeallocate.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagecolordeallocate.obj /out:$(BUILD_DIR)\gdimagecolordeallocate.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolorexact/gdimagecolorexact.c /Fo$(BUILD_DIR)\gdimagecolorexact.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagecolorexact.obj /out:$(BUILD_DIR)\gdimagecolorexact.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolorreplace/gdimagecolorreplace.c /Fo$(BUILD_DIR)\gdimagecolorreplace.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagecolorreplace.obj /out:$(BUILD_DIR)\gdimagecolorreplace.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolorresolve/gdimagecolorresolve.c /Fo$(BUILD_DIR)\gdimagecolorresolve.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagecolorresolve.obj /out:$(BUILD_DIR)\gdimagecolorresolve.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolortransparent/gdimagecolortransparent.c /Fo$(BUILD_DIR)\gdimagecolortransparent.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagecolortransparent.obj /out:$(BUILD_DIR)\gdimagecolortransparent.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecopy/bug00007.c /Fo$(BUILD_DIR)\bug00007.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00007.obj /out:$(BUILD_DIR)\bug00007.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecopy/bug00081.c /Fo$(BUILD_DIR)\bug00081.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00081.obj /out:$(BUILD_DIR)\bug00081.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecopyrotated/bug00020.c /Fo$(BUILD_DIR)\bug00020.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00020.obj /out:$(BUILD_DIR)\bug00020.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefile/gdnametest.c /Fo$(BUILD_DIR)\gdnametest.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdnametest.obj /out:$(BUILD_DIR)\gdnametest.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefill/bug00002_1.c /Fo$(BUILD_DIR)\bug00002_1.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00002_1.obj /out:$(BUILD_DIR)\bug00002_1.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefill/bug00002_2.c /Fo$(BUILD_DIR)\bug00002_2.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00002_2.obj /out:$(BUILD_DIR)\bug00002_2.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefill/bug00002_3.c /Fo$(BUILD_DIR)\bug00002_3.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00002_3.obj /out:$(BUILD_DIR)\bug00002_3.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefill/bug00002_4.c /Fo$(BUILD_DIR)\bug00002_4.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00002_4.obj /out:$(BUILD_DIR)\bug00002_4.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledellipse/bug00010.c /Fo$(BUILD_DIR)\bug00010.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00010.obj /out:$(BUILD_DIR)\bug00010.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledellipse/bug00191.c /Fo$(BUILD_DIR)\bug00191.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00191.obj /out:$(BUILD_DIR)\bug00191.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledpolygon/bug00100.c /Fo$(BUILD_DIR)\bug00100.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00100.obj /out:$(BUILD_DIR)\bug00100.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledpolygon/gdimagefilledpolygon0.c /Fo$(BUILD_DIR)\gdimagefilledpolygon0.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagefilledpolygon0.obj /out:$(BUILD_DIR)\gdimagefilledpolygon0.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledpolygon/gdimagefilledpolygon1.c /Fo$(BUILD_DIR)\gdimagefilledpolygon1.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagefilledpolygon1.obj /out:$(BUILD_DIR)\gdimagefilledpolygon1.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledpolygon/gdimagefilledpolygon2.c /Fo$(BUILD_DIR)\gdimagefilledpolygon2.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagefilledpolygon2.obj /out:$(BUILD_DIR)\gdimagefilledpolygon2.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledpolygon/gdimagefilledpolygon3.c /Fo$(BUILD_DIR)\gdimagefilledpolygon3.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagefilledpolygon3.obj /out:$(BUILD_DIR)\gdimagefilledpolygon3.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledrectangle/bug00004.c /Fo$(BUILD_DIR)\bug00004.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00004.obj /out:$(BUILD_DIR)\bug00004.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledrectangle/bug00078.c /Fo$(BUILD_DIR)\bug00078.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00078.obj /out:$(BUILD_DIR)\bug00078.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledrectangle/bug00106_gdimagefilledrectangle.c /Fo$(BUILD_DIR)\bug00106_gdimagefilledrectangle.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00106_gdimagefilledrectangle.obj /out:$(BUILD_DIR)\bug00106_gdimagefilledrectangle.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilltoborder/bug00037.c /Fo$(BUILD_DIR)\bug00037.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00037.obj /out:$(BUILD_DIR)\bug00037.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilter/gdCopyBlurred.c /Fo$(BUILD_DIR)\gdCopyBlurred.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdCopyBlurred.obj /out:$(BUILD_DIR)\gdCopyBlurred.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/bug00072.c /Fo$(BUILD_DIR)\bug00072.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00072.obj /out:$(BUILD_DIR)\bug00072.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/bug00077.c /Fo$(BUILD_DIR)\bug00077.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00077.obj /out:$(BUILD_DIR)\bug00077.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/bug00111.c /Fo$(BUILD_DIR)\bug00111.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00111.obj /out:$(BUILD_DIR)\bug00111.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/gdImageAALine_thickness.c /Fo$(BUILD_DIR)\gdImageAALine_thickness.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdImageAALine_thickness.obj /out:$(BUILD_DIR)\gdImageAALine_thickness.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/gdimageline_aa.c /Fo$(BUILD_DIR)\gdimageline_aa.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimageline_aa.obj /out:$(BUILD_DIR)\gdimageline_aa.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/gdimageline_aa_outofrange.c /Fo$(BUILD_DIR)\gdimageline_aa_outofrange.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimageline_aa_outofrange.obj /out:$(BUILD_DIR)\gdimageline_aa_outofrange.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/gdimageline_bug5.c /Fo$(BUILD_DIR)\gdimageline_bug5.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimageline_bug5.obj /out:$(BUILD_DIR)\gdimageline_bug5.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageopenpolygon/gdimageopenpolygon0.c /Fo$(BUILD_DIR)\gdimageopenpolygon0.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimageopenpolygon0.obj /out:$(BUILD_DIR)\gdimageopenpolygon0.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageopenpolygon/gdimageopenpolygon1.c /Fo$(BUILD_DIR)\gdimageopenpolygon1.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimageopenpolygon1.obj /out:$(BUILD_DIR)\gdimageopenpolygon1.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageopenpolygon/gdimageopenpolygon2.c /Fo$(BUILD_DIR)\gdimageopenpolygon2.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimageopenpolygon2.obj /out:$(BUILD_DIR)\gdimageopenpolygon2.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimageopenpolygon/gdimageopenpolygon3.c /Fo$(BUILD_DIR)\gdimageopenpolygon3.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimageopenpolygon3.obj /out:$(BUILD_DIR)\gdimageopenpolygon3.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagepixelate/gdimagepixelate.c /Fo$(BUILD_DIR)\gdimagepixelate.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagepixelate.obj /out:$(BUILD_DIR)\gdimagepixelate.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagepolygon/gdimagepolygon0.c /Fo$(BUILD_DIR)\gdimagepolygon0.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagepolygon0.obj /out:$(BUILD_DIR)\gdimagepolygon0.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagepolygon/gdimagepolygon1.c /Fo$(BUILD_DIR)\gdimagepolygon1.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagepolygon1.obj /out:$(BUILD_DIR)\gdimagepolygon1.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagepolygon/gdimagepolygon2.c /Fo$(BUILD_DIR)\gdimagepolygon2.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagepolygon2.obj /out:$(BUILD_DIR)\gdimagepolygon2.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagepolygon/gdimagepolygon3.c /Fo$(BUILD_DIR)\gdimagepolygon3.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagepolygon3.obj /out:$(BUILD_DIR)\gdimagepolygon3.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagerectangle/bug00003.c /Fo$(BUILD_DIR)\bug00003.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00003.obj /out:$(BUILD_DIR)\bug00003.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagerectangle/bug00106_gdimagerectangle.c /Fo$(BUILD_DIR)\bug00106_gdimagerectangle.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00106_gdimagerectangle.obj /out:$(BUILD_DIR)\bug00106_gdimagerectangle.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagerotate/bug00067.c /Fo$(BUILD_DIR)\bug00067.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00067.obj /out:$(BUILD_DIR)\bug00067.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagerotate/php_bug_64898.c /Fo$(BUILD_DIR)\php_bug_64898.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\php_bug_64898.obj /out:$(BUILD_DIR)\php_bug_64898.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagescatterex/bug00208_1.c /Fo$(BUILD_DIR)\bug00208_1.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00208_1.obj /out:$(BUILD_DIR)\bug00208_1.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagescatterex/bug00208_2.c /Fo$(BUILD_DIR)\bug00208_2.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00208_2.obj /out:$(BUILD_DIR)\bug00208_2.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagesetpixel/bug00186.c /Fo$(BUILD_DIR)\bug00186.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00186.obj /out:$(BUILD_DIR)\bug00186.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagestringft/gdimagestringft_bbox.c /Fo$(BUILD_DIR)\gdimagestringft_bbox.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagestringft_bbox.obj /out:$(BUILD_DIR)\gdimagestringft_bbox.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdimagestringftex/gdimagestringftex_returnfontpathname.c /Fo$(BUILD_DIR)\gdimagestringftex_returnfontpathname.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdimagestringftex_returnfontpathname.obj /out:$(BUILD_DIR)\gdimagestringftex_returnfontpathname.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdinterpolatedscale/gdModesAndPalettes.c /Fo$(BUILD_DIR)\gdModesAndPalettes.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdModesAndPalettes.obj /out:$(BUILD_DIR)\gdModesAndPalettes.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdinterpolatedscale/gdTrivialResize.c /Fo$(BUILD_DIR)\gdTrivialResize.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdTrivialResize.obj /out:$(BUILD_DIR)\gdTrivialResize.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdnewfilectx/gdnewfilectx_null.c /Fo$(BUILD_DIR)\gdnewfilectx_null.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gdnewfilectx_null.obj /out:$(BUILD_DIR)\gdnewfilectx_null.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gdtiled/bug00032.c /Fo$(BUILD_DIR)\bug00032.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00032.obj /out:$(BUILD_DIR)\bug00032.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00005.c /Fo$(BUILD_DIR)\bug00005.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00005.obj /out:$(BUILD_DIR)\bug00005.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00005_2.c /Fo$(BUILD_DIR)\bug00005_2.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00005_2.obj /out:$(BUILD_DIR)\bug00005_2.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00006.c /Fo$(BUILD_DIR)\bug00006.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00006.obj /out:$(BUILD_DIR)\bug00006.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00060.c /Fo$(BUILD_DIR)\bug00060.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00060.obj /out:$(BUILD_DIR)\bug00060.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00066.c /Fo$(BUILD_DIR)\bug00066.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00066.obj /out:$(BUILD_DIR)\bug00066.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00181.c /Fo$(BUILD_DIR)\bug00181.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00181.obj /out:$(BUILD_DIR)\bug00181.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00227.c /Fo$(BUILD_DIR)\bug00227.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00227.obj /out:$(BUILD_DIR)\bug00227.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gif/gif_im2im.c /Fo$(BUILD_DIR)\gif_im2im.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gif_im2im.obj /out:$(BUILD_DIR)\gif_im2im.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/gif/gif_null.c /Fo$(BUILD_DIR)\gif_null.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\gif_null.obj /out:$(BUILD_DIR)\gif_null.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/jpeg/jpeg_empty_file.c /Fo$(BUILD_DIR)\jpeg_empty_file.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\jpeg_empty_file.obj /out:$(BUILD_DIR)\jpeg_empty_file.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/jpeg/jpeg_im2im.c /Fo$(BUILD_DIR)\jpeg_im2im.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\jpeg_im2im.obj /out:$(BUILD_DIR)\jpeg_im2im.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/jpeg/jpeg_null.c /Fo$(BUILD_DIR)\jpeg_null.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\jpeg_null.obj /out:$(BUILD_DIR)\jpeg_null.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/jpeg/jpeg_read.c /Fo$(BUILD_DIR)\jpeg_read.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\jpeg_read.obj /out:$(BUILD_DIR)\jpeg_read.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/jpeg/jpeg_resolution.c /Fo$(BUILD_DIR)\jpeg_resolution.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\jpeg_resolution.obj /out:$(BUILD_DIR)\jpeg_resolution.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/png/bug00011.c /Fo$(BUILD_DIR)\bug00011.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00011.obj /out:$(BUILD_DIR)\bug00011.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/png/bug00033.c /Fo$(BUILD_DIR)\bug00033.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00033.obj /out:$(BUILD_DIR)\bug00033.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/png/bug00086.c /Fo$(BUILD_DIR)\bug00086.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00086.obj /out:$(BUILD_DIR)\bug00086.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/png/bug00088.c /Fo$(BUILD_DIR)\bug00088.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00088.obj /out:$(BUILD_DIR)\bug00088.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/png/bug00193.c /Fo$(BUILD_DIR)\bug00193.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\bug00193.obj /out:$(BUILD_DIR)\bug00193.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/png/png_im2im.c /Fo$(BUILD_DIR)\png_im2im.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\png_im2im.obj /out:$(BUILD_DIR)\png_im2im.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/png/png_null.c /Fo$(BUILD_DIR)\png_null.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\png_null.obj /out:$(BUILD_DIR)\png_null.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/png/png_resolution.c /Fo$(BUILD_DIR)\png_resolution.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\png_resolution.obj /out:$(BUILD_DIR)\png_resolution.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/tga/tga_null.c /Fo$(BUILD_DIR)\tga_null.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\tga_null.obj /out:$(BUILD_DIR)\tga_null.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/wbmp/wbmp_im2im.c /Fo$(BUILD_DIR)\wbmp_im2im.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\wbmp_im2im.obj /out:$(BUILD_DIR)\wbmp_im2im.exe
-  @$(CC) $(TEST_CFLAGS) /c tests/wbmp/wbmp_null.c /Fo$(BUILD_DIR)\wbmp_null.obj
-  @$(LD) $(TEST_LDFLAGS) $(BUILD_DIR)\wbmp_null.obj /out:$(BUILD_DIR)\wbmp_null.exe
+build_tests: build_lib configure_tests
+  @$(CC) $(CFLAGS) $(BASE_INCLUDES) /c tests\gdtest\gdtest.c /Fo$(SDR)gdtest.obj
+  @$(CC) $(TEST_CFLAGS) /c tests/bmp/bmp_im2im.c /Fo$(SDR)bmp_im2im.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bmp_im2im.obj /out:$(BUILD_DIR)\bmp_im2im.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/bmp/bmp_null.c /Fo$(SDR)bmp_null.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bmp_null.obj /out:$(BUILD_DIR)\bmp_null.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/freetype/bug00132.c /Fo$(SDR)bug00132.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00132.obj /out:$(BUILD_DIR)\bug00132.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gd/gd_im2im.c /Fo$(SDR)gd_im2im.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gd_im2im.obj /out:$(BUILD_DIR)\gd_im2im.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gd/gd_null.c /Fo$(SDR)gd_null.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gd_null.obj /out:$(BUILD_DIR)\gd_null.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gd/gd_num_colors.c /Fo$(SDR)gd_num_colors.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gd_num_colors.obj /out:$(BUILD_DIR)\gd_num_colors.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gd/gd_versiontest.c /Fo$(SDR)gd_versiontest.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gd_versiontest.obj /out:$(BUILD_DIR)\gd_versiontest.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gd2/gd2_empty_file.c /Fo$(SDR)gd2_empty_file.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gd2_empty_file.obj /out:$(BUILD_DIR)\gd2_empty_file.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gd2/gd2_im2im.c /Fo$(SDR)gd2_im2im.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gd2_im2im.obj /out:$(BUILD_DIR)\gd2_im2im.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gd2/gd2_null.c /Fo$(SDR)gd2_null.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gd2_null.obj /out:$(BUILD_DIR)\gd2_null.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gd2/gd2_read.c /Fo$(SDR)gd2_read.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gd2_read.obj /out:$(BUILD_DIR)\gd2_read.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagearc/bug00079.c /Fo$(SDR)bug00079.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00079.obj /out:$(BUILD_DIR)\bug00079.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolorclosest/gdimagecolorclosest.c /Fo$(SDR)gdimagecolorclosest.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagecolorclosest.obj /out:$(BUILD_DIR)\gdimagecolorclosest.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolordeallocate/gdimagecolordeallocate.c /Fo$(SDR)gdimagecolordeallocate.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagecolordeallocate.obj /out:$(BUILD_DIR)\gdimagecolordeallocate.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolorexact/gdimagecolorexact.c /Fo$(SDR)gdimagecolorexact.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagecolorexact.obj /out:$(BUILD_DIR)\gdimagecolorexact.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolorreplace/gdimagecolorreplace.c /Fo$(SDR)gdimagecolorreplace.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagecolorreplace.obj /out:$(BUILD_DIR)\gdimagecolorreplace.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolorresolve/gdimagecolorresolve.c /Fo$(SDR)gdimagecolorresolve.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagecolorresolve.obj /out:$(BUILD_DIR)\gdimagecolorresolve.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecolortransparent/gdimagecolortransparent.c /Fo$(SDR)gdimagecolortransparent.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagecolortransparent.obj /out:$(BUILD_DIR)\gdimagecolortransparent.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecopy/bug00007.c /Fo$(SDR)bug00007.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00007.obj /out:$(BUILD_DIR)\bug00007.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecopy/bug00081.c /Fo$(SDR)bug00081.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00081.obj /out:$(BUILD_DIR)\bug00081.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagecopyrotated/bug00020.c /Fo$(SDR)bug00020.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00020.obj /out:$(BUILD_DIR)\bug00020.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefile/gdnametest.c /Fo$(SDR)gdnametest.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdnametest.obj /out:$(BUILD_DIR)\gdnametest.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefill/bug00002_1.c /Fo$(SDR)bug00002_1.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00002_1.obj /out:$(BUILD_DIR)\bug00002_1.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefill/bug00002_2.c /Fo$(SDR)bug00002_2.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00002_2.obj /out:$(BUILD_DIR)\bug00002_2.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefill/bug00002_3.c /Fo$(SDR)bug00002_3.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00002_3.obj /out:$(BUILD_DIR)\bug00002_3.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefill/bug00002_4.c /Fo$(SDR)bug00002_4.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00002_4.obj /out:$(BUILD_DIR)\bug00002_4.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledellipse/bug00010.c /Fo$(SDR)bug00010.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00010.obj /out:$(BUILD_DIR)\bug00010.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledellipse/bug00191.c /Fo$(SDR)bug00191.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00191.obj /out:$(BUILD_DIR)\bug00191.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledpolygon/bug00100.c /Fo$(SDR)bug00100.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00100.obj /out:$(BUILD_DIR)\bug00100.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledpolygon/gdimagefilledpolygon0.c /Fo$(SDR)gdimagefilledpolygon0.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagefilledpolygon0.obj /out:$(BUILD_DIR)\gdimagefilledpolygon0.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledpolygon/gdimagefilledpolygon1.c /Fo$(SDR)gdimagefilledpolygon1.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagefilledpolygon1.obj /out:$(BUILD_DIR)\gdimagefilledpolygon1.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledpolygon/gdimagefilledpolygon2.c /Fo$(SDR)gdimagefilledpolygon2.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagefilledpolygon2.obj /out:$(BUILD_DIR)\gdimagefilledpolygon2.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledpolygon/gdimagefilledpolygon3.c /Fo$(SDR)gdimagefilledpolygon3.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagefilledpolygon3.obj /out:$(BUILD_DIR)\gdimagefilledpolygon3.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledrectangle/bug00004.c /Fo$(SDR)bug00004.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00004.obj /out:$(BUILD_DIR)\bug00004.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledrectangle/bug00078.c /Fo$(SDR)bug00078.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00078.obj /out:$(BUILD_DIR)\bug00078.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilledrectangle/bug00106_gdimagefilledrectangle.c /Fo$(SDR)bug00106_gdimagefilledrectangle.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00106_gdimagefilledrectangle.obj /out:$(BUILD_DIR)\bug00106_gdimagefilledrectangle.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilltoborder/bug00037.c /Fo$(SDR)bug00037.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00037.obj /out:$(BUILD_DIR)\bug00037.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagefilter/gdCopyBlurred.c /Fo$(SDR)gdCopyBlurred.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdCopyBlurred.obj /out:$(BUILD_DIR)\gdCopyBlurred.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/bug00072.c /Fo$(SDR)bug00072.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00072.obj /out:$(BUILD_DIR)\bug00072.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/bug00077.c /Fo$(SDR)bug00077.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00077.obj /out:$(BUILD_DIR)\bug00077.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/bug00111.c /Fo$(SDR)bug00111.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00111.obj /out:$(BUILD_DIR)\bug00111.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/gdImageAALine_thickness.c /Fo$(SDR)gdImageAALine_thickness.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdImageAALine_thickness.obj /out:$(BUILD_DIR)\gdImageAALine_thickness.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/gdimageline_aa.c /Fo$(SDR)gdimageline_aa.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimageline_aa.obj /out:$(BUILD_DIR)\gdimageline_aa.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/gdimageline_aa_outofrange.c /Fo$(SDR)gdimageline_aa_outofrange.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimageline_aa_outofrange.obj /out:$(BUILD_DIR)\gdimageline_aa_outofrange.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageline/gdimageline_bug5.c /Fo$(SDR)gdimageline_bug5.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimageline_bug5.obj /out:$(BUILD_DIR)\gdimageline_bug5.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageopenpolygon/gdimageopenpolygon0.c /Fo$(SDR)gdimageopenpolygon0.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimageopenpolygon0.obj /out:$(BUILD_DIR)\gdimageopenpolygon0.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageopenpolygon/gdimageopenpolygon1.c /Fo$(SDR)gdimageopenpolygon1.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimageopenpolygon1.obj /out:$(BUILD_DIR)\gdimageopenpolygon1.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageopenpolygon/gdimageopenpolygon2.c /Fo$(SDR)gdimageopenpolygon2.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimageopenpolygon2.obj /out:$(BUILD_DIR)\gdimageopenpolygon2.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimageopenpolygon/gdimageopenpolygon3.c /Fo$(SDR)gdimageopenpolygon3.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimageopenpolygon3.obj /out:$(BUILD_DIR)\gdimageopenpolygon3.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagepixelate/gdimagepixelate.c /Fo$(SDR)gdimagepixelate.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagepixelate.obj /out:$(BUILD_DIR)\gdimagepixelate.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagepolygon/gdimagepolygon0.c /Fo$(SDR)gdimagepolygon0.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagepolygon0.obj /out:$(BUILD_DIR)\gdimagepolygon0.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagepolygon/gdimagepolygon1.c /Fo$(SDR)gdimagepolygon1.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagepolygon1.obj /out:$(BUILD_DIR)\gdimagepolygon1.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagepolygon/gdimagepolygon2.c /Fo$(SDR)gdimagepolygon2.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagepolygon2.obj /out:$(BUILD_DIR)\gdimagepolygon2.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagepolygon/gdimagepolygon3.c /Fo$(SDR)gdimagepolygon3.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagepolygon3.obj /out:$(BUILD_DIR)\gdimagepolygon3.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagerectangle/bug00003.c /Fo$(SDR)bug00003.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00003.obj /out:$(BUILD_DIR)\bug00003.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagerectangle/bug00106_gdimagerectangle.c /Fo$(SDR)bug00106_gdimagerectangle.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00106_gdimagerectangle.obj /out:$(BUILD_DIR)\bug00106_gdimagerectangle.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagerotate/bug00067.c /Fo$(SDR)bug00067.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00067.obj /out:$(BUILD_DIR)\bug00067.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagerotate/php_bug_64898.c /Fo$(SDR)php_bug_64898.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)php_bug_64898.obj /out:$(BUILD_DIR)\php_bug_64898.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagescatterex/bug00208_1.c /Fo$(SDR)bug00208_1.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00208_1.obj /out:$(BUILD_DIR)\bug00208_1.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagescatterex/bug00208_2.c /Fo$(SDR)bug00208_2.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00208_2.obj /out:$(BUILD_DIR)\bug00208_2.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagesetpixel/bug00186.c /Fo$(SDR)bug00186.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00186.obj /out:$(BUILD_DIR)\bug00186.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagestringft/gdimagestringft_bbox.c /Fo$(SDR)gdimagestringft_bbox.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagestringft_bbox.obj /out:$(BUILD_DIR)\gdimagestringft_bbox.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdimagestringftex/gdimagestringftex_returnfontpathname.c /Fo$(SDR)gdimagestringftex_returnfontpathname.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdimagestringftex_returnfontpathname.obj /out:$(BUILD_DIR)\gdimagestringftex_returnfontpathname.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdinterpolatedscale/gdModesAndPalettes.c /Fo$(SDR)gdModesAndPalettes.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdModesAndPalettes.obj /out:$(BUILD_DIR)\gdModesAndPalettes.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdinterpolatedscale/gdTrivialResize.c /Fo$(SDR)gdTrivialResize.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdTrivialResize.obj /out:$(BUILD_DIR)\gdTrivialResize.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdnewfilectx/gdnewfilectx_null.c /Fo$(SDR)gdnewfilectx_null.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gdnewfilectx_null.obj /out:$(BUILD_DIR)\gdnewfilectx_null.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gdtiled/bug00032.c /Fo$(SDR)bug00032.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00032.obj /out:$(BUILD_DIR)\bug00032.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00005.c /Fo$(SDR)bug00005.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00005.obj /out:$(BUILD_DIR)\bug00005.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00005_2.c /Fo$(SDR)bug00005_2.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00005_2.obj /out:$(BUILD_DIR)\bug00005_2.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00006.c /Fo$(SDR)bug00006.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00006.obj /out:$(BUILD_DIR)\bug00006.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00060.c /Fo$(SDR)bug00060.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00060.obj /out:$(BUILD_DIR)\bug00060.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00066.c /Fo$(SDR)bug00066.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00066.obj /out:$(BUILD_DIR)\bug00066.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00181.c /Fo$(SDR)bug00181.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00181.obj /out:$(BUILD_DIR)\bug00181.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gif/bug00227.c /Fo$(SDR)bug00227.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00227.obj /out:$(BUILD_DIR)\bug00227.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gif/gif_im2im.c /Fo$(SDR)gif_im2im.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gif_im2im.obj /out:$(BUILD_DIR)\gif_im2im.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/gif/gif_null.c /Fo$(SDR)gif_null.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)gif_null.obj /out:$(BUILD_DIR)\gif_null.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/jpeg/jpeg_empty_file.c /Fo$(SDR)jpeg_empty_file.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)jpeg_empty_file.obj /out:$(BUILD_DIR)\jpeg_empty_file.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/jpeg/jpeg_im2im.c /Fo$(SDR)jpeg_im2im.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)jpeg_im2im.obj /out:$(BUILD_DIR)\jpeg_im2im.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/jpeg/jpeg_null.c /Fo$(SDR)jpeg_null.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)jpeg_null.obj /out:$(BUILD_DIR)\jpeg_null.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/jpeg/jpeg_read.c /Fo$(SDR)jpeg_read.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)jpeg_read.obj /out:$(BUILD_DIR)\jpeg_read.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/jpeg/jpeg_resolution.c /Fo$(SDR)jpeg_resolution.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)jpeg_resolution.obj /out:$(BUILD_DIR)\jpeg_resolution.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/png/bug00011.c /Fo$(SDR)bug00011.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00011.obj /out:$(BUILD_DIR)\bug00011.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/png/bug00033.c /Fo$(SDR)bug00033.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00033.obj /out:$(BUILD_DIR)\bug00033.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/png/bug00086.c /Fo$(SDR)bug00086.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00086.obj /out:$(BUILD_DIR)\bug00086.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/png/bug00088.c /Fo$(SDR)bug00088.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00088.obj /out:$(BUILD_DIR)\bug00088.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/png/bug00193.c /Fo$(SDR)bug00193.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)bug00193.obj /out:$(BUILD_DIR)\bug00193.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/png/png_im2im.c /Fo$(SDR)png_im2im.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)png_im2im.obj /out:$(BUILD_DIR)\png_im2im.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/png/png_null.c /Fo$(SDR)png_null.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)png_null.obj /out:$(BUILD_DIR)\png_null.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/png/png_resolution.c /Fo$(SDR)png_resolution.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)png_resolution.obj /out:$(BUILD_DIR)\png_resolution.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/tga/tga_null.c /Fo$(SDR)tga_null.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)tga_null.obj /out:$(BUILD_DIR)\tga_null.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/wbmp/wbmp_im2im.c /Fo$(SDR)wbmp_im2im.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)wbmp_im2im.obj /out:$(BUILD_DIR)\wbmp_im2im.exe
+  @$(CC) $(TEST_CFLAGS) /c tests/wbmp/wbmp_null.c /Fo$(SDR)wbmp_null.obj
+  @$(LD) $(TEST_LDFLAGS) $(SDR)wbmp_null.obj /out:$(BUILD_DIR)\wbmp_null.exe
