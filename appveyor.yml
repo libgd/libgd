@@ -1,6 +1,6 @@
 install:
-  # install 7z
-  - cinst 7zip.commandline -x86
+  # install 7z (not required, should already be present)
+  #- cinst 7zip.commandline -x86
   
   # fetch deps
   - git clone https://github.com/imazen/gd-win-dependencies.git --branch september-2014 --depth 1
