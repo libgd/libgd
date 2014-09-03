@@ -1,6 +1,6 @@
 CC=cl
 LD=link
-LIB=lib
+LB=lib
 
 GD_DLL=libgd.dll
 GD_LIBA=libgd_a.lib
@@ -68,7 +68,7 @@ build_lib: build_obj
   @$(LD) /DLL /OUT:$(BUILD_DIR)\$(GD_DLL) $(GD_GLOBAL_OBJS) $(LIBS_GD) $(LIBS) $(LDFLAGS)
 
 build_liba: build_obj
-  @$(LIB) /OUT:$(BUILD_DIR)\$(GD_LIBA) $(GD_GLOBAL_OBJS) $(LIBS_GD) $(LIBS) $(LDFLAGS)
+  @$(LB) /OUT:$(BUILD_DIR)\$(GD_LIBA) $(GD_GLOBAL_OBJS) $(LIBS_GD) $(LIBS) $(LDFLAGS)
 
 build_obj: make_dirs
   @$(CC) $(CFLAGS) /c src\gd.c /Fo$(SDR)gd.obj 
