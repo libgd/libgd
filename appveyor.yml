@@ -1,38 +1,22 @@
 install:
-  # install wget & 7z
-  - cinst wget -x86
+  # install 7z
   - cinst 7zip.commandline -x86
   
-  
-  # fetch and extract deps
-  - wget -q http://windows.php.net/downloads/php-sdk/deps-5.6-vc11-x86.7z
-  - 7z x deps-5.6-vc11-x86.7z -y > nul
-  - ren deps deps_x86
-  
-  - wget -q http://windows.php.net/downloads/php-sdk/deps-5.6-vc11-x64.7z
-  - 7z x deps-5.6-vc11-x64.7z -y > nul
-  - ren deps deps_x64
-  
-  
-  # generate test_config.h
-  - set TEST_DIR=%CD:\=\\%\\tests
-  - echo(#define GDTEST_TOP_DIR "%TEST_DIR%" > tests\test_config.h
-  # snprintf fix
-  - echo(#define snprintf sprintf_s >> tests\test_config.h
+  # fetch deps
+  - git clone https://github.com/tostercx/gd-win-dependencies.git
 
 
 build_script:
   - "\"C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall\""
-  - set PLATFORM=86
-  - nmake /F appveyor_Makefile.vc
+  - nmake /f windows\Makefile.vc all
   - "\"C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall\" x86_amd64"
   - set PLATFORM=64
-  - nmake /F appveyor_Makefile.vc
+  - nmake /f windows\Makefile.vc all
 
 
 after_build:
-  - 7z a libgd-x86.zip .\build_x86\libgd.dll .\build_x86\libgd.lib
-  - 7z a libgd-x64.zip .\build_x64\libgd.dll .\build_x64\libgd.lib
+  - 7z a libgd-x86.zip .\build_x86\libgd.dll .\build_x86\libgd.lib .\build_x86\libgd_a.lib
+  - 7z a libgd-x64.zip .\build_x64\libgd.dll .\build_x64\libgd.lib .\build_x64\libgd_a.lib
 
 
 test_script:
