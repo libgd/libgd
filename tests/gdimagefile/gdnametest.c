@@ -92,7 +92,7 @@ do_test() {
          * it.  (If it's one of the built-in types, *that* a different
          * problem; we assert that here.) */
         if (!gdSupportsFileType(names[n].nm, 0)) {
-            gdTestAssert(!names[n].required);
+            gdTestAssertMsg(!names[n].required, "GD doesn't support required file type: %s", full_filename);
             continue;
         }/* if */
 
@@ -103,23 +103,24 @@ do_test() {
         snprintf(full_filename, sizeof(full_filename), "gdimagefile/%s",
                  names[n].nm);
 
+
         /* Write the image unless writing is not supported. */
         if (!names[n].readonly) {
             gdImageFile(orig, full_filename);
         }/* if */
 
         copy = gdImageCreateFromFile(full_filename);
-        gdTestAssert(!!copy);
+        gdTestAssertMsg(!!copy, "Failed to load %s", full_filename);
         if (!copy) continue;
 
         /* Debug printf. */
         //printf("%s -> %d\n", full_filename, gdMaxPixelDiff(orig, copy));
         
-        gdTestAssert(gdMaxPixelDiff(orig, copy) <= names[n].maxdiff);
+        gdTestAssertMsg(gdMaxPixelDiff(orig, copy) <= names[n].maxdiff,"Pixels different on %s", full_filename, full_filename);
 
         if (!names[n].readonly) {
             status = remove(full_filename);
-            gdTestAssert(status == 0);
+            gdTestAssertMsg(status == 0, "Failed to delete %s", full_filename);
         }/* if */
 
         gdImageDestroy(orig);
