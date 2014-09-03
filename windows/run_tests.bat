@@ -19,7 +19,7 @@ for /f %%T in (testlist.txt) do (
   
   echo !output:~0,73!!result!
   if defined APPVEYOR (
-    appveyor AddTest "!test! x86" -Outcome !result! -Framework Custom -Filename %%~nT.exe -Duration 0
+    appveyor AddTest "!test! x%PLATFORM%" -Outcome !result! -Framework Custom -Filename %%~nT.exe -Duration 0
   )
 )
 
