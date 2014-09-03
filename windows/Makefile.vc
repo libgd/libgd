@@ -26,9 +26,9 @@ GD_GLOBAL_OBJS=$(SDR)gd.obj $(SDR)gd_color.obj $(SDR)gd_color_map.obj $(SDR)gd_t
 LDFLAGS=/nologo /nodefaultlib:libcmt /libpath:gd-win-dependencies\x$(PLATFORM)\lib /MACHINE:X$(PLATFORM)
 
 CFLAGS=/nologo /O2 /Qvec-report:1 /MD /TC\
-       /DWIN32=1
-       /D_WIN32=1 
-       /DMSWIN32=1
+       /DWIN32=1\
+       /D_WIN32=1\
+       /DMSWIN32=1\
        /DBGDWIN32=1\
        /DHAVE_FT2BUILD_H=1\
        /DHAVE_GD_H=1\
