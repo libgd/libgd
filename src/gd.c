@@ -1066,6 +1066,7 @@ BGD_DECLARE(void) gdImageSetPixel (gdImagePtr im, int x, int y, int color)
 					case gdEffectReplace:
 						im->tpixels[y][x] = color;
 						break;
+					case gdEffectAlphaBlend:
 					case gdEffectNormal:
 						im->tpixels[y][x] = gdAlphaBlend(im->tpixels[y][x], color);
 						break;
