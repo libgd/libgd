@@ -8,10 +8,10 @@ install:
 
 build_script:
   - "\"C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall\""
-  - nmake /F appveyor_Makefile.vc all
+  - nmake /f windows\Makefile.w32 all
   - "\"C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall\" x86_amd64"
   - set PLATFORM=64
-  - nmake /F appveyor_Makefile.vc all
+  - nmake /f windows\Makefile.w32 all
 
 
 after_build:
