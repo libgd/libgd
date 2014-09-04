@@ -99,7 +99,6 @@ TEST_MK=$(TDR)Maketests.vc
 !IF [mkdir $(BUILD_DIR)]
 !ENDIF
 !IF [mkdir $(TDR)]
-!ERROR Cannot create $(TDR)
 !ENDIF
 !IF [@copy NUL $(TEST_MK)]
 !ENDIF
