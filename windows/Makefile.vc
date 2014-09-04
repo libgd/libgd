@@ -96,7 +96,7 @@ TEST_MK=$(TDR)Maketests.vc
 
 # generate test makefile from TESTS macro
 
-!IF [mkdir /S $(TDR)]
+!IF [mkdir $(BUILD_DIR)]
 !IF [mkdir $(TDR)]
 !ERROR Cannot create $(TDR)
 !ENDIF
