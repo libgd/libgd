@@ -219,3 +219,7 @@ Makefile.in
 # Doc artifacts
 /docs/naturaldocs/html/
 /docs/naturaldocs/project/Data/
+
+gd-win-dependencies
+build_x86
+build_x64

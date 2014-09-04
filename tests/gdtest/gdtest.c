@@ -262,11 +262,11 @@ int _gdTestAssert(const char* file, unsigned int line, const char* message, int 
 
 int _gdTestAssertMsg(const char* file, unsigned int line, int condition, const char* message, ...)
 {
-	if (condition) return 1;
-
-	va_list args;
+  va_list args;
 	char output_buf[GDTEST_STRING_MAX];
-
+	
+	if (condition) return 1;
+  
 	va_start(args, message);
 	vsnprintf(output_buf, sizeof(output_buf), message, args);
 	va_end(args);
