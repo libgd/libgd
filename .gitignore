@@ -46,7 +46,6 @@ Makefile.in
 /m4/ltsugar.m4
 /m4/ltversion.m4
 /m4/lt~obsolete.m4
-/src/config.h
 /src/config.hin
 /src/stamp-h1
 
@@ -58,7 +57,6 @@ Makefile.in
 /src/fontconfigtest
 /src/fontsizetest
 /src/fontwheeltest
-/src/gd.h
 /src/gd2copypal
 /src/gd2time
 /src/gd2togif
