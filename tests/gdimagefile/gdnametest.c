@@ -47,6 +47,10 @@ gdImagePtr mkcross() {
 
 void
 do_test() {
+
+    gdTestAssertMsg(strchr("123",'2') != 0, "strchr() is not functional.\n");
+    gdTestAssertMsg(strcasecmp("123abC","123Abc") == 0, "strcasecmp() is not functional.\n");
+    
     int n;
     struct {
         const char *nm;     // Filename
@@ -92,7 +96,7 @@ do_test() {
          * it.  (If it's one of the built-in types, *that* a different
          * problem; we assert that here.) */
         if (!gdSupportsFileType(names[n].nm, 0)) {
-            gdTestAssertMsg(!names[n].required, "GD doesn't support required file type: %s", full_filename);
+            gdTestAssertMsg(!names[n].required, "GD doesn't support required file type: %s\n", full_filename);
             continue;
         }/* if */
 
@@ -100,27 +104,28 @@ do_test() {
 
         /* Prepend the test directory; this is expected to be run in
          * the parent dir. */
-        snprintf(full_filename, sizeof(full_filename), "gdimagefile/%s",
+        snprintf(full_filename, sizeof(full_filename), "gdimagefile\\%s\n",
                  names[n].nm);
 
 
         /* Write the image unless writing is not supported. */
         if (!names[n].readonly) {
-            gdImageFile(orig, full_filename);
+            status = gdImageFile(orig, full_filename);
+            gdTestAssertMsg(status == GD_TRUE, "Failed to create %s\n", full_filename);
         }/* if */
 
         copy = gdImageCreateFromFile(full_filename);
-        gdTestAssertMsg(!!copy, "Failed to load %s", full_filename);
+        gdTestAssertMsg(!!copy, "Failed to load %s\n", full_filename);
         if (!copy) continue;
 
         /* Debug printf. */
         //printf("%s -> %d\n", full_filename, gdMaxPixelDiff(orig, copy));
         
-        gdTestAssertMsg(gdMaxPixelDiff(orig, copy) <= names[n].maxdiff,"Pixels different on %s", full_filename, full_filename);
+        gdTestAssertMsg(gdMaxPixelDiff(orig, copy) <= names[n].maxdiff,"Pixels different on %s\n", full_filename, full_filename);
 
         if (!names[n].readonly) {
             status = remove(full_filename);
-            gdTestAssertMsg(status == 0, "Failed to delete %s", full_filename);
+            gdTestAssertMsg(status == 0, "Failed to delete %s\n", full_filename);
         }/* if */
 
         gdImageDestroy(orig);
