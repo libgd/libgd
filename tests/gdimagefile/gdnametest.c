@@ -3,6 +3,7 @@
 
 #include "gd.h"
 #include "gdtest.h"
+#include "../test_config.h"
 
 #define WIDTH 60
 #define HEIGHT 50
@@ -102,10 +103,18 @@ do_test() {
 
         orig = mkcross();
 
+        
+        #ifdef GDTEST_TOP_DIR 
+
+        snprintf(full_filename, sizeof(full_filename), GDTEST_TOP_DIR"\\gdimagefile\\%s",
+                 names[n].nm);
+
+        #else
         /* Prepend the test directory; this is expected to be run in
          * the parent dir. */
         snprintf(full_filename, sizeof(full_filename), "gdimagefile/%s",
                  names[n].nm);
+        #endif 
 
 
         /* Write the image unless writing is not supported. */
