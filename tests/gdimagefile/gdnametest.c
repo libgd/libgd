@@ -48,8 +48,8 @@ gdImagePtr mkcross() {
 void
 do_test() {
 
-    gdTestAssertMsg(strchr("123",'2') != 0, "strchr() is not functional.\n");
-    gdTestAssertMsg(strcasecmp("123abC","123Abc") == 0, "strcasecmp() is not functional.\n");
+    gdTestAssertMsg(strchr("123",'2') != 0, "strchr() is not functional.\n",1);
+    gdTestAssertMsg(strcasecmp("123abC","123Abc") == 0, "strcasecmp() is not functional.\n",1);
     
     int n;
     struct {
@@ -104,7 +104,7 @@ do_test() {
 
         /* Prepend the test directory; this is expected to be run in
          * the parent dir. */
-        snprintf(full_filename, sizeof(full_filename), "gdimagefile\\%s\n",
+        snprintf(full_filename, sizeof(full_filename), "gdimagefile/%s",
                  names[n].nm);
 
 
