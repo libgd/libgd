@@ -163,7 +163,7 @@ $(TARGETLIB): $(OBJECTS)
 
 build_tests: $(TEST_LIST) $(SDR)gdtest.obj $(TEST_EXES)
 
-$(SDR)gdtest.obj: $(TARGETDLL) $(TEST_CONFIG)
+$(SDR)gdtest.obj: $(TARGETDLL) $(TEST_CONFIG) tests\gdtest\gdtest.c
   @$(CC) $(CFLAGS) /c tests\gdtest\gdtest.c /Fo$(SDR)gdtest.obj
 
 $(TEST_CONFIG):
