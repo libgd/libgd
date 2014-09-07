@@ -7,10 +7,16 @@ CC=cl
 LD=link
 LB=lib
 
+
 !IFNDEF PLATFORM
 PLATFORM=x86
 !ENDIF
+# detects x64 cross-compiling
+!IF PREFERREDTOOLARCHITECTURE == x64
+PLATFORM=x64
+!ENDIF
 PLATFORM=$(PLATFORM:X=x)
+
 
 BUILD_DIR=build_$(PLATFORM)
 GD_DLL=libgd.dll
