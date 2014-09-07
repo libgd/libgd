@@ -16,8 +16,9 @@ after_build:
 
 
 test_script:
+  - set PLATFORM=x86
   - windows\run_tests
-  - set PLATFORM=64
+  - set PLATFORM=x64
   - windows\run_tests
 
 

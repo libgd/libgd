@@ -1,6 +1,7 @@
 @echo off
 setlocal EnableDelayedExpansion
-if [%PLATFORM%]==[] set PLATFORM=86
+if [%PLATFORM%]==[] set PLATFORM=x86
+set PLATFORM=%PLATFORM:X=x%
 
 if exist build_x%PLATFORM%\tests (cd build_x%PLATFORM%\tests) else (
   if exist ..\build_x%PLATFORM%\tests (cd ..\build_x%PLATFORM%\tests) else (
