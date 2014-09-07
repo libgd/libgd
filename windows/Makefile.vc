@@ -96,11 +96,11 @@ TEST_MK=$(TDR)Maketests.vc
 
 # generate test makefile from TESTS macro
 
-!IF [mkdir $(BUILD_DIR)]
+!IF [if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)]
 !ENDIF
-!IF [mkdir $(TDR)]
+!IF [if not exist $(TDR) mkdir $(TDR)]
 !ENDIF
-!IF [@copy NUL $(TEST_MK)]
+!IF [@copy NUL $(TEST_MK) > nul]
 !ENDIF
 !IF [@for %F in ($(TESTS)) do @echo TEST_EXES=$(TDR)%~nF.exe ^$(TEST_EXES) >> $(TEST_MK)]
 !ENDIF
