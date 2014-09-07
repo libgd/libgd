@@ -9,10 +9,11 @@ LD=link
 LB=lib
 
 !IFNDEF PLATFORM
-PLATFORM=86
+PLATFORM=x86
 !ENDIF
+PLATFORM=$(PLATFORM:X=x)
 
-BUILD_DIR=build_x$(PLATFORM)
+BUILD_DIR=build_$(PLATFORM)
 GD_DLL=libgd.dll
 GD_LIB=libgd_a.lib
 
@@ -28,9 +29,9 @@ TESTS=bmp\bmp_im2im bmp\bmp_null freetype\bug00132 gd\gd_im2im gd\gd_null gd\gd_
 LIBS=kernel32.lib ole32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib Dnsapi.lib Gdi32.Lib
 LIBS_GD=turbojpeg-static.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib
 
-INCLUDES=/Isrc /Igd-win-dependencies\x$(PLATFORM)\include -Igd-win-dependencies\x$(PLATFORM)\include\libjpeg-turbo -Igd-win-dependencies\x$(PLATFORM)\include\libpng15 -Igd-win-dependencies\x$(PLATFORM)\include\freetype /Itests /Itests\gdtest
+INCLUDES=/Isrc /Igd-win-dependencies\$(PLATFORM)\include -Igd-win-dependencies\$(PLATFORM)\include\libjpeg-turbo -Igd-win-dependencies\$(PLATFORM)\include\libpng15 -Igd-win-dependencies\$(PLATFORM)\include\freetype /Itests /Itests\gdtest
 
-LDFLAGS=/nologo /nodefaultlib:libcmt /libpath:gd-win-dependencies\x$(PLATFORM)\lib /MACHINE:X$(PLATFORM)
+LDFLAGS=/nologo /nodefaultlib:libcmt /libpath:gd-win-dependencies\$(PLATFORM)\lib /MACHINE:$(PLATFORM)
 
 CFLAGS=/nologo /O2 /Qvec-report:1 /MD /TC\
        /DWIN32=1\
