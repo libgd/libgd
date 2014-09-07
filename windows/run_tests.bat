@@ -1,10 +1,11 @@
 @echo off
 setlocal EnableDelayedExpansion
 if [%PLATFORM%]==[] set PLATFORM=x86
+if [%PREFERREDTOOLARCHITECTURE%]==[x64] set PLATFORM=x64
 set PLATFORM=%PLATFORM:X=x%
 
-if exist build_x%PLATFORM%\tests (cd build_x%PLATFORM%\tests) else (
-  if exist ..\build_x%PLATFORM%\tests (cd ..\build_x%PLATFORM%\tests) else (
+if exist build_%PLATFORM%\tests (cd build_%PLATFORM%\tests) else (
+  if exist ..\build_%PLATFORM%\tests (cd ..\build_%PLATFORM%\tests) else (
     echo unable to find test dir
     exit /b 1
   )
@@ -30,7 +31,7 @@ for /f %%T in (testlist.txt) do (
   rem if defined testout echo msg: !testout!
   
   if defined APPVEYOR (
-    appveyor AddTest "!test! x%PLATFORM%" -Outcome !result! -Framework Custom -Filename %%~nT.exe -Duration 0
+    appveyor AddTest "!test! %PLATFORM%" -Outcome !result! -Framework Custom -Filename %%~nT.exe -Duration 0
   )
 )
 
