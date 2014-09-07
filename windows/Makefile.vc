@@ -1,6 +1,5 @@
 # To build locally get a copy of the dependancies (https://github.com/imazen/gd-win-dependencies)
 # Then run 'nmake /f windows\Makefile.vc' in MS dev console
-# For x64 run x64 vcvarsall and 'set PLATFORM=64' before nmake
 # To build tests as well 'nmake /f windows\Makefile.vc all'
 # To build tests and execute them 'nmake /f windows\Makefile.vc check'
 
