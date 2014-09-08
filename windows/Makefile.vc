@@ -1,6 +1,5 @@
 # To build locally get a copy of the dependancies (https://github.com/imazen/gd-win-dependencies)
 # Then run 'nmake /f windows\Makefile.vc' in MS dev console
-# For x64 run x64 vcvarsall and 'set PLATFORM=64' before nmake
 # To build tests as well 'nmake /f windows\Makefile.vc all'
 # To build tests and execute them 'nmake /f windows\Makefile.vc check'
 
@@ -8,11 +7,18 @@ CC=cl
 LD=link
 LB=lib
 
-!IFNDEF PLATFORM
-PLATFORM=86
-!ENDIF
 
-BUILD_DIR=build_x$(PLATFORM)
+!IFNDEF PLATFORM
+PLATFORM=x86
+!ENDIF
+# detect x64 cross-compiler env
+!IF "$(PREFERREDTOOLARCHITECTURE)" == "x64"
+PLATFORM=x64
+!ENDIF
+PLATFORM=$(PLATFORM:X=x)
+
+
+BUILD_DIR=build_$(PLATFORM)
 GD_DLL=libgd.dll
 GD_LIB=libgd_a.lib
 
@@ -28,9 +34,9 @@ TESTS=bmp\bmp_im2im bmp\bmp_null freetype\bug00132 gd\gd_im2im gd\gd_null gd\gd_
 LIBS=kernel32.lib ole32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib Dnsapi.lib Gdi32.Lib
 LIBS_GD=turbojpeg-static.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib
 
-INCLUDES=/Isrc /Igd-win-dependencies\x$(PLATFORM)\include -Igd-win-dependencies\x$(PLATFORM)\include\libjpeg-turbo -Igd-win-dependencies\x$(PLATFORM)\include\libpng15 -Igd-win-dependencies\x$(PLATFORM)\include\freetype /Itests /Itests\gdtest
+INCLUDES=/Isrc /Igd-win-dependencies\$(PLATFORM)\include -Igd-win-dependencies\$(PLATFORM)\include\libjpeg-turbo -Igd-win-dependencies\$(PLATFORM)\include\libpng15 -Igd-win-dependencies\$(PLATFORM)\include\freetype /Itests /Itests\gdtest
 
-LDFLAGS=/nologo /nodefaultlib:libcmt /libpath:gd-win-dependencies\x$(PLATFORM)\lib /MACHINE:X$(PLATFORM)
+LDFLAGS=/nologo /nodefaultlib:libcmt /libpath:gd-win-dependencies\$(PLATFORM)\lib /MACHINE:$(PLATFORM)
 
 CFLAGS=/nologo /O2 /Qvec-report:1 /MD /TC\
        /DWIN32=1\
@@ -96,11 +102,11 @@ TEST_MK=$(TDR)Maketests.vc
 
 # generate test makefile from TESTS macro
 
-!IF [mkdir $(BUILD_DIR)]
+!IF [if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)]
 !ENDIF
-!IF [mkdir $(TDR)]
+!IF [if not exist $(TDR) mkdir $(TDR)]
 !ENDIF
-!IF [@copy NUL $(TEST_MK)]
+!IF [@copy NUL $(TEST_MK) > nul]
 !ENDIF
 !IF [@for %F in ($(TESTS)) do @echo TEST_EXES=$(TDR)%~nF.exe ^$(TEST_EXES) >> $(TEST_MK)]
 !ENDIF
@@ -163,7 +169,7 @@ $(TARGETLIB): $(OBJECTS)
 
 build_tests: $(TEST_LIST) $(SDR)gdtest.obj $(TEST_EXES)
 
-$(SDR)gdtest.obj: $(TARGETDLL) $(TEST_CONFIG)
+$(SDR)gdtest.obj: $(TARGETDLL) $(TEST_CONFIG) tests\gdtest\gdtest.c
   @$(CC) $(CFLAGS) /c tests\gdtest\gdtest.c /Fo$(SDR)gdtest.obj
 
 $(TEST_CONFIG):
