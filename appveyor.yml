@@ -1,29 +1,344 @@
+shallow_clone: true
+
+
+
+environment:
+  # settings
+  with_zlib: 1      # libgd actually won't build without it..
+  with_libpng: 1    # needs zlib
+  with_libjpeg: 1   # will download nasm; removing jpeg or png will break current tests
+  with_freetype: 1  # removing breaks bindings freetype test
+  with_iconv: 1     
+  with_tiff: 1      # needs zlib and jpeg
+  
+  
+  matrix:
+    - build_platform: "x86"
+      build_compiler: "msvc"
+    
+    - build_platform: "x64"
+      build_compiler: "msvc"
+    
+    - build_platform: "x86"
+      build_compiler: "mingw"
+      build_bindings: 1
+    
+    - build_platform: "x64"
+      build_compiler: "mingw"
+      build_bindings: 1
+
+
+
 install:
+  - ps: $nl = "`r`n"
+  - ps: $wc = New-Object 'System.Net.WebClient'
+  - ps: if($env:build_platform -eq 'x64') {$env:vc_arg = 'x86_amd64'}
+        else {$env:vc_arg = 'x86'}
+  
+  # functions
+  - ps: function print-file($txt) {
+      Get-Content $txt | ForEach-Object { echo "$_"  }}
+  
+  - ps: function invoke($exe, $al, $output=0) {
+      echo "$nl> INVOKE $exe $al <$nl$nl";
+      if($al) {Measure-Command {$process = (start-process $exe $al -Wait -NoNewWindow -RedirectStandardOutput C:\out.txt -RedirectStandardError C:\err.txt);}}
+      else {Measure-Command {$process = (start-process $exe -Wait -NoNewWindow -RedirectStandardOutput C:\out.txt -RedirectStandardError C:\err.txt);}}
+      if($output) {
+      echo "stdout:"; print-file 'C:\out.txt';
+      echo "stderr:"; print-file 'C:\err.txt'; }
+      return $process.ExitCode; }
+  
+  - ps: function Push-Ctest-Results($dir, $prefix='') {
+      $head = "<?xml version=`"1.0`" encoding=`"utf-8`"?>`n<assembly name=`"`" run-date=`"1970-01-01`" run-time=`"00:00:00`" configFile=`"`" time=`"0`" total=`"0`" passed=`"0`" failed=`"0`" skipped=`"0`" environment=`"`">`n<class time=`"0`" name=`"`" total=`"0`" passed=`"0`" failed=`"0`" skipped=`"0`">`n";
+      $foot = "</class>`n</assembly>`n";
+      $out = Select-String '(?s)\d+\/\d+ Testing.*?end time.*?[-]+' -input ((Get-Content $dir\Testing\Temporary\LastTest*.log) -join "`n") -AllMatches;
+      $xml = $head;
+      $num = 0;
+      Select-String '(\w+)\s+(\d+)\s+([\d\.]{5})' -input (Get-Content $dir\Testing\Temporary\CTestCostData.txt)-AllMatches | % {$_.Matches} | % {
+        $name = $prefix + $_.Groups[1].Value;
+        $res = @{$true="Pass";$false="Fail"}[$_.Groups[2].Value -eq 1];
+        $time = $_.Groups[3].Value;
+        $output = [Security.SecurityElement]::Escape($out.Matches[$num].Value);
+        $num++;
+        $xml += "<test name=`"$name`" type=`"`" method=`"`" result=`"$res`" time=`"$time`">`n<output>$output</output>`n</test>`n"};
+      $xml += $foot;
+      $xml > ".\xunit_tmp.xml";
+      $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\xunit_tmp.xml)); }
+  
+  
   # fetch deps
-  - git clone https://github.com/imazen/gd-win-dependencies.git --branch september-2014 --depth 1
+  - ps: if($env:build_bindings -eq 1) { invoke 'git' 'clone https://github.com/imazen/gd-dotnet-bindings-generator.git --depth 1 --branch itanium --single-branch' }
+  - ps: if($env:with_zlib -eq 1) { invoke 'git' 'clone https://github.com/imazen/zlib.git --depth 1' }
+  - ps: if($env:with_libpng -eq 1) { invoke 'git' 'clone https://github.com/imazen/libpng.git --depth 1' }
+  - ps: if($env:with_libjpeg -eq 1) { invoke 'git' 'clone https://github.com/imazen/libjpeg-turbo.git --depth 1' }
+  - ps: if($env:with_freetype -eq 1) { invoke 'git' 'clone https://github.com/imazen/freetype.git --depth 1' }
+  - ps: if($env:with_iconv -eq 1 -and $env:build_compiler -eq 'msvc') { invoke 'git' 'clone https://github.com/imazen/libiconv.git --depth 1' }
+  - ps: if($env:with_iconv -eq 1 -and $env:build_compiler -eq 'mingw') { invoke 'git' 'clone https://github.com/imazen/libiconv.git --depth 1 --branch preconfigured-makefiles3 --single-branch' }
+  - ps: if($env:with_tiff -eq 1) { invoke 'git' 'clone https://github.com/tostercx/libtiff.git --depth 1' }
+  
+  # get nasm
+  - if [%with_libjpeg%]==[1] cinst nasm
+  - ps: if($env:with_libjpeg -eq 1) { $env:path="C:\Program Files (x86)\nasm;$($env:path)" }
+  
+  # get mingw-w64 (C:\mingw64)
+  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') {
+      invoke 'curl' '-L -o mw64.7z "http://mingw.blob.core.windows.net/x86-64-491-release-posix-seh-rt-v3-rev1/mw64.7z"';
+      invoke '7z' 'x -oC:\ mw64.7z'; }
+  
+  
+  # get mingw-w64-32bit (C:\mingw32)
+  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x86' -and $env:build_bindings -eq 1) {
+      invoke 'curl' '-L -o mw64-32.7z "http://mingw.blob.core.windows.net/i686-491-release-posix-dwarf-rt-v3-rev1/mw32.7z"';
+      invoke '7z' 'x -oC:\ mw64-32.7z'; }
+  
+  
+  # sh is breaking mingw builds; remove
+  - for %%i in (sh.exe) do @del "%%~$PATH:i"
+
+
 
 
 build_script:
-  - "\"C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall\""
-  - nmake /f windows\Makefile.vc all
-  - "\"C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall\" x86_amd64"
-  - nmake /f windows\Makefile.vc all
+  
+  # set env
+  
+  - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall" %vc_arg%'
+  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x86] SET PATH=C:\MinGW\bin;%PATH%
+  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] SET PATH=C:\mingw64\bin;%PATH%
+  
+  
+  - if not exist deps\lib mkdir deps\lib
+  - if not exist deps\inc mkdir deps\inc
+  
+  
+  
+  # build msvc deps
+  
+  - if [%build_compiler%]==[msvc] (
+      (if [%with_zlib%]==[1] (
+        cd zlib &&
+        nmake /f win32/Makefile.msc &&
+        copy zlib_a.lib ..\deps\lib\zlib.lib &&
+        copy zconf.h ..\deps\inc\ &&
+        copy zlib.h ..\deps\inc\ &&
+        copy zutil.h ..\deps\inc\ &&
+        cd ..)) &&
+      (if [%with_libpng%]==[1] (
+        cd libpng &&
+        nmake /f scripts/makefile.msc &&
+        copy libpng.lib ..\deps\lib\ &&
+        copy png.h ..\deps\inc\ &&
+        copy pngconf.h ..\deps\inc\ &&
+        copy pnglibconf.h ..\deps\inc\ &&
+        cd ..)) &&
+      (if [%with_libjpeg%]==[1] (
+        cd libjpeg-turbo &&
+        (if [%build_platform%]==[x86] (cmake -G "Visual Studio 12")
+        else if [%build_platform%]==[x64] (cmake -G "Visual Studio 12 Win64")) &&
+        msbuild libjpeg-turbo.sln /p:Configuration=Release /v:m &&
+        copy release\jpeg-static.lib ..\deps\lib\libjpeg_a.lib &&
+        copy jpeglib.h ..\deps\inc\ &&
+        copy jconfig.h ..\deps\inc\ &&
+        copy jerror.h ..\deps\inc\ &&
+        copy jmorecfg.h ..\deps\inc\ &&
+        cd ..)) &&
+      (if [%with_freetype%]==[1] (
+        cd freetype &&
+        msbuild builds\windows\vc2013\freetype.sln /p:Configuration=Release /v:m &&
+        (if [%build_platform%]==[x86] (copy objs\win32\vc2013\freetype253.lib ..\deps\lib\freetype.lib)
+        else if [%build_platform%]==[x64] (copy builds\windows\vc2013\x64\Release\freetype253.lib ..\deps\lib\freetype.lib)) &&
+        mkdir ..\deps\inc\freetype\config &&
+        copy include\*.h ..\deps\inc\freetype\ &&
+        copy include\config ..\deps\inc\freetype\config &&
+        cd ..)) &&
+      (if [%with_iconv%]==[1] (
+        cd libiconv &&
+        msbuild MSVC12\libiconv.sln /p:Configuration=Release /v:m &&
+        (if [%build_platform%]==[x86] (copy MSVC12\libiconv_static\Release\libiconv_a.lib ..\deps\lib\)
+        else if [%build_platform%]==[x64] (copy MSVC12\libiconv_static\x64\Release\libiconv_a.lib ..\deps\lib\)) &&
+        copy source\include\iconv.h ..\deps\inc\ &&
+        cd ..)) &&
+      (if [%with_tiff%]==[1] (
+        cd libtiff &&
+        nmake /f makefile.vc &&
+        copy libtiff\libtiff.lib ..\deps\lib\ &&
+        copy libtiff\tiff.h ..\deps\inc\ &&
+        copy libtiff\tiffconf.h ..\deps\inc\ &&
+        copy libtiff\tiffio.h ..\deps\inc\ &&
+        copy libtiff\tiffvers.h ..\deps\inc\ &&
+        cd ..)))
+  
+  
+  # build mingw deps
+  
+  - if [%build_compiler%]==[mingw] (
+      (if [%with_zlib%]==[1] (
+        cd zlib &&
+        mingw32-make -fwin32/Makefile.gcc &&
+        copy libz.a ..\deps\lib\ &&
+        copy zconf.h ..\deps\inc\ &&
+        copy zlib.h ..\deps\inc\ &&
+        copy zutil.h ..\deps\inc\ &&
+        cd ..)) &&
+      (if [%with_libpng%]==[1] (
+        cd libpng &&
+        mingw32-make -fscripts/makefile.gcc &&
+        copy libpng.a ..\deps\lib\ &&
+        copy png.h ..\deps\inc\ &&
+        copy pngconf.h ..\deps\inc\ &&
+        copy pnglibconf.h ..\deps\inc\ &&
+        cd ..)) &&
+      (if [%with_libjpeg%]==[1] (
+        cd libjpeg-turbo &&
+        cmake -G "MinGW Makefiles" &&
+        mingw32-make &&
+        copy libjpeg.a ..\deps\lib\ &&
+        copy jpeglib.h ..\deps\inc\ &&
+        copy jconfig.h ..\deps\inc\ &&
+        copy jerror.h ..\deps\inc\ &&
+        copy jmorecfg.h ..\deps\inc\ &&
+        cd ..)) &&
+      (if [%with_freetype%]==[1] (
+        cd freetype &&
+        mingw32-make &&
+        mingw32-make &&
+        copy objs\freetype.a ..\deps\lib\ &&
+        mkdir ..\deps\inc\freetype\config &&
+        copy include\*.h ..\deps\inc\freetype\ &&
+        copy include\config ..\deps\inc\freetype\config &&
+        cd ..)) &&
+      (if [%with_iconv%]==[1] (
+        cd libiconv\source &&
+        c:\mingw\msys\1.0\bin\bash -c "PATH=/c/mingw/msys/1.0/bin:$PATH; make" &&
+        copy lib\.libs\libiconv.a ..\..\deps\lib\ &&
+        copy include\iconv.h ..\..\deps\inc\ &&
+        cd ..\..)) &&
+      (if [%with_tiff%]==[1] (
+        cd libtiff\libtiff &&
+        mingw32-make -fmakefile.mingw &&
+        cd .. &&
+        copy libtiff\libtiff.a ..\deps\lib\ &&
+        copy libtiff\tiff.h ..\deps\inc\ &&
+        copy libtiff\tiffconf.h ..\deps\inc\ &&
+        copy libtiff\tiffio.h ..\deps\inc\ &&
+        copy libtiff\tiffvers.h ..\deps\inc\ &&
+        cd ..)))
+  
+  
+  
+  
+  # build msvc x86
+  
+  - if [%build_compiler%]==[msvc] if [%build_platform%]==[x86] (
+      mkdir build_msvc12_x86 &&
+      cd build_msvc12_x86 &&
+      cmake -G "Visual Studio 12" -DCMAKE_C_FLAGS=/Qvec-report:1 -DCMAKE_CXX_FLAGS=/Qvec-report:1 -DCMAKE_LIBRARY_PATH=deps\lib -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype -DBUILD_TEST=1 -DENABLE_PNG=%with_libpng% -DENABLE_JPEG=%with_libjpeg% -DENABLE_FREETYPE=%with_freetype% -DENABLE_ICONV=%with_iconv% -DENABLE_TIFF=%with_tiff% -Wno-dev .. &&
+      msbuild gd.sln /p:Configuration=Release /v:m &&
+      cd .. )
+  
+  - ps: if($env:build_compiler -eq 'msvc' -and $env:build_platform -eq 'x86') {
+      invoke '7z' 'a libgd-msvc12-x86.zip .\build_msvc12_x86\Bin\Release\libgd.dll .\build_msvc12_x86\Bin\Release\libgd.lib .\build_msvc12_x86\Bin\Release\libgd-static.lib';
+      Push-AppveyorArtifact libgd-msvc12-x86.zip; }
+  
+  
+  
+  # build msvc x64
+  
+  - if [%build_compiler%]==[msvc] if [%build_platform%]==[x64] (
+      mkdir build_msvc12_x64 &&
+      cd build_msvc12_x64 &&
+      cmake -G "Visual Studio 12 Win64" -DCMAKE_C_FLAGS=/Qvec-report:1 -DCMAKE_CXX_FLAGS=/Qvec-report:1 -DCMAKE_LIBRARY_PATH=deps\lib -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype -DBUILD_TEST=1 -DENABLE_PNG=%with_libpng% -DENABLE_JPEG=%with_libjpeg% -DENABLE_FREETYPE=%with_freetype% -DENABLE_ICONV=%with_iconv% -DENABLE_TIFF=%with_tiff% -Wno-dev .. &&
+      msbuild gd.sln /p:Configuration=Release /v:m &&
+      cd ..)
+  
+  - ps: if($env:build_compiler -eq 'msvc' -and $env:build_platform -eq 'x64') {
+      invoke '7z' 'a libgd-msvc12-x64.zip .\build_msvc12_x64\Bin\Release\libgd.dll .\build_msvc12_x64\Bin\Release\libgd.lib .\build_msvc12_x64\Bin\Release\libgd-static.lib';
+      Push-AppveyorArtifact libgd-msvc12-x64.zip; }
+  
+  
+  
+  # build mingw x86
+  
+  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x86] (
+      mkdir build_mingw_x86 &&
+      cd build_mingw_x86 &&
+      cmake -G "MinGW Makefiles" -DCMAKE_LIBRARY_PATH=deps\lib -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype -DBUILD_TEST=1 -DENABLE_PNG=%with_libpng% -DENABLE_JPEG=%with_libjpeg% -DENABLE_FREETYPE=%with_freetype% -DENABLE_ICONV=%with_iconv% -DENABLE_TIFF=%with_tiff% -Wno-dev .. &&
+      mingw32-make &&
+      cd ..)
+  
+  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x86') {
+      invoke '7z' 'a libgd-mingw-x86.zip .\build_mingw_x86\Bin\liblibgd.dll .\build_mingw_x86\Bin\liblibgd.dll.a .\build_mingw_x86\Bin\liblibgd-static.a';
+      Push-AppveyorArtifact libgd-mingw-x86.zip; }
+  
+  
+  
+  # build mingw x64
+  
+  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] (
+      mkdir build_mingw_x64 &&
+      cd build_mingw_x64 &&
+      cmake -G "MinGW Makefiles" -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64 -DCMAKE_LIBRARY_PATH=deps\lib -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype -DBUILD_TEST=1 -DENABLE_PNG=%with_libpng% -DENABLE_JPEG=%with_libjpeg% -DENABLE_FREETYPE=%with_freetype% -DENABLE_ICONV=%with_iconv% -DENABLE_TIFF=%with_tiff% -Wno-dev .. &&
+      mingw32-make &&
+      cd ..)
+  
+  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') {
+      invoke '7z' 'a libgd-mingw-x64.zip .\build_mingw_x64\Bin\liblibgd.dll .\build_mingw_x64\Bin\liblibgd.dll.a .\build_mingw_x64\Bin\liblibgd-static.a';
+      Push-AppveyorArtifact libgd-mingw-x64.zip; }
+  
+  
+  
+  # build bindings
+  
+  - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall"'
+  - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
+      cd gd-dotnet-bindings-generator &&
+      msbuild LibGD.CLI\LibGD.CLI.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
+      copy ..\build_mingw_%build_platform%\Bin\liblibgd.dll LibGD.CLI\bin\Debug\liblibgd.dll &&
+      cd LibGD.CLI\bin\Debug &&
+      (if [%build_platform%]==[x86] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw32\bin\mingw32-make.exe liblibgd.dll)
+      else if [%build_platform%]==[x64] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw64\bin\mingw32-make.exe liblibgd.dll)) &&
+      appveyor PushArtifact LibGD.cs &&
+      cd ..\..\.. &&
+      msbuild LibGD.Tests\LibGD.Tests.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
+      cd..)
+  
+  - ps: if($env:build_bindings -eq 1 -and $env:build_compiler -eq 'mingw') {
+      invoke '7z' "a LibGDSharp-$($env:build_platform).zip .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\liblibgd.dll .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\LibGDSharp.dll";
+      Push-AppveyorArtifact "LibGDSharp-$($env:build_platform).zip"; }
 
 
-after_build:
-  - 7z a libgd-x86.zip .\build_x86\libgd.dll .\build_x86\libgd.lib .\build_x86\libgd_a.lib
-  - 7z a libgd-x64.zip .\build_x64\libgd.dll .\build_x64\libgd.lib .\build_x64\libgd_a.lib
 
 
 test_script:
-  - set PLATFORM=x86
-  - windows\run_tests
-  - set PLATFORM=x64
-  - windows\run_tests
-
-
-artifacts:
-  - path: libgd-x86.zip
-    name: libgd-x86.zip
-  - path: libgd-x64.zip
-    name: libgd-x64.zip
+  - if [%build_compiler%]==[msvc] if [%build_platform%]==[x86] (
+      cd build_msvc12_x86 &&
+      ctest -C Release &&
+      cd ..)
+  - ps: if($env:build_compiler -eq 'msvc' -and $env:build_platform -eq 'x86') { Push-Ctest-Results 'build_msvc12_x86' 'libgd (msvc x86) '; Push-AppveyorArtifact build_msvc12_x86\Testing\Temporary\LastTest*.log }
+  
+  
+  - if [%build_compiler%]==[msvc] if [%build_platform%]==[x64] (
+      cd build_msvc12_x64 &&
+      ctest -C Release &&
+      cd ..)
+  - ps: if($env:build_compiler -eq 'msvc' -and $env:build_platform -eq 'x64') { Push-Ctest-Results 'build_msvc12_x64' 'libgd (msvc x64) '; Push-AppveyorArtifact build_msvc12_x64\Testing\Temporary\LastTest*.log }
+  
+  
+  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x86] (
+      cd build_mingw_x86 &&
+      ctest -C Release &&
+      cd ..)
+  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x86') { Push-Ctest-Results 'build_mingw_x86' 'libgd (mingw x86) '; Push-AppveyorArtifact build_mingw_x86\Testing\Temporary\LastTest*.log }
+  
+  
+  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] (
+      cd build_mingw_x64 &&
+      ctest -C Release &&
+      cd ..)
+  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') { Push-Ctest-Results 'build_mingw_x64' 'libgd (mingw x64) '; Push-AppveyorArtifact build_mingw_x64\Testing\Temporary\LastTest*.log }
+  
+  
+  - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
+      copy gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\liblibgd.dll gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\liblibgd.dll &&
+      if [%build_platform%]==[x86] (nunit-console-x86 gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)
+      else if [%build_platform%]==[x64] (nunit-console gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll))

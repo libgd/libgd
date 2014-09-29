@@ -78,6 +78,7 @@ extern "C" {
 #define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt BGD_STDCALL
 
 #ifdef _MSC_VER
+#  define _ALLOW_KEYWORD_MACROS
 #  define inline __inline
 #  define strcasecmp _stricmp
 #endif
