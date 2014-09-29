@@ -72,9 +72,11 @@ install:
   - ps: if($env:with_libpng -eq 1) { invoke 'git' 'clone https://github.com/imazen/libpng.git --depth 1' }
   - ps: if($env:with_libjpeg -eq 1) { invoke 'git' 'clone https://github.com/imazen/libjpeg-turbo.git --depth 1' }
   - ps: if($env:with_freetype -eq 1) { invoke 'git' 'clone https://github.com/imazen/freetype.git --depth 1' }
-  - ps: if($env:with_iconv -eq 1 -and $env:build_compiler -eq 'msvc') { invoke 'git' 'clone https://github.com/imazen/libiconv.git --depth 1' }
-  - ps: if($env:with_iconv -eq 1 -and $env:build_compiler -eq 'mingw') { invoke 'git' 'clone https://github.com/imazen/libiconv.git --depth 1 --branch preconfigured-makefiles3 --single-branch' }
-  - ps: if($env:with_tiff -eq 1) { invoke 'git' 'clone https://github.com/tostercx/libtiff.git --depth 1' }
+  - ps: if($env:with_iconv -eq 1) {
+      if($env:build_compiler -eq 'msvc') { invoke 'git' 'clone https://github.com/imazen/libiconv.git --depth 1' }
+      else if($env:build_platform -eq 'x86') { invoke 'git' 'clone https://github.com/imazen/libiconv.git --depth 1 --branch mingw32-config --single-branch' }
+      else { invoke 'git' 'clone https://github.com/imazen/libiconv.git --depth 1 --branch mingw64-config --single-branch' } }
+  - ps: if($env:with_tiff -eq 1) { invoke 'git' 'clone https://github.com/imazen/libtiff.git --depth 1' }
   
   # get nasm
   - if [%with_libjpeg%]==[1] cinst nasm
