@@ -18,7 +18,7 @@ PLATFORM=x64
 PLATFORM=$(PLATFORM:X=x)
 
 
-BUILD_DIR=build_$(PLATFORM)
+BUILD_DIR=build_msvc12_$(PLATFORM)
 GD_DLL=libgd.dll
 GD_LIB=libgd_a.lib
 

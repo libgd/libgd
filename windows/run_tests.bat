@@ -4,8 +4,8 @@ if [%PLATFORM%]==[] set PLATFORM=x86
 if [%PREFERREDTOOLARCHITECTURE%]==[x64] set PLATFORM=x64
 set PLATFORM=%PLATFORM:X=x%
 
-if exist build_%PLATFORM%\tests (cd build_%PLATFORM%\tests) else (
-  if exist ..\build_%PLATFORM%\tests (cd ..\build_%PLATFORM%\tests) else (
+if exist build_msvc12_%PLATFORM%\tests (cd build_msvc12_%PLATFORM%\tests) else (
+  if exist ..\build_%PLATFORM%\tests (cd ..\build_msvc12_%PLATFORM%\tests) else (
     echo unable to find test dir
     exit /b 1
   )
