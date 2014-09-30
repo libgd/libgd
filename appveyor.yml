@@ -19,13 +19,13 @@ environment:
     - build_platform: "x64"
       build_compiler: "msvc"
     
-    - build_platform: "x86"
-      build_compiler: "mingw"
-      build_bindings: 1
+    #- build_platform: "x86"
+    #  build_compiler: "mingw"
+    #  build_bindings: 1
     
-    - build_platform: "x64"
-      build_compiler: "mingw"
-      build_bindings: 1
+    #- build_platform: "x64"
+    #  build_compiler: "mingw"
+    #  build_bindings: 1
 
 
 
@@ -234,7 +234,20 @@ build_script:
   - if [%build_compiler%]==[msvc] if [%build_platform%]==[x86] (
       mkdir build_msvc12_x86 &&
       cd build_msvc12_x86 &&
-      cmake -G "Visual Studio 12" -DCMAKE_C_FLAGS=/Qvec-report:1 -DCMAKE_CXX_FLAGS=/Qvec-report:1 -DCMAKE_LIBRARY_PATH=deps\lib -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype -DBUILD_TEST=1 -DENABLE_PNG=%with_libpng% -DENABLE_JPEG=%with_libjpeg% -DENABLE_FREETYPE=%with_freetype% -DENABLE_ICONV=%with_iconv% -DENABLE_TIFF=%with_tiff% -Wno-dev .. &&
+      cmake
+        -G "Visual Studio 12"
+        -DCMAKE_C_FLAGS="/MT /Qvec-report:1"
+        -DCMAKE_CXX_FLAGS="/MT /Qvec-report:1"
+        -DCMAKE_LIBRARY_PATH=deps\lib
+        -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
+        -DBUILD_TEST=1
+        -DENABLE_PNG=%with_libpng%
+        -DENABLE_JPEG=%with_libjpeg%
+        -DENABLE_FREETYPE=%with_freetype%
+        -DENABLE_ICONV=%with_iconv%
+        -DENABLE_TIFF=%with_tiff%
+        -Wno-dev
+        .. &&
       msbuild gd.sln /p:Configuration=Release /v:m &&
       cd .. )
   
@@ -249,9 +262,22 @@ build_script:
   - if [%build_compiler%]==[msvc] if [%build_platform%]==[x64] (
       mkdir build_msvc12_x64 &&
       cd build_msvc12_x64 &&
-      cmake -G "Visual Studio 12 Win64" -DCMAKE_C_FLAGS=/Qvec-report:1 -DCMAKE_CXX_FLAGS=/Qvec-report:1 -DCMAKE_LIBRARY_PATH=deps\lib -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype -DBUILD_TEST=1 -DENABLE_PNG=%with_libpng% -DENABLE_JPEG=%with_libjpeg% -DENABLE_FREETYPE=%with_freetype% -DENABLE_ICONV=%with_iconv% -DENABLE_TIFF=%with_tiff% -Wno-dev .. &&
+      cmake
+        -G "Visual Studio 12 Win64"
+        -DCMAKE_C_FLAGS=/Qvec-report:1
+        -DCMAKE_CXX_FLAGS=/Qvec-report:1
+        -DCMAKE_LIBRARY_PATH=deps\lib
+        -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
+        -DBUILD_TEST=1
+        -DENABLE_PNG=%with_libpng%
+        -DENABLE_JPEG=%with_libjpeg%
+        -DENABLE_FREETYPE=%with_freetype%
+        -DENABLE_ICONV=%with_iconv%
+        -DENABLE_TIFF=%with_tiff%
+        -Wno-dev
+        .. &&
       msbuild gd.sln /p:Configuration=Release /v:m &&
-      cd ..)
+      cd .. )
   
   - ps: if($env:build_compiler -eq 'msvc' -and $env:build_platform -eq 'x64') {
       invoke '7z' 'a libgd-msvc12-x64.zip .\build_msvc12_x64\Bin\Release\libgd.dll .\build_msvc12_x64\Bin\Release\libgd.lib .\build_msvc12_x64\Bin\Release\libgd-static.lib';
