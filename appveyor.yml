@@ -292,8 +292,7 @@ build_script:
       cd build_mingw_x86 &&
       cmake
         -G "MinGW Makefiles"
-        -DCMAKE_C_FLAGS="-static-libgcc -static"
-        -DCMAKE_CXX_FLAGS="-static-libgcc -static-libstdc++ -static"
+        -DCMAKE_SHARED_LINKER_FLAGS=-static
         -DCMAKE_LIBRARY_PATH=deps\lib
         -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
         -DBUILD_TEST=1
@@ -319,8 +318,9 @@ build_script:
       mkdir build_mingw_x64 &&
       cd build_mingw_x64 &&
       cmake -G "MinGW Makefiles"
-        -DCMAKE_C_FLAGS="-m64 -static-libgcc -static"
-        -DCMAKE_CXX_FLAGS="-m64 -static-libgcc -static-libstdc++ -static"
+        -DCMAKE_C_FLAGS=-m64
+        -DCMAKE_CXX_FLAGS=-m64
+        -DCMAKE_SHARED_LINKER_FLAGS=-static
         -DCMAKE_LIBRARY_PATH=deps\lib
         -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
         -DBUILD_TEST=1
