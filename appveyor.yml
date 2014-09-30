@@ -5,8 +5,8 @@ shallow_clone: true
 environment:
   # settings
   with_zlib: 1      # libgd actually won't build without it..
-  with_libpng: 1    # needs zlib
-  with_libjpeg: 1   # will download nasm; removing jpeg or png will break current tests
+  with_libpng: 1    # needs zlib; removing will break current tests
+  with_libjpeg: 1   # will download nasm; removing will break current tests
   with_freetype: 1  # removing breaks bindings freetype test
   with_iconv: 1     
   with_tiff: 1      # needs zlib and jpeg
@@ -264,7 +264,20 @@ build_script:
   - if [%build_compiler%]==[mingw] if [%build_platform%]==[x86] (
       mkdir build_mingw_x86 &&
       cd build_mingw_x86 &&
-      cmake -G "MinGW Makefiles" -DCMAKE_LIBRARY_PATH=deps\lib -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype -DBUILD_TEST=1 -DENABLE_PNG=%with_libpng% -DENABLE_JPEG=%with_libjpeg% -DENABLE_FREETYPE=%with_freetype% -DENABLE_ICONV=%with_iconv% -DENABLE_TIFF=%with_tiff% -Wno-dev .. &&
+      cmake
+        -G "MinGW Makefiles"
+        -DCMAKE_C_FLAGS="-static-libgcc -static"
+        -DCMAKE_CXX_FLAGS="-static-libgcc -static-libstdc++ -static"
+        -DCMAKE_LIBRARY_PATH=deps\lib
+        -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
+        -DBUILD_TEST=1
+        -DENABLE_PNG=%with_libpng%
+        -DENABLE_JPEG=%with_libjpeg%
+        -DENABLE_FREETYPE=%with_freetype%
+        -DENABLE_ICONV=%with_iconv%
+        -DENABLE_TIFF=%with_tiff%
+        -Wno-dev
+        .. &&
       mingw32-make &&
       cd ..)
   
@@ -279,7 +292,19 @@ build_script:
   - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] (
       mkdir build_mingw_x64 &&
       cd build_mingw_x64 &&
-      cmake -G "MinGW Makefiles" -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64 -DCMAKE_LIBRARY_PATH=deps\lib -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype -DBUILD_TEST=1 -DENABLE_PNG=%with_libpng% -DENABLE_JPEG=%with_libjpeg% -DENABLE_FREETYPE=%with_freetype% -DENABLE_ICONV=%with_iconv% -DENABLE_TIFF=%with_tiff% -Wno-dev .. &&
+      cmake -G "MinGW Makefiles"
+        -DCMAKE_C_FLAGS="-m64 -static-libgcc -static"
+        -DCMAKE_CXX_FLAGS="-m64 -static-libgcc -static-libstdc++ -static"
+        -DCMAKE_LIBRARY_PATH=deps\lib
+        -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
+        -DBUILD_TEST=1
+        -DENABLE_PNG=%with_libpng%
+        -DENABLE_JPEG=%with_libjpeg%
+        -DENABLE_FREETYPE=%with_freetype%
+        -DENABLE_ICONV=%with_iconv%
+        -DENABLE_TIFF=%with_tiff%
+        -Wno-dev
+        .. &&
       mingw32-make &&
       cd ..)
   
