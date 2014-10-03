@@ -202,9 +202,9 @@ build_script:
         cd ..)) &&
       (if [%with_freetype%]==[1] (
         cd freetype &&
+        cmake -G "MinGW Makefiles" &&
         mingw32-make &&
-        mingw32-make &&
-        copy objs\freetype.a ..\deps\lib\ &&
+        copy libfreetype.a ..\deps\lib\ &&
         mkdir ..\deps\inc\freetype\config &&
         copy include\*.h ..\deps\inc\freetype\ &&
         copy include\config ..\deps\inc\freetype\config &&
@@ -236,8 +236,8 @@ build_script:
       cd build_msvc12_x86 &&
       cmake
         -G "Visual Studio 12"
-        -DCMAKE_C_FLAGS="/MT /Qvec-report:1"
-        -DCMAKE_CXX_FLAGS="/MT /Qvec-report:1"
+        -DCMAKE_C_FLAGS="/Qvec-report:1"
+        -DCMAKE_CXX_FLAGS="/Qvec-report:1"
         -DCMAKE_LIBRARY_PATH=deps\lib
         -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
         -DBUILD_TEST=1
@@ -390,9 +390,7 @@ test_script:
   - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') { Push-Ctest-Results 'build_mingw_x64' 'libgd (mingw x64) '; Push-AppveyorArtifact build_mingw_x64\Testing\Temporary\LastTest*.log }
   
   
-  # x86 GlobalMembersGdimagecolorreplace excluded for now; the test fails
-  
   - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
       copy gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\liblibgd.dll gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\liblibgd.dll &&
-      if [%build_platform%]==[x86] (nunit-console-x86 gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll /exclude GlobalMembersGdimagecolorreplace)
+      if [%build_platform%]==[x86] (nunit-console-x86 gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)
       else if [%build_platform%]==[x64] (nunit-console gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll))
