@@ -82,15 +82,15 @@ install:
   - if [%with_libjpeg%]==[1] cinst nasm
   - ps: if($env:with_libjpeg -eq 1) { $env:path="C:\Program Files (x86)\nasm;$($env:path)" }
   
-  # get mingw-w64 (mount to X:\mingw32 and X:\mingw64)
-  - ps: if($env:build_compiler -eq 'mingw' -and ($env:build_platform -eq 'x64' -or $env:build_bindings -eq 1)) {
-      invoke 'curl' '-L -o mingw.7z "http://libgd.blob.core.windows.net/mingw/mingw.7z"';
-      invoke '7z' 'x -oC:\ mingw.7z'; 
-      'select vdisk file=C:\mingw.vhd' > 'mount.txt';
-      'attach vdisk' >> 'mount.txt';
-      'select partition 1' >> 'mount.txt';
-      'assign letter = X' >> 'mount.txt';
-      invoke 'diskpart' '/s mount.txt'; }
+  # get mingw-w64 (C:\mingw64)
+  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') {
+      invoke 'curl' '-L -o mw64.7z "http://libgd.blob.core.windows.net/mingw/x86_64-4.9.1-release-posix-seh-rt_v3-rev1.7z"';
+      invoke '7z' 'x -oC:\ mw64.7z'; }
+  
+  # get mingw-w64-32bit (C:\mingw32)
+  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x86' -and $env:build_bindings -eq 1) {
+      invoke 'curl' '-L -o mw64-32.7z "http://libgd.blob.core.windows.net/mingw/i686-4.9.1-release-posix-dwarf-rt_v3-rev1.7z"';
+      invoke '7z' 'x -oC:\ mw64-32.7z'; }
   
   # sh is breaking mingw builds; remove
   - for %%i in (sh.exe) do @del "%%~$PATH:i"
