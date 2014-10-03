@@ -82,17 +82,15 @@ install:
   - if [%with_libjpeg%]==[1] cinst nasm
   - ps: if($env:with_libjpeg -eq 1) { $env:path="C:\Program Files (x86)\nasm;$($env:path)" }
   
-  # get mingw-w64 (C:\mingw64)
-  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') {
-      invoke 'curl' '-L -o mw64.7z "http://mingw.blob.core.windows.net/x86-64-491-release-posix-seh-rt-v3-rev1/mw64.7z"';
-      invoke '7z' 'x -oC:\ mw64.7z'; }
-  
-  
-  # get mingw-w64-32bit (C:\mingw32)
-  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x86' -and $env:build_bindings -eq 1) {
-      invoke 'curl' '-L -o mw64-32.7z "http://mingw.blob.core.windows.net/i686-491-release-posix-dwarf-rt-v3-rev1/mw32.7z"';
-      invoke '7z' 'x -oC:\ mw64-32.7z'; }
-  
+  # get mingw-w64 (mount to X:\mingw32 and X:\mingw64)
+  - ps: if($env:build_compiler -eq 'mingw' -and ($env:build_platform -eq 'x64' -or $env:build_bindings -eq 1)) {
+      invoke 'curl' '-L -o mingw.7z "http://libgd.blob.core.windows.net/mingw/mingw.7z"';
+      invoke '7z' 'x -oC:\ mingw.7z'; 
+      'select vdisk file=C:\mingw.vhd' > 'mount.txt';
+      'attach vdisk' >> 'mount.txt';
+      'select partition 1' >> 'mount.txt';
+      'assign letter = X' >> 'mount.txt';
+      invoke 'diskpart' '/s mount.txt'; }
   
   # sh is breaking mingw builds; remove
   - for %%i in (sh.exe) do @del "%%~$PATH:i"
@@ -106,7 +104,7 @@ build_script:
   
   - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall" %vc_arg%'
   - if [%build_compiler%]==[mingw] if [%build_platform%]==[x86] SET PATH=C:\MinGW\bin;%PATH%
-  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] SET PATH=C:\mingw64\bin;%PATH%
+  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] SET PATH=X:\mingw64\bin;%PATH%
   
   
   - if not exist deps\lib mkdir deps\lib
@@ -348,8 +346,8 @@ build_script:
       msbuild LibGD.CLI\LibGD.CLI.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
       copy ..\build_mingw_%build_platform%\Bin\liblibgd.dll LibGD.CLI\bin\Debug\liblibgd.dll &&
       cd LibGD.CLI\bin\Debug &&
-      (if [%build_platform%]==[x86] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw32\bin\mingw32-make.exe liblibgd.dll)
-      else if [%build_platform%]==[x64] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw64\bin\mingw32-make.exe liblibgd.dll)) &&
+      (if [%build_platform%]==[x86] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src X:\mingw32\bin\mingw32-make.exe liblibgd.dll)
+      else if [%build_platform%]==[x64] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src X:\mingw64\bin\mingw32-make.exe liblibgd.dll)) &&
       cd ..\..\.. &&
       msbuild LibGD.Tests\LibGD.Tests.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
       cd..)
