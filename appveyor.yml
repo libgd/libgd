@@ -13,11 +13,11 @@ environment:
   
   
   matrix:
-    - build_platform: "x86"
-      build_compiler: "msvc"
+    #- build_platform: "x86"
+    #  build_compiler: "msvc"
     
-    - build_platform: "x64"
-      build_compiler: "msvc"
+    #- build_platform: "x64"
+    #  build_compiler: "msvc"
     
     - build_platform: "x86"
       build_compiler: "mingw"
@@ -104,7 +104,7 @@ build_script:
   
   - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall" %vc_arg%'
   - if [%build_compiler%]==[mingw] if [%build_platform%]==[x86] SET PATH=C:\MinGW\bin;%PATH%
-  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] SET PATH=X:\mingw64\bin;%PATH%
+  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] SET PATH=C:\mingw64\bin;%PATH%
   
   
   - if not exist deps\lib mkdir deps\lib
@@ -346,8 +346,8 @@ build_script:
       msbuild LibGD.CLI\LibGD.CLI.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
       copy ..\build_mingw_%build_platform%\Bin\liblibgd.dll LibGD.CLI\bin\Debug\liblibgd.dll &&
       cd LibGD.CLI\bin\Debug &&
-      (if [%build_platform%]==[x86] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src X:\mingw32\bin\mingw32-make.exe liblibgd.dll)
-      else if [%build_platform%]==[x64] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src X:\mingw64\bin\mingw32-make.exe liblibgd.dll)) &&
+      (if [%build_platform%]==[x86] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw32\bin\mingw32-make.exe liblibgd.dll)
+      else if [%build_platform%]==[x64] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw64\bin\mingw32-make.exe liblibgd.dll)) &&
       cd ..\..\.. &&
       msbuild LibGD.Tests\LibGD.Tests.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
       cd..)
