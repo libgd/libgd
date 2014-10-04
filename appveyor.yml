@@ -74,7 +74,8 @@ install:
       copy /y deps\libzlibstatic.a deps\libz.a &&
       del deps\libpng.dll* &&
       del deps\libjpeg.dll* &&
-      del deps\libtiff.dll* )
+      del deps\libtiff.dll* &&
+      del deps\libiconv.dll* )
   
   
   # get mingw-w64 (C:\mingw64)
