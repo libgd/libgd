@@ -8,7 +8,7 @@ environment:
   with_libpng: 1    # needs zlib; removing will break current tests
   with_libjpeg: 1   # will download nasm; removing will break current tests
   with_freetype: 1  # removing breaks bindings freetype test
-  with_iconv: 1     
+  with_iconv: 0     
   with_tiff: 1      # needs zlib and jpeg
   
   
