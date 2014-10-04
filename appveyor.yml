@@ -69,7 +69,7 @@ install:
   - if [%build_compiler%]==[msvc] (
       copy /y deps\zlibstatic.lib deps\zlib.lib &&
       copy /y deps\libpng15_static.lib deps\libpng.lib &&
-      copy /y deps\jpeg-static.lib deps\libjpeg_a.lib )
+      copy /y deps\jpeg-static.lib deps\jpeg.lib )
   - if [%build_compiler%]==[mingw] (
       copy /y deps\libzlibstatic.a deps\libz.a )
   
