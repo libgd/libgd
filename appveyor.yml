@@ -13,11 +13,11 @@ environment:
   
   
   matrix:
-    #- build_platform: "x86"
-    #  build_compiler: "msvc"
+    - build_platform: "x86"
+      build_compiler: "msvc"
     
-    #- build_platform: "x64"
-    #  build_compiler: "msvc"
+    - build_platform: "x64"
+      build_compiler: "msvc"
     
     - build_platform: "x86"
       build_compiler: "mingw"
@@ -30,57 +30,49 @@ environment:
 
 
 install:
-  - ps: $nl = "`r`n"
-  - ps: $wc = New-Object 'System.Net.WebClient'
-  - ps: if($env:build_platform -eq 'x64') {$env:vc_arg = 'x86_amd64'}
-        else {$env:vc_arg = 'x86'}
+  - ps: if($env:build_platform -eq 'x64') {
+          $env:vc_arg = 'x86_amd64'
+        }
+        else {
+          $env:vc_arg = 'x86'
+        }
   
-  # functions
-  - ps: function print-file($txt) {
-      Get-Content $txt | ForEach-Object { echo "$_"  }}
-  
-  - ps: function invoke($exe, $al, $output=0) {
-      echo "$nl> INVOKE $exe $al <$nl$nl";
-      if($al) {Measure-Command {$process = (start-process $exe $al -Wait -NoNewWindow -RedirectStandardOutput C:\out.txt -RedirectStandardError C:\err.txt);}}
-      else {Measure-Command {$process = (start-process $exe -Wait -NoNewWindow -RedirectStandardOutput C:\out.txt -RedirectStandardError C:\err.txt);}}
-      if($output) {
-      echo "stdout:"; print-file 'C:\out.txt';
-      echo "stderr:"; print-file 'C:\err.txt'; }
-      return $process.ExitCode; }
-  
-  - ps: function Push-Ctest-Results($dir, $prefix='') {
-      $head = "<?xml version=`"1.0`" encoding=`"utf-8`"?>`n<assembly name=`"`" run-date=`"1970-01-01`" run-time=`"00:00:00`" configFile=`"`" time=`"0`" total=`"0`" passed=`"0`" failed=`"0`" skipped=`"0`" environment=`"`">`n<class time=`"0`" name=`"`" total=`"0`" passed=`"0`" failed=`"0`" skipped=`"0`">`n";
-      $foot = "</class>`n</assembly>`n";
-      $out = Select-String '(?s)\d+\/\d+ Testing.*?end time.*?[-]+' -input ((Get-Content $dir\Testing\Temporary\LastTest*.log) -join "`n") -AllMatches;
-      $xml = $head;
-      $num = 0;
-      Select-String '(\w+)\s+(\d+)\s+([\d\.]{5})' -input (Get-Content $dir\Testing\Temporary\CTestCostData.txt)-AllMatches | % {$_.Matches} | % {
-        $name = $prefix + $_.Groups[1].Value;
-        $res = @{$true="Pass";$false="Fail"}[$_.Groups[2].Value -eq 1];
-        $time = $_.Groups[3].Value;
-        $output = [Security.SecurityElement]::Escape($out.Matches[$num].Value);
-        $num++;
-        $xml += "<test name=`"$name`" type=`"`" method=`"`" result=`"$res`" time=`"$time`">`n<output>$output</output>`n</test>`n"};
-      $xml += $foot;
-      $xml > ".\xunit_tmp.xml";
-      $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\xunit_tmp.xml)); }
+  # get common functions
+  - git clone https://github.com/imazen/gd-appveyor-helpers
+  - ps: . .\gd-appveyor-helpers\appveyor_funcs.ps1
   
   
   # fetch deps
+  - mkdir deps
   - ps: if($env:build_bindings -eq 1) { invoke 'git' 'clone https://github.com/imazen/gd-dotnet-bindings-generator.git --depth 1 --branch itanium --single-branch' }
-  - ps: if($env:with_zlib -eq 1) { invoke 'git' 'clone https://github.com/imazen/zlib.git --depth 1' }
-  - ps: if($env:with_libpng -eq 1) { invoke 'git' 'clone https://github.com/imazen/libpng.git --depth 1' }
-  - ps: if($env:with_libjpeg -eq 1) { invoke 'git' 'clone https://github.com/imazen/libjpeg-turbo.git --depth 1' }
-  - ps: if($env:with_freetype -eq 1) { invoke 'git' 'clone https://github.com/imazen/freetype.git --depth 1' }
+  - ps: if($env:with_zlib -eq 1) {
+          invoke 'nuget' "install zlib-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/zlib-94hmpf3q011d";
+          move zlib*\* deps -force }
+  - ps: if($env:with_libjpeg -eq 1) {
+          invoke 'nuget' "install libjpeg-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/libjpeg-turbo-t70qw53csfhj";
+          move libjpeg*\* deps -force }
+  - ps: if($env:with_libpng -eq 1) {
+          invoke 'nuget' "install libpng-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/libpng-i3b6v9aught8";
+          move libpng*\* deps -force }
+  - ps: if($env:with_freetype -eq 1) {
+          invoke 'nuget' "install freetype-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/freetype-vf7bw7v5ec29";
+          move freetype*\* deps -force }
   - ps: if($env:with_iconv -eq 1) {
-      if($env:build_compiler -eq 'msvc') { invoke 'git' 'clone https://github.com/imazen/libiconv.git --depth 1' }
-      elseif($env:build_platform -eq 'x86') { invoke 'git' 'clone https://github.com/imazen/libiconv.git --depth 1 --branch mingw32-config --single-branch' }
-      else { invoke 'git' 'clone https://github.com/imazen/libiconv.git --depth 1 --branch mingw64-config --single-branch' } }
-  - ps: if($env:with_tiff -eq 1) { invoke 'git' 'clone https://github.com/imazen/libtiff.git --depth 1' }
+          invoke 'nuget' "install libiconv-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/libiconv-es1y8p1h9c47";
+          move libiconv*\* deps -force }
+  - ps: if($env:with_tiff -eq 1) {
+          invoke 'nuget' "install libtiff-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/libtiff-i3h8tqqy7o7b";
+          move libtiff*\* deps -force }
   
-  # get nasm
-  - if [%with_libjpeg%]==[1] cinst nasm
-  - ps: if($env:with_libjpeg -eq 1) { $env:path="C:\Program Files (x86)\nasm;$($env:path)" }
+  
+  # make static names cmake friendly
+  - if [%build_compiler%]==[msvc] (
+      copy /y deps\zlibstatic.lib deps\zlib.lib &&
+      copy /y deps\libpng15_static.lib deps\libpng.lib &&
+      copy /y deps\jpeg-static.lib deps\libjpeg_a.lib )
+  - if [%build_compiler%]==[mingw] (
+      copy /y deps\libzlibstatic.a deps\libz.a )
+  
   
   # get mingw-w64 (C:\mingw64)
   - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') {
@@ -107,126 +99,6 @@ build_script:
   - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] SET PATH=C:\mingw64\bin;%PATH%
   
   
-  - if not exist deps\lib mkdir deps\lib
-  - if not exist deps\inc mkdir deps\inc
-  
-  
-  
-  # build msvc deps
-  
-  - if [%build_compiler%]==[msvc] (
-      (if [%with_zlib%]==[1] (
-        cd zlib &&
-        nmake /f win32/Makefile.msc &&
-        copy zlib_a.lib ..\deps\lib\zlib.lib &&
-        copy zconf.h ..\deps\inc\ &&
-        copy zlib.h ..\deps\inc\ &&
-        copy zutil.h ..\deps\inc\ &&
-        cd ..)) &&
-      (if [%with_libpng%]==[1] (
-        cd libpng &&
-        nmake /f scripts/makefile.msc &&
-        copy libpng.lib ..\deps\lib\ &&
-        copy png.h ..\deps\inc\ &&
-        copy pngconf.h ..\deps\inc\ &&
-        copy pnglibconf.h ..\deps\inc\ &&
-        cd ..)) &&
-      (if [%with_libjpeg%]==[1] (
-        cd libjpeg-turbo &&
-        (if [%build_platform%]==[x86] (cmake -G "Visual Studio 12")
-        else if [%build_platform%]==[x64] (cmake -G "Visual Studio 12 Win64")) &&
-        msbuild libjpeg-turbo.sln /p:Configuration=Release /v:m &&
-        copy release\jpeg-static.lib ..\deps\lib\libjpeg_a.lib &&
-        copy jpeglib.h ..\deps\inc\ &&
-        copy jconfig.h ..\deps\inc\ &&
-        copy jerror.h ..\deps\inc\ &&
-        copy jmorecfg.h ..\deps\inc\ &&
-        cd ..)) &&
-      (if [%with_freetype%]==[1] (
-        cd freetype &&
-        msbuild builds\windows\vc2013\freetype.sln /p:Configuration=Release /v:m &&
-        (if [%build_platform%]==[x86] (copy objs\win32\vc2013\freetype253.lib ..\deps\lib\freetype.lib)
-        else if [%build_platform%]==[x64] (copy builds\windows\vc2013\x64\Release\freetype253.lib ..\deps\lib\freetype.lib)) &&
-        mkdir ..\deps\inc\freetype\config &&
-        copy include\*.h ..\deps\inc\freetype\ &&
-        copy include\config ..\deps\inc\freetype\config &&
-        cd ..)) &&
-      (if [%with_iconv%]==[1] (
-        cd libiconv &&
-        msbuild MSVC12\libiconv.sln /p:Configuration=Release /v:m &&
-        (if [%build_platform%]==[x86] (copy MSVC12\libiconv_static\Release\libiconv_a.lib ..\deps\lib\)
-        else if [%build_platform%]==[x64] (copy MSVC12\libiconv_static\x64\Release\libiconv_a.lib ..\deps\lib\)) &&
-        copy source\include\iconv.h ..\deps\inc\ &&
-        cd ..)) &&
-      (if [%with_tiff%]==[1] (
-        cd libtiff &&
-        nmake /f makefile.vc &&
-        copy libtiff\libtiff.lib ..\deps\lib\ &&
-        copy libtiff\tiff.h ..\deps\inc\ &&
-        copy libtiff\tiffconf.h ..\deps\inc\ &&
-        copy libtiff\tiffio.h ..\deps\inc\ &&
-        copy libtiff\tiffvers.h ..\deps\inc\ &&
-        cd ..)))
-  
-  
-  # build mingw deps
-  
-  - if [%build_compiler%]==[mingw] (
-      (if [%with_zlib%]==[1] (
-        cd zlib &&
-        mingw32-make -fwin32/Makefile.gcc &&
-        copy libz.a ..\deps\lib\ &&
-        copy zconf.h ..\deps\inc\ &&
-        copy zlib.h ..\deps\inc\ &&
-        copy zutil.h ..\deps\inc\ &&
-        cd ..)) &&
-      (if [%with_libpng%]==[1] (
-        cd libpng &&
-        mingw32-make -fscripts/makefile.gcc &&
-        copy libpng.a ..\deps\lib\ &&
-        copy png.h ..\deps\inc\ &&
-        copy pngconf.h ..\deps\inc\ &&
-        copy pnglibconf.h ..\deps\inc\ &&
-        cd ..)) &&
-      (if [%with_libjpeg%]==[1] (
-        cd libjpeg-turbo &&
-        cmake -G "MinGW Makefiles" &&
-        mingw32-make &&
-        copy libjpeg.a ..\deps\lib\ &&
-        copy jpeglib.h ..\deps\inc\ &&
-        copy jconfig.h ..\deps\inc\ &&
-        copy jerror.h ..\deps\inc\ &&
-        copy jmorecfg.h ..\deps\inc\ &&
-        cd ..)) &&
-      (if [%with_freetype%]==[1] (
-        cd freetype &&
-        cmake -G "MinGW Makefiles" &&
-        mingw32-make &&
-        copy libfreetype.a ..\deps\lib\ &&
-        mkdir ..\deps\inc\freetype\config &&
-        copy include\*.h ..\deps\inc\freetype\ &&
-        copy include\config ..\deps\inc\freetype\config &&
-        cd ..)) &&
-      (if [%with_iconv%]==[1] (
-        cd libiconv\source &&
-        c:\mingw\msys\1.0\bin\bash -c "PATH=/c/mingw/msys/1.0/bin:$PATH; make" &&
-        copy lib\.libs\libiconv.a ..\..\deps\lib\ &&
-        copy include\iconv.h ..\..\deps\inc\ &&
-        cd ..\..)) &&
-      (if [%with_tiff%]==[1] (
-        cd libtiff\libtiff &&
-        mingw32-make -fmakefile.mingw &&
-        cd .. &&
-        copy libtiff\libtiff.a ..\deps\lib\ &&
-        copy libtiff\tiff.h ..\deps\inc\ &&
-        copy libtiff\tiffconf.h ..\deps\inc\ &&
-        copy libtiff\tiffio.h ..\deps\inc\ &&
-        copy libtiff\tiffvers.h ..\deps\inc\ &&
-        cd ..)))
-  
-  
-  
-  
   # build msvc x86
   
   - if [%build_compiler%]==[msvc] if [%build_platform%]==[x86] (
@@ -236,8 +108,8 @@ build_script:
         -G "Visual Studio 12"
         -DCMAKE_C_FLAGS="/Qvec-report:1"
         -DCMAKE_CXX_FLAGS="/Qvec-report:1"
-        -DCMAKE_LIBRARY_PATH=deps\lib
-        -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
+        -DCMAKE_LIBRARY_PATH=deps
+        -DCMAKE_INCLUDE_PATH=deps;deps\freetype
         -DBUILD_TEST=1
         -DENABLE_PNG=%with_libpng%
         -DENABLE_JPEG=%with_libjpeg%
@@ -264,8 +136,8 @@ build_script:
         -G "Visual Studio 12 Win64"
         -DCMAKE_C_FLAGS=/Qvec-report:1
         -DCMAKE_CXX_FLAGS=/Qvec-report:1
-        -DCMAKE_LIBRARY_PATH=deps\lib
-        -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
+        -DCMAKE_LIBRARY_PATH=deps
+        -DCMAKE_INCLUDE_PATH=deps;deps\freetype
         -DBUILD_TEST=1
         -DENABLE_PNG=%with_libpng%
         -DENABLE_JPEG=%with_libjpeg%
@@ -290,11 +162,9 @@ build_script:
       cd build_mingw_x86 &&
       cmake
         -G "MinGW Makefiles"
-        -DCMAKE_C_FLAGS=-fkeep-inline-functions
-        -DCMAKE_CXX_FLAGS=-fkeep-inline-functions
         -DCMAKE_SHARED_LINKER_FLAGS=-static
-        -DCMAKE_LIBRARY_PATH=deps\lib
-        -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
+        -DCMAKE_LIBRARY_PATH=deps
+        -DCMAKE_INCLUDE_PATH=deps;deps\freetype
         -DBUILD_TEST=1
         -DENABLE_PNG=%with_libpng%
         -DENABLE_JPEG=%with_libjpeg%
@@ -318,11 +188,11 @@ build_script:
       mkdir build_mingw_x64 &&
       cd build_mingw_x64 &&
       cmake -G "MinGW Makefiles"
-        -DCMAKE_C_FLAGS="-m64 -fkeep-inline-functions"
-        -DCMAKE_CXX_FLAGS="-m64 -fkeep-inline-functions"
+        -DCMAKE_C_FLAGS=-m64
+        -DCMAKE_CXX_FLAGS=-m64
         -DCMAKE_SHARED_LINKER_FLAGS=-static
-        -DCMAKE_LIBRARY_PATH=deps\lib
-        -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
+        -DCMAKE_LIBRARY_PATH=deps
+        -DCMAKE_INCLUDE_PATH=deps;deps\freetype
         -DBUILD_TEST=1
         -DENABLE_PNG=%with_libpng%
         -DENABLE_JPEG=%with_libjpeg%
