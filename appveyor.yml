@@ -290,6 +290,8 @@ build_script:
       cd build_mingw_x86 &&
       cmake
         -G "MinGW Makefiles"
+        -DCMAKE_C_FLAGS=-fkeep-inline-functions
+        -DCMAKE_CXX_FLAGS=-fkeep-inline-functions
         -DCMAKE_SHARED_LINKER_FLAGS=-static
         -DCMAKE_LIBRARY_PATH=deps\lib
         -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
@@ -316,8 +318,8 @@ build_script:
       mkdir build_mingw_x64 &&
       cd build_mingw_x64 &&
       cmake -G "MinGW Makefiles"
-        -DCMAKE_C_FLAGS=-m64
-        -DCMAKE_CXX_FLAGS=-m64
+        -DCMAKE_C_FLAGS="-m64 -fkeep-inline-functions"
+        -DCMAKE_CXX_FLAGS="-m64 -fkeep-inline-functions"
         -DCMAKE_SHARED_LINKER_FLAGS=-static
         -DCMAKE_LIBRARY_PATH=deps\lib
         -DCMAKE_INCLUDE_PATH=deps\inc;deps\inc\freetype
