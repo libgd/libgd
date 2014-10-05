@@ -187,5 +187,6 @@ test_script:
   
   - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
       copy gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\liblibgd.dll gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\liblibgd.dll &&
-      if [%build_platform%]==[x86] (nunit-console-x86 gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)
-      else if [%build_platform%]==[x64] (nunit-console gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll))
+      (if [%build_platform%]==[x86] (nunit-console-x86 gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)
+      else if [%build_platform%]==[x64] (nunit-console gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)) &&
+      appveyor PushArtifact TestResult.xml )
