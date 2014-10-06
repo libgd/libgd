@@ -75,6 +75,7 @@ install:
       copy /y deps\libpng15_static.lib deps\libpng.lib &&
       copy /y deps\jpeg-static.lib deps\jpeg.lib &&
       copy /y deps\freetype_static.lib deps\freetype.lib )
+      copy /y deps\tiff_static.lib deps\tiff.lib )
   - if [%build_compiler%]==[mingw] (
       copy /y deps\libzlibstatic.a deps\libz.a &&
       del deps\*.dll* )
