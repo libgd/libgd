@@ -11,6 +11,13 @@ environment:
   with_iconv: 0     
   with_tiff: 1      # needs zlib and jpeg
   
+  static_runtime: 1
+  static_gcargs: -DCMAKE_SHARED_LINKER_FLAGS=-static
+  static_vcargs:
+  #static_vcargs: -DCMAKE_C_FLAGS_RELEASE=/MT
+  # ^ don't.
+  
+  cmake_args: -DCMAKE_LIBRARY_PATH=deps -DCMAKE_INCLUDE_PATH=deps;deps\freetype
   
   matrix:
     - build_platform: "x86"
@@ -109,51 +116,60 @@ build_script:
   
   # build msvc
   
+  - SET zip=libgd-msvc12-%build_platform%.zip
+  - SET cmake_cmd=cmake
+      -G "%vc_cm_arg%"
+      %cmake_args%
+      -DCMAKE_C_FLAGS="/Qvec-report:1"
+      -DCMAKE_CXX_FLAGS="/Qvec-report:1"
+      -DBUILD_TEST=1
+      -DENABLE_PNG=%with_libpng%
+      -DENABLE_JPEG=%with_libjpeg%
+      -DENABLE_FREETYPE=%with_freetype%
+      -DENABLE_ICONV=%with_iconv%
+      -DENABLE_TIFF=%with_tiff%
+      -Wno-dev
+  - if [%static_runtime%]==[1] SET cmake_cmd=%cmake_cmd% %static_vcargs%
+  
   - if [%build_compiler%]==[msvc] (
-      cmake
-        -G "%vc_cm_arg%"
-        -DCMAKE_C_FLAGS="/Qvec-report:1"
-        -DCMAKE_CXX_FLAGS="/Qvec-report:1"
-        -DCMAKE_LIBRARY_PATH=deps
-        -DCMAKE_INCLUDE_PATH=deps;deps\freetype
-        -DBUILD_TEST=1
-        -DENABLE_PNG=%with_libpng%
-        -DENABLE_JPEG=%with_libjpeg%
-        -DENABLE_FREETYPE=%with_freetype%
-        -DENABLE_ICONV=%with_iconv%
-        -DENABLE_TIFF=%with_tiff%
-        -Wno-dev
-        . &&
+      %cmake_args% &&
       msbuild gd.sln /p:Configuration=Release /v:m )
   
   - ps: if($env:build_compiler -eq 'msvc') {
-      invoke '7z' "a libgd-msvc12-$($env:build_platform).zip .\Bin\Release\libgd.dll .\Bin\Release\libgd.lib .\Bin\Release\libgd-static.lib";
-      Push-AppveyorArtifact "libgd-msvc12-$($env:build_platform).zip"; }
+      invoke '7z' "a $($env:zip)
+        .\Bin\Release\libgd.dll
+        .\Bin\Release\libgd.lib
+        .\Bin\Release\libgd-static.lib";
+      Push-AppveyorArtifact $env:zip; }
   
   
   
   # build mingw
   
+  - SET zip=libgd-mingw-%build_platform%.zip
+  - SET cmake_cmd=cmake
+      -G "MinGW Makefiles"
+      %mingw_extra%
+      %cmake_args%
+      -DBUILD_TEST=1
+      -DENABLE_PNG=%with_libpng%
+      -DENABLE_JPEG=%with_libjpeg%
+      -DENABLE_FREETYPE=%with_freetype%
+      -DENABLE_ICONV=%with_iconv%
+      -DENABLE_TIFF=%with_tiff%
+      -Wno-dev
+  - if [%static_runtime%]==[1] SET cmake_cmd=%cmake_cmd% %static_gcargs%
+  
   - if [%build_compiler%]==[mingw] (
-      cmake
-        -G "MinGW Makefiles"
-        %mingw_extra%
-        -DCMAKE_SHARED_LINKER_FLAGS=-static
-        -DCMAKE_LIBRARY_PATH=deps
-        -DCMAKE_INCLUDE_PATH=deps;deps\freetype
-        -DBUILD_TEST=1
-        -DENABLE_PNG=%with_libpng%
-        -DENABLE_JPEG=%with_libjpeg%
-        -DENABLE_FREETYPE=%with_freetype%
-        -DENABLE_ICONV=%with_iconv%
-        -DENABLE_TIFF=%with_tiff%
-        -Wno-dev
-        . &&
+      %cmake_cmd% &&
       mingw32-make )
   
   - ps: if($env:build_compiler -eq 'mingw') {
-      invoke '7z' "a libgd-mingw-$($env:build_platform).zip .\Bin\liblibgd.dll .\Bin\liblibgd.dll.a .\Bin\liblibgd-static.a";
-      Push-AppveyorArtifact "libgd-mingw-$($env:build_platform).zip"; }
+      invoke '7z' "a $($env:zip)
+        .\Bin\liblibgd.dll
+        .\Bin\liblibgd.dll.a
+        .\Bin\liblibgd-static.a";
+      Push-AppveyorArtifact $env:zip; }
   
   
   
