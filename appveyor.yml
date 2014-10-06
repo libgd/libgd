@@ -141,7 +141,7 @@ build_script:
       msbuild gd.sln /p:Configuration=Release /v:m &&
       if [%pack_dlls%]==[1] (
         move Bin\Release\libgd.dll Bin\Release\libgd_raw.dll &&
-        upx -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll ))
+        upx.exe -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll ))
   
   - ps: if($env:build_compiler -eq 'msvc') {
       invoke '7z' "a $($env:zip)
@@ -173,7 +173,7 @@ build_script:
       mingw32-make &&
       if [%pack_dlls%]==[1] (
         move Bin\liblibgd.dll Bin\liblibgd_raw.dll &&
-        upx -o Bin\liblibgd.dll Bin\liblibgd_raw.dll ))
+        upx.exe -o Bin\liblibgd.dll Bin\liblibgd_raw.dll ))
   
   - ps: if($env:build_compiler -eq 'mingw') {
       invoke '7z' "a $($env:zip)
