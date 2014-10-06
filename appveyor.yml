@@ -73,7 +73,7 @@ install:
   - if [%build_compiler%]==[msvc] (
       copy /y deps\zlibstatic.lib deps\zlib.lib &&
       copy /y deps\libpng15_static.lib deps\libpng.lib &&
-      copy /y deps\jpeg-static.lib deps\jpeg.lib )
+      copy /y deps\jpeg-static.lib deps\jpeg.lib &&
       copy /y deps\freetype_static.lib deps\freetype.lib )
   - if [%build_compiler%]==[mingw] (
       copy /y deps\libzlibstatic.a deps\libz.a &&
