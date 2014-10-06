@@ -11,6 +11,8 @@ environment:
   with_iconv: 0     
   with_tiff: 1      # needs zlib and jpeg
   
+  pack_dlls: 1      # will fetch upx
+  
   static_runtime: 1
   static_gcargs: -DCMAKE_SHARED_LINKER_FLAGS=-static
   static_vcargs:
@@ -89,6 +91,9 @@ install:
       del deps\*.dll* )
   
   
+  # get upx
+  - if [%pack_dlls%]==[1] cinst upx
+  
   # get mingw-w64 (C:\mingw64)
   - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') {
       invoke 'curl' '-L -o mw64.7z "http://libgd.blob.core.windows.net/mingw/x86_64-4.9.1-release-posix-seh-rt_v3-rev1.7z"';
@@ -132,8 +137,11 @@ build_script:
   - if [%static_runtime%]==[1] SET cmake_cmd=%cmake_cmd% %static_vcargs%
   
   - if [%build_compiler%]==[msvc] (
-      %cmake_args% &&
-      msbuild gd.sln /p:Configuration=Release /v:m )
+      %cmake_cmd% &&
+      msbuild gd.sln /p:Configuration=Release /v:m &&
+      if [%pack_dlls%]==[1] (
+        move Bin\Release\libgd.dll Bin\Release\libgd_raw.dll &&
+        upx -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll ))
   
   - ps: if($env:build_compiler -eq 'msvc') {
       invoke '7z' "a $($env:zip)
@@ -162,7 +170,10 @@ build_script:
   
   - if [%build_compiler%]==[mingw] (
       %cmake_cmd% &&
-      mingw32-make )
+      mingw32-make &&
+      if [%pack_dlls%]==[1] (
+        move Bin\liblibgd.dll Bin\liblibgd_raw.dll &&
+        upx -o Bin\liblibgd.dll Bin\liblibgd_raw.dll ))
   
   - ps: if($env:build_compiler -eq 'mingw') {
       invoke '7z' "a $($env:zip)
