@@ -193,10 +193,10 @@ build_script:
   
   - ps: if($env:with_tiff -eq 0 -and $env:build_bindings -eq 1) {
       prepend 'gd-dotnet-bindings-generator\LibGD.CLI\LibGDExtensions.cs' '#define NO_TIFF';
-      echo '#define NO_TIFF' >> gd-dotnet-bindings-generator\LibGD.Tests\test_config.cs; }
+      $env:test_defs += 'NO_TIFF;' }
   - ps: if($env:with_freetype -eq 0 -and $env:build_bindings -eq 1) {
-      prepend 'notes.txt' '#define NO_FREETYPE';
-      echo '#define NO_FREETYPE' >> gd-dotnet-bindings-generator\LibGD.Tests\test_config.cs; }
+      prepend 'gd-dotnet-bindings-generator\LibGD.CLI\LibGDExtensions.cs' '#define NO_FREETYPE';
+      $env:test_defs += 'NO_FREETYPE;' }
   
   - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall"'
   - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
@@ -207,7 +207,7 @@ build_script:
       (if [%build_platform%]==[x86] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw32\bin\mingw32-make.exe liblibgd.dll)
       else if [%build_platform%]==[x64] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw64\bin\mingw32-make.exe liblibgd.dll)) &&
       cd ..\..\.. &&
-      msbuild LibGD.Tests\LibGD.Tests.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
+      msbuild LibGD.Tests\LibGD.Tests.csproj /p:Configuration=Debug /p:Platform=AnyCPU /p:DefineConstants="%test_defs%" /v:m &&
       cd..)
   
   - ps: if($env:build_bindings -eq 1 -and $env:build_compiler -eq 'mingw') {
