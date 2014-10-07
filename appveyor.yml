@@ -7,9 +7,9 @@ environment:
   with_zlib: 1      # libgd actually won't build without it..
   with_libpng: 1    # needs zlib; removing will break current tests
   with_libjpeg: 1   # will download nasm; removing will break current tests
-  with_freetype: 1  # removing breaks bindings freetype test
+  with_freetype: 0  # removing breaks bindings freetype test
   with_iconv: 0     
-  with_tiff: 0      # needs zlib and jpeg
+  with_tiff: 1      # needs zlib and jpeg
   
   pack_dlls: 1      # will fetch upx
   
