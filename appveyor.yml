@@ -11,7 +11,7 @@ environment:
   with_iconv: 0     
   with_tiff: 1      # needs zlib and jpeg
   
-  pack_dlls: 1      # will fetch upx
+  pack_dlls: 0      # will fetch upx
   
   static_runtime: 1
   static_gcargs: -DCMAKE_SHARED_LINKER_FLAGS=-static
@@ -79,16 +79,8 @@ install:
   
   
   # make static names cmake friendly
-  - if [%build_compiler%]==[msvc] (
-      copy /y deps\zlibstatic.lib deps\zlib.lib &&
-      copy /y deps\libpng15_static.lib deps\libpng.lib &&
-      copy /y deps\jpeg-static.lib deps\jpeg.lib &&
-      copy /y deps\freetype_static.lib deps\freetype.lib &&
-      copy /y deps\tiff_static.lib deps\tiff.lib )
-  - if [%build_compiler%]==[mingw] (
-      copy /y deps\libzlibstatic.a deps\libz.a &&
-      copy /y deps\libfreetype_static.a deps\libfreetype.a &&
-      del deps\*.dll* )
+  - del deps\*.dll*
+  - ps: ls deps\*_static.lib | % {move $_ ($_ -replace '_static', '') -force}
   
   
   # get upx
@@ -147,7 +139,7 @@ build_script:
       invoke '7z' "a $($env:zip)
         .\Bin\Release\libgd.dll
         .\Bin\Release\libgd.lib
-        .\Bin\Release\libgd-static.lib";
+        .\Bin\Release\libgd_static.lib";
       Push-AppveyorArtifact $env:zip; }
   
   
@@ -179,7 +171,7 @@ build_script:
       invoke '7z' "a $($env:zip)
         .\Bin\liblibgd.dll
         .\Bin\liblibgd.dll.a
-        .\Bin\liblibgd-static.a";
+        .\Bin\liblibgd.a";
       Push-AppveyorArtifact $env:zip; }
   
   
