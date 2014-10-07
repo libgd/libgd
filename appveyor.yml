@@ -62,6 +62,10 @@ install:
           $env:mingw_extra = '';
         }
   
+  - ps: function prepend($file, $line) {
+      Set-Content $file -value $line,(Get-Content $file)
+    }
+  
   # get common functions
   - git clone https://github.com/imazen/gd-appveyor-helpers
   - ps: . .\gd-appveyor-helpers\appveyor_funcs.ps1
@@ -188,6 +192,13 @@ build_script:
   
   
   # build bindings
+  
+  - ps: if($env:with_tiff -eq 0) {
+      prepend 'gd-dotnet-bindings-generator\LibGD.CLI\LibGDExtensions.cs','#define NO_TIFF';
+      echo '#define NO_TIFF' >> gd-dotnet-bindings-generator\LibGD.Tests\test_config.cs; }
+  - ps: if($env:with_freetype -eq 0) {
+      prepend 'gd-dotnet-bindings-generator\LibGD.CLI\LibGDExtensions.cs','#define NO_FREETYPE';
+      echo '#define NO_FREETYPE' >> gd-dotnet-bindings-generator\LibGD.Tests\test_config.cs; }
   
   - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall"'
   - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
