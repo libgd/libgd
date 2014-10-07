@@ -11,7 +11,7 @@ environment:
   with_iconv: 0     
   with_tiff: 1      # needs zlib and jpeg
   
-  pack_dlls: 0      # will fetch upx
+  pack_dlls: 1      # will fetch upx
   
   static_runtime: 1
   static_gcargs: -DCMAKE_SHARED_LINKER_FLAGS=-static
@@ -134,12 +134,11 @@ build_script:
   - if [%build_compiler%]==[msvc] (
       %cmake_cmd% &&
       msbuild gd.sln /p:Configuration=Release /v:m &&
-      if [%pack_dlls%]==[1] (
-        move Bin\Release\libgd.dll Bin\Release\libgd_raw.dll &&
-        upx -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll ))
+      copy Bin\Release\libgd.dll Bin\Release\libgd_raw.dll &&
+      if [%pack_dlls%]==[1] upx -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll )
   
   - ps: if($env:build_compiler -eq 'msvc') {
-      invoke '7z' "a $($env:zip) .\Bin\Release\libgd.dll .\Bin\Release\libgd.lib .\Bin\Release\libgd_static.lib";
+      invoke '7z' "a $($env:zip) .\Bin\Release\libgd_static.lib .\Bin\Release\libgd.dll .\Bin\Release\libgd.lib";
       Push-AppveyorArtifact $env:zip; }
   
   
@@ -163,9 +162,8 @@ build_script:
   - if [%build_compiler%]==[mingw] (
       %cmake_cmd% &&
       mingw32-make &&
-      if [%pack_dlls%]==[1] (
-        move Bin\liblibgd.dll Bin\liblibgd_raw.dll &&
-        upx -o Bin\liblibgd.dll Bin\liblibgd_raw.dll ))
+      copy Bin\liblibgd.dll Bin\liblibgd_raw.dll &&
+      if [%pack_dlls%]==[1] upx -o Bin\liblibgd.dll Bin\liblibgd_raw.dll )
   
   - ps: if($env:build_compiler -eq 'mingw') {
       invoke '7z' "a $($env:zip) .\Bin\liblibgd.dll .\Bin\liblibgd.dll.a .\Bin\liblibgd.a";
@@ -179,7 +177,7 @@ build_script:
   - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
       cd gd-dotnet-bindings-generator &&
       msbuild LibGD.CLI\LibGD.CLI.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
-      copy ..\Bin\liblibgd.dll LibGD.CLI\bin\Debug\liblibgd.dll &&
+      copy ..\Bin\liblibgd_raw.dll LibGD.CLI\bin\Debug\liblibgd.dll &&
       cd LibGD.CLI\bin\Debug &&
       (if [%build_platform%]==[x86] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw32\bin\mingw32-make.exe liblibgd.dll)
       else if [%build_platform%]==[x64] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw64\bin\mingw32-make.exe liblibgd.dll)) &&
@@ -202,7 +200,7 @@ test_script:
   - exit %fail%
   
   - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
-      copy gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\liblibgd.dll gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\liblibgd.dll &&
+      copy Bin\liblibgd.dll gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\liblibgd.dll &&
       (if [%build_platform%]==[x86] (nunit-console-x86 gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)
       else if [%build_platform%]==[x64] (nunit-console gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)) &&
       appveyor PushArtifact TestResult.xml )
