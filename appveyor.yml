@@ -44,13 +44,12 @@ environment:
 
 install:
   - if [%min_build%]==[1] (
-      SET with_zlib=1 &&
-      SET with_libpng=1 &&
-      SET with_libjpeg=1 &&
-      SET with_freetype=0 &&
-      SET with_iconv=0 &&
-      SET with_tiff=0
-    )
+      SET with_zlib=1&&
+      SET with_libpng=1&&
+      SET with_libjpeg=1&&
+      SET with_freetype=0&&
+      SET with_iconv=0&&
+      SET with_tiff=0)
   
   - ps: if($env:build_platform -eq 'x64') {
           $env:vcvar_arg = 'x86_amd64';
