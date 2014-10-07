@@ -11,7 +11,7 @@ environment:
   with_iconv: 0     
   with_tiff: 1      # needs zlib and jpeg
   
-  pack_dlls: 1      # will fetch upx
+  pack_dlls: 0      # will fetch upx
   
   static_runtime: 1
   static_gcargs: -DCMAKE_SHARED_LINKER_FLAGS=-static
@@ -84,7 +84,10 @@ install:
   
   
   # get upx
-  - if [%pack_dlls%]==[1] cinst upx -Version 3.08
+  #- if [%pack_dlls%]==[1] cinst upx
+  - if [%pack_dlls%]==[1] (
+      curl -L -o upx.zip http://upx.sourceforge.net/download/upx391w.zip &&
+      7z e upx391w.zip *.exe -r )
   
   # get mingw-w64 (C:\mingw64)
   - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') {
