@@ -7,9 +7,9 @@ environment:
   with_zlib: 1      # libgd actually won't build without it..
   with_libpng: 1    # needs zlib; removing will break current tests
   with_libjpeg: 1   # will download nasm; removing will break current tests
-  with_freetype: 1  # removing breaks bindings freetype test
+  with_freetype: 0  # removing breaks bindings freetype test
   with_iconv: 0     
-  with_tiff: 1      # needs zlib and jpeg
+  with_tiff: 0      # needs zlib and jpeg
   
   pack_dlls: 1      # will fetch upx
   
@@ -22,11 +22,11 @@ environment:
   cmake_args: -DCMAKE_LIBRARY_PATH=deps -DCMAKE_INCLUDE_PATH=deps;deps\freetype
   
   matrix:
-    - build_platform: "x86"
-      build_compiler: "msvc"
+    #- build_platform: "x86"
+    #  build_compiler: "msvc"
     
-    - build_platform: "x64"
-      build_compiler: "msvc"
+    #- build_platform: "x64"
+    #  build_compiler: "msvc"
     
     - build_platform: "x86"
       build_compiler: "mingw"
@@ -87,7 +87,7 @@ install:
   #- if [%pack_dlls%]==[1] cinst upx
   - if [%pack_dlls%]==[1] (
       curl -L -o upx.zip http://upx.sourceforge.net/download/upx391w.zip &&
-      7z e upx391w.zip *.exe -r )
+      7z e upx.zip *.exe -r )
   
   # get mingw-w64 (C:\mingw64)
   - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') {
