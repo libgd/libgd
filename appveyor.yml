@@ -4,7 +4,7 @@ shallow_clone: true
 
 environment:
   # settings
-  min_build: 0      # if 1 overwrites with_* flags to leave zlib-png-jpeg
+  min_build: 1      # if 1 overwrites with_* flags to leave zlib-png-jpeg
   
   with_zlib: 1      # libgd actually won't build without it..
   with_libpng: 1    # needs zlib; removing will break current tests
