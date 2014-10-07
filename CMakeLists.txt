@@ -208,7 +208,7 @@ else (USE_EXT_GD)
 		SET(GD_LIB gd)
 	endif (WIN32)
 
-	SET(GD_LIB_STATIC "${GD_LIB}-static")
+	SET(GD_LIB_STATIC "${GD_LIB}_static")
 
 	IF(PROFILE)
 		add_definitions("-pg")

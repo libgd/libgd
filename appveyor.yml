@@ -42,12 +42,12 @@ install:
   - ps: if($env:build_platform -eq 'x64') {
           $env:vcvar_arg = 'x86_amd64';
           $env:vc_cm_arg = 'Visual Studio 12 Win64';
-          $env:mingw_extra = '-DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64';
+          $env:mingw_extra = '-DCMAKE_C_FLAGS="-m64 -fno-rtti" -DCMAKE_CXX_FLAGS="-m64 -fno-rtti"';
         }
         else {
           $env:vcvar_arg = 'x86';
           $env:vc_cm_arg = 'Visual Studio 12';
-          $env:mingw_extra = '';
+          $env:mingw_extra = '-DCMAKE_C_FLAGS=-fno-rtti -DCMAKE_CXX_FLAGS=-fno-rtti';
         }
   
   # get common functions
