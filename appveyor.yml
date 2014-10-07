@@ -43,7 +43,7 @@ environment:
 
 
 install:
-  - if[%min_build%]==[1] (
+  - if [%min_build%]==[1] (
       SET with_zlib=1 &&
       SET with_libpng=1 &&
       SET with_libjpeg=1 &&
