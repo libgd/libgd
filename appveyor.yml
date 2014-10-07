@@ -202,7 +202,12 @@ build_script:
       cd..)
   
   - ps: if($env:build_bindings -eq 1 -and $env:build_compiler -eq 'mingw') {
-      invoke '7z' "a LibGDSharp-$($env:build_platform).zip .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\liblibgd.dll .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\LibGDSharp.dll";
+      invoke '7z' "a LibGDSharp-$($env:build_platform).zip
+        .\Bin\liblibgd.dll
+        .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\_iobuf.cs
+        .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\LibGD.cs
+        .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\LibGDExtensions.cs
+        .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\LibGDSharp.dll";
       Push-AppveyorArtifact "LibGDSharp-$($env:build_platform).zip"; }
 
 
