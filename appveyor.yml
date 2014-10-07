@@ -139,10 +139,7 @@ build_script:
         upx -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll ))
   
   - ps: if($env:build_compiler -eq 'msvc') {
-      invoke '7z' "a $($env:zip)
-        .\Bin\Release\libgd.dll
-        .\Bin\Release\libgd.lib
-        .\Bin\Release\libgd_static.lib";
+      invoke '7z' "a $($env:zip) .\Bin\Release\libgd.dll .\Bin\Release\libgd.lib .\Bin\Release\libgd_static.lib";
       Push-AppveyorArtifact $env:zip; }
   
   
@@ -171,10 +168,7 @@ build_script:
         upx -o Bin\liblibgd.dll Bin\liblibgd_raw.dll ))
   
   - ps: if($env:build_compiler -eq 'mingw') {
-      invoke '7z' "a $($env:zip)
-        .\Bin\liblibgd.dll
-        .\Bin\liblibgd.dll.a
-        .\Bin\liblibgd.a";
+      invoke '7z' "a $($env:zip) .\Bin\liblibgd.dll .\Bin\liblibgd.dll.a .\Bin\liblibgd.a";
       Push-AppveyorArtifact $env:zip; }
   
   
