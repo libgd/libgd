@@ -62,9 +62,9 @@ install:
           $env:mingw_extra = '';
         }
   
-  - ps: function prepend($file, $line) {
+  - ps: 'function prepend($file, $line) {
       Set-Content $file -value $line,(Get-Content $file)
-    }
+    }'
   
   # get common functions
   - git clone https://github.com/imazen/gd-appveyor-helpers
