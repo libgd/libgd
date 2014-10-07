@@ -9,7 +9,7 @@ environment:
   with_libjpeg: 1   # will download nasm; removing will break current tests
   with_freetype: 1  # removing breaks bindings freetype test
   with_iconv: 0     
-  with_tiff: 1      # needs zlib and jpeg
+  with_tiff: 0      # needs zlib and jpeg
   
   pack_dlls: 1      # will fetch upx
   
@@ -32,9 +32,9 @@ environment:
       build_compiler: "mingw"
       build_bindings: 1
     
-    - build_platform: "x64"
-      build_compiler: "mingw"
-      build_bindings: 1
+    #- build_platform: "x64"
+    #  build_compiler: "mingw"
+    #  build_bindings: 1
 
 
 
