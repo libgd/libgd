@@ -192,10 +192,10 @@ build_script:
   # build bindings
   
   - ps: if($env:with_tiff -eq 0 -and $env:build_bindings -eq 1) {
-      prepend 'gd-dotnet-bindings-generator\LibGD.CLI\LibGDExtensions.cs', '#define NO_TIFF';
+      prepend 'gd-dotnet-bindings-generator\LibGD.CLI\LibGDExtensions.cs' '#define NO_TIFF';
       echo '#define NO_TIFF' >> gd-dotnet-bindings-generator\LibGD.Tests\test_config.cs; }
   - ps: if($env:with_freetype -eq 0 -and $env:build_bindings -eq 1) {
-      prepend 'gd-dotnet-bindings-generator\LibGD.CLI\LibGDExtensions.cs', '#define NO_FREETYPE';
+      prepend 'notes.txt' '#define NO_FREETYPE';
       echo '#define NO_FREETYPE' >> gd-dotnet-bindings-generator\LibGD.Tests\test_config.cs; }
   
   - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall"'
