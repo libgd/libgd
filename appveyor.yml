@@ -137,7 +137,7 @@ build_script:
       copy Bin\Release\libgd.dll Bin\Release\libgd_raw.dll &&
       if [%pack_dlls%]==[1] (
         del Bin\Release\libgd.dll &&
-        upx -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll )
+        upx -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll ))
   
   - ps: if($env:build_compiler -eq 'msvc') {
       invoke '7z' "a $($env:zip) .\Bin\Release\libgd_static.lib .\Bin\Release\libgd.dll .\Bin\Release\libgd.lib";
@@ -167,7 +167,7 @@ build_script:
       copy Bin\liblibgd.dll Bin\liblibgd_raw.dll &&
       if [%pack_dlls%]==[1] (
         del Bin\liblibgd.dll &&
-        upx -o Bin\liblibgd.dll Bin\liblibgd_raw.dll )
+        upx -o Bin\liblibgd.dll Bin\liblibgd_raw.dll ))
   
   - ps: if($env:build_compiler -eq 'mingw') {
       invoke '7z' "a $($env:zip) .\Bin\liblibgd.dll .\Bin\liblibgd.dll.a .\Bin\liblibgd.a";
