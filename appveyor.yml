@@ -4,14 +4,17 @@ shallow_clone: true
 
 environment:
   # settings
+  min_build: 1      # if 1 overwrites with_* flags to leave zlib-png-jpeg
+  
   with_zlib: 1      # libgd actually won't build without it..
   with_libpng: 1    # needs zlib; removing will break current tests
-  with_libjpeg: 1   # will download nasm; removing will break current tests
-  with_freetype: 0  # removing breaks bindings freetype test
+  with_libjpeg: 1   # removing will break current tests
+  with_freetype: 1  # removing breaks bindings freetype test
   with_iconv: 0     
   with_tiff: 1      # needs zlib and jpeg
   
   pack_dlls: 1      # will fetch upx
+  
   
   static_runtime: 1
   static_gcargs: -DCMAKE_SHARED_LINKER_FLAGS=-static
@@ -20,6 +23,7 @@ environment:
   # ^ don't.
   
   cmake_args: -DCMAKE_LIBRARY_PATH=deps -DCMAKE_INCLUDE_PATH=deps;deps\freetype
+  
   
   matrix:
     #- build_platform: "x86"
@@ -39,6 +43,15 @@ environment:
 
 
 install:
+  - if[%min_build%]==[1] (
+      SET with_zlib=1 &&
+      SET with_libpng=1 &&
+      SET with_libjpeg=1 &&
+      SET with_freetype=0 &&
+      SET with_iconv=0 &&
+      SET with_tiff=0
+    )
+  
   - ps: if($env:build_platform -eq 'x64') {
           $env:vcvar_arg = 'x86_amd64';
           $env:vc_cm_arg = 'Visual Studio 12 Win64';
@@ -83,7 +96,7 @@ install:
   - ps: ls deps\*_static.lib | % {move $_ ($_ -replace '_static', '') -force}
   
   
-  # get upx
+  # get upx (cinst broken; gets dos ver)
   #- if [%pack_dlls%]==[1] cinst upx
   - if [%pack_dlls%]==[1] (
       curl -L -o upx.zip http://upx.sourceforge.net/download/upx391w.zip &&
