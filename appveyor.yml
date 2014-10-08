@@ -1,3 +1,4 @@
+version: 2.1.1.{build}
 shallow_clone: true
 
 
@@ -73,22 +74,22 @@ install:
   - mkdir deps
   - ps: if($env:build_bindings -eq 1) { invoke 'git' 'clone https://github.com/imazen/gd-dotnet-bindings-generator.git --depth 1 --branch itanium --single-branch' }
   - ps: if($env:with_zlib -eq 1) {
-          invoke 'nuget' "install zlib-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/zlib-94hmpf3q011d";
+          invoke 'nuget' "install zlib-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/zlib-94hmpf3q011d";
           move zlib*\* deps -force }
   - ps: if($env:with_libjpeg -eq 1) {
-          invoke 'nuget' "install libjpeg-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/libjpeg-turbo-t70qw53csfhj";
+          invoke 'nuget' "install libjpeg-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libjpeg-turbo-t70qw53csfhj";
           move libjpeg*\* deps -force }
   - ps: if($env:with_libpng -eq 1) {
-          invoke 'nuget' "install libpng-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/libpng-i3b6v9aught8";
+          invoke 'nuget' "install libpng-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libpng-i3b6v9aught8";
           move libpng*\* deps -force }
   - ps: if($env:with_freetype -eq 1) {
-          invoke 'nuget' "install freetype-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/freetype-vf7bw7v5ec29";
+          invoke 'nuget' "install freetype-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/freetype-vf7bw7v5ec29";
           move freetype*\* deps -force }
   - ps: if($env:with_iconv -eq 1) {
-          invoke 'nuget' "install libiconv-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/libiconv-es1y8p1h9c47";
+          invoke 'nuget' "install libiconv-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libiconv-es1y8p1h9c47";
           move libiconv*\* deps -force }
   - ps: if($env:with_tiff -eq 1) {
-          invoke 'nuget' "install libtiff-$($env:build_compiler)-$($env:build_platform) -Source https://ci.appveyor.com/nuget/libtiff-i3h8tqqy7o7b";
+          invoke 'nuget' "install libtiff-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libtiff-i3h8tqqy7o7b";
           move libtiff*\* deps -force }
   
   
