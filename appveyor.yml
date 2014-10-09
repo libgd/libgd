@@ -3,7 +3,7 @@ shallow_clone: true
 
 init:
   - cinst imdisk
-  - imdisk -a -s 512M -m X: -p "/fs:ntfs /q /y"
+  - 'imdisk -a -s 512M -m X: -p "/fs:ntfs /q /y"'
 
 #clone_folder: 'X:\'
 
