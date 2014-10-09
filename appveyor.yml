@@ -5,7 +5,7 @@ init:
   - cinst imdisk
   - imdisk -a -s 512M -m X: -p "/fs:ntfs /q /y"
 
-clone_folder: 'X:\'
+#clone_folder: 'X:\'
 
 
 
@@ -50,6 +50,9 @@ environment:
 
 
 install:
+  - move .\* X:
+  - SET APPVEYOR_BUILD_FOLDER=X:
+  
   - if [%min_build%]==[1] (
       SET with_zlib=1&&
       SET with_libpng=1&&
