@@ -44,12 +44,9 @@ environment:
 
 install:
   - curl -L -o imdiskinst.exe http://www.ltr-data.se/files/imdiskinst.exe
+  - imdiskinst -y
   - 7z x -oimdisk imdiskinst.exe
-  #- imdisk\install
-  - cd imdisk
-  - rundll32 setupapi.dll,InstallHinfSection DefaultInstall 132 .\imdisk.inf
-  - copy cli\i386\imdisk.exe ..\
-  - cd ..
+  - copy imdisk\cli\i386\imdisk.exe .\
   #- cinst imdisk
   - 'imdisk -a -s 512M -m X: -p "/fs:ntfs /q /y"'
   - move .\* X:
