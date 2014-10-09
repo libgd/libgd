@@ -148,11 +148,12 @@ build_script:
   
   - if [%build_compiler%]==[msvc] (
       %cmake_cmd% &&
-      msbuild gd.sln /p:Configuration=Release /v:diag &&
+      msbuild gd.sln /p:Configuration=Release /fl /flp:logfile=msvc%vcvar_arg%.log;verbosity=diagnostic &&
       copy Bin\Release\libgd.dll Bin\Release\libgd_raw.dll &&
       if [%pack_dlls%]==[1] (
         del Bin\Release\libgd.dll &&
         upx -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll ))
+      appveyor PushArtifact msvc%vcvar_arg%.log;
   
   - ps: if($env:build_compiler -eq 'msvc') {
       invoke '7z' "a $($env:zip) .\Bin\Release\libgd_static.lib .\Bin\Release\libgd.dll .\Bin\Release\libgd.lib";
