@@ -43,7 +43,10 @@ environment:
 
 
 install:
-  - cinst imdisk
+  - curl -L -o imdiskinst.exe http://www.ltr-data.se/files/imdiskinst.exe
+  - 7z x -oimdisk imdiskinst.exe
+  - imdisk\install
+  #- cinst imdisk
   - 'imdisk -a -s 512M -m X: -p "/fs:ntfs /q /y"'
   - move .\* X:
   - SET APPVEYOR_BUILD_FOLDER=X:
