@@ -48,6 +48,7 @@ install:
   #- imdisk\install
   - cd imdisk
   - rundll32 setupapi.dll,InstallHinfSection DefaultInstall 132 .\imdisk.inf
+  - copy cli\i386\imdisk.exe ..\
   - cd ..
   #- cinst imdisk
   - 'imdisk -a -s 512M -m X: -p "/fs:ntfs /q /y"'
