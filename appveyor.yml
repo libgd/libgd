@@ -1,13 +1,6 @@
 version: 2.1.1.{build}
 shallow_clone: true
 
-init:
-  - cinst imdisk
-  - 'imdisk -a -s 512M -m X: -p "/fs:ntfs /q /y"'
-
-#clone_folder: 'X:\'
-
-
 
 environment:
   # settings
@@ -50,6 +43,8 @@ environment:
 
 
 install:
+  - cinst imdisk
+  - 'imdisk -a -s 512M -m X: -p "/fs:ntfs /q /y"'
   - move .\* X:
   - SET APPVEYOR_BUILD_FOLDER=X:
   
