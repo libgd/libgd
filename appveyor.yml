@@ -1,6 +1,11 @@
 version: 2.1.1.{build}
 shallow_clone: true
 
+clone_folder: 'X:'
+init:
+  - cinst imdisk
+  - imdisk -a -s 512M -m X: -p "/fs:ntfs /q /y"
+
 
 
 environment:
