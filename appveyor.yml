@@ -44,7 +44,8 @@ environment:
 
 install:
   - curl -k -L -oramdisk_setup.exe -s https://www.softperfect.com/download/freeware/ramdisk_setup.exe
-  - start /wait ramdisk_setup.exe /S /D=C:\ramdisk
+  - dir
+  - ramdisk_setup.exe /S /D=C:\ramdisk
   - start /wait C:\ramdisk\ramdiskws /add:letter=X,fs=NTFS,size=512M
   - move .\* X:
   - SET APPVEYOR_BUILD_FOLDER=X:
