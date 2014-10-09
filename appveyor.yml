@@ -45,11 +45,15 @@ environment:
 install:
   - curl -L -o imdiskinst.exe http://www.ltr-data.se/files/imdiskinst.exe
   - 7z x -oimdisk imdiskinst.exe
-  - imdisk\install
+  #- imdisk\install
+  - cd imdisk
+  - rundll32 setupapi.dll,InstallHinfSection DefaultInstall 132 .\imdisk.inf
+  - cd ..
   #- cinst imdisk
   - 'imdisk -a -s 512M -m X: -p "/fs:ntfs /q /y"'
   - move .\* X:
   - SET APPVEYOR_BUILD_FOLDER=X:
+  - X:
   
   - if [%min_build%]==[1] (
       SET with_zlib=1&&
