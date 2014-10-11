@@ -132,6 +132,10 @@ build_script:
   
   # build msvc
   
+  - if [%build_compiler%]==[msvc] (
+      SET dll_name=libgd.dll &&
+      SET dll_source=Bin\Release\libgd_raw.dll )
+  
   - SET zip=libgd-msvc12-%build_platform%.zip
   - SET cmake_cmd=cmake
       -G "%vc_cm_arg%"
@@ -152,8 +156,6 @@ build_script:
       msbuild gd.sln /p:Configuration=Release /fl /flp:logfile=msvc%vcvar_arg%.log;verbosity=diagnostic &&
       copy Bin\Release\libgd.dll Bin\Release\libgd_raw.dll &&
       appveyor PushArtifact msvc%vcvar_arg%.log &&
-      SET dll_name=libgd.dll &&
-      SET dll_source=Bin\Release\libgd_raw.dll &&
       SET cli_args=%dll_name% &&
       if [%pack_dlls%]==[1] (
         del Bin\Release\libgd.dll &&
@@ -166,6 +168,10 @@ build_script:
   
   
   # build mingw
+  
+  - if [%build_compiler%]==[mingw] (
+      SET dll_name=liblibgd.dll &&
+      SET dll_source=Bin\liblibgd_raw.dll )
   
   - SET zip=libgd-mingw-%build_platform%.zip
   - SET cmake_cmd=cmake
@@ -185,8 +191,6 @@ build_script:
       %cmake_cmd% &&
       mingw32-make &&
       copy Bin\liblibgd.dll Bin\liblibgd_raw.dll &&
-      SET dll_name=liblibgd.dll &&
-      SET dll_source=Bin\liblibgd_raw.dll &&
       (if [%build_platform%]==[x86] (SET dll_make=C:\mingw32\bin\mingw32-make.exe)
       else if [%build_platform%]==[x64] (SET dll_make=C:\mingw64\bin\mingw32-make.exe)) &&
       SET cli_args=%dll_make% %dll_name% &&
