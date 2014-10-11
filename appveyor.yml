@@ -26,11 +26,13 @@ environment:
   
   
   matrix:
-    - build_platform: "x86"
-      build_compiler: "msvc"
+    #- build_platform: "x86"
+    #  build_compiler: "msvc"
+    #  build_bindings: 1
     
     - build_platform: "x64"
       build_compiler: "msvc"
+      build_bindings: 1
     
     - build_platform: "x86"
       build_compiler: "mingw"
@@ -150,6 +152,9 @@ build_script:
       msbuild gd.sln /p:Configuration=Release /fl /flp:logfile=msvc%vcvar_arg%.log;verbosity=diagnostic &&
       copy Bin\Release\libgd.dll Bin\Release\libgd_raw.dll &&
       appveyor PushArtifact msvc%vcvar_arg%.log &&
+      SET dll_name=libgd.dll &&
+      SET dll_source=Bin\Release\libgd_raw.dll &&
+      SET cli_args=%dll_name% &&
       if [%pack_dlls%]==[1] (
         del Bin\Release\libgd.dll &&
         upx -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll ))
@@ -180,6 +185,11 @@ build_script:
       %cmake_cmd% &&
       mingw32-make &&
       copy Bin\liblibgd.dll Bin\liblibgd_raw.dll &&
+      SET dll_name=liblibgd.dll &&
+      SET dll_source=Bin\liblibgd_raw.dll &&
+      (if [%build_platform%]==[x86] (SET dll_make=C:\mingw32\bin\mingw32-make.exe)
+      else if [%build_platform%]==[x64] (SET dll_make=C:\mingw64\bin\mingw32-make.exe)) &&
+      SET cli_args=%dll_make% %dll_name% &&
       if [%pack_dlls%]==[1] (
         del Bin\liblibgd.dll &&
         upx -o Bin\liblibgd.dll Bin\liblibgd_raw.dll ))
@@ -203,10 +213,9 @@ build_script:
   - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
       cd gd-dotnet-bindings-generator &&
       msbuild LibGD.CLI\LibGD.CLI.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
-      copy ..\Bin\liblibgd_raw.dll LibGD.CLI\bin\Debug\liblibgd.dll &&
+      copy ..\%dll_source% LibGD.CLI\bin\Debug\%dll_name% &&
       cd LibGD.CLI\bin\Debug &&
-      (if [%build_platform%]==[x86] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw32\bin\mingw32-make.exe liblibgd.dll)
-      else if [%build_platform%]==[x64] (LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src C:\mingw64\bin\mingw32-make.exe liblibgd.dll)) &&
+      LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src %cli_args% &&
       cd ..\..\.. &&
       msbuild LibGD.Tests\LibGD.Tests.csproj /p:Configuration=Debug /p:Platform=AnyCPU /p:DefineConstants="%test_defs%" /v:m &&
       cd..)
@@ -230,8 +239,8 @@ test_script:
   - ps: Push-AppveyorArtifact Testing\Temporary\LastTest.log
   - exit %fail%
   
-  - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
-      copy Bin\liblibgd.dll gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\liblibgd.dll &&
+  - if [%build_bindings%]==[1] (
+      copy %dll_source% gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\%dll_name% &&
       (if [%build_platform%]==[x86] (nunit-console-x86 gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)
       else if [%build_platform%]==[x64] (nunit-console gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)) &&
       appveyor PushArtifact TestResult.xml )
