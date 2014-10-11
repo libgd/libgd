@@ -210,7 +210,7 @@ build_script:
       $env:test_defs += 'NO_FREETYPE;' }
   
   - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall"'
-  - if [%build_bindings%]==[1] if [%build_compiler%]==[mingw] (
+  - if [%build_bindings%]==[1] (
       cd gd-dotnet-bindings-generator &&
       msbuild LibGD.CLI\LibGD.CLI.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
       copy ..\%dll_source% LibGD.CLI\bin\Debug\%dll_name% &&
