@@ -134,6 +134,7 @@ build_script:
   
   - if [%build_compiler%]==[msvc] (
       SET dll_name=libgd.dll &&
+      SET dll_pack=Bin\Release\libgd.dll &&
       SET dll_source=Bin\Release\libgd_raw.dll )
   
   - SET zip=libgd-msvc12-%build_platform%.zip
@@ -171,7 +172,11 @@ build_script:
   
   - if [%build_compiler%]==[mingw] (
       SET dll_name=liblibgd.dll &&
+      SET dll_pack=Bin\liblibgd.dll &&
       SET dll_source=Bin\liblibgd_raw.dll )
+  
+  - if [%build_platform%]==[x86] SET dll_make=C:\mingw32\bin\mingw32-make.exe
+  - if [%build_platform%]==[x64] SET dll_make=C:\mingw64\bin\mingw32-make.exe
   
   - SET zip=libgd-mingw-%build_platform%.zip
   - SET cmake_cmd=cmake
@@ -191,8 +196,6 @@ build_script:
       %cmake_cmd% &&
       mingw32-make &&
       copy Bin\liblibgd.dll Bin\liblibgd_raw.dll &&
-      (if [%build_platform%]==[x86] (SET dll_make=C:\mingw32\bin\mingw32-make.exe)
-      else if [%build_platform%]==[x64] (SET dll_make=C:\mingw64\bin\mingw32-make.exe)) &&
       SET cli_args=%dll_make% %dll_name% &&
       if [%pack_dlls%]==[1] (
         del Bin\liblibgd.dll &&
@@ -226,7 +229,7 @@ build_script:
   
   - ps: if($env:build_bindings -eq 1 -and $env:build_compiler -eq 'mingw') {
       invoke '7z' "a LibGDSharp-$($env:build_platform).zip
-        .\Bin\liblibgd.dll
+        .\$($env:dll_pack)
         .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\_iobuf.cs
         .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\LibGD.cs
         .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\LibGDExtensions.cs
