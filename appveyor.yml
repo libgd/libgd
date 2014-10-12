@@ -28,7 +28,7 @@ environment:
   matrix:
     - build_platform: "x86"
       build_compiler: "msvc"
-    #  build_bindings: 1
+      build_bindings: 1
     
     - build_platform: "x64"
       build_compiler: "msvc"
