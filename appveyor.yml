@@ -73,7 +73,7 @@ install:
   
   # fetch deps
   - mkdir deps
-  - ps: if($env:build_bindings -eq 1) { invoke 'git' 'clone https://github.com/imazen/gd-dotnet-bindings-generator.git --depth 1 --branch itanium --single-branch' }
+  - ps: if($env:build_bindings -eq 1) { invoke 'git' 'clone https://github.com/imazen/gd-dotnet-bindings-generator.git --depth 1' }
   - ps: if($env:with_zlib -eq 1) {
           invoke 'nuget' "install zlib-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/zlib-94hmpf3q011d";
           move zlib*\* deps -force }
