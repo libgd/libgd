@@ -61,7 +61,7 @@ install:
         else {
           $env:vcvar_arg = 'x86';
           $env:vc_cm_arg = 'Visual Studio 12';
-          $env:mingw_extra = '-DCMAKE_C_FLAGS="-fkeep-inline-functions" -DCMAKE_CXX_FLAGS="-fkeep-inline-functions"';
+          $env:mingw_extra = '-DCMAKE_C_FLAGS="-fkeep-inline-functions -Winline" -DCMAKE_CXX_FLAGS="-fkeep-inline-functions -Winline"';
         }
   
   - ps: 'function prepend($file, $line) { Set-Content (Resolve-Path $file) -value $line,(Get-Content (Resolve-Path $file)) }'
@@ -126,7 +126,7 @@ build_script:
   # set env
   
   - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall" %vcvar_arg%'
-  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x86] SET PATH=C:\MinGW32\bin;%PATH%
+  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x86] SET PATH=C:\MinGW\bin;%PATH%
   - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] SET PATH=C:\mingw64\bin;%PATH%
   
   
