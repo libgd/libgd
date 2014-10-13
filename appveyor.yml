@@ -56,12 +56,12 @@ install:
   - ps: if($env:build_platform -eq 'x64') {
           $env:vcvar_arg = 'x86_amd64';
           $env:vc_cm_arg = 'Visual Studio 12 Win64';
-          $env:mingw_extra = '-DCMAKE_C_FLAGS="-m64 -fkeep-inline-functions" -DCMAKE_CXX_FLAGS="-m64 -fkeep-inline-functions"';
+          $env:mingw_extra = '-DCMAKE_C_FLAGS="-m64 -fno-default-inline" -DCMAKE_CXX_FLAGS="-m64 -fno-default-inline"';
         }
         else {
           $env:vcvar_arg = 'x86';
           $env:vc_cm_arg = 'Visual Studio 12';
-          $env:mingw_extra = '-DCMAKE_C_FLAGS=-fkeep-inline-functions -DCMAKE_CXX_FLAGS=-fkeep-inline-functions';
+          $env:mingw_extra = '-DCMAKE_C_FLAGS=-fno-default-inline -DCMAKE_CXX_FLAGS=-fno-default-inline';
         }
   
   - ps: 'function prepend($file, $line) { Set-Content (Resolve-Path $file) -value $line,(Get-Content (Resolve-Path $file)) }'
