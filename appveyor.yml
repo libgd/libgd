@@ -56,12 +56,12 @@ install:
   - ps: if($env:build_platform -eq 'x64') {
           $env:vcvar_arg = 'x86_amd64';
           $env:vc_cm_arg = 'Visual Studio 12 Win64';
-          $env:mingw_extra = '-DCMAKE_C_FLAGS="-m64 -fkeep-inline-functions" -DCMAKE_CXX_FLAGS="-m64 -fkeep-inline-functions -fno-default-inline"';
+          $env:mingw_extra = '-DCMAKE_C_FLAGS="-m64 -fkeep-inline-functions" -DCMAKE_CXX_FLAGS="-m64 -fkeep-inline-functions"';
         }
         else {
           $env:vcvar_arg = 'x86';
           $env:vc_cm_arg = 'Visual Studio 12';
-          $env:mingw_extra = '-DCMAKE_C_FLAGS="-fkeep-inline-functions -Winline" -DCMAKE_CXX_FLAGS="-fkeep-inline-functions -Winline"';
+          $env:mingw_extra = '-DCMAKE_C_FLAGS="-fkeep-inline-functions" -DCMAKE_CXX_FLAGS="-fkeep-inline-functions"';
         }
   
   - ps: 'function prepend($file, $line) { Set-Content (Resolve-Path $file) -value $line,(Get-Content (Resolve-Path $file)) }'
@@ -107,7 +107,7 @@ install:
   
   # get mingw-w64 (C:\mingw64)
   - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') {
-      invoke 'curl' '-L -o mw64.7z "http://libgd.blob.core.windows.net/mingw/x86_64-4.9.1-release-posix-seh-rt_v3-rev1.7z"';
+      invoke 'curl' '-L -o mw64.7z "http://libgd.blob.core.windows.net/mingw/mingw-w64-dgn-x86_64-20141001.7z"';
       invoke '7z' 'x -oC:\ mw64.7z'; }
   
   # get mingw-w64-32bit (C:\mingw32)
