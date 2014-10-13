@@ -207,6 +207,10 @@ build_script:
   
   
   
+  # push uncompressed
+  
+  if [%pack_dlls%]==[1] appveyor PushArtifact %dll_source%
+  
   # build bindings
   
   - ps: if($env:with_tiff -eq 0 -and $env:build_bindings -eq 1) {
