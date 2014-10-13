@@ -22,17 +22,17 @@ environment:
   #static_vcargs: -DCMAKE_C_FLAGS_RELEASE=/MT
   # ^ don't.
   
-  cmake_args: -DCMAKE_LIBRARY_PATH=deps -DCMAKE_INCLUDE_PATH=deps;deps\freetype
+  cmake_args: -DCMAKE_LIBRARY_PATH=deps -DCMAKE_INCLUDE_PATH=deps;deps\freetype -DCMAKE_BULD_TYPE=Release
   
   
   matrix:
-    #- build_platform: "x86"
-    #  build_compiler: "msvc"
-    #  build_bindings: 1
+    - build_platform: "x86"
+      build_compiler: "msvc"
+      build_bindings: 1
     
-    #- build_platform: "x64"
-    #  build_compiler: "msvc"
-    #  build_bindings: 1
+    - build_platform: "x64"
+      build_compiler: "msvc"
+      build_bindings: 1
     
     - build_platform: "x86"
       build_compiler: "mingw"
