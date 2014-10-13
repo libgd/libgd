@@ -22,7 +22,7 @@ environment:
   #static_vcargs: -DCMAKE_C_FLAGS_RELEASE=/MT
   # ^ don't.
   
-  cmake_args: -DCMAKE_LIBRARY_PATH=deps -DCMAKE_INCLUDE_PATH=deps;deps\freetype -DCMAKE_BUILD_TYPE=Release
+  cmake_args: -DCMAKE_LIBRARY_PATH=deps -DCMAKE_INCLUDE_PATH=deps;deps\freetype
   
   
   matrix:
