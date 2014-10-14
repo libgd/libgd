@@ -154,9 +154,8 @@ build_script:
   
   - if [%build_compiler%]==[msvc] (
       %cmake_cmd% &&
-      msbuild gd.sln /p:Configuration=Release /fl /flp:logfile=msvc%vcvar_arg%.log;verbosity=diagnostic &&
+      msbuild gd.sln /p:Configuration=Release /v:m &&
       copy Bin\Release\libgd.dll Bin\Release\libgd_raw.dll &&
-      appveyor PushArtifact msvc%vcvar_arg%.log &&
       SET cli_args=%dll_name% &&
       if [%pack_dlls%]==[1] (
         del Bin\Release\libgd.dll &&
