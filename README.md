@@ -12,3 +12,7 @@ Current master:
 Last build:
 
 [![Build status](https://ci.appveyor.com/api/projects/status/02x5t3nngomjrawp)](https://ci.appveyor.com/project/nathanaeljones/gd-libgd)
+
+### Drone.io build
+
+[![Build Status](https://drone.io/github.com/imazen/gd-libgd/status.png)](https://drone.io/github.com/imazen/gd-libgd/latest)
