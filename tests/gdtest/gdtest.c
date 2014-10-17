@@ -10,7 +10,10 @@
 #include "gdtest.h"
 #include "test_config.h"
 
-static inline int max(int a, int b) {return a > b ? a : b;}
+/* max is already defined in windows/msvc */
+#ifndef max
+	static inline int max(int a, int b) {return a > b ? a : b;}
+#endif
 
 void gdSilence(int priority, const char *format, va_list args)
 {
@@ -253,7 +256,25 @@ int _gdTestAssert(const char* file, unsigned int line, const char* message, int 
 	if (condition) return 1;
 	_gdTestErrorMsg(file, line, "%s", message);
 
-    ++failureCount;
+	++failureCount;
+
+	return 0;
+}
+
+int _gdTestAssertMsg(const char* file, unsigned int line, int condition, const char* message, ...)
+{
+	char output_buf[GDTEST_STRING_MAX];
+	if (condition) return 1;
+
+	va_list args;
+
+	va_start(args, message);
+	vsnprintf(output_buf, sizeof(output_buf), message, args);
+	va_end(args);
+	fprintf(stderr, "%s:%u: %s", file, line, output_buf);
+	fflush(stderr);
+
+	++failureCount;
 
 	return 0;
 }
