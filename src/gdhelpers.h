@@ -35,8 +35,13 @@ extern "C" {
 	int overflow2(int a, int b);
 
 	/* 2.0.16: portable mutex support for thread safety. */
-
-#if defined(_WIN32)
+#if defined(CPP_SHARP)
+# define gdMutexDeclare(x)
+# define gdMutexSetup(x)
+# define gdMutexShutdown(x)
+# define gdMutexLock(x)
+# define gdMutexUnlock(x)
+#elif defined(_WIN32)
 	/* 2.0.18: must include windows.h to get CRITICAL_SECTION. */
 # include <windows.h>
 # define gdMutexDeclare(x) CRITICAL_SECTION x
