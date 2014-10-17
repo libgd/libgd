@@ -43,7 +43,7 @@ namespace GD
 /**	This class GD::Point stores a point in two dimensions, somewhere
 	on the plane of an image.
 */
-class Point
+class BGD_EXPORT_DATA_PROT Point
 {
 public:
 	// Constructors
@@ -93,7 +93,7 @@ typedef Point * PointPtr;
 /**	This class GD::Size stores length in two dimensions.
 	Giving the size of an area as width and height.
 */
-class Size
+class BGD_EXPORT_DATA_PROT Size
 {
 public:
 	// Constructors
@@ -140,7 +140,7 @@ typedef Size * SizePtr;
 /**	This class GD::TrueColor stores a colour as an RGBA quadruplet.
 	It can also be read as an integer, and in other colour formats.
 */
-class TrueColor
+class BGD_EXPORT_DATA_PROT TrueColor
 {
 public:
 	union as_types {
@@ -206,19 +206,19 @@ protected:
 	to tell the compiler which constructor we want when we know
 	the image file format.
 */
-struct Png_tag {};
-struct Gif_tag {};
-struct WBMP_tag {};
-struct Jpeg_tag {};
-struct Gd_tag {};
-struct Gd2_tag {};
-struct Xbm_tag {};
+struct BGD_EXPORT_DATA_PROT Png_tag {};
+struct BGD_EXPORT_DATA_PROT Gif_tag {};
+struct BGD_EXPORT_DATA_PROT WBMP_tag {};
+struct BGD_EXPORT_DATA_PROT Jpeg_tag {};
+struct BGD_EXPORT_DATA_PROT Gd_tag {};
+struct BGD_EXPORT_DATA_PROT Gd2_tag {};
+struct BGD_EXPORT_DATA_PROT Xbm_tag {};
 
 /**	This class GD::Image wraps all of the 'C' libgd functionality
 	for the convenience of C++ users.  An instance of this class
 	corresponds to a single image.
 */
-class BGD_EXPORT_DATA_IMPL Image
+class BGD_EXPORT_DATA_PROT Image
 {
 public:
 	/**	Construct a null image
@@ -1264,14 +1264,14 @@ public:
 	void Gd(FILE * out) const {
 		gdImageGd(im, out);
 	}
-	void Gd(int * size) const {
-		gdImageGdPtr(im, size);
+	void* Gd(int * size) const {
+		return gdImageGdPtr(im, size);
 	}
 	void Gd2(FILE * out, int cs, int fmt) const {
 		gdImageGd2(im, out, cs, fmt);
 	}
-	void Gd2(int cs, int fmt, int * size) const {
-		gdImageGd2Ptr(im, cs, fmt, size);
+	void* Gd2(int cs, int fmt, int * size) const {
+		return gdImageGd2Ptr(im, cs, fmt, size);
 	}
 
 	void Ellipse(int cx, int cy, int w, int h, int color) {
