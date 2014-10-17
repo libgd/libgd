@@ -202,7 +202,7 @@ else (USE_EXT_GD)
 			ADD_DEFINITIONS("/D_CRT_SECURE_NO_DEPRECATE")
 		endif(NOT MINGW AND MSVC_VERSION GREATER 1399)
 		if (MINGW OR MSYS)
-			ADD_DEFINITIONS("-mms-bitfields -m32")
+			ADD_DEFINITIONS("-mms-bitfields") # -m32
 		endif (MINGW OR MSYS)
 	else (WIN32)
 		SET(GD_LIB gd)
