@@ -256,18 +256,18 @@ int _gdTestAssert(const char* file, unsigned int line, const char* message, int 
 	if (condition) return 1;
 	_gdTestErrorMsg(file, line, "%s", message);
 
-	++failureCount;
+    ++failureCount;
 
 	return 0;
 }
 
 int _gdTestAssertMsg(const char* file, unsigned int line, int condition, const char* message, ...)
 {
+  va_list args;
 	char output_buf[GDTEST_STRING_MAX];
+	
 	if (condition) return 1;
-
-	va_list args;
-
+  
 	va_start(args, message);
 	vsnprintf(output_buf, sizeof(output_buf), message, args);
 	va_end(args);
