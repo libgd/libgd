@@ -77,11 +77,21 @@ extern "C" {
 
 #define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt BGD_STDCALL
 
+/* VS2012+ disable keyword macroizing unless _ALLOW_KEYWORD_MACROS is set
+   We define inline, snprintf, and strcasecmp if they're missing 
+*/
 #ifdef _MSC_VER
 #  define _ALLOW_KEYWORD_MACROS
-#  define inline __inline
-#  define strcasecmp _stricmp
-#endif
+#  ifndef inline
+#    define inline __inline
+#  endif 
+#  ifndef strcasecmp
+#    define strcasecmp _stricmp
+#  endif 
+#  ifndef snprintf 
+#   define snprintf _snprintf
+#  endif 
+#endif 
 
 
 
