@@ -1,0 +1,183 @@
+# To build locally get a copy of the dependancies (https://github.com/imazen/gd-win-dependencies)
+# Then run 'nmake /f windows\Makefile.vc' in MS dev console
+# To build tests as well 'nmake /f windows\Makefile.vc all'
+# To build tests and execute them 'nmake /f windows\Makefile.vc check'
+
+CC=cl
+LD=link
+LB=lib
+
+
+!IFNDEF PLATFORM
+PLATFORM=x86
+!ENDIF
+# detect x64 cross-compiler env
+!IF "$(PREFERREDTOOLARCHITECTURE)" == "x64"
+PLATFORM=x64
+!ENDIF
+PLATFORM=$(PLATFORM:X=x)
+
+
+BUILD_DIR=build_msvc12_$(PLATFORM)
+GD_DLL=libgd.dll
+GD_LIB=libgd_a.lib
+
+SDR=$(BUILD_DIR)\obj^\
+TDR=$(BUILD_DIR)\tests^\
+TARGETDLL=$(BUILD_DIR)\$(GD_DLL)
+TARGETLIB=$(BUILD_DIR)\$(GD_LIB)
+
+OBJECTS=$(SDR)gd.obj $(SDR)gd_color.obj $(SDR)gd_color_map.obj $(SDR)gd_transform.obj $(SDR)gdfx.obj $(SDR)gd_security.obj $(SDR)gd_gd.obj $(SDR)gd_gd2.obj $(SDR)gd_io.obj $(SDR)gd_io_dp.obj $(SDR)gd_gif_in.obj $(SDR)gd_gif_out.obj $(SDR)gd_io_file.obj $(SDR)gd_io_ss.obj $(SDR)gd_jpeg.obj $(SDR)gd_png.obj $(SDR)gd_ss.obj $(SDR)gd_topal.obj $(SDR)gd_wbmp.obj $(SDR)gdcache.obj $(SDR)gdfontg.obj $(SDR)gdfontl.obj $(SDR)gdfontmb.obj $(SDR)gdfonts.obj $(SDR)gdfontt.obj $(SDR)gdft.obj $(SDR)gdhelpers.obj $(SDR)gdkanji.obj $(SDR)gdtables.obj $(SDR)gdxpm.obj $(SDR)wbmp.obj $(SDR)gd_filter.obj $(SDR)gd_nnquant.obj $(SDR)gd_rotate.obj $(SDR)gd_matrix.obj $(SDR)gd_interpolation.obj $(SDR)gd_crop.obj $(SDR)webpimg.obj $(SDR)gd_webp.obj $(SDR)gd_tiff.obj $(SDR)gd_tga.obj $(SDR)gd_bmp.obj $(SDR)gd_xbm.obj $(SDR)gd_color_match.obj $(SDR)gd_version.obj $(SDR)gd_filename.obj
+TESTS=bmp\bmp_im2im bmp\bmp_null freetype\bug00132 gd\gd_im2im gd\gd_null gd\gd_num_colors gd\gd_versiontest gd2\gd2_empty_file gd2\gd2_im2im gd2\gd2_null gd2\gd2_read gdimagearc\bug00079 gdimagecolorclosest\gdimagecolorclosest gdimagecolordeallocate\gdimagecolordeallocate gdimagecolorexact\gdimagecolorexact gdimagecolorreplace\gdimagecolorreplace gdimagecolorresolve\gdimagecolorresolve gdimagecolortransparent\gdimagecolortransparent gdimagecopy\bug00007 gdimagecopy\bug00081 gdimagecopyrotated\bug00020 gdimagefile\gdnametest gdimagefill\bug00002_1 gdimagefill\bug00002_2 gdimagefill\bug00002_3 gdimagefill\bug00002_4 gdimagefilledellipse\bug00010 gdimagefilledellipse\bug00191 gdimagefilledpolygon\bug00100 gdimagefilledpolygon\gdimagefilledpolygon0 gdimagefilledpolygon\gdimagefilledpolygon1 gdimagefilledpolygon\gdimagefilledpolygon2 gdimagefilledpolygon\gdimagefilledpolygon3 gdimagefilledrectangle\bug00004 gdimagefilledrectangle\bug00078 gdimagefilledrectangle\bug00106_gdimagefilledrectangle gdimagefilltoborder\bug00037 gdimagefilter\gdCopyBlurred gdimageline\bug00072 gdimageline\bug00077 gdimageline\bug00111 gdimageline\gdImageAALine_thickness gdimageline\gdimageline_aa gdimageline\gdimageline_aa_outofrange gdimageline\gdimageline_bug5 gdimageopenpolygon\gdimageopenpolygon0 gdimageopenpolygon\gdimageopenpolygon1 gdimageopenpolygon\gdimageopenpolygon2 gdimageopenpolygon\gdimageopenpolygon3 gdimagepixelate\gdimagepixelate gdimagepolygon\gdimagepolygon0 gdimagepolygon\gdimagepolygon1 gdimagepolygon\gdimagepolygon2 gdimagepolygon\gdimagepolygon3 gdimagerectangle\bug00003 gdimagerectangle\bug00106_gdimagerectangle gdimagerotate\bug00067 gdimagerotate\php_bug_64898 gdimagescatterex\bug00208_1 gdimagescatterex\bug00208_2 gdimagesetpixel\bug00186 gdimagesetpixel\gdeffectmultiply gdimagesetpixel\gdeffectoverlay gdimagestringft\gdimagestringft_bbox gdimagestringftex\gdimagestringftex_returnfontpathname gdinterpolatedscale\gdModesAndPalettes gdinterpolatedscale\gdTrivialResize gdnewfilectx\gdnewfilectx_null gdtiled\bug00032 gif\bug00005 gif\bug00005_2 gif\bug00006 gif\bug00060 gif\bug00066 gif\bug00181 gif\bug00227 gif\gif_im2im gif\gif_null jpeg\jpeg_empty_file jpeg\jpeg_im2im jpeg\jpeg_null jpeg\jpeg_read jpeg\jpeg_resolution png\bug00011 png\bug00033 png\bug00086 png\bug00088 png\bug00193 png\png_im2im png\png_null png\png_resolution tga\tga_null
+#tiff\tiff_im2im tiff\tiff_null wbmp\wbmp_im2im wbmp\wbmp_null xpm\bug00166 xpm\bug00185 xpm\color_name
+
+LIBS=kernel32.lib ole32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib Dnsapi.lib Gdi32.Lib
+LIBS_GD=turbojpeg-static.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib
+
+INCLUDES=/Isrc /Igd-win-dependencies\$(PLATFORM)\include -Igd-win-dependencies\$(PLATFORM)\include\libjpeg-turbo -Igd-win-dependencies\$(PLATFORM)\include\libpng15 -Igd-win-dependencies\$(PLATFORM)\include\freetype /Itests /Itests\gdtest
+
+LDFLAGS=/nologo /nodefaultlib:libcmt /libpath:gd-win-dependencies\$(PLATFORM)\lib /MACHINE:$(PLATFORM)
+
+CFLAGS=/nologo /O2 /Qvec-report:1 /MD /TC\
+       /DWIN32=1\
+       /D_WIN32=1\
+       /DMSWIN32=1\
+       /DBGDWIN32=1\
+       /DHAVE_FT2BUILD_H=1\
+       /DHAVE_GD_H=1\
+       /DHAVE_PNG_H=1\
+       /DHAVE_ICONV_H=1\
+       /DHAVE_GD_BUNDLED=1\
+       /DHAVE_LIBFREETYPE=1\
+       /DHAVE_LIBJPEG=1\
+       /DHAVE_LIBPNG=1\
+       /DHAVE_LIBZ=1\
+       $(INCLUDES)
+
+#      /DHAVE_LIBXPM
+
+# These flags are not present in this fork of libgd (they may be used in php's):
+#       /DHAVE_GD_WBMP
+#       /DHAVE_GD_GIF_READ=1\
+#       /DHAVE_GD_GIF_CREATE=1\
+#       /DHAVE_GD_GD2=1\
+#       /DHAVE_GDIMAGECOLORRESOLVE=1\
+#       /DHAVE_GD_IMAGESETBRUSH=1\
+#       /DHAVE_GD_IMAGESETTILE=1\
+#       /DHAVE_GD_FONTCACHESHUTDOWN=1\
+#       /DHAVE_GD_FONTMUTEX=1\
+#       /DHAVE_GD_STRINGFTEX=1\
+#       /DHAVE_GD_STRINGTTF=1\
+#       /DHAVE_GD_FREETYPE=1\
+#       /DHAVE_LIBGD13=1\
+#       /DHAVE_LIBGD15=1\
+#       /DHAVE_LIBGD20=1\
+#       /DHAVE_LIBGD204=1\
+#       /DHAVE_COLORCLOSESTHWB\
+#       /DUSE_GD_IMGSTRTTF\
+#       /DUSE_GD_IOCTX\
+#       /DHAVE_GD_JPG\
+#       /DHAVE_GD_PNG\
+#       /DHAVE_GD_DYNAMIC_CTX_EX=1\
+#       /DHAVE_XPM\
+#       /DHAVE_GD_XBM\
+#       /DHAVE_GD_XPM\
+#       /DHAVE_XPM_H=1\
+
+# These flags may be set wrong; not sure of precise purpose
+# HAVE_GD_BUNDLED
+# NDEBUG
+
+
+
+
+
+TEST_CFLAGS=$(CFLAGS) /FItest_config.h
+TEST_LDFLAGS=$(LDFLAGS) $(SDR)gdtest.obj $(BUILD_DIR)\libgd.lib
+TEST_CONFIG=tests\test_config.h
+TEST_LIST=$(TDR)testlist.txt
+TEST_MK=$(TDR)Maketests.vc
+
+
+
+# generate test makefile from TESTS macro
+
+!IF [if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)]
+!ENDIF
+!IF [if not exist $(TDR) mkdir $(TDR)]
+!ENDIF
+!IF [@copy NUL $(TEST_MK) > nul]
+!ENDIF
+!IF [@for %F in ($(TESTS)) do @echo TEST_EXES=$(TDR)%~nF.exe ^$(TEST_EXES) >> $(TEST_MK)]
+!ENDIF
+!IF [@for %F in ($(TESTS)) do @echo $(SDR)%~nF.obj: tests\%F.c; @^$(CC) ^$(TEST_CFLAGS) /c  ^$** /Fo:^$@ >> $(TEST_MK)]
+!ENDIF
+!IF [@for %F in ($(TESTS)) do @echo $(TDR)%~nF.exe: $(SDR)%~nF.obj; @$(LD) $(TEST_LDFLAGS) ^$** /out:^$@ >> $(TEST_MK)]
+!ENDIF
+TEST_OBJS=$(TEST_EXES:tests=obj)
+TEST_OBJS=$(TEST_OBJS:exe=obj)
+
+
+
+
+
+
+# pseudotargets
+
+build_libs: make_dirs $(TARGETDLL) $(TARGETLIB)
+all: build_libs build_tests
+check: all run_tests
+
+clean:
+  @if exist $(SDR) rd $(SDR) /s /q
+  @if exist $(TDR) rd $(TDR) /s /q
+  @if exist $(BUILD_DIR)\*.exe del $(BUILD_DIR)\*.exe /q
+  @if exist tests\test_config.h del tests\test_config.h /q
+
+
+
+
+# helpers
+
+make_dirs:
+  @if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+  @if not exist $(SDR) mkdir $(SDR)
+
+run_tests:
+  @windows\run_tests
+
+
+
+
+# libgd
+
+$(TARGETDLL): $(OBJECTS)
+  @$(LD) /DLL /OUT:$@ $(OBJECTS) $(LIBS_GD) $(LIBS) $(LDFLAGS)
+
+$(TARGETLIB): $(OBJECTS)
+  @$(LB) /OUT:$@ $(OBJECTS) $(LDFLAGS)
+
+{src\}.c{$(SDR)}.obj::
+  @$(CC) $(CFLAGS) /c $< /Fo$(SDR)
+
+
+
+
+# tests
+
+!INCLUDE $(TEST_MK)
+
+build_tests: $(TEST_LIST) $(SDR)gdtest.obj $(TEST_EXES)
+
+$(SDR)gdtest.obj: $(TARGETDLL) $(TEST_CONFIG) tests\gdtest\gdtest.c
+  @$(CC) $(CFLAGS) /c tests\gdtest\gdtest.c /Fo$(SDR)gdtest.obj
+
+$(TEST_CONFIG):
+  @echo #define GDTEST_TOP_DIR "$(MAKEDIR:\=\\)\\tests" > tests\test_config.h
+  @echo #define snprintf _snprintf >> tests\test_config.h
+
+$(TEST_LIST): $(TARGETDLL)
+  @if not exist $(TDR) mkdir $(TDR)
+  @copy $(TARGETDLL) $(TDR)$(GD_DLL)
+  @copy NUL $(TDR)testlist.txt
+  @for %%F in ($(TESTS)) do @echo %%F >> $(TDR)testlist.txt
