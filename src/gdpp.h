@@ -1264,14 +1264,14 @@ public:
 	void Gd(FILE * out) const {
 		gdImageGd(im, out);
 	}
-	void Gd(int * size) const {
-		gdImageGdPtr(im, size);
+	void* Gd(int * size) const {
+		return gdImageGdPtr(im, size);
 	}
 	void Gd2(FILE * out, int cs, int fmt) const {
 		gdImageGd2(im, out, cs, fmt);
 	}
-	void Gd2(int cs, int fmt, int * size) const {
-		gdImageGd2Ptr(im, cs, fmt, size);
+	void* Gd2(int cs, int fmt, int * size) const {
+		return gdImageGd2Ptr(im, cs, fmt, size);
 	}
 
 	void Ellipse(int cx, int cy, int w, int h, int color) {
