@@ -24,6 +24,10 @@
 #ifndef _gdpp_h
 #define _gdpp_h
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "gd_io_stream.h"
 #include <string>
 
@@ -288,7 +292,7 @@ public:
 		:im(0) {
 		CreateFrom(size, data);
 	}
-#if HAVE_PNG
+#ifdef HAVE_LIBPNG
 	/** Construct an image by reading from \p in.
 		The tag is an empty struct which simply tells the compiler which image read function to use.
 		e.g. GD::Image img(input, GD::Png_tag()); // read a png file from input
@@ -404,7 +408,7 @@ public:
 		CreateFromWBMP(size, data);
 	}
 
-#if HAVE_JPEG
+#ifdef HAVE_LIBJPEG
 	/** Construct an image by reading from \p in.
 		The tag is an empty struct which simply tells the compiler which image read function to use.
 		e.g. GD::Image img(input, GD::Jpeg_tag()); // read a jpeg file from input
@@ -604,7 +608,7 @@ public:
 	/// Read an image from a memory block, after determining the image format
 	bool CreateFrom(int size, void * data);
 
-#if HAVE_PNG
+#ifdef HAVE_LIBPNG
 	// Png
 	bool CreateFromPng(FILE * in) {
 		clear();
@@ -662,7 +666,7 @@ public:
 		return ((im = gdImageCreateFromWBMPCtx( & _in_ctx)) != 0);
 	}
 
-#if HAVE_JPEG
+#ifdef HAVE_LIBJPEG
 	// Jpeg
 	/**
 		Load a truecolor image from a JPEG format file.
@@ -1085,7 +1089,7 @@ public:
 		gdImageGifCtx(im, & _out_ctx);
 	}
 
-#if HAVE_PNG
+#ifdef HAVE_LIBPNG
 	/**
 		Write out this image in PNG file format to \p out.
 		\param out A FILE * handle
@@ -1187,7 +1191,7 @@ public:
 		gdImageWBMPCtx(im, fg, & _out_ctx);
 	}
 
-#if HAVE_JPEG
+#ifdef HAVE_LIBJPEG
 	/**
 		Write out this image in JPEG file format to \p out.
 		\param out A FILE * handle
