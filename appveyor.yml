@@ -239,6 +239,8 @@ build_script:
         .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\LibGDExtensions.cs
         .\gd-dotnet-bindings-generator\LibGD.CLI\bin\Debug\LibGDSharp.dll";
       Push-AppveyorArtifact $($env:zip); }
+  
+  - appveyor PushArtifact src\config.h
 
 
 
