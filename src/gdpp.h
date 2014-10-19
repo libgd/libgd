@@ -1339,6 +1339,10 @@ public:
 		gdImageCopyRotated(im, src, dstX, dstY, srcX, srcY, srcWidth, srcHeight, angle);
 	}
 
+	Image * CopyGaussianBlurred(int radius, double sigma) {
+		return new Image(gdImageCopyGaussianBlurred(im, radius, sigma));
+	}
+
 	void Copy(const gdImagePtr src, const Point & dstP, const Point & srcP, const Size & s) {
 		Copy(src, dstP.X(), dstP.Y(), srcP.X(), srcP.Y(), s.W(), s.H());
 	}
@@ -1399,6 +1403,10 @@ public:
 		CopyRotated(src.im, dstX, dstY, srcP.X(), srcP.Y(), srcS.W(), srcS.H(), angle);
 	}
 
+	Image * Clone() {
+		return new Image(gdImageClone(im));
+	}
+
 	void SetBrush(gdImagePtr brush) {
 		gdImageSetBrush(im, brush);
 	}
@@ -1423,6 +1431,16 @@ public:
 	void SetThickness(int thickness) {
 		gdImageSetThickness(im, thickness);
 	}
+	void SetResolution(int res_x, int res_y) {
+		gdImageSetResolution(im, res_x, res_y);
+	}
+	void SetInterpolationMethod(gdInterpolationMethod interpolation_method) {
+		gdImageSetInterpolationMethod(im, interpolation_method);
+	}
+
+	Image * RotateInterpolated(const float angle, int bgcolor) {
+		return new Image(gdImageRotateInterpolated(im, angle, bgcolor));
+	}
 
 	void Interlace(bool interlaceArg) {
 		gdImageInterlace(im, interlaceArg?1:0);
@@ -1432,6 +1450,27 @@ public:
 	}
 	void SaveAlpha(bool saveAlphaArg) {
 		gdImageSaveAlpha(im, saveAlphaArg?1:0);
+	}
+
+	int ColorReplace(int src, int dst) {
+		return gdImageColorReplace(im, src, dst);
+	}
+	int ColorReplaceArray(int len, int * src, int * dst) {
+		return gdImageColorReplaceArray(im, len, src, dst);
+	}
+	int ColorReplaceCallback(gdCallbackImageColor callback) {
+		return gdImageColorReplaceCallback(im, callback);
+	}
+	int ColorReplaceThreshold(int src, int dst, float threshold) {
+		return gdImageColorReplaceThreshold(im, src, dst, threshold);
+	}
+
+	bool Pixelate(int block_size, gdPixelateMode mode) {
+		return gdImagePixelate(im, block_size, mode) == 0 ? false : true;
+	}
+
+	Image * Scale(int new_width, int new_height) {
+		return new Image(gdImageScale(im, new_width, new_height));
 	}
 
 	bool IsTrueColor() const {
@@ -1448,6 +1487,12 @@ public:
 	}
 	int Height() const {
 		return SY();
+	}
+	int ResX() const {
+		return gdImageResolutionX(im);
+	}
+	int ResY() const {
+		return gdImageResolutionY(im);
 	}
 	void GetSize(Size & s) const {
 		s.set(SX(), SY());
