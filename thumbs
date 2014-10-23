@@ -1,0 +1,215 @@
+#!/bin/bash
+
+# THe Ultimate Make Bash Script
+# Used to wrap build scripts for easy dep
+# handling and multiplatform support
+
+
+# Basic usage on *nix:
+# export tbs_arch=x86
+# ./thumbs make
+
+# On Win (msvc):
+# C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall x86_amd64
+# C:\path\to\bash -c "export tbs_tools=msvc12; ./thumbs make"
+
+# On Win (mingw32):
+# SET path=C:\mingw32\bin;%path%
+# C:\path\to\bash -c "export tbs_tools=mingw; export tbs_arch=x86; ./thumbs make"
+
+
+# Global settings are stored in env vars
+# Should be inherited
+
+[ $tbs_arch ]           || export tbs_arch=x64
+[ $tbs_tools ]          || export tbs_tools=gnu
+[ $tbs_static_runtime ] || export tbs_static_runtime=0
+
+
+# tbsd_* contains dep related settings
+# tbsd_[name]_* contains settings specific to the dep
+# name should match the repo name
+
+deps=()
+
+[ $tbsd_zlib_repo ]          || export tbsd_zlib_repo="https://github.com/imazen/zlib"
+[ $tbsd_libpng_repo ]        || export tbsd_libpng_repo="https://github.com/imazen/libpng"
+
+# bash is bad with dashes in vars...
+[ $tbsd_libjpeg_turbo_repo ] || export tbsd_libjpeg_turbo_repo="https://github.com/imazen/libjpeg-turbo libjpeg_turbo"
+
+deps+=(zlib)
+deps+=(libpng)
+deps+=(libjpeg_turbo)
+
+
+# dep processor
+
+process_deps()
+{
+  mkdir build_deps
+  mkdir deps
+  cd build_deps
+
+  for dep in "${deps[@]}"
+  do
+    i_dep_repo="tbsd_${dep}_repo"
+    i_dep_incdir="tbsd_${dep}_incdir"
+    i_dep_libdir="tbsd_${dep}_libdir"
+    i_dep_built="tbsd_${dep}_built"
+    
+    [ ${!i_dep_built} ] || export "${i_dep_built}=0"
+    
+    if [ ${!i_dep_built} -eq 0 ]
+    then
+      git clone ${!i_dep_repo} --depth 1
+      cd $dep || exit 1
+      ./thumbs make || exit 1
+      
+      cp -u $(./thumbs list_inc) ../../deps
+      cp -u $(./thumbs list_slib) ../../deps
+      
+      # look in both local and parent dep dirs
+      export "${i_dep_incdir}=../../deps;deps"
+      export "${i_dep_libdir}=../../deps;deps"
+      
+      cd ..
+    fi
+  done
+  
+  # build scripts will most likely look for libs w/o suffixes
+  for lib in ../deps/*_static.lib; do mv $lib ${lib%_static.lib}.lib; done
+  for lib in ../deps/*.dll.a; do mv $lib ${lib%.dll.a}.a; done
+  
+  cd ..
+}
+
+# -----------
+
+postproc_deps()
+{
+  cm_inc=
+  cm_lib=
+  
+  for dep in "${deps[@]}"
+  do
+    i_dep_incdir="tbsd_${dep}_incdir"
+    i_dep_libdir="tbsd_${dep}_libdir"
+    
+    cm_inc="${!i_dep_incdir};$cm_inc"
+    cm_lib="${!i_dep_libdir};$cm_lib"
+  done
+  
+  cm_args+=(-DCMAKE_LIBRARY_PATH=$cm_lib)
+  cm_args+=(-DCMAKE_INCLUDE_PATH=$cm_inc)
+}
+
+# -----------
+
+if [ $# -lt 1 ]
+then
+  echo ""
+  echo " Usage : ./thumbs [command]"
+  echo ""
+  echo " Commands:"
+  echo "   make      - builds everything"
+  echo "   check     - runs tests"
+  echo "   clean     - removes build files"
+  echo "   list      - echo paths to any interesting files"
+  echo "               space separated; relative"
+  echo "   list_bin  - echo binary paths"
+  echo "   list_inc  - echo lib include files"
+  echo "   list_slib - echo static lib path"
+  echo "   list_dlib - echo dynamic lib path"
+  echo ""
+  exit
+fi
+
+# Local settings
+
+l_inc=""
+l_slib=
+l_dlib=
+l_bin=
+list=
+
+make=
+cm_tools=
+cm_args=(-DENABLE_PNG=1 -DENABLE_JPEG=1)
+
+# -----------
+
+case "$tbs_tools" in
+msvc12)
+  cm_tools="Visual Studio 12"
+  make="msbuild.exe GD.sln //p:Configuration=Release //v:m"
+#  l_slib="./build/Release/libpng_static.lib"
+#  l_dlib="./build/Release/libpng.lib"
+#  l_bin="./build/Release/libpng.dll"
+#  list="$l_bin $l_slib $l_dlib $l_inc" ;;
+#gnu)
+#  cm_tools="Unix Makefiles"
+#  cm_args+=(-fPIC)
+#  make=make
+#  l_slib="./build/libpng.a"
+#  l_dlib="./build/libpng.so.15.18.0"
+#  l_bin="$l_dlib"
+#  list="$l_slib $l_dlib $l_inc" ;;
+#mingw)
+#  cm_tools="MinGW Makefiles"
+#  make=mingw32-make
+#  l_slib="./build/libpng.a"
+#  l_dlib="./build/libpng.dll.a"
+#  l_bin="./build/libpng.dll"
+#  list="$l_bin $l_slib $l_dlib $l_inc" ;;
+esac
+
+# -----------
+
+case "$tbs_arch" in
+x64)
+  [ $tbs_tools = msvc12 ] && cm_tools="$cm_tools Win64"
+  [ $tbs_tools = gnu -o $tbs_tools = mingw ] && cm_args+=(-DCMAKE_C_FLAGS=-m64) ;;
+x86)
+  [ $tbs_tools = gnu -o $tbs_tools = mingw ] && cm_args+=(-DCMAKE_C_FLAGS=-m32) ;;
+esac
+
+# -----------
+
+if [ $tbs_static_runtime -gt 0 ]
+then
+  [ $tbs_tools = msvc12 ] && cm_args+=(-DCMAKE_C_FLAGS_RELEASE=/MT)
+  [ $tbs_tools = gnu -o $tbs_tools = mingw ] && cm_args+=(-DCMAKE_SHARED_LINKER_FLAGS=-static-libgcc)
+fi
+
+# -----------
+
+case "$1" in
+make)
+  process_deps
+  postproc_deps
+  
+  mkdir build
+  cd build
+  
+  cmake -G "$cm_tools" "${cm_args[@]}" .. || exit 1
+  $make || exit 1
+  
+  cd .. ;;
+  
+check)
+  cd build
+  ctest . || exit 1
+  cd .. ;;
+  
+clean)
+  rm -rf deps
+  rm -rf build_deps
+  rm -rf build ;;
+
+list) echo $list ;;
+list_bin) echo $l_bin ;;
+list_inc) echo $l_inc ;;
+list_slib) echo $l_slib ;;
+list_dlib) echo $l_dlib ;;
+esac
