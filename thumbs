@@ -69,6 +69,10 @@ process_deps()
       cp -u $(./thumbs list_inc) ../../deps
       cp -u $(./thumbs list_slib) ../../deps
       
+      # build scripts will most likely look for libs w/o suffixes
+      for lib in ../../deps/*_static.lib; do mv $lib ${lib%_static.lib}.lib; done
+      for lib in ../../deps/*.dll.a; do mv $lib ${lib%.dll.a}.a; done
+      
       # look in both local and parent dep dirs
       export "${i_dep_incdir}=../../deps;deps"
       export "${i_dep_libdir}=../../deps;deps"
@@ -77,10 +81,6 @@ process_deps()
       cd ..
     fi
   done
-  
-  # build scripts will most likely look for libs w/o suffixes
-  for lib in ../deps/*_static.lib; do mv $lib ${lib%_static.lib}.lib; done
-  for lib in ../deps/*.dll.a; do mv $lib ${lib%.dll.a}.a; done
   
   cd ..
 }
