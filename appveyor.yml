@@ -119,6 +119,14 @@ build_script:
   - ps: $nupkg_b = "libgd-$($env:tbs_tools)-$($env:tbs_arch)-$($env:APPVEYOR_REPO_BRANCH)";
   - ps: $nupkg_c = "libgd-$($env:tbs_tools)-$($env:tbs_arch)-$($env:APPVEYOR_REPO_COMMIT)";
   
+  - if [%tbs_arch%]==[x86] SET dll_make=C:\mingw32\bin\mingw32-make.exe 
+  - if [%tbs_arch%]==[x64] SET dll_make=C:\mingw64\bin\mingw32-make.exe 
+  - if [%tbs_tools%]==[msvc12] SET dll_make=
+  
+  - for /f "tokens=*" %%i in ('thumbs list_bin') do set dll_name=%%i
+  - SET dll_raw=%dll_name%.raw
+  - SET cli_args=%dll_make%%dll_name%
+  
   - thumbs make
   - for /f "tokens=*" %%i in ('thumbs list') do set files=%%i
   - 7z a %zip% %files%
@@ -136,14 +144,6 @@ build_script:
   
   
   # build bindings
-  
-  - if [%tbs_arch%]==[x86] SET dll_make=C:\mingw32\bin\mingw32-make.exe 
-  - if [%tbs_arch%]==[x64] SET dll_make=C:\mingw64\bin\mingw32-make.exe 
-  - if [%tbs_tools%]==[msvc12] SET dll_make=
-  
-  - for /f "tokens=*" %%i in ('thumbs list_bin') do set dll_name=%%i
-  - SET dll_raw=%dll_name%.raw
-  - SET cli_args=%dll_make%%dll_name%
   
   - ps: if($env:with_tiff -eq 0 -and $env:build_bindings -eq 1) {
       prepend 'gd-dotnet-bindings-generator\LibGD.CLI\LibGDExtensions.cs' '#define NO_TIFF';
