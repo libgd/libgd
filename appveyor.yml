@@ -4,15 +4,16 @@ shallow_clone: true
 
 environment:
   # settings
-  min_build: 0      # if 1 overwrites tbs_gd_* flags to leave png and jpeg
+  min_build: 0        # if 1 overwrites tbs_gd_* flags to leave png and jpeg
   
   tbs_gd_png: 1
   tbs_gd_jpeg: 1
   tbs_gd_freetype: 1
-  tbs_gd_iconv: 0   # todo: add iconv thumbs
+  tbs_gd_iconv: 0     # todo: add iconv thumbs
   tbs_gd_tiff: 1
   
-  pack_dlls: 1      # will fetch upx
+  build_bindings: 1   # build .net bidnings
+  pack_dlls: 1        # pack dll with upx
   
   
   matrix:
@@ -130,18 +131,19 @@ build_script:
   
   - thumbs make
   - for /f "tokens=*" %%i in ('thumbs list') do set files=%%i
-  - 7z a %zip% %files%
-  - appveyor PushArtifact %zip%
-  
-  - ps: if(Test-Path $env:zip) {
-          zip2nuget $env:zip $nupkg_b;
-          zip2nuget $env:zip $nupkg_c; }
   
   - copy %dll_name% %dll_raw%
   - if [%pack_dlls%]==[1] (
         appveyor PushArtifact %dll_raw% &&
         del %dll_name% &&
         upx -o %dll_name% %dll_raw% )
+  
+  - 7z a %zip% %files%
+  - appveyor PushArtifact %zip%
+  
+  - ps: if(Test-Path $env:zip) {
+          zip2nuget $env:zip $nupkg_b;
+          zip2nuget $env:zip $nupkg_c; }
   
   
   # build bindings
