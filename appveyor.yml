@@ -124,6 +124,7 @@ build_script:
   - if [%tbs_tools%]==[msvc12] SET dll_make=
   
   - for /f "tokens=*" %%i in ('thumbs list_bin') do set dll_name=%%i
+  - SET dll_name=%dll_name:/=\%
   - SET dll_raw=%dll_name%.raw
   - SET cli_args=%dll_make%%dll_name%
   
