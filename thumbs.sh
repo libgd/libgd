@@ -85,7 +85,9 @@ if [ $tbs_gd_jpeg -gt 0 ]; then
 fi
 
 if [ $tbs_gd_tiff -gt 0 ]; then
-  deps+=(libtiff); targ+=("libtiff/tiff_static")
+  ttarg="libtiff/tiff_static"
+  [ $tbs_tools = gnu -o $tbs_tools = mingw ] && ttarg=tiff_static
+  deps+=(libtiff); targ+=($ttarg)
   post+=("cp -u \$(./thumbs.sh list_slib) ../../deps/$tname")
 fi
 
