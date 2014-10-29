@@ -55,6 +55,13 @@ install:
   - git clone https://github.com/imazen/gd-appveyor-helpers
   - ps: . .\gd-appveyor-helpers\appveyor_funcs.ps1
   
+  # get nasm
+  #- cinst nasm
+  #nasm's main site down...
+  - curl -L -o nasminst.exe http://libgd.blob.core.windows.net/nasm/nasm-2.07-installer.exe
+  - start /wait nasminst.exe /S
+  - ps: $env:path="C:\Program Files (x86)\nasm;$($env:path)"
+  
   
   # fetch deps
   #- mkdir deps
