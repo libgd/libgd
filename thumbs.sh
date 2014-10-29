@@ -230,14 +230,14 @@ msvc12)
 gnu)
   cm_tools="Unix Makefiles"
   c_flags+=" -fPIC"
-  make=make
+  make="make $target"
   l_slib="./build/Bin/libgd.a"
   l_dlib="./build/Bin/libgd.so"
   l_bin="$l_dlib"
   list="$l_slib $l_dlib $l_inc" ;;
 mingw)
   cm_tools="MinGW Makefiles"
-  make=mingw32-make
+  make="mingw32-make $target"
   c_flags+=" -fkeep-inline-functions"
   
   # allow sh in path; some old cmake/mingw bug?
