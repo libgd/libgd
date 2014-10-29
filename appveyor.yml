@@ -97,13 +97,13 @@ install:
       curl -L -o upx.zip http://upx.sourceforge.net/download/upx391w.zip &&
       7z e upx.zip *.exe -r )
   
-  # get mingw-w64 (C:\mingw64)
-  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x64') {
+  # get mingw-w64-dgn (C:\mingw64)
+  - ps: if($env:tbs_tools -eq 'mingw' -and $env:tbs_arch -eq 'x64') {
       invoke 'curl' '-L -o mw64.7z "http://libgd.blob.core.windows.net/mingw/mingw-w64-dgn-x86_64-20141001.7z"';
       invoke '7z' 'x -oC:\ mw64.7z'; }
   
   # get mingw-w64-32bit (C:\mingw32)
-  - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x86' -and $env:build_bindings -eq 1) {
+  - ps: if($env:tbs_tools -eq 'mingw' -and $env:tbs_arch -eq 'x86' -and $env:build_bindings -eq 1) {
       invoke 'curl' '-L -o mw64-32.7z "http://libgd.blob.core.windows.net/mingw/i686-4.9.1-release-posix-dwarf-rt_v3-rev1.7z"';
       invoke '7z' 'x -oC:\ mw64-32.7z'; }
 
@@ -112,7 +112,7 @@ install:
 
 build_script:
   - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall" %vcvar_arg%'
-  - if [%tbs_tools%]==[mingw] if [%tbs_arch%]==[x86] SET PATH=C:\MinGW\bin;%PATH%
+  - if [%tbs_tools%]==[mingw] if [%tbs_arch%]==[x86] SET PATH=C:\mingw\bin;%PATH%
   - if [%tbs_tools%]==[mingw] if [%tbs_arch%]==[x64] SET PATH=C:\mingw64\bin;%PATH%
   
   - SET zip=libgd-%tbs_tools%-%tbs_arch%.zip
