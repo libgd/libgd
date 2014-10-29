@@ -4,64 +4,49 @@ shallow_clone: true
 
 environment:
   # settings
-  min_build: 0      # if 1 overwrites with_* flags to leave zlib-png-jpeg
+  min_build: 0      # if 1 overwrites tbs_gd_* flags to leave png and jpeg
   
-  with_zlib: 1      # libgd actually won't build without it..
-  with_libpng: 1    # needs zlib; removing will break current tests
-  with_libjpeg: 1   # removing will break current tests
-  with_freetype: 1  
-  with_iconv: 0     
-  with_tiff: 1      # needs zlib and jpeg
+  tbs_gd_png: 1
+  tbs_gd_jpeg: 1
+  tbs_gd_freetype: 1
+  tbs_gd_iconv: 0   # todo: add iconv thumbs
+  tbs_gd_tiff: 1
   
   pack_dlls: 1      # will fetch upx
   
   
-  static_runtime: 1
-  static_gcargs: -DCMAKE_SHARED_LINKER_FLAGS=-static
-  static_vcargs:
-  #static_vcargs: -DCMAKE_C_FLAGS_RELEASE=/MT
-  # ^ don't.
-  
-  cmake_args: -DCMAKE_LIBRARY_PATH=deps -DCMAKE_INCLUDE_PATH=deps;deps\freetype
-  
-  
   matrix:
-    - build_platform: "x86"
-      build_compiler: "msvc"
-      build_bindings: 1
+    - tbs_arch: "x86"
+      tbs_tools: "msvc12"
+      tbs_static_runtime: 0
     
-    - build_platform: "x64"
-      build_compiler: "msvc"
-      build_bindings: 1
+    - tbs_arch: "x64"
+      tbs_tools: "msvc12"
+      tbs_static_runtime: 0
     
-    - build_platform: "x86"
-      build_compiler: "mingw"
-      build_bindings: 1
+    - tbs_arch: "x86"
+      tbs_tools: "mingw"
+      tbs_static_runtime: 1
     
-    - build_platform: "x64"
-      build_compiler: "mingw"
-      build_bindings: 1
+    - tbs_arch: "x64"
+      tbs_tools: "mingw"
+      tbs_static_runtime: 1
 
 
 
 install:
   - if [%min_build%]==[1] (
-      SET with_zlib=1&&
-      SET with_libpng=1&&
-      SET with_libjpeg=1&&
-      SET with_freetype=0&&
-      SET with_iconv=0&&
-      SET with_tiff=0)
+      SET tbs_gd_png=1&&
+      SET tbs_gd_jpeg=1&&
+      SET tbs_gd_freetype=0&&
+      SET tbs_gd_iconv=0&&
+      SET tbs_gd_tiff=0)
   
   - ps: if($env:build_platform -eq 'x64') {
           $env:vcvar_arg = 'x86_amd64';
-          $env:vc_cm_arg = 'Visual Studio 12 Win64';
-          $env:mingw_extra = '-DCMAKE_C_FLAGS="-m64 -fkeep-inline-functions" -DCMAKE_CXX_FLAGS="-m64 -fkeep-inline-functions"';
         }
         else {
           $env:vcvar_arg = 'x86';
-          $env:vc_cm_arg = 'Visual Studio 12';
-          $env:mingw_extra = '-DCMAKE_C_FLAGS="-fkeep-inline-functions" -DCMAKE_CXX_FLAGS="-fkeep-inline-functions"';
         }
   
   - ps: 'function prepend($file, $line) { Set-Content (Resolve-Path $file) -value $line,(Get-Content (Resolve-Path $file)) }'
@@ -72,31 +57,31 @@ install:
   
   
   # fetch deps
-  - mkdir deps
-  - ps: if($env:build_bindings -eq 1) { invoke 'git' 'clone https://github.com/imazen/gd-dotnet-bindings-generator.git --depth 1' }
-  - ps: if($env:with_zlib -eq 1) {
-          invoke 'nuget' "install zlib-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/zlib-94hmpf3q011d";
-          move zlib*\* deps -force }
-  - ps: if($env:with_libjpeg -eq 1) {
-          invoke 'nuget' "install libjpeg-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libjpeg-turbo-t70qw53csfhj";
-          move libjpeg*\* deps -force }
-  - ps: if($env:with_libpng -eq 1) {
-          invoke 'nuget' "install libpng-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libpng-i3b6v9aught8";
-          move libpng*\* deps -force }
-  - ps: if($env:with_freetype -eq 1) {
-          invoke 'nuget' "install freetype-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/freetype-vf7bw7v5ec29";
-          move freetype*\* deps -force }
-  - ps: if($env:with_iconv -eq 1) {
-          invoke 'nuget' "install libiconv-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libiconv-es1y8p1h9c47";
-          move libiconv*\* deps -force }
-  - ps: if($env:with_tiff -eq 1) {
-          invoke 'nuget' "install libtiff-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libtiff-i3h8tqqy7o7b";
-          move libtiff*\* deps -force }
+  #- mkdir deps
+  #- ps: if($env:build_bindings -eq 1) { invoke 'git' 'clone https://github.com/imazen/gd-dotnet-bindings-generator.git --depth 1' }
+  #- ps: if($env:with_zlib -eq 1) {
+  #        invoke 'nuget' "install zlib-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/zlib-94hmpf3q011d";
+  #        move zlib*\* deps -force }
+  #- ps: if($env:with_libjpeg -eq 1) {
+  #        invoke 'nuget' "install libjpeg-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libjpeg-turbo-t70qw53csfhj";
+  #        move libjpeg*\* deps -force }
+  #- ps: if($env:with_libpng -eq 1) {
+  #        invoke 'nuget' "install libpng-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libpng-i3b6v9aught8";
+  #        move libpng*\* deps -force }
+  #- ps: if($env:with_freetype -eq 1) {
+  #        invoke 'nuget' "install freetype-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/freetype-vf7bw7v5ec29";
+  #        move freetype*\* deps -force }
+  #- ps: if($env:with_iconv -eq 1) {
+  #        invoke 'nuget' "install libiconv-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libiconv-es1y8p1h9c47";
+  #        move libiconv*\* deps -force }
+  #- ps: if($env:with_tiff -eq 1) {
+  #        invoke 'nuget' "install libtiff-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libtiff-i3h8tqqy7o7b";
+  #        move libtiff*\* deps -force }
   
   
   # make static lib names cmake friendly
-  - del deps\*.dll*
-  - ps: ls deps\*_static.lib | % {move $_ ($_ -replace '_static', '') -force}
+  #- del deps\*.dll*
+  #- ps: ls deps\*_static.lib | % {move $_ ($_ -replace '_static', '') -force}
   
   
   # get upx (cinst broken; gets dos ver)
@@ -114,103 +99,44 @@ install:
   - ps: if($env:build_compiler -eq 'mingw' -and $env:build_platform -eq 'x86' -and $env:build_bindings -eq 1) {
       invoke 'curl' '-L -o mw64-32.7z "http://libgd.blob.core.windows.net/mingw/i686-4.9.1-release-posix-dwarf-rt_v3-rev1.7z"';
       invoke '7z' 'x -oC:\ mw64-32.7z'; }
-  
-  # sh is breaking mingw builds; remove
-  - for %%i in (sh.exe) do @del "%%~$PATH:i"
 
 
 
 
 build_script:
-  
-  # set env
-  
   - '"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall" %vcvar_arg%'
-  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x86] SET PATH=C:\MinGW\bin;%PATH%
-  - if [%build_compiler%]==[mingw] if [%build_platform%]==[x64] SET PATH=C:\mingw64\bin;%PATH%
+  - if [%tbs_tools%]==[mingw] if [%tbs_arch%]==[x86] SET PATH=C:\MinGW\bin;%PATH%
+  - if [%tbs_tools%]==[mingw] if [%tbs_arch%]==[x64] SET PATH=C:\mingw64\bin;%PATH%
   
+  - SET zip=libgd-%tbs_tools%-%tbs_arch%.zip
+  - ps: $nupkg_b = "libgd-$($env:tbs_tools)-$($env:tbs_arch)-$($env:APPVEYOR_REPO_BRANCH)";
+  - ps: $nupkg_c = "libgd-$($env:tbs_tools)-$($env:tbs_arch)-$($env:APPVEYOR_REPO_COMMIT)";
   
-  # build msvc
+  - thumbs make
+  - for /f "tokens=*" %%i in ('thumbs list') do set files=%%i
+  - 7z a %zip% %files%
+  - appveyor PushArtifact %zip%
   
-  - if [%build_compiler%]==[msvc] (
-      SET dll_name=libgd.dll &&
-      SET dll_pack=Bin\Release\libgd.dll &&
-      SET dll_source=Bin\Release\libgd_raw.dll )
+  - ps: if(Test-Path $env:zip) {
+          zip2nuget $env:zip $nupkg_b;
+          zip2nuget $env:zip $nupkg_c; }
   
-  - SET zip=libgd-msvc12-%build_platform%.zip
-  - SET cmake_cmd=cmake
-      -G "%vc_cm_arg%"
-      %cmake_args%
-      -DCMAKE_C_FLAGS="/Qvec-report:1"
-      -DCMAKE_CXX_FLAGS="/Qvec-report:1"
-      -DBUILD_TEST=1
-      -DENABLE_PNG=%with_libpng%
-      -DENABLE_JPEG=%with_libjpeg%
-      -DENABLE_FREETYPE=%with_freetype%
-      -DENABLE_ICONV=%with_iconv%
-      -DENABLE_TIFF=%with_tiff%
-      -Wno-dev
-  - if [%static_runtime%]==[1] SET cmake_cmd=%cmake_cmd% %static_vcargs%
+  - copy %dll_name% %dll_raw%
+  - if [%pack_dlls%]==[1] (
+        appveyor PushArtifact %dll_raw% &&
+        del %dll_name% &&
+        upx -o %dll_name% %dll_raw% )
   
-  - if [%build_compiler%]==[msvc] (
-      %cmake_cmd% &&
-      msbuild gd.sln /p:Configuration=Release /v:m &&
-      copy Bin\Release\libgd.dll Bin\Release\libgd_raw.dll &&
-      SET cli_args=%dll_name% &&
-      if [%pack_dlls%]==[1] (
-        del Bin\Release\libgd.dll &&
-        upx -o Bin\Release\libgd.dll Bin\Release\libgd_raw.dll ))
-  
-  - ps: if($env:build_compiler -eq 'msvc') {
-      invoke '7z' "a $($env:zip) .\Bin\Release\libgd_static.lib .\Bin\Release\libgd.dll .\Bin\Release\libgd.lib";
-      Push-AppveyorArtifact $env:zip; }
-  
-  
-  
-  # build mingw
-  
-  - if [%build_compiler%]==[mingw] (
-      SET dll_name=liblibgd.dll &&
-      SET dll_pack=Bin\liblibgd.dll &&
-      SET dll_source=Bin\liblibgd_raw.dll )
-  
-  - if [%build_platform%]==[x86] SET dll_make=C:\mingw32\bin\mingw32-make.exe
-  - if [%build_platform%]==[x64] SET dll_make=C:\mingw64\bin\mingw32-make.exe
-  
-  - SET zip=libgd-mingw-%build_platform%.zip
-  - SET cmake_cmd=cmake
-      -G "MinGW Makefiles"
-      %mingw_extra%
-      %cmake_args%
-      -DBUILD_TEST=1
-      -DENABLE_PNG=%with_libpng%
-      -DENABLE_JPEG=%with_libjpeg%
-      -DENABLE_FREETYPE=%with_freetype%
-      -DENABLE_ICONV=%with_iconv%
-      -DENABLE_TIFF=%with_tiff%
-      -Wno-dev
-  - if [%static_runtime%]==[1] SET cmake_cmd=%cmake_cmd% %static_gcargs%
-  
-  - if [%build_compiler%]==[mingw] (
-      %cmake_cmd% &&
-      mingw32-make &&
-      copy Bin\liblibgd.dll Bin\liblibgd_raw.dll &&
-      SET cli_args=%dll_make% %dll_name% &&
-      if [%pack_dlls%]==[1] (
-        del Bin\liblibgd.dll &&
-        upx -o Bin\liblibgd.dll Bin\liblibgd_raw.dll ))
-  
-  - ps: if($env:build_compiler -eq 'mingw') {
-      invoke '7z' "a $($env:zip) .\Bin\liblibgd.dll .\Bin\liblibgd.dll.a .\Bin\liblibgd.a";
-      Push-AppveyorArtifact $env:zip; }
-  
-  
-  
-  # push uncompressed
-  
-  - if [%pack_dlls%]==[1] appveyor PushArtifact %dll_source%
   
   # build bindings
+  
+  - if [%tbs_arch%]==[x86] SET dll_make=C:\mingw32\bin\mingw32-make.exe 
+  - if [%tbs_arch%]==[x64] SET dll_make=C:\mingw64\bin\mingw32-make.exe 
+  - if [%tbs_tools%]==[msvc12] SET dll_make=
+  
+  - for /f "tokens=*" %%i in ('thumbs list_bin') do set dll_name=%%i
+  - SET dll_raw=%dll_name%.raw
+  - SET cli_args=%dll_make%%dll_name%
   
   - ps: if($env:with_tiff -eq 0 -and $env:build_bindings -eq 1) {
       prepend 'gd-dotnet-bindings-generator\LibGD.CLI\LibGDExtensions.cs' '#define NO_TIFF';
@@ -223,7 +149,7 @@ build_script:
   - if [%build_bindings%]==[1] (
       cd gd-dotnet-bindings-generator &&
       msbuild LibGD.CLI\LibGD.CLI.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
-      copy ..\%dll_source% LibGD.CLI\bin\Debug\%dll_name% &&
+      copy ..\%dll_raw% LibGD.CLI\bin\Debug\%dll_name% &&
       cd LibGD.CLI\bin\Debug &&
       LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src %cli_args% &&
       cd ..\..\.. &&
@@ -247,9 +173,9 @@ build_script:
 
 test_script:
   - SET fail=0
-  - ctest -C Release || SET fail=1 & ver > nul
-  - ps: Push-Ctest-Results '.'
-  - ps: Push-AppveyorArtifact Testing\Temporary\LastTest.log
+  - thumbs check || SET fail=1 & ver > nul
+  - ps: Push-Ctest-Results 'build'
+  - ps: Push-AppveyorArtifact build\Testing\Temporary\LastTest.log
   - exit %fail%
   
   - if [%build_bindings%]==[1] (
@@ -257,3 +183,7 @@ test_script:
       (if [%build_platform%]==[x86] (nunit-console-x86 gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)
       else if [%build_platform%]==[x64] (nunit-console gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)) &&
       appveyor PushArtifact TestResult.xml )
+
+on_success:
+  - ps: Push-AppveyorArtifact "$nupkg_b*.nupkg"
+  - ps: Push-AppveyorArtifact "$nupkg_c*.nupkg"
