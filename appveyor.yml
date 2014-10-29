@@ -56,40 +56,47 @@ install:
   - git clone https://github.com/imazen/gd-appveyor-helpers
   - ps: . .\gd-appveyor-helpers\appveyor_funcs.ps1
   
-  # get nasm
-  #- cinst nasm
-  #nasm's main site down...
-  - curl -L -o nasminst.exe http://libgd.blob.core.windows.net/nasm/nasm-2.07-installer.exe
-  - start /wait nasminst.exe /S
-  - ps: $env:path="C:\Program Files (x86)\nasm;$($env:path)"
-  
   
   # fetch deps
-  #- mkdir deps
-  #- ps: if($env:build_bindings -eq 1) { invoke 'git' 'clone https://github.com/imazen/gd-dotnet-bindings-generator.git --depth 1' }
-  #- ps: if($env:with_zlib -eq 1) {
-  #        invoke 'nuget' "install zlib-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/zlib-94hmpf3q011d";
-  #        move zlib*\* deps -force }
-  #- ps: if($env:with_libjpeg -eq 1) {
-  #        invoke 'nuget' "install libjpeg-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libjpeg-turbo-t70qw53csfhj";
-  #        move libjpeg*\* deps -force }
-  #- ps: if($env:with_libpng -eq 1) {
-  #        invoke 'nuget' "install libpng-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libpng-i3b6v9aught8";
-  #        move libpng*\* deps -force }
-  #- ps: if($env:with_freetype -eq 1) {
-  #        invoke 'nuget' "install freetype-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/freetype-vf7bw7v5ec29";
-  #        move freetype*\* deps -force }
-  #- ps: if($env:with_iconv -eq 1) {
-  #        invoke 'nuget' "install libiconv-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libiconv-es1y8p1h9c47";
-  #        move libiconv*\* deps -force }
-  #- ps: if($env:with_tiff -eq 1) {
-  #        invoke 'nuget' "install libtiff-$($env:build_compiler)-$($env:build_platform)-master -Source https://ci.appveyor.com/nuget/libtiff-i3h8tqqy7o7b";
-  #        move libtiff*\* deps -force }
+  - mkdir deps
+  - ps: if($env:build_bindings -eq 1) { invoke 'git' 'clone https://github.com/imazen/gd-dotnet-bindings-generator.git --depth 1' }
   
+  - nuget install zlib-%tbs_tools%-%tbs_arch%-master -Source https://ci.appveyor.com/nuget/zlib-94hmpf3q011d
+  - ps: move zlib*\* deps -force
+  - if [%tbs_tools%]==[mingw] move deps\libzlibstatic.a deps\libz.a
+  - if [%tbs_tools%]==[msvc12] move deps\zlibstatic.lib deps\zlib.lib
+  - SET tbsd_zlib_built=1
+  - SET tbsd_zlib_incdir=deps
+  - SET tbsd_zlib_libdir=deps
   
-  # make static lib names cmake friendly
-  #- del deps\*.dll*
-  #- ps: ls deps\*_static.lib | % {move $_ ($_ -replace '_static', '') -force}
+  - if [%tbs_gd_jpeg%]==[1] (
+      nuget install libjpeg-%tbs_tools%-%tbs_arch%-master -Source https://ci.appveyor.com/nuget/libjpeg-turbo-t70qw53csfhj &&
+      powershell -Command "move libjpeg*\* deps -force" &&
+      (if [%tbs_tools%]==[msvc12] move deps\jpeg_static.lib deps\jpeg.lib) &&
+      SET tbsd_libjpeg_turbo_built=1)
+  
+  - if [%tbs_gd_png%]==[1] (
+      nuget install libpng-%tbs_tools%-%tbs_arch%-master -Source https://ci.appveyor.com/nuget/libpng-7hwq4pmmrc48 &&
+      powershell -Command "move libpng*\* deps -force" &&
+      (if [%tbs_tools%]==[mingw] move deps\libpng16.a deps\libpng.a) &&
+      (if [%tbs_tools%]==[msvc12] move deps\libpng16_static.lib deps\png.lib) &&
+      SET tbsd_libpng_built=1)
+  
+  - if [%tbs_gd_freetype%]==[1] (
+      nuget install freetype-%tbs_tools%-%tbs_arch%-master -Source https://ci.appveyor.com/nuget/freetype-vf7bw7v5ec29 &&
+      powershell -Command "move freetype*\* deps -force" &&
+      (if [%tbs_tools%]==[msvc12] move deps\freetype_static.lib deps\freetype.lib) &&
+      SET tbsd_freetype_built=1)
+  
+  - if [%tbs_gd_tiff%]==[1] (
+      nuget install libtiff-%tbs_tools%-%tbs_arch%-master -Source https://ci.appveyor.com/nuget/libtiff-i3h8tqqy7o7b &&
+      powershell -Command "move libtiff*\* deps -force" &&
+      (if [%tbs_tools%]==[msvc12] move deps\tiff_static.lib deps\tiff.lib) &&
+      SET tbsd_libtiff_built=1)
+  
+  # remove dyn libs
+  - del deps\*.dll*
+  
   
   
   # get upx (cinst broken; gets dos ver)
@@ -120,14 +127,15 @@ build_script:
   - ps: $nupkg_b = "libgd-$($env:tbs_tools)-$($env:tbs_arch)-$($env:APPVEYOR_REPO_BRANCH)";
   - ps: $nupkg_c = "libgd-$($env:tbs_tools)-$($env:tbs_arch)-$($env:APPVEYOR_REPO_COMMIT)";
   
-  - if [%tbs_arch%]==[x86] SET dll_make=C:\mingw32\bin\mingw32-make.exe 
-  - if [%tbs_arch%]==[x64] SET dll_make=C:\mingw64\bin\mingw32-make.exe 
-  - if [%tbs_tools%]==[msvc12] SET dll_make=
+  - if [%tbs_arch%]==[x86] SET dll_make=C:\mingw32\bin\mingw32-make.exe
+  - if [%tbs_arch%]==[x64] SET dll_make=C:\mingw64\bin\mingw32-make.exe
   
   - for /f "tokens=*" %%i in ('thumbs list_bin') do set dll_name=%%i
   - SET dll_name=%dll_name:/=\%
+  - for /f %%i in ("%dll_name%") do set dll_basename=%%~nxi
   - SET dll_raw=%dll_name%.raw
-  - SET cli_args=%dll_make%%dll_name%
+  - if [%tbs_tools%]==[msvc12] SET cli_args=%dll_basename%
+  - if [%tbs_tools%]==[mingw] SET cli_args=%dll_make% %dll_basename%
   
   - thumbs make
   - for /f "tokens=*" %%i in ('thumbs list') do set files=%%i
@@ -159,14 +167,14 @@ build_script:
   - if [%build_bindings%]==[1] (
       cd gd-dotnet-bindings-generator &&
       msbuild LibGD.CLI\LibGD.CLI.csproj /p:Configuration=Debug /p:Platform=AnyCPU /v:m &&
-      copy ..\%dll_raw% LibGD.CLI\bin\Debug\%dll_name% &&
+      copy ..\%dll_raw% LibGD.CLI\bin\Debug\%dll_basename% &&
       cd LibGD.CLI\bin\Debug &&
       LibGD.CLI.exe %APPVEYOR_BUILD_FOLDER%\src %cli_args% &&
       cd ..\..\.. &&
       msbuild LibGD.Tests\LibGD.Tests.csproj /p:Configuration=Debug /p:Platform=AnyCPU /p:DefineConstants="%test_defs%" /v:m &&
       cd..)
   
-  - SET zip=LibGDSharp-%build_compiler%-%build_platform%.zip
+  - SET zip=LibGDSharp-%tbs_tools%-%tbs_arch%.zip
   - ps: if($env:build_bindings -eq 1) {
       invoke '7z' "a $($env:zip)
         .\$($env:dll_pack)
@@ -189,9 +197,9 @@ test_script:
   - exit %fail%
   
   - if [%build_bindings%]==[1] (
-      copy %dll_source% gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\%dll_name% &&
-      (if [%build_platform%]==[x86] (nunit-console-x86 gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)
-      else if [%build_platform%]==[x64] (nunit-console gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)) &&
+      copy %dll_name% gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\%dll_basename% &&
+      (if [%tbs_arch%]==[x86] (nunit-console-x86 gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)
+      else if [%tbs_arch%]==[x64] (nunit-console gd-dotnet-bindings-generator\LibGD.Tests\bin\Debug\LibGD.Tests.dll)) &&
       appveyor PushArtifact TestResult.xml )
 
 on_success:
