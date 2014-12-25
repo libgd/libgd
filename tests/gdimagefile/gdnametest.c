@@ -105,7 +105,7 @@ do_test() {
         
         #ifdef GDTEST_TOP_DIR 
 
-        snprintf(full_filename, sizeof(full_filename), GDTEST_TOP_DIR"\\gdimagefile\\%s",
+        snprintf(full_filename, sizeof(full_filename), GDTEST_TOP_DIR"/gdimagefile/%s",
                  names[n].nm);
 
         #else
