@@ -72,11 +72,11 @@ post=()
 [ $tbsd_freetype_repo ]      || export tbsd_freetype_repo="https://github.com/imazen/freetype"
 
 deps+=(zlib); targ+=(zlibstatic)
-post+=("cp -u \$(./thumbs.sh list_slib) ../../deps/$zname")
+post+=("cp \$(./thumbs.sh list_slib) ../../deps/$zname")
 
 if [ $tbs_gd_png -gt 0 ]; then
   deps+=(libpng); targ+=(png16_static)
-  post+=("cp -u \$(./scripts/thumbs.sh list_slib) ../../deps/$pname")
+  post+=("cp \$(./scripts/thumbs.sh list_slib) ../../deps/$pname")
 fi
 
 if [ $tbs_gd_jpeg -gt 0 ]; then
@@ -88,12 +88,12 @@ if [ $tbs_gd_tiff -gt 0 ]; then
   ttarg="libtiff/tiff_static"
   [ $tbs_tools = gnu -o $tbs_tools = mingw ] && ttarg=tiff_static
   deps+=(libtiff); targ+=($ttarg)
-  post+=("cp -u \$(./thumbs.sh list_slib) ../../deps/$tname")
+  post+=("cp \$(./thumbs.sh list_slib) ../../deps/$tname")
 fi
 
 if [ $tbs_gd_freetype -gt 0 ]; then
   deps+=(freetype); targ+=("freetype_static")
-  post+=("cp -u \$(./thumbs.sh list_slib) ../../deps/$fname")
+  post+=("cp \$(./thumbs.sh list_slib) ../../deps/$fname")
 fi
 
 
@@ -128,7 +128,7 @@ process_deps()
       $thumbs make ${targ[$key]} || exit 1
       
       # copy any includes and do poststep
-      cp -u -r $($thumbs list_inc) ../../deps
+      cp -r $($thumbs list_inc) ../../deps
       eval ${post[$key]}
       
       # look in both local and parent dep dirs
