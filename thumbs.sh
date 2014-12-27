@@ -71,29 +71,33 @@ post=()
 [ $tbsd_libtiff_repo ]       || export tbsd_libtiff_repo="https://github.com/imazen/libtiff"
 [ $tbsd_freetype_repo ]      || export tbsd_freetype_repo="https://github.com/imazen/freetype"
 
+if [[ "$OSTYPE" == "darwin"* ]]; then cp="rsync"
+else cp="cp"
+fi
+
 deps+=(zlib); targ+=(zlibstatic)
-post+=("cp \$(./thumbs.sh list_slib) ../../deps/$zname")
+post+=("$cp -u \$(./thumbs.sh list_slib) ../../deps/$zname")
 
 if [ $tbs_gd_png -gt 0 ]; then
   deps+=(libpng); targ+=(png16_static)
-  post+=("cp \$(./scripts/thumbs.sh list_slib) ../../deps/$pname")
+  post+=("$cp -u \$(./scripts/thumbs.sh list_slib) ../../deps/$pname")
 fi
 
 if [ $tbs_gd_jpeg -gt 0 ]; then
   deps+=(libjpeg_turbo); targ+=(jpeg_static)
-  post+=("for lib in \$(./thumbs.sh list_slib); do [ -f \$lib ] && cp -u \$lib ../../deps/$jname; done")
+  post+=("for lib in \$(./thumbs.sh list_slib); do [ -f \$lib ] && $cp -u \$lib ../../deps/$jname; done")
 fi
 
 if [ $tbs_gd_tiff -gt 0 ]; then
   ttarg="libtiff/tiff_static"
   [ $tbs_tools = gnu -o $tbs_tools = mingw ] && ttarg=tiff_static
   deps+=(libtiff); targ+=($ttarg)
-  post+=("cp \$(./thumbs.sh list_slib) ../../deps/$tname")
+  post+=("$cp -u \$(./thumbs.sh list_slib) ../../deps/$tname")
 fi
 
 if [ $tbs_gd_freetype -gt 0 ]; then
   deps+=(freetype); targ+=("freetype_static")
-  post+=("cp \$(./thumbs.sh list_slib) ../../deps/$fname")
+  post+=("$cp -u \$(./thumbs.sh list_slib) ../../deps/$fname")
 fi
 
 
@@ -128,7 +132,7 @@ process_deps()
       $thumbs make ${targ[$key]} || exit 1
       
       # copy any includes and do poststep
-      cp -r $($thumbs list_inc) ../../deps
+      $cp -u -r $($thumbs list_inc) ../../deps
       eval ${post[$key]}
       
       # look in both local and parent dep dirs
