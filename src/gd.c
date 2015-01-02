@@ -3651,7 +3651,7 @@ BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src)
 	return 1;
 
 clean_on_error:
-	/* free new palette buffer (y is not allocated) */
+	/* free new true color buffer (y is not allocated, have failed) */
 	for (yy = 0; yy < y; yy++) {
 		gdFree(src->tpixels[yy]);
 	}
