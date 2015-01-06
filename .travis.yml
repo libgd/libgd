@@ -6,15 +6,23 @@ env:
 
 os:
   - linux
-#  - osx
+  - osx
 
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get -y install nasm
-  - if [ "$tbs_arch" = "x86" ];
+  - if [ "$TRAVIS_OS_NAME" = "linux" ];
     then
-      sudo apt-get -y install gcc-multilib;
-      sudo apt-get -y install g++-multilib;
+      sudo apt-get update -qq;
+      sudo apt-get -y install nasm;
+      if [ "$tbs_arch" = "x86" ];
+      then
+        sudo apt-get -y install gcc-multilib;
+        sudo apt-get -y install g++-multilib;
+      fi
+    fi
+  
+  - if [ "$TRAVIS_OS_NAME" = "osx" ];
+    then
+      brew install nasm;
     fi
 
 script:
