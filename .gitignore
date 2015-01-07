@@ -17,7 +17,8 @@ CTestTestfile.cmake
 libimagequant
 libimagequant-prefix
 src/deps.mk
-
+deps
+Release_GD
 # Autotools related files.
 *.l[ao]
 .deps
@@ -45,19 +46,18 @@ Makefile.in
 /m4/ltsugar.m4
 /m4/ltversion.m4
 /m4/lt~obsolete.m4
-/src/config.h
 /src/config.hin
 /src/stamp-h1
 
 # Common GD artifacts.
 /config/gdlib-config
 /config/gdlib.pc
+/src/config.h
 /src/annotate
 /src/circletexttest
 /src/fontconfigtest
 /src/fontsizetest
 /src/fontwheeltest
-/src/gd.h
 /src/gd2copypal
 /src/gd2time
 /src/gd2togif
@@ -218,3 +218,9 @@ Makefile.in
 # Doc artifacts
 /docs/naturaldocs/html/
 /docs/naturaldocs/project/Data/
+
+gd-dotnet-bindings-generator
+build_msvc12_x86
+build_msvc12_x64
+build_mingw_x86
+build_mingw_x64

@@ -1,0 +1,30 @@
+language: cpp
+
+env:
+  - tbs_arch=x86
+  - tbs_arch=x64
+
+os:
+  - linux
+  - osx
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ];
+    then
+      sudo apt-get update -qq;
+      sudo apt-get -y install nasm;
+      if [ "$tbs_arch" = "x86" ];
+      then
+        sudo apt-get -y install gcc-multilib;
+        sudo apt-get -y install g++-multilib;
+      fi
+    fi
+  
+  - if [ "$TRAVIS_OS_NAME" = "osx" ];
+    then
+      brew install nasm;
+    fi
+
+script:
+  - ./thumbs.sh make
+  - ./thumbs.sh check
