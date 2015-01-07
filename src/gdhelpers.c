@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <sys/types.h>
+#include <ctype.h>
+
 /* TBB: gd_strtok_r is not portable; provide an implementation */
 
 #define SEP_TEST (separators[*((unsigned char *) s)])
@@ -91,3 +94,5 @@ BGD_DECLARE(void) gdFree (void *ptr)
 {
 	free (ptr);
 }
+
+
