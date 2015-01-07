@@ -13,7 +13,7 @@ int main()
     gdTestAssert(GD_RELEASE_VERSION == gdReleaseVersion());
     gdTestAssert(strcmp(GD_EXTRA_VERSION, gdExtraVersion()) == 0);
 
-    snprintf(buffer, sizeof(buffer), "%d.%d.%d%s", GD_MAJOR_VERSION, GD_MINOR_VERSION,
+    sprintf(buffer, "%d.%d.%d%s", GD_MAJOR_VERSION, GD_MINOR_VERSION,
              GD_RELEASE_VERSION, GD_EXTRA_VERSION);
     gdTestAssert(strcmp(GD_VERSION_STRING, gdVersionString()) == 0);
 
