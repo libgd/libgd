@@ -201,7 +201,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	png_infop info_ptr;
 	png_uint_32 width, height, rowbytes, w, h, res_x, res_y;
 	int bit_depth, color_type, interlace_type, unit_type;
-	int num_palette, num_trans;
+	int num_palette = 0, num_trans;
 	png_colorp palette;
 	png_color_16p trans_gray_rgb;
 	png_color_16p trans_color_rgb;
