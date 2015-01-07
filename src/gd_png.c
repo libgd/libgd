@@ -421,6 +421,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	rowbytes = png_get_rowbytes (png_ptr, info_ptr);
 	if (overflow2(rowbytes, height)) {
 		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
+		if (im) {
+			gdImageDestroy(im);
+		}
 		return NULL;
 	}
 	image_data = (png_bytep) gdMalloc (rowbytes * height);
