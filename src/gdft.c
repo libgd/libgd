@@ -1052,6 +1052,8 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 
 			strex->fontpath = (char *) gdMalloc(fontpath_len + 1);
 			if (strex->fontpath == NULL) {
+				gdCacheDelete(tc_cache);
+				gdMutexUnlock(gdFontCacheMutex);
 				return "could not alloc full list of fonts";
 			}
 			strncpy(strex->fontpath, font->fontpath, fontpath_len);
@@ -1669,6 +1671,7 @@ static char * font_path(char **fontpath, char *name_list)
 		                      strlen (fontsearchpath) + strlen (name) + 8);
 		if (!fullname) {
 			gdFree(fontlist);
+			gdFree(path);
 			return "could not alloc full path of font";
 		}
 		/* if name is an absolute or relative pathname then test directly */
