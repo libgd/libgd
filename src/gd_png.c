@@ -433,6 +433,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 		if (im) {
 			gdImageDestroy(im);
 		}
+		if (palette_allocated) {
+			gdFree (palette);
+		}
 		return NULL;
 	}
 	if (overflow2(height, sizeof (png_bytep))) {
@@ -440,6 +443,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 		gdFree (image_data);
 		if (im) {
 			gdImageDestroy(im);
+		}
+		if (palette_allocated) {
+			gdFree (palette);
 		}
 		return NULL;
 	}
@@ -452,6 +458,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 			gdImageDestroy(im);
 		}
 		gdFree (image_data);
+		if (palette_allocated) {
+			gdFree (palette);
+		}
 		return NULL;
 	}
 
