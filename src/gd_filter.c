@@ -824,11 +824,15 @@ gdImageCopyGaussianBlurred(gdImagePtr src, int radius, double sigma)
         int tcstat;
 
         src = gdImageClone(src);
-        if (!src) return NULL;
+        if (!src) {
+			gdFree(coeffs);
+			return NULL;
+		}
 
         tcstat = gdImagePaletteToTrueColor(src);
         if (!tcstat) {
             gdImageDestroy(src);
+			gdFree(coeffs);
             return NULL;
         }/* if */
 		
@@ -837,7 +841,10 @@ gdImageCopyGaussianBlurred(gdImagePtr src, int radius, double sigma)
 
     /* Apply the filter horizontally. */
     tmp = gdImageCreateTrueColor(src->sx, src->sy);
-    if (!tmp) return NULL;
+    if (!tmp) {
+		gdFree(coeffs);
+		return NULL;
+	}
     applyCoeffs(src, tmp, coeffs, radius, HORIZONTAL);
 
     /* Apply the filter vertically. */
@@ -847,6 +854,7 @@ gdImageCopyGaussianBlurred(gdImagePtr src, int radius, double sigma)
     }/* if */
 
     gdImageDestroy(tmp);
+	gdFree(coeffs);
     if (freeSrc) gdImageDestroy(src);
 
     return result;
