@@ -347,6 +347,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 		if ((palette = (png_colorp) gdMalloc (256 * sizeof (png_color))) == NULL) {
 			gd_error("gd-png error: cannot allocate gray palette\n");
 			png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
+			gdImageDestroy(im);
 			return NULL;
 		}
 		palette_allocated = TRUE;
