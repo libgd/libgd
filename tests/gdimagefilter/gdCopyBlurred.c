@@ -148,6 +148,7 @@ void do_crosstest()
     save(im, "cross.png");
 
     blurred = gdImageCopyGaussianBlurred(im, RADIUS, 0.0);
+	gdTestAssert(blurred != NULL);
     save(blurred, "blurredcross.png");
 
     /* These spots shouldn't be affected. */
@@ -183,7 +184,7 @@ void do_crosstest()
     gdTestAssert(getwhite(blurred, 1, LY)     <= getwhite(blurred, 1, LY + 1));
     gdTestAssert(getwhite(blurred, 1, LY + 1) <  getwhite(blurred, 1, LY + 3));
     gdTestAssert(getwhite(blurred, 1, LY + 3) <  getwhite(blurred, 1, HEIGHT-1));
-
+	gdImageDestroy(blurred);
 }/* do_crosstest*/
 
 
