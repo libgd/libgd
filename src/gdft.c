@@ -1648,6 +1648,7 @@ static char * font_path(char **fontpath, char *name_list)
 
 	fontlist = (char *) gdMalloc(name_list_len + 1);
 	if (fontlist == NULL) {
+		gdFree(path);
 		return "could not alloc full list of fonts";
 	}
 	strncpy(fontlist, name_list, name_list_len);
