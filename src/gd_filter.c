@@ -854,7 +854,8 @@ gdImageCopyGaussianBlurred(gdImagePtr src, int radius, double sigma)
     }/* if */
 
     gdImageDestroy(tmp);
-	gdFree(coeffs);
+    gdFree(coeffs);
+
     if (freeSrc) gdImageDestroy(src);
 
     return result;
