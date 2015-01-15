@@ -1047,7 +1047,7 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
 {
     const unsigned int src_width = src->sx;
     const unsigned int src_height = src->sy;
-	gdImagePtr tmp_im = NULL;;
+	gdImagePtr tmp_im = NULL;
 	gdImagePtr dst = NULL;
 
     /* First, handle the trivial case. */

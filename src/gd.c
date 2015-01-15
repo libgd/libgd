@@ -2060,7 +2060,7 @@ BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
 	int alphablending_bak;
 
 	/* stack of filled segments */
-	/* struct seg stack[FILL_MAX],*sp = stack;; */
+	/* struct seg stack[FILL_MAX],*sp = stack; */
 	struct seg *stack;
 	struct seg *sp;
 
@@ -3631,7 +3631,7 @@ BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src)
 			for (x = 0; x < sx; x++) {
 				const unsigned char c = *(src_row + x);
 				if (c == src->transparent) {
-					*(dst_row + x) = gdTrueColorAlpha(0, 0, 0, 127);;
+					*(dst_row + x) = gdTrueColorAlpha(0, 0, 0, 127);
 				} else {
 					*(dst_row + x) = gdTrueColorAlpha(src->red[c], src->green[c], src->blue[c], src->alpha[c]);
 				}
