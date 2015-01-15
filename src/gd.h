@@ -12,8 +12,8 @@ extern "C" {
  * trailing comment. */
 #define GD_MAJOR_VERSION    2           /*version605b5d1778*/
 #define GD_MINOR_VERSION    1           /*version605b5d1778*/
-#define GD_RELEASE_VERSION  1           /*version605b5d1778*/
-#define GD_EXTRA_VERSION    ""          /*version605b5d1778*/
+#define GD_RELEASE_VERSION  2           /*version605b5d1778*/
+#define GD_EXTRA_VERSION    "-dev"      /*version605b5d1778*/
 /* End parsable section. */
 
 /* The version string.  This is constructed from the version number
