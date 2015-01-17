@@ -185,6 +185,9 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantiza
 		gd_error("gd-webp error: cannot allocate Y buffer");
 		return;
 	}
+	if (quantization == -1) {
+		quantization = 80;
+	}
 	vp8_quality = mapQualityToVP8QP(quantization);
 
 	U = Y + width * height;
