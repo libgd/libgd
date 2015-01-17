@@ -201,8 +201,13 @@ check_PROGRAMS += \
 endif
 
 if HAVE_LIBFREETYPE
-check_PROGRAMS +=
+check_PROGRAMS += \
 	freetype/bug00132
+endif
+
+if HAVE_LIBVPX
+check_PROGRAMS += \
+	webp/bug00111
 endif
 
 LDADD = libgdtest.a ../src/libgd.la
@@ -365,4 +370,5 @@ CLEANFILES = \
 	wbmp/wbmp_im2im_dst.wbmp \
 	wbmp/wbmp_im2im_src.wbmp \
 	wbmp_im2im_dst.wbmp \
-	wbmp_im2im_src.wbmp
+	wbmp_im2im_src.wbmp \
+	webp/tmpbug00111.webp
