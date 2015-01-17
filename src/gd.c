@@ -2384,7 +2384,7 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 		}
 		for (i = 0; i < src->sy; i++) {
 			for (x = 0; x < src->sx; x++) {
-				dst->pixels[i][x] = dst->pixels[i][x];
+				dst->pixels[i][x] = src->pixels[i][x];
 			}
 		}
 	} else {
