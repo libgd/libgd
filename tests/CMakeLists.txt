@@ -71,6 +71,10 @@ if (BUILD_TEST)
 		LIST(APPEND TESTS_DIRS xpm)
 	ENDIF(XPM_FOUND)
 
+	IF(VPX_FOUND)
+		LIST(APPEND TESTS_DIRS webp)
+	ENDIF(XPM_FOUND)
+
 	FOREACH(test_dir ${TESTS_DIRS})
 		add_subdirectory (${test_dir})
 	ENDFOREACH(test_dir)
