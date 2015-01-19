@@ -1,6 +1,7 @@
 
 SET(TESTS_FILES
 	tga_null
+	bug00084
 )
 
 FOREACH(test_name ${TESTS_FILES})

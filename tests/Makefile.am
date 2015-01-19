@@ -15,6 +15,7 @@ check_PROGRAMS = \
 	gd/gd_null \
 	gd/gd_num_colors \
 	tga/tga_null \
+	tga/bug00084 \
 	gdimagepixelate/gdimagepixelate \
 	gdimagecopy/bug00007 \
 	gdnewfilectx/gdnewfilectx_null \
@@ -297,6 +298,7 @@ EXTRA_DIST = \
 	gdimagerectangle/CMakeLists.txt \
 	gd/CMakeLists.txt \
 	tga/CMakeLists.txt \
+	tga/bug00084.tga \
 	gdimagepixelate/CMakeLists.txt \
 	tiff/CMakeLists.txt \
 	gdimagecopy/CMakeLists.txt \

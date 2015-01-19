@@ -218,7 +218,7 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 	/*!	\brief Allocate memmory for image block
 	 *  Allocate a chunk of memory for the image block to be passed into.
 	 */
-	tga->bitmap = (int *) gdMalloc(image_block_size * sizeof(uint8_t));
+	tga->bitmap = (int *) gdMalloc(image_block_size * sizeof(int));
 	if (tga->bitmap == NULL) {
 		return -1;
 	}
@@ -243,7 +243,6 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 	if (tga->imagetype == TGA_TYPE_RGB) {
 		conversion_buffer = (unsigned char *) gdMalloc(image_block_size * sizeof(unsigned char));
 		if (conversion_buffer == NULL) {
-			gdFree(conversion_buffer);
 			return -1;
 		}
 
@@ -254,7 +253,7 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 			buffer_caret++;
 		}
 
-		gdFree( conversion_buffer );
+		gdFree(conversion_buffer);
 	}
 
 	/*! \brief Read in RLE compressed RGB TGA
@@ -263,13 +262,11 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 	if (tga->imagetype == TGA_TYPE_RGB_RLE) {
 		decompression_buffer = (uint8_t*) gdMalloc(image_block_size * sizeof(uint8_t));
 		if (decompression_buffer == NULL) {
-			gdFree( decompression_buffer );
 			return -1;
 		}
 		conversion_buffer = (unsigned char *) gdMalloc(image_block_size * sizeof(unsigned char));
 		if (conversion_buffer == NULL) {
 			gdFree( decompression_buffer );
-			gdFree( conversion_buffer );
 			return -1;
 		}
 
@@ -277,7 +274,7 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 
 		buffer_caret = 0;
 
-		while( buffer_caret < image_block_size ) {
+		while( buffer_caret < image_block_size) {
 			decompression_buffer[buffer_caret] = (int)conversion_buffer[buffer_caret];
 			buffer_caret++;
 		}
@@ -308,10 +305,8 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 				}
 			}
 		}
-
 		gdFree( decompression_buffer );
 		gdFree( conversion_buffer );
-
 	}
 
 	/*!	\todo Add image type support
