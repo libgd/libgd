@@ -425,6 +425,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 		if (im) {
 			gdImageDestroy(im);
 		}
+		if (palette_allocated) {
+			gdFree (palette);
+		}
 		return NULL;
 	}
 	image_data = (png_bytep) gdMalloc (rowbytes * height);
