@@ -286,17 +286,20 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	if(bitDepth != 24) {
 		colorMapRed   = (uint16 *) gdMalloc(3 * (1 << bitsPerSample));
 		if (!colorMapRed) {
+			gdFree(th);
 			return;
 		}
 		colorMapGreen = (uint16 *) gdMalloc(3 * (1 << bitsPerSample));
 		if (!colorMapGreen) {
 			gdFree(colorMapRed);
+			gdFree(th);
 			return;
 		}
 		colorMapBlue  = (uint16 *) gdMalloc(3 *  (1 << bitsPerSample));
 		if (!colorMapBlue) {
 			gdFree(colorMapRed);
 			gdFree(colorMapGreen);
+			gdFree(th);
 			return;
 		}
 
@@ -326,10 +329,18 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, 1);
 
 	if(overflow2(width, samplesPerPixel)) {
+		if (colorMapRed)   gdFree(colorMapRed);
+		if (colorMapGreen) gdFree(colorMapGreen);
+		if (colorMapBlue)  gdFree(colorMapBlue);
+		gdFree(th);
 		return;
 	}
 
 	if(!(scan = (char *)gdMalloc(width * samplesPerPixel))) {
+		if (colorMapRed)   gdFree(colorMapRed);
+		if (colorMapGreen) gdFree(colorMapGreen);
+		if (colorMapBlue)  gdFree(colorMapBlue);
+		gdFree(th);
 		return;
 	}
 
@@ -371,6 +382,10 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 
 		/* Write the scan line to the tiff */
 		if(TIFFWriteEncodedStrip(tiff, y, scan, width * samplesPerPixel) == -1) {
+			if (colorMapRed)   gdFree(colorMapRed);
+			if (colorMapGreen) gdFree(colorMapGreen);
+			if (colorMapBlue)  gdFree(colorMapBlue);
+			gdFree(th);
 			/* error handler here */
 			gd_error("Could not create TIFF\n");
 			return;
