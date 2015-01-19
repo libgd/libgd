@@ -32,7 +32,6 @@ check_PROGRAMS = \
 	bmp/bmp_null \
 	gdinterpolatedscale/gdTrivialResize \
 	gdinterpolatedscale/gdModesAndPalettes \
-	gdinterpolatedscale/bug00091 \
 	gd/gd_versiontest \
 	gdimagefilter/gdCopyBlurred \
 	gdimagefile/gdnametest

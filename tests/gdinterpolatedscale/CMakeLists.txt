@@ -1,6 +1,5 @@
 
 SET(TESTS_FILES
-	bug00091
 	gdModesAndPalettes
 	gdTrivialResize
 )
