@@ -104,8 +104,7 @@ EXTRA_PROGRAMS = \
 	gdimagescatterex/bug00208_1 \
 	gdimagescatterex/bug00208_2 \
 	gdimagefilltoborder/bug00037 \
-	gdimagerotate/php_bug_64898 \
-	gdimagerotate/bug00067
+	gdimagerotate/php_bug_64898
 
 if HAVE_LIBXPM
 check_PROGRAMS += \
