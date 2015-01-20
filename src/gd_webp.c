@@ -58,17 +58,20 @@ gdImagePtr gdImageCreateFromWebpCtx (gdIOCtx * infile)
 
 	if (WebPGetInfo(filedata,size, &width, &height) == 0) {
 		gd_error("gd-webp cannot get webp info");
+		gdFree(temp);
 		return NULL;
 	}
 
 	im = gdImageCreateTrueColor(width, height);
 	if (!im) {
+		gdFree(temp);
 		return NULL;
 	}
 	argb = WebPDecodeARGB(filedata, size, &width, &height);
 	if (!argb) {
 		gd_error("gd-webp cannot allocate temporary buffer");
-		gdFree(argb);
+		gdFree(temp);
+		gdImageDestry(im);
 		return NULL;
 	}
 	for (y = 0, p = argb;  y < height; y++) {
@@ -81,7 +84,9 @@ gdImagePtr gdImageCreateFromWebpCtx (gdIOCtx * infile)
 		}
 	}
 	gdFree(filedata);
+	/* do not use gdFree here, in case gdFree/alloc is mapped to something else than libc */
 	free(argb);
+	gdFree(temp);
 	im->saveAlphaFlag = 1;
 	return im;
 }
@@ -130,7 +135,6 @@ void gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantization)
 		}
 	}
 	out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quantization, &out);
-	printf("outsize: %i\n", out_size);
 	if (out_size == 0) {
 		gd_error("gd-webp encoding failed");
 		goto freeargb;
