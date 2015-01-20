@@ -317,63 +317,6 @@ if test "$with_xpm" != no; then
 fi
 AM_CONDITIONAL([HAVE_LIBXPM], test "$with_xpm" = yes)
 
-dnl check for libvpx by default
-AC_ARG_WITH(vpx,dnl
-[  --with-vpx=DIR         where to find the vpx library])
-
-case $with_vpx in
-no) ;;
-yes|"")
-  PKG_CHECK_MODULES([LIBVPX], vpx, [with_vpx=yes],
-  [
-    PKG_CHECK_MODULES([LIBVPX], libvpx, [with_vpx=yes],
-    [
-      if test "$with_vpx" = yes; then
-        AC_MSG_ERROR([VPX support requested, but not found])
-      fi
-      with_vpx=no
-    ])
-  ])
-  ;;
-*)
-  save_LIBS="$LIBS"
-  save_CPPFLAGS="$CPPFLAGS"
-
-  if test -d "$with_vpx"; then
-    LIBVPX_CFLAGS="-I$with_vpx/include"
-    LIBVPX_LIBS="-L$with_vpx/lib -lvpx"
-  fi
-
-  CPPFLAGS="$CPPFLAGS $LIBVPX_CFLAGS"
-  LIBS="$LIBS $LIBVPX_LIBS"
-
-  AC_CHECK_LIB(vpx,vpx_codec_destroy,
-    [
-      if test -z "$LIBVPX_LIBS"; then
-        LIBVPX_LIBS="-lvpx"
-      fi
-      with_vpx=yes
-    ],[
-      if test "$with_vpx" != ""; then
-        AC_MSG_ERROR([vpx support requested, but not found])
-      else
-        with_vpx=no
-      fi
-    ])
-
-  CPPFLAGS="$save_CPPFLAGS"
-  LIBS="$save_LIBS"
-  ;;
-esac
-
-if test "$with_vpx" != no; then
-  CPPFLAGS="$CPPFLAGS $LIBVPX_CFLAGS"
-  LIBS="$LIBS $LIBVPX_LIBS"
-  FEATURES="GD_VPX $FEATURES"
-  AC_DEFINE(HAVE_LIBVPX, 1, [ Define if you have the VPX library. ])
-fi
-AM_CONDITIONAL([HAVE_LIBVPX], test "$with_vpx" = yes)
-
 dnl check for libtiff by default
 AC_ARG_WITH(tiff,dnl
 [  --with-tiff=DIR         where to find the TIFF library])
@@ -437,6 +380,27 @@ if test "$mingw_cv_win32_host" = yes; then
 AC_DEFINE([BGDWIN32], [], [Define is you are building for Win32 API])
 fi
 
+
+dnl check for libwebp by default
+AC_ARG_WITH(webp,dnl
+[  --with-webp=DIR         where to find the webp library],
+  [if test -d "$withval"; then
+     LDFLAGS="$LDFLAGS -L$withval/lib"
+     CFLAGS="$CFLAGS -I$withval/include"
+   fi],
+  withval=yes)
+
+if test "$withval" != no; then
+  AC_CHECK_LIB(webp,WebPGetInfo,
+    [LIBS="-lwebp $LIBS" 
+     FEATURES="GD_WEBP $FEATURES"
+     AC_DEFINE(HAVE_LIBWEBP, 1, [ Define if you have the webp library. ])])
+     with_webp=yes
+else
+  with_webp=no
+fi
+AM_CONDITIONAL([HAVE_LIBWEBP], test "$with_webp" = yes)
+
 dnl report configuration
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE $VERSION:
@@ -444,7 +408,7 @@ AC_MSG_RESULT([
    Support for Zlib:                 $with_zlib
    Support for PNG library:          $with_png
    Support for JPEG library:         $ac_cv_lib_jpeg_jpeg_set_defaults
-   Support for VPX library:          $with_vpx
+   Support for WebP library:         $with_webp
    Support for TIFF library:         $with_tiff
    Support for Freetype 2.x library: $with_freetype
    Support for Fontconfig library:   $with_fontconfig

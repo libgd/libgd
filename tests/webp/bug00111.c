@@ -10,7 +10,7 @@ int main()
 	char path[2048];
 	FILE *fp;
 
-	im = gdImageCreateTrueColor(2,2);
+	im = gdImageCreateTrueColor(20, 20);
 	if (!im) {
 		return 0;
 	}

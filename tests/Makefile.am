@@ -205,7 +205,7 @@ check_PROGRAMS += \
 	freetype/bug00132
 endif
 
-if HAVE_LIBVPX
+if HAVE_LIBWEBP
 check_PROGRAMS += \
 	webp/bug00111
 endif
