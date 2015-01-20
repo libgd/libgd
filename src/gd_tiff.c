@@ -829,7 +829,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	TIFFGetFieldDefaulted (tif, TIFFTAG_BITSPERSAMPLE, &bps);
 
 	/* Unsupported bps, force to RGBA */
-	if (bps > 8 && bps != 16) {
+	if (1/*bps > 8 && bps != 16*/) {
 		force_rgba = TRUE;
 	}
 
