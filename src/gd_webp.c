@@ -71,7 +71,7 @@ gdImagePtr gdImageCreateFromWebpCtx (gdIOCtx * infile)
 	if (!argb) {
 		gd_error("gd-webp cannot allocate temporary buffer");
 		gdFree(temp);
-		gdImageDestry(im);
+		gdImageDestroy(im);
 		return NULL;
 	}
 	for (y = 0, p = argb;  y < height; y++) {
