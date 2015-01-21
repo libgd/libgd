@@ -28,6 +28,12 @@ GDLIB_REVISION=gd_REVISION
 GDLIB_EXTRA=gd_EXTRA
 GDLIB_VERSION=gd_PKG_VERSION
 
+AC_SUBST(GDLIB_MAJOR)
+AC_SUBST(GDLIB_MINOR)
+AC_SUBST(GDLIB_REVISION)
+AC_SUBST(GDLIB_EXTRA)
+AC_SUBST(GDLIB_VERSION)
+
 # Dynamic library version information
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
 
