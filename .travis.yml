@@ -28,12 +28,12 @@ before_install:
                               automake \
                               autoconf \
                               libtool \
-                              html2text
+                              html2text;
       if [ "$tbs_arch" = "x86" ];
       then
         sudo apt-get -y install gcc-multilib;
         sudo apt-get -y install g++-multilib;
-      fi
+      fi;
     fi
   
   - if [ "$TRAVIS_OS_NAME" = "osx" ];
