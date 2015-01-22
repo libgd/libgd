@@ -1,9 +1,9 @@
 language: cpp
 
 env:
-  global:
-    # COVERITY_SCAN_TOKEN
-    - secure: "HK0Ey4+9OsxcWl0FwNzwbkEkvHMD7DM27x3NWeY8Lo2NmU2ZBB72Q3TWIBtk6YpeY5glsBTUQob17H+ISQR2xHqL5GaGf1hWk9x7iBAA4XRb4RUgCnzEE6vPmUGcxcjx0AIjtbnFKShoEOKbN/O2ms1zqz8rgUTNiAQWFgJKCW0="
+  #global:
+  #  # COVERITY_SCAN_TOKEN
+  #  - secure: "HK0Ey4+9OsxcWl0FwNzwbkEkvHMD7DM27x3NWeY8Lo2NmU2ZBB72Q3TWIBtk6YpeY5glsBTUQob17H+ISQR2xHqL5GaGf1hWk9x7iBAA4XRb4RUgCnzEE6vPmUGcxcjx0AIjtbnFKShoEOKbN/O2ms1zqz8rgUTNiAQWFgJKCW0="
   - tbs_arch=x86
   - tbs_arch=x64
 
