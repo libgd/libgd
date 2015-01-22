@@ -70,8 +70,8 @@ addons:
     # ** specific to your project **
     project:
       name: libgd/libgd
-      version: 2.1.1
-      description: GD Graphics Library
+    #  version: 2.1.1
+    #  description: GD Graphics Library
 
     # Where email notification of build analysis results will be sent
     # notification_email: scan_notifications@example.com
