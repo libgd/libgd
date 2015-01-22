@@ -44,13 +44,13 @@ before_install:
 script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ];
     then
-      autoreconf -fi
-      ./configure
-      make
-      make check
+      autoreconf -fi;
+      ./configure;
+      make;
+      make check;
     fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ];
     then
-      ./thumbs.sh make
-      ./thumbs.sh check
+      ./thumbs.sh make;
+      ./thumbs.sh check;
     fi
