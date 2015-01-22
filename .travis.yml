@@ -12,7 +12,24 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ];
     then
       sudo apt-get update -qq;
+      sudo apt-get dist-upgrade -y -qq
       sudo apt-get -y install nasm;
+      sudo apt-get -y install autotools-dev \
+      	   	      	      libpng-dev \
+			      libz-dev \
+			      libjpeg-dev \
+			      libfreetype6-dev \
+			      libxpm-dev \
+			      libx11-dev \
+			      libxt-dev \
+			      libfontconfig-dev \
+			      libvpx-dev \
+			      libtiff-dev \
+			      autoreconf \
+			      automake \
+			      autoconf \
+			      libtool \
+			      html2text
       if [ "$tbs_arch" = "x86" ];
       then
         sudo apt-get -y install gcc-multilib;
@@ -26,5 +43,15 @@ before_install:
     fi
 
 script:
-  - ./thumbs.sh make
-  - ./thumbs.sh check
+  - if [ "$TRAVIS_OS_NAME" = "linux" ];
+    then
+      autoreconf -fi
+      ./configure
+      make
+      make check
+    fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ];
+    then
+      ./thumbs.sh make
+      ./thumbs.sh check
+    fi
