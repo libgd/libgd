@@ -17,7 +17,7 @@ before_install:
       sudo apt-get update -qq;
       sudo apt-get -y install nasm;
       sudo apt-get -y install autotools-dev \
-                                             libpng-dev \
+                              libpng-dev \
                               libz-dev \
                               libjpeg-dev \
                               libfreetype6-dev \
@@ -27,6 +27,7 @@ before_install:
                               libfontconfig-dev \
                               libvpx-dev \
                               libtiff-dev \
+                              libwebp-dev \
                               autoreconf \
                               automake \
                               autoconf \
@@ -53,7 +54,7 @@ before_script:
 script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ];
     then
-      ./configure;
+      ./configure --with-tiff=/usr --libdir=/usr/lib/$(dpkg-architecture -qDEB_TARGET_MULTIARCH);
       make;
       make check || true;
     fi
