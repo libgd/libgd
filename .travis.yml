@@ -1,6 +1,9 @@
 language: cpp
 
 env:
+  global:
+    # COVERITY_SCAN_TOKEN
+    - secure: "HK0Ey4+9OsxcWl0FwNzwbkEkvHMD7DM27x3NWeY8Lo2NmU2ZBB72Q3TWIBtk6YpeY5glsBTUQob17H+ISQR2xHqL5GaGf1hWk9x7iBAA4XRb4RUgCnzEE6vPmUGcxcjx0AIjtbnFKShoEOKbN/O2ms1zqz8rgUTNiAQWFgJKCW0="
   - tbs_arch=x86
   - tbs_arch=x64
 
@@ -41,16 +44,47 @@ before_install:
       brew install nasm;
     fi
 
-script:
+before_script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ];
     then
       autoreconf -fi;
+    fi
+
+script:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ];
+    then
       ./configure;
       make;
-      make check;
+      make check || true;
     fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ];
     then
       ./thumbs.sh make;
       ./thumbs.sh check;
     fi
+
+addons:
+  coverity_scan:
+
+    # GitHub project metadata
+    # ** specific to your project **
+    project:
+      name: libgd/libgd
+      version: 2.1.1
+      description: GD Graphics Library
+
+    # Where email notification of build analysis results will be sent
+    # notification_email: scan_notifications@example.com
+
+    # Commands to prepare for build_command
+    # ** likely specific to your build **
+    build_command_prepend: autoreconf -fi && ./configure
+
+    # The command that will be added as an argument to "cov-build" to compile your project for analysis,
+    # ** likely specific to your build **
+    build_command: make
+
+    # Pattern to match selecting branches that will run analysis. We recommend leaving this set to 'coverity_scan'.
+    # Take care in resource usage, and consider the build frequency allowances per
+    #   https://scan.coverity.com/faq#frequency
+    branch_pattern: coverity_scan
