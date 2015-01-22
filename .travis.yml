@@ -14,21 +14,21 @@ before_install:
       sudo apt-get update -qq;
       sudo apt-get -y install nasm;
       sudo apt-get -y install autotools-dev \
-      	   	      	      libpng-dev \
-			      libz-dev \
-			      libjpeg-dev \
-			      libfreetype6-dev \
-			      libxpm-dev \
-			      libx11-dev \
-			      libxt-dev \
-			      libfontconfig-dev \
-			      libvpx-dev \
-			      libtiff-dev \
-			      autoreconf \
-			      automake \
-			      autoconf \
-			      libtool \
-			      html2text
+                                             libpng-dev \
+                              libz-dev \
+                              libjpeg-dev \
+                              libfreetype6-dev \
+                              libxpm-dev \
+                              libx11-dev \
+                              libxt-dev \
+                              libfontconfig-dev \
+                              libvpx-dev \
+                              libtiff-dev \
+                              autoreconf \
+                              automake \
+                              autoconf \
+                              libtool \
+                              html2text
       if [ "$tbs_arch" = "x86" ];
       then
         sudo apt-get -y install gcc-multilib;
