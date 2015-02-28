@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "gd.h"
 #include "gdtest.h"
-#include "../test_config.h"
+#include "test_config.h"
 
 #define WIDTH 60
 #define HEIGHT 50
