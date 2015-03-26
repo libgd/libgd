@@ -2216,7 +2216,7 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 			return dst;
 		}
 
-		case -2700:
+		case -27000:
 		case   9000:
 			return gdImageRotate90(src, 0);
 
