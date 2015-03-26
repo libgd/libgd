@@ -214,6 +214,8 @@ Makefile.in
 /tests/gdimagefile/gdnametest
 /tests/gdimagefile/img.png
 /tests/gdimagefilter/gdCopyBlurred
+/tests/tga/bug00084
+/tests/webp/bug00111
 
 # Doc artifacts
 /docs/naturaldocs/html/
