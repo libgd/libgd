@@ -97,7 +97,7 @@ gd_gif_out.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c		\
 gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c		\
 gdfonts.c gdfontt.c gdft.c gdhelpers.c gdkanji.c gdtables.c gdxpm.c	\
 wbmp.c gd_filter.c gd_nnquant.c gd_rotate.c gd_matrix.c				\
-gd_interpolation.c gd_crop.c webpimg.c gd_webp.c gd_tiff.c gd_tga.c	\
+gd_interpolation.c gd_crop.c gd_webp.c gd_tiff.c gd_tga.c			\
 gd_bmp.c gd_xbm.c gd_color_match.c gd_version.c gd_filename.c
 
 OBJ=$(SRC:.c=.o)

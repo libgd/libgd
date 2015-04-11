@@ -62,7 +62,6 @@ SET (LIBGD_SRC_FILES
 	gd.h
 	wbmp.h
 	gd_webp.c
-	webpimg.c
 	gd_xbm.c
 	gd_version.c
 )
