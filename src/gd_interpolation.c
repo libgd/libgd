@@ -61,9 +61,13 @@ TODO:
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <assert.h>
 
-#define NDEBUG 1 /* TODO: disable/enable assertions in configure. */
+#ifndef NDEBUG
+/* Comment out this line to enable asserts.
+ * TODO: This logic really belongs in cmake and configure.
+ */
+#define NDEBUG 1
+#endif
 #include <assert.h>
 
 #include "gd.h"
