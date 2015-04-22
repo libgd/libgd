@@ -265,6 +265,9 @@ gdImageSquareToCircle (gdImagePtr im, int radius)
 		return 0;
 	}
 	im2 = gdImageCreateTrueColor (radius * 2, radius * 2);
+	if (!im2) {
+		return 0;
+	}
 	/* Supersampling for a nicer result */
 	c = (im2->sx / 2) * SUPER;
 	for (y = 0; (y < im2->sy * SUPER); y++) {
