@@ -1519,6 +1519,9 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 			gdImageDestroy(nim);
 		}
 		nim = gdImageNeuQuant(oim, colorsWanted, oim->paletteQuantizationSpeed ? oim->paletteQuantizationSpeed : 2);
+		if (!nim) {
+			return FALSE;
+		}
 		if (cimP) {
 			*cimP = nim;
 		} else {
