@@ -23,9 +23,9 @@ BGD_DECLARE(void) gdImageFlipVertical(gdImagePtr im)
 		unsigned char p;
 		for (y = 0; y < im->sy / 2; y++) {
 			for (x = 0; x < im->sx; x++) {
-				p = im->tpixels[y][x];
-				im->tpixels[y][x] =	im->tpixels[im->sy - 1 - y][x];
-				im->tpixels[im->sy - 1 - y][x] = p;
+				p = im->pixels[y][x];
+				im->pixels[y][x] =	im->pixels[im->sy - 1 - y][x];
+				im->pixels[im->sy - 1 - y][x] = p;
 			}
 		}
 	}
