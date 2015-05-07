@@ -70,7 +70,7 @@ static struct FileType {
     {".gd2",    gdImageCreateFromGd2,   writegd2,       NULL},
 #endif
 
-#ifdef HAVE_LIBVPX
+#ifdef HAVE_LIBWEBP
     {".webp",   gdImageCreateFromWebp,  gdImageWebp,    NULL},
 #endif
 
