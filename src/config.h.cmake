@@ -39,8 +39,8 @@
 /* Define if you have the png library. */
 #cmakedefine HAVE_LIBPNG
 
-/* Define if you have the VPX library. */
-#cmakedefine HAVE_LIBVPX
+/* Define if you have the WEBP library. */
+#cmakedefine HAVE_LIBWEBP
 
 /* Define to 1 if you have the <libimagequant.h> header file. */
 #cmakedefine HAVE_LIBIMAGEQUANT_H
