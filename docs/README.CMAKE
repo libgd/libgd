@@ -15,6 +15,7 @@ ENABLE_TIFF=1
 ENABLE_FREETYPE=1
 ENABLE_FONTCONFIG=1
 ENABLE_XPM=1
+ENABLE_WEBP=1
 
 You can optionnally run our tests suite using:
 $ ctest .
