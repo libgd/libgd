@@ -1,13 +1,13 @@
-# - Find the native VPX includes and library
+# - Find the native WEBP includes and library
 #
 
 # This module defines
-#  VPX_INCLUDE_DIR, where to find png.h, etc.
-#  VPX_LIBRARIES, the libraries to link against to use VPX.
-#  VPX_DEFINITIONS - You should ADD_DEFINITONS(${VPX_DEFINITIONS}) before compiling code that includes png library files.
-#  VPX_FOUND, If false, do not try to use VPX.
+#  WEBP_INCLUDE_DIR, where to find png.h, etc.
+#  WEBP_LIBRARIES, the libraries to link against to use WEBP.
+#  WEBP_DEFINITIONS - You should ADD_DEFINITONS(${WEBP_DEFINITIONS}) before compiling code that includes png library files.
+#  WEBP_FOUND, If false, do not try to use WEBP.
 # also defined, but not for general use are
-#  VPX_LIBRARY, where to find the VPX library.
+#  WEBP_LIBRARY, where to find the WEBP library.
 #
 # Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
 #
@@ -38,38 +38,35 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-INCLUDE(FindZLIB)
+include(FindZLIB)
 
-SET(VPX_FOUND "NO")
-SET(VPX_LIBRARY "")
-
-FIND_PATH(VPX_INCLUDE_DIR vp8cx.h
-/usr/local/include/vpx
-/usr/include/vpx
+find_path(WEBP_INCLUDE_DIR decode.h
+/usr/local/include/webp
+/usr/include/webp
 )
 
-SET(VPX_NAMES ${VPX_NAMES} "vpxmt" "libvpx")
-FIND_LIBRARY(VPX_LIBRARY
- NAMES ${VPX_NAMES}
- PATHS "${PROJECT_SOURCE_DIR}/../deps/lib" /usr/lib64 /usr/lib /usr/local/lib 
-)
+set(WEBP_NAMES ${WEBP_NAMES} webp)
+find_library(WEBP_LIBRARY
+  NAMES ${WEBP_NAMES}
+  PATHS "${PROJECT_SOURCE_DIR}/../deps/lib" /usr/lib64 /usr/lib /usr/local/lib
+  )
 
-IF (VPX_LIBRARY AND VPX_INCLUDE_DIR)
-	SET(VPX_INCLUDE_DIR ${VPX_INCLUDE_DIR})
-	SET(VPX_LIBRARIES ${VPX_LIBRARY})
-	SET(VPX_FOUND "YES")
+if (WEBP_LIBRARY AND WEBP_INCLUDE_DIR)
+  set(WEBP_INCLUDE_DIR ${WEBP_INCLUDE_DIR})
+  set(WEBP_LIBRARIES ${WEBP_LIBRARY})
+  set(WEBP_FOUND "YES")
 
-ENDIF (VPX_LIBRARY AND VPX_INCLUDE_DIR)
+endif (WEBP_LIBRARY AND WEBP_INCLUDE_DIR)
 
-IF (VPX_FOUND)
-  IF (NOT VPX_FIND_QUIETLY)
-    MESSAGE(STATUS "Found VPX: ${VPX_LIBRARY}")
-  ENDIF (NOT VPX_FIND_QUIETLY)
-ELSE (VPX_FOUND)
-  IF (VPX_FIND_REQUIRED)
-    MESSAGE(FATAL_ERROR "Could not find VPX library")
-  ENDIF (VPX_FIND_REQUIRED)
-ENDIF (VPX_FOUND)
+if (WEBP_FOUND)
+  if (NOT WEBP_FIND_QUIETLY)
+    message(STATUS "Found WEBP: ${WEBP_LIBRARY}")
+  endif (NOT WEBP_FIND_QUIETLY)
+else (WEBP_FOUND)
+  if (WEBP_FIND_REQUIRED)
+    message(FATAL_ERROR "Could not find WEBP library")
+  endif (WEBP_FIND_REQUIRED)
+endif (WEBP_FOUND)
 
-MARK_AS_ADVANCED(VPX_INCLUDE_DIR VPX_LIBRARY )
-SET(VPX_LIBRARIES ${VPX_LIBRARY})
+mark_as_advanced(WEBP_INCLUDE_DIR WEBP_LIBRARY )
+set(WEBP_LIBRARIES ${WEBP_LIBRARY})
