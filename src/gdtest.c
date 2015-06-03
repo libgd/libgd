@@ -51,13 +51,13 @@ main (int argc, char **argv)
 
 	fclose (in);
 	if (!im) {
-               	fprintf(stderr, "gdImageCreateFromPng failed.\n");
+		fprintf(stderr, "gdImageCreateFromPng failed.\n");
                	exit (1);
-       	}
-       	if (!ref) {
-               	fprintf(stderr, "gdImageCreateFromPng failed.\n");
+	}
+	if (!ref) {
+		fprintf(stderr, "gdImageCreateFromPng failed.\n");
                	exit (1);
-       	}
+	}
 
 	printf ("Reference File has %d Palette entries\n", ref->colorsTotal);
 
@@ -396,8 +396,6 @@ main (int argc, char **argv)
 			         gdImageRed (im2, i),
 			         gdImageGreen (im2, i), gdImageBlue (im2, i));
 		}
-		
-
 		CompareImages ("WBMP test (gdtest.png, gdtest.wbmp)", ref, im2);
 		out = fopen ("test/gdtest_wbmp_to_png.png", "wb");
 		if (!out) {
