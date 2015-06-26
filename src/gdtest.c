@@ -50,6 +50,14 @@ main (int argc, char **argv)
 	ref = gdImageCreateFromPng (in);
 
 	fclose (in);
+	if (!im) {
+		fprintf(stderr, "gdImageCreateFromPng failed.\n");
+               	exit (1);
+	}
+	if (!ref) {
+		fprintf(stderr, "gdImageCreateFromPng failed.\n");
+               	exit (1);
+	}
 
 	printf ("Reference File has %d Palette entries\n", ref->colorsTotal);
 
@@ -65,6 +73,10 @@ main (int argc, char **argv)
 	sprintf (of, "%s.png", argv[1]);
 #endif
 	out = fopen (of, "wb");
+	if (!out) {
+		fprintf(stderr, "PNG Output file does not exist!\n");
+		exit (1);
+	}
 	gdImagePng (im, out);
 	fclose (out);
 
@@ -75,7 +87,12 @@ main (int argc, char **argv)
 	}
 	im2 = gdImageCreateFromPng (in);
 	fclose (in);
-
+	
+	if (!im2) {
+		fprintf(stderr, "gdImageCreateFromPng failed.\n");
+		exit (1);
+	}
+	
 	CompareImages ("GD->PNG File->GD", ref, im2);
 
 	unlink (of);
@@ -85,6 +102,10 @@ main (int argc, char **argv)
 	iptr = gdImagePngPtr (im, &sz);
 	im2 = gdImageCreateFromPngPtr (sz, iptr);
 	gdFree (iptr);
+	if (!im2) {
+		fprintf(stderr, "gdImageCreateFromPngPtr failed.\n");
+		exit (1);
+	}
 	CompareImages ("GD->PNG ptr->GD", ref, im2);
 
 	gdImageDestroy (im2);
@@ -98,6 +119,10 @@ main (int argc, char **argv)
 	sprintf (of, "%s.gd2", argv[1]);
 #endif
 	out = fopen (of, "wb");
+	if (!out) {
+		fprintf(stderr, "GD2 Output file does not exist!\n");
+		exit (1);
+	}
 	gdImageGd2 (im, out, 128, 2);
 	fclose (out);
 
@@ -108,7 +133,10 @@ main (int argc, char **argv)
 	}
 	im2 = gdImageCreateFromGd2 (in);
 	fclose (in);
-
+	if (!im2) {
+		fprintf(stderr, "gdImageCreateFromGd2 failed.\n");
+		exit (1);
+	}
 	CompareImages ("GD->GD2 File->GD", ref, im2);
 
 	unlink (of);
@@ -119,7 +147,10 @@ main (int argc, char **argv)
 	im2 = gdImageCreateFromGd2Ptr (sz, iptr);
 	gdFree (iptr);
 	/*printf("Got img2 %d\n",im2); */
-
+	if (!im2) {
+		fprintf(stderr, "gdImageCreateFromGd2Ptr failed.\n");
+		exit (1);
+	}
 	CompareImages ("GD->GD2 ptr->GD", ref, im2);
 
 	gdImageDestroy (im2);
@@ -133,6 +164,10 @@ main (int argc, char **argv)
 	sprintf (of, "%s.gd", argv[1]);
 #endif
 	out = fopen (of, "wb");
+	if (!out) {
+		fprintf(stderr, "GD Output file does not exist!\n");
+		exit (1);
+	}
 	gdImageGd (im, out);
 	fclose (out);
 
@@ -143,7 +178,10 @@ main (int argc, char **argv)
 	}
 	im2 = gdImageCreateFromGd (in);
 	fclose (in);
-
+	if (!im2) {
+		fprintf(stderr, "gdImageCreateFromGd failed.\n");
+		exit (1);
+	}
 	CompareImages ("GD->GD File->GD", ref, im2);
 
 	unlink (of);
@@ -154,7 +192,11 @@ main (int argc, char **argv)
 	im2 = gdImageCreateFromGdPtr (sz, iptr);
 	gdFree (iptr);
 	/*printf("Got img2 %d\n",im2); */
-
+	if (!im2) {
+		fprintf(stderr, "gdImageCreateFromGdPtr failed.\n");
+		exit (1);
+	}
+	
 	CompareImages ("GD->GD ptr->GD", ref, im2);
 
 	gdImageDestroy (im2);
@@ -188,6 +230,11 @@ main (int argc, char **argv)
 	sprintf (of, "%s.snk", argv[1]);
 #endif
 	out = fopen (of, "wb");
+	if (!out) {
+		fprintf (stderr,
+			"GD Sink: ERROR - GD Sink Output file does not exist!\n");
+		exit (1);
+	}
 	imgsnk.sink = fwriteWrapper;
 	imgsnk.context = out;
 	gdImagePngToSink (im, &imgsnk);
@@ -199,7 +246,10 @@ main (int argc, char **argv)
 	} else {
 		im2 = gdImageCreateFromPng (in);
 		fclose (in);
-
+		if (!im2) {
+			fprintf(stderr, "gdImageCreateFromPng failed.\n");
+			exit (1);
+		}
 		CompareImages ("GD Sink", ref, im2);
 		gdImageDestroy (im2);
 	};
@@ -216,7 +266,10 @@ main (int argc, char **argv)
 	}
 	im2 = gdImageCreateFromPng (in);
 	fclose (in);
-
+	if (!im2) {
+		fprintf(stderr, "gdImageCreateFromPng failed.\n");
+		exit (1);
+	}
 
 	in = fopen ("test/gdtest.gd2", "rb");
 	if (!in) {
@@ -225,7 +278,10 @@ main (int argc, char **argv)
 	}
 	im3 = gdImageCreateFromGd2Part (in, 200, 300, 150, 100);
 	fclose (in);
-
+	if (!im3) {
+		fprintf(stderr, "gdImageCreateFromGd2Part failed.\n");
+		exit (1);
+	}
 	CompareImages ("GD2Part (gdtest_200_300_150_100.png, gdtest.gd2(part))",
 	               im2, im3);
 
@@ -242,8 +298,15 @@ main (int argc, char **argv)
 	}
 	im2 = gdImageCreateFromPng (in);
 	fclose (in);
-
+	if (!im2) {
+		fprintf(stderr, "gdImageCreateFromPng failed.\n");
+		exit (1);
+	}
 	im3 = gdImageCreate (100, 60);
+	if (!im3) {
+		fprintf(stderr, "gdImageCreate failed.\n");
+		exit (1);
+	}
 	colRed = gdImageColorAllocate (im3, 255, 0, 0);
 	colBlu = gdImageColorAllocate (im3, 0, 0, 255);
 	gdImageFilledRectangle (im3, 0, 0, 49, 30, colRed);
@@ -264,7 +327,10 @@ main (int argc, char **argv)
 	}
 	im3 = gdImageCreateFromPng (in);
 	fclose (in);
-
+	if (!im3) {
+		fprintf(stderr, "gdImageCreateFromPng failed.\n");
+		exit (1);
+	}
 	printf ("[Merged Image has %d colours]\n", im2->colorsTotal);
 	CompareImages ("Merged (gdtest.png, gdtest_merge.png)", im2, im3);
 
@@ -318,17 +384,17 @@ main (int argc, char **argv)
 			exit (1);
 		}
 		im2 = gdImageCreateFromWBMP (in);
+		fclose (in);
+		if (!im2) {
+			fprintf(stderr, "gdImageCreateFromWBMP failed.\n");
+			exit (1);
+		}
 		fprintf(stderr, "WBMP has %d colors\n", gdImageColorsTotal (im2));
 		fprintf(stderr, "WBMP colors are:\n");
 		for (i = 0; (i < gdImageColorsTotal (im2)); i++) {
 			fprintf(stderr, "%02X%02X%02X\n",
 			         gdImageRed (im2, i),
 			         gdImageGreen (im2, i), gdImageBlue (im2, i));
-		}
-		fclose (in);
-		if (!im2) {
-			fprintf(stderr, "gdImageCreateFromWBMP failed.\n");
-			exit (1);
 		}
 		CompareImages ("WBMP test (gdtest.png, gdtest.wbmp)", ref, im2);
 		out = fopen ("test/gdtest_wbmp_to_png.png", "wb");
