@@ -1325,20 +1325,17 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 	if (dy <= dx) {
 		/* More-or-less horizontal. use wid for vertical stroke */
 		/* Doug Claar: watch out for NaN in atan2 (2.0.5) */
-		if ((dx == 0) && (dy == 0)) {
-			wid = 1;
+		
+		/* 2.0.12: Michael Schwartz: divide rather than multiply;
+			  TBB: but watch out for /0! */
+		double ac = cos (atan2 (dy, dx));
+		if (ac != 0) {
+			wid = thick / ac;
 		} else {
-			/* 2.0.12: Michael Schwartz: divide rather than multiply;
-			   TBB: but watch out for /0! */
-			double ac = cos (atan2 (dy, dx));
-			if (ac != 0) {
-				wid = thick / ac;
-			} else {
-				wid = 1;
-			}
-			if (wid == 0) {
-				wid = 1;
-			}
+			wid = 1;
+		}
+		if (wid == 0) {
+			wid = 1;
 		}
 		d = 2 * dy - dx;
 		incr1 = 2 * dy;
