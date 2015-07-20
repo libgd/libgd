@@ -2262,12 +2262,13 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 	}
 
 	if (y2 < y1) {
-		int t;
-		t = y1;
+		int t = y1;
 		y1 = y2;
 		y2 = t;
+	}
 
-		t = x1;
+	if (x2 < x1) {
+		int t = x1;
 		x1 = x2;
 		x2 = t;
 	}
