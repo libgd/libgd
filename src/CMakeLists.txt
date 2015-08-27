@@ -67,7 +67,11 @@ SET (LIBGD_SRC_FILES
 )
 
 include(GNUInstallDirs)
-add_library(${GD_LIB} ${LIBGD_SRC_FILES})
+
+if (BUILD_SHARED_LIBS)
+  add_library(${GD_LIB} ${LIBGD_SRC_FILES})
+endif()
+
 add_library(${GD_LIB_STATIC} STATIC  ${LIBGD_SRC_FILES})
 
 if (WIN32 AND NOT MINGW AND NOT MSYS)
@@ -86,16 +90,29 @@ endif (MINGW OR MSYS)
 
 INCLUDE_DIRECTORIES(BEFORE "${PROJECT_BINARY_DIR}" "${CMAKE_BINARY_DIR}" "${GD_SOURCE_DIR}/src")
 
-target_link_libraries(${GD_LIB} ${ZLIB_LIBRARIES} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ICONV_LIBRARIES} ${LIQ_LIBRARIES} ${JPEG_LIBRARIES} ${TIFF_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARY} ${WEBP_LIBRARIES})
+if (BUILD_SHARED_LIBS)
+  target_link_libraries(${GD_LIB} ${ZLIB_LIBRARIES} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ICONV_LIBRARIES} ${LIQ_LIBRARIES} ${JPEG_LIBRARIES} ${TIFF_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARY} ${WEBP_LIBRARIES})
+endif()
+
 target_link_libraries(${GD_LIB_STATIC} ${ZLIB_LIBRARIES} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ICONV_LIBRARIES} ${LIQ_LIBRARIES} ${JPEG_LIBRARIES} ${TIFF_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARY} ${WEBP_LIBRARIES} )
 
 set(GD_PROGRAMS annotate gdparttopng gdtopng gd2copypal gd2topng pngtogd pngtogd2 webpng gd2togif gdcmpgif giftogd2)
 foreach(program ${GD_PROGRAMS})
     add_executable(${program} ${program}.c)
-    target_link_libraries(${program} ${GD_LIB})
+    if (BUILD_SHARED_LIBS)
+        target_link_libraries(${program} ${GD_LIB})
+    else()
+        target_link_libraries(${program} ${GD_LIB_STATIC})
+    endif()
 endforeach(program)
 
-install(TARGETS ${GD_LIB} ${GD_LIB_STATIC} ${GD_PROGRAMS}
+if (BUILD_SHARED_LIBS)
+  set(GD_INSTALL_TARGETS ${GD_LIB} ${GD_LIB_STATIC} ${GD_PROGRAMS})
+else()
+  set(GD_INSTALL_TARGETS ${GD_LIB_STATIC} ${GD_PROGRAMS})
+endif()
+
+install(TARGETS ${GD_INSTALL_TARGETS}
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
