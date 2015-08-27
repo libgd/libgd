@@ -19,6 +19,10 @@ libimagequant-prefix
 src/deps.mk
 deps
 Release_GD
+
+# CMake build directory
+/build
+
 # Autotools related files.
 *.l[ao]
 .deps
