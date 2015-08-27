@@ -15,7 +15,11 @@
 #include <time.h>
 #include <math.h>
 
-#define NDEBUG  /* Uncomment to enable assertions. */
+#undef NDEBUG
+/* Comment out this line to enable asserts.
+ * TODO: This logic really belongs in cmake and configure.
+ */
+#define NDEBUG 1
 #include <assert.h>
 
 typedef int (BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
