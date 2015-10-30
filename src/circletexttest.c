@@ -33,6 +33,10 @@ int main(void)
 #else
 	im = gdImageCreateTrueColor(300, 300);
 #endif /* HAVE_LIBJPEG */
+	if(!im) {
+		fprintf(stderr, "gdImageCreateTrueColor failed \n");
+		return 1;
+	}
 	if(gdImageSX(im) < gdImageSY(im)) {
 		radius = gdImageSX(im) / 2;
 	} else {
