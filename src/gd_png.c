@@ -293,8 +293,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	if (setjmp(jbw.jmpbuf)) {
 		gd_error("gd-png error: setjmp returns error condition 2\n");
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-		gdFree(image_data);
-		gdFree(row_pointers);
 		if (im) {
 			gdImageDestroy(im);
 		}
@@ -407,8 +405,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	default:
 		gd_error("gd-png color_type is unknown: %d\n", color_type);
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-		gdFree(image_data);
-		gdFree(row_pointers);
 		if (im) {
 			gdImageDestroy(im);
 		}
