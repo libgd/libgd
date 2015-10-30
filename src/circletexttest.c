@@ -26,12 +26,24 @@ int main(void)
 	in = fopen("eleanor.jpg", "rb");
 	if(!in) {
 		im = gdImageCreateTrueColor(300, 300);
+		if(!im) {
+			fprintf(stderr, "gdImageCreateTrueColor failed \n");
+			return 1;
+		}
 	} else {
 		im = gdImageCreateFromJpeg(in);
 		fclose(in);
+		if(!im) {
+			fprintf(stderr, "gdImageCreateFromJpeg failed \n");
+			return 1;
+		}
 	}
 #else
 	im = gdImageCreateTrueColor(300, 300);
+	if(!im) {
+		fprintf(stderr, "gdImageCreateTrueColor failed \n");
+		return 1;
+	}
 #endif /* HAVE_LIBJPEG */
 	if(gdImageSX(im) < gdImageSY(im)) {
 		radius = gdImageSX(im) / 2;
