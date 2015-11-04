@@ -56,7 +56,7 @@ script:
     then
       ./configure --with-tiff=/usr --libdir=/usr/lib/$(dpkg-architecture -qDEB_TARGET_MULTIARCH);
       make;
-      make check || true;
+      make check;
     fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ];
     then
