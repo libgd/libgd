@@ -1743,7 +1743,7 @@ gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
 
 	const gdFixed f_slop_y = f_sin;
 	const gdFixed f_slop_x = f_cos;
-	const gdFixed f_slop = f_slop_x > 0 && f_slop_x > 0 ?
+	const gdFixed f_slop = f_slop_x > 0 && f_slop_y > 0 ?
 							f_slop_x > f_slop_y ? gd_divfx(f_slop_y, f_slop_x) : gd_divfx(f_slop_x, f_slop_y)
 						: 0;
 
