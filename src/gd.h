@@ -2,6 +2,7 @@
 extern "C" {
 #endif
 
+#include <stdlib.h>
 
 #ifndef GD_H
 #define GD_H 1
@@ -88,9 +89,9 @@ extern "C" {
 #  ifndef strcasecmp
 #    define strcasecmp _stricmp
 #  endif 
-#  ifndef snprintf 
-#   define snprintf _snprintf
-#  endif 
+#if _MSC_VER < 1900
+     extern int snprintf(char*, size_t, const char*, ...);
+#endif
 #endif 
 
 #ifdef __cplusplus

@@ -66,6 +66,12 @@ SET (LIBGD_SRC_FILES
 	gd_version.c
 )
 
+if(MSVC AND MSVC_VERSION LESS 1900)
+	set(LIBGD_SRC_FILES ${LIBGD_SRC_FILES}
+		snprintf.c
+	)
+endif(MSVC AND MSVC_VERSION LESS 1900)
+
 include(GNUInstallDirs)
 add_library(${GD_LIB} ${LIBGD_SRC_FILES})
 add_library(${GD_LIB_STATIC} STATIC  ${LIBGD_SRC_FILES})
