@@ -109,8 +109,8 @@ dnl do we need to specify -lm explicitly?
 AC_CHECK_FUNC(sin,,[AC_CHECK_LIB(m,sin)])
 
 dnl zlib is required
-AC_ARG_WITH(zlib,
-[  --with-zlib=DIR         where to find the zlib library])
+AC_ARG_WITH([zlib],
+  [AS_HELP_STRING([--with-zlib@<:@=DIR@:>@], [where to find the zlib library])])
 if test "$with_zlib" != no; then
   AC_CHECK_LIB(z,deflate,
     [LIBS="-lz $LIBS"
@@ -122,8 +122,8 @@ fi
 AM_CONDITIONAL([HAVE_LIBZ], test "$with_zlib" = yes)
 
 dnl libpng is required
-AC_ARG_WITH(png,dnl
-[  --with-png=DIR          where to find the png library])
+AC_ARG_WITH([png],
+  [AS_HELP_STRING([--with-png@<:@=DIR@:>@], [where to find the png library])])
 
 case $with_png in
 no) ;;
@@ -159,8 +159,8 @@ fi
 AM_CONDITIONAL([HAVE_LIBPNG], test "$with_png" = yes)
 
 dnl FreeType configure tests snarfed from libwmf ..
-AC_ARG_WITH(freetype,dnl
-[  --with-freetype=DIR     where to find the freetype 2.x library]])
+AC_ARG_WITH([freetype],
+  [AS_HELP_STRING([--with-freetype@<:@=DIR@:>@], [where to find the freetype 2.x library])])
 
 case $with_freetype in
 no) ;;
@@ -199,8 +199,8 @@ fi
 AM_CONDITIONAL([HAVE_LIBFREETYPE], test "$with_freetype" = yes)
 
 dnl check for libfontconfig by default
-AC_ARG_WITH(fontconfig,dnl
-[  --with-fontconfig=DIR         where to find the fontconfig library])
+AC_ARG_WITH([fontconfig],
+  [AS_HELP_STRING([--with-fontconfig@<:@=DIR@:>@], [where to find the fontconfig library])])
 
 case $with_fontconfig in
 no) ;;
@@ -251,8 +251,8 @@ fi
 AM_CONDITIONAL([HAVE_LIBFONTCONFIG], test "$with_fontconfig" = yes)
 
 dnl check for libjpeg by default
-AC_ARG_WITH(jpeg,dnl
-[  --with-jpeg=DIR         where to find the jpeg library],
+AC_ARG_WITH([jpeg],
+  [AS_HELP_STRING([--with-jpeg@<:@=DIR@:>@], [where to find the jpeg library])],
   [if test -d "$withval"; then
      LDFLAGS="$LDFLAGS -L$withval/lib"
      CFLAGS="$CFLAGS -I$withval/include"
@@ -270,8 +270,8 @@ fi
 AM_CONDITIONAL([HAVE_LIBJPEG], test "$ac_cv_lib_jpeg_jpeg_set_defaults" = yes)
 
 dnl check for libXpm by default
-AC_ARG_WITH(xpm,dnl
-[  --with-xpm=DIR          where to find the xpm library])
+AC_ARG_WITH([xpm],
+  [AS_HELP_STRING([--with-xpm@<:@=DIR@:>@], [where to find the xpm library])])
 
 case $with_xpm in
 no) ;;
@@ -324,8 +324,8 @@ fi
 AM_CONDITIONAL([HAVE_LIBXPM], test "$with_xpm" = yes)
 
 dnl check for libtiff by default
-AC_ARG_WITH(tiff,dnl
-[  --with-tiff=DIR         where to find the TIFF library])
+AC_ARG_WITH([tiff],
+  [AS_HELP_STRING([--with-tiff@<:@=DIR@:>@], [where to find the tiff library])])
 
 case $with_tiff in
 no) ;;
@@ -388,8 +388,8 @@ fi
 
 
 dnl check for libwebp by default
-AC_ARG_WITH(webp,dnl
-[  --with-webp=DIR         where to find the webp library],
+AC_ARG_WITH([webp],
+  [AS_HELP_STRING([--with-webp@<:@=DIR@:>@], [where to find the webp library])],
   [if test -d "$withval"; then
      LDFLAGS="$LDFLAGS -L$withval/lib"
      CFLAGS="$CFLAGS -I$withval/include"
