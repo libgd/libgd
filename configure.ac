@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 # Configure template for gd library
 
-AC_PREREQ(2.54)
+AC_PREREQ(2.64)
 
 # We extract version numbers from src/versions.h
 define([gv],[perl config/getver.pl ]$1)
@@ -50,13 +50,10 @@ AC_SUBST(GDLIB_AGE)
 FEATURES="GD_GIF GD_GIFANIM GD_OPENPOLYGON"
 AC_SUBST(FEATURES)
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2 dist-xz -Wall -Werror subdir-objects])
+AM_INIT_AUTOMAKE([1.11 foreign dist-bzip2 dist-xz -Wall -Werror subdir-objects])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
-dnl newer automake wants this, but we still want to work with older
-m4_ifndef([AM_PROG_AR],[m4_define([AM_PROG_AR],[:])])
 AM_PROG_AR
-
 AC_PROG_CC_STDC
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
