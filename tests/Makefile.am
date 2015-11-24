@@ -8,7 +8,6 @@ libgdtest_a_SOURCES = \
 check_PROGRAMS = \
 	gd2/gd2_empty_file \
 	gdimagesetpixel/bug00186 \
-	gdimagestringftex/gdimagestringftex_returnfontpathname \
 	gdimageline/gdimageline_aa_outofrange \
 	gdimagerectangle/bug00003 \
 	gdimagerectangle/bug00106_gdimagerectangle \
@@ -115,6 +114,7 @@ endif
 
 if HAVE_LIBJPEG
 check_PROGRAMS += \
+	gdimagerotate/bug00067 \
 	jpeg/jpeg_empty_file \
 	jpeg/jpeg_im2im \
 	jpeg/jpeg_null
@@ -138,7 +138,6 @@ check_PROGRAMS += \
 	gdtiled/bug00032
 endif
 check_PROGRAMS += \
-	gdimagestringft/gdimagestringft_bbox \
 	gdimagearc/bug00079 \
 	gdimageline/gdimageline_aa \
 	gdimageline/bug00072 \
@@ -190,8 +189,7 @@ check_PROGRAMS += \
 	gdimagescatterex/bug00208_1 \
 	gdimagescatterex/bug00208_2 \
 	gdimagefilltoborder/bug00037 \
-	gdimagerotate/php_bug_64898 \
-	gdimagerotate/bug00067
+	gdimagerotate/php_bug_64898
 endif
 
 if HAVE_LIBTIFF
@@ -202,6 +200,8 @@ endif
 
 if HAVE_LIBFREETYPE
 check_PROGRAMS += \
+	gdimagestringft/gdimagestringft_bbox \
+	gdimagestringftex/gdimagestringftex_returnfontpathname \
 	freetype/bug00132
 endif
 
