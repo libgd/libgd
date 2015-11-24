@@ -14,11 +14,9 @@
 #include "config.h"
 #endif
 
-#include <stdio.h>
 /* 2.0.29: no more errno.h, makes windows happy */
 #include <math.h>
 #include <string.h>
-#include <stdlib.h>
 #include "gd.h"
 #include "gd_errors.h"
 #include "gdhelpers.h"
@@ -1056,15 +1054,55 @@ BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
 }
 
 #else /* no HAVE_LIBZ */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2 (FILE * inFile)
+static void _noLibzError (void)
 {
 	gd_error("GD2 support is not available - no libz\n");
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2 (FILE * inFile)
+{
+	_noLibzError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 {
-	gd_error("GD2 support is not available - no libz\n");
+	_noLibzError();
 	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Part (FILE * inFile, int srcx, int srcy, int w, int h)
+{
+	_noLibzError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ptr (int size, void *data)
+{
+	_noLibzError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
+{
+	_noLibzError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartPtr (int size, void *data, int srcx, int srcy, int w,
+        int h)
+{
+	_noLibzError();
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImageGd2 (gdImagePtr im, FILE * outFile, int cs, int fmt)
+{
+	_noLibzError();
+}
+
+BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
+{
+	_noLibzError();
 }
 #endif /* HAVE_LIBZ */
