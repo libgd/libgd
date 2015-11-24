@@ -5,6 +5,12 @@ syntax: glob
 *.exe
 *.obj
 *.dll
+*.vcxproj
+*.sln
+*.filters
+*.dir
+[Bb]in
+win32
 
 Makefile
 CMakeCache.txt
