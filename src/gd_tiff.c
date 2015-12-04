@@ -817,6 +817,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 
 	if (!tif) {
 		gd_error("Cannot open TIFF image");
+		gdFree(th);
 		return NULL;
 	}
 
@@ -983,6 +984,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	}
 error:
 	TIFFClose(tif);
+	gdFree(th);
 	return im;
 }
 
