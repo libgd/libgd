@@ -15,5 +15,6 @@ int main()
 	gdImageLine(im, 1,1, 50, 50, gdAntiAliased);
 
 	/* Test for segfaults, if we reach this point, the test worked */
+	gdImageDestroy(im);
 	return 0;
 }

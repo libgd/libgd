@@ -40,6 +40,7 @@ int main()
 		return 1;
 	}
 
+	gdImageDestroy(im);
 	return 0;
 #endif
 }
