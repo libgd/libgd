@@ -37,6 +37,12 @@ matrix:
         - os: linux
           compiler: clang
           env: BUILD_TYPE=asan tbs_arch=x64
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=lsan tbs_arch=x64
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=msan tbs_arch=x64
         #- os: linux
         #  compiler: gcc
         #  env: BUILD_TYPE=coverage tbs_arch=x64
@@ -91,6 +97,16 @@ before_script:
     then
       export CFLAGS=-fsanitize=address;
       export LDFLAGS=-fsanitize=address;
+    fi
+  - if [ "$BUILD_TYPE" = "lsan" ];
+    then
+      export CFLAGS=-fsanitize=leak;
+      export LDFLAGS=-fsanitize=leak;
+    fi
+  - if [ "$BUILD_TYPE" = "msan" ];
+    then
+      export CFLAGS=-fsanitize=memory;
+      export LDFLAGS=-fsanitize=memory;
     fi
   # Use all the parts of UBSAN except shift checks (-fsanitize=shift, for gd_io.c:139) and index-out-of-bounds (-fsanitize=bounds, for gd_gif_in.c:459)
   - if [ "$BUILD_TYPE" = "ubsan" ];
