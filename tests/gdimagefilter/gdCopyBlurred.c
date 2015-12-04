@@ -110,6 +110,9 @@ void do_test()
     blurblank(im, 4, 0.0);
     blurblank(im, 8, 0.0);
     blurblank(im, 16, 0.0);
+
+    gdImageDestroy(im);
+    gdImageDestroy(imref);
 }/* do_test*/
 
 /* Ensure that RGB values are equal, then return r (which is therefore
@@ -185,6 +188,7 @@ void do_crosstest()
     gdTestAssert(getwhite(blurred, 1, LY + 1) <  getwhite(blurred, 1, LY + 3));
     gdTestAssert(getwhite(blurred, 1, LY + 3) <  getwhite(blurred, 1, HEIGHT-1));
 	gdImageDestroy(blurred);
+	gdImageDestroy(im);
 }/* do_crosstest*/
 
 
