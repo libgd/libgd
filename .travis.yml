@@ -1,15 +1,51 @@
 language: cpp
 
-env:
+#env:
   #global:
   #  # COVERITY_SCAN_TOKEN
   #  - secure: "HK0Ey4+9OsxcWl0FwNzwbkEkvHMD7DM27x3NWeY8Lo2NmU2ZBB72Q3TWIBtk6YpeY5glsBTUQob17H+ISQR2xHqL5GaGf1hWk9x7iBAA4XRb4RUgCnzEE6vPmUGcxcjx0AIjtbnFKShoEOKbN/O2ms1zqz8rgUTNiAQWFgJKCW0="
-  - tbs_arch=x86
-  - tbs_arch=x64
 
-os:
-  - linux
-  - osx
+matrix:
+    include:
+        - os: linux
+          compiler: gcc
+          env: BUILD_TYPE=normal tbs_arch=x86
+        - os: linux
+          compiler: gcc
+          env: BUILD_TYPE=normal tbs_arch=x64
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=normal tbs_arch=x86
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=normal tbs_arch=x64
+        - os: osx
+          compiler: gcc
+          env: BUILD_TYPE=normal tbs_arch=x86
+        - os: osx
+          compiler: gcc
+          env: BUILD_TYPE=normal tbs_arch=x64
+        - os: osx
+          compiler: clang
+          env: BUILD_TYPE=normal tbs_arch=x86
+        - os: osx
+          compiler: clang
+          env: BUILD_TYPE=normal tbs_arch=x64
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=ubsan tbs_arch=x64
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=asan tbs_arch=x64
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=lsan tbs_arch=x64
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=msan tbs_arch=x64
+        #- os: linux
+        #  compiler: gcc
+        #  env: BUILD_TYPE=coverage tbs_arch=x64
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ];
@@ -38,6 +74,8 @@ before_install:
         sudo apt-get -y install gcc-multilib;
         sudo apt-get -y install g++-multilib;
       fi;
+      pip install --user 'requests[security]';
+      pip install --user cpp-coveralls;
     fi
   
   - if [ "$TRAVIS_OS_NAME" = "osx" ];
@@ -49,6 +87,33 @@ before_script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ];
     then
       autoreconf -fi;
+    fi
+  - if [ "$BUILD_TYPE" = "coverage" ];
+    then
+      export CFLAGS="-fprofile-arcs -ftest-coverage";
+      export LDFLAGS="-fprofile-arcs -ftest-coverage";
+    fi
+  - if [ "$BUILD_TYPE" = "asan" ];
+    then
+      export CFLAGS=-fsanitize=address;
+      export LDFLAGS=-fsanitize=address;
+    fi
+  - if [ "$BUILD_TYPE" = "lsan" ];
+    then
+      export CFLAGS=-fsanitize=leak;
+      export LDFLAGS=-fsanitize=leak;
+    fi
+  - if [ "$BUILD_TYPE" = "msan" ];
+    then
+      export CFLAGS=-fsanitize=memory;
+      export LDFLAGS=-fsanitize=memory;
+    fi
+  # Use all the parts of UBSAN except shift checks (-fsanitize=shift, for gd_io.c:139) and index-out-of-bounds (-fsanitize=bounds, for gd_gif_in.c:459)
+  - if [ "$BUILD_TYPE" = "ubsan" ];
+    then
+      export UBSAN_FLAGS="-fsanitize=alignment -fsanitize=bool -fsanitize=enum -fsanitize=float-cast-overflow -fsanitize=float-divide-by-zero -fsanitize=function -fsanitize=integer-divide-by-zero -fsanitize=null -fsanitize=object-size -fsanitize=return -fsanitize=signed-integer-overflow -fsanitize=unreachable -fsanitize=unsigned-integer-overflow";
+      export CFLAGS=$UBSAN_FLAGS;
+      export LDFLAGS=$UBSAN_FLAGS;
     fi
 
 script:
@@ -62,6 +127,10 @@ script:
     then
       ./thumbs.sh make;
       ./thumbs.sh check;
+    fi
+  - if [ "$BUILD_TYPE" = "coverage" ];
+    then
+      cpp-coveralls --exclude tests --gcov-options '\-lp';
     fi
 
 addons:

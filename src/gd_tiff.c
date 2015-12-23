@@ -972,6 +972,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	}
 error:
 	TIFFClose(tif);
+	gdFree(th);
 	return im;
 }
 
