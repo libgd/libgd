@@ -191,8 +191,7 @@ else (USE_EXT_GD)
 
 	CONFIGURE_FILE(${GD_SOURCE_DIR}/src/config.h.cmake ${GD_SOURCE_DIR}/src/config.h ESCAPE_QUOTES)
 
-
-	set(BUILD_SHARED_LIBS On)
+	option(BUILD_SHARED_LIBS "Build both shared and static libs" ON)
 
 	if (WIN32)
 		SET(GD_LIB libgd)
