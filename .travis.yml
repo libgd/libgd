@@ -55,8 +55,9 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ];
     then
       ./configure --with-tiff=/usr --libdir=/usr/lib/$(dpkg-architecture -qDEB_TARGET_MULTIARCH);
-      make;
-      make check;
+      ncpus=$(getconf _NPROCESSORS_ONLN);
+      make -j${ncpus};
+      make -j${ncpus} check;
     fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ];
     then
