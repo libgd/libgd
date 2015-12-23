@@ -61,9 +61,12 @@ TODO:
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <assert.h>
 
-#define NDEBUG 1 /* TODO: disable/enable assertions in configure. */
+#undef NDEBUG
+/* Comment out this line to enable asserts.
+ * TODO: This logic really belongs in cmake and configure.
+ */
+#define NDEBUG 1
 #include <assert.h>
 
 #include "gd.h"
@@ -1634,7 +1637,7 @@ BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int ne
 {
 	gdImagePtr im_scaled = NULL;
 
-	if (src == NULL || src->interpolation_id < 0 || src->interpolation_id > GD_METHOD_COUNT) {
+	if (src == NULL || (uintmax_t)src->interpolation_id >= GD_METHOD_COUNT) {
 		return 0;
 	}
 
@@ -2515,7 +2518,7 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 
 BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMethod id)
 {
-	if (im == NULL || id < 0 || id > GD_METHOD_COUNT) {
+	if (im == NULL || id < 0 || (uintmax_t)id > GD_METHOD_COUNT) {
 		return 0;
 	}
 
