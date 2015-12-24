@@ -95,7 +95,7 @@ gdImagePtr gdImageCreateFromWebpCtx (gdIOCtx * infile)
 			im->tpixels[y][x] = gdTrueColorAlpha(r, g, b, a);
 		}
 	}
-	gdFree(filedata);
+	/* gdFree(filedata); */
 	/* do not use gdFree here, in case gdFree/alloc is mapped to something else than libc */
 	free(argb);
 	gdFree(temp);
