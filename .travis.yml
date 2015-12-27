@@ -16,22 +16,21 @@ before_install:
     then
       sudo apt-get update -qq;
       sudo apt-get -y install nasm;
-      sudo apt-get -y install autotools-dev \
-                              libpng-dev \
-                              libz-dev \
-                              libjpeg-dev \
-                              libfreetype6-dev \
-                              libxpm-dev \
-                              libx11-dev \
-                              libxt-dev \
-                              libfontconfig-dev \
-                              libvpx-dev \
-                              libtiff-dev \
-                              libwebp-dev \
-                              autoreconf \
-                              automake \
-                              autoconf \
-                              libtool \
+      sudo apt-get -y install autotools-dev
+                              libpng-dev
+                              libz-dev
+                              libjpeg-dev
+                              libfreetype6-dev
+                              libxpm-dev
+                              libx11-dev
+                              libxt-dev
+                              libfontconfig-dev
+                              libvpx-dev
+                              libtiff-dev
+                              libwebp-dev
+                              automake
+                              autoconf
+                              libtool
                               html2text;
       if [ "$tbs_arch" = "x86" ];
       then
