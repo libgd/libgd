@@ -70,6 +70,7 @@ EXTRA_PROGRAMS = \
 	gdimagefill/bug00002_1 \
 	gdimagefill/bug00002_4 \
 	gdimagefill/bug00002_3 \
+	gdimagefill/bug00104_1 \
 	gdimagecolorclosest/gdimagecolorclosest \
 	gif/bug00005 \
 	gif/gif_im2im \
@@ -167,6 +168,7 @@ check_PROGRAMS += \
 	gdimagefill/bug00002_1 \
 	gdimagefill/bug00002_4 \
 	gdimagefill/bug00002_3 \
+	gdimagefill/bug00104_1 \
 	gdimagecolorclosest/gdimagecolorclosest \
 	gif/bug00005 \
 	gif/gif_im2im \
@@ -267,6 +269,7 @@ EXTRA_DIST = \
 	gdimagefill/bug00002_2_exp.png \
 	gdimagefill/bug00002_1_exp.png \
 	gdimagefill/bug00002_4_exp.png \
+	gdimagefill/bug00104_1_exp.png \
 	gif/bug00005_0.gif \
 	gif/bug00005_1.gif \
 	gif/bug00005_3.gif \

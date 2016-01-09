@@ -4,6 +4,7 @@ SET(TESTS_FILES
 	bug00002_2
 	bug00002_3
 	bug00002_4
+	bug00104_1
 )
 FOREACH(test_name ${TESTS_FILES})
 	add_executable(${test_name} "${test_name}.c")
