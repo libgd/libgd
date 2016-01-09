@@ -14,7 +14,8 @@ The most common applications of GD involve website development, although it
 can be used with any standalone application!
 
 The library was originally developed by Thomas Boutell and is now maintained
-by many contributors (see the CONTRIBUTORS file) under the umbrella of PHP.net.
+by many contributors (see the [CONTRIBUTORS](CONTRIBUTORS) file) under the
+umbrella of PHP.net.
 
 ## Downloads/etc...
 
