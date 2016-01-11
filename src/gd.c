@@ -2201,9 +2201,9 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 	FILL_PUSH(y+1, x, x, -1);
 	while (sp>stack) {
 		FILL_POP(y, x1, x2, dy);
-		for (x=x1; x>=0 && (!pts[y + x*wx2] && gdImageGetPixel(im,x,y)==oc); x--) {
+		for (x=x1; x>=0 && (!pts[y + x*wy2] && gdImageGetPixel(im,x,y)==oc); x--) {
 			nc = gdImageTileGet(im,x,y);
-			pts[y + x*wx2]=1;
+			pts[y + x*wy2]=1;
 			gdImageSetPixel(im,x, y, nc);
 		}
 		if (x>=x1) {
@@ -2217,13 +2217,13 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 		}
 		x = x1+1;
 		do {
-			for (; x<wx2 && (!pts[y + x*wx2] && gdImageGetPixel(im,x, y)==oc) ; x++) {
-				if (pts[y + x*wx2]) {
+			for (; x<wx2 && (!pts[y + x*wy2] && gdImageGetPixel(im,x, y)==oc) ; x++) {
+				if (pts[y + x*wy2]) {
 					/* we should never be here */
 					break;
 				}
 				nc = gdImageTileGet(im,x,y);
-				pts[y + x*wx2]=1;
+				pts[y + x*wy2]=1;
 				gdImageSetPixel(im, x, y, nc);
 			}
 			FILL_PUSH(y, l, x-1, dy);
@@ -2232,7 +2232,7 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 				FILL_PUSH(y, x2+1, x-1, -dy);
 			}
 skip:
-			for (x++; x<=x2 && (pts[y + x*wx2] || gdImageGetPixel(im,x, y)!=oc); x++);
+			for (x++; x<=x2 && (pts[y + x*wy2] || gdImageGetPixel(im,x, y)!=oc); x++);
 			l = x;
 		} while (x<=x2);
 	}
