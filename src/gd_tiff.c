@@ -282,6 +282,9 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	bitsPerSample = (bitDepth == 24 || bitDepth == 8) ? 8 : 1;
 	TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, bitsPerSample);
 
+	TIFFSetField(tiff, TIFFTAG_XRESOLUTION, (float)image->res_x);
+	TIFFSetField(tiff, TIFFTAG_YRESOLUTION, (float)image->res_y);
+
 	/* build the color map for 8 bit images */
 	if(bitDepth != 24) {
 		colorMapRed   = (uint16 *) gdMalloc(3 * (1 << bitsPerSample));
@@ -795,6 +798,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	char	save_transparent;
 	int		image_type;
 	int   ret;
+	float res_float;
 
 	gdImagePtr im = NULL;
 
@@ -957,7 +961,14 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 		goto error;
 	}
 
-	if (TIFFGetField (tif, TIFFTAG_ORIENTATION, &orientation)) {
+	if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &res_float)) { 
+		im->res_x = (unsigned int)res_float;  //truncate
+	}
+	if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &res_float)) { 
+		im->res_y = (unsigned int)res_float;  //truncate
+	}
+
+	if (TIFFGetField(tif, TIFFTAG_ORIENTATION, &orientation)) {
 		switch (orientation) {
 		case ORIENTATION_TOPLEFT:
 		case ORIENTATION_TOPRIGHT:

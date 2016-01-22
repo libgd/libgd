@@ -2,6 +2,7 @@
 SET(TESTS_FILES
 	tiff_im2im
 	tiff_null
+	tiff_dpi
 )
 
 FOREACH(test_name ${TESTS_FILES})

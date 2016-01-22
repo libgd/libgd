@@ -99,6 +99,7 @@ EXTRA_PROGRAMS = \
 	wbmp/wbmp_im2im \
 	tiff/tiff_null \
 	tiff/tiff_im2im \
+	tiff/tiff_dpi \
 	freetype/bug00132 \
 	bmp/bmp_im2im \
 	gdimagescatterex/bug00208_1 \
@@ -197,7 +198,8 @@ endif
 if HAVE_LIBTIFF
 check_PROGRAMS += \
 	tiff/tiff_null \
-	tiff/tiff_im2im
+	tiff/tiff_im2im \
+	tiff/tiff_dpi
 endif
 
 if HAVE_LIBFREETYPE
@@ -371,6 +373,7 @@ CLEANFILES = \
 	png_im2im_src.png \
 	tiff_im2im_dst.tiff \
 	tiff_im2im_src.tiff \
+	tiff_dpi_src.tiff \
 	wbmp/wbmp_im2im_dst.wbmp \
 	wbmp/wbmp_im2im_src.wbmp \
 	wbmp_im2im_dst.wbmp \
