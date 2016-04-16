@@ -150,6 +150,7 @@ Makefile.in
 /tests/gd2/gd2_im2im
 /tests/gd2/gd2_null
 /tests/gd2/gd2_read
+/tests/gd2/gd2_read_corrupt
 /tests/gdimagearc/bug00079
 /tests/gdimageline/gdimageline_aa
 /tests/gdimageline/bug00072

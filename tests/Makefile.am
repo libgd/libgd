@@ -129,7 +129,8 @@ endif
 
 if HAVE_LIBZ
 check_PROGRAMS += \
-	gd2/gd2_null
+	gd2/gd2_null \
+	gd2/gd2_read_corrupt
 endif
 
 if HAVE_LIBPNG
