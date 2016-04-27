@@ -160,15 +160,12 @@ _gd2GetHeader (gdIOCtxPtr in, int *sx, int *sy,
 		}
 		for (i = 0; i < nc; i++) {
 			if (gdGetInt (&cidx[i].offset, in) != 1) {
-				gdFree(cidx);
 				goto fail2;
 			};
 			if (gdGetInt (&cidx[i].size, in) != 1) {
-				gdFree(cidx);
 				goto fail2;
 			};
 			if (cidx[i].offset < 0 || cidx[i].size < 0)
-				gdFree(cidx);
 				goto fail2;
 		};
 		*chunkIdx = cidx;
