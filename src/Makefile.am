@@ -43,12 +43,61 @@ include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h g
 
 lib_LTLIBRARIES = libgd.la
 
-libgd_la_SOURCES = gd.c gd_color.c gd_color_map.c gd_transform.c gdfx.c gd_security.c gd_gd.c gd_gd2.c gd_io.c gd_io_dp.c gd_gif_in.c    \
-                   gd_gif_out.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c    \
-                   gdfontmb.c gdfonts.c gdfontt.c gdft.c gdhelpers.c gdhelpers.h gdkanji.c gdtables.c gdxpm.c jisx0208.h wbmp.c wbmp.h   \
-                   gd_filter.c gd_nnquant.c gd_rotate.c gd_matrix.c gd_interpolation.c gd_crop.c gd_webp.c gd_tiff.c \
-                   gd_tga.c gd_tga.h gd_bmp.c bmp.h gd_color.h gd_nnquant.h gd_tga.h gd_intern.h gd_io_stream.h gd_xbm.c \
-		   gd_color_match.c gd_version.c gd_filename.c
+libgd_la_SOURCES = \
+	bmp.h \
+	gd.c \
+	gd_bmp.c \
+	gd_color.c \
+	gd_color.h \
+	gd_color_map.c \
+	gd_color_match.c \
+	gd_crop.c \
+	gd_filename.c \
+	gd_filter.c \
+	gd_gd.c \
+	gd_gd2.c \
+	gd_gif_in.c \
+	gd_gif_out.c \
+	gd_intern.h \
+	gd_interpolation.c \
+	gd_io.c \
+	gd_io_dp.c \
+	gd_io_file.c \
+	gd_io_ss.c \
+	gd_io_stream.h \
+	gd_jpeg.c \
+	gd_matrix.c \
+	gd_nnquant.c \
+	gd_nnquant.h \
+	gd_png.c \
+	gd_rotate.c \
+	gd_security.c \
+	gd_ss.c \
+	gd_tga.c \
+	gd_tga.h \
+	gd_tiff.c \
+	gd_topal.c \
+	gd_transform.c \
+	gd_version.c \
+	gd_wbmp.c \
+	gd_webp.c \
+	gd_xbm.c \
+	gdcache.c \
+	gdfontg.c \
+	gdfontl.c \
+	gdfontmb.c \
+	gdfonts.c \
+	gdfontt.c \
+	gdft.c \
+	gdfx.c \
+	gdhelpers.c \
+	gdhelpers.h \
+	gdkanji.c \
+	gdtables.c \
+	gdxpm.c \
+	jisx0208.h \
+	wbmp.c \
+	wbmp.h
 
 libgd_la_LDFLAGS = -version-info $(GDLIB_CURRENT):$(GDLIB_REVISION):$(GDLIB_AGE) -no-undefined
 

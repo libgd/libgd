@@ -1,44 +1,45 @@
 
 SET (LIBGD_SRC_FILES
+	bmp.h
 	gd.c
-	gdfx.c
-	gdfx.h
+	gd.h
+	gd_bmp.c
 	gd_color.c
 	gd_color.h
 	gd_color_map.c
 	gd_color_map.h
 	gd_crop.c
-	gd_transform.c
-	gd_security.c
-	gdpp.cxx
-	gdpp.h
-	gd_bmp.c
-	bmp.h
+	gd_filename.c
 	gd_filter.c
 	gd_gd.c
 	gd_gd2.c
-	gd_io.c
-	gd_io.h
-	gd_io_stream.cxx
-	gd_io_stream.h
-	gd_io_dp.c
-	gd_interpolation.c
 	gd_gif_in.c
 	gd_gif_out.c
+	gd_interpolation.c
+	gd_io.c
+	gd_io.h
+	gd_io_dp.c
 	gd_io_file.c
 	gd_io_ss.c
+	gd_io_stream.cxx
+	gd_io_stream.h
 	gd_jpeg.c
 	gd_matrix.c
 	gd_nnquant.c
 	gd_nnquant.h
 	gd_png.c
 	gd_rotate.c
-	gd_tiff.c
+	gd_security.c
+	gd_ss.c
 	gd_tga.c
 	gd_tga.h
-	gd_ss.c
+	gd_tiff.c
 	gd_topal.c
+	gd_transform.c
+	gd_version.c
 	gd_wbmp.c
+	gd_webp.c
+	gd_xbm.c
 	gdcache.c
 	gdcache.h
 	gdfontg.c
@@ -52,18 +53,18 @@ SET (LIBGD_SRC_FILES
 	gdfontt.c
 	gdfontt.h
 	gdft.c
+	gdfx.c
+	gdfx.h
 	gdhelpers.c
 	gdhelpers.h
 	gdkanji.c
+	gdpp.cxx
+	gdpp.h
 	gdtables.c
 	gdxpm.c
 	jisx0208.h
 	wbmp.c
-	gd.h
 	wbmp.h
-	gd_webp.c
-	gd_xbm.c
-	gd_version.c
 )
 
 if(MSVC AND MSVC_VERSION LESS 1900)
