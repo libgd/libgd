@@ -31,11 +31,13 @@ if (BUILD_TEST)
 		gdimagecolortransparent
 		gdimagecopy
 		gdimagecopyrotated
+		gdimagefile
 		gdimagefill
 		gdimagefilledellipse
 		gdimagefilledpolygon
 		gdimagefilledrectangle
 		gdimagefilltoborder
+		gdimagefilter
 		gdimageline
 		gdimageopenpolygon
 		gdimagepixelate
