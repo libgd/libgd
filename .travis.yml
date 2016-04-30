@@ -7,39 +7,13 @@ env:
   - tbs_arch=x86
   - tbs_arch=x64
 
+sudo: false
+
 os:
   - linux
   - osx
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ];
-    then
-      sudo apt-get update -qq;
-      sudo apt-get -y install nasm;
-      sudo apt-get -y install autotools-dev \
-                              libpng-dev \
-                              libz-dev \
-                              libjpeg-dev \
-                              libfreetype6-dev \
-                              libxpm-dev \
-                              libx11-dev \
-                              libxt-dev \
-                              libfontconfig-dev \
-                              libvpx-dev \
-                              libtiff-dev \
-                              libwebp-dev \
-                              autoreconf \
-                              automake \
-                              autoconf \
-                              libtool \
-                              html2text;
-      if [ "$tbs_arch" = "x86" ];
-      then
-        sudo apt-get -y install gcc-multilib;
-        sudo apt-get -y install g++-multilib;
-      fi;
-    fi
-  
   - if [ "$TRAVIS_OS_NAME" = "osx" ];
     then
       brew install nasm;
@@ -66,6 +40,28 @@ script:
     fi
 
 addons:
+  apt:
+    packages:
+    - nasm
+    - libpng-dev
+    - libz-dev
+    - libjpeg-dev
+    - libfreetype6-dev
+    - libxpm-dev
+    - libx11-dev
+    - libxt-dev
+    - libfontconfig-dev
+    - libvpx-dev
+    - libtiff-dev
+    - libwebp-dev
+    - autoreconf
+    - automake
+    - autoconf
+    - libtool
+    - html2text
+    - gcc-multilib
+    - g++-multilib
+
   coverity_scan:
 
     # GitHub project metadata
