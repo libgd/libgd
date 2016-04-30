@@ -9,6 +9,8 @@ PROJECT(GD)
 
 SET(CMAKE_MODULE_PATH "${GD_SOURCE_DIR}/cmake/modules")
 
+include(gd)
+
 OPTION(ENABLE_PNG "Enable PNG support" 0)
 OPTION(ENABLE_LIQ "Enable libimagequant support" 0)
 OPTION(ENABLE_JPEG "Enable JPEG support" 0)
