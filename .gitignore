@@ -60,6 +60,11 @@ Makefile.in
 /src/config.hin
 /src/stamp-h1
 
+# cmake artifacts.
+Testing
+/DartConfiguration.tcl
+/install_manifest.txt
+
 # Common GD artifacts.
 /config/gdlib-config
 /config/gdlib.pc
