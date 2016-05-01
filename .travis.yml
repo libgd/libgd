@@ -1,4 +1,11 @@
+# Travis build integration.
+# https://docs.travis-ci.com/
+
 language: cpp
+compiler:
+# TODO: Add clang compiler support.
+#  - clang
+  - gcc
 
 env:
   #global:
@@ -19,25 +26,7 @@ before_install:
       brew install nasm;
     fi
 
-before_script:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ];
-    then
-      autoreconf -fi;
-    fi
-
-script:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ];
-    then
-      ./configure --with-tiff=/usr --libdir=/usr/lib/$(dpkg-architecture -qDEB_TARGET_MULTIARCH);
-      ncpus=$(getconf _NPROCESSORS_ONLN);
-      make -j${ncpus};
-      make -j${ncpus} check;
-    fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ];
-    then
-      ./thumbs.sh make;
-      ./thumbs.sh check;
-    fi
+script: ./travis/main.sh
 
 addons:
   apt:
