@@ -1,10 +1,10 @@
 if HAVE_LIBJPEG
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagerotate/bug00067
 endif
 
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagerotate/php_bug_64898
 endif
 

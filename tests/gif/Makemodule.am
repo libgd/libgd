@@ -1,11 +1,11 @@
-check_PROGRAMS += \
+libgd_test_programs += \
 	gif/bug00005_2 \
 	gif/bug00181 \
 	gif/bug00227 \
 	gif/gif_null
 
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	gif/bug00005 \
 	gif/bug00006 \
 	gif/bug00060 \

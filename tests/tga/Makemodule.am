@@ -1,4 +1,4 @@
-check_PROGRAMS += \
+libgd_test_programs += \
 	tga/bug00084 \
 	tga/tga_null
 

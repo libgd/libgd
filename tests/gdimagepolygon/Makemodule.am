@@ -1,5 +1,5 @@
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagepolygon/gdimagepolygon0 \
 	gdimagepolygon/gdimagepolygon1 \
 	gdimagepolygon/gdimagepolygon2 \

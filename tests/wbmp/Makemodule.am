@@ -1,8 +1,8 @@
-check_PROGRAMS += \
+libgd_test_programs += \
 	wbmp/wbmp_null
 
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	wbmp/wbmp_im2im
 endif
 

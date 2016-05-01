@@ -1,5 +1,5 @@
 if HAVE_LIBXPM
-check_PROGRAMS += \
+libgd_test_programs += \
 	xpm/bug00166 \
 	xpm/bug00185 \
 	xpm/color_name

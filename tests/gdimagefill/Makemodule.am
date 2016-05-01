@@ -1,5 +1,5 @@
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagefill/bug00002_1 \
 	gdimagefill/bug00002_2 \
 	gdimagefill/bug00002_3 \

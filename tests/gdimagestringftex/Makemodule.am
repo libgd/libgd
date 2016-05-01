@@ -1,5 +1,5 @@
 if HAVE_LIBFREETYPE
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagestringftex/gdimagestringftex_returnfontpathname
 endif
 

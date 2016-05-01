@@ -4,17 +4,22 @@
 #include <stdlib.h>
 #include "gdtest.h"
 
-int main()
+int main(int argc, char *argv[])
 {
 	gdImagePtr im;
 	FILE *fp;
-	char path[1024];
+	char *inpath;
+
+	if (argc != 2) {
+		printf("Usage: %s <input gd2>\n", argv[0]);
+		return 1;
+	}
 
 	/* Read the corrupt image. */
-	sprintf(path, "%s/gd2/invalid_neg_size.gd2", GDTEST_TOP_DIR);
-	fp = fopen(path, "rb");
+	inpath = argv[1];
+	fp = fopen(inpath, "rb");
 	if (!fp) {
-		printf("failed, cannot open file\n");
+		printf("failed, cannot open file: %s\n", inpath);
 		return 1;
 	}
 	im = gdImageCreateFromGd2(fp);

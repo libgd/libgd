@@ -1,10 +1,10 @@
-check_PROGRAMS += \
+libgd_test_programs += \
 	gd/gd_null \
 	gd/gd_num_colors \
 	gd/gd_versiontest
 
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	gd/gd_im2im
 endif
 

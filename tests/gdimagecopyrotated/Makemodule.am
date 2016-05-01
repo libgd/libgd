@@ -1,5 +1,5 @@
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagecopyrotated/bug00020
 endif
 

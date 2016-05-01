@@ -1,11 +1,11 @@
 if HAVE_LIBJPEG
-check_PROGRAMS += \
+libgd_test_programs += \
 	jpeg/jpeg_empty_file \
 	jpeg/jpeg_im2im \
 	jpeg/jpeg_null
 
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	jpeg/jpeg_read \
 	jpeg/jpeg_resolution
 endif

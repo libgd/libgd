@@ -1,5 +1,5 @@
 if HAVE_LIBTIFF
-check_PROGRAMS += \
+libgd_test_programs += \
 	tiff/tiff_dpi \
 	tiff/tiff_im2im \
 	tiff/tiff_null

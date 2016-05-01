@@ -1,5 +1,5 @@
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagefilledpolygon/bug00100 \
 	gdimagefilledpolygon/gdimagefilledpolygon0 \
 	gdimagefilledpolygon/gdimagefilledpolygon1 \

@@ -1,8 +1,8 @@
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagecopy/bug00007
 
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagecopy/bug00081
 endif
 

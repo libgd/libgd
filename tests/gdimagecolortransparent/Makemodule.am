@@ -1,4 +1,4 @@
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagecolortransparent/gdimagecolortransparent
 
 EXTRA_DIST += \

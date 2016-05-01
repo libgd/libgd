@@ -1,4 +1,4 @@
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagefile/gdnametest
 
 EXTRA_DIST += \

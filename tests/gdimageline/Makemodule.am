@@ -1,8 +1,8 @@
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimageline/gdimageline_aa_outofrange
 
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimageline/bug00072 \
 	gdimageline/bug00077 \
 	gdimageline/bug00111 \

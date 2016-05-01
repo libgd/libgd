@@ -1,15 +1,21 @@
-check_PROGRAMS += \
+libgd_helper_programs += \
+	gd2/gd2_read \
+	gd2/gd2_read_corrupt
+
+libgd_test_programs += \
 	gd2/gd2_empty_file
 
 if HAVE_LIBZ
-check_PROGRAMS += \
-	gd2/gd2_null \
-	gd2/gd2_read_corrupt
+libgd_test_programs += \
+	gd2/gd2_null
+TESTS += \
+	gd2/invalid_neg_size.sh
 
 if HAVE_LIBPNG
-check_PROGRAMS += \
-	gd2/gd2_im2im \
-	gd2/gd2_read
+libgd_test_programs += \
+	gd2/gd2_im2im
+TESTS += \
+	gd2/conv_test.sh
 endif
 
 endif

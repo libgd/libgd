@@ -6,7 +6,8 @@ libgdtest_a_SOURCES = \
 	gdhelpers.c
 
 # Setup vars that subdirs will increment.
-check_PROGRAMS =
+libgd_test_programs =
+libgd_helper_programs =
 CLEANFILES =
 EXTRA_DIST =
 TESTS =
@@ -57,7 +58,8 @@ include xpm/Makemodule.am
 LDADD = libgdtest.a ../src/libgd.la
 AM_CPPFLAGS = -I$(top_srcdir)/src -I $(top_srcdir)/tests/gdtest
 
-TESTS += $(check_PROGRAMS)
+check_PROGRAMS = $(libgd_test_programs) $(libgd_helper_programs)
+TESTS += $(libgd_test_programs)
 
 EXTRA_DIST += \
 	CMakeLists.txt

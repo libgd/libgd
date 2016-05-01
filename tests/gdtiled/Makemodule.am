@@ -1,6 +1,6 @@
 if HAVE_LIBPNG
 if HAVE_LIBZ
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdtiled/bug00032
 endif
 endif

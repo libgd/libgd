@@ -1,4 +1,4 @@
-check_PROGRAMS += \
+libgd_test_programs += \
 	gdimagesetpixel/bug00186
 
 EXTRA_DIST += \

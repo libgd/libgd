@@ -1,5 +1,5 @@
 if HAVE_LIBPNG
-check_PROGRAMS += \
+libgd_test_programs += \
 	png/bug00011 \
 	png/bug00033 \
 	png/bug00086 \
