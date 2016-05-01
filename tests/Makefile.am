@@ -1,4 +1,4 @@
-noinst_LIBRARIES = libgdtest.a
+check_LIBRARIES = libgdtest.a
 
 libgdtest_a_SOURCES = \
 	gdtest/gdtest.c \
