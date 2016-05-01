@@ -19,6 +19,7 @@ os:
   - linux
   - osx
 
+# Note: This is only here due to thumbs.sh bootstrap logic.
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ];
     then
