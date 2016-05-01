@@ -3,8 +3,7 @@
 
 language: cpp
 compiler:
-# TODO: Add clang compiler support.
-#  - clang
+  - clang
   - gcc
 
 env:
