@@ -3,7 +3,7 @@ noinst_LIBRARIES = libgdtest.a
 libgdtest_a_SOURCES = \
 	gdtest/gdtest.c \
 	gdtest/gdtest.h \
-	../src/gdhelpers.c
+	gdhelpers.c
 
 check_PROGRAMS = \
 	gd2/gd2_empty_file \
