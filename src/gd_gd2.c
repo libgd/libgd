@@ -359,9 +359,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 	im =
 	    _gd2CreateFromFile (in, &sx, &sy, &cs, &vers, &fmt, &ncx, &ncy,
 	                        &chunkIdx);
-
 	if (im == NULL) {
-		gdFree (chunkIdx);
+		/* No need to free chunkIdx as _gd2CreateFromFile does it for us. */
 		return 0;
 	}
 

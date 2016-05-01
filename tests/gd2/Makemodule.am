@@ -4,6 +4,8 @@ libgd_helper_programs += \
 
 libgd_test_programs += \
 	gd2/gd2_empty_file
+TESTS += \
+	gd2/invalid_header.sh
 
 if HAVE_LIBZ
 libgd_test_programs += \
