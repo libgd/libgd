@@ -1,0 +1,5 @@
+check_PROGRAMS += \
+	gdnewfilectx/gdnewfilectx_null
+
+EXTRA_DIST += \
+	gdnewfilectx/CMakeLists.txt

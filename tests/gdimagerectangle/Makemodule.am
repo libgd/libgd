@@ -1,0 +1,6 @@
+check_PROGRAMS += \
+	gdimagerectangle/bug00003 \
+	gdimagerectangle/bug00106_gdimagerectangle
+
+EXTRA_DIST += \
+	gdimagerectangle/CMakeLists.txt

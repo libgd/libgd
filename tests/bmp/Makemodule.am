@@ -1,0 +1,10 @@
+check_PROGRAMS += \
+	bmp/bmp_null
+
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	bmp/bmp_im2im
+endif
+
+EXTRA_DIST += \
+	bmp/CMakeLists.txt

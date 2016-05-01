@@ -1,0 +1,5 @@
+check_PROGRAMS += \
+	gdimagefilter/gdCopyBlurred
+
+EXTRA_DIST += \
+	gdimagefilter/CMakeLists.txt

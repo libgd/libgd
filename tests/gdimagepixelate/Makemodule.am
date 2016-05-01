@@ -1,0 +1,5 @@
+check_PROGRAMS += \
+	gdimagepixelate/gdimagepixelate
+
+EXTRA_DIST += \
+	gdimagepixelate/CMakeLists.txt

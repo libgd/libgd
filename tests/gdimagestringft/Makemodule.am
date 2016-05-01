@@ -1,0 +1,7 @@
+if HAVE_LIBFREETYPE
+check_PROGRAMS += \
+	gdimagestringft/gdimagestringft_bbox
+endif
+
+EXTRA_DIST += \
+	gdimagestringft/CMakeLists.txt

@@ -1,0 +1,9 @@
+if HAVE_LIBFREETYPE
+check_PROGRAMS += \
+	freetype/bug00132
+endif
+
+EXTRA_DIST += \
+	freetype/CMakeLists.txt \
+	freetype/bug00132_exp.png \
+	freetype/DejaVuSans.ttf

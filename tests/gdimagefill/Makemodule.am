@@ -1,0 +1,16 @@
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gdimagefill/bug00002_1 \
+	gdimagefill/bug00002_2 \
+	gdimagefill/bug00002_3 \
+	gdimagefill/bug00002_4 \
+	gdimagefill/bug00104_1
+endif
+
+EXTRA_DIST += \
+	gdimagefill/CMakeLists.txt \
+	gdimagefill/bug00002_1_exp.png \
+	gdimagefill/bug00002_2_exp.png \
+	gdimagefill/bug00002_3_exp.png \
+	gdimagefill/bug00002_4_exp.png \
+	gdimagefill/bug00104_1_exp.png

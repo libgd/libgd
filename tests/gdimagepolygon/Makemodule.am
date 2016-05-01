@@ -1,0 +1,14 @@
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gdimagepolygon/gdimagepolygon0 \
+	gdimagepolygon/gdimagepolygon1 \
+	gdimagepolygon/gdimagepolygon2 \
+	gdimagepolygon/gdimagepolygon3
+endif
+
+EXTRA_DIST += \
+	gdimagepolygon/CMakeLists.txt \
+	gdimagepolygon/gdimagepolygon0.png \
+	gdimagepolygon/gdimagepolygon1.png \
+	gdimagepolygon/gdimagepolygon2.png \
+	gdimagepolygon/gdimagepolygon3.png

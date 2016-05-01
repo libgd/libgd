@@ -1,0 +1,8 @@
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gdimagearc/bug00079
+endif
+
+EXTRA_DIST += \
+	gdimagearc/CMakeLists.txt \
+	gdimagearc/bug00079_exp.png

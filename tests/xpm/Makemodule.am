@@ -1,0 +1,13 @@
+if HAVE_LIBXPM
+check_PROGRAMS += \
+	xpm/bug00166 \
+	xpm/bug00185 \
+	xpm/color_name
+endif
+
+EXTRA_DIST += \
+	xpm/CMakeLists.txt \
+	xpm/bug00166.xpm \
+	xpm/bug00185.xpm \
+	xpm/bug00185_damaged.xpm \
+	xpm/color_name.xpm

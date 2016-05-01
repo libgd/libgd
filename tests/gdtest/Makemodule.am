@@ -1,0 +1,5 @@
+# Note: Library is declared in tests/Makefile.am as it's used by all the tests.
+
+EXTRA_DIST += \
+	gdtest/CMakeLists.txt \
+	gdtest/test_config.h.cmake

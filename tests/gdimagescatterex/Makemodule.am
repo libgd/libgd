@@ -1,0 +1,11 @@
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gdimagescatterex/bug00208_1 \
+	gdimagescatterex/bug00208_2
+endif
+
+EXTRA_DIST += \
+	gdimagescatterex/CMakeLists.txt \
+	gdimagescatterex/bug00208.png \
+	gdimagescatterex/bug00208_1.png \
+	gdimagescatterex/bug00208_2.png

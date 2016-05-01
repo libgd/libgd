@@ -1,0 +1,10 @@
+if HAVE_LIBPNG
+if HAVE_LIBZ
+check_PROGRAMS += \
+	gdtiled/bug00032
+endif
+endif
+
+EXTRA_DIST += \
+	gdtiled/CMakeLists.txt \
+	gdtiled/bug00032_exp.png

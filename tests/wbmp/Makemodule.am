@@ -1,0 +1,10 @@
+check_PROGRAMS += \
+	wbmp/wbmp_null
+
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	wbmp/wbmp_im2im
+endif
+
+EXTRA_DIST += \
+	wbmp/CMakeLists.txt

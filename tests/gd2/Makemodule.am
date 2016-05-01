@@ -1,0 +1,22 @@
+check_PROGRAMS += \
+	gd2/gd2_empty_file
+
+if HAVE_LIBZ
+check_PROGRAMS += \
+	gd2/gd2_null \
+	gd2/gd2_read_corrupt
+
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gd2/gd2_im2im \
+	gd2/gd2_read
+endif
+
+endif
+
+EXTRA_DIST += \
+	gd2/CMakeLists.txt \
+	gd2/conv_gd2_exp.gd2 \
+	gd2/conv_test.gd2 \
+	gd2/conv_test_exp.png \
+	gd2/empty.gd2

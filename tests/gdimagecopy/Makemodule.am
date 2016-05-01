@@ -1,0 +1,11 @@
+check_PROGRAMS += \
+	gdimagecopy/bug00007
+
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gdimagecopy/bug00081
+endif
+
+EXTRA_DIST += \
+	gdimagecopy/CMakeLists.txt \
+	gdimagecopy/bug00081_exp.png

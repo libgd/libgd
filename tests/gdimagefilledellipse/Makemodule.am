@@ -1,0 +1,10 @@
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gdimagefilledellipse/bug00010 \
+	gdimagefilledellipse/bug00191
+endif
+
+EXTRA_DIST += \
+	gdimagefilledellipse/CMakeLists.txt \
+	gdimagefilledellipse/bug00010_exp.png \
+	gdimagefilledellipse/bug00191.png

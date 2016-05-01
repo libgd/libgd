@@ -1,0 +1,5 @@
+check_PROGRAMS += \
+	gdimagecolortransparent/gdimagecolortransparent
+
+EXTRA_DIST += \
+	gdimagecolortransparent/CMakeLists.txt

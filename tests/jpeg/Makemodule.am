@@ -1,0 +1,18 @@
+if HAVE_LIBJPEG
+check_PROGRAMS += \
+	jpeg/jpeg_empty_file \
+	jpeg/jpeg_im2im \
+	jpeg/jpeg_null
+
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	jpeg/jpeg_read \
+	jpeg/jpeg_resolution
+endif
+endif
+
+EXTRA_DIST += \
+	jpeg/CMakeLists.txt \
+	jpeg/conv_test.jpeg \
+	jpeg/conv_test_exp.png \
+	jpeg/empty.jpeg

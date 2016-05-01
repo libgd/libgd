@@ -1,0 +1,6 @@
+check_PROGRAMS += \
+	gdinterpolatedscale/gdModesAndPalettes \
+	gdinterpolatedscale/gdTrivialResize
+
+EXTRA_DIST += \
+	gdinterpolatedscale/CMakeLists.txt

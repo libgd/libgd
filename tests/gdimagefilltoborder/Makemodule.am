@@ -1,0 +1,7 @@
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gdimagefilltoborder/bug00037
+endif
+
+EXTRA_DIST += \
+	gdimagefilltoborder/CMakeLists.txt

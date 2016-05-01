@@ -1,0 +1,28 @@
+if HAVE_LIBJPEG
+check_PROGRAMS += \
+	gdimagerotate/bug00067
+endif
+
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gdimagerotate/php_bug_64898
+endif
+
+EXTRA_DIST += \
+	gdimagerotate/CMakeLists.txt \
+	gdimagerotate/bug00067_000_exp.png \
+	gdimagerotate/bug00067_015_exp.png \
+	gdimagerotate/bug00067_030_exp.png \
+	gdimagerotate/bug00067_045_exp.png \
+	gdimagerotate/bug00067_060_exp.png \
+	gdimagerotate/bug00067_075_exp.png \
+	gdimagerotate/bug00067_090_exp.png \
+	gdimagerotate/bug00067_105_exp.png \
+	gdimagerotate/bug00067_120_exp.png \
+	gdimagerotate/bug00067_135_exp.png \
+	gdimagerotate/bug00067_150_exp.png \
+	gdimagerotate/bug00067_165_exp.png \
+	gdimagerotate/bug00067_180_exp.png \
+	gdimagerotate/php_bug_64898.png \
+	gdimagerotate/php_bug_64898_exp.png \
+	gdimagerotate/remirh128.jpg

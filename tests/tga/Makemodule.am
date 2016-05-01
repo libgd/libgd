@@ -1,0 +1,7 @@
+check_PROGRAMS += \
+	tga/bug00084 \
+	tga/tga_null
+
+EXTRA_DIST += \
+	tga/CMakeLists.txt \
+	tga/bug00084.tga

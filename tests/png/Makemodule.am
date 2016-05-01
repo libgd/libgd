@@ -1,0 +1,20 @@
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	png/bug00011 \
+	png/bug00033 \
+	png/bug00086 \
+	png/bug00088 \
+	png/bug00193 \
+	png/png_im2im \
+	png/png_null \
+	png/png_resolution
+endif
+
+EXTRA_DIST += \
+	png/CMakeLists.txt \
+	png/bug00033.png \
+	png/bug00088_1.png \
+	png/bug00088_1_exp.png \
+	png/bug00088_2.png \
+	png/bug00088_2_exp.png \
+	png/emptyfile

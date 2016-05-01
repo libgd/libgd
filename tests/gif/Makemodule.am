@@ -1,0 +1,25 @@
+check_PROGRAMS += \
+	gif/bug00005_2 \
+	gif/bug00181 \
+	gif/bug00227 \
+	gif/gif_null
+
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gif/bug00005 \
+	gif/bug00006 \
+	gif/bug00060 \
+	gif/bug00066 \
+	gif/gif_im2im
+endif
+
+EXTRA_DIST += \
+	gif/CMakeLists.txt \
+	gif/bug00005_0.gif \
+	gif/bug00005_1.gif \
+	gif/bug00005_2.gif \
+	gif/bug00005_2_exp.png \
+	gif/bug00005_3.gif \
+	gif/bug00060.gif \
+	gif/bug00066.gif \
+	gif/bug00066_exp.png

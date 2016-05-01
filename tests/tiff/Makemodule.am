@@ -1,0 +1,9 @@
+if HAVE_LIBTIFF
+check_PROGRAMS += \
+	tiff/tiff_dpi \
+	tiff/tiff_im2im \
+	tiff/tiff_null
+endif
+
+EXTRA_DIST += \
+	tiff/CMakeLists.txt

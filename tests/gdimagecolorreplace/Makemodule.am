@@ -1,0 +1,7 @@
+if HAVE_LIBPNG
+check_PROGRAMS += \
+	gdimagecolorreplace/gdimagecolorreplace
+endif
+
+EXTRA_DIST += \
+	gdimagecolorreplace/CMakeLists.txt

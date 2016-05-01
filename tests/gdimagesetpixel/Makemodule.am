@@ -1,0 +1,5 @@
+check_PROGRAMS += \
+	gdimagesetpixel/bug00186
+
+EXTRA_DIST += \
+	gdimagesetpixel/CMakeLists.txt
