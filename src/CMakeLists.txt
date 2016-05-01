@@ -124,4 +124,18 @@ install(TARGETS ${GD_INSTALL_TARGETS}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(PROGRAMS bdftogd DESTINATION bin)
-install(FILES gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h gd_color_map.h gd_errors.h DESTINATION include)
+install(FILES
+	entities.h
+	gd.h
+	gd_color_map.h
+	gd_errors.h
+	gd_io.h
+	gdcache.h
+	gdfontg.h
+	gdfontl.h
+	gdfontmb.h
+	gdfonts.h
+	gdfontt.h
+	gdfx.h
+	gdpp.h
+	DESTINATION include)
