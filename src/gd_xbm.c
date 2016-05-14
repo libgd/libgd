@@ -180,7 +180,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm(FILE * fd)
 /* {{{ gdCtxPrintf */
 static void gdCtxPrintf(gdIOCtx * out, const char *format, ...)
 {
-	char buf[4096];
+	char buf[1024];
 	int len;
 	va_list args;
 
@@ -190,6 +190,9 @@ static void gdCtxPrintf(gdIOCtx * out, const char *format, ...)
 	out->putBuf(out, buf, len);
 }
 /* }}} */
+
+/* The compiler will optimize strlen(constant) to a constant number. */
+#define gdCtxPuts(out, s) out->putBuf(out, s, strlen(s))
 
 /* {{{ gdImageXbmCtx */
 BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOCtx * out)
@@ -215,9 +218,26 @@ BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOC
 		}
 	}
 
-	gdCtxPrintf(out, "#define %s_width %d\n", name, gdImageSX(image));
-	gdCtxPrintf(out, "#define %s_height %d\n", name, gdImageSY(image));
-	gdCtxPrintf(out, "static unsigned char %s_bits[] = {\n  ", name);
+	/* Since "name" comes from the user, run it through a direct puts.
+	 * Trying to printf it into a local buffer means we'd need a large
+	 * or dynamic buffer to hold it all. */
+
+	/* #define <name>_width 1234 */
+	gdCtxPuts(out, "#define ");
+	gdCtxPuts(out, name);
+	gdCtxPuts(out, "_width ");
+	gdCtxPrintf(out, "%d\n", gdImageSX(image));
+
+	/* #define <name>_height 1234 */
+	gdCtxPuts(out, "#define ");
+	gdCtxPuts(out, name);
+	gdCtxPuts(out, "_height ");
+	gdCtxPrintf(out, "%d\n", gdImageSY(image));
+
+	/* static unsigned char <name>_bits[] = {\n */
+	gdCtxPuts(out, "static unsigned char ");
+	gdCtxPuts(out, name);
+	gdCtxPuts(out, "_bits[] = {\n  ");
 
 	free(name);
 
@@ -234,9 +254,9 @@ BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOC
 			if ((b == 128) || (x == sx && y == sy)) {
 				b = 1;
 				if (p) {
-					gdCtxPrintf(out, ", ");
+					gdCtxPuts(out, ", ");
 					if (!(p%12)) {
-						gdCtxPrintf(out, "\n  ");
+						gdCtxPuts(out, "\n  ");
 						p = 12;
 					}
 				}
@@ -248,6 +268,6 @@ BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOC
 			}
 		}
 	}
-	gdCtxPrintf(out, "};\n");
+	gdCtxPuts(out, "};\n");
 }
 /* }}} */
