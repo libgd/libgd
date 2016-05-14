@@ -251,7 +251,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	 */
 
 	/* setjmp() must be called in every non-callback function that calls a
-	 * PNG-reading libpng function */
+	 * PNG-reading libpng function.  We must reset it everytime we get a
+	 * new allocation that we save in a stack variable.
+	 */
 #ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(jbw.jmpbuf)) {
 		gd_error("gd-png error: setjmp returns error condition 1\n");
@@ -275,9 +277,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	}
 	if (im == NULL) {
 		gd_error("gd-png error: cannot allocate gdImage struct\n");
-		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
-
-		return NULL;
+		goto error;
 	}
 
 	if (bit_depth == 16) {
@@ -287,18 +287,13 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	}
 
 	/* setjmp() must be called in every non-callback function that calls a
-	 * PNG-reading libpng function
+	 * PNG-reading libpng function.  We must reset it everytime we get a
+	 * new allocation that we save in a stack variable.
 	 */
 #ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(jbw.jmpbuf)) {
 		gd_error("gd-png error: setjmp returns error condition 2\n");
-		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-		gdFree(image_data);
-		gdFree(row_pointers);
-		if (im) {
-			gdImageDestroy(im);
-		}
-		return NULL;
+		goto error;
 	}
 #endif
 
@@ -346,9 +341,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 		/* create a fake palette and check for single-shade transparency */
 		if ((palette = (png_colorp) gdMalloc (256 * sizeof (png_color))) == NULL) {
 			gd_error("gd-png error: cannot allocate gray palette\n");
-			png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
-			gdImageDestroy(im);
-			return NULL;
+			goto error;
 		}
 		palette_allocated = TRUE;
 		if (bit_depth < 8) {
@@ -406,67 +399,39 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 		break;
 	default:
 		gd_error("gd-png color_type is unknown: %d\n", color_type);
-		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-		gdFree(image_data);
-		gdFree(row_pointers);
-		if (im) {
-			gdImageDestroy(im);
-		}
-		return NULL;
-		break;
+		goto error;
 	}
 
 	png_read_update_info (png_ptr, info_ptr);
 
 	/* allocate space for the PNG image data */
 	rowbytes = png_get_rowbytes (png_ptr, info_ptr);
-	if (overflow2(rowbytes, height)) {
-		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
-		if (im) {
-			gdImageDestroy(im);
-		}
-		if (palette_allocated) {
-			gdFree (palette);
-		}
-		return NULL;
-	}
+	if (overflow2(rowbytes, height))
+		goto error;
 	image_data = (png_bytep) gdMalloc (rowbytes * height);
 	if (!image_data) {
 		gd_error("gd-png error: cannot allocate image data\n");
-		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
-		if (im) {
-			gdImageDestroy(im);
-		}
-		if (palette_allocated) {
-			gdFree (palette);
-		}
-		return NULL;
+		goto error;
 	}
-	if (overflow2(height, sizeof (png_bytep))) {
-		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
-		gdFree (image_data);
-		if (im) {
-			gdImageDestroy(im);
-		}
-		if (palette_allocated) {
-			gdFree (palette);
-		}
-		return NULL;
-	}
+	if (overflow2(height, sizeof (png_bytep)))
+		goto error;
 
 	row_pointers = (png_bytepp) gdMalloc (height * sizeof (png_bytep));
 	if (!row_pointers) {
 		gd_error("gd-png error: cannot allocate row pointers\n");
-		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
-		if (im) {
-			gdImageDestroy(im);
-		}
-		gdFree (image_data);
-		if (palette_allocated) {
-			gdFree (palette);
-		}
-		return NULL;
+		goto error;
 	}
+
+	/* setjmp() must be called in every non-callback function that calls a
+	 * PNG-reading libpng function.  We must reset it everytime we get a
+	 * new allocation that we save in a stack variable.
+	 */
+#ifdef PNG_SETJMP_SUPPORTED
+	if (setjmp(jbw.jmpbuf)) {
+		gd_error("gd-png error: setjmp returns error condition 3\n");
+		goto error;
+	}
+#endif
 
 	/* set the individual row_pointers to point at the correct offsets */
 	for (h = 0; h < height; ++h) {
@@ -551,13 +516,24 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	}
 #endif
 
+ done:
 	if (palette_allocated) {
 		gdFree (palette);
 	}
-	gdFree (image_data);
-	gdFree (row_pointers);
+	if (image_data)
+		gdFree(image_data);
+	if (row_pointers)
+		gdFree(row_pointers);
 
 	return im;
+
+ error:
+	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	if (im) {
+		gdImageDestroy(im);
+		im = NULL;
+	}
+	goto done;
 }
 
 
