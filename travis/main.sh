@@ -22,7 +22,8 @@ build_autotools() {
 		--with-xpm \
 		--with-zlib
 	m
-	m check
+	# Make sure failures are shown in the log.
+	m check VERBOSE=1
 
 	# TODO: Re-enable this once out-of-tree tests work.
 	#m distcheck

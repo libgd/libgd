@@ -31,5 +31,6 @@ int main()
 	}
 	
 	gdImageDestroy(im);
+	gdImageDestroy(tile);
 	return error;
 }
