@@ -179,7 +179,7 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga)
 			return -1;
 		}
 
-		gdGetBuf( &( tga->ident ), tga->identsize, ctx );
+		gdGetBuf(tga->ident, tga->identsize, ctx);
 	}
 
 	return 1;
@@ -211,7 +211,7 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 		return -1;
 	}
 
-	if(overflow2(image_block_size, sizeof(uint8_t))) {
+	if(overflow2(image_block_size, sizeof(int))) {
 		return -1;
 	}
 
