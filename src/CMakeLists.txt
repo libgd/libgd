@@ -103,7 +103,23 @@ endif()
 
 target_link_libraries(${GD_LIB_STATIC} ${ZLIB_LIBRARIES} ${FREETYPE_LIBRARIES} ${PNG_LIBRARIES} ${ICONV_LIBRARIES} ${LIQ_LIBRARIES} ${JPEG_LIBRARIES} ${TIFF_LIBRARIES} ${XPM_LIBRARIES} ${FONTCONFIG_LIBRARY} ${WEBP_LIBRARIES} )
 
-set(GD_PROGRAMS annotate gdparttopng gdtopng gd2copypal gd2topng pngtogd pngtogd2 webpng gd2togif gdcmpgif giftogd2)
+set(GD_PROGRAMS gdcmpgif)
+
+if (PNG_FOUND)
+	set(GD_PROGRAMS ${GD_PROGRAMS} gdtopng pngtogd webpng)
+	if (ZLIB_FOUND)
+		set(GD_PROGRAMS ${GD_PROGRAMS} gdparttopng gd2topng pngtogd2)
+	endif()
+endif()
+
+if (FREETYPE_FOUND)
+	set(GD_PROGRAMS ${GD_PROGRAMS} annotate)
+endif()
+
+if (ZLIB_FOUND)
+	set(GD_PROGRAMS ${GD_PROGRAMS} gd2copypal gd2togif giftogd2)
+endif()
+
 foreach(program ${GD_PROGRAMS})
     add_executable(${program} ${program}.c)
     if (BUILD_SHARED_LIBS)
