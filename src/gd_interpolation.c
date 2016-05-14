@@ -2415,8 +2415,8 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 
 	gdImageGetClip(dst, &c1x, &c1y, &c2x, &c2y);
 
-	end_x = bbox.width  + (int) fabs(bbox.x);
-	end_y = bbox.height + (int) fabs(bbox.y);
+	end_x = bbox.width  + abs(bbox.x);
+	end_y = bbox.height + abs(bbox.y);
 
 	/* Get inverse affine to let us work with destination -> source */
 	gdAffineInvert(inv, affine);
@@ -2518,7 +2518,7 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 
 BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMethod id)
 {
-	if (im == NULL || id < 0 || (uintmax_t)id > GD_METHOD_COUNT) {
+	if (im == NULL || (uintmax_t)id > GD_METHOD_COUNT) {
 		return 0;
 	}
 

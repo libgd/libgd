@@ -3508,9 +3508,11 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 		return;
 	} else {
 		double ag;
-		ag = (abs(dy) < abs(dx)) ? cos(atan2(dy, dx)) : sin(atan2(dy, dx));
+		/* Cast the long to an int to avoid compiler warnings about truncation.
+		 * This isn't a problem as computed dy/dx values came from ints above. */
+		ag = fabs(abs((int)dy) < abs((int)dx) ? cos(atan2(dy, dx)) : sin(atan2(dy, dx)));
 		if (ag != 0) {
-			wid = abs(thick / ag);
+			wid = thick / ag;
 		} else {
 			wid = 1;
 		}
@@ -3528,7 +3530,7 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 		return;
 	}
 
-	if (abs(dx) > abs(dy)) {
+	if (abs((int)dx) > abs((int)dy)) {
 		if (dx < 0) {
 			tmp = x1;
 			x1 = x2;

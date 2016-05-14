@@ -11,7 +11,6 @@ int main()
 	const char *file_im = "gdimagerotate/php_bug_64898.png";
 	const char *file_exp = "gdimagerotate/php_bug_64898_exp.png";
 	FILE *fp;
-	int color;
 
 	sprintf(path, "%s/%s", GDTEST_TOP_DIR, file_im);
 

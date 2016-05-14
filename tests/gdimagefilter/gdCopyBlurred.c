@@ -23,7 +23,7 @@ save(gdImagePtr im, const char *filename) {
     gdImagePng(im, out);
     fclose(out);
 #else
-    im, filename;
+    (void)im, (void)filename;
 #endif
 }/* save*/
 
@@ -87,8 +87,7 @@ void blurblank(gdImagePtr im, int radius, double sigma) {
 
 void do_test()
 {
-	gdImagePtr im, imref, tmp;
-    gdImagePtr same, same2;
+	gdImagePtr im, imref;
 
 	im = mkwhite(WIDTH, HEIGHT);
     imref = mkwhite(WIDTH, HEIGHT);

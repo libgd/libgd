@@ -51,11 +51,13 @@ static void run_tests(gdImagePtr im, int *error)
 		}														\
 	} while (0)
 
-#define CHECK_PIXEL(x, y, expected) do {						\
+#define CHECK_PIXEL(x, y, expected) \
+	do {														\
+		int pix;												\
 		gdImageSetClip(im, 0, 0, 4, 4);							\
-		c = gdImageGetPixel(im, (x), (y));						\
-		if (gdTestAssert(c == (expected)) != 1) {				\
-			printf("%d is expected, but %d\n", expected, c);	\
+		pix = gdImageGetPixel(im, (x), (y));					\
+		if (gdTestAssert(pix == (expected)) != 1) {				\
+			printf("%d is expected, but %d\n", expected, pix);	\
 			*error = -1;										\
 		}														\
 	} while (0)

@@ -77,7 +77,7 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 				r1 = gdTrueColorGetRed(c1);
 				r2 = gdTrueColorGetRed(c2);
 				diff_r = abs (r1 - r2);
-				/* diff_r *= 4;  /* emphasize */
+				// diff_r *= 4;  /* emphasize */
 				if (diff_r) {
 					diff_r += gdRedMax/2; /* make sure it's visible */
 				}

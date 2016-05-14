@@ -58,8 +58,7 @@ void scaletest(int x, int y, int nx, int ny)
 
 void do_test(int x, int y, int nx, int ny)
 {
-	gdImagePtr im, imref, tmp;
-    gdImagePtr same, same2;
+	gdImagePtr im, imref, same;
 
 	im = mkwhite(x, y);
     imref = mkwhite(x, y);

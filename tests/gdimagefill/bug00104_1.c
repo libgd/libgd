@@ -6,8 +6,8 @@
 int main()
 {
 	gdImagePtr im, tile;
-	int im_white, tile_red, tile_blue;
-	int x, y, error = 0;
+	int tile_red, tile_blue;
+	int error = 0;
 	char path[1024];
 	
 	im = gdImageCreate(200, 150);
