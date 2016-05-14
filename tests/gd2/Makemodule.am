@@ -26,5 +26,10 @@ EXTRA_DIST += \
 	gd2/CMakeLists.txt \
 	gd2/conv_gd2_exp.gd2 \
 	gd2/conv_test.gd2 \
+	gd2/conv_test.sh \
 	gd2/conv_test_exp.png \
-	gd2/empty.gd2
+	gd2/empty.gd2 \
+	gd2/invalid_header.gd2 \
+	gd2/invalid_header.sh \
+	gd2/invalid_neg_size.gd2 \
+	gd2/invalid_neg_size.sh
