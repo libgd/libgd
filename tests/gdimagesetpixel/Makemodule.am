@@ -1,5 +1,7 @@
 libgd_test_programs += \
-	gdimagesetpixel/bug00186
+	gdimagesetpixel/bug00186 \
+	gdimagesetpixel/gdeffectmultiply \
+	gdimagesetpixel/gdeffectoverlay
 
 EXTRA_DIST += \
 	gdimagesetpixel/CMakeLists.txt
