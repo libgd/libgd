@@ -12,6 +12,7 @@ build_autotools() {
 	v --fold="configure" ./configure \
 		--prefix=/usr/local \
 		--libdir=/usr/local/lib \
+		--enable-werror \
 		--with-fontconfig \
 		--with-freetype \
 		--with-jpeg \
