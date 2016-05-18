@@ -37,12 +37,12 @@ AC_SUBST(GDLIB_VERSION)
 # Dynamic library version information
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
 
-GDLIB_CURRENT=3
-GDLIB_REVISION=0
-GDLIB_AGE=0
-AC_SUBST(GDLIB_CURRENT)
-AC_SUBST(GDLIB_REVISION)
-AC_SUBST(GDLIB_AGE)
+GDLIB_LT_CURRENT=3
+GDLIB_LT_REVISION=0
+GDLIB_LT_AGE=0
+AC_SUBST(GDLIB_LT_CURRENT)
+AC_SUBST(GDLIB_LT_REVISION)
+AC_SUBST(GDLIB_LT_AGE)
 
 #Expanded by tests later in this file. TBB 2.0.26
 #2.0.28: GIF is standard now. Doesn't depend on anything else,

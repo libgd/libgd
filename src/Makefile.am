@@ -99,7 +99,7 @@ libgd_la_SOURCES = \
 	wbmp.c \
 	wbmp.h
 
-libgd_la_LDFLAGS = -version-info $(GDLIB_CURRENT):$(GDLIB_REVISION):$(GDLIB_AGE) -no-undefined
+libgd_la_LDFLAGS = -version-info $(GDLIB_LT_CURRENT):$(GDLIB_LT_REVISION):$(GDLIB_LT_AGE) -no-undefined
 
 libgd_la_LIBADD = $(LTLIBICONV)
 
