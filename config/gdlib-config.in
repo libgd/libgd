@@ -4,6 +4,9 @@
 #
 # Modeled after pdflib-config
 
+echo "gdlib-config: warning: this script is deprecated;" \
+     "please use the pkg-config file instead." >&2
+
 # installation directories
 prefix=@prefix@
 exec_prefix=@exec_prefix@
