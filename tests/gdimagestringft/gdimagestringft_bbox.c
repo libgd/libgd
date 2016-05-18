@@ -68,11 +68,7 @@ int main()
 		y = (int)(cos_t * y - sin_t * x);
 		x = temp;
 	}
-	fp = fopen("gdimagestringft_bbox.png", "wb");
-	if (!fp) {
-		error = 1;
-		goto done;
-	}
+	fp = gdTestTempFp();
 	gdImagePng(im, fp);
 	fclose(fp);
 done:

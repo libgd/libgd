@@ -23,13 +23,9 @@ int main()
 	gdImageEllipse(src, 70, 25, 30, 20, b);
 
 #define OUTPUT_GD2(x) do {												\
-		FILE *fp;														\
-																		\
-		fp = fopen("gd2_im2im_" #x ".gd2", "wb");						\
-		if (fp) {														\
-			gdImageGd2(x, fp, (GD2_CHUNKSIZE_MIN+GD2_CHUNKSIZE_MAX)/2, GD2_FMT_COMPRESSED); \
-			fclose(fp);													\
-		}																\
+		FILE *fp = gdTestTempFp();										\
+		gdImageGd2(x, fp, (GD2_CHUNKSIZE_MIN+GD2_CHUNKSIZE_MAX)/2, GD2_FMT_COMPRESSED); \
+		fclose(fp);														\
 	} while (0)
 
 	OUTPUT_GD2(src);

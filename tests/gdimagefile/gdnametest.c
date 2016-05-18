@@ -84,7 +84,7 @@ do_test() {
     for (n = 0; names[n].nm; n++) {
         gdImagePtr orig, copy;
         int status;
-        char full_filename[255];
+        char *full_filename;
 
         /* Some image readers are buggy and crash the program so we
          * skip them.  Bug fixers should remove these from the list of
@@ -104,24 +104,19 @@ do_test() {
 
         orig = mkcross();
 
-        
-        #ifdef GDTEST_TOP_DIR 
-
-        snprintf(full_filename, sizeof(full_filename), GDTEST_TOP_DIR"/gdimagefile/%s",
-                 names[n].nm);
-
-        #else
-        /* Prepend the test directory; this is expected to be run in
-         * the parent dir. */
-        snprintf(full_filename, sizeof(full_filename), "gdimagefile/%s",
-                 names[n].nm);
-        #endif 
-
-
         /* Write the image unless writing is not supported. */
         if (!names[n].readonly) {
+            /* Prepend the test directory; this is expected to be run in
+             * the parent dir. */
+            full_filename = gdTestTempFile(names[n].nm);
             status = gdImageFile(orig, full_filename);
             gdTestAssertMsg(status == GD_TRUE, "Failed to create %s\n", full_filename);
+        } else {
+            /* Prepend the test directory; this is expected to be run in
+             * the parent dir. */
+            full_filename = malloc(strlen(GDTEST_TOP_DIR) + strlen("/gdimagefile/") + strlen(names[n].nm) + 1);
+            gdTestAssert(full_filename != NULL);
+            sprintf(full_filename, GDTEST_TOP_DIR"/gdimagefile/%s", names[n].nm);
         }/* if */
 
         copy = gdImageCreateFromFile(full_filename);
@@ -138,6 +133,7 @@ do_test() {
             gdTestAssertMsg(status == 0, "Failed to delete %s\n", full_filename);
         }/* if */
 
+        free(full_filename);
         gdImageDestroy(orig);
         gdImageDestroy(copy);
     }/* for */

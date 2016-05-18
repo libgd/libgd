@@ -25,13 +25,9 @@ int main()
 	gdImageEllipse(src, 70, 25, 30, 20, b);
 
 #define OUTPUT_JPEG(name) do {							\
-		FILE *fp;										\
-														\
-		fp = fopen("jpeg_im2im_" #name ".jpeg", "wb");	\
-		if (fp) {										\
-			gdImageJpeg(name, fp, 100);					\
-			fclose(fp);									\
-		}												\
+		FILE *fp = gdTestTempFp();						\
+		gdImageJpeg(name, fp, 100);						\
+		fclose(fp);										\
 	} while (0)
 
 	OUTPUT_JPEG(src);

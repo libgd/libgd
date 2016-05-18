@@ -23,13 +23,9 @@ int main()
 	gdImageEllipse(src, 70, 25, 30, 20, b);
 
 #define OUTPUT_BMP(name) do {							\
-		FILE *fp;										\
-														\
-		fp = fopen("bmp_im2im_" #name ".bmp", "wb");	\
-		if (fp) {										\
-			gdImageBmp(name, fp, 1);					\
-			fclose(fp);									\
-		}												\
+		FILE *fp = gdTestTempFp();						\
+		gdImageBmp(name, fp, 1);						\
+		fclose(fp);										\
 	} while (0)
 
 	OUTPUT_BMP(src);

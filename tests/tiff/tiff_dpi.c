@@ -31,13 +31,9 @@ int main()
 	src->res_y = res_y;
 
 #define OUTPUT_TIFF(name) do {							\
-		FILE *fp;										\
-														\
-		fp = fopen("tiff_dpi_" #name ".tiff", "wb");	\
-		if (fp) {										\
-			gdImageTiff(name, fp);						\
-			fclose(fp);									\
-		}												\
+		FILE *fp = gdTestTempFp();						\
+		gdImageTiff(name, fp);							\
+		fclose(fp);										\
 	} while (0)
 
 	OUTPUT_TIFF(src);

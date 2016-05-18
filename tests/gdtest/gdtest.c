@@ -1,3 +1,4 @@
+#include <config.h>
 #include <assert.h>
 #include <setjmp.h>
 #include <stdlib.h>
@@ -5,6 +6,20 @@
 #include <string.h>
 #include <math.h>
 #include <limits.h>
+
+#ifdef HAVE_DIRENT_H
+#include <dirent.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
 #include "gd.h"
 
 #include "gdtest.h"
@@ -36,6 +51,105 @@ gdImagePtr gdTestImageFromPng(const char *filename)
 	image = gdImageCreateFromPng(fp);
 	fclose(fp);
 	return image;
+}
+
+static char *tmpdir_base;
+
+/* This is kind of hacky, but it's meant to be simple. */
+static void _clean_dir(const char *dir)
+{
+	DIR *d;
+	struct dirent *de;
+
+	d = opendir(dir);
+	if (d == NULL)
+		return;
+
+	if (chdir(dir) != 0)
+		goto done;
+
+	while ((de = readdir(d)) != NULL) {
+		struct stat st;
+
+		if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
+			continue;
+
+		if (lstat(de->d_name, &st) != 0)
+			continue;
+
+		if (S_ISDIR(st.st_mode))
+			_clean_dir(de->d_name);
+		else
+			unlink(de->d_name);
+	}
+
+	if (chdir("..")) {
+		/* Ignore. */;
+	}
+
+ done:
+	closedir(d);
+	rmdir(dir);
+}
+
+static void tmpdir_cleanup(void)
+{
+	_clean_dir(tmpdir_base);
+	free(tmpdir_base);
+}
+
+const char *gdTestTempDir(void)
+{
+	if (tmpdir_base == NULL) {
+		char *tmpdir, *tmpdir_root;
+
+		tmpdir_root = getenv("TMPDIR");
+		if (tmpdir_root == NULL)
+			tmpdir_root = "/tmp";
+
+		/* The constant here is a lazy over-estimate. */
+		tmpdir = malloc(strlen(tmpdir_root) + 30);
+		gdTestAssert(tmpdir != NULL);
+
+		sprintf(tmpdir, "%s/gdtest.XXXXXX", tmpdir_root);
+
+		tmpdir_base = mkdtemp(tmpdir);
+		gdTestAssert(tmpdir_base != NULL);
+
+		atexit(tmpdir_cleanup);
+	}
+
+	return tmpdir_base;
+}
+
+char *gdTestTempFile(const char *template)
+{
+	const char *tempdir = gdTestTempDir();
+	char *ret;
+
+	if (template == NULL)
+		template = "gdtemp.XXXXXX";
+
+	ret = malloc(strlen(tempdir) + 10 + strlen(template));
+	gdTestAssert(ret != NULL);
+	sprintf(ret, "%s/%s", tempdir, template);
+
+	if (strstr(template, "XXXXXX") != NULL) {
+		int fd = mkstemp(ret);
+		gdTestAssert(fd != -1);
+		close(fd);
+	}
+
+	return ret;
+}
+
+FILE *gdTestTempFp(void)
+{
+	char *file = gdTestTempFile(NULL);
+	FILE *fp = fopen(file, "wb");
+	gdTestAssert(fp != NULL);
+	free(file);
+	return fp;
 }
 
 /* Compare two buffers, returning the number of pixels that are

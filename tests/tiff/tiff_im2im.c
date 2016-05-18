@@ -25,13 +25,9 @@ int main()
 	gdImageEllipse(src, 70, 25, 30, 20, b);
 
 #define OUTPUT_TIFF(name) do {							\
-		FILE *fp;										\
-														\
-		fp = fopen("tiff_im2im_" #name ".tiff", "wb");	\
-		if (fp) {										\
-			gdImageTiff(name, fp);						\
-			fclose(fp);									\
-		}												\
+		FILE *fp = gdTestTempFp();						\
+		gdImageTiff(name, fp);							\
+		fclose(fp);										\
 	} while (0)
 
 	OUTPUT_TIFF(src);

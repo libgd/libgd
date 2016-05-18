@@ -2,12 +2,11 @@
 #include "gd.h"
 #include "gdtest.h"
 
-#define TMP_FN "_tmp_bug0006.gif"
-
 int main()
 {
 	gdImagePtr im;
 	FILE *fp;
+	char *file;
 	const int r = 255, g = 0, b = 0;
 	int r_f,g_f,b_f, trans_c_f;
 	int trans_c = gdTrueColorAlpha(r,g,b,0);
@@ -22,9 +21,10 @@ int main()
 	gdImageColorTransparent(im, trans_c);
 	gdImageFilledRectangle(im, 0,0, 192,36, trans_c);
 
-	fp = fopen(TMP_FN, "wb");
+	file = gdTestTempFile("bug0006.gif");
+	fp = fopen(file, "wb");
 	if (!fp) {
-		gdTestErrorMsg("Cannot open <%s> for writing\n", TMP_FN);
+		gdTestErrorMsg("Cannot open <%s> for writing\n", file);
 		return 1;
 	}
 	gdImageGif(im,fp);
@@ -32,16 +32,16 @@ int main()
 
 	gdImageDestroy(im);
 
-	fp = fopen(TMP_FN, "rb");
+	fp = fopen(file, "rb");
 	if (!fp) {
-		gdTestErrorMsg("Cannot open <%s> for reading\n", TMP_FN);
+		gdTestErrorMsg("Cannot open <%s> for reading\n", file);
 		return 1;
 	}
 	im = gdImageCreateFromGif(fp);
 	fclose(fp);
 
 	if (!im) {
-		gdTestErrorMsg("Cannot create image from <%s>\n", TMP_FN);
+		gdTestErrorMsg("Cannot create image from <%s>\n", file);
 		return 1;
 	}
 
@@ -60,8 +60,5 @@ int main()
 
 	/* Destroy it */
 	gdImageDestroy(im);
-	if (remove(TMP_FN) == -1) {
-		gdTestErrorMsg("Cannot remove file: <%s>\n", TMP_FN);
-	}
 	return error;
 }

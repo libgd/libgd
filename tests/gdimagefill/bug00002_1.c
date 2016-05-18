@@ -2,12 +2,11 @@
 #include <stdio.h>
 #include "gdtest.h"
 
-#define TMP_FN "bug00002_1.png"
-
 int main()
 {
 	gdImagePtr im;
 	FILE *fp;
+	char *file;
 	char path[1024];
 
 	im = gdImageCreateTrueColor(100, 100);
@@ -20,9 +19,10 @@ int main()
 	gdImageFill(im, 0, 0, 0xffffff);
 	gdImageFill(im, 0, 0, 0xffffff);
 
-	fp = fopen(TMP_FN, "wb");
+	file = gdTestTempFile("bug00002_1.png");
+	fp = fopen(file, "wb");
 	if (fp == NULL) {
-		gdTestErrorMsg("Cannot create image from <%s>\n", TMP_FN);
+		gdTestErrorMsg("Cannot create image from <%s>\n", file);
 		gdImageDestroy(im);
 		return 1;
 	}
@@ -37,11 +37,6 @@ int main()
 	}
 
 	gdImageDestroy(im);
-
-	if (remove(TMP_FN) == -1) {
-		gdTestErrorMsg("Cannot remove temporary file: <%s>\n", TMP_FN);
-		return 1;
-	}
 
 	return 0;
 }

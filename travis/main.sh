@@ -26,7 +26,7 @@ build_autotools() {
 	m check VERBOSE=1
 
 	# TODO: Re-enable this once out-of-tree tests work.
-	#m distcheck
+	m distcheck VERBOSE=1
 	m install DESTDIR=$PWD/install-autotools
 
 	# Clean things up for cmake.
@@ -34,19 +34,31 @@ build_autotools() {
 }
 
 build_cmake() {
-	v cmake \
-		-DBUILD_TEST=1 \
-		-DCMAKE_INSTALL_PREFIX=/usr/local \
-		-DCMAKE_INSTALL_LIBDIR=/usr/local/lib \
-		-DENABLE_FONTCONFIG=1 \
-		-DENABLE_FREETYPE=1 \
-		-DENABLE_JPEG=1 \
-		-DENABLE_PNG=1 \
-		-DENABLE_TIFF=1 \
-		-DENABLE_WEBP=1 \
-		-DENABLE_XPM=1 \
-		-DENABLE_ZLIB=1 \
-		.
+	local args=(
+		-DBUILD_TEST=1
+		-DCMAKE_INSTALL_PREFIX=/usr/local
+		-DCMAKE_INSTALL_LIBDIR=/usr/local/lib
+		-DENABLE_FONTCONFIG=1
+		-DENABLE_FREETYPE=1
+		-DENABLE_JPEG=1
+		-DENABLE_PNG=1
+		-DENABLE_TIFF=1
+		-DENABLE_WEBP=1
+		-DENABLE_XPM=1
+		-DENABLE_ZLIB=1
+	)
+
+	# First try building out of tree.
+	mkdir build
+	cd build
+	v cmake "${args[@]}" ..
+	m
+	v ctest -j${ncpus}
+	cd ..
+	rm -rf build
+
+	# Then build in-tree.
+	v cmake "${args[@]}" .
 	m
 	v ctest -j${ncpus}
 	m install DESTDIR=$PWD/install-cmake

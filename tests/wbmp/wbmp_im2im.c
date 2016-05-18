@@ -21,13 +21,9 @@ int main()
 	gdImageEllipse(src, 70, 25, 30, 20, b);
 
 #define OUTPUT_WBMP(name) do {							\
-		FILE *fp;										\
-														\
-		fp = fopen("wbmp_im2im_" #name ".wbmp", "wb");	\
-		if (fp) {										\
-			gdImageWBMP(name, 1, fp);					\
-			fclose(fp);									\
-		}												\
+		FILE *fp = gdTestTempFp();						\
+		gdImageWBMP(name, 1, fp);						\
+		fclose(fp);										\
 	} while (0)
 
 	OUTPUT_WBMP(src);

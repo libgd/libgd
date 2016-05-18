@@ -15,6 +15,21 @@ struct CuTestImageResult {
 /* Internal versions of assert functions -- use the public versions */
 gdImagePtr gdTestImageFromPng(const char *filename);
 
+/* Return a path to a writable temp dir.  The common test code will make sure
+ * it's cleaned up when the test exits.  Feel free to write whatever in here.
+ */
+const char *gdTestTempDir(void);
+
+/* Return a path to a writable file inside of the tempdir (see above).
+ * You should free the pointer when you're done.
+ * If |template| is NULL, you'll get a random file name, otherwise you'll get
+ * that under the tempdir.
+ */
+char *gdTestTempFile(const char *template);
+
+/* Return an open file handle to a temp file. */
+FILE *gdTestTempFp(void);
+
 void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
                      gdImagePtr buf_diff, CuTestImageResult *result_ret);
 

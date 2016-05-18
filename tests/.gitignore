@@ -1,20 +1,4 @@
 *.log
 *.trs
 
-# We don't keep any media files in the top dir ... just generated outputs.
-/*.bmp
-/*.gd
-/*.gd2
-/*.gif
-/*.jpeg
-/*.jpg
-/*.png
-/*.tga
-/*.tiff
-/*.ttf
-/*.wbmp
-/*.webp
-/*.xbm
-/*.xpm
-
 /test_config.h

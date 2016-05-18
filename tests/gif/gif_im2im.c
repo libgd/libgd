@@ -23,13 +23,9 @@ int main()
 	gdImageEllipse(src, 70, 25, 30, 20, b);
 
 #define OUTPUT_GIF(name) do {							\
-		FILE *fp;										\
-														\
-		fp = fopen("gif_im2im_" #name ".gif", "wb");	\
-		if (fp) {										\
-			gdImageGif(name, fp);						\
-			fclose(fp);									\
-		}												\
+		FILE *fp = gdTestTempFp();						\
+		gdImageGif(name, fp);							\
+		fclose(fp);										\
 	} while (0)
 
 	OUTPUT_GIF(src);

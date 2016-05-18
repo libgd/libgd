@@ -11,6 +11,7 @@
 int main()
 {
 	FILE *fp;
+	char *file;
 	gdImagePtr im0, im1, im2;
 	int i;
 	char *buf;
@@ -23,7 +24,8 @@ int main()
 		gdImageSetPixel(im0, i, 0, c);
 	}
 
-	fp = fopen("bug00227.gif", "wb");
+	file = gdTestTempFile("bug00227.gif");
+	fp = fopen(file, "wb");
 	if (!fp) return 1;
 
 	gdImageGifAnimBegin(im0, fp, 0, 0);
@@ -55,7 +57,7 @@ int main()
 	gdImageDestroy(im2);
 
 	/* check the Global Color Table flag */
-	fp = fopen("bug00227.gif", "rb");
+	fp = fopen(file, "rb");
 	if (!fp) return 1;
 	buf = malloc(PROBE_SIZE);
 	if (!buf) return 1;

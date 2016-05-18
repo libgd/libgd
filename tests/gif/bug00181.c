@@ -5,6 +5,7 @@
 int main()
 {
 	gdImagePtr im, im2, im3;
+	char *file;
 	FILE *fp;
 	int black, trans;
 	int error = 0;
@@ -16,28 +17,30 @@ int main()
                 return 1;
         }
 	im->interlace = 1;
-	fp = fopen("bug00181.gif", "wb");
+	file = gdTestTempFile("bug00181.gif");
+	fp = fopen(file, "wb");
 	if (!fp) {
-		gdTestErrorMsg("Cannot open <%s> for writing.\n", "bug00181.gif");
+		gdTestErrorMsg("Cannot open <%s> for writing.\n", file);
 		return 1;
 	}
 	gdImageGif(im, fp);
 	gdImageDestroy(im);
 	fclose(fp);
 
-	fp = fopen("bug00181.gif", "rb");
+	fp = fopen(file, "rb");
 	if (!fp) {
-		gdTestErrorMsg("Cannot open <%s> for reading.\n", "bug00181.gif");
+		gdTestErrorMsg("Cannot open <%s> for reading.\n", file);
 		return 1;
 	}
 	im = gdImageCreateFromGif(fp);
 	fclose(fp);
         if (!im) {
-                gdTestErrorMsg("Cannot create image from <%s>\n", "bug00181.gif");
+                gdTestErrorMsg("Cannot create image from <%s>\n", file);
                 return 1;
         }
 	error = !im->interlace;
 	gdImageDestroy(im);
+	free(file);
 
 	if (error) return error;
 
@@ -48,9 +51,10 @@ int main()
 	black = gdImageColorAllocate(im, 0, 0, 0);
 	trans = gdImageColorAllocate(im, 1, 1, 1);
 	gdImageRectangle(im, 0, 0, 10, 10, black);
-	fp = fopen("bug00181a.gif", "wb");
+	file = gdTestTempFile("bug00181a.gif");
+	fp = fopen(file, "wb");
 	if (!fp) {
-		gdTestErrorMsg("Cannot open <%s> for writing.\n", "bug00181a.gif");
+		gdTestErrorMsg("Cannot open <%s> for writing.\n", file);
 		return 1;
 	}
 	gdImageGifAnimBegin(im, fp, 1, 3);
@@ -75,15 +79,15 @@ int main()
 	gdImageDestroy(im2);
 	gdImageDestroy(im3);
 
-	fp = fopen("bug00181a.gif", "rb");
+	fp = fopen(file, "rb");
 	if (!fp) {
-		gdTestErrorMsg("Cannot open <%s> for reading.\n", "bug00181a.gif");
+		gdTestErrorMsg("Cannot open <%s> for reading.\n", file);
 		return 1;
 	}
 	im = gdImageCreateFromGif(fp);
 	fclose(fp);
         if (!im) {
-                gdTestErrorMsg("Cannot create image from <%s>\n", "bug00181a.gif");
+                gdTestErrorMsg("Cannot create image from <%s>\n", file);
                 return 1;
         }
 	error = !im->interlace;
