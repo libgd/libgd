@@ -43,8 +43,8 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
-#ifdef HAVE_LIBIMAGEQUANT_H
-#include <libimagequant.h> /* if this fails then set -DENABLE_LIQ=NO in cmake or make static libimagequant.a in libimagequant/ */
+#ifdef HAVE_LIBIMAGEQUANT
+#include <libimagequant.h>
 #endif
 
 /* (Re)define some defines known by libjpeg */
@@ -1375,7 +1375,7 @@ zeroHistogram (hist3d histogram)
 */
 BGD_DECLARE(int) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, int speed)
 {
-#ifndef HAVE_LIBIMAGEQUANT_H
+#ifndef HAVE_LIBIMAGEQUANT
 	if (method == GD_QUANT_LIQ) {
 		return FALSE;
 	}
@@ -1424,7 +1424,7 @@ BGD_DECLARE(int) gdImageTrueColorToPalette (gdImagePtr im, int dither, int color
 	return gdImageTrueColorToPaletteBody(im, dither, colorsWanted, 0);
 }
 
-#ifdef HAVE_LIBIMAGEQUANT_H
+#ifdef HAVE_LIBIMAGEQUANT
 /**
   LIQ library needs pixels in RGBA order with alpha 0-255 (opaque 255).
   This callback is run whenever source rows need to be converted from GD's format.
@@ -1532,7 +1532,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 	}
 
 
-#ifdef HAVE_LIBIMAGEQUANT_H
+#ifdef HAVE_LIBIMAGEQUANT
 	if (oim->paletteQuantizationMethod == GD_QUANT_DEFAULT ||
 	        oim->paletteQuantizationMethod == GD_QUANT_LIQ) {
 		liq_attr *attr = liq_attr_create_with_allocator(gdMalloc, gdFree);

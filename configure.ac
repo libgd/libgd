@@ -119,6 +119,9 @@ AC_CHECK_HEADERS(iconv.h,
 dnl do we need to specify -lm explicitly?
 AC_CHECK_FUNC(sin,,[AC_CHECK_LIB(m,sin)])
 
+AX_PTHREAD()
+AX_OPENMP()
+
 dnl Helper macro for working with external libraries.
 dnl GD_LIB_CHECK([SYM], [FEATURE], [name], [...test...])
 dnl $1 - upper case symbol
@@ -238,6 +241,19 @@ GD_LIB_CHECK([LIBJPEG], [JPEG], [jpeg], [
   ])
 ])
 
+dnl Check for libimagequant support.
+GD_LIB_CHECK([LIBIMAGEQUANT], [LIQ], [liq], [
+  AC_CHECK_HEADER([libimagequant.h], [
+    save_CFLAGS=$CFLAGS
+    CFLAGS="$CFLAGS $OPENMP_CFLAGS"
+    AC_CHECK_LIB([imagequant], [liq_attr_create_with_allocator], [dnl
+      AS_VAR_APPEND([LIBIMAGEQUANT_LIBS], [" -limagequant $OPENMP_CFLAGS"])
+      gd_found_lib=yes
+    ])
+    CFLAGS=$save_CFLAGS
+  ])
+])
+
 dnl Check for xpm support.
 GD_LIB_PKG_CHECK([LIBXPM], [XPM], [xpm], [xpm], [
   AC_CHECK_LIB([Xpm], [XpmReadFileToXpmImage], [dnl
@@ -265,8 +281,6 @@ GD_LIB_CHECK([LIBWEBP], [WEBP], [webp], [
 gl_VISIBILITY()
 CFLAGS="$CFLAGS $CFLAG_VISIBILITY"
 
-AX_PTHREAD()
-
 MINGW_AC_WIN32_NATIVE_HOST()
 
 if test "$mingw_cv_win32_host" = yes; then
@@ -292,6 +306,7 @@ AC_MSG_RESULT([
    Support for Freetype 2.x library: $gd_with_LIBFREETYPE
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG
    Support for Xpm library:          $gd_with_LIBXPM
+   Support for liq library:          $gd_with_LIBIMAGEQUANT
    Support for pthreads:             $ax_pthread_ok
 ])
 

@@ -33,6 +33,9 @@
 /* Define if you have freetype */
 #cmakedefine HAVE_LIBFREETYPE
 
+/* Define if you have liq */
+#cmakedefine HAVE_LIBIMAGEQUANT
+
 /* Define if you have jpeg */
 #cmakedefine HAVE_LIBJPEG
 
@@ -59,6 +62,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H
+
+/* Define if OpenMP is enabled */
+#cmakedefine HAVE_OPENMP
 
 /* Define if you have POSIX threads libraries and header files. */
 #cmakedefine HAVE_PTHREAD
