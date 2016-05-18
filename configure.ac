@@ -73,8 +73,22 @@ if test -n "$x_libraries" && test "x$x_libraries" != xNONE ; then
   LDFLAGS="$LDFLAGS -L$x_libraries"
 fi
 
+dnl Keep in sync with cmake/modules/AC_HEADER_STDC.cmake.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([errno.h limits.h stddef.h stdlib.h string.h unistd.h])
+AC_CHECK_HEADERS_ONCE(m4_flatten([
+	dirent.h
+	errno.h
+	inttypes.h
+	limits.h
+	stddef.h
+	stdint.h
+	stdlib.h
+	string.h
+	strings.h
+	unistd.h
+	sys/stat.h
+	sys/types.h
+]))
 
 dnl if we're configuring on a system w/out gettext, don't fall over
 m4_ifndef([AM_ICONV],[m4_define([AM_ICONV],[:])])

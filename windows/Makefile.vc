@@ -45,7 +45,6 @@ CFLAGS=/nologo /O2 /Qvec-report:1 /MD /TC\
        /DBGDWIN32=1\
        /DHAVE_FT2BUILD_H=1\
        /DHAVE_GD_H=1\
-       /DHAVE_PNG_H=1\
        /DHAVE_ICONV_H=1\
        /DHAVE_GD_BUNDLED=1\
        /DHAVE_LIBFREETYPE=1\

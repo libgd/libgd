@@ -23,4 +23,8 @@ if ! autoreconf -f -i ; then
 	exit 1
 fi
 
-exit 0
+sed \
+	-e '1d' \
+	-e '2i/* Generated from config.hin via autoheader for cmake; see bootstraps.h. */' \
+	-e 's:#undef:#cmakedefine:' \
+	src/config.hin > src/config.h.cmake
