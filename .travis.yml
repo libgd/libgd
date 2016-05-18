@@ -30,6 +30,7 @@ addons:
   apt:
     packages:
     - nasm
+    - naturaldocs
     - libpng-dev
     - libz-dev
     - libjpeg-dev

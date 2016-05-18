@@ -7,7 +7,7 @@
 . "${0%/*}"/lib.sh
 
 build_autotools() {
-	v --fold="autoreconf" autoreconf -fi
+	v --fold="bootstrap" ./bootstrap.sh
 
 	v --fold="configure" ./configure \
 		--prefix=/usr/local \
