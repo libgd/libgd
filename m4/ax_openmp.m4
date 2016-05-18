@@ -38,7 +38,6 @@
 # LICENSE
 #
 #   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
-#   Copyright (c) 2015 John W. Peterson <jwpeterson@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU General Public License as published by the
@@ -66,10 +65,10 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 11
+#serial 9
 
 AC_DEFUN([AX_OPENMP], [
-AC_PREREQ([2.69]) dnl for _AC_LANG_PREFIX
+AC_PREREQ(2.59) dnl for _AC_LANG_PREFIX
 
 AC_CACHE_CHECK([for OpenMP flag of _AC_LANG compiler], ax_cv_[]_AC_LANG_ABBREV[]_openmp, [save[]_AC_LANG_PREFIX[]FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
 ax_cv_[]_AC_LANG_ABBREV[]_openmp=unknown
@@ -84,27 +83,18 @@ for ax_openmp_flag in $ax_openmp_flags; do
     none) []_AC_LANG_PREFIX[]FLAGS=$save[]_AC_LANG_PREFIX[] ;;
     *) []_AC_LANG_PREFIX[]FLAGS="$save[]_AC_LANG_PREFIX[]FLAGS $ax_openmp_flag" ;;
   esac
-  AC_LINK_IFELSE([AC_LANG_SOURCE([[
-@%:@include <omp.h>
+  AC_TRY_LINK([#ifdef __cplusplus
+extern "C"
+#endif
+void omp_set_num_threads(int);], [const int N = 100000;
+  int i, arr[N];
 
-static void
-parallel_fill(int * data, int n)
-{
-  int i;
-@%:@pragma omp parallel for
-  for (i = 0; i < n; ++i)
-    data[i] = i;
-}
-
-int
-main()
-{
-  int arr[100000];
   omp_set_num_threads(2);
-  parallel_fill(arr, 100000);
-  return 0;
-}
-]])],[ax_cv_[]_AC_LANG_ABBREV[]_openmp=$ax_openmp_flag; break],[])
+
+  #pragma omp parallel for
+  for (i = 0; i < N; i++) {
+    arr[i] = i;
+  }], [ax_cv_[]_AC_LANG_ABBREV[]_openmp=$ax_openmp_flag; break])
 done
 []_AC_LANG_PREFIX[]FLAGS=$save[]_AC_LANG_PREFIX[]FLAGS
 ])
