@@ -1,317 +1,142 @@
-be907e0 fix indent (Pierre Joye)
-999b5d2 add sanity check and fix leak on exit (Pierre Joye)
-1424dd6 free path on error (Pierre Joye)
-13d87a6 free im on error (Pierre Joye)
-2a40315 update changelog (Pierre Joye)
-5c562ec Add thumbs.bat and thumbs.sh to Makefile.am (Nathanael Jones)
-bc372f2 Merge branch 'master' into rebase-1-for-2015 (Nathanael Jones)
-a247407 Use sprintf instead of snprintf to be C89 compliant. (Nathanael Jones)
-0324316 Remove uneeded includes introduced in earlier version-local commits. (Nathanael Jones)
-4d54513 Exposed all missing format-independent members in the C++ wrapper. (Nathanael Jones)
-c7bf379 Update gdpp.* to use HAVE_LIBPNG vs HAVE_PNG, etc.- should honor the same feature support flags as the rest of gd, (Nathanael Jones)
-40c6129 Normalize static lib name to libgd.a on *nix and libgd_static.lib on windows. (Nathanael Jones)
-7c2b071 Replace windows MSVC makefile; update msys iconv path. (Nathanael Jones)
-07c3fde Drop -m32 definition on MINGW; prevents a 64-bit build from occurring. (Nathanael Jones)
-37f5925 Skip bug00132 - failing because test data is out if date (we think). (Nathanael Jones)
-f085a2e When both CPP_SHARP and _WIN32 are defined, do not enable thread safety. (Nathanael Jones)
-e81ff90 Export C++ wrapper clases. Change two Gd() functions of the C++ wrapper to return values when the underlying C calls do. (Nathanael Jones)
-56f79f3 C89 compat; define vars at top of function (Nathanael Jones)
-b52b9c5 Upgrade to long-syntax CMAKE add_test command to improve cross-platform compatibility. (Nathanael Jones)
-e8a1a46 free coeffs (Pierre Joye)
-5f7c099 free allocated palette on error (Pierre Joye)
-7b49862 fix im leaked on error (Pierre Joye)
-4faf926 just reduce static analyzer noise (Pierre Joye)
-2a09086 free tc_cache and path on error (leak) (Pierre Joye)
-09e954b Thumbs: add osx settings for travis (tostercx)
-4af76c9 fix comment (Remi Collet)
-3c0d220 Fix possible infinite loop (php bug report #68713) - make code more legible (yy>=yy-1 seems ugly) - fix mem leak, always free src->tpixels (Remi Collet)
-7a8e6b8 Thumbs: use rsync -u on osx as it doesn't have cp -u (tostercx)
-eb9d7d1 Thumbs: Remove cp -u usage (Nathanael Jones)
-c9e458b add read-only test images to tarball (Remi Collet)
-3169371 use / in image patch (Remi Collet)
-81e9a99 move overflow test outside the loop for perf (Remi Collet)
-47eb44b Fix possible buffer read overflow detected by -fsanitize=address, thanks to Jan Bee (Remi Collet)
-5fe6837 squash test commits; add deps from nuget; fix bindings (tostercx)
-679fd78 pack compressed dll vers; build bindings (tostercx)
-0c3b914 fix mingw if blocks (tostercx)
-84319d1 replace slashes with backslashes for appveyor/cmd (tostercx)
-c954881 add build targets for gnu with thumbs (tostercx)
-18c51e6 fix tiff targets (tostercx)
-5f99611 fix dll_name not set before usage (tostercx)
-c447d68 fetch nasm (tostercx)
-7ba81f0 add thumbs (tostercx)
-4865cdb rename libs correctly as soon as they're copied (tostercx)
-bf51c4e fix tbsd_*_built flags not being set (tostercx)
-f3deb6b add basic msvc thumbs (tostercx)
-39fd5ce Exposed all missing format-independent members in the C++ wrapper. (Dimitar Dobrev)
-2d74b00 update lib switching macros (tostercx)
-d5527e7 push config.h (tostercx)
-5828f7e Use ifdefs around keyword redefinitions (Nathanael Jones)
-d3fb9c3 update appveyor project url (tostercx)
-6db34b7 Merged in nathanaeljones/gd-libgd/test-message-improvements (pull request #22) (Nathanael Jones)
-d1a6768 Merged in nathanaeljones/gd-libgd/add-osx-boostrap-support (pull request #21) - bootstrap.sh now offers build tips on OS X and defaults to glibtoolize (Nathanael Jones)
-31619ab Merged in nathanaeljones/gd-libgd/shut-up-automake (pull request #23) Silence automake 1.14 warnings (Nathanael Jones)
-7eb9462 Merged in nathanaeljones/gd-libgd/cmake-iconv (pull request #24) (Nathanael Jones)
-dedf03f Merged in nathanaeljones/gd-libgd/msvc-fix-keyword-macros (pull request #25) (Nathanael Jones)
-c4809ae Changed two functions of the C++ wrapper to return values when the underlying C calls do. (Dimitar Dobrev)
-433b04a set msvc output to minimal (tostercx)
-daa7613 move drone build script to file (tostercx)
-82550ca add drone badge (tostercx)
-6ea31fb reset build type (tostercx)
-47eaee1 test CMAKE_BULD_TYPE (tostercx)
-e4fbb28 test CMAKE_BULD_TYPE (tostercx)
-8e18552 push uncompressed dlls as artifacts (tostercx)
-0bcb5e3 push uncompressed dlls as artifacts (tostercx)
-5d09526 test dgn w64 (tostercx)
-e3fe7e4 warn inline (tostercx)
-adc3b7c test w64-32 (tostercx)
-55f9066 inline test 3 (tostercx)
-12898fe inline test 2 (tostercx)
-8864390 inline test (tostercx)
-0cd926f Exported all classes from the C++ binding of libgd. (Nathanael Jones)
-c8711e7 fetch binding gen from master (tostercx)
-23b5f11 test 32bit msvc bindings (tostercx)
-98d1a1a update binding artifact handling (tostercx)
-6be49c8 test msvc x64 bindings 4 (tostercx)
-97c2846 test msvc x64 bindings 3 (tostercx)
-eee663c test msvc x64 bindings 2 (tostercx)
-a7ce8bb test msvc x64 bindings (tostercx)
-12a6fbc scrap ramdisks (tostercx)
-1f07497 ramdisk test 3 (tostercx)
-398a82c ramdisk test 2 (tostercx)
-c6cd0d8 ramdisk test (tostercx)
-ae8a7e5 imdisk test 7 (tostercx)
-3a178fd imdisk test 6 (tostercx)
-5d5eb2a imdisk test 6 (tostercx)
-bfdc673 imdisk test 5 (tostercx)
-1855563 imdisk test 5 (tostercx)
-084e2e2 imdisk test 4 (tostercx)
-bbad6a7 imdisk test 3 (tostercx)
-9d3bd38 imdisk test 2 (tostercx)
-ff7ace5 Merge branch 'master' of https://github.com/imazen/gd-libgd (tostercx)
-e78df6a imdisk test (tostercx)
-f15ea0e Msbuild logging: Fix block scope error (Nathanael Jones)
-3a7334c Msbuild now logs to file and uploads as artifact (Nathanael Jones)
-c0ce1fa Enable verbose msbuild output temporarily (Nathanael Jones)
-b70fd99 fix unix static name (tostercx)
-b217d22 update nuget package names; add version # (tostercx)
-724869d update test macro usage (tostercx)
-560aa9b fix ps syntax errors (tostercx)
-dce1809 configure files only if building bindings (tostercx)
-e023800 test min=1 (tostercx)
-668ef42 test min=0 (tostercx)
-c28d572 quote function (tostercx)
-cd9ae09 test test switching macros (tostercx)
-c9b0fec add gdsharp .cs files to artifact (tostercx)
-c19f2e0 remove SET spaces (tostercx)
-3e88692 fix if spacing (tostercx)
-9208848 test min flag (tostercx)
-fef130e mingw test - noft; wtiff (tostercx)
-8fae7df test mingw no tiff (tostercx)
-bef860f mingw test build (tostercx)
-841f3cd fix msvc static lib name; test mingw no-rtti (tostercx)
-31552f5 build all (tostercx)
-071963b fix if block (tostercx)
-71f8aaf remove original dll on pack (tostercx)
-b7ac813 minimal build (tostercx)
-487ee4c re-enable packing (tostercx)
-8e4ea0e test ps spacing (tostercx)
-3ef2235 disable upx (tostercx)
-918d603 update library names (tostercx)
-bfff81d update library names (tostercx)
-daa782e upx test 3 (tostercx)
-5fc0ca3 upx test 2 (tostercx)
-4fba094 add upx; fix cmake_cmd (tostercx)
-015be62 spring cleaning (tostercx)
-09daf1d re-fix if block (tostercx)
-338c39b fix mingw freetype static link (tostercx)
-335fd04 fix tiff static link (tostercx)
-397029a fix if block (tostercx)
-c16ccd1 fix freetype static links (tostercx)
-6c3617a add appveyor badge (tostercx)
-b6b0249 push nunit result xml as artifact (tostercx)
-d87b394 disable iconv (tostercx)
-fb10cf1 fix dll dir for bindings (tostercx)
-61e8d53 simplify build script (tostercx)
-b6a6ba6 fix static link to iconv for mingw builds (tostercx)
-f8d2a36 fix mingw static links (tostercx)
-ff2eb8a fix msvc link to static jpeg (tostercx)
-1d75d52 remove inline flags; fetch deps from subbuilds (tostercx)
-b0167e9 keep inline functions (tostercx)
-6d3ab8d fix mingw dir; build only mingw (tostercx)
-4d88ae7 scrap .vhd mount; update compiler blob location (tostercx)
-1f7d33b test mounted mingww64 (tostercx)
-bd4cebd fix bloated freetype (tostercx)
-ade007d Support MSVC++ 2013 and higher: define _ALLOW_KEYWORD_MACROS, inline, strcasecmp, snprintf. (Nathanael Jones)
-f82b371 Add libiconv support to CMake files (Nathanael Jones)
-10ffb33 Silence automake 1.14 warnings ("source file is in a subdirectory, but option subdir-objects is disabled"). (Nathanael Jones)
-90c3799 Add gdTestAssertMsg(condition, formatmessage, variables) to support detailed failure messages. Improve error reporting and diagnostics in gdimagefile test. Fix 'max' definition conflict on some compilers. (Nathanael Jones)
-7f1d183 bootstrap.sh now offers build tips on OS X and defaults to glibtoolize (Nathanael Jones)
-444c760 update mingw crt static link command (tostercx)
-0b10bb8 exclude failing binding test; build all (tostercx)
-f05791c static link msvc runtime (tostercx)
-4f8e411 fix elseif block (tostercx)
-7dc864c static link mingw compiler deps (tostercx)
-c38ad3c update repositories (tostercx)
-64b843b Merge pull request #5 from tostercx/master (tostercx)
-292124c squash everything (tostercx)
-8d63a96 Merge pull request #4 from tostercx/master (Nathanael Jones)
-344267f fix testing env detection and directory (tostercx)
-9664951 fix tests not executing (tostercx)
-701507b fix x64 cross compiles (tostercx)
-33dff1f not needed anymore (tostercx)
-c1bcfcd not needed anymore (tostercx)
-9546428 fix platform letter case (tostercx)
-4d74480 fix gdtest not rebuilding (tostercx)
-4fac5f7 remove mkdir error messages (tostercx)
-6e7128a Prevent CppSharp parsing error (Nathanael Jones)
-8e8c0f9 Get gdnametest passing on windows (Nathanael Jones)
-300b6ff Fix gdnametest on *nix (Nathanael Jones)
-6c4ffe7 Improve error messages in gdnametest. (Nathanael Jones)
-ddbf021 Drop strcasecmp implementation. Only define 'inline' on msvc builds. (Nathanael Jones)
-42e5fa7 Merge remote-tracking branch 'origin/master' (Nathanael Jones)
-e30293d Add a readme for building on windows. (Nathanael Jones)
-681992a Remove src/config.h and src/gd.h from .gitignore. Sheesh. (Nathanael Jones)
-235c5b0 Merge pull request #3 from tostercx/master (Nathanael Jones)
-0eb3b05 fix rebuilds failing (tostercx)
-dab8734 fix mkdir failing on appveyor (tostercx)
-0356ea9 fix mkdir failing on appveyor (tostercx)
-96408de fix mkdir (tostercx)
-073197d fix dir making (tostercx)
-2e1d22e fix makefile always rebuilding (tostercx)
-25b31be add cleanup, .gitnore build directories and deps, partially fix always rebuilding (tostercx)
-7f735f6 Merged in nathanaeljones/gd-libgd/nathanaeljones/restore-support-for-alphablendingflag-va-1409782287517 (pull request #20) (Pierre Joye)
-08eb6ee Restore support for alphaBlendingFlag value gdEffectAlphaBlend (Nathanael Jones)
-e3ff6ec C89 compat (tostercx)
-e52ed5e Merge pull request #2 from tostercx/master (Nathanael Jones)
-6cc63f2 fix platorm reports in test (tostercx)
-68a8dc0 updated windows makefile and test execution (tostercx)
-8e7df78 Fix syntax error in Makefile.vc (missing line continuations) (Nathanael Jones)
-71ab3d8 Fix space/tab mix in Makefile.vc; enable vectorization reporting. (Nathanael Jones)
-911046d Comment out unused compilation vars; ensure (_)WIN32 is set, enable speed optimizations via /O2 (Nathanael Jones)
-749b33e Improve error reporting in gdimagefile test. Add gdTestAssertMsg(condition, message, variables) to support detailed failure messages. (Nathanael Jones)
-db88704 Restore support for alphaBlendingFlag value gdEffectAlphaBlend. (9 unit tests pass again). (Nathanael Jones)
-dc8bb49 Only omit the 'max' macro if it is already present (this may break windows, let's see) (Nathanael Jones)
-b0b140f Drop 7zip installation step, should already be installed on AppVeyor by default. (Nathanael Jones)
-bcf7cb4 Switch dependency repository back, and use a named branch now for compatibility. (Nathanael Jones)
-043dfa8 Merge pull request #1 from tostercx/master (Nathanael Jones)
-12ab27b add notes (tostercx)
-b710274 remove old makefiles (tostercx)
-dd870dc consolidate makefiles to windows/makefile.vc (tostercx)
-c114d89 consolidate makefiles to windows/makefile.vc (tostercx)
-720f82b add static lib to artifacts, generate test config in makefile (tostercx)
-c088f28 add static lib to artifacts, generate test config in makefile (tostercx)
-0db988e add static lib to artifacts, generate test config in kaefile (tostercx)
-1ce2b19 fix overwriting LIB env var (tostercx)
-e0475cc debug iconv tmp fix (tostercx)
-a3ee395 re-fix mkdir (tostercx)
-5abb901 fix mkdir (tostercx)
-35888c5 added making static libgd (tostercx)
-701bc63 switch to libjpeg-turbo (tostercx)
-d74fa37 fetch deps from imazen/gd-win-dependencies (tostercx)
-23cbea2 Add AppVeyor files provided by TosterCx (Nathanael Jones)
-af9ca1d Simplify makefile and add static lib generation. (Nathanael Jones)
-ce5f060 Simplify Makefile.vc (Nathanael Jones)
-ab31a6d Build inside Release_GD (Nathanael Jones)
-ee308e1 Rename Makefile.gd and add some notes (Nathanael Jones)
-d8987f5 Added strcasecmp implementation, now creates a .dll (Nathanael Jones)
-09006c4 Get makefile almost working (Nathanael Jones)
-2fdf3ad Start work on nmake makefile (Nathanael Jones)
-0eb8429 Changed path to libiconv in msys Makefile. (Nathanael Jones)
-5aee678 Merged from the upstream. (Nathanael Jones)
-31ff666 Merged in ttoohey/gd-libgd/layout-effect (pull request #18) (Ondřej Surý)
-33c05c1 Merged in ttoohey/gd-libgd/bugfix/font_path_overrun (pull request #19) (Ondřej Surý)
-463c3bd CVE-2014-2497, NULL pointer dereference, fix #126 (Remi Collet)
-f01ade7 Remove wrong license headers. Based on http://www.paulbourke.net/dataformats/tga/ (Pierre Joye)
-354409b Fix buffer overrun from long font search path (Tim Toohey)
-01dccbd add tests for layer effects (Tim Toohey)
-b39f92b Add overlay and multiply effects to gdImageSetPixel (Tim Toohey)
-4b86e06 Fix artefact in gdImageScale using GD_BILINEAR_FIXED (Remi Collet)
-1de3b80 new example "resize" (Remi Collet)
-5b42b11 Fix gdImageSetInterpolationMethod with GD_DEFAULT (Remi Collet)
-2d5dc2e MSys Makefile now statically links libgd.dll to libiconv. (Chris Reuter)
-01104a2 MSys Makefile fix (Chris Reuter)
-7a8e8b2 Bug fix: GD DLL rename hadn't been propagated everywhere. (Chris Reuter)
-6b94f66 Minor enhancements to the MinGW+Msys build scripts. (Chris Reuter)
-339b17a Updated the MSys build files. (Chris Reuter)
-0cb34fd Got gd_filename.c to work correctly under Windows. (Chris Reuter)
-74ad18c Updated .gitignore. (Chris Reuter)
-0da2258 Added TIFF to the list of skipped image formats in gdnametest.c (Chris Reuter)
-0afe34d Merge branch 'master' of https://bitbucket.org/libgd/gd-libgd (Chris Reuter)
-275ac17 Started importing the old manual into Naturaldocs comments. (Chris Reuter)
-3b2caf6 Added function 'gdImageGetInterpolationMethod()'. (Chris Reuter)
-592e232 Merge branch 'master' of https://bitbucket.org/libgd/gd-libgd (Chris Reuter)
-00cd958 Added gdnametest and gdCopyBlurred to .gitignore. (Chris Reuter)
-4761a7e Added gdnametest and gdCopyBlurred to .gitignore. (Chris Reuter)
-c9d2f89 Added gdImageFile(),  gdImageCreateFromFile() and gdSupportsFileType(). (Chris Reuter)
-9eb3951 Added gdImageFile(),  gdImageCreateFromFile() and gdSupportsFileType(). (Chris Reuter)
-e054be7 Small code cleanup. (Chris Reuter)
-3cb508f Small code cleanup. (Chris Reuter)
-9933000 Merge branch 'master' of https://bitbucket.org/libgd/gd-libgd (Chris Reuter)
-b20cdef Added a test case for gdImageCopyGaussianBlurred(). (Chris Reuter)
-6febd90 Added a new Gaussian blur function. (Chris Reuter)
-3c43f07 Merge branch 'master' of https://bitbucket.org/libgd/gd-libgd (Chris Reuter)
-d525680 Bug fix: gdImageScale() was sometimes messing up transparency. (Chris Reuter)
-b505465 Merge remote-tracking branch 'upstream/master' (Chris Reuter)
-549addc Added .gitignore lines to exclude naturaldocs by-products. (Chris Reuter)
-bb1d4a0 Added documention for gdImageCreate() and type gdImage. (Chris Reuter)
-3c1202e Added beginnings of an updated manual (Chris Reuter)
-7060f5e Added another Makefile. (Chris Reuter)
-769fb15 Added another Makefile. (Chris Reuter)
-3f8931d Bug fix: tests didn't (always) return a valid status. (Chris Reuter)
-0dfd45c Bug fix: tests didn't (always) return a valid status. (Chris Reuter)
-f316c8a Removed bash-ism from bootstrap.sh.  (Not /bin/sh are bash, even these days.) (Chris Reuter)
-6cb7f9f Merge branch 'master' of github.com:imazen-discovery/gd-libgd (Chris Reuter)
-0adaf8a Merge branch 'master' of https://bitbucket.org/libgd/gd-libgd (Chris Reuter)
-d21db28 Merge remote-tracking branch 'refs/remotes/origin/master' (Nathanael Jones)
-68d38a8 bootstrap.sh now offers build tips on OS X and defaults to glibtoolize (Nathanael Jones)
-9812cc4 Merge branch 'master' of https://bitbucket.org/suetanvil/gd-libgd. (Chris Reuter)
-506e57a Merged libgd/gd-libgd into master (Chris Reuter)
-16ccce6 Fixed a comment. (Chris Reuter)
-e82b084 Added new files to CMakeLists.txt. (Chris Reuter)
-8cdb109 Updated Netware makefile (Chris Reuter)
-784ffdd Test case for new version code. (Chris Reuter)
-4378b8d gd.h now holds the canonical version number. (Chris Reuter)
-3c96ad1 Keep automake from complaining "automake: but option 'subdir-objects' is disabled" (Nathanael Jones)
-5b7f746 Merged libgd/gd-libgd into master (Chris Reuter)
-3766620 Merge branch 'master' of https://bitbucket.org/libgd/gd-libgd (Chris Reuter)
-3884557 Merged in suetanvil/gd-libgd/scale-palette-image-bug (pull request #16) (Chris Reuter)
-1a92b2e Merged in suetanvil/gd-libgd/interp-precision (pull request #15) (Chris Reuter)
-723ea52 Fix for Issue #97: segfaults when scaling a non-truecolor image (Chris Reuter)
-f321961 Added test case to exercise all of the gdImageScale() modes. (Chris Reuter)
-5586a1e Merged libgd/gd-libgd into master (Chris Reuter)
-948bb0a Higher precision in scaling. (Chris Reuter)
-3f713da Higher precision in scaling. (Chris Reuter)
-1c6ee56 More dead code removal. (Chris Reuter)
-241ada6 Removed some dead code. (Chris Reuter)
-916d00c Merged in suetanvil/gd-libgd/suetanvil-scale-code-cleanup (pull request #14) (Pierre Joye)
-0510b4f Merged in suetanvil/gd-libgd/suetanvil-dead-code-removal (pull request #13) (Pierre Joye)
-2ade818 Merge branch 'private-scale-axis-merge-rebased' (Chris Reuter)
-546b274 Bug fix: #92: Bicubic scaling leaves the rightmost and bottom rows black (Chris Reuter)
-16ed1a9 Added a test case for gdImageScaleTwoPass(). (Chris Reuter)
-65fce84 Improved testing code (Chris Reuter)
-be3c8cb Cleaned up floating-point rescaling code. (Chris Reuter)
-0d13658 More dead code removal. (Chris Reuter)
-5ce14ef Removed some dead code. (Chris Reuter)
-70a4070 Merge branch 'master' of https://bitbucket.org/suetanvil/gd-libgd (Chris Reuter)
-08fdff6 Merged libgd/gd-libgd into master (Chris Reuter)
-6db2828 Merge remote-tracking branch 'remotes/bitbucket-repo/suetanvil' (Chris Reuter)
-3c5c639 Merged in suetanvil/gd-libgd/suetanvil (pull request #12) (Pierre Joye)
-4f65a3e Fixed memory overrun bug in gdImageScaleTwoPass (Chris Reuter)
-3e76d30 Merged libgd/gd-libgd into master (Chris Reuter)
-de7acbf Merged in suetanvil/gd-libgd (pull request #11) (Pierre Joye)
-4c70f57 Fix #86: gdImageScale segfaults with most interpolation types (Chris Reuter)
-6d1275d Fix bug #86 (segfaults on gdImageScale with most interpolation modes). (Chris Reuter)
-2a862b2 Undo previous change to make a cleaner changeset. (Chris Reuter)
-4a90e3f Fixed bug #86. https://bitbucket.org/libgd/gd-libgd/issue/86/gdimagescale-segfaults-with-most (Chris Reuter)
-d47c718 Merge branch '2.1.0-stable' into bicubic-fixed-perf (Chris Reuter)
-fda0b29 Added a function to retrieve the interpolation mode ID. (Chris Reuter)
-fb93646 Added the latest manual I could find. (Chris Reuter)
-a0be11f Added new README.md prior to importing into GitHub. (Chris Reuter)
-a0f58c6 fix #81, cmake_minimum_required must be the 1st line in 2.8+ (Pierre Joye)
-54f8019 GD_EXTRA_VERSION and GD_VERSION_STRING needs quotes (Courtesy of Marc Deslauriers) (Ondřej Surý)
-dfea094 Add INSTALL notes for Solaris conflicting iconv.h headers (fixes #76) (Ondřej Surý)
-37689ef ignore generated gd.h header (Ondřej Surý)
-5b917b4 Merged in fix-version-in-gd.h (pull request #9) (Ondřej Surý)
-f597bd4 Don't append dash when GDLIB_EXTRA is empty (Ondřej Surý)
-f47a1df Create gd.h from gd.h.in to properly include current library version (Ondřej Surý)
+c6c52b3 dist: drop bzip2 tarball
+7932944 libtool: set revision based on package version
+119b38e travis: switch to the local bootstrap script
+f79d0a8 m4: use an older openmp macro
+e6bf771 docs: clean up a bit and support `NaturalDocs`
+c9a4a85 libimagequant: fix integration
+6e054c4 gdlib-config: mark it as deprecated #140
+b64c996 build: fix GDLIB_REVISION collision
+10a4915 tests: rework handling of temp output files
+1239832 configure/cmake: unify header checks and config.h generation
+32c5072 bootstrap: switch to autoreconf
+f7471f2 tests: add missing gdimagesetpixel tests
+e59a0e8 tests: add missing test files to dist
+2733b62 tga: cleanup/simplify a bit
+96d5687 tga: fix two memory corruption bugs #159
+8f50777 tests: get working under lsan (leak sanitizer)
+e530663 png: fix some memory leaks w/invalid images
+82b80dc gif: avoid out-of-bound reads of masks array #209
+4dc1a2d xbm: avoid stack overflow (read) with large names #211
+b083ec1 cmake: update build files to match autotools more
+2db153a webpng: rewrite & cleanup to use getopt
+b12f217 configure: enable -Werror by default when available
+75c38f6 fix various gcc/clang warnings found with -Wall
+8bdfede cmake: document the common build/install steps #179
+6f3552d travis: drop multiarch settings
+d549193 travis: drop nasm apt install
+cd15d9b drop unused make_drone.io
+b32324d travis: enable the clang compiler
+05d70f6 tests: fix leaks in test code
+4e61c9b tiff: fix leak in gdImageCreateFromTiffCtx()
+658f168 gd2: fix double free when processing invalid headers
+0315e44 tests: gd2: add general read test helpers #208
+3c47bb4 tests: do not build libgdtest.a all the time
+09d2d01 webp: fix double free
+cd1d964 libgd: update & sort cmake installed headers #164
+161ac24 travis: rework & improve main script logic
+613e8c9 tests: split up makefile entries
+92c3209 tests: fix distclean errors
+3768c9e travis: switch to non-sudo mode
+adc8598 tests: unify cmake test code into a single macro
+ef9b000 build: handle renamed README file
+e16310b libgd: update & sort source lists
+a44e1ba tests: gdimageline: add missing -lm linkage
+3b0eabf tests: add missing cmake files gdimagefile/gdimagefilter
+4c6a07b gitignore: split up test entries
+6455304 tests: drop EXTRA_PROGRAMS
+982d488 revert... unneeded
+a5b5c27 Fix memory leak
+2bb97f4 gd2: handle corrupt images better (CVE-2016-3074)
+fc14a8c README: document supported image formats
+5277b6f Merge pull request #199 from mattbo/tiff_dpi_support
+4e53ed7 Added support for reading and writing TIFFTAG_XRESOLUTION and TIFFTAG_YRESOLUTION.  Includes a unit test.
+6913dd3 bmp: use double variant of ceil func
+f29f7db Merge pull request #198 from sherif-elmetainy/master
+e87ec88 :fix and unit test for crash issue in gdImageFillTiled
+258dbf2 README: link to the CONTRIBUTORS file
+6895576 README: reformat in markdown for better github display
+73ab7c7 Merge pull request #182 from leoyanggit/fix_build_static
+e08acb0 Merge pull request #153 from davidchappelle/master
+78dad44 circletexttest: check image creation return value
+a9346dd travis: build/check in parallel
+e5d1e9d Fail Travis builds if make check fails
+b6211d9 tests: fix build failures when jpeg/freetype are disabled
+3667974 Merge pull request #193 from vapier/master
+f732d74 Merge pull request #194 from jasonwilliams200OK/master
+859bcf7 git,repo: Ignore build spew.
+10a8761 Merge pull request #192 from jasonwilliams200OK/master
+8f69034 code: Adds missing methods for absent libz case.
+a4f5d5d configure: unify library tests
+a9205e5 configure: require autoconf-2.64/automake-1.11
+2e04a67 win: Use an external snprintf hook.
+9104bba configure: use AS_HELP_STRING everywhere
+1dc5280 Merge pull request #191 from jitendarKumar/patch-8
+dd48286 Logical Operation && has no Impact on expression result .
+52dad8b Update git ignore file to exclude cmake build directory
+9ea3097 Prevent duplicate macro definition errors/warnings
+40f42c0 Fix compiler warnings when checking interpolation_id
+7147b64 Make BUILD_SHARED_LIBS configurable
+4751b60 gdImageScaleTwoPass memory leak fix
+4e1ce66 Merge pull request #166 from jitendarKumar/patch-5
+1219113 Merge pull request #155 from jitendarKumar/patch-2
+38e016f Merge pull request #156 from jitendarKumar/patch-3
+4e70131 Merge pull request #157 from jitendarKumar/patch-4
+895be03 Indentation corrected.
+7b6261c Dereference null return value in gdtest.c
+7297c94 Merge pull request #163 from wangkun611/webp_cmake
+917fa11 fix CMake error when ENABLE_WEBP
+7ec030c add gdImageCreateFromWebpPtr impl
+eaca20f Remove Deadcode in gd.c
+312b020 Update gd_topal.c
+18bbbfa Merge pull request #148 from smcdow/master
+f2712a6 Remove Deadcode in gd_nnquant.c
+4f99667 Merge pull request #154 from jitendarKumar/patch-1
+4cf5307 Missing nullcheck in gd_topal.c
+d403501 Dereference null return value in gdfx.c
+ac527e6 delete webpimg.c references
+c9dac2d Fix segfault in gdImageFlipVertical() for non-TrueColor images.
+a9f3a83 Merge pull request #146 from dmelani/rotation_fix
+4e833d3 Added missing zero.
+b12712e Merge pull request #143 from vapier/master
+2618996 missing file in archive, need for autoreconf
+6bdfa68 ignore new tests
+1c33d94 tests: fix header inclusion
+e0aafd0 Add Debian/Ubuntu M-A specific configure options
+3a72f64 lint.travis-ci.org doesn't know version and description in Coverity addon
+87804f6 Comment-out Coverity encrypted token
+2b8bfd4 Don't fail when make check fails; Add coverity configuration for coverity_scan branch
+10a92e7 Even more missing semicolons
+09783e4 Add missing semicolons to .travis.yml
+25cfac5 Replace <TAB> with 8*<SPACE>
+2be44f0 Don't upgrade build environment now
+5edbc3f Use autotools on linux to build libgd
+9201900 Change issue tracker URL to github
+ba081d9 Merge branch 'GD-2.1'
+1481c41 fix #140, versions placeholder not replaced in gdlib-config
+88fb8fc typo
+4ef5903 fix some leaks on error
+824a3aa remove remaining libvpx related code
+a79232c fix #129, drop VPX usage in favor of libwebp
+9a205a1 Merge branch 'GD-2.1'
+511160e fix #82, fix 1 bit tiff support
+7a567db Merge branch 'GD-2.1'
+aa1d71c fix #135, fix logic in gdkanji
+58990de Merge branch 'master' of https://bitbucket.org/libgd/gd-libgd
+2f85291 fix #139, patch by Peter Breitenlohner
+255a9e4 fix visibility test
+358950c remove this test, too big
+5c48b49 fix #91, actually add tests, bug already fixed
+f680978 fix #94, HAVE_VISIBILITY may be defined but set to 0
+b126726 fix #89, fix leaks on tiff read
+acdebc8 fix #84, double free and overrun due to wrong alloc type, uint8_t instead of int
+490bc3e free palette on error
+289c829 port fix for saner boolean usage from https://reviews.facebook.net/D31695
+2b3130e fix #90, actually copy src to dst
+b1f4313 add tests for #111
+3d7c3f5 fix #111, invalid quantization
+ac1ff44 update results to match modern freetype builds
+c7e5dc6  fix #111, invalid default quantization
+81d341c fix #113, NULL deref in gdfx
+2f40d52 Fix #138, VS 2010 build error due to double semi column
+0e9c4e0 master is now 2.2.0-dev
+06b2e4f back to dev
