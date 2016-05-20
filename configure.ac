@@ -38,7 +38,10 @@ AC_SUBST(GDLIB_VERSION)
 # See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
 
 GDLIB_LT_CURRENT=3
-GDLIB_LT_REVISION=0
+dnl This isn't 100% correct, but it tends to be a close enough approximation
+dnl for how we manage the codebase.  It's rare to do a release that doesn't
+dnl modify the library since this project is centered around the library.
+GDLIB_LT_REVISION=$(printf '%i%02i%02i' $GDLIB_MAJOR $GDLIB_MINOR $GDLIB_REVISION)
 GDLIB_LT_AGE=0
 AC_SUBST(GDLIB_LT_CURRENT)
 AC_SUBST(GDLIB_LT_REVISION)
