@@ -12,7 +12,7 @@ extern "C" {
  * whitespace, take the form GD_*_VERSION and contain the magical
  * trailing comment. */
 #define GD_MAJOR_VERSION    2           /*version605b5d1778*/
-#define GD_MINOR_VERSION    2           /*version605b5d1778*/
+#define GD_MINOR_VERSION    3           /*version605b5d1778*/
 #define GD_RELEASE_VERSION  0           /*version605b5d1778*/
 #define GD_EXTRA_VERSION    "-dev"      /*version605b5d1778*/
 /* End parsable section. */
