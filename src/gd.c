@@ -1938,6 +1938,17 @@ BGD_DECLARE(void) gdImageFillToBorder (gdImagePtr im, int x, int y, int border, 
 	restoreAlphaBleding = im->alphaBlendingFlag;
 	im->alphaBlendingFlag = 0;
 
+	if (x >= im->sx) {
+		x = im->sx - 1;
+	} else if (x < 0) {
+		x = 0;
+	}
+	if (y >= im->sy) {
+		y = im->sy - 1;
+	} else if (y < 0) {
+		y = 0;
+	}
+	
 	for (i = x; (i >= 0); i--) {
 		if (gdImageGetPixel (im, i, y) == border) {
 			break;
