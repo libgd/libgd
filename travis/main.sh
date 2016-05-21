@@ -6,6 +6,19 @@
 
 . "${0%/*}"/lib.sh
 
+update_os() {
+	# Note: Linux deps are maintained in .travis.yml.
+	case ${TRAVIS_OS_NAME} in
+	osx)
+		v --fold="brew_update" brew update
+		# These packages are already installed in Travis, so omit them or brew fails.
+		# autoconf automake libtool pkg-config cmake libpng jpeg libtiff
+		v --fold="brew_install" brew install \
+			gettext freetype fontconfig webp xz
+		;;
+	esac
+}
+
 build_autotools() {
 	v --fold="bootstrap" ./bootstrap.sh
 
@@ -71,18 +84,8 @@ compare_builds() {
 	diff -ur install-autotools install-cmake || true
 }
 
-build_osx() {
-	v ./thumbs.sh make
-	v ./thumbs.sh check
-}
-
 main() {
-	if [[ ${TRAVIS_OS_NAME} == "osx" ]] ; then
-		# TODO: Should convert this to autotools/cmake.
-		build_osx
-		return
-	fi
-
+	update_os
 	build_autotools
 	build_cmake
 	compare_builds
