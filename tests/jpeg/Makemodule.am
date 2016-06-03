@@ -1,9 +1,9 @@
 if HAVE_LIBJPEG
 libgd_test_programs += \
+	jpeg/bug_github_18 \
 	jpeg/jpeg_empty_file \
 	jpeg/jpeg_im2im \
-	jpeg/jpeg_null \
-	big_github_18
+	jpeg/jpeg_null
 
 if HAVE_LIBPNG
 libgd_test_programs += \
