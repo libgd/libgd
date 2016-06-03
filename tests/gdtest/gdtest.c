@@ -198,6 +198,7 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 				if (diff_r > 255) {
 					diff_r = 255;
 				}
+				UP_DIFF(diff_r);
 
 				g1 = gdTrueColorGetGreen(c1);
 				g2 = gdTrueColorGetGreen(c2);
@@ -210,6 +211,7 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 				if (diff_g > 255) {
 					diff_g = 255;
 				}
+				UP_DIFF(diff_g);
 
 				b1 = gdTrueColorGetBlue(c1);
 				b2 = gdTrueColorGetBlue(c2);
@@ -221,6 +223,7 @@ void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
 				if (diff_b > 255) {
 					diff_b = 255;
 				}
+				UP_DIFF(diff_b);
 
 				result_ret->pixels_changed++;
 				if (buf_diff) gdImageSetPixel(buf_diff, x,y, gdTrueColorAlpha(diff_r, diff_g, diff_b, diff_a));
@@ -326,6 +329,7 @@ int gdTestImageCompareToImage(const char* file, unsigned int line, const char* m
 		if (!fp) goto fail;
 		gdImagePng(actual, fp);
 		fclose(fp);
+		return 0;
 	} else {
 		if (surface_diff) {
 			gdImageDestroy(surface_diff);
