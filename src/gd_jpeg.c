@@ -307,6 +307,10 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
 	if(quality >= 0) {
 		jpeg_set_quality(&cinfo, quality, TRUE);
+		if (quality >= 90) {
+			cinfo.comp_info[0].h_samp_factor = 1;
+			cinfo.comp_info[0].v_samp_factor = 1;
+		}
 	}
 
 	/* If user requests interlace, translate that to progressive JPEG */

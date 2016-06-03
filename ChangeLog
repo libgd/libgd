@@ -1,3 +1,6 @@
+4d29684 CVE-2015-8874
+fe199ed release gd-2.2.0
+6556574 ChangeLog: update for gd-2.2 branching
 c6c52b3 dist: drop bzip2 tarball
 7932944 libtool: set revision based on package version
 119b38e travis: switch to the local bootstrap script
