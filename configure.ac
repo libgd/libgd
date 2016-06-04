@@ -295,6 +295,9 @@ if test "$mingw_cv_win32_host" = yes; then
 AC_DEFINE([BGDWIN32], [], [Define is you are building for Win32 API])
 fi
 
+dnl Enable -Wall if possible.  Do it after all other tests.
+AX_CFLAGS_WARN_ALL
+
 dnl Enable -Werror if possible.  Do it after all other tests.
 AC_ARG_ENABLE([werror], [AS_HELP_STRING([--enable-werror], [treat compile warnings as errors])])
 if test "$enable_werror" = "yes" || test "$GCC" = "yes" -a "$enable_werror" != "no"; then
