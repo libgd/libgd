@@ -4,7 +4,6 @@
 
 int main() {
 	gdImagePtr im;
-	int  white, red;
 
 	im = gdImageCreate(50, 50);
 	white = gdImageColorAllocate(im, 255, 255, 255);
