@@ -9,7 +9,7 @@ int main()
 	int error;
 	gdImagePtr im;
 	FILE *fp;
-	char path[1024];
+	char *path;
 	const char * files[2] = {"bug00088_1.png", "bug00088_2.png"};
 	const char * files_exp[2] = {"bug00088_1_exp.png", "bug00088_2_exp.png"};
 
@@ -18,13 +18,7 @@ int main()
 
 	for (i = 0; i < cnt; i++) {
 
-		sprintf(path, "%s/png/%s", GDTEST_TOP_DIR, files[i]);
-		fp = fopen(path, "rb");
-		if (!fp) {
-			printf("failed, cannot open file <%s>\n", path);
-			return 1;
-		}
-
+		fp = gdTestFileOpen2("png", files[i]);
 		im = gdImageCreateFromPng(fp);
 		fclose(fp);
 
@@ -33,10 +27,11 @@ int main()
 			continue;
 		}
 
-		sprintf(path, "%s/png/%s", GDTEST_TOP_DIR, files_exp[i]);
+		path = gdTestFilePath2("png", files_exp[i]);
 		if (!gdAssertImageEqualsToFile(path, im)) {
 			error |= 1;
 		}
+		free(path);
 		gdImageDestroy(im);
 	}
 

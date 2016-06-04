@@ -6,17 +6,7 @@
 int main()
 {
 	gdImagePtr im;
-	FILE *fp;
-	char path[1024];
-
-	sprintf(path, "%s/gif/bug00060.gif", GDTEST_TOP_DIR);
-	fp = fopen(path, "rb");
-
-	if (!fp) {
-		printf("cannot open <%s>\n", path);
-		return -1;
-	}
-
+	FILE *fp = gdTestFileOpen("gif/bug00060.gif");
 	im = gdImageCreateFromGif(fp);
 	fclose(fp);
 	gdImageDestroy(im);

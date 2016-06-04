@@ -26,8 +26,23 @@ const char *gdTestTempDir(void);
  */
 char *gdTestTempFile(const char *template);
 
-/* Return an open file handle to a temp file. */
+/* Return an open (writable) file handle to a temp file. */
 FILE *gdTestTempFp(void);
+
+/* Return the full path to a test file.  The path should be relative
+ * to the tests/ dir.  The caller should free the pointer when finished.
+ */
+char *gdTestFilePathV(const char *path, va_list args);
+char *gdTestFilePathX(const char *path, ...);
+#define gdTestFilePath(p)       gdTestFilePathX(p, NULL)
+#define gdTestFilePath2(p1, p2) gdTestFilePathX(p1, p2, NULL)
+
+/* Return an open (read-only) file handle to a test file.
+ * The path should be relative to the tests/ dir.
+ */
+FILE *gdTestFileOpenX(const char *path, ...);
+#define gdTestFileOpen(p)       gdTestFileOpenX(p, NULL)
+#define gdTestFileOpen2(p1, p2) gdTestFileOpenX(p1, p2, NULL)
 
 void gdTestImageDiff(gdImagePtr buf_a, gdImagePtr buf_b,
                      gdImagePtr buf_diff, CuTestImageResult *result_ret);

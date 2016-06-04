@@ -23,7 +23,7 @@ main(void)
 	points[0].x = 10;
 	points[0].y = 10;
 	gdImageFilledPolygon(im, points, 1, black);
-	r = gdAssertImageEqualsToFile(GDTEST_TOP_DIR "/gdimagefilledpolygon/gdimagefilledpolygon1.png", im);
+	r = gdAssertImageEqualsToFile("gdimagefilledpolygon/gdimagefilledpolygon1.png", im);
 	free(points);
 	gdImageDestroy(im);
 	if (!r) exit(EXIT_FAILURE);

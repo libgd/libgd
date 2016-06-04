@@ -4,11 +4,7 @@
 int main()
 {
 	gdImagePtr im;
-	const char *exp = "bug00072_exp.png";
 	int error = 0;
-
-	char path[1024];
-
 
 	im = gdImageCreateTrueColor(11, 11);
 	gdImageFilledRectangle(im, 0, 0, 10, 10, 0xFFFFFF);
@@ -24,8 +20,7 @@ int main()
 	gdImageLine(im, 0, 5, 11, 5, 0xFF0000);
 	gdImageLine(im, 0, 0, 11, 11, 0xFF0000);
 
-	sprintf(path, "%s/gdimageline/%s", GDTEST_TOP_DIR, exp);
-	if (!gdAssertImageEqualsToFile(path, im)) {
+	if (!gdAssertImageEqualsToFile("gdimageline/bug00072_exp.png", im)) {
 		error = 1;
 	}
 

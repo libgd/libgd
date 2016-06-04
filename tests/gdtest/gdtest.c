@@ -40,14 +40,16 @@ void gdSilence(int priority, const char *format, va_list args)
 gdImagePtr gdTestImageFromPng(const char *filename)
 {
 	gdImagePtr image;
-
 	FILE *fp;
 
-	fp = fopen(filename, "rb");
+	/* If the path is relative, then assume it's in the tests/ dir. */
+	if (filename[0] == '/') {
+		fp = fopen(filename, "rb");
+		if (!fp)
+			return NULL;
+	} else
+		fp = gdTestFileOpen(filename);
 
-	if (!fp) {
-		return NULL;
-	}
 	image = gdImageCreateFromPng(fp);
 	fclose(fp);
 	return image;
@@ -147,6 +149,57 @@ FILE *gdTestTempFp(void)
 {
 	char *file = gdTestTempFile(NULL);
 	FILE *fp = fopen(file, "wb");
+	gdTestAssert(fp != NULL);
+	free(file);
+	return fp;
+}
+
+char *gdTestFilePathV(const char *path, va_list args)
+{
+	size_t len;
+	const char *p;
+	char *file;
+	va_list args_len;
+
+	/* Figure out how much space we need. */
+	va_copy(args_len, args);
+	len = strlen(GDTEST_TOP_DIR) + 1;
+	p = path;
+	do {
+		len += strlen(p) + 1;
+	} while ((p = va_arg(args_len, const char *)) != NULL);
+	va_end(args_len);
+
+	/* Now build the path. */
+	file = malloc(len);
+	gdTestAssert(file != NULL);
+	strcpy(file, GDTEST_TOP_DIR);
+	p = path;
+	do {
+		strcat(file, "/");
+		strcat(file, p);
+	} while ((p = va_arg(args, const char *)) != NULL);
+	va_end(args);
+
+	return file;
+}
+
+char *gdTestFilePathX(const char *path, ...)
+{
+	va_list args;
+	va_start(args, path);
+	return gdTestFilePathV(path, args);
+}
+
+FILE *gdTestFileOpenX(const char *path, ...)
+{
+	va_list args;
+	FILE *fp;
+	char *file;
+
+	va_start(args, path);
+	file = gdTestFilePathV(path, args);
+	fp = fopen(file, "rb");
 	gdTestAssert(fp != NULL);
 	free(file);
 	return fp;

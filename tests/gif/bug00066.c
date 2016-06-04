@@ -6,22 +6,13 @@ int main()
 {
 	gdImagePtr im;
 	FILE *fp;
-	char path[1024];
 	int error = 0;
 
-	sprintf(path, "%s/gif/bug00066.gif", GDTEST_TOP_DIR);
-	fp = fopen(path, "rb");
-
-	if (!fp) {
-		printf("cannot open <%s>\n", path);
-		return -1;
-	}
-
+	fp = gdTestFileOpen("gif/bug00066.gif");
 	im = gdImageCreateFromGif(fp);
 	fclose(fp);
 
-	sprintf(path, "%s/gif/bug00066_exp.png", GDTEST_TOP_DIR);
-	if (!gdAssertImageEqualsToFile(path, im)) {
+	if (!gdAssertImageEqualsToFile("gif/bug00066_exp.png", im)) {
 		error = 1;
 	}
 	gdImageDestroy(im);

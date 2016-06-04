@@ -9,15 +9,17 @@ int
 main()
 {
 	gdImagePtr im;
-	char path[1024];
+	char *path;
 
-	sprintf(path, "%s/xpm/bug00185.xpm", GDTEST_TOP_DIR);
+	path = gdTestFilePath("xpm/bug00185.xpm");
 	im = gdImageCreateFromXpm(path);
+	free(path);
 	if (!im) return 1;
 	gdImageDestroy(im);
 
-	sprintf(path, "%s/xpm/bug00185_damaged.xpm", GDTEST_TOP_DIR);
+	path = gdTestFilePath("xpm/bug00185_damaged.xpm");
 	im = gdImageCreateFromXpm(path);
+	free(path);
 	if (!im) return 0;
 	gdImageDestroy(im);
 

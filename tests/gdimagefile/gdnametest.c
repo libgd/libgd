@@ -114,9 +114,7 @@ do_test() {
         } else {
             /* Prepend the test directory; this is expected to be run in
              * the parent dir. */
-            full_filename = malloc(strlen(GDTEST_TOP_DIR) + strlen("/gdimagefile/") + strlen(names[n].nm) + 1);
-            gdTestAssert(full_filename != NULL);
-            sprintf(full_filename, GDTEST_TOP_DIR"/gdimagefile/%s", names[n].nm);
+            full_filename = gdTestFilePath2("gdimagefile", names[n].nm);
         }/* if */
 
         copy = gdImageCreateFromFile(full_filename);
