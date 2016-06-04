@@ -646,6 +646,7 @@ static inline int _color_blend (const int dst, const int src)
 	}
 }
 
+#if 0
 static inline int _setEdgePixel(const gdImagePtr src, unsigned int x, unsigned int y, gdFixed coverage, const int bgColor) 
 {
 	const gdFixed f_127 = gd_itofx(127);
@@ -653,6 +654,7 @@ static inline int _setEdgePixel(const gdImagePtr src, unsigned int x, unsigned i
 	c = c | (( (int) (gd_fxtof(gd_mulfx(coverage, f_127)) + 50.5f)) << 24);
 	return _color_blend(bgColor, c);
 }
+#endif
 
 static inline int getPixelOverflowTC(gdImagePtr im, const int x, const int y, const int bgColor)
 {
@@ -1159,6 +1161,7 @@ gdImageScaleNearestNeighbour(gdImagePtr im, const unsigned int width, const unsi
 	return dst_img;
 }
 
+#if 0
 static inline int getPixelOverflowColorTC(gdImagePtr im, const int x, const int y, const int color)
 {
 	if (gdImageBoundsSafe(im, x, y)) {
@@ -1206,6 +1209,7 @@ processborder:
 		}
 	}
 }
+#endif
 
 static gdImagePtr gdImageScaleBilinearPalette(gdImagePtr im, const unsigned int new_width, const unsigned int new_height)
 {
