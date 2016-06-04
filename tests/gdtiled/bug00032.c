@@ -11,11 +11,11 @@
 int main()
 {
 	gdImagePtr im, tile;
-	char path[GDTEST_STRING_MAX];
+	char path[1024];
 
 	gdSetErrorMethod(gdSilence);
 
-	snprintf(path, GDTEST_STRING_MAX - 1, "%s/gdtiled/%s", GDTEST_TOP_DIR, exp_img);
+	sprintf(path, "%s/gdtiled/%s", GDTEST_TOP_DIR, exp_img);
 
 	tile = gdImageCreateTrueColor(10, 10);
 	gdImageFill(tile, 0, 0, 0xFFFFFF);
