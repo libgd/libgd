@@ -8,11 +8,12 @@ int
 main(void)
 {
 	gdImagePtr im;
-	char path[1024];
+	char *path;
 	int c, result;
 
-	sprintf(path, "%s/xpm/bug00166.xpm", GDTEST_TOP_DIR);
+	path = gdTestFilePath("xpm/bug00166.xpm");
 	im = gdImageCreateFromXpm(path);
+	free(path);
 	if (!im) {
 		return 2;
 	}

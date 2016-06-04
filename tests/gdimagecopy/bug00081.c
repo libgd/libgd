@@ -9,8 +9,6 @@ int main()
 {
 	gdImagePtr im, im2;
 	int error = 0;
-	char path[2048];
-	const char *file_exp = "bug00081_exp.png";
 
 	im = gdImageCreateTrueColor(5, 5);
 	if (!im) {
@@ -31,8 +29,7 @@ int main()
 
 	gdImageCopy(im2, im, 2, 2 , 0, 0, gdImageSX(im), gdImageSY(im));
 
-	sprintf(path, "%s/gdimagecopy/%s", GDTEST_TOP_DIR, file_exp);
-	if (!gdAssertImageEqualsToFile(path, im2)) {
+	if (!gdAssertImageEqualsToFile("gdimagecopy/bug00081_exp.png", im2)) {
 		error = 1;
 		printf("Reference image and destination differ\n");
 	}

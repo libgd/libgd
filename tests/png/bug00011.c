@@ -8,14 +8,8 @@ int main()
 {
 	gdImagePtr im;
 	FILE *fp;
-	char path[2048];
 
-	sprintf(path, "%s/png/emptyfile", GDTEST_TOP_DIR);
-	fp = fopen(path, "rb");
-	if (!fp) {
-		fprintf(stderr, "failed, cannot open file: %s\n", path);
-		return 1;
-	}
+	fp = gdTestFileOpen("png/emptyfile");
 	im = gdImageCreateFromPng(fp);
 	fclose(fp);
 

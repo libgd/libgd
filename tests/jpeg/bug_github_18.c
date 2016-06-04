@@ -6,17 +6,10 @@ int main() {
 	gdImagePtr im, imres, imexp;
 	FILE *fp;
 	void *pjpeg;
-	char path[1024];
 	unsigned int status = 0;
 	int size = 0;
 
-	snprintf(path, sizeof(path)-1, "%s/jpeg/github_bug_18.png", GDTEST_TOP_DIR);
-	fp = fopen(path, "rb");
-	if (!fp) {
-		gdTestErrorMsg("failed, cannot open file: %s\n", path);
-		return 1;
-	}
-
+	fp = gdTestFileOpen("jpeg/github_bug_18.png");
 	im = gdImageCreateFromPng(fp);
 	fclose(fp);
 
@@ -44,14 +37,7 @@ int main() {
 		goto door2;
 	}
 
-	snprintf(path, sizeof(path)-1, "%s/jpeg/github_bug_18_exp.jpeg", GDTEST_TOP_DIR);
-	fp = fopen(path, "rb");
-	if (!fp) {
-		gdTestErrorMsg("failed, cannot open file: %s\n", path);
-		status = 1;
-		goto door2;
-	}
-
+	fp = gdTestFileOpen("jpeg/github_bug_18_exp.jpeg");
 	imexp = gdImageCreateFromJpeg(fp);
 	if (imexp == NULL) {
 		fclose(fp);
@@ -59,8 +45,7 @@ int main() {
 		goto door1;
 	}
 
-	snprintf(path, sizeof(path), "%s/jpeg/github_bug_18.png", GDTEST_TOP_DIR);
-	if (gdTestImageCompareToImage(path, __LINE__, __FILE__, imexp, imres) != 1) {
+	if (gdTestImageCompareToImage("jpeg/github_bug_18.png", __LINE__, __FILE__, imexp, imres) != 1) {
 		status = 1;
 	}
 	gdImageDestroy(imexp);

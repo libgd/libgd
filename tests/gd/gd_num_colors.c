@@ -5,15 +5,7 @@
 int main()
 {
 	gdImagePtr im;
-	char path[1024];
-	FILE* fp;
-
-	sprintf(path, "%s/gd/crafted_num_colors.gd", GDTEST_TOP_DIR);
-
-	fp = fopen(path, "rb");
-	if (!fp) {
-		return 1;
-	}
+	FILE *fp = gdTestFileOpen("gd/crafted_num_colors.gd");
 	im = gdImageCreateFromGd(fp);
 	fclose(fp);
 	if (im) {

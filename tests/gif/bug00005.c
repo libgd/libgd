@@ -11,17 +11,10 @@ int main()
 	FILE *fp;
 	int i = 0;
 	int error = 0;
-	char path[1024];
+	char *path;
 
 	for (i=0; i < files_cnt; i++) {
-		sprintf(path, "%s/gif/%s", GDTEST_TOP_DIR, giffiles[i]);
-
-		fp = fopen(path, "rb");
-		if (!fp) {
-			gdTestErrorMsg("<%s> Input file does not exist!\n", path);
-			return 1;
-		}
-
+		fp = gdTestFileOpen2("gif", giffiles[i]);
 		im = gdImageCreateFromGif(fp);
 		fclose(fp);
 
@@ -29,10 +22,11 @@ int main()
 			if (!im) {
 				error = 1;
 			} else {
-				sprintf(path, "%s/gif/%s", GDTEST_TOP_DIR, exp[i]);
+				path = gdTestFilePath2("gif", exp[i]);
 				if (!gdAssertImageEqualsToFile(path, im)) {
 					error = 1;
 				}
+				free(path);
 				gdImageDestroy(im);
 			}
 		} else {

@@ -8,11 +8,7 @@ int main()
 	gdScatter s;
 	CuTestImageResult r;
 
-	fp = fopen(GDTEST_TOP_DIR "/gdimagescatterex/bug00208.png", "rb");
-	if (!fp) {
-		fprintf(stderr, "could not open file\n");
-		return 1;
-	}
+	fp = gdTestFileOpen("gdimagescatterex/bug00208.png");
 	im = gdImageCreateFromPng(fp);
 	fclose(fp);
 	if (!im) {
@@ -30,12 +26,7 @@ int main()
 		return 1;
 	}
 
-	fp = fopen(GDTEST_TOP_DIR "/gdimagescatterex/bug00208_1.png", "rb");
-	if (!fp) {
-		fprintf(stderr, "could not open file\n");
-		gdImageDestroy(im);
-		return 1;
-	}
+	fp = gdTestFileOpen("gdimagescatterex/bug00208_1.png");
 	ex = gdImageCreateFromPng(fp);
 	fclose(fp);
 	if (!ex) {

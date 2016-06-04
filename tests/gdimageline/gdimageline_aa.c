@@ -3,10 +3,6 @@
 #include "gd.h"
 #include "gdtest.h"
 
-#ifdef _MSC_VER
-# define snprintf _snprintf
-#endif
-
 int gen_image(const char* filename, int idx, int reverse_x, int width, int height, int bgd)
 {
 	double gradient = height / (width*2.0);
@@ -49,28 +45,19 @@ int gen_image(const char* filename, int idx, int reverse_x, int width, int heigh
 int main()
 {
 	int error = 0;
-	char path[1024];
 
-	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_a_0_exp.png", GDTEST_TOP_DIR);
-	error |= gen_image(path,0,1,10,100, 1);
+	error |= gen_image("gdimageline/gdimageline_aa_a_0_exp.png", 0, 1, 10, 100, 1);
 
-	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_a_1_exp.png", GDTEST_TOP_DIR);
-	error |= gen_image(path,1,1,10,100, 2);
+	error |= gen_image("gdimageline/gdimageline_aa_a_1_exp.png", 1, 1, 10, 100, 2);
 
-	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_b_0_exp.png", GDTEST_TOP_DIR);
-	error |= gen_image(path,2,-1,10,100, 1);
-	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_b_1_exp.png", GDTEST_TOP_DIR);
-	error |= gen_image(path,1,-1,10,100, 2);
+	error |= gen_image("gdimageline/gdimageline_aa_b_0_exp.png", 2, -1, 10, 100, 1);
+	error |= gen_image("gdimageline/gdimageline_aa_b_1_exp.png", 1, -1, 10, 100, 2);
 
-	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_c_0_exp.png", GDTEST_TOP_DIR);
-	error |= gen_image(path,0,1,100,10, 1);
-	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_c_1_exp.png", GDTEST_TOP_DIR);
-	error |= gen_image(path,1,1,100,10, 2);
+	error |= gen_image("gdimageline/gdimageline_aa_c_0_exp.png", 0, 1, 100, 10, 1);
+	error |= gen_image("gdimageline/gdimageline_aa_c_1_exp.png", 1, 1, 100, 10, 2);
 
-	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_d_0_exp.png", GDTEST_TOP_DIR);
-	error |= gen_image(path,2,-1,100,10, 1);
-	snprintf(path, sizeof(path)-1, "%s/gdimageline/gdimageline_aa_d_1_exp.png", GDTEST_TOP_DIR);
-	error |= gen_image(path,1,-1,100,10, 2);
+	error |= gen_image("gdimageline/gdimageline_aa_d_0_exp.png", 2, -1, 100, 10, 1);
+	error |= gen_image("gdimageline/gdimageline_aa_d_1_exp.png", 1, -1, 100, 10, 2);
 
 	return error;
 }

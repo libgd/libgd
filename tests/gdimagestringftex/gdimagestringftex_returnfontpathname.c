@@ -5,9 +5,9 @@
 int main()
 {
 	gdFTStringExtra strex;
-	char path[2048];
+	char *path;
 
-	sprintf(path, "%s/freetype/DejaVuSans.ttf", GDTEST_TOP_DIR);
+	path = gdTestFilePath("freetype/DejaVuSans.ttf");
 	strex.flags = gdFTEX_RETURNFONTPATHNAME;
 	strex.fontpath = NULL;
 	gdImageStringFTEx(NULL, NULL, 0, path, 72, 0, 0, 0, "hello, gd", &strex);
@@ -18,5 +18,6 @@ int main()
 		return 2;
 	}
 	gdFree(strex.fontpath);
+	free(path);
 	return 0;
 }

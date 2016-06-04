@@ -25,7 +25,7 @@ main(void)
 	points[1].x = 50;
 	points[1].y = 70;
 	gdImageOpenPolygon(im, points, 2, black);
-	r = gdAssertImageEqualsToFile(GDTEST_TOP_DIR "/gdimageopenpolygon/gdimageopenpolygon2.png", im);
+	r = gdAssertImageEqualsToFile("gdimageopenpolygon/gdimageopenpolygon2.png", im);
 	free(points);
 	gdImageDestroy(im);
 	if (!r) exit(EXIT_FAILURE);

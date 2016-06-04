@@ -5,8 +5,7 @@
 int main(int argc, char **argv)
 {
 	gdImagePtr im;
-	char path[2048];
-	const char *file_exp = "gdimageline/gdImageAALine_thickness_exp.png";
+	int error = 0;
 
 	im = gdImageCreateTrueColor(100, 100);
 	gdImageFilledRectangle(im, 0, 0, 99, 99,
@@ -16,15 +15,10 @@ int main(int argc, char **argv)
 	gdImageSetAntiAliased(im, gdImageColorExactAlpha(im, 0, 0, 0, 0));
 	gdImageLine(im, 0,0, 99, 99, gdAntiAliased);
 
-	sprintf(path, "%s/%s", GDTEST_TOP_DIR, file_exp);
-
-	if (!gdAssertImageEqualsToFile(path, im)) {
-		printf("comparing rotated image to %s failed.\n", path);
-		gdImageDestroy(im);
-		return 1;
-	}
+	if (!gdAssertImageEqualsToFile("gdimageline/gdImageAALine_thickness_exp.png", im))
+		error = 1;
 
 	gdImageDestroy(im);
 
-    return 0;
+    return error;
 }

@@ -150,7 +150,7 @@ main(void)
 	pointy[4].y = bot;
 	gdImageFilledPolygon(im, pointy, 5, black);
 
-	r = gdAssertImageEqualsToFile(GDTEST_TOP_DIR "/gdimagefilledpolygon/bug00100.png", im);
+	r = gdAssertImageEqualsToFile("gdimagefilledpolygon/bug00100.png", im);
 	gdImageDestroy(im);
 	if (!r) exit(EXIT_FAILURE);
 	return EXIT_SUCCESS;

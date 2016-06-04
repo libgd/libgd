@@ -15,7 +15,7 @@ main(void)
 	gdImageFilledRectangle(im, 0, 0, 99, 99, white);
 	gdImageOpenPolygon(im, NULL, 0, black);  /* no effect */
 	gdImageOpenPolygon(im, NULL, -1, black); /* no effect */
-	r = gdAssertImageEqualsToFile(GDTEST_TOP_DIR "/gdimageopenpolygon/gdimageopenpolygon0.png", im);
+	r = gdAssertImageEqualsToFile("gdimageopenpolygon/gdimageopenpolygon0.png", im);
 	gdImageDestroy(im);
 	if (!r) exit(EXIT_FAILURE);
 	return EXIT_SUCCESS;

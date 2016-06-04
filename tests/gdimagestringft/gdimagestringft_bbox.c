@@ -28,7 +28,7 @@ static int EXPECT[16][8] = {
 
 int main()
 {
-	char path[2048];
+	char *path;
 	gdImagePtr im;
 	int black;
 	double cos_t, sin_t;
@@ -38,7 +38,7 @@ int main()
 	int error = 0;
 	FILE *fp;
 
-	sprintf(path, "%s/freetype/DejaVuSans.ttf", GDTEST_TOP_DIR);
+	path = gdTestFilePath("freetype/DejaVuSans.ttf");
 	im = gdImageCreate(800, 800);
 	gdImageColorAllocate(im, 0xFF, 0xFF, 0xFF); /* allocate white for background color */
 	black = gdImageColorAllocate(im, 0, 0, 0);
@@ -73,5 +73,6 @@ int main()
 	fclose(fp);
 done:
 	gdImageDestroy(im);
+	free(path);
 	return error;
 }
