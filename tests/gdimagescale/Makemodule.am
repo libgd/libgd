@@ -1,0 +1,6 @@
+
+libgd_test_programs += \
+	gdimagescale/github_bug_00218
+
+EXTRA_DIST += \
+	gdimagescale/CMakeLists.txt

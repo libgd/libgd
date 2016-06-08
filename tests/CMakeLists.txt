@@ -44,6 +44,7 @@ if (BUILD_TEST)
 		gdimagepolygon
 		gdimagerectangle
 		gdimagerotate
+		gdimagescale
 		gdimagescatterex
 		gdimagesetpixel
 		gdnewfilectx

@@ -1638,7 +1638,11 @@ BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int ne
 	gdImagePtr im_scaled = NULL;
 
 	if (src == NULL || (uintmax_t)src->interpolation_id >= GD_METHOD_COUNT) {
-		return 0;
+		return NULL;
+	}
+
+	if (new_width == 0 || new_height == 0) {
+		return NULL;
 	}
 
 	switch (src->interpolation_id) {
