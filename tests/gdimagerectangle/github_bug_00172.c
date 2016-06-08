@@ -5,8 +5,6 @@
 
 int main() {
 	gdImagePtr im, imres, imexp;
-	FILE *fp;
-	unsigned int status = 0;
 	int white, black, red;
 	char path[1024];
 	int error = 0;
@@ -35,15 +33,15 @@ int main() {
 	gdImageRectangle(im, 325, 125, 325, 175, black);
 	gdImageSetPixel(im, 300, 94, red);
 	gdImageSetPixel(im, 350, 94, red);
-	gdImageDestroy(im);
 	gdImageEllipse(im, 325, 95, 90, 50, red);
 
 
 
-	sprintf(path, "%s/png/%s", GDTEST_TOP_DIR, "github_bug_00172_exp.png");
+	sprintf(path, "%s/gdimagerectangle/%s", GDTEST_TOP_DIR, "github_bug_00172_exp.png");
 	if (!gdAssertImageEqualsToFile(path, im)) {
 		error |= 1;
 	}
+	gdImageDestroy(im);
 
-	return status;
+	return error;
 }
