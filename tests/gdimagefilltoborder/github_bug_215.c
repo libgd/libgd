@@ -4,9 +4,9 @@
 
 int main() {
 	gdImagePtr im;
-	int bgd, color, border;
+	int color, border;
 	im = gdImageCreate(50, 50);
-	bgd = gdImageColorAllocate(im, 255, 0, 0);
+	gdImageColorAllocate(im, 255, 0, 0);
 	color = gdImageColorAllocate(im, 255, 0, 0);
 	border = gdImageColorAllocate(im, 255, 0, 0);
 	gdImageFillToBorder(im, 0, 0, border + 10, color);

@@ -4,8 +4,8 @@
 #include "gdtest.h"
 
 int main() {
-	gdImagePtr im, imres, imexp;
-	int white, black, red;
+	gdImagePtr im;
+	int black, red;
 	char path[1024];
 	int error = 0;
 
@@ -16,14 +16,19 @@ int main() {
 		return 1;
 	}
 
-	white = gdImageColorAllocate(im, 255,255,255);
+	gdImageColorAllocate(im, 255,255,255);
 	black = gdImageColorAllocate(im, 0,0,0);
 	red = gdImageColorAllocate(im, 255,0,0);
-	gdImageString(im, gdFontGetGiant(), 5, 5, "RECTANGLES", black);
-	gdImageString(im, gdFontGetGiant(), 150, 5, "Filled", black);
-	gdImageString(im, gdFontGetGiant(), 300, 5, "Unfilled", black);
-	gdImageString(im, gdFontGetGiant(), 5, 75, "Height=0", black);
-	gdImageString(im, gdFontGetGiant(), 5, 145, "Width=0", black);
+	gdImageString(im, gdFontGetGiant(), 5, 5,
+	              (unsigned char *) "RECTANGLES", black);
+	gdImageString(im, gdFontGetGiant(), 150, 5,
+	              (unsigned char *) "Filled", black);
+	gdImageString(im, gdFontGetGiant(), 300, 5,
+	              (unsigned char *) "Unfilled", black);
+	gdImageString(im, gdFontGetGiant(), 5, 75,
+	              (unsigned char *) "Height=0", black);
+	gdImageString(im, gdFontGetGiant(), 5, 145,
+	              (unsigned char *) "Width=0", black);
 	gdImageFilledRectangle(im, 150, 95, 200, 95, black);
 	gdImageRectangle(im, 300, 95, 350, 95, black);
 	gdImageSetPixel(im, 300, 94, red);
