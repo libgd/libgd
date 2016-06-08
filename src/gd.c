@@ -1934,10 +1934,10 @@ BGD_DECLARE(void) gdImageFillToBorder (gdImagePtr im, int x, int y, int border, 
 	}
 
 	if (!im->trueColor) {
-		if ((color > (im->colorsTotal - 1)) || (border > (im->colorsTotal - 1))) {
+		if ((color > (im->colorsTotal - 1)) || (border > (im->colorsTotal - 1)) || (color < 0)) {
 			return;
 		}
-    }
+	}
 
 	leftLimit = (-1);
 
