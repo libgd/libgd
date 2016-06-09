@@ -2267,6 +2267,16 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 		return;
 	}
 
+	if (x1 == x2 && y1 == y2) {
+		gdImageSetPixel(im, x1, y1, color);
+		return;
+	}
+
+	if (x1 == x2 || y1 == y2) {
+		gdImageLine(im, x1, y1, x2, y2, color);
+		return;
+	}
+
 	if (y2 < y1) {
 		int t = y1;
 		y1 = y2;

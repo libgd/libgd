@@ -4,5 +4,4 @@ libgd_test_programs += \
 	gdimagerectangle/github_bug_00172
 
 EXTRA_DIST += \
-	gdimagerectangle/CMakeLists.txt \
-	gdimagerectangle/github_bug_00172_exp.png
+	gdimagerectangle/CMakeLists.txt
