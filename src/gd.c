@@ -1244,11 +1244,14 @@ BGD_DECLARE(void) gdImageAABlend (gdImagePtr im)
 
 static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int col);
 
+static void _gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
+		int color, int horizontal);
+
 static void gdImageHLine(gdImagePtr im, int y, int x1, int x2, int col)
 {
 	if (im->thick > 1) {
 		int thickhalf = im->thick >> 1;
-		gdImageFilledRectangle(im, x1, y - thickhalf, x2, y + im->thick - thickhalf - 1, col);
+		_gdImageFilledRectangle(im, x1, y - thickhalf, x2, y + im->thick - thickhalf - 1, col, 1);
 	} else {
 		if (x2 < x1) {
 			int t = x2;
@@ -2339,8 +2342,8 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 	}
 }
 
-BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
-		int color)
+static void _gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
+		int color, int horizontal)
 {
 	int x, y;
 
@@ -2377,11 +2380,25 @@ BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2,
 		y2 = gdImageSY(im) - 1;
 	}
 
-	for (y = y1; (y <= y2); y++) {
+	if (horizontal) {
 		for (x = x1; (x <= x2); x++) {
-			gdImageSetPixel (im, x, y, color);
+			for (y = y1; (y <= y2); y++) {
+				gdImageSetPixel (im, x, y, color);
+			}
+		}
+	} else {
+		for (y = y1; (y <= y2); y++) {
+			for (x = x1; (x <= x2); x++) {
+				gdImageSetPixel (im, x, y, color);
+			}
 		}
 	}
+}
+
+BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2, int y2,
+		int color)
+{
+	_gdImageFilledRectangle(im, x1, y1, x2, y2, color, 0);
 }
 
 BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
