@@ -40,8 +40,6 @@ int main() {
 			error |=1;
 		}
 	}
-	FILE *fp = fopen("a.png", "wb");
-	gdImagePng(im, fp);
 	gdImageDestroy(im);
 
 	return error;
