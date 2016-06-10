@@ -22,6 +22,7 @@ if (BUILD_TEST)
 		bmp
 		gd
 		gd2
+		gdaffineboundingbox
 		gdimagearc
 		gdimagecolorclosest
 		gdimagecolordeallocate

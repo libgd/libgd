@@ -2515,8 +2515,9 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 	}
 	bbox->x = (int) min.x;
 	bbox->y = (int) min.y;
-	bbox->width  = (int) floor(max.x - min.x) - 1;
-	bbox->height = (int) floor(max.y - min.y);
+	bbox->width  = (int) ceil((max.x - min.x)) + 1;
+	bbox->height = (int) ceil(max.y - min.y) + 1;
+
 	return GD_TRUE;
 }
 
