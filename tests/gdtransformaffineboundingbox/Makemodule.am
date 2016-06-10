@@ -1,0 +1,6 @@
+
+libgd_test_programs += \
+	gdtransformaffineboundingbox/github_bug_00221
+
+EXTRA_DIST += \
+	gdtransformaffineboundingbox/CMakeLists.txt
