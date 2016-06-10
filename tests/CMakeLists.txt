@@ -22,7 +22,6 @@ if (BUILD_TEST)
 		bmp
 		gd
 		gd2
-		gdaffineboundingbox
 		gdimagearc
 		gdimagecolorclosest
 		gdimagecolordeallocate
@@ -50,6 +49,7 @@ if (BUILD_TEST)
 		gdimagesetpixel
 		gdnewfilectx
 		gdtiled
+		gdtransformaffineboundingbox
 		gif
 		tga
 		wbmp
