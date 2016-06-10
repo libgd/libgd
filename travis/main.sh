@@ -19,6 +19,24 @@ update_os() {
 	esac
 }
 
+check_git_status() {
+	local status
+
+	# Make sure our gitignore files are up-to-date, and we aren't
+	# forgetting to commit the few generated (e.g. cmake.in) files.
+	# Note: We ignore config.h.cmake changes since it indirectly
+	# depends on the format of the output of autoheader :/.
+	status=$(git status --porcelain | grep -v '^ M src/config.h.cmake') || :
+	if [[ -n ${status} ]]; then
+		echo "Missing git repo updates (gitignore/etc...):"
+		echo "$ git status"
+		echo "${status}"
+		echo "$ git diff"
+		git diff
+		exit 1
+	fi
+}
+
 build_autotools() {
 	v --fold="bootstrap" ./bootstrap.sh
 
@@ -38,9 +56,11 @@ build_autotools() {
 	# Make sure failures are shown in the log.
 	m check VERBOSE=1
 
-	# TODO: Re-enable this once out-of-tree tests work.
+	check_git_status
+
+	# Verify building a release works (also does things like read-only
+	# out of tree builds for use).
 	m distcheck VERBOSE=1
-	m install DESTDIR=$PWD/install-autotools
 
 	# Clean things up for cmake.
 	m distclean
