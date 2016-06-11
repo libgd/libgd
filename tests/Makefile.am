@@ -16,7 +16,6 @@ include bmp/Makemodule.am
 include freetype/Makemodule.am
 include gd/Makemodule.am
 include gd2/Makemodule.am
-include gdtransformaffineboundingbox/Makemodule.am
 include gdimagearc/Makemodule.am
 include gdimagecolorclosest/Makemodule.am
 include gdimagecolordeallocate/Makemodule.am
@@ -48,6 +47,7 @@ include gdinterpolatedscale/Makemodule.am
 include gdnewfilectx/Makemodule.am
 include gdtest/Makemodule.am
 include gdtiled/Makemodule.am
+include gdtransformaffineboundingbox/Makemodule.am
 include gif/Makemodule.am
 include jpeg/Makemodule.am
 include png/Makemodule.am
