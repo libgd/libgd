@@ -33,7 +33,7 @@ int main()
 		return 1;
 	}
 
-	color = gdImageColorAllocate(im, 0, 0, 0);
+	color = gdImageColorAllocateAlpha(im, 255, 255, 255, 127);
 
 	if (color < 0) {
 		gdTestErrorMsg("allocation color from image failed.\n");
