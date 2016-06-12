@@ -1689,7 +1689,6 @@ gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
 	float _angle = ((float) (-degrees / 180.0f) * (float)M_PI);
 	const int src_w  = gdImageSX(src);
 	const int src_h = gdImageSY(src);
-	const gdFixed f_0_5 = gd_ftofx(0.5f);
 	const gdFixed f_H = gd_itofx(src_h/2);
 	const gdFixed f_W = gd_itofx(src_w/2);
 	const gdFixed f_cos = gd_ftofx(cos(-_angle));
