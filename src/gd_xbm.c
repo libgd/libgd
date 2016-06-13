@@ -251,7 +251,7 @@ BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOC
 			if (gdImageGetPixel(image, x, y) == fg) {
 				c |= b;
 			}
-			if ((b == 128) || (x == sx && y == sy)) {
+			if ((b == 128) || (x == sx - 1)) {
 				b = 1;
 				if (p) {
 					gdCtxPuts(out, ", ");
