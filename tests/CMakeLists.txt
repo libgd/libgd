@@ -60,6 +60,7 @@ if (BUILD_TEST)
 		tiff
 		wbmp
 		webp
+		xbm
 		xpm
 	)
 
