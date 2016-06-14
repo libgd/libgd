@@ -369,10 +369,10 @@ int gdNumFailures() {
     return failureCount;
 }
 
-int _gdTestAssert(const char* file, unsigned int line, const char* message, int condition)
+int _gdTestAssert(const char* file, unsigned int line, int condition)
 {
 	if (condition) return 1;
-	_gdTestErrorMsg(file, line, "%s", message);
+	_gdTestErrorMsg(file, line, "Assert failed in <%s:%i>\n", file, line);
 
     ++failureCount;
 
@@ -381,7 +381,7 @@ int _gdTestAssert(const char* file, unsigned int line, const char* message, int 
 
 int _gdTestAssertMsg(const char* file, unsigned int line, int condition, const char* message, ...)
 {
-  va_list args;
+	va_list args;
 	char output_buf[GDTEST_STRING_MAX];
 	
 	if (condition) return 1;
@@ -389,7 +389,7 @@ int _gdTestAssertMsg(const char* file, unsigned int line, int condition, const c
 	va_start(args, message);
 	vsnprintf(output_buf, sizeof(output_buf), message, args);
 	va_end(args);
-	fprintf(stderr, "%s:%u: %s", file, line, output_buf);
+	fprintf(stderr, "%s:%u: %s\n", file, line, output_buf);
 	fflush(stderr);
 
 	++failureCount;
