@@ -7,9 +7,8 @@
 int main()
 {
 	gdImagePtr im, exp;
-	char path[2048];
+	char *path, filename[2048];
 	const char *file_im = "gdimagerotate/remirh128.png";
-	const char *file_exp = "gdimagerotate/bug00067";
 
 	FILE *fp;
 	int color;
@@ -27,7 +26,6 @@ int main()
 	}
 
 	im = gdImageCreateFromPng(fp);
-
 	fclose(fp);
 
 	if (!im) {
