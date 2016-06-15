@@ -22,7 +22,7 @@ int main()
 	fp = fopen(path, "rb");
 
 	if (!fp) {
-		gdTestErrorMsg("opening Jpeg %s for reading failed.\n", path);
+		gdTestErrorMsg("opening Png %s for reading failed.\n", path);
 		return 1;
 	}
 
@@ -53,14 +53,11 @@ int main()
 			return 1;
 		}
 
-		sprintf(filename, "bug00067_%03d_exp.png", angle);
-		path = gdTestFilePath2("gdimagerotate", filename);
+		sprintf(path, "%s/%s_%03d_exp.png", GDTEST_TOP_DIR, file_exp, angle);
 		if (!gdAssertImageEqualsToFile(path, exp)) {
 			gdTestErrorMsg("comparing rotated image to %s failed.\n", path);
 			error += 1;
 		}
-		free(path);
-
 		gdImageDestroy(exp);
 	}
 
