@@ -1,4 +1,4 @@
-SET(TESTS_FILES
+LIST(APPEND TESTS_FILES
 	gif_im2im
 	gif_null
 	bug00005

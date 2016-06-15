@@ -1,5 +1,5 @@
 IF(PNG_FOUND)
-SET(TESTS_FILES
+LIST(APPEND TESTS_FILES
 	png_im2im
 	png_null
 	png_resolution

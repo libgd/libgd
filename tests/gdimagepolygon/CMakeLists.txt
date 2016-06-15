@@ -1,4 +1,4 @@
-SET(TESTS_FILES
+LIST(APPEND TESTS_FILES
 	gdimagepolygon0
 	gdimagepolygon1
 	gdimagepolygon2

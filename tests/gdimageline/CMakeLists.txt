@@ -1,4 +1,4 @@
-SET(TESTS_FILES
+LIST(APPEND TESTS_FILES
 	gdimageline_aa
 	gdimageline_aa_outofrange
 	bug00077
