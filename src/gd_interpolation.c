@@ -619,6 +619,8 @@ static double filter_welsh(const double x)
 # define inline __inline
 #endif 
 
+/* keep it for future usage for affine copy over an existing image, targetting fix for 2.2.2 */
+#if 0 
 /* Copied from upstream's libgd */
 static inline int _color_blend (const int dst, const int src)
 {
@@ -659,6 +661,7 @@ static inline int _setEdgePixel(const gdImagePtr src, unsigned int x, unsigned i
 	c = c | (( (int) (gd_fxtof(gd_mulfx(coverage, f_127)) + 50.5f)) << 24);
 	return _color_blend(bgColor, c);
 }
+#endif
 
 static inline int getPixelOverflowTC(gdImagePtr im, const int x, const int y, const int bgColor)
 {
