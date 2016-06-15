@@ -1,5 +1,5 @@
 IF(FREETYPE_FOUND)
-SET(TESTS_FILES
+LIST(APPEND TESTS_FILES
 	gdimagestringftex_returnfontpathname
 )
 ENDIF(FREETYPE_FOUND)

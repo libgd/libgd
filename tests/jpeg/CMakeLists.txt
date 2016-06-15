@@ -1,5 +1,5 @@
 IF(JPEG_FOUND)
-SET(TESTS_FILES
+LIST(APPEND TESTS_FILES
 	jpeg_im2im
 	jpeg_null
 	jpeg_read

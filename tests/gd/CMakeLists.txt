@@ -1,4 +1,4 @@
-SET(TESTS_FILES
+LIST(APPEND TESTS_FILES
 	gd_im2im
 	gd_null
 	gd_num_colors

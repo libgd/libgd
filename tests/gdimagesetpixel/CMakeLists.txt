@@ -1,4 +1,4 @@
-SET(TESTS_FILES
+LIST(APPEND TESTS_FILES
 	alpha_blending
 	bug00186
 	gdeffectoverlay
