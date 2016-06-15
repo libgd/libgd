@@ -25,4 +25,4 @@ EXTRA_DIST += \
 	gdimagerotate/bug00067_180_exp.png \
 	gdimagerotate/php_bug_64898.png \
 	gdimagerotate/php_bug_64898_exp.png \
-	gdimagerotate/remirh128.jpg
+	gdimagerotate/remirh128.png
