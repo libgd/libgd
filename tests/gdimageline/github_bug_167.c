@@ -9,6 +9,8 @@
 	To have the same pattern style, it has to be adapted according to the
 	thickness (i.e. the pixels have to be repeated thickness times), which
 	happens in setStyleAndThickness().
+
+	See also <https://github.com/libgd/libgd/issues/167>.
 */
 
 #include "gd.h"
