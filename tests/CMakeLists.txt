@@ -49,6 +49,7 @@ if (BUILD_TEST)
 		gdimagesetpixel
 		gdimagestringft
 		gdimagestringftex
+		gdinterpolatedscale
 		gdnewfilectx
 		gdtest
 		gdtiled
