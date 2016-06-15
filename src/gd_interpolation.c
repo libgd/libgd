@@ -654,7 +654,6 @@ static inline int _color_blend (const int dst, const int src)
 	}
 }
 
-#if 0
 static inline int _setEdgePixel(const gdImagePtr src, unsigned int x, unsigned int y, gdFixed coverage, const int bgColor) 
 {
 	const gdFixed f_127 = gd_itofx(127);
