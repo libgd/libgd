@@ -1899,7 +1899,6 @@ BGD_DECLARE(int) gdTransformAffineGetImage(gdImagePtr *dst,
 		  m);
 
 	if (res != GD_TRUE) {
-		i
 		gdImageDestroy(*dst);
 		*dst = NULL;
 		return GD_FALSE;
