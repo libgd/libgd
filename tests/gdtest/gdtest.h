@@ -55,7 +55,7 @@ int gdTestImageCompareToFile(const char* file, unsigned int line, const char* me
 
 unsigned int gdMaxPixelDiff(gdImagePtr a, gdImagePtr b);
 
-int _gdTestAssert(const char* file, unsigned int line, const char* message, int condition);
+int _gdTestAssert(const char* file, unsigned int line, int condition);
 
 int _gdTestAssertMsg(const char* file, unsigned int line, int condition, const char* message, ...);
 
@@ -69,7 +69,7 @@ int _gdTestErrorMsg(const char* file, unsigned int line, const char* string, ...
 #define gdAssertImageEquals(tc,ex,ac) CuAssertImageEquals_LineMsg((tc),__FILE__,__LINE__,NULL,(ex),(ac))
 #define gdAssertImageEqualsMsg(tc,ex,ac) CuAssertImageEquals_LineMsg((tc),__FILE__,__LINE__,(ms),(ex),(ac))
 
-#define gdTestAssert(cond) _gdTestAssert(__FILE__, __LINE__, "assert failed in <%s:%i>\n", (cond))
+#define gdTestAssert(cond) _gdTestAssert(__FILE__, __LINE__, (cond))
 
 #define gdTestAssertMsg(cond, message, ...) _gdTestAssertMsg(__FILE__, __LINE__, (cond),(message),__VA_ARGS__)
 

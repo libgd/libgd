@@ -208,6 +208,7 @@ enum gdPaletteQuantizationMethod {
  *  GD_SINC				 - Sinc
  *  GD_TRIANGLE			 - Triangle
  *  GD_WEIGHTED4		 - 4 pixels weighted bilinear interpolation
+ *  GD_LINEAR            - bilinear interpolation
  *
  * See also:
  *  <gdSetInterpolationMethod>
@@ -235,7 +236,8 @@ typedef enum {
 	GD_SINC,
 	GD_TRIANGLE,
 	GD_WEIGHTED4,
-	GD_METHOD_COUNT = 21
+	GD_LINEAR,
+	GD_METHOD_COUNT = 23
 } gdInterpolationMethod;
 
 /* define struct with name and func ptr and add it to gdImageStruct gdInterpolationMethod interpolation; */

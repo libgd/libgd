@@ -36,6 +36,10 @@ int main() {
             result = gdImageScale(im[i], NX, NY);
             gdTestAssert(result != NULL);
             gdTestAssert(result != im[i]);
+            if (result == NULL) {
+				gdTestErrorMsg("gdImageScale failed (method: %i, im:%i).\n", method, i);
+				break;
+			}
             gdTestAssert(result->sx == NX && result->sy == NY);
 
             gdImageDestroy(result);

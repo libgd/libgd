@@ -7,15 +7,27 @@
 int main()
 {
 	gdImagePtr im, exp;
-	char *path, filename[2048];
-	const char *file_im = "gdimagerotate/remirh128.jpg";
+	char path[2048];
+	const char *file_im = "gdimagerotate/remirh128.png";
+	const char *file_exp = "gdimagerotate/bug00067";
+
 	FILE *fp;
 	int color;
 	int error = 0;
 	int angle;
 
-	fp = gdTestFileOpen(file_im);
-	im = gdImageCreateFromJpeg(fp);
+
+	sprintf(path, "%s/%s", GDTEST_TOP_DIR, file_im);
+
+	fp = fopen(path, "rb");
+
+	if (!fp) {
+		gdTestErrorMsg("opening Jpeg %s for reading failed.\n", path);
+		return 1;
+	}
+
+	im = gdImageCreateFromPng(fp);
+
 	fclose(fp);
 
 	if (!im) {
