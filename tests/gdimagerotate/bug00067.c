@@ -7,27 +7,15 @@
 int main()
 {
 	gdImagePtr im, exp;
-	char path[2048];
+	char *path, filename[2048];
 	const char *file_im = "gdimagerotate/remirh128.png";
-	const char *file_exp = "gdimagerotate/bug00067";
-
 	FILE *fp;
 	int color;
 	int error = 0;
 	int angle;
 
-
-	sprintf(path, "%s/%s", GDTEST_TOP_DIR, file_im);
-
-	fp = fopen(path, "rb");
-
-	if (!fp) {
-		gdTestErrorMsg("opening Png %s for reading failed.\n", path);
-		return 1;
-	}
-
+	fp = gdTestFileOpen(file_im);
 	im = gdImageCreateFromPng(fp);
-
 	fclose(fp);
 
 	if (!im) {
@@ -53,11 +41,14 @@ int main()
 			return 1;
 		}
 
-		sprintf(path, "%s/%s_%03d_exp.png", GDTEST_TOP_DIR, file_exp, angle);
+		sprintf(filename, "bug00067_%03d_exp.png", angle);
+		path = gdTestFilePath2("gdimagerotate", filename);
 		if (!gdAssertImageEqualsToFile(path, exp)) {
 			gdTestErrorMsg("comparing rotated image to %s failed.\n", path);
 			error += 1;
 		}
+		free(path);
+
 		gdImageDestroy(exp);
 	}
 
