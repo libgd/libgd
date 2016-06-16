@@ -64,6 +64,11 @@ build_autotools() {
 			-fsanitize=unsigned-integer-overflow)
 		CFLAGS+=" ${SANITIZE_FLAGS[*]}"
 		;;
+	coverage)
+		set_default_compiler_settings
+		COVERAGE_FLAGS="-fprofile-arcs -ftest-coverage"
+		CFLAGS+=" $COVERAGE_FLAGS"
+		;;
 	esac
 
 	v --fold="configure" ./configure \
@@ -84,12 +89,17 @@ build_autotools() {
 
 	check_git_status
 
-	# Verify building a release works (also does things like read-only
-	# out of tree builds for use).
-	m distcheck VERBOSE=1
+	# Coverage builds leave behind coverage information that is needed later
+	# for upload, so skip cleanup.  The presence of the coverage files also
+	# causes the distcheck target to fail, so skip that too.
+	if [[ "${TRAVIS_BUILD_TYPE}" != "coverage" ]]; then
+		# Verify building a release works (also does things like read-only
+		# out of tree builds for use).
+		m distcheck VERBOSE=1
 
-	# Clean things up for cmake.
-	m distclean
+		# Clean things up for cmake.
+		m distclean
+	fi
 }
 
 build_cmake() {
@@ -130,6 +140,10 @@ compare_builds() {
 	diff -ur install-autotools install-cmake || true
 }
 
+upload_coverage() {
+	v --fold="upload_coverage" cpp-coveralls --exclude tests --gcov-options '\-lp'
+}
+
 main() {
 	update_os
 	build_autotools
@@ -137,6 +151,9 @@ main() {
 	"")
 		build_cmake
 		compare_builds
+		;;
+	coverage)
+		upload_coverage
 		;;
 	esac
 }

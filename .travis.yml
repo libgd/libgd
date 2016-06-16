@@ -22,8 +22,15 @@ matrix:
     - os: linux
       compiler: clang
       env: TRAVIS_BUILD_TYPE=sanitizers
+    - os: linux
+      compiler: gcc
+      env: TRAVIS_BUILD_TYPE=coverage
 
 script: ./travis/main.sh
+
+before_install:
+  - pip install --user 'requests[security]'
+  - pip install --user cpp-coveralls
 
 addons:
   apt:
