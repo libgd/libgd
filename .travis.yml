@@ -17,6 +17,12 @@ os:
   - linux
   - osx
 
+matrix:
+  include:
+    - os: linux
+      compiler: clang
+      env: TRAVIS_BUILD_TYPE=sanitizers
+
 script: ./travis/main.sh
 
 addons:

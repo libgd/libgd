@@ -2,8 +2,6 @@
 # The main script for building/testing while under travis ci.
 # https://travis-ci.org/libgd/libgd
 
-# TODO: Add support for building/testing w/ASAN/etc... enabled.
-
 . "${0%/*}"/lib.sh
 
 update_os() {
@@ -37,8 +35,36 @@ check_git_status() {
 	fi
 }
 
+set_default_compiler_settings() {
+	: ${CFLAGS=-O2 -pipe}
+	export CFLAGS
+}
+
 build_autotools() {
 	v --fold="bootstrap" ./bootstrap.sh
+
+	case ${TRAVIS_BUILD_TYPE} in
+	sanitizers)
+		set_default_compiler_settings
+		SANITIZE_FLAGS=(
+			-fsanitize=address
+			-fsanitize=leak
+			-fsanitize=alignment
+			-fsanitize=bool
+			-fsanitize=enum
+			-fsanitize=float-cast-overflow
+			-fsanitize=float-divide-by-zero
+			-fsanitize=function
+			-fsanitize=integer-divide-by-zero
+			-fsanitize=null
+			-fsanitize=object-size
+			-fsanitize=return
+			-fsanitize=signed-integer-overflow
+			-fsanitize=unreachable
+			-fsanitize=unsigned-integer-overflow)
+		CFLAGS+=" ${SANITIZE_FLAGS[*]}"
+		;;
+	esac
 
 	v --fold="configure" ./configure \
 		--prefix=/usr/local \
@@ -107,7 +133,11 @@ compare_builds() {
 main() {
 	update_os
 	build_autotools
-	build_cmake
-	compare_builds
+	case ${TRAVIS_BUILD_TYPE} in
+	"")
+		build_cmake
+		compare_builds
+		;;
+	esac
 }
 main "$@"
