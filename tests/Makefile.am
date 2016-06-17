@@ -55,6 +55,7 @@ include tga/Makemodule.am
 include tiff/Makemodule.am
 include wbmp/Makemodule.am
 include webp/Makemodule.am
+include xbm/Makemodule.am
 include xpm/Makemodule.am
 
 LDADD = libgdtest.a ../src/libgd.la

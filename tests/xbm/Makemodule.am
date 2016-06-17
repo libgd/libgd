@@ -1,0 +1,5 @@
+libgd_test_programs += \
+	xbm/github_bug_170
+
+EXTRA_DIST += \
+	xbm/CMakeLists.txt
