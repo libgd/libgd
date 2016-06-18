@@ -7,9 +7,9 @@ compiler:
   - gcc
 
 env:
-  #global:
-  #  # COVERITY_SCAN_TOKEN
-  #  - secure: "HK0Ey4+9OsxcWl0FwNzwbkEkvHMD7DM27x3NWeY8Lo2NmU2ZBB72Q3TWIBtk6YpeY5glsBTUQob17H+ISQR2xHqL5GaGf1hWk9x7iBAA4XRb4RUgCnzEE6vPmUGcxcjx0AIjtbnFKShoEOKbN/O2ms1zqz8rgUTNiAQWFgJKCW0="
+  global:
+    # COVERITY_SCAN_TOKEN
+    secure: "h7NGklk0xX2iuY5PgxijE7FFEgd95hxbhSwofs+hzYIiW6FR2kk8gSwEqRH5dYGnvazGT3a7fjxuYAr0y5BQCfV7yyQISl19rYZPJbP9bTxGxijTGlItyQqVTXCaucuXzgJbAOgC1W3ja4lYODflCyFzHhPggJLkXEAw1FF3+5M="
 
 sudo: false
 
@@ -63,4 +63,4 @@ addons:
     # Pattern to match selecting branches that will run analysis. We recommend leaving this set to 'coverity_scan'.
     # Take care in resource usage, and consider the build frequency allowances per
     #   https://scan.coverity.com/faq#frequency
-    branch_pattern: coverity_scan
+    branch_pattern: GD-2.2
