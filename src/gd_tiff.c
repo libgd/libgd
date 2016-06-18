@@ -664,6 +664,7 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 			}
 		}
 	}
+	gdFree(buffer);
 	return TRUE;
 }
 
