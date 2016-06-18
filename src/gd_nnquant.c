@@ -330,12 +330,13 @@ register int al,b,g,r;
 	/* bias[i] = gamma*((1/netsize)-freq[i]) */
 
 	register int i,dist,a,biasdist,betafreq;
-	int bestpos,bestbiaspos,bestd,bestbiasd;
+	unsigned int bestpos,bestbiaspos;
+	double bestd,bestbiasd;
 	register int *p,*f, *n;
 
 	bestd = ~(((int) 1)<<31);
 	bestbiasd = bestd;
-	bestpos = -1;
+	bestpos = 0;
 	bestbiaspos = bestpos;
 	p = nnq->bias;
 	f = nnq->freq;
