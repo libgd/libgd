@@ -246,16 +246,16 @@ void inxbuild(nn_quant *nnq)
 
 /* Search for ABGR values 0..255 (after net is unbiased) and return colour index
 	 ---------------------------------------------------------------------------- */
-int inxsearch(nnq, al,b,g,r)
+unsigned int inxsearch(nnq, al,b,g,r)
 nn_quant *nnq;
 register int al, b, g, r;
 {
 	register int i, j, dist, a, bestd;
 	register int *p;
-	int best;
+	unsigned int best;
 
 	bestd = 1000;		/* biggest possible dist is 256*3 */
-	best = -1;
+	best = 0;
 	i = nnq->netindex[g];	/* index on g */
 	j = i-1;		/* start at netindex[g] and work outwards */
 
