@@ -55,16 +55,28 @@ void gdImageSkewX (gdImagePtr dst, gdImagePtr src, int uRow, int iOffset, double
 		b = (int)(gdImageBlue(src,pxlSrc) * dWeight);
 		a = (int)(gdImageAlpha(src,pxlSrc) * dWeight);
 
-		pxlLeft = gdImageColorAllocateAlpha(src, r, g, b, a);
-
-		if (pxlLeft == -1) {
-			pxlLeft = gdImageColorClosestAlpha(src, r, g, b, a);
+		if (r>255) {
+			r = 255;
 		}
 
-		r = gdImageRed(src,pxlSrc) - (gdImageRed(src,pxlLeft) - gdImageRed(src,pxlOldLeft));
-		g = gdImageGreen(src,pxlSrc) - (gdImageGreen(src,pxlLeft) - gdImageGreen(src,pxlOldLeft));
-		b = gdImageBlue(src,pxlSrc) - (gdImageBlue(src,pxlLeft) - gdImageBlue(src,pxlOldLeft));
-		a = gdImageAlpha(src,pxlSrc) - (gdImageAlpha(src,pxlLeft) - gdImageAlpha(src,pxlOldLeft));
+		if (g>255) {
+			g = 255;
+		}
+
+		if (b>255) {
+			b = 255;
+		}
+
+		if (a>127) {
+			a = 127;
+		}
+
+		pxlLeft = gdTrueColorAlpha(r, g, b, a);
+
+		r = gdImageRed(src,pxlSrc)   - (r - gdImageRed(src,pxlOldLeft));
+		g = gdImageGreen(src,pxlSrc) - (g - gdImageGreen(src,pxlOldLeft));
+		b = gdImageBlue(src,pxlSrc)  - (b - gdImageBlue(src,pxlOldLeft));
+		a = gdImageAlpha(src,pxlSrc) - (a - gdImageAlpha(src,pxlOldLeft));
 
 		if (r>255) {
 			r = 255;
@@ -145,19 +157,31 @@ void gdImageSkewY (gdImagePtr dst, gdImagePtr src, int uCol, int iOffset, double
 		b = (int)((double)gdImageBlue(src,pxlSrc) * dWeight);
 		a = (int)((double)gdImageAlpha(src,pxlSrc) * dWeight);
 
-		pxlLeft = gdImageColorAllocateAlpha(src, r, g, b, a);
-
-		if (pxlLeft == -1) {
-			pxlLeft = gdImageColorClosestAlpha(src, r, g, b, a);
+		if (r>255) {
+        	r = 255;
 		}
 
-		r = gdImageRed(src,pxlSrc) - (gdImageRed(src,pxlLeft) - gdImageRed(src,pxlOldLeft));
-		g = gdImageGreen(src,pxlSrc) - (gdImageGreen(src,pxlLeft) - gdImageGreen(src,pxlOldLeft));
-		b = gdImageBlue(src,pxlSrc) - (gdImageBlue(src,pxlLeft) - gdImageBlue(src,pxlOldLeft));
-		a = gdImageAlpha(src,pxlSrc) - (gdImageAlpha(src,pxlLeft) - gdImageAlpha(src,pxlOldLeft));
+		if (g>255) {
+			g = 255;
+		}
+
+		if (b>255) {
+    			b = 255;
+		}
+
+		if (a>127) {
+			a = 127;
+		}
+
+		pxlLeft = gdTrueColorAlpha(r, g, b, a);
+
+		r = gdImageRed(src,pxlSrc)   - (r - gdImageRed(src,pxlOldLeft));
+		g = gdImageGreen(src,pxlSrc) - (g - gdImageGreen(src,pxlOldLeft));
+		b = gdImageBlue(src,pxlSrc)  - (b - gdImageBlue(src,pxlOldLeft));
+		a = gdImageAlpha(src,pxlSrc) - (a - gdImageAlpha(src,pxlOldLeft));
 
 		if (r>255) {
-        		r = 255;
+        	r = 255;
 		}
 
 		if (g>255) {
@@ -529,5 +553,3 @@ gdImagePtr gdImageRotate (gdImagePtr src, double dAngle, int clrBack, int ignore
 	return rotatedImg;
 }
 /* End Rotate function */
-
-
