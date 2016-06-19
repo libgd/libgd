@@ -5,8 +5,6 @@ int main()
 {
 	gdImagePtr im;
 	int x, y, c;
-	FILE *out;
-	char path[1024];
 	int r=0;
 
 
