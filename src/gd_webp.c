@@ -20,6 +20,9 @@ gdImagePtr gdImageCreateFromWebp (FILE * inFile)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
+	if (!in) {
+		return 0;
+	}
 	im = gdImageCreateFromWebpCtx(in);
 	in->gd_free(in);
 
@@ -160,6 +163,9 @@ freeargb:
 BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quantization)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
+	if (out == NULL) {
+		return;
+	}
 	gdImageWebpCtx(im, out, quantization);
 	out->gd_free(out);
 }
@@ -167,6 +173,9 @@ BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quantization
 BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
+	if (out == NULL) {
+		return;
+	}
 	gdImageWebpCtx(im, out, -1);
 	out->gd_free(out);
 }
@@ -175,6 +184,9 @@ BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+	if (out == NULL) {
+		return NULL;
+	}
 	gdImageWebpCtx(im, out, -1);
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
@@ -186,6 +198,9 @@ BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quantization
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+	if (out == NULL) {
+		return NULL;
+	}
 	gdImageWebpCtx(im, out, quantization);
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
