@@ -1506,7 +1506,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 			goto outOfMemory;
 		}
 		for (i = 0; (i < nim->sy); i++) {
-			nim->pixels[i] = (unsigned char *) gdCalloc (sizeof (unsigned char *), oim->sx);
+			nim->pixels[i] = (unsigned char *) gdCalloc (sizeof (unsigned char), oim->sx);
 			if (!nim->pixels[i]) {
 				goto outOfMemory;
 			}
