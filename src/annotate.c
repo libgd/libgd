@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Standard input should consist of\n");
 		fprintf(stderr, "lines in the following formats:\n");
 		fprintf(stderr, "color r g b (0-255 each) [a (0-127, 0 is opaque)]\n");
-		fprintf(stderr, "font fontname\n");
+		fprintf(stderr, "font fontname (max name length 1024)\n");
 		fprintf(stderr, "size pointsize\n");
 		fprintf(stderr, "align (left|right|center)\n");
 		fprintf(stderr, "move x y\n");
@@ -98,9 +98,14 @@ int main(int argc, char *argv[])
 			char *st = strtok(0, " \t\r\n");
 			if(!st) {
 				goto badLine;
+			} else {
+				const unsigned int font_len = strlen(st);
+				if (font_len >= 1024) {
+					fprintf(stderr, "Font maximum length is 1024, %d given\n", font_len);
+					goto badLine;
+				}
+				strncpy(font, st, font_len);
 			}
-
-			strcpy(font, st);
 		} else if(!strcmp(st, "align")) {
 			char *st = strtok(0, " \t\r\n");
 
