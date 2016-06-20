@@ -639,10 +639,12 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 	if (!TIFFGetField (tif, TIFFTAG_PLANARCONFIG, &planar)) {
 		planar = PLANARCONFIG_CONTIG;
 	}
-	TIFFGetField (tif, TIFFTAG_IMAGEWIDTH, &im_width);
-	TIFFGetField (tif, TIFFTAG_IMAGELENGTH, &im_height);
-	TIFFGetField (tif, TIFFTAG_TILEWIDTH, &tile_width);
-	TIFFGetField (tif, TIFFTAG_TILELENGTH, &tile_height);
+	if (TIFFGetField (tif, TIFFTAG_IMAGEWIDTH, &im_width) == 0 ||
+		TIFFGetField (tif, TIFFTAG_IMAGELENGTH, &im_height) == 0 ||
+		TIFFGetField (tif, TIFFTAG_TILEWIDTH, &tile_width) ==  0 ||
+		TIFFGetField (tif, TIFFTAG_TILELENGTH, &tile_height) == 0) {
+		return FALSE;
+	}
 
 	buffer = (unsigned char *) gdMalloc (TIFFTileSize (tif));
 	if (!buffer) {
