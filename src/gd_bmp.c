@@ -676,11 +676,13 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 			BMP_DEBUG(printf("RLE is only valid for 8-bit images\n"));
 			return 1;
 		}
+		break;
 	case BMP_BI_RLE4:
 		if (info->depth != 4) {
 			BMP_DEBUG(printf("RLE is only valid for 4-bit images\n"));
 			return 1;
 		}
+		break;
 	case BMP_BI_JPEG:
 	case BMP_BI_PNG:
 	default:
