@@ -734,8 +734,6 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
 				                + bitmap.num_grays / 2)
 				               / (bitmap.num_grays - 1);
 			} else if (bitmap.pixel_mode == ft_pixel_mode_mono) {
-				tc_key.pixel = ((bitmap.buffer[pc / 8]
-				                 << (pc % 8)) & 128) ? GD_NUMCOLORS : 0;
 				/* 2.0.5: mode_mono fix from Giuliano Pochini */
 				tc_key.pixel =
 				    ((bitmap.
