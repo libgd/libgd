@@ -16,7 +16,7 @@ gdImagePtr mkwhite(int x, int y)
 
 	gdTestAssert(im != NULL);
 
-	gdImageSetInterpolationMethod(im, GD_BICUBIC);    // FP interp'n
+	gdImageSetInterpolationMethod(im, GD_BILINEAR_FIXED);    // FP interp'n
 
 	return im;
 }/* mkwhite*/
@@ -87,7 +87,7 @@ void do_test(int x, int y, int nx, int ny)
 int main(int argc, char **argv)
 {
 	do_test(300, 300, 600, 600);
-	do_test(3200, 2133, 640, 427);
+	do_test(1500, 1000, 600, 400);
 
 	return gdNumFailures();
 }
