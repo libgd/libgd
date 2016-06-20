@@ -495,12 +495,14 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 		}
 		break;
 	default:
-		/* Palette image, or something coerced to be one */
-		for (h = 0; h < height; ++h) {
-			for (w = 0; w < width; ++w) {
-				register png_byte idx = row_pointers[h][w];
-				im->pixels[h][w] = idx;
-				open[idx] = 0;
+		if (!im->trueColor) {
+			/* Palette image, or something coerced to be one */
+			for (h = 0; h < height; ++h) {
+				for (w = 0; w < width; ++w) {
+					register png_byte idx = row_pointers[h][w];
+					im->pixels[h][w] = idx;
+					open[idx] = 0;
+				}
 			}
 		}
 	}
