@@ -4,7 +4,8 @@ libgd_test_programs += \
 	gdimagefilledpolygon/gdimagefilledpolygon0 \
 	gdimagefilledpolygon/gdimagefilledpolygon1 \
 	gdimagefilledpolygon/gdimagefilledpolygon2 \
-	gdimagefilledpolygon/gdimagefilledpolygon3
+	gdimagefilledpolygon/gdimagefilledpolygon3 \
+	gdimagefilledpolygon/php_bug_64641
 endif
 
 EXTRA_DIST += \
@@ -13,4 +14,5 @@ EXTRA_DIST += \
 	gdimagefilledpolygon/gdimagefilledpolygon0.png \
 	gdimagefilledpolygon/gdimagefilledpolygon1.png \
 	gdimagefilledpolygon/gdimagefilledpolygon2.png \
-	gdimagefilledpolygon/gdimagefilledpolygon3.png
+	gdimagefilledpolygon/gdimagefilledpolygon3.png \
+	gdimagefilledpolygon/php_bug_64641.png
