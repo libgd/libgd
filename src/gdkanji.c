@@ -490,7 +490,7 @@ do_check_and_conv (unsigned char *to, unsigned char *from)
 
 	if (copy_string) {
 		ustrncpy (tmp, from, BUFSIZ);
-		tmp[BUFSUZ-1] = "\0";
+		tmp[BUFSIZ-1] = '\0';
 	}
 
 	/* Hankaku Kana ---> Zenkaku Kana */
