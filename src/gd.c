@@ -1909,14 +1909,11 @@ BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int mx, int my, int w, in
 			rx -=dy;
 			r  +=rx;
 		}
-		if(old_y2!=my2) {
-			for(i=mx1; i<=mx2; i++) {
-				gdImageSetPixel(im,i,my1,c);
-			}
-		}
+
 		if(old_y2!=my2) {
 			for(i=mx1; i<=mx2; i++) {
 				gdImageSetPixel(im,i,my2,c);
+				gdImageSetPixel(im,i,my1,c);
 			}
 		}
 		old_y2 = my2;
