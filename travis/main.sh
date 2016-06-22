@@ -2,8 +2,6 @@
 # The main script for building/testing while under travis ci.
 # https://travis-ci.org/libgd/libgd
 
-# TODO: Add support for building/testing w/ASAN/etc... enabled.
-
 . "${0%/*}"/lib.sh
 
 update_os() {
@@ -37,8 +35,41 @@ check_git_status() {
 	fi
 }
 
+set_default_compiler_settings() {
+	: ${CFLAGS=-O2 -pipe}
+	export CFLAGS
+}
+
 build_autotools() {
 	v --fold="bootstrap" ./bootstrap.sh
+
+	case ${TRAVIS_BUILD_TYPE} in
+	sanitizers)
+		set_default_compiler_settings
+		SANITIZE_FLAGS=(
+			-fsanitize=address
+			-fsanitize=leak
+			-fsanitize=alignment
+			-fsanitize=bool
+			-fsanitize=enum
+			-fsanitize=float-cast-overflow
+			-fsanitize=float-divide-by-zero
+			-fsanitize=function
+			-fsanitize=integer-divide-by-zero
+			-fsanitize=null
+			-fsanitize=object-size
+			-fsanitize=return
+			-fsanitize=signed-integer-overflow
+			-fsanitize=unreachable
+			-fsanitize=unsigned-integer-overflow)
+		CFLAGS+=" ${SANITIZE_FLAGS[*]}"
+		;;
+	coverage)
+		set_default_compiler_settings
+		COVERAGE_FLAGS="-fprofile-arcs -ftest-coverage"
+		CFLAGS+=" $COVERAGE_FLAGS"
+		;;
+	esac
 
 	v --fold="configure" ./configure \
 		--prefix=/usr/local \
@@ -58,12 +89,17 @@ build_autotools() {
 
 	check_git_status
 
-	# Verify building a release works (also does things like read-only
-	# out of tree builds for use).
-	m distcheck VERBOSE=1
+	# Coverage builds leave behind coverage information that is needed later
+	# for upload, so skip cleanup.  The presence of the coverage files also
+	# causes the distcheck target to fail, so skip that too.
+	if [[ "${TRAVIS_BUILD_TYPE}" != "coverage" ]]; then
+		# Verify building a release works (also does things like read-only
+		# out of tree builds for use).
+		m distcheck VERBOSE=1
 
-	# Clean things up for cmake.
-	m distclean
+		# Clean things up for cmake.
+		m distclean
+	fi
 }
 
 build_cmake() {
@@ -104,10 +140,21 @@ compare_builds() {
 	diff -ur install-autotools install-cmake || true
 }
 
+upload_coverage() {
+	v --fold="upload_coverage" cpp-coveralls --exclude tests --gcov-options '\-lp'
+}
+
 main() {
 	update_os
 	build_autotools
-	build_cmake
-	compare_builds
+	case ${TRAVIS_BUILD_TYPE} in
+	"")
+		build_cmake
+		compare_builds
+		;;
+	coverage)
+		upload_coverage
+		;;
+	esac
 }
 main "$@"
