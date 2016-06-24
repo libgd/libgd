@@ -9,4 +9,4 @@ EXTRA_DIST += \
 	gdimagefilledellipse/CMakeLists.txt \
 	gdimagefilledellipse/bug00010_exp.png \
 	gdimagefilledellipse/bug00191.png \
-	gdimagefilledellipse/github_bug_00238_exp
+	gdimagefilledellipse/github_bug_00238_exp.png
