@@ -103,7 +103,8 @@
 /* Define as const if the declaration of iconv() needs const. */
 #cmakedefine ICONV_CONST
 
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
 #cmakedefine LT_OBJDIR
 
 /* Name of package */
