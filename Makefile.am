@@ -3,7 +3,7 @@ SUBDIRS = src config tests
 EXTRA_DIST = test docs examples windows VMS cmake netware bootstrap.sh CMakeLists.txt CONTRIBUTORS README.md
 
 clean-local:
-	find -maxdepth 3 \
+	find . -maxdepth 3 \
 		'(' \
 			-name CMakeCache.txt -o \
 			-name CMakeFiles -o \
