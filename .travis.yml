@@ -2,9 +2,11 @@
 # https://docs.travis-ci.com/
 
 language: cpp
+# Order here matters for implicit matrix generation and coverity scan.
+# See travis/main.sh for details.
 compiler:
-  - clang
   - gcc
+  - clang
 
 env:
   global:
@@ -13,6 +15,7 @@ env:
 
 sudo: false
 
+# Order here matters; see compiler comment above.
 os:
   - linux
   - osx
@@ -39,29 +42,3 @@ addons:
     - autoconf
     - libtool
     - html2text
-
-  coverity_scan:
-
-    # GitHub project metadata
-    # ** specific to your project **
-    project:
-      name: "libgd/libgd"
-      version: 2.2.2
-      description: "GD Graphics Library"
-    notification_email: pierre.php@gmail.com
-
-    # Where email notification of build analysis results will be sent
-    # notification_email: scan_notifications@example.com
-
-    # Commands to prepare for build_command
-    # ** likely specific to your build **
-    build_command_prepend: "autoreconf -fi && ./configure"
-
-    # The command that will be added as an argument to "cov-build" to compile your project for analysis,
-    # ** likely specific to your build **
-    build_command: "make"
-
-    # Pattern to match selecting branches that will run analysis. We recommend leaving this set to 'coverity_scan'.
-    # Take care in resource usage, and consider the build frequency allowances per
-    #   https://scan.coverity.com/faq#frequency
-    branch_pattern: GD-2.2
