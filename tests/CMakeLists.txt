@@ -31,6 +31,7 @@ if (BUILD_TEST)
 		gdimagecolortransparent
 		gdimagecopy
 		gdimagecopyrotated
+        gdimagecrop
 		gdimagefile
 		gdimagefill
 		gdimagefilledellipse
