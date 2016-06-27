@@ -1,3 +1,4 @@
+IF(PNG_FOUND)
 SET(TESTS_FILES
 	png_im2im
 	png_null
@@ -8,5 +9,6 @@ SET(TESTS_FILES
 	bug00088
 	bug00193
 )
+ENDIF(PNG_FOUND)
 
 ADD_GD_TESTS()

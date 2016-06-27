@@ -1,3 +1,4 @@
+IF(JPEG_FOUND)
 SET(TESTS_FILES
 	jpeg_im2im
 	jpeg_null
@@ -6,5 +7,6 @@ SET(TESTS_FILES
 	jpeg_resolution
 	bug_github_18
 )
+ENDIF(JPEG_FOUND)
 
 ADD_GD_TESTS()
