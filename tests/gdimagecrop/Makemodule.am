@@ -1,0 +1,5 @@
+libgd_test_programs += \
+	gdimagecrop/php_bug_72494
+
+EXTRA_DIST += \
+	gdimagecrop/CMakeLists.txt
