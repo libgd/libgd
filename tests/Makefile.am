@@ -25,6 +25,7 @@ include gdimagecolorresolve/Makemodule.am
 include gdimagecolortransparent/Makemodule.am
 include gdimagecopy/Makemodule.am
 include gdimagecopyrotated/Makemodule.am
+include gdimagecrop/Makemodule.am
 include gdimagefile/Makemodule.am
 include gdimagefill/Makemodule.am
 include gdimagefilledellipse/Makemodule.am
