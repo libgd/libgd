@@ -6,7 +6,7 @@
 
 int main()
 {
-	gdImagePtr im, exp;
+	gdImagePtr im;
 	int error = 0;
 
 	im = gdImageCreate(50, 50);
