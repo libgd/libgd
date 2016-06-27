@@ -1,0 +1,5 @@
+SET(TESTS_FILES
+	php_bug_72494
+)
+
+ADD_GD_TESTS()
