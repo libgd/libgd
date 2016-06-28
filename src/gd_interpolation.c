@@ -1097,6 +1097,7 @@ gdImageScaleNearestNeighbour(gdImagePtr im, const unsigned int width, const unsi
 	return dst_img;
 }
 
+#if 0
 static inline int getPixelOverflowColorTC(gdImagePtr im, const int x, const int y, const int color)
 {
 	if (gdImageBoundsSafe(im, x, y)) {
@@ -1144,6 +1145,7 @@ processborder:
 		}
 	}
 }
+#endif
 
 static gdImagePtr gdImageScaleBilinearPalette(gdImagePtr im, const unsigned int new_width, const unsigned int new_height)
 {

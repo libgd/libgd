@@ -84,7 +84,7 @@ do_test() {
     for (n = 0; names[n].nm; n++) {
         gdImagePtr orig, copy;
         int status;
-        char *full_filename;
+        char *full_filename = NULL;
 
         /* Some image readers are buggy and crash the program so we
          * skip them.  Bug fixers should remove these from the list of
