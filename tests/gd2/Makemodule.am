@@ -3,7 +3,8 @@ libgd_helper_programs += \
 	gd2/gd2_read_corrupt
 
 libgd_test_programs += \
-	gd2/gd2_empty_file
+	gd2/gd2_empty_file \
+	gd2/php_bug_72339
 TESTS += \
 	gd2/invalid_header.sh
 
@@ -32,4 +33,5 @@ EXTRA_DIST += \
 	gd2/invalid_header.gd2 \
 	gd2/invalid_header.sh \
 	gd2/invalid_neg_size.gd2 \
-	gd2/invalid_neg_size.sh
+	gd2/invalid_neg_size.sh \
+	gd2/php_bug_72339_exp.gd2
