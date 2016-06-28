@@ -154,8 +154,11 @@ _gd2GetHeader (gdIOCtxPtr in, int *sx, int *sy,
 		nc = (*ncx) * (*ncy);
 		GD2_DBG (printf ("Reading %d chunk index entries\n", nc));
 		sidx = sizeof (t_chunk_info) * nc;
+		if (overflow2(sidx, nc)) {
+			goto fail1;
+		}
 		cidx = gdCalloc (sidx, 1);
-		if (!cidx) {
+		if (cidx == NULL) {
 			goto fail1;
 		}
 		for (i = 0; i < nc; i++) {
