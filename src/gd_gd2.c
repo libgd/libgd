@@ -152,11 +152,16 @@ _gd2GetHeader (gdIOCtxPtr in, int *sx, int *sy,
 
 	if (gd2_compressed (*fmt)) {
 		nc = (*ncx) * (*ncy);
+
 		GD2_DBG (printf ("Reading %d chunk index entries\n", nc));
-		sidx = sizeof (t_chunk_info) * nc;
-		if (overflow2(sidx, nc)) {
+		if (overflow2(sizeof(t_chunk_info), nc)) {
 			goto fail1;
 		}
+		sidx = sizeof (t_chunk_info) * nc;
+		if (sidx <= 0) {
+			goto fail1;
+		}
+
 		cidx = gdCalloc (sidx, 1);
 		if (cidx == NULL) {
 			goto fail1;
