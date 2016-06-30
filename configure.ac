@@ -233,6 +233,14 @@ if test "$gd_with_LIBFREETYPE" = "yes"; then
   AC_DEFINE([HAVE_FT2BUILD_H], [1], [Define if you have the ft2build.h header.])
 fi
 
+dnl Check for Raqm support.
+GD_LIB_PKG_CHECK([LIBRAQM], [RAQM], [raqm], [raqm], [
+  AC_CHECK_LIB([raqm], [raqm_create], [dnl
+    AS_VAR_APPEND([LIBRAQM_LIBS], [" -lraqm -lfreetype"])
+    gd_found_lib=yes
+  ])
+])
+
 dnl Check for fontconfig support.
 GD_LIB_PKG_CHECK([LIBFONTCONFIG], [FONTCONFIG], [fontconfig], [fontconfig], [
   AC_CHECK_LIB([fontconfig], [FcInit], [dnl
@@ -318,6 +326,7 @@ AC_MSG_RESULT([
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG
    Support for Xpm library:          $gd_with_LIBXPM
    Support for liq library:          $gd_with_LIBIMAGEQUANT
+   Support for complext text:        $gd_with_LIBRAQM
    Support for pthreads:             $ax_pthread_ok
 ])
 
