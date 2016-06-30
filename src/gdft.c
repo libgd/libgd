@@ -431,6 +431,107 @@ gdTcl_UtfToUniChar (char *str, Tcl_UniChar * chPtr)
 	return 1;
 }
 
+#ifdef HAVE_LIBRAQM
+#include <raqm.h>
+#endif
+
+typedef struct {
+	unsigned int index;
+	FT_Pos x_advance;
+	FT_Pos x_offset;
+	FT_Pos y_offset;
+	uint32_t cluster;
+} glyphInfo;
+
+static size_t
+textLayout(uint32_t *text, int len,
+		FT_Face face, gdFTStringExtraPtr strex,
+		glyphInfo **glyph_info)
+{
+	size_t count;
+	glyphInfo *info;
+
+#ifdef HAVE_LIBRAQM
+	size_t i;
+	raqm_glyph_t *glyphs;
+	raqm_t *rq = raqm_create ();
+
+	if (!rq || !raqm_set_text (rq, text, len) ||
+		!raqm_set_freetype_face (rq, face) ||
+		!raqm_set_par_direction (rq, RAQM_DIRECTION_DEFAULT) ||
+		!raqm_layout (rq)) {
+		raqm_destroy (rq);
+		return 0;
+	}
+
+	glyphs = raqm_get_glyphs (rq, &count);
+	if (!glyphs) {
+		raqm_destroy (rq);
+		return 0;
+	}
+
+	info = (glyphInfo*) gdMalloc (sizeof (glyphInfo) * count);
+	if (!info) {
+		raqm_destroy (rq);
+		return 0;
+	}
+
+	for (i = 0; i < count; i++) {
+		info[i].index = glyphs[i].index;
+		info[i].x_offset = glyphs[i].x_offset;
+		info[i].y_offset = glyphs[i].y_offset;
+		info[i].x_advance = glyphs[i].x_advance;
+		info[i].cluster = glyphs[i].cluster;
+	}
+
+	raqm_destroy (rq);
+#else
+	FT_UInt glyph_index = 0, previous = 0;
+	FT_Vector delta;
+	FT_Error err;
+	info = (glyphInfo*) gdMalloc (sizeof (glyphInfo) * len);
+	if (!info) {
+		return 0;
+	}
+	for (count = 0; count < len; count++) {
+		/* Convert character code to glyph index */
+		glyph_index = FT_Get_Char_Index (face, text[count]);
+
+		/* retrieve kerning distance */
+		if (! (strex && (strex->flags & gdFTEX_DISABLE_KERNING))
+			&& ! FT_IS_FIXED_WIDTH(face)
+			&& FT_HAS_KERNING(face)
+			&& previous
+			&& glyph_index)
+			FT_Get_Kerning (face, previous, glyph_index, ft_kerning_default, &delta);
+		else
+			delta.x = delta.y = 0;
+
+		err = FT_Load_Glyph (face, glyph_index, FT_LOAD_DEFAULT);
+		if (err) {
+			gdFree (info);
+			return 0;
+		}
+		info[count].index = glyph_index;
+		info[count].x_offset = 0;
+		info[count].y_offset = 0;
+		if (delta.x != 0)
+			info[count - 1].x_advance += delta.x;
+		info[count].x_advance = face->glyph->metrics.horiAdvance;
+		info[count].cluster = count;
+
+		/* carriage returns or newlines */
+		if (text[count] == '\r' || text[count] == '\n')
+			previous = 0;	/* clear kerning flag */
+		else
+			previous = glyph_index;
+	}
+#endif
+
+	*glyph_info = info;
+	return count;
+}
+
 /********************************************************************/
 /* font cache functions                                             */
 
@@ -944,20 +1045,23 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
                                        gdFTStringExtraPtr strex)
 {
 	FT_Matrix matrix;
-	FT_Vector penf, oldpenf, delta, total_min = {0,0}, total_max = {0,0}, glyph_min, glyph_max;
+	FT_Vector penf, oldpenf, total_min = {0,0}, total_max = {0,0}, glyph_min, glyph_max;
 	FT_Face face;
 	FT_CharMap charmap = NULL;
 	FT_Glyph image;
 	FT_GlyphSlot slot;
 	FT_Error err;
-	FT_UInt glyph_index, previous;
+	FT_UInt glyph_index;
 	double sin_a = sin (angle);
 	double cos_a = cos (angle);
-	int len, i, ch;
+	int  i, ch;
 	font_t *font;
 	fontkey_t fontkey;
 	char *next;
 	char *tmpstr = 0;
+	uint32_t *text;
+	glyphInfo *info = NULL;
+	size_t count;
 	int render = (im && (im->trueColor || (fg <= 255 && fg >= -255)));
 	FT_BitmapGlyph bm;
 	/* 2.0.13: Bob Ostermann: don't force autohint, that's just for testing
@@ -1170,31 +1274,11 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 
 	oldpenf.x = oldpenf.y = 0; /* for postscript xshow operator */
 	penf.x = penf.y = 0;	/* running position of non-rotated glyphs */
-	previous = 0;		/* index of previous glyph for kerning calculations */
-	for (i=0; *next; i++) {
-		FT_Activate_Size (platform_independent);
-
+	text = (uint32_t*) gdCalloc (sizeof (uint32_t), strlen(next));
+	i = 0;
+	while (*next) {
+		int len;
 		ch = *next;
-
-		/* carriage returns */
-		if (ch == '\r') {
-			penf.x = 0;
-			previous = 0;		/* clear kerning flag */
-			next++;
-			continue;
-		}
-		/* newlines */
-		if (ch == '\n') {
-			/* 2.0.13: reset penf.x. Christopher J. Grayce */
-			penf.x = 0;
-			penf.y += linespace * ptsize * 64 * METRIC_RES / 72;
-			penf.y &= ~63;	/* round down to 1/METRIC_RES */
-			previous = 0;		/* clear kerning flag */
-			next++;
-			continue;
-		}
-
-
 		switch (encoding) {
 		case gdFTEX_Unicode: {
 			/* use UTF-8 mapping from ASCII */
@@ -1270,22 +1354,43 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 			next++;
 			break;
 		}
+		text[i] = ch;
+		i++;
+	}
 
-		/* Convert character code to glyph index */
-		glyph_index = FT_Get_Char_Index (face, ch);
+	FT_Activate_Size (platform_independent);
 
-		/* retrieve kerning distance */
-		if ( ! (strex && (strex->flags & gdFTEX_DISABLE_KERNING))
-		        && ! FT_IS_FIXED_WIDTH(face)
-		        && FT_HAS_KERNING(face)
-		        && previous
-		        && glyph_index)
-			FT_Get_Kerning (face, previous, glyph_index, ft_kerning_default, &delta);
-		else
-			delta.x = delta.y = 0;
+	count = textLayout (text , i, face, strex, &info);
+	gdFree (text);
 
-		penf.x += delta.x;
+	if (!count) {
+		gdFree (tmpstr);
+		gdCacheDelete (tc_cache);
+		gdMutexUnlock (gdFontCacheMutex);
+		return "Problem doing text layout";
+	}
 
+	for (i = 0; i < count; i++) {
+		FT_Activate_Size (platform_independent);
+
+		ch = text[info[i].cluster];
+
+		/* carriage returns */
+		if (ch == '\r') {
+			penf.x = 0;
+			continue;
+		}
+
+		/* newlines */
+		if (ch == '\n') {
+			/* 2.0.13: reset penf.x. Christopher J. Grayce */
+			penf.x = 0;
+			penf.y += linespace * ptsize * 64 * METRIC_RES / 72;
+			penf.y &= ~63;	/* round down to 1/METRIC_RES */
+			continue;
+		}
+
+		glyph_index = info[i].index;
 		/* When we know the position of the second or subsequent character,
 		save the (kerned) advance from the preceeding character in the
 		xshow vector */
@@ -1329,7 +1434,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 			return "Problem loading glyph";
 		}
 
-		horiAdvance = slot->metrics.horiAdvance;
+		horiAdvance = info[i].x_advance;
 
 		if (brect) {
 			/* only if need brect */
@@ -1395,18 +1500,20 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 			bm = (FT_BitmapGlyph) image;
 			/* position rounded down to nearest pixel at current dpi
 			(the estimate was rounded up to next 1/METRIC_RES, so this should fit) */
+			FT_Pos pen_x = penf.x + info[i].x_offset;
+			FT_Pos pen_y = penf.y - info[i].y_offset;
 			gdft_draw_bitmap (tc_cache, im, fg, bm->bitmap,
-			                  (int)(x + (penf.x * cos_a + penf.y * sin_a)*hdpi/(METRIC_RES*64) + bm->left),
-			                  (int)(y - (penf.x * sin_a - penf.y * cos_a)*vdpi/(METRIC_RES*64) - bm->top));
+					  (int)(x + (pen_x * cos_a + pen_y * sin_a)*hdpi/(METRIC_RES*64) + bm->left),
+					  (int)(y - (pen_x * sin_a - pen_y * cos_a)*vdpi/(METRIC_RES*64) - bm->top));
 
 			FT_Done_Glyph (image);
 		}
 
-		/* record current glyph index for kerning */
-		previous = glyph_index;
 
 		penf.x += horiAdvance;
 	}
+
+	gdFree(info);
 
 	/* Save the (unkerned) advance from the last character in the xshow vector */
 	if (strex && (strex->flags & gdFTEX_XSHOW) && strex->xshow) {
