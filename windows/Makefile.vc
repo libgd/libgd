@@ -70,6 +70,7 @@ LIB_OBJS= \
   $(LIBGD_OBJ_DIR)\gd_jpeg.obj \
   $(LIBGD_OBJ_DIR)\gd_security.obj \
   $(LIBGD_OBJ_DIR)\gd_tga.obj \
+  $(LIBGD_OBJ_DIR)\gd_tiff.obj \
   $(LIBGD_OBJ_DIR)\gd_xbm.obj \
   $(LIBGD_OBJ_DIR)\gdkanji.obj \
   $(LIBGD_OBJ_DIR)\gd_nnquant.obj \
@@ -115,7 +116,7 @@ CFLAGS=/nologo /O2 /Qvec-report:1 /MD /TC\
 # NDEBUG
 
 TEST_CFLAGS=$(CFLAGS) /FItest_config.h
-TEST_LDFLAGS=$(LDFLAGS) $(SDR)gdtest.obj $(BUILD_DIR)\libgd.lib
+TEST_LDFLAGS=$(LDFLAGS) $(SDR)readdir.obj $(SDR)gdtest.obj $(BUILD_DIR)\libgd.lib
 TEST_CONFIG=tests\test_config.h
 TEST_LIST=$(TDR)testlist.txt
 TEST_MK=$(TDR)Maketests.vc
@@ -131,7 +132,7 @@ TEST_MK=$(TDR)Maketests.vc
 !ENDIF
 !IF [@for %F in ($(TESTS)) do @echo $(SDR)%~nF.obj: tests\%F.c; @^$(CC) ^$(TEST_CFLAGS) /c  ^$** /Fo:^$@ >> $(TEST_MK)]
 !ENDIF
-!IF [@for %F in ($(TESTS)) do @echo $(TDR)%~nF.exe: $(SDR)%~nF.obj; @$(LD) $(TEST_LDFLAGS) ^$** /out:^$@ >> $(TEST_MK)]
+!IF [@for %F in ($(TESTS)) do @echo $(TDR)%~nF.exe: $(SDR)%~nF.obj; $(LD) $(TEST_LDFLAGS) ^$** /out:^$@ >> $(TEST_MK)]
 !ENDIF
 TEST_OBJS=$(TEST_EXES:tests=obj)
 TEST_OBJS=$(TEST_OBJS:exe=obj)
@@ -185,11 +186,14 @@ all: $(LIBGD_OBJ_DIR) $(LIBGD_BIN_DIR) $(LIB_OBJS) $(STATICLIB)
 # tests
 
 !INCLUDE $(TEST_MK)
-build_tests: $(TEST_LIST) $(SDR)gdtest.obj $(TEST_EXES)
+build_tests: $(TEST_LIST) $(SDR)readdir.obj $(SDR)gdtest.obj $(TEST_EXES)
 
 $(SDR)gdtest.obj: $(TARGETDLL) $(TEST_CONFIG) tests\gdtest\gdtest.c
   @$(CC) $(CFLAGS) /c tests\gdtest\gdtest.c /Fo$(SDR)gdtest.obj
 
+$(SDR)readdir.obj: $(TARGETDLL) $(TEST_CONFIG) tests\gdtest\readdir.c
+  @$(CC) $(CFLAGS) /c tests\gdtest\readdir.c /Fo$(SDR)readdir.obj
+  
 $(TEST_CONFIG):
   @echo #define GDTEST_TOP_DIR "$(MAKEDIR:\=\\)\\tests" > tests\test_config.h
   @echo #define snprintf _snprintf >> tests\test_config.h
