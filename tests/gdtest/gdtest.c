@@ -20,6 +20,10 @@
 #include <sys/types.h>
 #endif
 
+#ifdef _WIN32
+# include "readdir.h"
+#endif
+
 #include "gd.h"
 
 #include "gdtest.h"
@@ -75,7 +79,20 @@ static void _clean_dir(const char *dir)
 
 		if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
 			continue;
+#ifdef _WIN32
+	{
+		WIN32_FILE_ATTRIBUTE_DATA data;
 
+		if (!GetFileAttributesEx(de->d_name, GetFileExInfoStandard, &data)) {
+			continue;
+		}
+		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+			_clean_dir(de->d_name);
+		} else {
+			unlink(de->d_name);
+		}
+	}
+#else
 		if (lstat(de->d_name, &st) != 0)
 			continue;
 
@@ -83,6 +100,7 @@ static void _clean_dir(const char *dir)
 			_clean_dir(de->d_name);
 		else
 			unlink(de->d_name);
+#endif
 	}
 
 	if (chdir("..")) {
