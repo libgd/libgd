@@ -155,7 +155,8 @@ make_dirs:
   @if not exist $(SDR) mkdir $(SDR)
 
 run_tests:
-  @windows\run_tests
+  @cd $(TDR)
+  @$(MAKEDIR)\windows\run_tests
 
 # libgd
 $(LIBGD_OBJ_DIR):
@@ -195,11 +196,18 @@ $(SDR)readdir.obj: $(TARGETDLL) $(TEST_CONFIG) tests\gdtest\readdir.c
   @$(CC) $(CFLAGS) /c tests\gdtest\readdir.c /Fo$(SDR)readdir.obj
   
 $(TEST_CONFIG):
-  @echo #define GDTEST_TOP_DIR "$(MAKEDIR:\=\\)\\tests" > tests\test_config.h
-  @echo #define snprintf _snprintf >> tests\test_config.h
+  @echo #ifndef GD_TEST_CONFIG_H> tests\test_config.h
+  @echo #define GD_TEST_CONFIG_H>> tests\test_config.h
+  @echo #ifndef GDTEST_TOP_DIR>> tests\test_config.h
+  @echo #define GDTEST_TOP_DIR "$(MAKEDIR:\=\\)\\tests">> tests\test_config.h
+  @echo #endif>> tests\test_config.h
+  @echo #ifndef _WIN32>> tests\test_config.h
+  @echo #define snprintf _snprintf>> tests\test_config.h
+  @echo #endif>> tests\test_config.h
+  @echo #endif>> tests\test_config.h
 
 $(TEST_LIST): $(TARGETDLL)
-  @if not exist $(TDR) mkdir $(TDR)
-  @copy $(TARGETDLL) $(TDR)$(GD_DLL)
-  @copy NUL $(TDR)testlist.txt
-  @for %%F in ($(TESTS)) do @echo %%F >> $(TDR)testlist.txt
+  if not exist $(TDR) mkdir $(TDR)
+  copy $(TARGETDLL) $(TDR)$(GD_DLL)
+  copy NUL $(TEST_LIST)
+  for %%F in ($(TESTS)) do @echo %%F >> $(TEST_LIST)
