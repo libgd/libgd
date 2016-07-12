@@ -118,14 +118,148 @@ static void tmpdir_cleanup(void)
 	free(tmpdir_base);
 }
 
+#ifdef _WIN32
+char* strrstr (char* haystack, char* needle)
+{
+  int needle_length = strlen(needle);
+  char * haystack_end = haystack + strlen(haystack) - needle_length;
+  char * p;
+  int i;
+
+  for(p = haystack_end; p >= haystack; --p)
+  {
+    for(i = 0; i < needle_length; ++i) {
+      if(p[i] != needle[i])
+        goto next;
+    }
+    return p;
+
+    next:;
+  }
+  return 0;
+}
+
+
+typedef VOID (WINAPI *MyGetSystemTimeAsFileTime)(LPFILETIME lpSystemTimeAsFileTime);
+
+static MyGetSystemTimeAsFileTime get_time_func(void)
+{
+	MyGetSystemTimeAsFileTime timefunc = NULL;
+	HMODULE hMod = GetModuleHandle("kernel32.dll");
+
+	if (hMod) {
+		/* Max possible resolution <1us, win8/server2012 */
+		timefunc = (MyGetSystemTimeAsFileTime)GetProcAddress(hMod, "GetSystemTimePreciseAsFileTime");
+
+		if(!timefunc) {
+			/* 100ns blocks since 01-Jan-1641 */
+			timefunc = (MyGetSystemTimeAsFileTime)GetProcAddress(hMod, "GetSystemTimeAsFileTime");
+		}
+	}
+
+	return timefunc;
+}
+static MyGetSystemTimeAsFileTime timefunc = NULL;
+static int getfilesystemtime(struct timeval *tv)
+{
+	FILETIME ft;
+	unsigned __int64 ff = 0;
+	ULARGE_INTEGER fft;
+
+	if (timefunc == NULL) {
+		timefunc = get_time_func();
+	}
+	timefunc(&ft);
+
+    /*
+	 * Do not cast a pointer to a FILETIME structure to either a
+	 * ULARGE_INTEGER* or __int64* value because it can cause alignment faults on 64-bit Windows.
+	 * via  http://technet.microsoft.com/en-us/library/ms724284(v=vs.85).aspx
+	 */
+	fft.HighPart = ft.dwHighDateTime;
+	fft.LowPart = ft.dwLowDateTime;
+	ff = fft.QuadPart;
+
+	ff /= 10Ui64; /* convert to microseconds */
+	ff -= 11644473600000000Ui64; /* convert to unix epoch */
+
+	tv->tv_sec = (long)(ff / 1000000Ui64);
+	tv->tv_usec = (long)(ff % 1000000Ui64);
+
+	return 0;
+}
+
+static char *
+mkdtemp (char *tmpl)
+{
+	static const char letters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	static const int NLETTERS = sizeof (letters) - 1;
+	static int counter = 0;
+	char *XXXXXX;
+	struct timeval tv;
+	_int64 value;
+	int count;
+
+	/* find the last occurrence of "XXXXXX" */
+	XXXXXX = strrstr(tmpl, "XXXXXX");
+
+	if (!XXXXXX || strncmp (XXXXXX, "XXXXXX", 6)) {
+		errno = EINVAL;
+		return NULL;
+	}
+
+	/* Get some more or less random data.  */
+	getfilesystemtime(&tv);
+	value = (tv.tv_usec ^ tv.tv_sec) + counter++;
+
+	for (count = 0; count < 100; value += 7777, ++count) {
+		_int64 v = value;
+
+		/* Fill in the random bits.  */
+		XXXXXX[0] = letters[v % NLETTERS];
+		v /= NLETTERS;
+		XXXXXX[1] = letters[v % NLETTERS];
+		v /= NLETTERS;
+		XXXXXX[2] = letters[v % NLETTERS];
+		v /= NLETTERS;
+		XXXXXX[3] = letters[v % NLETTERS];
+		v /= NLETTERS;
+		XXXXXX[4] = letters[v % NLETTERS];
+		v /= NLETTERS;
+		XXXXXX[5] = letters[v % NLETTERS];
+
+		/* tmpl is in UTF-8 on Windows, thus use g_mkdir() */
+		if (mkdir(tmpl) == 0)
+			return tmpl;
+
+		if (errno != EEXIST)
+			/* Any other error will apply also to other names we might
+			 *  try, and there are 2^32 or so of them, so give up now.
+			 */
+			return NULL;
+	}
+
+	/* We got out of the loop because we ran out of combinations to try.  */
+	errno = EEXIST;
+	return NULL;
+}
+#endif
+
 const char *gdTestTempDir(void)
 {
 	if (tmpdir_base == NULL) {
-		char *tmpdir, *tmpdir_root;
-
+		char *tmpdir;
+#ifdef _WIN32
+		char tmpdir_root[MAX_PATH];
+		size_t tmpdir_root_len = GetTempPath(MAX_PATH, tmpdir_root);
+		gdTestAssert(tmpdir_root_len > MAX_PATH || (tmpdir_root_len == 0));
+		gdTestAssert((tmpdir_root_len + 30 < MAX_PATH));
+#else
+		char *tmpdir_root;
 		tmpdir_root = getenv("TMPDIR");
 		if (tmpdir_root == NULL)
 			tmpdir_root = "/tmp";
+#endif
 
 		/* The constant here is a lazy over-estimate. */
 		tmpdir = malloc(strlen(tmpdir_root) + 30);
@@ -147,9 +281,24 @@ char *gdTestTempFile(const char *template)
 	const char *tempdir = gdTestTempDir();
 	char *ret;
 
-	if (template == NULL)
-		template = "gdtemp.XXXXXX";
+#ifdef _WIN32
+	{
+		char *tmpfilename;
+		UINT error;
 
+		ret = malloc(MAX_PATH);
+		gdTestAssert(ret != NULL);
+
+		error = GetTempFileName(tempdir,
+								  "gdtest",
+								  0,
+								  ret);
+		gdTestAssert(error != 0);
+	}
+#else
+	if (template == NULL) {
+		template = "gdtemp.XXXXXX";
+	}
 	ret = malloc(strlen(tempdir) + 10 + strlen(template));
 	gdTestAssert(ret != NULL);
 	sprintf(ret, "%s/%s", tempdir, template);
@@ -159,7 +308,7 @@ char *gdTestTempFile(const char *template)
 		gdTestAssert(fd != -1);
 		close(fd);
 	}
-
+#endif
 	return ret;
 }
 
