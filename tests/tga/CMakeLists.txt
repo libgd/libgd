@@ -2,6 +2,7 @@ SET(TESTS_FILES
 	tga_null
 	bug00084
 	bug00247
+	bug00247a
 )
 
 ADD_GD_TESTS()
