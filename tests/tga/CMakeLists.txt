@@ -1,6 +1,7 @@
 LIST(APPEND TESTS_FILES
 	tga_null
 	bug00084
+	bug00247
 )
 
 ADD_GD_TESTS()
