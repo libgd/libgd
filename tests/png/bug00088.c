@@ -28,6 +28,7 @@ int main()
 		}
 
 		path = gdTestFilePath2("png", files_exp[i]);
+
 		if (!gdAssertImageEqualsToFile(path, im)) {
 			error |= 1;
 		}

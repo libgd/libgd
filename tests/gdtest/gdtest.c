@@ -47,12 +47,18 @@ gdImagePtr gdTestImageFromPng(const char *filename)
 	FILE *fp;
 
 	/* If the path is relative, then assume it's in the tests/ dir. */
-	if (filename[0] == '/') {
+	if (filename[0] == '/' 
+#ifdef _WIN32
+	|| filename[1] == ':'
+#endif
+	) {
 		fp = fopen(filename, "rb");
-		if (!fp)
+		if (!fp) {
 			return NULL;
-	} else
+		}
+	} else {
 		fp = gdTestFileOpen(filename);
+	}
 
 	image = gdImageCreateFromPng(fp);
 	fclose(fp);
@@ -301,8 +307,11 @@ char *gdTestTempFile(const char *template)
 	}
 	ret = malloc(strlen(tempdir) + 10 + strlen(template));
 	gdTestAssert(ret != NULL);
+#ifdef _WIN32
+	sprintf(ret, "%s\\%s", tempdir, template);
+#else
 	sprintf(ret, "%s/%s", tempdir, template);
-
+#endif
 	if (strstr(template, "XXXXXX") != NULL) {
 		int fd = mkstemp(ret);
 		gdTestAssert(fd != -1);
@@ -343,8 +352,13 @@ char *gdTestFilePathV(const char *path, va_list args)
 	strcpy(file, GDTEST_TOP_DIR);
 	p = path;
 	do {
+#ifdef _WIN32
+		strcat(file, "\\");
+#else
 		strcat(file, "/");
+#endif
 		strcat(file, p);
+
 	} while ((p = va_arg(args, const char *)) != NULL);
 	va_end(args);
 
