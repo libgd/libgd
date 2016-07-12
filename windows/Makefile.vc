@@ -9,6 +9,12 @@ CC=cl
 LD=link
 LB=lib
 
+
+!IFNDEF DEBUG
+DEBUG=0
+!ENDIF
+
+
 !IFNDEF WITH_DEVEL
 WITH_DEVEL=..\deps
 !ENDIF
@@ -97,7 +103,13 @@ INCLUDES=/Isrc /I$(WITH_DEVEL)\include -I$(WITH_DEVEL)\include\libpng16 -I$(WITH
 
 LDFLAGS=/nologo /nodefaultlib:libcmt /libpath:$(WITH_DEVEL)\lib /MACHINE:$(PLATFORM)
 
-CFLAGS=/nologo /O2 /Qvec-report:1 /MD /TC\
+!IF $(DEBUG)
+CFLAGS=/nologo /Qvec-report:1 /MD /TC /Zi /Debug
+!ELSE
+CFLAGS=/nologo /O2 /Qvec-report:1 /MD /TC
+!ENDIF
+
+CFLAGS= $(CFLAGS) \
        /DWIN32=1\
        /D_WIN32=1\
        /DMSWIN32=1\
