@@ -53,13 +53,14 @@ gdImagePtr gdTestImageFromPng(const char *filename)
 #endif
 	) {
 		fp = fopen(filename, "rb");
-		if (!fp) {
-			return NULL;
-		}
 	} else {
 		fp = gdTestFileOpen(filename);
 	}
 
+	if (fp == NULL) {
+		return NULL;
+	}
+	
 	image = gdImageCreateFromPng(fp);
 	fclose(fp);
 	return image;
