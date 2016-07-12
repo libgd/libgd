@@ -19,7 +19,7 @@ int main()
 	im2 = gdImageCreateTrueColor(width, width);
 
 	gdImageCopyRotated(im2, im, width / 2, width / 2, 0,0, width, width, 60);
-	path = gdTestFilePath2("png", "bug00020_exp.png");
+	path = gdTestFilePath2("gdimagecopyrotated", "bug00020_exp.png");
 	if (!gdAssertImageEqualsToFile(path, im2)) {
 		error = 1;
 	}
