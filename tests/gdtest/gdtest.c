@@ -235,9 +235,10 @@ mkdtemp (char *tmpl)
 		XXXXXX[5] = letters[v % NLETTERS];
 
 		/* tmpl is in UTF-8 on Windows, thus use g_mkdir() */
-		if (mkdir(tmpl) == 0)
+		if (mkdir(tmpl) == 0) {
 			return tmpl;
-
+		}
+		printf("failed to create directory\n");
 		if (errno != EEXIST)
 			/* Any other error will apply also to other names we might
 			 *  try, and there are 2^32 or so of them, so give up now.
@@ -258,7 +259,7 @@ const char *gdTestTempDir(void)
 #ifdef _WIN32
 		char tmpdir_root[MAX_PATH];
 		size_t tmpdir_root_len = GetTempPath(MAX_PATH, tmpdir_root);
-		gdTestAssert(tmpdir_root_len > MAX_PATH || (tmpdir_root_len == 0));
+		gdTestAssert(!(tmpdir_root_len > MAX_PATH || (tmpdir_root_len == 0)));
 		gdTestAssert((tmpdir_root_len + 30 < MAX_PATH));
 #else
 		char *tmpdir_root;
@@ -270,9 +271,11 @@ const char *gdTestTempDir(void)
 		/* The constant here is a lazy over-estimate. */
 		tmpdir = malloc(strlen(tmpdir_root) + 30);
 		gdTestAssert(tmpdir != NULL);
-
+#ifdef _WIN32
+		sprintf(tmpdir, "%sgdtest.XXXXXX", tmpdir_root);
+#else
 		sprintf(tmpdir, "%s/gdtest.XXXXXX", tmpdir_root);
-
+#endif
 		tmpdir_base = mkdtemp(tmpdir);
 		gdTestAssert(tmpdir_base != NULL);
 
@@ -294,12 +297,15 @@ char *gdTestTempFile(const char *template)
 
 		ret = malloc(MAX_PATH);
 		gdTestAssert(ret != NULL);
-
-		error = GetTempFileName(tempdir,
-								  "gdtest",
-								  0,
-								  ret);
-		gdTestAssert(error != 0);
+		if (template == NULL) {
+			error = GetTempFileName(tempdir,
+										  "gdtest",
+										  0,
+										  ret);
+				gdTestAssert(error != 0);
+		} else {
+			sprintf(ret, "%s\%s", tempdir, template);		
+		}
 	}
 #else
 	if (template == NULL) {
@@ -307,11 +313,8 @@ char *gdTestTempFile(const char *template)
 	}
 	ret = malloc(strlen(tempdir) + 10 + strlen(template));
 	gdTestAssert(ret != NULL);
-#ifdef _WIN32
-	sprintf(ret, "%s\\%s", tempdir, template);
-#else
 	sprintf(ret, "%s/%s", tempdir, template);
-#endif
+
 	if (strstr(template, "XXXXXX") != NULL) {
 		int fd = mkstemp(ret);
 		gdTestAssert(fd != -1);

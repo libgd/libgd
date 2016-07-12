@@ -123,7 +123,7 @@ do_test() {
 
         /* Debug printf. */
         //printf("%s -> %d\n", full_filename, gdMaxPixelDiff(orig, copy));
-        
+
         gdTestAssertMsg(gdMaxPixelDiff(orig, copy) <= names[n].maxdiff,"Pixels different on %s\n", full_filename, full_filename);
 
         if (!names[n].readonly) {
