@@ -99,7 +99,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx)
 			if (tga->bits == TGA_BPP_24) {
 				*tpix = gdTrueColor(tga->bitmap[bitmap_caret + 2], tga->bitmap[bitmap_caret + 1], tga->bitmap[bitmap_caret]);
 				bitmap_caret += 3;
-			} else if (tga->bits == TGA_BPP_32 && tga->alphabits) {
+			} else if (tga->bits == TGA_BPP_32 || tga->alphabits) {
 				register int a = tga->bitmap[bitmap_caret + 3];
 
 				*tpix = gdTrueColorAlpha(tga->bitmap[bitmap_caret + 2], tga->bitmap[bitmap_caret + 1], tga->bitmap[bitmap_caret], gdAlphaMax - (a >> 1));
@@ -159,12 +159,16 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga)
 	printf("wxh: %i %i\n", tga->width, tga->height);
 #endif
 
-	if (!((tga->bits == TGA_BPP_24 && tga->alphabits == 0)
-		|| (tga->bits == TGA_BPP_32 && tga->alphabits == 8)))
-	{
-		gd_error_ex(GD_WARNING, "gd-tga: %u bits per pixel with %u alpha bits not supported\n",
-			tga->bits, tga->alphabits);
+	switch(tga->bits) {
+	case 8:
+	case 16:
+	case 24:
+	case 32:
+		break;
+	default:
+		gd_error("bps %i not supported", tga->bits);
 		return -1;
+		break;
 	}
 
 	tga->ident = NULL;
