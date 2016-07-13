@@ -8,7 +8,7 @@ gdImageCreateFromTga().
 #include "gd.h"
 #include "gdtest.h"
 
-int main(int argc, char **argv)
+int main()
 {
     gdImagePtr im;
     FILE *fp = gdTestFileOpen("tga/bug00247a.tga");
