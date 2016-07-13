@@ -12,7 +12,7 @@ int main()
 
 	im = gdImageCreateTrueColor(10, 10);
 	if (!im) {
-		printf("can't get truecolor image\n");
+		gdTestErrorMsg("can't get truecolor image\n");
 		return 1;
 	}
 
@@ -23,7 +23,7 @@ int main()
 
 	if (!gdAssertImageEqualsToFile("gdimageline/bug00111_exp.png", im)) {
 		error = 1;
-		printf("Reference image and destination differ\n");
+		gdTestErrorMsg("Reference image and destination differ\n");
 	}
 
 	gdImageDestroy(im);

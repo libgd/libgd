@@ -22,7 +22,7 @@ int main()
 	if (gdTestAssert(color==0x1000000)) {
 		return 0;
 	} else {
-		printf("c: %X, expected %X\n", color, 0x1000000);
+		gdTestErrorMsg("c: %X, expected %X\n", color, 0x1000000);
 		return -1;
 	}
 

@@ -16,7 +16,7 @@ int main()
 
 	src = gdImageCreate(100, 100);
 	if (src == NULL) {
-		printf("could not create src\n");
+		gdTestErrorMsg("could not create src\n");
 		return 1;
 	}
 	r = gdImageColorAllocate(src, 0xFF, 0, 0);
@@ -40,30 +40,30 @@ int main()
 	p = gdImageTiffPtr(src, &size);
 	if (p == NULL) {
 		status = 1;
-		printf("p is null\n");
+		gdTestErrorMsg("p is null\n");
 		goto door0;
 	}
 	if (size <= 0) {
 		status = 1;
-		printf("size is non-positive\n");
+		gdTestErrorMsg("size is non-positive\n");
 		goto door1;
 	}
 
 	dst = gdImageCreateFromTiffPtr(size, p);
 	if (dst == NULL) {
 		status = 1;
-		printf("could not create dst\n");
+		gdTestErrorMsg("could not create dst\n");
 		goto door1;
 	}
 
 	if (dst->res_x != res_x) {
 		status = 1;
-		printf("mismatch in res_x (got %d, expected %d)", dst->res_x, res_x);
+		gdTestErrorMsg("mismatch in res_x (got %d, expected %d)", dst->res_x, res_x);
 	}
 
 	if (dst->res_y != res_y) {
 		status = 1;
-		printf("mismatch in res_y (got %d, expected %d)", dst->res_y, res_y);
+		gdTestErrorMsg("mismatch in res_y (got %d, expected %d)", dst->res_y, res_y);
 	}
 
 	gdImageDestroy(dst);
