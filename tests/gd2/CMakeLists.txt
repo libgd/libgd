@@ -3,6 +3,8 @@ LIST(APPEND TESTS_FILES
 	gd2_im2im
 	gd2_null
 	php_bug_72339
+	gd2_read
+	gd2_read_corrupt
 )
 
 ADD_GD_TESTS()
