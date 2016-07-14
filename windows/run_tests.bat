@@ -14,7 +14,6 @@ rem )
 for /f %%T in (testlist.txt) do (
   set test=%%T
   set output=test: !test!....................................................................
-  echo !target!
   set target=%%~nT.exe
   if not exist !target! SET result=NotFound
   call !target! && (SET result=Passed) || (SET result=Failed)
