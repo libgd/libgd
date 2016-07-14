@@ -7,10 +7,12 @@ In a sub directory:
 $ mkdir bld
 $ cd bld
 $ cmake -DBUILD_TEST=1 ..
+$ make
 $ ctest .
 
 Or if you like to build in the source tree:
 $ cmake -DBUILD_TEST=1 .
+$ make
 $ ctest .
 
 Add "-DCMAKE_BUILD_TYPE=DEBUG" if you like to have a debug version.
