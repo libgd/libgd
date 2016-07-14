@@ -8,8 +8,8 @@ int main()
 {
 	gdImagePtr im;
 	FILE *fp;
-
-	fp = gdTestFileOpen("gdimagerotate/php_bug_64898.png");
+	
+	fp = gdTestFileOpen2("gd2", "php_bug_72339_exp.gd2");
 	im = gdImageCreateFromGd2(fp);
 	if (im == NULL) {
 		return 0;
