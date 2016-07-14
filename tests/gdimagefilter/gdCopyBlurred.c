@@ -191,7 +191,7 @@ void do_crosstest()
 }/* do_crosstest*/
 
 
-int main(int argc, char **argv)
+int main()
 {
 
     do_test();

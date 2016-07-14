@@ -154,7 +154,7 @@ do_errortest() {
 }/* do_errortest*/
 
 
-int main(int argc, char **argv)
+int main()
 {
 
     do_test();
