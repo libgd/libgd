@@ -10,7 +10,7 @@ libgd_test_programs += \
 if HAVE_LIBPNG
 libgd_test_programs += \
 	gd2/gd2_im2im \
-	gd2/gd_read
+	gd2/gd2_read
 endif
 endif
 
