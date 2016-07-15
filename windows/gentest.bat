@@ -7,12 +7,15 @@ set LDFLAGS=%~4
 set CC=%~5
 set LD=%~6
 set TESTMK=%~7
-
+set TESTLIST=%~8
 echo %*
 echo recieved !testsdir! !builddir! !CFLAGS! !LDFLAGS! !CC!
-copy NUL $(TEST_MK) > nul
+
+copy NUL !TESTMK! > nul
+copy NUL !TESTLIST! > nul
+
 for /D %%d in (!testsdir!/*) do (
-    for %%f in (!testsdir!/%%d/*.c) do (
+	if NOT "%%d"=="gdtest" for %%f in (!testsdir!/%%d/*.c) do (
 		echo TEST_EXES=!builddir!\tests\%%d_%%~nf.exe ^$^(TEST_EXES^) >> !TESTMK!
 	)
 )
@@ -26,6 +29,7 @@ for /D %%d in (!testsdir!/*) do (
 for /D %%d in (!testsdir!/*) do (
     for %%f in (!testsdir!/%%d/*.c) do (
 		echo !builddir!\tests\%%d_%%~nf.exe: !builddir!\%%d_%%~nf.obj; !LD! !LDFLAGS! $** /out:$@ >> !TESTMK!
+		echo %%d_%%~nf.exe >> !TESTLIST!
 	)
 )
 ENDLOCAL
