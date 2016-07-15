@@ -9,11 +9,9 @@ CC=cl
 LD=link
 LB=lib
 
-
 !IFNDEF DEBUG
 DEBUG=0
 !ENDIF
-
 
 !IFNDEF WITH_DEVEL
 WITH_DEVEL=..\deps
@@ -26,6 +24,7 @@ WITH_BUILD=..\gdbuild
 LIBGD_SRC_DIR=src
 LIBGD_OBJ_DIR=$(WITH_BUILD)
 LIBGD_BIN_DIR=$(WITH_BUILD)\bin
+LIBGD_TEST_DIR=test
 
 !IFNDEF PLATFORM
 PLATFORM=x86
@@ -39,7 +38,6 @@ PLATFORM=$(PLATFORM:X=x)
 BUILD_DIR=$(WITH_BUILD)
 
 !MESSAGE library source:  $(LIBGD_SRC_DIR)
-
 
 GD_DLL=libgd.dll
 GD_LIB=libgd_a.lib
@@ -93,8 +91,7 @@ LIB_OBJS= \
   $(LIBGD_OBJ_DIR)\gd_rotate.obj \
   $(LIBGD_OBJ_DIR)\gd_version.obj
 
-TESTS=bmp\bmp_im2im bmp\bmp_null freetype\bug00132 gd\gd_im2im gd\gd_null gd\gd_num_colors gd\gd_versiontest gd2\gd2_empty_file gd2\gd2_im2im gd2\gd2_null gd2\gd2_read gdimagearc\bug00079 gdimagecolorclosest\gdimagecolorclosest gdimagecolordeallocate\gdimagecolordeallocate gdimagecolorexact\gdimagecolorexact gdimagecolorreplace\gdimagecolorreplace gdimagecolorresolve\gdimagecolorresolve gdimagecolortransparent\gdimagecolortransparent gdimagecopy\bug00007 gdimagecopy\bug00081 gdimagecopyrotated\bug00020 gdimagefile\gdnametest gdimagefill\bug00002_1 gdimagefill\bug00002_2 gdimagefill\bug00002_3 gdimagefill\bug00002_4 gdimagefilledellipse\bug00010 gdimagefilledellipse\bug00191 gdimagefilledpolygon\bug00100 gdimagefilledpolygon\gdimagefilledpolygon0 gdimagefilledpolygon\gdimagefilledpolygon1 gdimagefilledpolygon\gdimagefilledpolygon2 gdimagefilledpolygon\gdimagefilledpolygon3 gdimagefilledrectangle\bug00004 gdimagefilledrectangle\bug00078 gdimagefilledrectangle\bug00106_gdimagefilledrectangle gdimagefilltoborder\bug00037 gdimagefilter\gdCopyBlurred gdimageline\bug00072 gdimageline\bug00077 gdimageline\bug00111 gdimageline\gdImageAALine_thickness gdimageline\gdimageline_aa gdimageline\gdimageline_aa_outofrange gdimageline\gdimageline_bug5 gdimageopenpolygon\gdimageopenpolygon0 gdimageopenpolygon\gdimageopenpolygon1 gdimageopenpolygon\gdimageopenpolygon2 gdimageopenpolygon\gdimageopenpolygon3 gdimagepixelate\gdimagepixelate gdimagepolygon\gdimagepolygon0 gdimagepolygon\gdimagepolygon1 gdimagepolygon\gdimagepolygon2 gdimagepolygon\gdimagepolygon3 gdimagerectangle\bug00003 gdimagerectangle\bug00106_gdimagerectangle gdimagerotate\bug00067 gdimagerotate\php_bug_64898 gdimagescatterex\bug00208_1 gdimagescatterex\bug00208_2 gdimagesetpixel\bug00186 gdimagesetpixel\gdeffectmultiply gdimagesetpixel\gdeffectoverlay gdimagestringft\gdimagestringft_bbox gdimagestringftex\gdimagestringftex_returnfontpathname gdinterpolatedscale\gdModesAndPalettes gdinterpolatedscale\gdTrivialResize gdnewfilectx\gdnewfilectx_null gdtiled\bug00032 gif\bug00005 gif\bug00005_2 gif\bug00006 gif\bug00060 gif\bug00066 gif\bug00181 gif\bug00227 gif\gif_im2im gif\gif_null jpeg\jpeg_empty_file jpeg\jpeg_im2im jpeg\jpeg_null jpeg\jpeg_read jpeg\jpeg_resolution png\bug00011 png\bug00033 png\bug00086 png\bug00088 png\bug00193 png\png_im2im png\png_null png\png_resolution tga\tga_null
-#tiff\tiff_im2im tiff\tiff_null wbmp\wbmp_im2im wbmp\wbmp_null xpm\bug00166 xpm\bug00185 xpm\color_name
+!include "Makefiletest.vc"
 
 LIBS=kernel32.lib ole32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib Dnsapi.lib Gdi32.Lib
 LIBS_GD=libjpeg_a.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib
@@ -124,9 +121,6 @@ CFLAGS= $(CFLAGS) \
        /DHAVE_LIBZ=1\
        $(INCLUDES)
 
-# These flags may be set wrong; not sure of precise purpose
-# NDEBUG
-
 TEST_CFLAGS=$(CFLAGS) /FItest_config.h
 TEST_LDFLAGS=$(LDFLAGS) $(SDR)readdir.obj $(SDR)gdtest.obj $(BUILD_DIR)\libgd.lib
 TEST_CONFIG=tests\test_config.h
@@ -134,18 +128,15 @@ TEST_LIST=$(TDR)testlist.txt
 TEST_MK=$(TDR)Maketests.vc
 
 # generate test makefile from TESTS macro
+# generate test makefile from TESTS macro
 !IF [if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)]
 !ENDIF
 !IF [if not exist $(TDR) mkdir $(TDR)]
 !ENDIF
-!IF [@copy NUL $(TEST_MK) > nul]
+
+!IF [$(MAKEDIR)\windows\gentest.bat tests $(BUILD_DIR) "$(TEST_CFLAGS)" "$(TEST_LDFLAGS)" $(CC) $(LD) "$(TEST_MK)"] 
 !ENDIF
-!IF [@for %F in ($(TESTS)) do @echo TEST_EXES=$(TDR)%~nF.exe ^$(TEST_EXES) >> $(TEST_MK)]
-!ENDIF
-!IF [@for %F in ($(TESTS)) do @echo $(SDR)%~nF.obj: tests\%F.c; @^$(CC) ^$(TEST_CFLAGS) /c  ^$** /Fo:^$@ >> $(TEST_MK)]
-!ENDIF
-!IF [@for %F in ($(TESTS)) do @echo $(TDR)%~nF.exe: $(SDR)%~nF.obj; $(LD) $(TEST_LDFLAGS) ^$** /out:^$@ >> $(TEST_MK)]
-!ENDIF
+
 TEST_OBJS=$(TEST_EXES:tests=obj)
 TEST_OBJS=$(TEST_OBJS:exe=obj)
 
@@ -222,4 +213,3 @@ $(TEST_LIST): $(TARGETDLL)
   if not exist $(TDR) mkdir $(TDR)
   copy $(TARGETDLL) $(TDR)$(GD_DLL)
   copy NUL $(TEST_LIST)
-  for %%F in ($(TESTS)) do @echo %%F >> $(TEST_LIST)
