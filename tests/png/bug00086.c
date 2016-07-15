@@ -1,4 +1,3 @@
-/* $Id$ */
 /* id: gdbad3.c, Xavier Roche, May. 2007 */
 /* gcc gdbad3.c -o bad -lgd && ./bad */
 
