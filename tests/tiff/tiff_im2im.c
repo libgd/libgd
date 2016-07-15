@@ -8,9 +8,7 @@ int main()
 	void *p;
 	int size = 0;
 	int status = 0;
-#if 0
 	CuTestImageResult result = {0, 0};
-#endif
 
 	src = gdImageCreate(100, 100);
 	if (src == NULL) {
@@ -50,13 +48,13 @@ int main()
 		goto door1;
 	}
 	OUTPUT_TIFF(dst);
-#if 0
+
 	gdTestImageDiff(src, dst, NULL, &result);
 	if (result.pixels_changed > 0) {
 		status = 1;
 		printf("pixels changed: %d\n", result.pixels_changed);
 	}
-#endif
+
 	gdImageDestroy(dst);
 door1:
 	gdFree(p);
