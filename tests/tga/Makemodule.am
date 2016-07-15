@@ -3,6 +3,7 @@ libgd_test_programs += \
 	tga/bug00247 \
 	tga/bug00247a \
 	tga/bug00248 \
+	tga/bug00248a \
 	tga/tga_null
 
 EXTRA_DIST += \
@@ -10,4 +11,5 @@ EXTRA_DIST += \
 	tga/bug00084.tga \
 	tga/bug00247.tga \
 	tga/bug00247a.tga \
-	tga/bug00248.tga
+	tga/bug00248.tga \
+	tga/bug00248a.tga
