@@ -215,5 +215,3 @@ $(TEST_CONFIG):
 $(TEST_LIST): $(TARGETDLL)
   if not exist $(TDR) mkdir $(TDR)
   copy $(TARGETDLL) $(TDR)$(GD_DLL)
-  copy NUL $(TEST_LIST)
-  for %%F in ($(TEST_EXE)) do @echo %%F >> $(TEST_LIST)
