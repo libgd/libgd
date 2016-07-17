@@ -94,8 +94,6 @@ LIB_OBJS= \
   $(LIBGD_OBJ_DIR)\gd_color_map.obj \
   $(LIBGD_OBJ_DIR)\gd_webp.obj
 
-!include "Makefiletest.vc"
-
 LIBS=kernel32.lib ole32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib Dnsapi.lib Gdi32.Lib
 LIBS_GD=libjpeg_a.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib libwebp_a.lib libxpm_a.lib
 
