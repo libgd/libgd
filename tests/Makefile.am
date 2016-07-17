@@ -15,6 +15,7 @@ TESTS =
 include bmp/Makemodule.am
 include freetype/Makemodule.am
 include gd/Makemodule.am
+include gd_error/Makemodule.am
 include gd2/Makemodule.am
 include gdimagearc/Makemodule.am
 include gdimagecolorclosest/Makemodule.am

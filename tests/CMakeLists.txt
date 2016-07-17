@@ -21,6 +21,7 @@ if (BUILD_TEST)
 		bmp
 		freetype
 		gd
+		gd_error
 		gd2
 		gdimagearc
 		gdimagecolorclosest

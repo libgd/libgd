@@ -1,0 +1,5 @@
+libgd_test_programs += \
+	gd_error/bug00252
+
+EXTRA_DIST += \
+	gd_error/CMakeLists.txt

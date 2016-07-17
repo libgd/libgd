@@ -96,12 +96,19 @@ void gd_stderr_error(int priority, const char *format, va_list args)
 
 static gdErrorMethod gd_error_method = gd_stderr_error;
 
+static void _gd_error_ex(int priority, const char *format, va_list args)
+{
+	if (gd_error_method) {
+		gd_error_method(priority, format, args);
+	}
+}
+
 void gd_error(const char *format, ...)
 {
 	va_list args;
 
 	va_start(args, format);
-	gd_error_ex(GD_WARNING, format, args);
+	_gd_error_ex(GD_WARNING, format, args);
 	va_end(args);
 }
 void gd_error_ex(int priority, const char *format, ...)
@@ -109,9 +116,7 @@ void gd_error_ex(int priority, const char *format, ...)
 	va_list args;
 
 	va_start(args, format);
-	if (gd_error_method) {
-		gd_error_method(priority, format, args);
-	}
+	_gd_error_ex(priority, format, args);
 	va_end(args);
 }
 
