@@ -1,4 +1,4 @@
-# Contributing to Atom
+# Contributing to libgd
 
 :+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
 
@@ -19,7 +19,7 @@
   * [Coding standard](#coding-standard)
   * [Documentation Styleguide](#documentation-styleguide)
  
- ## What should I know before I get started?
+## What should I know before I get started?
 
 ### Code of Conduct
 
@@ -62,3 +62,6 @@ Explain the problem and include additional details to help maintainers reproduce
 * **Explain which behavior you expected to see instead and why.**
 * **Include images, expected and result images** which show you following the described steps and clearly demonstrate the problem.
 * **If you're reporting that libGD crashed**, include a crash report with a stack trace from the operating system. Include the crash report in the issue in a [code block](https://help.github.com/articles/markdown-basics/#multiple-lines), a [file attachment](https://help.github.com/articles/file-attachments-on-issues-and-pull-requests/), or put it in a [gist](https://gist.github.com/) and provide link to that gist.
+
+
+This text has been largely inspired by the Atom contributing notes, which amazingly complete
