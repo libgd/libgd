@@ -90,7 +90,7 @@ do_test() {
          * skip them.  Bug fixers should remove these from the list of
          * skipped items as bugs are fixed. */
         if (names[n].required < 0) {
-            printf("Skipping test for '%s'.  FIX THIS!\n", names[n].nm);
+            gdTestErrorMsg("Skipping test for '%s'.  FIX THIS!\n", names[n].nm);
             continue;
         }/* if */
 
@@ -120,9 +120,6 @@ do_test() {
         copy = gdImageCreateFromFile(full_filename);
         gdTestAssertMsg(!!copy, "Failed to load %s\n", full_filename);
         if (!copy) continue;
-
-        /* Debug printf. */
-        //printf("%s -> %d\n", full_filename, gdMaxPixelDiff(orig, copy));
 
         gdTestAssertMsg(gdMaxPixelDiff(orig, copy) <= names[n].maxdiff,"Pixels different on %s\n", full_filename, full_filename);
 

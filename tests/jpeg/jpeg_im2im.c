@@ -54,7 +54,7 @@ int main()
 	gdTestImageDiff(src, dst, NULL, &result);
 	if (result.pixels_changed > 0) {
 		status = 1;
-		printf("pixels changed: %d\n", result.pixels_changed);
+		gdTestErrorMsg("pixels changed: %d\n", result.pixels_changed);
 	}
 #endif
 	gdImageDestroy(dst);
