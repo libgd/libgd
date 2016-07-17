@@ -16,12 +16,10 @@
 
 [Styleguides](#styleguides)
   * [Git Commit Messages](#git-commit-messages)
-  * [CoffeeScript Styleguide](#coffeescript-styleguide)
-  * [Specs Styleguide](#specs-styleguide)
+  * [Coding standard](#coding-standard)
   * [Documentation Styleguide](#documentation-styleguide)
-  
-  
-## What should I know before I get started?
+ 
+ ## What should I know before I get started?
 
 ### Code of Conduct
 
