@@ -305,7 +305,7 @@ char *gdTestTempFile(const char *template)
 										  ret);
 				gdTestAssert(error != 0);
 		} else {
-			sprintf(ret, "%s\%s", tempdir, template);		
+			sprintf(ret, "%s\\%s", tempdir, template);		
 		}
 	}
 #else
