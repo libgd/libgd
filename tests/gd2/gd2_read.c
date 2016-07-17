@@ -1,4 +1,3 @@
-/* $Id$ */
 #include "gd.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +23,7 @@ int main(int argc, char *argv[])
 	while (path[i] != NULL) {
 		fp = gdTestFileOpen2("gd2", path[i]);
 		if (!fp) {
-			printf("failed, cannot open file: %s\n", path[0]);
+			gdTestErrorMsg("failed, cannot open file: %s\n", path[0]);
 			return 1;
 		}
 		im = gdImageCreateFromGd2(fp);
@@ -33,12 +32,12 @@ int main(int argc, char *argv[])
 		if (path_exp[i] != NULL) {
 			fp = gdTestFileOpen2("gd2", path_exp[i]);
 			if (!fp) {
-				printf("failed, cannot open file: %s\n", path_exp[i]);
+				gdTestErrorMsg("failed, cannot open file: %s\n", path_exp[i]);
 				return 1;
 			}
 			exp = gdImageCreateFromPng(fp);
 			if (!gdAssertImageEquals(exp, im)) {
-				printf("image %s differ from expected result\n", path[i]);
+				gdTestErrorMsg("image %s differs from expected result\n", path[i]);
 				gdImageDestroy(im);
 				error = 1;
 			} else {
@@ -50,7 +49,7 @@ int main(int argc, char *argv[])
 		} else {
 			/* expected to fail */
 			if (im) {
-				printf("image %s should have failed to be loaded\n", path[i]);
+				gdTestErrorMsg("image %s should have failed to be loaded\n", path[i]);
 				gdImageDestroy(im);
 				error = 1;
 			} else {
