@@ -21,13 +21,13 @@ for /D %%d in (!testsdir!/*) do (
 )
 
 for /D %%d in (!testsdir!/*) do (
-    for %%f in (!testsdir!/%%d/*.c) do (
+    if NOT "%%d"=="gdtest" for %%f in (!testsdir!/%%d/*.c) do (
 		echo !builddir!\%%d_%%~nf.obj: !testsdir!\%%d\%%f; ^$^(CC^) ^$^(TEST_CFLAGS^) /c ^$** /Fo:$@  >> !TESTMK!
 	)
 )
 
 for /D %%d in (!testsdir!/*) do (
-    for %%f in (!testsdir!/%%d/*.c) do (
+    if NOT "%%d"=="gdtest" for %%f in (!testsdir!/%%d/*.c) do (
 		echo !builddir!\tests\%%d_%%~nf.exe: !builddir!\%%d_%%~nf.obj; !LD! !LDFLAGS! $** /out:$@ >> !TESTMK!
 		echo %%d_%%~nf.exe >> !TESTLIST!
 	)
