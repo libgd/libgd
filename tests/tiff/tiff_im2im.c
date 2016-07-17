@@ -1,3 +1,11 @@
+#ifdef _WIN32
+#include <stdio.h>
+int main()
+{
+	printf("skip");
+	return 0;
+}
+#else
 #include "gd.h"
 #include "gdtest.h"
 
@@ -64,3 +72,4 @@ door0:
 	gdImageDestroy(src);
 	return status;
 }
+#endif
