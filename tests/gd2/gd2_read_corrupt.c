@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 	fp = gdTestFileOpen2("gd2", "invalid_header.gd2");
 
 	if (!fp) {
-		printf("failed, cannot open file: %s\n", "invalid_header.gd2");
+		gdTestErrorMsg("failed, cannot open file: %s\n", "invalid_header.gd2");
 		return 1;
 	}
 	im = gdImageCreateFromGd2(fp);
