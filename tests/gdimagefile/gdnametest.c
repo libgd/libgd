@@ -90,7 +90,7 @@ do_test() {
          * skip them.  Bug fixers should remove these from the list of
          * skipped items as bugs are fixed. */
         if (names[n].required < 0) {
-            gdTestErrorMsg("Skipping test for '%s'.  FIX THIS!\n", names[n].nm);
+            printf("Skipping test for '%s'.  FIX THIS!\n", names[n].nm);
             continue;
         }/* if */
 
