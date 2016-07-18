@@ -1,0 +1,9 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagecopyresampled/bug00201
+endif
+
+EXTRA_DIST += \
+	gdimagecopyrotated/CMakeLists.txt \
+	gdimagecopyrotated/bug00201_src.png \
+	gdimagecopyrotated/bug00201_exp.png

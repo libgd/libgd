@@ -30,6 +30,7 @@ if (BUILD_TEST)
 		gdimagecolorresolve
 		gdimagecolortransparent
 		gdimagecopy
+		gdimagecopyresampled
 		gdimagecopyrotated
 		gdimagecrop
 		gdimagefile
