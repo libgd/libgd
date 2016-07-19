@@ -34,6 +34,7 @@ if (BUILD_TEST)
 		gdimagecrop
 		gdimagefile
 		gdimagefill
+		gdimagefilledarc
 		gdimagefilledellipse
 		gdimagefilledpolygon
 		gdimagefilledrectangle
