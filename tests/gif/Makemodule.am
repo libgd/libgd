@@ -1,6 +1,7 @@
 libgd_test_programs += \
 	gif/bug00005_2 \
 	gif/bug00181 \
+	gif/bug00209 \
 	gif/bug00227 \
 	gif/gif_null
 
@@ -22,4 +23,5 @@ EXTRA_DIST += \
 	gif/bug00005_3.gif \
 	gif/bug00060.gif \
 	gif/bug00066.gif \
-	gif/bug00066_exp.png
+	gif/bug00066_exp.png \
+	gif/bug00209.gd2
