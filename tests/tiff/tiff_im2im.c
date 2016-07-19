@@ -1,3 +1,11 @@
+#ifdef _WIN32
+#include <stdio.h>
+int main()
+{
+	printf("skip");
+	return 0;
+}
+#else
 #include "gd.h"
 #include "gdtest.h"
 
@@ -8,13 +16,11 @@ int main()
 	void *p;
 	int size = 0;
 	int status = 0;
-#if 0
 	CuTestImageResult result = {0, 0};
-#endif
 
 	src = gdImageCreate(100, 100);
 	if (src == NULL) {
-		printf("could not create src\n");
+		gdTestErrorMsg("could not create src\n");
 		return 1;
 	}
 	r = gdImageColorAllocate(src, 0xFF, 0, 0);
@@ -34,29 +40,29 @@ int main()
 	p = gdImageTiffPtr(src, &size);
 	if (p == NULL) {
 		status = 1;
-		printf("p is null\n");
+		gdTestErrorMsg("p is null\n");
 		goto door0;
 	}
 	if (size <= 0) {
 		status = 1;
-		printf("size is non-positive\n");
+		gdTestErrorMsg("size is non-positive\n");
 		goto door1;
 	}
 
 	dst = gdImageCreateFromTiffPtr(size, p);
 	if (dst == NULL) {
 		status = 1;
-		printf("could not create dst\n");
+		gdTestErrorMsg("could not create dst\n");
 		goto door1;
 	}
 	OUTPUT_TIFF(dst);
-#if 0
+
 	gdTestImageDiff(src, dst, NULL, &result);
 	if (result.pixels_changed > 0) {
 		status = 1;
 		printf("pixels changed: %d\n", result.pixels_changed);
 	}
-#endif
+
 	gdImageDestroy(dst);
 door1:
 	gdFree(p);
@@ -64,3 +70,4 @@ door0:
 	gdImageDestroy(src);
 	return status;
 }
+#endif

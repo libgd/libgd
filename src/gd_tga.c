@@ -99,7 +99,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx)
 			if (tga->bits == TGA_BPP_24) {
 				*tpix = gdTrueColor(tga->bitmap[bitmap_caret + 2], tga->bitmap[bitmap_caret + 1], tga->bitmap[bitmap_caret]);
 				bitmap_caret += 3;
-			} else if (tga->bits == TGA_BPP_32 || tga->alphabits) {
+			} else if (tga->bits == TGA_BPP_32 && tga->alphabits) {
 				register int a = tga->bitmap[bitmap_caret + 3];
 
 				*tpix = gdTrueColorAlpha(tga->bitmap[bitmap_caret + 2], tga->bitmap[bitmap_caret + 1], tga->bitmap[bitmap_caret], gdAlphaMax - (a >> 1));
@@ -159,16 +159,12 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga)
 	printf("wxh: %i %i\n", tga->width, tga->height);
 #endif
 
-	switch(tga->bits) {
-	case 8:
-	case 16:
-	case 24:
-	case 32:
-		break;
-	default:
-		gd_error("bps %i not supported", tga->bits);
+	if (!((tga->bits == TGA_BPP_24 && tga->alphabits == 0)
+		|| (tga->bits == TGA_BPP_32 && tga->alphabits == 8)))
+	{
+		gd_error_ex(GD_WARNING, "gd-tga: %u bits per pixel with %u alpha bits not supported\n",
+			tga->bits, tga->alphabits);
 		return -1;
-		break;
 	}
 
 	tga->ident = NULL;
@@ -200,7 +196,6 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 	int buffer_caret = 0;
 	int bitmap_caret = 0;
 	int i = 0;
-	int j = 0;
 	uint8_t encoded_pixels;
 
 	if(overflow2(tga->width, tga->height)) {
@@ -237,7 +232,11 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 			return -1;
 		}
 
-		gdGetBuf(conversion_buffer, image_block_size, ctx);
+		if (gdGetBuf(conversion_buffer, image_block_size, ctx) != image_block_size) {
+			gd_error("gd-tga: premature end of image data\n");
+			gdFree(conversion_buffer);
+			return -1;
+		}
 
 		while (buffer_caret < image_block_size) {
 			tga->bitmap[buffer_caret] = (int) conversion_buffer[buffer_caret];
@@ -257,11 +256,16 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 		}
 		conversion_buffer = (unsigned char *) gdMalloc(image_block_size * sizeof(unsigned char));
 		if (conversion_buffer == NULL) {
+			gd_error("gd-tga: premature end of image data\n");
 			gdFree( decompression_buffer );
 			return -1;
 		}
 
-		gdGetBuf( conversion_buffer, image_block_size, ctx );
+		if (gdGetBuf(conversion_buffer, image_block_size, ctx) != image_block_size) {
+			gdFree(conversion_buffer);
+			gdFree(decompression_buffer);
+			return -1;
+		}
 
 		buffer_caret = 0;
 
@@ -273,27 +277,36 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 		buffer_caret = 0;
 
 		while( bitmap_caret < image_block_size ) {
-
+			
 			if ((decompression_buffer[buffer_caret] & TGA_RLE_FLAG) == TGA_RLE_FLAG) {
-				encoded_pixels = ( ( decompression_buffer[ buffer_caret ] & 127 ) + 1 );
+				encoded_pixels = ( ( decompression_buffer[ buffer_caret ] & !TGA_RLE_FLAG ) + 1 );
 				buffer_caret++;
 
+				if ((bitmap_caret + (encoded_pixels * pixel_block_size)) >= image_block_size) {
+					gdFree( decompression_buffer );
+					gdFree( conversion_buffer );
+					return -1;
+				}
+
 				for (i = 0; i < encoded_pixels; i++) {
-					for (j = 0; j < pixel_block_size; j++, bitmap_caret++) {
-						tga->bitmap[ bitmap_caret ] = decompression_buffer[ buffer_caret + j ];
-					}
+					memcpy(tga->bitmap + bitmap_caret, decompression_buffer + buffer_caret, pixel_block_size);
+					bitmap_caret += pixel_block_size;
 				}
 				buffer_caret += pixel_block_size;
+
 			} else {
 				encoded_pixels = decompression_buffer[ buffer_caret ] + 1;
 				buffer_caret++;
 
-				for (i = 0; i < encoded_pixels; i++) {
-					for( j = 0; j < pixel_block_size; j++, bitmap_caret++ ) {
-						tga->bitmap[ bitmap_caret ] = decompression_buffer[ buffer_caret + j ];
-					}
-					buffer_caret += pixel_block_size;
+				if ((bitmap_caret + (encoded_pixels * pixel_block_size)) >= image_block_size) {
+					gdFree( decompression_buffer );
+					gdFree( conversion_buffer );
+					return -1;
 				}
+
+				memcpy(tga->bitmap + bitmap_caret, decompression_buffer + buffer_caret, encoded_pixels * pixel_block_size);
+				bitmap_caret += (encoded_pixels * pixel_block_size);
+				buffer_caret += (encoded_pixels * pixel_block_size);
 			}
 		}
 		gdFree( decompression_buffer );

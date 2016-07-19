@@ -13,7 +13,7 @@ int main()
 	im = gdImageCreateFromPng(fp);
 	fclose(fp);
 	if (!im) {
-		fprintf(stderr, "could not create image\n");
+		gdTestErrorMsg("could not create image\n");
 		return 1;
 	}
 
@@ -24,7 +24,7 @@ int main()
 	s.colors = colors;
 	if (!gdImageScatterEx(im, &s)) {
 		gdImageDestroy(im);
-		fprintf(stderr, "could not scatter\n");
+		gdTestErrorMsg("could not scatter\n");
 		return 1;
 	}
 
@@ -32,7 +32,7 @@ int main()
 	ex = gdImageCreateFromPng(fp);
 	fclose(fp);
 	if (!ex) {
-		fprintf(stderr, "could not create image\n");
+		gdTestErrorMsg("could not create image\n");
 		gdImageDestroy(im);
 		return 1;
 	}
@@ -41,7 +41,7 @@ int main()
 	gdImageDestroy(ex);
 	gdImageDestroy(im);
 	if (r.pixels_changed > 10000) {
-		fprintf(stderr, "too much diff: %d\n", r.pixels_changed);
+		gdTestErrorMsg("too much diff: %d\n", r.pixels_changed);
 		return 1;
 	}
 	return 0;

@@ -18,6 +18,10 @@ The library was originally developed by Thomas Boutell and is now maintained
 by many contributors (see the [CONTRIBUTORS](CONTRIBUTORS) file) under the
 umbrella of PHP.net.
 
+If you like to contribute, report bugs, see [how to contribute document](CONTRIBUTING.md)
+
+For security related issues, please contact us at security@libgd.org
+
 ## Downloads/etc...
 
 Please visit our [homepage](http://www.libgd.org/) for more details.

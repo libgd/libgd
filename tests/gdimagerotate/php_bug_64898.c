@@ -33,7 +33,7 @@ int main()
 	}
 
 	if (!gdAssertImageEqualsToFile("gdimagerotate/php_bug_64898_exp.png", exp)) {
-		printf("comparing rotated image failed.\n");
+		gdTestErrorMsg("comparing rotated image failed.\n");
 		error = 1;
 	}
 

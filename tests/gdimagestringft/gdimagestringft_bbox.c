@@ -53,7 +53,7 @@ int main()
 		}
 		for (j = 0; j < 8; j++) {
 			if (brect[j] != EXPECT[i][j]) {
-				printf("(%d, %d) (%d, %d) (%d, %d) (%d, %d) expected, but (%d, %d) (%d, %d) (%d, %d) (%d, %d)\n",
+				gdTestErrorMsg("(%d, %d) (%d, %d) (%d, %d) (%d, %d) expected, but (%d, %d) (%d, %d) (%d, %d) (%d, %d)\n",
 				       EXPECT[i][0], EXPECT[i][1], EXPECT[i][2], EXPECT[i][3],
 				       EXPECT[i][4], EXPECT[i][5], EXPECT[i][6], EXPECT[i][7],
 				       brect[0], brect[1], brect[2], brect[3],

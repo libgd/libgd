@@ -6,8 +6,9 @@
 int main()
 {
     gdImagePtr im;
-    FILE *fp = gdTestFileOpen("tga/bug00084.tga");
+    FILE *fp = gdTestFileOpen("tga/bug00247.tga");
     im = gdImageCreateFromTga(fp);
-	gdImageDestroy(im);
-    return 0;
+    gdTestAssert(im == NULL);
+    fclose(fp);
+    return gdNumFailures();
 }
