@@ -1,4 +1,3 @@
-/* $Id$ */
 #include "gd.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,6 +27,7 @@ int main()
 		}
 
 		path = gdTestFilePath2("png", files_exp[i]);
+
 		if (!gdAssertImageEqualsToFile(path, im)) {
 			error |= 1;
 		}

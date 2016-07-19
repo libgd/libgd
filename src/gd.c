@@ -711,6 +711,10 @@ BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color)
 
 BGD_DECLARE(void) gdImageColorTransparent (gdImagePtr im, int color)
 {
+	if (color < 0) {
+		return;
+	}
+
 	if (!im->trueColor) {
 		if((color < -1) || (color >= gdMaxColors)) {
 			return;

@@ -84,7 +84,7 @@ void do_test(int x, int y, int nx, int ny)
 	scaletest(x, y, nx, ny);
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	do_test(300, 300, 600, 600);
 	do_test(1500, 1000, 600, 400);

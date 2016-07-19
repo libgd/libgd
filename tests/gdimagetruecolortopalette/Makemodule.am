@@ -1,0 +1,6 @@
+
+libgd_test_programs += \
+	gdimagetruecolortopalette/php_bug_72512
+
+EXTRA_DIST += \
+	gdimagetruecolortopalette/CMakeLists.txt

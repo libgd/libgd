@@ -44,22 +44,22 @@ static void run_tests(gdImagePtr im, int *error)
 	COLOR(yellow, 0xFF, 0xFF, 0);
 #undef COLOR
 
-#define CHECK_VALUE(n, expected) do {							\
-		if (gdTestAssert((n) == (expected)) != 1) {				\
-			printf("%d is expected, but %d\n", expected, n);	\
-			*error = -1;										\
-		}														\
+#define CHECK_VALUE(n, expected) do {								\
+		if (gdTestAssert((n) == (expected)) != 1) {					\
+			gdTestErrorMsg("%d is expected, but %d\n", expected, n);\
+			*error = -1;											\
+		}															\
 	} while (0)
 
 #define CHECK_PIXEL(x, y, expected) \
-	do {														\
-		int pix;												\
-		gdImageSetClip(im, 0, 0, 4, 4);							\
-		pix = gdImageGetPixel(im, (x), (y));					\
-		if (gdTestAssert(pix == (expected)) != 1) {				\
-			printf("%d is expected, but %d\n", expected, pix);	\
-			*error = -1;										\
-		}														\
+	do {																\
+		int pix;														\
+		gdImageSetClip(im, 0, 0, 4, 4);									\
+		pix = gdImageGetPixel(im, (x), (y));							\
+		if (gdTestAssert(pix == (expected)) != 1) {						\
+			gdTestErrorMsg("%d is expected, but %d\n", expected, pix);	\
+			*error = -1;												\
+		}																\
 	} while (0)
 
 	c = gdImageColorAllocate(im, 0xFF, 0, 0xFF);

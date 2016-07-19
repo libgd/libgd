@@ -9,7 +9,7 @@ int main()
 	im = gdImageCreate(5,5);
 	dest = gdImageScale(im, 0, 1);
 	if (dest != NULL) {
-		printf("expecting NULL result\n");
+		gdTestErrorMsg("expecting NULL result\n");
 		status = 1;
 	} else {
 		status = 0;

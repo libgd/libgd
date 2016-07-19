@@ -1,8 +1,9 @@
-/* $Id$ */
 #include "gd.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#ifndef _WIN32
+# include <unistd.h>
+#endif
 #include "gdtest.h"
 
 int main()

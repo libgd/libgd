@@ -12,7 +12,7 @@ int main()
 
 	src = gdImageCreate(100, 100);
 	if (src == NULL) {
-		printf("could not create src\n");
+		gdTestErrorMsg("could not create src\n");
 		return 1;
 	}
 	r = gdImageColorAllocate(src, 0xFF, 0, 0);
@@ -32,26 +32,26 @@ int main()
 	p = gdImageGdPtr(src, &size);
 	if (p == NULL) {
 		status = 1;
-		printf("p is null\n");
+		gdTestErrorMsg("p is null\n");
 		goto door0;
 	}
 	if (size <= 0) {
 		status = 1;
-		printf("size is non-positive\n");
+		gdTestErrorMsg("size is non-positive\n");
 		goto door1;
 	}
 
 	dst = gdImageCreateFromGdPtr(size, p);
 	if (dst == NULL) {
 		status = 1;
-		printf("could not create dst\n");
+		gdTestErrorMsg("could not create dst\n");
 		goto door1;
 	}
 	OUTPUT_GD(dst);
 	gdTestImageDiff(src, dst, NULL, &result);
 	if (result.pixels_changed > 0) {
 		status = 1;
-		printf("pixels changed: %d\n", result.pixels_changed);
+		gdTestErrorMsg("pixels changed: %d\n", result.pixels_changed);
 	}
 	gdImageDestroy(dst);
 door1:
