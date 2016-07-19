@@ -196,7 +196,7 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 	int buffer_caret = 0;
 	int bitmap_caret = 0;
 	int i = 0;
-	uint8_t encoded_pixels;
+	int encoded_pixels;
 
 	if(overflow2(tga->width, tga->height)) {
 		return -1;
@@ -279,7 +279,7 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 		while( bitmap_caret < image_block_size ) {
 			
 			if ((decompression_buffer[buffer_caret] & TGA_RLE_FLAG) == TGA_RLE_FLAG) {
-				encoded_pixels = ( ( decompression_buffer[ buffer_caret ] & !TGA_RLE_FLAG ) + 1 );
+				encoded_pixels = ( ( decompression_buffer[ buffer_caret ] & ~TGA_RLE_FLAG ) + 1 );
 				buffer_caret++;
 
 				if ((bitmap_caret + (encoded_pixels * pixel_block_size)) >= image_block_size) {
