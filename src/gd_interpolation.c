@@ -1063,7 +1063,7 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
     }/* if */
 
 
-	if (src != tmp_im && tmp_im != NULL) {
+	if (tmp_im != NULL && src != tmp_im) {
         gdImageDestroy(tmp_im);
     }/* if */
 
