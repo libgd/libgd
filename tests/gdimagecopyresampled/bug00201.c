@@ -45,7 +45,7 @@ int main()
 
     background = blank_image(DEST_WIDTH,DEST_HEIGHT);
 
-    fp = gdTestFileOpen("gdimagecopyresampled/bug00201_src.png");
+    fp = gdTestFileOpen2("gdimagecopyresampled", "bug00201_src.png");
     logo_source = gdImageCreateFromPng(fp);
     fclose(fp);
     

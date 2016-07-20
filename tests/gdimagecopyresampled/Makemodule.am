@@ -4,6 +4,6 @@ libgd_test_programs += \
 endif
 
 EXTRA_DIST += \
-	gdimagecopyrotated/CMakeLists.txt \
-	gdimagecopyrotated/bug00201_src.png \
-	gdimagecopyrotated/bug00201_exp.png
+	gdimagecopyresampled/CMakeLists.txt \
+	gdimagecopyresampled/bug00201_src.png \
+	gdimagecopyresampled/bug00201_exp.png
