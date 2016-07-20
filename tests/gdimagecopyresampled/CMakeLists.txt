@@ -1,4 +1,7 @@
 LIST(APPEND TESTS_FILES
+	basic
+	basic_alpha
+	exact_alpha
 	bug00201
 )
 
