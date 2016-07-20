@@ -60,6 +60,9 @@ static int gdBMPPutInt(gdIOCtx *out, int w)
 	return 0;
 }
 
+/*
+	Function: gdImageBmpPtr
+*/
 BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression)
 {
 	void *rv;
@@ -71,6 +74,9 @@ BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression)
 	return rv;
 }
 
+/*
+	Function: gdImageBmp
+*/
 BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
@@ -79,6 +85,9 @@ BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression)
 	out->gd_free(out);
 }
 
+/*
+	Function: gdImageBmpCtx
+*/
 BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 {
 	int bitmap_size = 0, info_size, total_size, padding;
@@ -397,6 +406,9 @@ static int build_rle_packet(unsigned char *row, int packet_type, int length, uns
 	return compressed_size;
 }
 
+/*
+	Function: gdImageCreateFromBmp
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmp(FILE * inFile)
 {
 	gdImagePtr im = 0;
@@ -407,6 +419,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromBmp(FILE * inFile)
 	return im;
 }
 
+/*
+	Function: gdImageCreateFromBmpPtr
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpPtr(int size, void *data)
 {
 	gdImagePtr im;
@@ -417,6 +432,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpPtr(int size, void *data)
 	return im;
 }
 
+/*
+	Function: gdImageCreateFromBmpCtx
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx(gdIOCtxPtr infile)
 {
 	bmp_hdr_t *hdr;

@@ -767,6 +767,9 @@ BGD_EXPORT_DATA_PROT gdColorMap GD_COLOR_MAP_X11 = {
 	(gdColorMapEntry *)GD_COLOR_MAP_X11_ENTRIES
 };
 
+/*
+	Function: gdColorMapLookup
+*/
 BGD_DECLARE(int)
 gdColorMapLookup(const gdColorMap color_map, const char *color_name, int *r, int *g, int *b)
 {

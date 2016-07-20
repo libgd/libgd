@@ -195,6 +195,9 @@ static void gdCtxPrintf(gdIOCtx * out, const char *format, ...)
 #define gdCtxPuts(out, s) out->putBuf(out, s, strlen(s))
 
 /* {{{ gdImageXbmCtx */
+/*
+    Function: gdImageXbmCtx
+*/
 BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOCtx * out)
 {
 	int x, y, c, b, sx, sy, p;

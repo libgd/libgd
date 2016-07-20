@@ -34,6 +34,9 @@ typedef int (BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
 # define GD_SCATTER_SEED() (unsigned int)(time(0) * getpid())
 #endif
 
+/*
+	Function: gdImageScatter
+ */
 BGD_DECLARE(int) gdImageScatter(gdImagePtr im, int sub, int plus)
 {
 	gdScatter s;
@@ -45,6 +48,9 @@ BGD_DECLARE(int) gdImageScatter(gdImagePtr im, int sub, int plus)
 	return gdImageScatterEx(im, &s);
 }
 
+/*
+	Function: gdImageScatterColor
+ */
 BGD_DECLARE(int) gdImageScatterColor(gdImagePtr im, int sub, int plus, int colors[], unsigned int num_colors)
 {
 	gdScatter s;
@@ -57,6 +63,9 @@ BGD_DECLARE(int) gdImageScatterColor(gdImagePtr im, int sub, int plus, int color
 	return gdImageScatterEx(im, &s);
 }
 
+/*
+	Function: gdImageScatterEx
+ */
 BGD_DECLARE(int) gdImageScatterEx(gdImagePtr im, gdScatterPtr scatter)
 {
 	register int x, y;
@@ -116,6 +125,9 @@ BGD_DECLARE(int) gdImageScatterEx(gdImagePtr im, gdScatterPtr scatter)
 	return 1;
 }
 
+/*
+	Function: gdImagePixelate
+ */
 BGD_DECLARE(int) gdImagePixelate(gdImagePtr im, int block_size, const unsigned int mode)
 {
 	int x, y;
@@ -172,7 +184,11 @@ BGD_DECLARE(int) gdImagePixelate(gdImagePtr im, int block_size, const unsigned i
 	return 1;
 }
 
-/* invert src image */
+/*
+	Function: gdImageNegate
+	
+	Invert src image.
+ */
 BGD_DECLARE(int) gdImageNegate(gdImagePtr src)
 {
 	int x, y;
@@ -204,7 +220,11 @@ BGD_DECLARE(int) gdImageNegate(gdImagePtr src)
 	return 1;
 }
 
-/* Convert the image src to a grayscale image */
+/*
+	Function: gdImageGrayScale
+	
+	Convert the image src to a grayscale image.
+ */
 BGD_DECLARE(int) gdImageGrayScale(gdImagePtr src)
 {
 	int x, y;
@@ -237,7 +257,11 @@ BGD_DECLARE(int) gdImageGrayScale(gdImagePtr src)
 	return 1;
 }
 
-/* Set the brightness level <level> for the image src */
+/*
+	Function: gdImageBrightness
+	
+	Set the brightness level <level> for the image src.
+ */
 BGD_DECLARE(int) gdImageBrightness(gdImagePtr src, int brightness)
 {
 	int x, y;
@@ -283,6 +307,9 @@ BGD_DECLARE(int) gdImageBrightness(gdImagePtr src, int brightness)
 }
 
 
+/*
+	Function: gdImageContrast
+ */
 BGD_DECLARE(int) gdImageContrast(gdImagePtr src, double contrast)
 {
 	int x, y;
@@ -343,6 +370,9 @@ BGD_DECLARE(int) gdImageContrast(gdImagePtr src, double contrast)
 }
 
 
+/*
+	Function: gdImageColor
+ */
 BGD_DECLARE(int) gdImageColor(gdImagePtr src, const int red, const int green, const int blue, const int alpha)
 {
 	int x, y;
@@ -385,6 +415,9 @@ BGD_DECLARE(int) gdImageColor(gdImagePtr src, const int red, const int green, co
 	return 1;
 }
 
+/*
+	Function: gdImageConvolution
+ */
 BGD_DECLARE(int) gdImageConvolution(gdImagePtr src, float filter[3][3], float filter_div, float offset)
 {
 	int         x, y, i, j, new_a;
@@ -445,6 +478,9 @@ BGD_DECLARE(int) gdImageConvolution(gdImagePtr src, float filter[3][3], float fi
 	return 1;
 }
 
+/*
+	Function: gdImageSelectiveBlur
+ */
 BGD_DECLARE(int) gdImageSelectiveBlur( gdImagePtr src)
 {
 	int         x, y, i, j;
@@ -563,6 +599,9 @@ BGD_DECLARE(int) gdImageSelectiveBlur( gdImagePtr src)
 	return 1;
 }
 
+/*
+	Function: gdImageEdgeDetectQuick
+ */
 BGD_DECLARE(int) gdImageEdgeDetectQuick(gdImagePtr src)
 {
 	float filter[3][3] =	{{-1.0,0.0,-1.0},
@@ -603,6 +642,9 @@ BGD_DECLARE(int) gdImageGaussianBlur(gdImagePtr im)
 	return gdImageConvolution(im, filter, 16, 0);
 }
 
+/*
+	Function: gdImageEmboss
+ */
 BGD_DECLARE(int) gdImageEmboss(gdImagePtr im)
 {
 /*
@@ -617,6 +659,9 @@ BGD_DECLARE(int) gdImageEmboss(gdImagePtr im)
 	return gdImageConvolution(im, filter, 1, 127);
 }
 
+/*
+	Function: gdImageMeanRemoval
+ */
 BGD_DECLARE(int) gdImageMeanRemoval(gdImagePtr im)
 {
 	float filter[3][3] =	{{-1.0,-1.0,-1.0},
@@ -626,6 +671,9 @@ BGD_DECLARE(int) gdImageMeanRemoval(gdImagePtr im)
 	return gdImageConvolution(im, filter, 1, 0);
 }
 
+/*
+	Function: gdImageSmooth
+ */
 BGD_DECLARE(int) gdImageSmooth(gdImagePtr im, float weight)
 {
 	float filter[3][3] =	{{1.0,1.0,1.0},

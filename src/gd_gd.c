@@ -326,6 +326,9 @@ _gdImageGd (gdImagePtr im, gdIOCtx * out)
 	}
 }
 
+/*
+	Function: gdImageGd
+ */
 BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * outFile)
 {
 	gdIOCtx *out = gdNewFileCtx (outFile);
@@ -334,6 +337,9 @@ BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * outFile)
 	out->gd_free (out);
 }
 
+/*
+	Function: gdImageGdPtr
+ */
 BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size)
 {
 	void *rv;

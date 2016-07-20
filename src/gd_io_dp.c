@@ -64,13 +64,20 @@ static int dynamicGetchar(gdIOCtxPtr ctx);
 static int dynamicSeek(struct gdIOCtx *, const int);
 static long dynamicTell(struct gdIOCtx *);
 
-/* return data as a dynamic pointer */
+/*
+	Function: gdNewDynamicCtx
+
+	Return data as a dynamic pointer.
+*/
 BGD_DECLARE(gdIOCtx *) gdNewDynamicCtx(int initialSize, void *data)
 {
 	/* 2.0.23: Phil Moore: 'return' keyword was missing! */
 	return gdNewDynamicCtxEx(initialSize, data, 1);
 }
 
+/*
+	Function: gdNewDynamicCtxEx
+*/
 BGD_DECLARE(gdIOCtx *) gdNewDynamicCtxEx(int initialSize, void *data, int freeOKFlag)
 {
 	dpIOCtx *ctx;
@@ -103,6 +110,9 @@ BGD_DECLARE(gdIOCtx *) gdNewDynamicCtxEx(int initialSize, void *data, int freeOK
 	return (gdIOCtx *)ctx;
 }
 
+/*
+	Function: gdDPExtractData
+*/
 BGD_DECLARE(void *) gdDPExtractData (struct gdIOCtx *ctx, int *size)
 {
 	dynamicPtr *dp;

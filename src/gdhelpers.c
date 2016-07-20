@@ -90,6 +90,9 @@ gdReallocEx (void *ptr, size_t size)
 	return newPtr;
 }
 
+/*
+	Function: gdFree
+*/
 BGD_DECLARE(void) gdFree (void *ptr)
 {
 	free (ptr);
