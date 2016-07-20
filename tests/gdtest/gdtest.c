@@ -628,8 +628,6 @@ int _gdTestAssertMsg(const char* file, unsigned int line, int condition, const c
 	vfprintf(stderr, message, args);
 	va_end(args);
 
-	fprintf(stderr, "%s:%u: %s\n", file, line, message);
-
 	fflush(stderr);
 
 	++failureCount;
