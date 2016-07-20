@@ -62,3 +62,9 @@ timeout              the default timeout is 5 seconds. Some test may
                      have infinite loops when compiled against old versions
                      of the GD library (esp. 2.0.33 or earlier)
 
+Some features rely on floating point arithmetics and results may vary from
+one architecture to another.
+Examples:
+on i686,  gdimagerotate/bug00067 will faill. The result is still viusally 
+acceptable but i686 default arithmetic mode will generate different results.
+Adding "-msse -mfpmath=sse" to CFLAGS will solve this difference.
