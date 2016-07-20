@@ -82,15 +82,17 @@ int gd_getin(void *in)
 	return (gdGetC((gdIOCtx *)in));
 }
 
-/* gdImageWBMPCtx
- *  --------------
- *  Write the image as a wbmp file
- *  Parameters are:
- *  image:  gd image structure;
- *  fg:     the index of the foreground color. any other value will be
- *          considered as background and will not be written
- *  out:    the stream where to write
- */
+/*
+	Function: gdImageWBMPCtx
+
+	Write the image as a wbmp file
+
+	Parameters:
+		image - gd image structure
+		fg    - the index of the foreground color. any other value will be
+				considered as background and will not be written
+		out   - the stream where to write
+*/
 BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out)
 {
 	int x, y, pos;
@@ -242,8 +244,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr(int size, void *data)
 	return im;
 }
 
-/* gdImageWBMP
- */
+/*
+	Function: gdImageWBMP
+*/
 BGD_DECLARE(void) gdImageWBMP(gdImagePtr im, int fg, FILE *outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
@@ -252,8 +255,9 @@ BGD_DECLARE(void) gdImageWBMP(gdImagePtr im, int fg, FILE *outFile)
 	out->gd_free(out);
 }
 
-/* gdImageWBMPPtr
- */
+/*
+	Function: gdImageWBMPPtr
+*/
 BGD_DECLARE(void *) gdImageWBMPPtr(gdImagePtr im, int *size, int fg)
 {
 	void *rv;

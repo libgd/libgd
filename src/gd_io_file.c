@@ -48,7 +48,11 @@ static int fileSeek(struct gdIOCtx *, const int);
 static long fileTell(struct gdIOCtx *);
 static void gdFreeFileCtx(gdIOCtx *ctx);
 
-/* return data as a dynamic pointer */
+/*
+	Function: gdNewFileCtx
+
+	Return data as a dynamic pointer.
+*/
 BGD_DECLARE(gdIOCtx *) gdNewFileCtx(FILE *f)
 {
 	fileIOCtx *ctx;

@@ -47,7 +47,11 @@ static int sinkPutbuf(gdIOCtx *ctx, const void *buf, int size);
 static void sinkPutchar(gdIOCtx *ctx, int a);
 static void gdFreeSsCtx(gdIOCtx *ctx);
 
-/* return data as a dynamic pointer */
+/*
+	Function: gdNewSSCtx
+
+	Return data as a dynamic pointer.
+*/
 BGD_DECLARE(gdIOCtx *) gdNewSSCtx(gdSourcePtr src, gdSinkPtr snk)
 {
 	ssIOCtxPtr ctx;

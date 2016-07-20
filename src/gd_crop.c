@@ -18,6 +18,9 @@
 
 static int gdGuessBackgroundColorFromCorners(gdImagePtr im, int *color);
 
+/*
+	Function: gdImageCrop
+ */
 BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop)
 {
 	gdImagePtr dst;
@@ -29,6 +32,9 @@ BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop)
 	return dst;
 }
 
+/*
+	Function: gdImageCropAuto
+ */
 BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 {
 	const int width = gdImageSX(im);
@@ -117,6 +123,9 @@ BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 	return gdImageCrop(im, &crop);
 }
 
+/*
+	Function: gdImageCropThreshold
+ */
 BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int color, const float threshold)
 {
 	const int width = gdImageSX(im);

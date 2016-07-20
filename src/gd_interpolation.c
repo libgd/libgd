@@ -1607,6 +1607,9 @@ gdImageScaleBicubicFixed(gdImagePtr src, const unsigned int width,
 	return dst;
 }
 
+/*
+	Function: gdImageScale
+*/
 BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int new_width, const unsigned int new_height)
 {
 	gdImagePtr im_scaled = NULL;
@@ -1793,6 +1796,9 @@ gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
 	return dst;
 }
 
+/*
+	Function: gdImageRotateInterpolated
+*/
 BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const float angle, int bgcolor)
 {
 	/* round to two decimals and keep the 100x multiplication to use it in the common square angles 
@@ -2111,6 +2117,9 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 	return GD_TRUE;
 }
 
+/*
+	Function: gdImageSetInterpolationMethod
+*/
 BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMethod id)
 {
 	if (im == NULL || (uintmax_t)id > GD_METHOD_COUNT) {
@@ -2193,9 +2202,13 @@ BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMet
 }
 
 
-/* Return the interpolation mode set in 'im'.  This is here so that
- * the value can be read via a language or VM with an FFI but no
- * (portable) way to extract the value from the struct. */
+/*
+	Function: gdImageGetInterpolationMethod
+
+	Return the interpolation mode set in 'im'.  This is here so that
+	the value can be read via a language or VM with an FFI but no
+	(portable) way to extract the value from the struct.
+*/
 BGD_DECLARE(gdInterpolationMethod) gdImageGetInterpolationMethod(gdImagePtr im)
 {
     return im->interpolation_id;

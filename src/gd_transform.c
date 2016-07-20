@@ -4,6 +4,9 @@
 
 #include "gd.h"
 
+/*
+	Function: gdImageFlipVertical
+*/
 BGD_DECLARE(void) gdImageFlipVertical(gdImagePtr im)
 {
 	register int x, y;
@@ -32,6 +35,9 @@ BGD_DECLARE(void) gdImageFlipVertical(gdImagePtr im)
 	return;
 }
 
+/*
+	Function: gdImageFlipHorizontal
+*/
 BGD_DECLARE(void) gdImageFlipHorizontal(gdImagePtr im)
 {
 
@@ -68,6 +74,9 @@ BGD_DECLARE(void) gdImageFlipHorizontal(gdImagePtr im)
 	}
 }
 
+/*
+	Function: gdImageFlipBoth
+*/
 BGD_DECLARE(void) gdImageFlipBoth(gdImagePtr im)
 {
 	gdImageFlipVertical(im);

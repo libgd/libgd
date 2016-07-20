@@ -1043,6 +1043,9 @@ fail:
 
 }
 
+/*
+	Function: gdImageGd2
+*/
 BGD_DECLARE(void) gdImageGd2 (gdImagePtr im, FILE * outFile, int cs, int fmt)
 {
 	gdIOCtx *out = gdNewFileCtx (outFile);
@@ -1051,6 +1054,9 @@ BGD_DECLARE(void) gdImageGd2 (gdImagePtr im, FILE * outFile, int cs, int fmt)
 	out->gd_free (out);
 }
 
+/*
+	Function: gdImageGd2Ptr
+*/
 BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
 {
 	void *rv;

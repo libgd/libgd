@@ -160,6 +160,9 @@ freeargb:
 	gdFree(argb);
 }
 
+/*
+	Function: gdImageWebpEx
+*/
 BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quantization)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
@@ -170,6 +173,9 @@ BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quantization
 	out->gd_free(out);
 }
 
+/*
+	Function: gdImageWebp
+*/
 BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
@@ -180,6 +186,9 @@ BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 	out->gd_free(out);
 }
 
+/*
+	Function: gdImageWebpPtr
+*/
 BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 {
 	void *rv;
@@ -194,6 +203,9 @@ BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 	return rv;
 }
 
+/*
+	Function: gdImageWebpPtrEx
+*/
 BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quantization)
 {
 	void *rv;

@@ -25,6 +25,9 @@
 #define MAXY(x) MAX4(x[1],x[3],x[5],x[7])
 #define MINY(x) MIN4(x[1],x[3],x[5],x[7])
 
+/*
+	Function: gdImageStringFTCircle
+*/
 BGD_DECLARE(char *)
 gdImageStringFTCircle (gdImagePtr im,
                        int cx,
@@ -254,6 +257,9 @@ main (int argc, char *argv[])
 #define SUPERBITS1 1
 #define SUPERBITS2 2
 
+/*
+	Function: gdImageSquareToCircle
+*/
 BGD_DECLARE(gdImagePtr)
 gdImageSquareToCircle (gdImagePtr im, int radius)
 {
@@ -381,16 +387,18 @@ gdImageSubSharpen (int pc, int c, int nc, float inner_coeff, float
 }
 
 /*
-  * Sharpen function added on 2003-11-19
-  * by Paul Troughton (paul<dot>troughton<at>ieee<dot>org)
-  * Simple 3x3 convolution kernel
-  * Makes use of seperability
-  * Faster, but less flexible, than full-blown unsharp masking
-  * pct is sharpening percentage, and can be greater than 100
-  * Silently does nothing to non-truecolor images
-  * Silently does nothing for pct<0, as not a useful blurring function
-  * Leaves transparency/alpha-channel untouched
-  */
+	Function: gdImageSharpen
+
+	Sharpen function added on 2003-11-19
+	by Paul Troughton (paul<dot>troughton<at>ieee<dot>org)
+	Simple 3x3 convolution kernel
+	Makes use of seperability
+	Faster, but less flexible, than full-blown unsharp masking
+	pct is sharpening percentage, and can be greater than 100
+	Silently does nothing to non-truecolor images
+	Silently does nothing for pct<0, as not a useful blurring function
+	Leaves transparency/alpha-channel untouched
+*/
 BGD_DECLARE(void)
 gdImageSharpen (gdImagePtr im, int pct)
 {

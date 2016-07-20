@@ -18,6 +18,9 @@
 #define GD_SS_DBG(s)
 
 #ifdef HAVE_LIBPNG
+/*
+	Function: gdImagePngToSink
+*/
 BGD_DECLARE(void) gdImagePngToSink (gdImagePtr im, gdSinkPtr outSink)
 {
 	gdIOCtx *out = gdNewSSCtx (NULL, outSink);

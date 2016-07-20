@@ -1366,12 +1366,14 @@ zeroHistogram (hist3d histogram)
 
 
 /*
-  Selects quantization method used for subsequent gdImageTrueColorToPalette calls.
-  See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT, GD_QUANT_LIQ).
-  Speed is from 1 (highest quality) to 10 (fastest).
-  Speed 0 selects method-specific default (recommended).
+	Function: gdImageTrueColorToPaletteSetMethod
 
-  Returns FALSE if the given method is invalid or not available.
+	Selects quantization method used for subsequent gdImageTrueColorToPalette calls.
+	See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT, GD_QUANT_LIQ).
+	Speed is from 1 (highest quality) to 10 (fastest).
+	Speed 0 selects method-specific default (recommended).
+
+	Returns FALSE if the given method is invalid or not available.
 */
 BGD_DECLARE(int) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, int speed)
 {
@@ -1393,11 +1395,13 @@ BGD_DECLARE(int) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, 
 }
 
 /*
-  Chooses quality range that subsequent call to gdImageTrueColorToPalette will aim for.
-  Min and max quality is in range 1-100 (1 = ugly, 100 = perfect). Max must be higher than min.
-  If palette cannot represent image with at least min_quality, then image will remain true-color.
-  If palette can represent image with quality better than max_quality, then lower number of colors will be used.
-  This function has effect only when GD_QUANT_LIQ method has been selected.
+	Function: gdImageTrueColorToPaletteSetQuality
+
+	Chooses quality range that subsequent call to gdImageTrueColorToPalette will aim for.
+	Min and max quality is in range 1-100 (1 = ugly, 100 = perfect). Max must be higher than min.
+	If palette cannot represent image with at least min_quality, then image will remain true-color.
+	If palette can represent image with quality better than max_quality, then lower number of colors will be used.
+	This function has effect only when GD_QUANT_LIQ method has been selected.
 */
 BGD_DECLARE(void) gdImageTrueColorToPaletteSetQuality (gdImagePtr im, int min_quality, int max_quality)
 {
@@ -1410,6 +1414,9 @@ BGD_DECLARE(void) gdImageTrueColorToPaletteSetQuality (gdImagePtr im, int min_qu
 
 static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colorsWanted, gdImagePtr *cimP);
 
+/*
+	Function: gdImageCreatePaletteFromTrueColor
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int dither, int colorsWanted)
 {
 	gdImagePtr nim;
@@ -1419,6 +1426,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int di
 	return NULL;
 }
 
+/*
+	Function: gdImageTrueColorToPalette
+*/
 BGD_DECLARE(int) gdImageTrueColorToPalette (gdImagePtr im, int dither, int colorsWanted)
 {
 	return gdImageTrueColorToPaletteBody(im, dither, colorsWanted, 0);

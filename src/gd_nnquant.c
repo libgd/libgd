@@ -506,6 +506,9 @@ int verbose;
 	if (verbose) gd_error_ex(GD_NOTICE, "finished 1D learning: final alpha=%f !\n",((float)alpha)/initalpha);
 }
 
+/*
+	Function: gdImageNeuQuant
+*/
 BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int sample_factor)
 {
 	const int newcolors = max_color;

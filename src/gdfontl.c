@@ -4639,6 +4639,9 @@ gdFont gdFontLargeRep = {
 
 BGD_EXPORT_DATA_PROT gdFontPtr gdFontLarge = &gdFontLargeRep;
 
+/*
+	Function: gdFontGetLarge
+*/
 BGD_DECLARE(gdFontPtr)
 gdFontGetLarge (void)
 {

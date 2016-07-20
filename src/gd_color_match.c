@@ -5,8 +5,10 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
-/* bring the palette colors in im2 to be closer to im1
- *
+/*
+	Function: gdImageColorMatch
+
+	Bring the palette colors in im2 to be closer to im1.
  */
 BGD_DECLARE(int) gdImageColorMatch (gdImagePtr im1, gdImagePtr im2)
 {

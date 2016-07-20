@@ -12,10 +12,14 @@
 #include "gd_errors.h"
 #include "gdhelpers.h"
 
-/*!	\brief Creates a gdImage from a TGA file
- *	Creates a gdImage from a TGA binary file via a gdIOCtx.
- *	\param infile Pointer to TGA binary file
- *	\return gdImagePtr
+/*
+	Function: gdImageCreateFromTga
+
+	Creates a gdImage from a TGA file
+
+	Parameters:
+
+		infile - Pointer to TGA binary file
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTga(FILE *fp)
 {
@@ -27,6 +31,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTga(FILE *fp)
 	return image;
 }
 
+/*
+	Function: gdImageCreateFromTgaPtr
+*/
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaPtr(int size, void *data)
 {
 	gdImagePtr im;
@@ -38,10 +45,13 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaPtr(int size, void *data)
 }
 
 
-/*!	\brief Creates a gdImage from a gdIOCtx
- *	Creates a gdImage from a gdIOCtx referencing a TGA binary file.
- *	\param ctx Pointer to a gdIOCtx structure
- *	\return gdImagePtr
+/*
+	Function: gdImageCreateFromTgaCtx
+
+	Creates a gdImage from a gdIOCtx referencing a TGA binary file.
+
+	Parameters:
+		ctx - Pointer to a gdIOCtx structure
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx* ctx)
 {
