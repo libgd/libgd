@@ -1055,7 +1055,7 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
         scale_pass_res = _gdScalePass(tmp_im, src_height, dst, new_height, new_width, VERTICAL);
 		if (scale_pass_res != 1) {
 			gdImageDestroy(dst);
-			if (tmp != NULL && src != tmp_im) {
+			if (tmp_im != NULL && src != tmp_im) {
 				gdImageDestroy(tmp_im);
 			}
 			return NULL;
