@@ -71,7 +71,7 @@ int _gdTestErrorMsg(const char* file, unsigned int line, const char* string, ...
 
 #define gdTestAssert(cond) _gdTestAssert(__FILE__, __LINE__, (cond))
 
-#define gdTestAssertMsg(cond, message, ...) _gdTestAssertMsg(__FILE__, __LINE__, (cond),(message),__VA_ARGS__)
+#define gdTestAssertMsg(cond, message, ...) _gdTestAssertMsg(__FILE__, __LINE__, (cond), (message), ## __VA_ARGS__)
 
 
 #define gdTestErrorMsg(...) _gdTestErrorMsg(__FILE__, __LINE__, __VA_ARGS__)
