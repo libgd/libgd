@@ -27,7 +27,6 @@
 #include "gd.h"
 
 #include "gdtest.h"
-#include "test_config.h"
 
 /* max is already defined in windows/msvc */
 #ifndef max

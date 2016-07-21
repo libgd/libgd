@@ -1,4 +1,3 @@
-SET(GDTEST_TOP_DIR "${GD_SOURCE_DIR}/tests")
-CONFIGURE_FILE(test_config.h.cmake test_config.h ESCAPE_QUOTES)
+add_definitions(-DGDTEST_TOP_DIR="${CMAKE_CURRENT_SOURCE_DIR}/..")
 add_library (gdTest STATIC gdtest.c)
 target_link_libraries(gdTest ${GD_LIB})

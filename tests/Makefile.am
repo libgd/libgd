@@ -4,6 +4,7 @@ libgdtest_a_SOURCES = \
 	gdtest/gdtest.c \
 	gdtest/gdtest.h \
 	gdhelpers.c
+libgdtest_a_CPPFLAGS = $(AM_CPPFLAGS) -DGDTEST_TOP_DIR='"$(srcdir)"'
 
 # Setup vars that subdirs will increment.
 libgd_test_programs =
@@ -63,7 +64,7 @@ include xbm/Makemodule.am
 include xpm/Makemodule.am
 
 LDADD = libgdtest.a ../src/libgd.la
-AM_CPPFLAGS = -I$(top_srcdir)/src -I $(top_srcdir)/tests/gdtest
+AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/tests/gdtest
 
 check_PROGRAMS = $(libgd_test_programs) $(libgd_helper_programs)
 TESTS += $(libgd_test_programs)

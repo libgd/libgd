@@ -2,7 +2,6 @@
 #define GD_TEST_H
 
 #include <stdarg.h>
-#include "test_config.h"
 
 #define GDTEST_STRING_MAX 1024
 typedef struct CuTestImageResult CuTestImageResult;
