@@ -66,12 +66,12 @@ int main()
 
 	if (dst->res_x != res_x) {
 		status = 1;
-		gdTestErrorMsg("mismatch in res_x (got %d, expected %d)", dst->res_x, res_x);
+		gdTestErrorMsg("mismatch in res_x (got %d, expected %d)\n", dst->res_x, res_x);
 	}
 
 	if (dst->res_y != res_y) {
 		status = 1;
-		gdTestErrorMsg("mismatch in res_y (got %d, expected %d)", dst->res_y, res_y);
+		gdTestErrorMsg("mismatch in res_y (got %d, expected %d)\n", dst->res_y, res_y);
 	}
 
 	gdImageDestroy(dst);

@@ -589,7 +589,7 @@ int gdTestImageCompareToFile(const char* file, unsigned int line, const char* me
 	expected = gdTestImageFromPng(expected_file);
 
 	if (!expected) {
-		_gdTestErrorMsg(file, line, "Cannot open PNG <%s>", expected_file);
+		_gdTestErrorMsg(file, line, "Cannot open PNG <%s>\n", expected_file);
 		res = 0;
 	} else {
 		res = gdTestImageCompareToImage(file, line, message, expected, actual);

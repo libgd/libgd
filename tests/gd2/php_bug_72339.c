@@ -14,7 +14,7 @@ int main()
 	if (im == NULL) {
 		return 0;
 	} else {
-		gdTestErrorMsg("Image should have failed to be loaded");
+		gdTestErrorMsg("Image should have failed to be loaded\n");
 		return 1;
 	}
 
