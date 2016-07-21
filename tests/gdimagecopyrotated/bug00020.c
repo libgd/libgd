@@ -7,7 +7,6 @@ int main()
 {
 	gdImagePtr im, im2;
 	int error = 0;
-	char *path;
 
 	im = gdImageCreateTrueColor(width, width);
 	gdImageFilledRectangle(im, 0,0, width, width, 0xFF0000);
@@ -18,13 +17,11 @@ int main()
 	im2 = gdImageCreateTrueColor(width, width);
 
 	gdImageCopyRotated(im2, im, width / 2, width / 2, 0,0, width, width, 60);
-	path = gdTestFilePath2("gdimagecopyrotated", "bug00020_exp.png");
-	if (!gdAssertImageEqualsToFile(path, im2)) {
+	if (!gdAssertImageEqualsToFile("gdimagecopyrotated/bug00020_exp.png", im2)) {
 		error = 1;
 	}
 
 	gdImageDestroy(im2);
 	gdImageDestroy(im);
-	free(path);
 	return error;
 }
