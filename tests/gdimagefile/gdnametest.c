@@ -121,9 +121,6 @@ do_test() {
         gdTestAssertMsg(!!copy, "Failed to load %s\n", full_filename);
         if (!copy) continue;
 
-        /* Debug printf. */
-        //printf("%s -> %d\n", full_filename, gdMaxPixelDiff(orig, copy));
-        
         gdTestAssertMsg(gdMaxPixelDiff(orig, copy) <= names[n].maxdiff,"Pixels different on %s\n", full_filename, full_filename);
 
         if (!names[n].readonly) {
@@ -154,7 +151,7 @@ do_errortest() {
 }/* do_errortest*/
 
 
-int main(int argc, char **argv)
+int main()
 {
 
     do_test();

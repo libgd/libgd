@@ -8,23 +8,21 @@ int main(int argc, char *argv[])
 {
 	gdImagePtr im;
 	FILE *fp;
-	char *inpath;
 
-	if (argc != 2) {
-		printf("Usage: %s <input gd2>\n", argv[0]);
-		return 1;
-	}
+	fp = gdTestFileOpen2("gd2", "invalid_header.gd2");
 
-	/* Read the corrupt image. */
-	inpath = argv[1];
-	fp = fopen(inpath, "rb");
 	if (!fp) {
-		printf("failed, cannot open file: %s\n", inpath);
+		gdTestErrorMsg("failed, cannot open file: %s\n", "invalid_header.gd2");
 		return 1;
 	}
 	im = gdImageCreateFromGd2(fp);
 	fclose(fp);
 
-	/* Should have failed & rejected it. */
-	return im == NULL ? 0 : 1;
+	if (im != NULL) {
+		gdTestErrorMsg("image should have failed to be loaded\n");
+		gdImageDestroy(im);
+		return 1;
+	} else {
+		return 0;
+	}
 }

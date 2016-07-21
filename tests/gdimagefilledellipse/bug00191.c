@@ -1,4 +1,3 @@
-/* $Id$ */
 #include "gd.h"
 #include "gdtest.h"
 

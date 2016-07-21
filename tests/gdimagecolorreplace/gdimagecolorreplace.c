@@ -46,7 +46,7 @@ static void run_tests(gdImagePtr im, int *error)
 
 #define CHECK_VALUE(n, expected) do {							\
 		if (gdTestAssert((n) == (expected)) != 1) {				\
-			printf("%d is expected, but %d\n", expected, n);	\
+			gdTestErrorMsg("%d is expected, but %d\n", expected, n);\
 			*error = -1;										\
 		}														\
 	} while (0)
@@ -57,7 +57,7 @@ static void run_tests(gdImagePtr im, int *error)
 		gdImageSetClip(im, 0, 0, 4, 4);							\
 		pix = gdImageGetPixel(im, (x), (y));					\
 		if (gdTestAssert(pix == (expected)) != 1) {				\
-			printf("%d is expected, but %d\n", expected, pix);	\
+			gdTestErrorMsg("%d is expected, but %d\n", expected, pix);	\
 			*error = -1;										\
 		}														\
 	} while (0)

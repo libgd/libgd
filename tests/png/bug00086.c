@@ -1,4 +1,3 @@
-/* $Id$ */
 /* id: gdbad3.c, Xavier Roche, May. 2007 */
 /* gcc gdbad3.c -o bad -lgd && ./bad */
 
@@ -17,7 +16,7 @@ int main(void)
 	if ( ( im = gdImageCreateFromPngPtr(93, (char*) &pngdata[0]) ) == NULL) {
 		return 0;
 	} else {
-		fprintf(stderr, "failed!\n");
+		gdTestErrorMsg("failed!\n");
 		gdImageDestroy(im);
 		return 1;
 	}

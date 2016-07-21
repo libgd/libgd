@@ -1,3 +1,11 @@
+#ifdef _WIN32
+#include <stdio.h>
+int main()
+{
+	printf("skip");
+	return 0;
+}
+#else
 #include "gd.h"
 
 int main()
@@ -12,3 +20,4 @@ int main()
 	gdImageTiff(im, NULL); /* noop safely */
 	return 0;
 }
+#endif

@@ -2,7 +2,7 @@
 #include "gd.h"
 #include "gdtest.h"
 
-int main(int argc, char **argv)
+int main()
 {
 	gdImagePtr im;
 	int error = 0;

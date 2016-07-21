@@ -36,15 +36,15 @@ static const int expected_average[][3] = {
 				int g = ((expected)[y/BLOCK_SIZE][x/BLOCK_SIZE]>> 8)&0xFF; \
 				int b = ((expected)[y/BLOCK_SIZE][x/BLOCK_SIZE]    )&0xFF; \
 				if (r != gdImageRed(im, p)) {							\
-					printf("Red %x is expected, but %x\n", r, gdImageRed(im, p)); \
+					gdTestErrorMsg("Red %x is expected, but %x\n", r, gdImageRed(im, p));	  \
 					return 0;											\
 				}														\
 				if (g != gdImageGreen(im, p)) {							\
-					printf("Green %x is expected, but %x\n", g, gdImageGreen(im, p)); \
+					gdTestErrorMsg("Green %x is expected, but %x\n", g, gdImageGreen(im, p)); \
 					return 0;											\
 				}														\
 				if (b != gdImageBlue(im, p)) {							\
-					printf("Blue %x is expected, but %x\n", b, gdImageBlue(im, p));	\
+					gdTestErrorMsg("Blue %x is expected, but %x\n", b, gdImageBlue(im, p));	  \
 					return 0;											\
 				}														\
 			}															\

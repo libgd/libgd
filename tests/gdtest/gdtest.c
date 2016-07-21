@@ -20,6 +20,10 @@
 #include <sys/types.h>
 #endif
 
+#ifdef _WIN32
+# include "readdir.h"
+#endif
+
 #include "gd.h"
 
 #include "gdtest.h"
@@ -43,12 +47,19 @@ gdImagePtr gdTestImageFromPng(const char *filename)
 	FILE *fp;
 
 	/* If the path is relative, then assume it's in the tests/ dir. */
-	if (filename[0] == '/') {
+	if (filename[0] == '/' 
+#ifdef _WIN32
+	|| filename[1] == ':'
+#endif
+	) {
 		fp = fopen(filename, "rb");
-		if (!fp)
-			return NULL;
-	} else
+	} else {
 		fp = gdTestFileOpen(filename);
+	}
+
+	if (fp == NULL) {
+			return NULL;
+	}
 
 	image = gdImageCreateFromPng(fp);
 	fclose(fp);
@@ -75,7 +86,20 @@ static void _clean_dir(const char *dir)
 
 		if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
 			continue;
+#ifdef _WIN32
+	{
+		WIN32_FILE_ATTRIBUTE_DATA data;
 
+		if (!GetFileAttributesEx(de->d_name, GetFileExInfoStandard, &data)) {
+			continue;
+		}
+		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+			_clean_dir(de->d_name);
+		} else {
+			unlink(de->d_name);
+		}
+	}
+#else
 		if (lstat(de->d_name, &st) != 0)
 			continue;
 
@@ -83,6 +107,7 @@ static void _clean_dir(const char *dir)
 			_clean_dir(de->d_name);
 		else
 			unlink(de->d_name);
+#endif
 	}
 
 	if (chdir("..")) {
@@ -100,21 +125,158 @@ static void tmpdir_cleanup(void)
 	free(tmpdir_base);
 }
 
+#ifdef _WIN32
+char* strrstr (char* haystack, char* needle)
+{
+  int needle_length = strlen(needle);
+  char * haystack_end = haystack + strlen(haystack) - needle_length;
+  char * p;
+  int i;
+
+  for(p = haystack_end; p >= haystack; --p)
+  {
+    for(i = 0; i < needle_length; ++i) {
+      if(p[i] != needle[i])
+        goto next;
+    }
+    return p;
+
+    next:;
+  }
+  return 0;
+}
+
+
+typedef VOID (WINAPI *MyGetSystemTimeAsFileTime)(LPFILETIME lpSystemTimeAsFileTime);
+
+static MyGetSystemTimeAsFileTime get_time_func(void)
+{
+	MyGetSystemTimeAsFileTime timefunc = NULL;
+	HMODULE hMod = GetModuleHandle("kernel32.dll");
+
+	if (hMod) {
+		/* Max possible resolution <1us, win8/server2012 */
+		timefunc = (MyGetSystemTimeAsFileTime)GetProcAddress(hMod, "GetSystemTimePreciseAsFileTime");
+
+		if(!timefunc) {
+			/* 100ns blocks since 01-Jan-1641 */
+			timefunc = (MyGetSystemTimeAsFileTime)GetProcAddress(hMod, "GetSystemTimeAsFileTime");
+		}
+	}
+
+	return timefunc;
+}
+static MyGetSystemTimeAsFileTime timefunc = NULL;
+static int getfilesystemtime(struct timeval *tv)
+{
+	FILETIME ft;
+	unsigned __int64 ff = 0;
+	ULARGE_INTEGER fft;
+
+	if (timefunc == NULL) {
+		timefunc = get_time_func();
+	}
+	timefunc(&ft);
+
+    /*
+	 * Do not cast a pointer to a FILETIME structure to either a
+	 * ULARGE_INTEGER* or __int64* value because it can cause alignment faults on 64-bit Windows.
+	 * via  http://technet.microsoft.com/en-us/library/ms724284(v=vs.85).aspx
+	 */
+	fft.HighPart = ft.dwHighDateTime;
+	fft.LowPart = ft.dwLowDateTime;
+	ff = fft.QuadPart;
+
+	ff /= 10Ui64; /* convert to microseconds */
+	ff -= 11644473600000000Ui64; /* convert to unix epoch */
+
+	tv->tv_sec = (long)(ff / 1000000Ui64);
+	tv->tv_usec = (long)(ff % 1000000Ui64);
+
+	return 0;
+}
+
+static char *
+mkdtemp (char *tmpl)
+{
+	static const char letters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	static const int NLETTERS = sizeof (letters) - 1;
+	static int counter = 0;
+	char *XXXXXX;
+	struct timeval tv;
+	_int64 value;
+	int count;
+
+	/* find the last occurrence of "XXXXXX" */
+	XXXXXX = strrstr(tmpl, "XXXXXX");
+
+	if (!XXXXXX || strncmp (XXXXXX, "XXXXXX", 6)) {
+		errno = EINVAL;
+		return NULL;
+	}
+
+	/* Get some more or less random data.  */
+	getfilesystemtime(&tv);
+	value = (tv.tv_usec ^ tv.tv_sec) + counter++;
+
+	for (count = 0; count < 100; value += 7777, ++count) {
+		_int64 v = value;
+
+		/* Fill in the random bits.  */
+		XXXXXX[0] = letters[v % NLETTERS];
+		v /= NLETTERS;
+		XXXXXX[1] = letters[v % NLETTERS];
+		v /= NLETTERS;
+		XXXXXX[2] = letters[v % NLETTERS];
+		v /= NLETTERS;
+		XXXXXX[3] = letters[v % NLETTERS];
+		v /= NLETTERS;
+		XXXXXX[4] = letters[v % NLETTERS];
+		v /= NLETTERS;
+		XXXXXX[5] = letters[v % NLETTERS];
+
+		/* tmpl is in UTF-8 on Windows, thus use g_mkdir() */
+		if (mkdir(tmpl) == 0) {
+			return tmpl;
+		}
+		printf("failed to create directory\n");
+		if (errno != EEXIST)
+			/* Any other error will apply also to other names we might
+			 *  try, and there are 2^32 or so of them, so give up now.
+			 */
+			return NULL;
+	}
+
+	/* We got out of the loop because we ran out of combinations to try.  */
+	errno = EEXIST;
+	return NULL;
+}
+#endif
+
 const char *gdTestTempDir(void)
 {
 	if (tmpdir_base == NULL) {
-		char *tmpdir, *tmpdir_root;
-
+		char *tmpdir;
+#ifdef _WIN32
+		char tmpdir_root[MAX_PATH];
+		size_t tmpdir_root_len = GetTempPath(MAX_PATH, tmpdir_root);
+		gdTestAssert(!(tmpdir_root_len > MAX_PATH || (tmpdir_root_len == 0)));
+		gdTestAssert((tmpdir_root_len + 30 < MAX_PATH));
+#else
+		char *tmpdir_root;
 		tmpdir_root = getenv("TMPDIR");
 		if (tmpdir_root == NULL)
 			tmpdir_root = "/tmp";
+#endif
 
 		/* The constant here is a lazy over-estimate. */
 		tmpdir = malloc(strlen(tmpdir_root) + 30);
 		gdTestAssert(tmpdir != NULL);
-
+#ifdef _WIN32
+		sprintf(tmpdir, "%sgdtest.XXXXXX", tmpdir_root);
+#else
 		sprintf(tmpdir, "%s/gdtest.XXXXXX", tmpdir_root);
-
+#endif
 		tmpdir_base = mkdtemp(tmpdir);
 		gdTestAssert(tmpdir_base != NULL);
 
@@ -129,9 +291,27 @@ char *gdTestTempFile(const char *template)
 	const char *tempdir = gdTestTempDir();
 	char *ret;
 
-	if (template == NULL)
-		template = "gdtemp.XXXXXX";
+#ifdef _WIN32
+	{
+		char *tmpfilename;
+		UINT error;
 
+		ret = malloc(MAX_PATH);
+		gdTestAssert(ret != NULL);
+		if (template == NULL) {
+			error = GetTempFileName(tempdir,
+										  "gdtest",
+										  0,
+										  ret);
+				gdTestAssert(error != 0);
+		} else {
+			sprintf(ret, "%s\\%s", tempdir, template);		
+		}
+	}
+#else
+	if (template == NULL) {
+		template = "gdtemp.XXXXXX";
+	}
 	ret = malloc(strlen(tempdir) + 10 + strlen(template));
 	gdTestAssert(ret != NULL);
 	sprintf(ret, "%s/%s", tempdir, template);
@@ -141,7 +321,7 @@ char *gdTestTempFile(const char *template)
 		gdTestAssert(fd != -1);
 		close(fd);
 	}
-
+#endif
 	return ret;
 }
 
@@ -176,7 +356,11 @@ char *gdTestFilePathV(const char *path, va_list args)
 	strcpy(file, GDTEST_TOP_DIR);
 	p = path;
 	do {
+#ifdef _WIN32
+		strcat(file, "\\");
+#else
 		strcat(file, "/");
+#endif
 		strcat(file, p);
 	} while ((p = va_arg(args, const char *)) != NULL);
 	va_end(args);
@@ -435,14 +619,14 @@ int _gdTestAssert(const char* file, unsigned int line, int condition)
 int _gdTestAssertMsg(const char* file, unsigned int line, int condition, const char* message, ...)
 {
 	va_list args;
-	char output_buf[GDTEST_STRING_MAX];
 	
 	if (condition) return 1;
   
+	fprintf(stderr, "%s:%u: ", file, line);
 	va_start(args, message);
-	vsnprintf(output_buf, sizeof(output_buf), message, args);
+	vfprintf(stderr, message, args);
 	va_end(args);
-	fprintf(stderr, "%s:%u: %s\n", file, line, output_buf);
+
 	fflush(stderr);
 
 	++failureCount;
@@ -453,12 +637,11 @@ int _gdTestAssertMsg(const char* file, unsigned int line, int condition, const c
 int _gdTestErrorMsg(const char* file, unsigned int line, const char* format, ...) /* {{{ */
 {
 	va_list args;
-	char output_buf[GDTEST_STRING_MAX];
 
+	fprintf(stderr, "%s:%u: ", file, line);
 	va_start(args, format);
-	vsnprintf(output_buf, sizeof(output_buf), format, args);
+	vfprintf(stderr, format, args);
 	va_end(args);
-	fprintf(stderr, "%s:%u: %s", file, line, output_buf);
 	fflush(stderr);
 
     ++failureCount;
