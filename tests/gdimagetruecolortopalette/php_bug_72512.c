@@ -12,7 +12,7 @@ int main()
 	im = gdImageCreateTrueColor(100, 100);
 
 	if (im == NULL) {
-		gdTestErrorMsg("gdImageCreateTruecolor failed");
+		gdTestErrorMsg("gdImageCreateTruecolor failed\n");
 		error = 1;
 		goto exit;
 	}
