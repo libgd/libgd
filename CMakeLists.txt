@@ -225,6 +225,8 @@ endif (USE_EXT_GD)
 add_subdirectory(tests)
 add_subdirectory(examples)
 
+add_custom_target(distclean ${GD_SOURCE_DIR}/cmake/distclean.sh)
+
 SET(CPACK_PACKAGE_NAME "libgd")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libGD, powerful and easy to use graphic library")
 SET(CPACK_PACKAGE_VENDOR "http://www.libgd.org")
