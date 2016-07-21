@@ -333,7 +333,6 @@ AC_MSG_RESULT([
 AC_CONFIG_FILES([Makefile
                 src/Makefile
                 tests/Makefile
-        		tests/test_config.h
                 config/Makefile
                 config/gdlib-config
                 config/gdlib.pc])

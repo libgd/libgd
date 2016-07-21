@@ -2,7 +2,6 @@
 #define GD_TEST_H
 
 #include <stdarg.h>
-#include "test_config.h"
 
 typedef struct CuTestImageResult CuTestImageResult;
 struct CuTestImageResult {
