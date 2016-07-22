@@ -8,6 +8,7 @@ SET (LIBGD_SRC_FILES
 	gd_color.h
 	gd_color_map.c
 	gd_color_map.h
+	gd_color_match.c
 	gd_crop.c
 	gd_filename.c
 	gd_filter.c
@@ -15,6 +16,7 @@ SET (LIBGD_SRC_FILES
 	gd_gd2.c
 	gd_gif_in.c
 	gd_gif_out.c
+	gd_intern.h
 	gd_interpolation.c
 	gd_io.c
 	gd_io.h
