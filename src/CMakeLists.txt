@@ -76,7 +76,11 @@ endif(MSVC AND MSVC_VERSION LESS 1900)
 include(GNUInstallDirs)
 
 if (BUILD_SHARED_LIBS)
-  add_library(${GD_LIB} ${LIBGD_SRC_FILES})
+	add_library(${GD_LIB} ${LIBGD_SRC_FILES})
+	set_target_properties(${GD_LIB} PROPERTIES
+		C_VISIBILITY_PRESET hidden
+		CXX_VISIBILITY_PRESET hidden
+	)
 endif()
 
 if (BUILD_STATIC_LIBS)
