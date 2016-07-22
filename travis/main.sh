@@ -95,6 +95,8 @@ build_autotools() {
 
 build_cmake() {
 	local args=(
+		-DBUILD_SHARED_LIBS=1
+		-DBUILD_STATIC_LIBS=1
 		-DBUILD_TEST=1
 		-DCMAKE_INSTALL_PREFIX=/usr/local
 		-DCMAKE_INSTALL_LIBDIR=/usr/local/lib
