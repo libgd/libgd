@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-	int error, i = 0;
+	int error = 0, i = 0;
 	gdImagePtr im, exp;
 	FILE *fp;
 	char *path[] = {
@@ -40,8 +40,6 @@ int main(int argc, char *argv[])
 				gdTestErrorMsg("image %s differs from expected result\n", path[i]);
 				gdImageDestroy(im);
 				error = 1;
-			} else {
-				error = 0;
 			}
 			if (exp) {
 				gdImageDestroy(exp);
@@ -52,8 +50,6 @@ int main(int argc, char *argv[])
 				gdTestErrorMsg("image %s should have failed to be loaded\n", path[i]);
 				gdImageDestroy(im);
 				error = 1;
-			} else {
-				error = 0;
 			}
 		}
 		i++;
