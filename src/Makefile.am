@@ -46,10 +46,12 @@ lib_LTLIBRARIES = libgd.la
 libgd_la_SOURCES = \
 	bmp.h \
 	gd.c \
+	gd.h \
 	gd_bmp.c \
 	gd_color.c \
 	gd_color.h \
 	gd_color_map.c \
+	gd_color_map.h \
 	gd_color_match.c \
 	gd_crop.c \
 	gd_filename.c \
@@ -61,6 +63,7 @@ libgd_la_SOURCES = \
 	gd_intern.h \
 	gd_interpolation.c \
 	gd_io.c \
+	gd_io.h \
 	gd_io_dp.c \
 	gd_io_file.c \
 	gd_io_ss.c \
@@ -83,13 +86,20 @@ libgd_la_SOURCES = \
 	gd_webp.c \
 	gd_xbm.c \
 	gdcache.c \
+	gdcache.h \
 	gdfontg.c \
+	gdfontg.h \
 	gdfontl.c \
+	gdfontl.h \
 	gdfontmb.c \
+	gdfontmb.h \
 	gdfonts.c \
+	gdfonts.h \
 	gdfontt.c \
+	gdfontt.h \
 	gdft.c \
 	gdfx.c \
+	gdfx.h \
 	gdhelpers.c \
 	gdhelpers.h \
 	gdkanji.c \
