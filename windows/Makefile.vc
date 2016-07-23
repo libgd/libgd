@@ -131,16 +131,6 @@ TEST_LDFLAGS=$(LDFLAGS) $(SDR)readdir.obj $(SDR)gdtest.obj $(BUILD_DIR)\libgd.li
 TEST_LIST=$(TDR)testlist.txt
 TEST_MK=$(TDR)Maketests.vc
 
-# generate test makefile from TESTS macro
-# generate test makefile from TESTS macro
-!IF [if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)]
-!ENDIF
-!IF [if not exist $(TDR) mkdir $(TDR)]
-!ENDIF
-
-!IF [$(MAKEDIR)\windows\gentest.bat tests $(BUILD_DIR) "$(TEST_CFLAGS)" "$(TEST_LDFLAGS)" $(CC) $(LD) "$(TEST_MK)" "$(TEST_LIST)"]
-!ENDIF
-
 TEST_OBJS=$(TEST_EXES:tests=obj)
 TEST_OBJS=$(TEST_OBJS:exe=obj)
 
@@ -159,19 +149,47 @@ clean:
 make_dirs:
 	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 	@if not exist $(SDR) mkdir $(SDR)
-	@echo #define HAVE_FT2BUILD_H> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_FT2BUILD_H> $(GD_CONFIG_H)
+	@echo #define HAVE_FT2BUILD_H>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_ICONV_H>> $(GD_CONFIG_H)
 	@echo #define HAVE_ICONV_H>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_LIBFREETYPE>> $(GD_CONFIG_H)
 	@echo #define HAVE_LIBFREETYPE>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_LIBJPEG>> $(GD_CONFIG_H)
 	@echo #define HAVE_LIBJPEG>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_LIBPNG>> $(GD_CONFIG_H)
 	@echo #define HAVE_LIBPNG>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_LIBWEBP>> $(GD_CONFIG_H)
 	@echo #define HAVE_LIBWEBP>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_LIBZ>> $(GD_CONFIG_H)
 	@echo #define HAVE_LIBZ>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_LIBXPM>> $(GD_CONFIG_H)
 	@echo #define HAVE_LIBXPM>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_INTTYPES_H>> $(GD_CONFIG_H)
 	@echo #define HAVE_INTTYPES_H>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_SYS_STAT_H>> $(GD_CONFIG_H)
+	@echo #define HAVE_SYS_STAT_H>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)	
 
 run_tests: pretest
-  @cd $(TDR)
-  @$(MAKEDIR)\windows\run_tests
+	@cd $(TDR)
+	@$(MAKEDIR)\windows\run_tests
+	!IF [if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)]
+	!ENDIF
+	!IF [if not exist $(TDR) mkdir $(TDR)]
+	!ENDIF
+
+	!IF [$(MAKEDIR)\windows\gentest.bat tests $(BUILD_DIR) "$(TEST_CFLAGS)" "$(TEST_LDFLAGS)" $(CC) $(LD) "$(TEST_MK)" "$(TEST_LIST)"]
+	!ENDIF
 
 # libgd
 $(LIBGD_OBJ_DIR):
