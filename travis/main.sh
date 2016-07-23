@@ -34,10 +34,14 @@ update_os() {
 	case ${TRAVIS_OS_NAME} in
 	osx)
 		v --fold="brew_update" brew update
+		# We have to hack this package due to bugs in Travis CI.  See:
+		# https://github.com/libgd/libgd/issues/266
+		# https://github.com/Homebrew/legacy-homebrew/issues/43874
+		v --fold="brew_clean" brew uninstall libtool
 		# These packages are already installed in Travis, so omit them or brew fails.
-		# autoconf automake libtool pkg-config cmake libpng jpeg libtiff
+		# autoconf automake pkg-config cmake libpng jpeg libtiff
 		v --fold="brew_install" brew install \
-			gettext freetype fontconfig webp xz
+			gettext freetype fontconfig libtool webp xz
 		;;
 	esac
 }
@@ -91,6 +95,8 @@ build_autotools() {
 
 build_cmake() {
 	local args=(
+		-DBUILD_SHARED_LIBS=1
+		-DBUILD_STATIC_LIBS=1
 		-DBUILD_TEST=1
 		-DCMAKE_INSTALL_PREFIX=/usr/local
 		-DCMAKE_INSTALL_LIBDIR=/usr/local/lib

@@ -4,7 +4,6 @@
 
 #include "gd.h"
 #include "gdtest.h"
-#include "test_config.h"
 
 #define WIDTH 60
 #define HEIGHT 50
@@ -50,8 +49,8 @@ gdImagePtr mkcross() {
 void
 do_test() {
 
-    gdTestAssertMsg(strchr("123",'2') != 0, "strchr() is not functional.\n",1);
-    gdTestAssertMsg(strcasecmp("123abC","123Abc") == 0, "strcasecmp() is not functional.\n",1);
+    gdTestAssertMsg(strchr("123",'2') != 0, "strchr() is not functional.\n");
+    gdTestAssertMsg(strcasecmp("123abC","123Abc") == 0, "strcasecmp() is not functional.\n");
     
     int n;
     struct {

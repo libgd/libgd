@@ -66,7 +66,7 @@ extern "C" {
 # define BGD_STDCALL __stdcall
 # define BGD_EXPORT_DATA_IMPL
 #else
-# if defined(HAVE_VISIBILITY) && HAVE_VISIBILITY==1
+# if defined(__GNUC__) || defined(__clang__)
 #  define BGD_EXPORT_DATA_PROT __attribute__ ((visibility ("default")))
 #  define BGD_EXPORT_DATA_IMPL __attribute__ ((visibility ("hidden")))
 # else

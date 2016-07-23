@@ -27,7 +27,6 @@
 #include "gd.h"
 
 #include "gdtest.h"
-#include "test_config.h"
 
 /* max is already defined in windows/msvc */
 #ifndef max
@@ -47,7 +46,7 @@ gdImagePtr gdTestImageFromPng(const char *filename)
 	FILE *fp;
 
 	/* If the path is relative, then assume it's in the tests/ dir. */
-	if (filename[0] == '/' 
+	if (filename[0] == '/' || filename[0] == '.'
 #ifdef _WIN32
 	|| filename[1] == ':'
 #endif
@@ -591,7 +590,7 @@ int gdTestImageCompareToFile(const char* file, unsigned int line, const char* me
 	expected = gdTestImageFromPng(expected_file);
 
 	if (!expected) {
-		_gdTestErrorMsg(file, line, "Cannot open PNG <%s>", expected_file);
+		_gdTestErrorMsg(file, line, "Cannot open PNG <%s>\n", expected_file);
 		res = 0;
 	} else {
 		res = gdTestImageCompareToImage(file, line, message, expected, actual);

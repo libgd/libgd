@@ -193,7 +193,8 @@ else (USE_EXT_GD)
 
 	CONFIGURE_FILE(${GD_SOURCE_DIR}/src/config.h.cmake ${GD_SOURCE_DIR}/src/config.h ESCAPE_QUOTES)
 
-	option(BUILD_SHARED_LIBS "Build both shared and static libs" ON)
+	option(BUILD_SHARED_LIBS "Build shared libs" ON)
+	option(BUILD_STATIC_LIBS "Build static libs" OFF)
 
 	if (WIN32)
 		SET(GD_LIB libgd)
@@ -224,6 +225,8 @@ endif (USE_EXT_GD)
 
 add_subdirectory(tests)
 add_subdirectory(examples)
+
+add_custom_target(distclean ${GD_SOURCE_DIR}/cmake/distclean.sh)
 
 SET(CPACK_PACKAGE_NAME "libgd")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libGD, powerful and easy to use graphic library")

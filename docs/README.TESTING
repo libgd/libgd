@@ -34,7 +34,7 @@ $ ctest .
 I will certainly add a nice CMake option to give prefix later.
 
 What to do if tests fail on your platform and you use the last GD release? 
-either from your favourite distributions or from http://www.libgd.org or git?
+either from your favorite distributions or from http://www.libgd.org or git?
 
 If you use a packaged version of the GD Library (installed from RPM, deb or 
 ports, gentoo packages or any other packages format or distribution), please try
@@ -53,7 +53,7 @@ You can attach the two files available in:
 Later versions will have an automatic post mode.
 
 If the tests run successfully, please report a bug to the maintainer of the
-packages (debian, bsd, ubuntu or whoever is responsible for the packages).
+packages (Debian, BSD, Ubuntu or whoever is responsible for the packages).
 
 Reasons of failures:
 Exception: SegFault: self explaining
@@ -62,9 +62,9 @@ timeout              the default timeout is 5 seconds. Some test may
                      have infinite loops when compiled against old versions
                      of the GD library (esp. 2.0.33 or earlier)
 
-Some features rely on floating point arithmetics and results may vary from
+Some features rely on floating point arithmetic and results may vary from
 one architecture to another.
 Examples:
-on i686,  gdimagerotate/bug00067 will faill. The result is still viusally 
+on i686, gdimagerotate/bug00067 will fail. The result is still visually
 acceptable but i686 default arithmetic mode will generate different results.
 Adding "-msse -mfpmath=sse" to CFLAGS will solve this difference.
