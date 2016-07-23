@@ -8,11 +8,14 @@
 
 use strict;
 
+use FindBin;
+
 my $key = shift;
 my @version_parts = ();
+my $dir = $FindBin::Bin;
 
-open FH, "<src/gd.h"   # old-style filehandle for max. portability
-  or die "Unable to open 'version.h' for reading.\n";
+open FH, "<$dir/../src/gd.h"   # old-style filehandle for max. portability
+  or die "Unable to open 'gd.h' for reading.\n";
 
 while(<FH>) {
   next unless m{version605b5d1778};
