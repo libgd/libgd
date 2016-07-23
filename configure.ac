@@ -34,20 +34,17 @@ AC_SUBST(GDLIB_REVISION)
 AC_SUBST(GDLIB_EXTRA)
 AC_SUBST(GDLIB_VERSION)
 
-# Dynamic library version information
-# See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
+dnl Keep the libtool version details in an external script so cmake can
+dnl access the values too.
+define([lt_gv], [config/getlib.sh ]$1)
+m4_define([gd_LT_CURRENT], esyscmd(lt_gv(CURRENT)))
+m4_define([gd_LT_REVISION], esyscmd(lt_gv(REVISION)))
+m4_define([gd_LT_AGE], esyscmd(lt_gv(AGE)))
 
-GDLIB_LT_CURRENT=3
-dnl This is the version where the soname (current above) changes.  We use it
-dnl to reset the revision base back to zero.  It's a bit of a pain, but some
-dnl systems restrict the revision range below to [0..255] (like OS X).
-GDLIB_PREV_MAJOR=2
-GDLIB_PREV_MINOR=2
-dnl This isn't 100% correct, but it tends to be a close enough approximation
-dnl for how we manage the codebase.  It's rare to do a release that doesn't
-dnl modify the library since this project is centered around the library.
-GDLIB_LT_REVISION=$(( ((GDLIB_MAJOR - GDLIB_PREV_MAJOR) << 6) | ((GDLIB_MINOR - GDLIB_PREV_MINOR) << 3) | GDLIB_REVISION ))
-GDLIB_LT_AGE=0
+GDLIB_LT_CURRENT=gd_LT_CURRENT
+GDLIB_LT_REVISION=gd_LT_REVISION
+GDLIB_LT_AGE=gd_LT_AGE
+
 AC_SUBST(GDLIB_LT_CURRENT)
 AC_SUBST(GDLIB_LT_REVISION)
 AC_SUBST(GDLIB_LT_AGE)
