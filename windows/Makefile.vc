@@ -169,7 +169,7 @@ make_dirs:
 	@echo #define HAVE_LIBXPM>> $(GD_CONFIG_H)
 	@echo #define HAVE_INTTYPES_H>> $(GD_CONFIG_H)
 
-run_tests:
+run_tests: pretest
   @cd $(TDR)
   @$(MAKEDIR)\windows\run_tests
 
@@ -210,6 +210,6 @@ $(SDR)gdtest.obj: $(TARGETDLL) tests\gdtest\gdtest.c
 $(SDR)readdir.obj: $(TARGETDLL) tests\gdtest\readdir.c
   @$(CC) $(CFLAGS) /c tests\gdtest\readdir.c /Fo$(SDR)readdir.obj
 
-$(TEST_LIST): $(TARGETDLL)
+pretest: $(TARGETDLL)
   if not exist $(TDR) mkdir $(TDR)
   copy $(TARGETDLL) $(TDR)$(GD_DLL)
