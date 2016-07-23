@@ -41,6 +41,8 @@ BUILD_DIR=$(WITH_BUILD)
 
 GD_DLL=libgd.dll
 GD_LIB=libgd_a.lib
+GD_CONFIG_H=$(LIBGD_SRC_DIR)\$(LIBGD_SRC_DIR)\config.h
+
 
 SDR=$(BUILD_DIR)^\
 TDR=$(BUILD_DIR)\tests^\
@@ -124,9 +126,8 @@ CFLAGS= $(CFLAGS) \
 	   /DHAVE_LIBXPM=1\
        $(INCLUDES)
 
-TEST_CFLAGS=$(CFLAGS) /FItest_config.h
+TEST_CFLAGS=$(CFLAGS)
 TEST_LDFLAGS=$(LDFLAGS) $(SDR)readdir.obj $(SDR)gdtest.obj $(BUILD_DIR)\libgd.lib
-TEST_CONFIG=tests\test_config.h
 TEST_LIST=$(TDR)testlist.txt
 TEST_MK=$(TDR)Maketests.vc
 
@@ -152,7 +153,6 @@ clean:
   @if exist $(SDR) rd $(SDR) /s /q
   @if exist $(TDR) rd $(TDR) /s /q
   @if exist $(BUILD_DIR)\*.exe del $(BUILD_DIR)\*.exe /q
-  @if exist tests\test_config.h del tests\test_config.h /q
 
 # helpers
 
@@ -195,22 +195,11 @@ all: $(LIBGD_OBJ_DIR) $(LIBGD_BIN_DIR) $(LIB_OBJS) $(STATICLIB)
 !INCLUDE $(TEST_MK)
 build_tests: $(TEST_LIST) $(SDR)readdir.obj $(SDR)gdtest.obj $(TEST_EXES)
 
-$(SDR)gdtest.obj: $(TARGETDLL) $(TEST_CONFIG) tests\gdtest\gdtest.c
-  @$(CC) $(CFLAGS) /c tests\gdtest\gdtest.c /Fo$(SDR)gdtest.obj
+$(SDR)gdtest.obj: $(TARGETDLL) tests\gdtest\gdtest.c
+  @$(CC) $(CFLAGS) /DGDTEST_TOP_DIR=\"$(MAKEDIR:\=\\)\\tests\" /c tests\gdtest\gdtest.c /Fo$(SDR)gdtest.obj
 
-$(SDR)readdir.obj: $(TARGETDLL) $(TEST_CONFIG) tests\gdtest\readdir.c
+$(SDR)readdir.obj: $(TARGETDLL) tests\gdtest\readdir.c
   @$(CC) $(CFLAGS) /c tests\gdtest\readdir.c /Fo$(SDR)readdir.obj
-  
-$(TEST_CONFIG):
-  @echo #ifndef GD_TEST_CONFIG_H> tests\test_config.h
-  @echo #define GD_TEST_CONFIG_H>> tests\test_config.h
-  @echo #ifndef GDTEST_TOP_DIR>> tests\test_config.h
-  @echo #define GDTEST_TOP_DIR "$(MAKEDIR:\=\\)\\tests">> tests\test_config.h
-  @echo #endif>> tests\test_config.h
-  @echo #ifndef _WIN32>> tests\test_config.h
-  @echo #define snprintf _snprintf>> tests\test_config.h
-  @echo #endif>> tests\test_config.h
-  @echo #endif>> tests\test_config.h
 
 $(TEST_LIST): $(TARGETDLL)
   if not exist $(TDR) mkdir $(TDR)
