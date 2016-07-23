@@ -80,6 +80,8 @@ include(GNUInstallDirs)
 if (BUILD_SHARED_LIBS)
 	add_library(${GD_LIB} ${LIBGD_SRC_FILES})
 	set_target_properties(${GD_LIB} PROPERTIES
+		SOVERSION ${GDLIB_LIB_SOVERSION}
+		VERSION ${GDLIB_LIB_VERSION}
 		C_VISIBILITY_PRESET hidden
 		CXX_VISIBILITY_PRESET hidden
 	)
