@@ -41,7 +41,7 @@ BUILD_DIR=$(WITH_BUILD)
 
 GD_DLL=libgd.dll
 GD_LIB=libgd_a.lib
-GD_CONFIG_H=$(LIBGD_SRC_DIR)\$(LIBGD_SRC_DIR)\config.h
+GD_CONFIG_H=$(LIBGD_SRC_DIR)\config.h
 
 
 SDR=$(BUILD_DIR)^\
@@ -157,8 +157,17 @@ clean:
 # helpers
 
 make_dirs:
-  @if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
-  @if not exist $(SDR) mkdir $(SDR)
+	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	@if not exist $(SDR) mkdir $(SDR)
+	@echo #define HAVE_FT2BUILD_H> $(GD_CONFIG_H)
+	@echo #define HAVE_ICONV_H>> $(GD_CONFIG_H)
+	@echo #define HAVE_LIBFREETYPE>> $(GD_CONFIG_H)
+	@echo #define HAVE_LIBJPEG>> $(GD_CONFIG_H)
+	@echo #define HAVE_LIBPNG>> $(GD_CONFIG_H)
+	@echo #define HAVE_LIBWEBP>> $(GD_CONFIG_H)
+	@echo #define HAVE_LIBZ>> $(GD_CONFIG_H)
+	@echo #define HAVE_LIBXPM>> $(GD_CONFIG_H)
+	@echo #define HAVE_INTTYPES_H>> $(GD_CONFIG_H)
 
 run_tests: pretest
   @cd $(TDR)
