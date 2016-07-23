@@ -1490,13 +1490,8 @@ gdImageScaleBicubicFixed(gdImagePtr src, const unsigned int width,
 				src_offset_y[8] = m;
 			}
 
-			if (m >= src_h - 1) {
-				src_offset_x[9] = n;
-				src_offset_y[9] = m;
-			} else {
-				src_offset_x[9] = n;
-				src_offset_y[9] = m;
-			}
+			src_offset_x[9] = n;
+			src_offset_y[9] = m;
 
 			if ((m >= src_h-1) || (n >= src_w-1)) {
 				src_offset_x[10] = n;
