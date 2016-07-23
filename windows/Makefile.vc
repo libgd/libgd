@@ -134,6 +134,17 @@ TEST_MK=$(TDR)Maketests.vc
 TEST_OBJS=$(TEST_EXES:tests=obj)
 TEST_OBJS=$(TEST_OBJS:exe=obj)
 
+# create buil dir and test exe dir. test ext dir may not be called but easier like this
+# so we can include the gentest file
+!IF [if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)]
+!ENDIF
+
+!IF [if not exist $(TDR) mkdir $(TDR)]
+!ENDIF
+
+!IF [$(MAKEDIR)\windows\gentest.bat tests $(BUILD_DIR) "$(TEST_CFLAGS)" "$(TEST_LDFLAGS)" $(CC) $(LD) "$(TEST_MK)" "$(TEST_LIST)"]
+!ENDIF
+
 # pseudotargets
 build_libs: make_dirs $(TARGETDLL) $(TARGETLIB)
 all: build_libs build_tests
@@ -183,13 +194,6 @@ make_dirs:
 run_tests: pretest
 	@cd $(TDR)
 	@$(MAKEDIR)\windows\run_tests
-	!IF [if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)]
-	!ENDIF
-	!IF [if not exist $(TDR) mkdir $(TDR)]
-	!ENDIF
-
-	!IF [$(MAKEDIR)\windows\gentest.bat tests $(BUILD_DIR) "$(TEST_CFLAGS)" "$(TEST_LDFLAGS)" $(CC) $(LD) "$(TEST_MK)" "$(TEST_LIST)"]
-	!ENDIF
 
 # libgd
 $(LIBGD_OBJ_DIR):
@@ -229,5 +233,5 @@ $(SDR)readdir.obj: $(TARGETDLL) tests\gdtest\readdir.c
   @$(CC) $(CFLAGS) /c tests\gdtest\readdir.c /Fo$(SDR)readdir.obj
 
 pretest: $(TARGETDLL)
-  if not exist $(TDR) mkdir $(TDR)
-  copy $(TARGETDLL) $(TDR)$(GD_DLL)
+	if not exist $(TDR) mkdir $(TDR)
+	copy $(TARGETDLL) $(TDR)$(GD_DLL)
