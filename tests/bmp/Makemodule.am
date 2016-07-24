@@ -1,5 +1,5 @@
 libgd_test_programs += \
-	bmp/bmp_null
+	bmp/bmp_null \
 	bmp/bug00275
 
 if HAVE_LIBPNG
