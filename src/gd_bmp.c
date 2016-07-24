@@ -62,6 +62,18 @@ static int gdBMPPutInt(gdIOCtx *out, int w)
 
 /*
 	Function: gdImageBmpPtr
+
+	Outputs the given image as BMP data, but using a <gdIOCtx> instead
+	of a file. See <gdImageBmp>.
+
+	Parameters:
+		im			- the image to save.
+		size 		- Output: size in bytes of the result.
+		compression - whether to apply RLE or not.
+
+	Returns:
+
+		A pointer to memory containing the image data or NULL on error.
 */
 BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression)
 {
@@ -76,6 +88,31 @@ BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression)
 
 /*
 	Function: gdImageBmp
+
+    <gdImageBmp> outputs the specified image to the specified file in
+    BMP format. The file must be open for writing. Under MSDOS and all
+    versions of Windows, it is important to use "wb" as opposed to
+    simply "w" as the mode when opening the file, and under Unix there
+    is no penalty for doing so. <gdImageBmp> does not close the file;
+    your code must do so.
+
+    In addition, <gdImageBmp> allows to specify whether RLE compression
+    should be applied.
+
+	Variants:
+
+		<gdImageBmpCtx> write via a <gdIOCtx> instead of a file handle.
+
+		<gdImageBmpPtr> store the image file to memory.
+
+	Parameters:
+
+		im			- the image to save.
+		outFile		- the output FILE* object.
+		compression - whether to apply RLE or not.
+
+	Returns:
+		nothing
 */
 BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression)
 {
@@ -87,6 +124,14 @@ BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression)
 
 /*
 	Function: gdImageBmpCtx
+
+	Outputs the given image as BMP data, but using a <gdIOCtx> instead
+	of a file. See <gdImageBmp>.
+
+	Parameters:
+		im			- the image to save.
+		out 		- the <gdIOCtx> to write to.
+		compression - whether to apply RLE or not.
 */
 BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 {
@@ -102,7 +147,7 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 		compression = 0;
 	}
 
-	if (compression == 1 && !out->seek) {
+	if (compression && !out->seek) {
 		/* Try to create a temp file where we can seek */
 		if ((tmpfile_for_compression = tmpfile()) == NULL) {
 			compression = 0;
