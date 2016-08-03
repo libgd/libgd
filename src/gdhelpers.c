@@ -91,7 +91,24 @@ gdReallocEx (void *ptr, size_t size)
 }
 
 /*
-	Function: gdFree
+  Function: gdFree
+
+    Frees memory that has been allocated by libgd functions.
+
+	Unless more specialized functions exists (for instance, <gdImageDestroy>),
+	all memory that has been allocated by public libgd functions has to be
+	freed by calling <gdFree>, and not by free(3), because libgd internally
+	doesn't use alloc(3) and friends but rather its own allocation functions,
+	which are, however, not publicly available.
+
+  Parameters:
+
+	ptr - Pointer to the memory space to free. If it is NULL, no operation is
+		  performed.
+
+  Returns:
+
+	Nothing.
 */
 BGD_DECLARE(void) gdFree (void *ptr)
 {
