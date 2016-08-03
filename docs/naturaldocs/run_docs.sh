@@ -68,7 +68,8 @@ sed -e "s/@VERSION@/$VERSION/g" preamble.txt > tmp/preamble.txt
 $(nd) --rebuild --rebuild-output --documented-only \
     -i tmp/ \
     -o html html  \
-    --project project/
+    --project project/ \
+    -s Default libgd
 
 # And cleanup the temp files.
 rm -rf Data tmp
