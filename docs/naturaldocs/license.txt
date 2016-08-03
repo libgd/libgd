@@ -70,5 +70,5 @@ Credits and license terms:
 > documentation.
 >
 > Although their code does not appear in the current release, the
-> authors also wish to thank Hutchison Avenue Software Corporation
-> for their prior contributions.
+> authors also wish to thank David Koblas, David Rowley, and Hutchison
+> Avenue Software Corporation for their prior contributions.
