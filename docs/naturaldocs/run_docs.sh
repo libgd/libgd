@@ -64,6 +64,9 @@ echo "Title: License" | cat - ../../COPYING > tmp/license.txt
 sed -e "s/@VERSION@/$VERSION/g" preamble.txt > tmp/preamble.txt
 # ^^^ hack to get the version number in the docs.
 
+# Hack to work around NaturalDocs encoding issues
+iconv -f UTF-8 -t ISO-8859-1 -o tmp/license.txt tmp/license.txt
+
 # Run naturaldocs to create the manual.
 $(nd) --rebuild --rebuild-output --documented-only \
     -i tmp/ \
