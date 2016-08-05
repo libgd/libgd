@@ -164,15 +164,15 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 
   Parameters:
 
-    im           - The image to write.
-    outfile      - The output sink.
-    quantization - Image quality.
+    im      - The image to write.
+    outfile - The output sink.
+    quality - Image quality.
 
   Returns:
 
     Nothing.
 */
-BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantization)
+BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 {
 	uint8_t *argb;
 	int x, y;
@@ -189,8 +189,8 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantiza
 		return;
 	}
 
-	if (quantization == -1) {
-		quantization = 80;
+	if (quality == -1) {
+		quality = 80;
 	}
 
 	argb = (uint8_t *)gdMalloc(gdImageSX(im) * 4 * gdImageSY(im));
@@ -215,7 +215,7 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantiza
 			*(p++) = a;
 		}
 	}
-	out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quantization, &out);
+	out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
 	if (out_size == 0) {
 		gd_error("gd-webp encoding failed");
 		goto freeargb;
@@ -237,9 +237,9 @@ freeargb:
     is no penalty for doing so. <gdImageWebpEx> does not close the file;
     your code must do so.
 
-	If _quantization_ is -1, a reasonable quality value (which should yield a
+	If _quality_ is -1, a reasonable quality value (which should yield a
 	good general quality / size tradeoff for most situations) is used. Otherwise
-	_quantization_ should be a value in the range 0-100, higher quality values
+	_quality_ should be a value in the range 0-100, higher quality values
 	usually implying both higher quality and larger image sizes.
 
   Variants:
@@ -250,21 +250,21 @@ freeargb:
 
   Parameters:
 
-    im           - The image to save.
-    outFile      - The FILE pointer to write to.
-    quantization - Compression quality (0-100).
+    im      - The image to save.
+    outFile - The FILE pointer to write to.
+    quality - Compression quality (0-100).
 
   Returns:
 
     Nothing.
 */
-BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quantization)
+BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quality)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
 	if (out == NULL) {
 		return;
 	}
-	gdImageWebpCtx(im, out, quantization);
+	gdImageWebpCtx(im, out, quality);
 	out->gd_free(out);
 }
 
@@ -316,14 +316,14 @@ BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 
     See <gdImageWebpEx>.
 */
-BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quantization)
+BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) {
 		return NULL;
 	}
-	gdImageWebpCtx(im, out, quantization);
+	gdImageWebpCtx(im, out, quality);
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
 	return rv;
