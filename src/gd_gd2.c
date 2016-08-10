@@ -1119,5 +1119,6 @@ BGD_DECLARE(void) gdImageGd2 (gdImagePtr im, FILE * outFile, int cs, int fmt)
 BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
 {
 	_noLibzError();
+	return NULL;
 }
 #endif /* HAVE_LIBZ */
