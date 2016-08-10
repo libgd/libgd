@@ -17,7 +17,6 @@
 
 #include "gd.h"
 #include "gdhelpers.h"
-#include "entities.h"
 #include "gd_intern.h"
 
 /* 2.0.10: WIN32, not MSWIN32 */
@@ -46,7 +45,10 @@ static int fontConfigFlag = 0;
 static char *font_pattern(char **fontpath, char *fontpattern);
 #endif
 
+#ifdef HAVE_LIBFREETYPE
+#include "entities.h"
 static char *font_path(char **fontpath, char *name_list);
+#endif
 
 /* 2.0.30: move these up here so we can build correctly without freetype
 	but with fontconfig */
@@ -1737,6 +1739,7 @@ static char * font_pattern(char **fontpath, char *fontpattern)
 
 #endif /* HAVE_LIBFONTCONFIG */
 
+#ifdef HAVE_LIBFREETYPE
 /* Look up font using font names as file names. */
 static char * font_path(char **fontpath, char *name_list)
 {
@@ -1855,6 +1858,7 @@ static char * font_path(char **fontpath, char *name_list)
 	*fontpath = fullname;
 	return NULL;
 }
+#endif
 
 /*
 	Function: gdFTUseFontConfig
