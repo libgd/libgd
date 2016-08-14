@@ -15,9 +15,50 @@
  *
  * Read and write GD2 images.
  *
- * The GD2 image format is a proprietary image format of libgd. It has to be
- * regarded as being obsolete, and should only be used for development and
- * testing purposes.
+ * The GD2 image format is a proprietary image format of libgd. *It has to be*
+ * *regarded as being obsolete, and should only be used for development and*
+ * *testing purposes.*
+ *
+ * Structure of a GD2 image file:
+ *  - file header
+ *  - color header (either truecolor or palette)
+ *  - chunks of image data (chunk-row-major, top to bottom, left to right)
+ *
+ * All numbers are stored in big-endian format.
+ *
+ * File header structure:
+ *  signature     - 4 bytes (always "gd2\0")
+ *  version       - 1 word (e.g. "\0\002")
+ *  width         - 1 word
+ *  height        - 1 word
+ *  chunk_size    - 1 word
+ *  format        - 1 word
+ *  x_chunk_count - 1 word
+ *  y_chunk_count - 1 word
+ *
+ * Recognized formats:
+ *  1 - raw palette image data
+ *  2 - compressed palette image data
+ *  3 - raw truecolor image data
+ *  4 - compressed truecolor image data
+ *
+ * Truecolor image color header:
+ *  truecolor   - 1 byte (always "\001")
+ *  transparent - 1 dword (ARGB color)
+ *
+ * Palette image color header:
+ *  truecolor   - 1 byte (always "\0")
+ *  count       - 1 word (the number of used palette colors)
+ *  transparent - 1 dword (ARGB color)
+ *  palette     - 256 dwords (RGBA colors)
+ *
+ * Chunk structure:
+ *  Sequential pixel data of a rectangular area (chunk_size x chunk_size),
+ *  row-major from top to bottom, left to right:
+ *  - 1 byte per pixel for palette images
+ *  - 1 dword (ARGB) per pixel for truecolor images
+ *
+ *  Depending on format, the chunk may be ZLIB compressed.
  */
 
 #ifdef HAVE_CONFIG_H
