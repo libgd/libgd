@@ -10,6 +10,16 @@
    *
  */
 
+/**
+ * File: GD2 IO
+ *
+ * Read and write GD2 images.
+ *
+ * The GD2 image format is a proprietary image format of libgd. It has to be
+ * regarded as being obsolete, and should only be used for development and
+ * testing purposes.
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif

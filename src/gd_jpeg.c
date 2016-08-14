@@ -21,6 +21,11 @@
  * Christian Aberger
  */
 
+/**
+ * File: JPEG IO
+ *
+ * Read and write JPEG images.
+ */
 
 #ifdef HAVE_CONFIG_H
 #	include "config.h"

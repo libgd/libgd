@@ -5,6 +5,14 @@
  * http://www.csn.ul.ie/~caolan
  */
 
+
+/**
+ * File: XPM Input
+ *
+ * Read XPM images.
+ */
+
+
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
 #endif

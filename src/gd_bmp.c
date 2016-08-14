@@ -12,6 +12,13 @@
 
 	----------------------------------------------------------------------------
  */
+
+/**
+ * File: BMP IO
+ *
+ * Read and write BMP images.
+ */
+
 /* $Id$ */
 #ifdef HAVE_CONFIG_H
 #include "config.h"

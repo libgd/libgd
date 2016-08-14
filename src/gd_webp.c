@@ -1,3 +1,9 @@
+/**
+ * File: WebP IO
+ *
+ * Read and write WebP images.
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif /* HAVE_CONFIG_H */

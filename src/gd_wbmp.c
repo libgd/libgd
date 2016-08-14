@@ -51,6 +51,12 @@
  *--------------------------------------------------------------------------
  */
 
+/**
+ * File: WBMP IO
+ *
+ * Read and write WBMP images.
+ */
+
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
 #endif
