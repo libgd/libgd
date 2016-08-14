@@ -401,7 +401,7 @@ gdPointF, *gdPointFPtr;
   A font structure, containing the bitmaps of all characters in a
   font.  Used to declare the characteristics of a font. Text-output
   functions expect these as their second argument, following the
-  <gdImagePtr> argument.  <gdFontSmall> and <gdFontGetLarge> both
+  <gdImagePtr> argument.  <gdFontGetSmall> and <gdFontGetLarge> both
   return one.
 
   You can provide your own font data by providing such a structure and

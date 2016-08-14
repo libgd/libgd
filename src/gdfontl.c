@@ -11,6 +11,15 @@
    "Libor Skarvada, libor@informatics.muni.cz"
  */
 
+/**
+ * File: Large Font
+ *
+ * A large ISO-8859-2 raster font (8x16 pixels).
+ *
+ * The font is supposed to be used with <gdImageChar> and <gdImageString>
+ * and their variants.
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -4639,9 +4648,11 @@ gdFont gdFontLargeRep = {
 
 BGD_EXPORT_DATA_PROT gdFontPtr gdFontLarge = &gdFontLargeRep;
 
-/*
-	Function: gdFontGetLarge
-*/
+/**
+ * Function: gdFontGetLarge
+ *
+ * Returns the built-in large font.
+ */
 BGD_DECLARE(gdFontPtr)
 gdFontGetLarge (void)
 {

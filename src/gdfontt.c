@@ -10,6 +10,15 @@
    "Libor Skarvada, libor@informatics.muni.cz"
  */
 
+/**
+ * File: Tiny Font
+ *
+ * A very small ISO-8859-2 raster font (5x8 pixels).
+ *
+ * The font is supposed to be used with <gdImageChar> and <gdImageString>
+ * and their variants.
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -2590,9 +2599,11 @@ gdFont gdFontTinyRep = {
 
 BGD_EXPORT_DATA_PROT gdFontPtr gdFontTiny = &gdFontTinyRep;
 
-/*
-	Function: gdFontGetTiny
-*/
+/**
+ * Function: gdFontGetTiny
+ *
+ * Returns the built-in tiny font.
+ */
 BGD_DECLARE(gdFontPtr)
 gdFontGetTiny (void)
 {
