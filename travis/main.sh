@@ -53,7 +53,7 @@ check_git_status() {
 	# forgetting to commit the few generated (e.g. cmake.in) files.
 	# Note: We ignore config.h.cmake changes since it indirectly
 	# depends on the format of the output of autoheader :/.
-	status=$(git status --porcelain | grep -v '^ M src/config.h.cmake') || :
+	status=$(git status --porcelain | grep -v '^ M src/config\.h\.cmake' | grep -v '^ M docs/naturaldocs/project/Menu\.txt') || :
 	if [[ -n ${status} ]]; then
 		echo "Missing git repo updates (gitignore/etc...):"
 		echo "$ git status"
