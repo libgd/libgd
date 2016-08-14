@@ -1686,9 +1686,25 @@ BGD_DECLARE(int) gdImageBoundsSafe (gdImagePtr im, int x, int y)
 	return gdImageBoundsSafeMacro (im, x, y);
 }
 
-/*
-	Function: gdImageChar
-*/
+/**
+ * Function: gdImageChar
+ *
+ * Draws a single character.
+ *
+ * Parameters:
+ *  im    - The image to draw onto.
+ *  f     - The raster font.
+ *  x     - The x coordinate of the upper left pixel.
+ *  y     - The y coordinate of the upper left pixel.
+ *  c     - The character.
+ *  color - The color.
+ *
+ * Variants:
+ *  - <gdImageCharUp>
+ *
+ * See also:
+ *  - <gdFontPtr>
+ */
 BGD_DECLARE(void) gdImageChar (gdImagePtr im, gdFontPtr f, int x, int y, int c, int color)
 {
 	int cx, cy;
@@ -1715,9 +1731,9 @@ BGD_DECLARE(void) gdImageChar (gdImagePtr im, gdFontPtr f, int x, int y, int c, 
 	}
 }
 
-/*
-	Function: gdImageCharUp
-*/
+/**
+ * Function: gdImageCharUp
+ */
 BGD_DECLARE(void) gdImageCharUp (gdImagePtr im, gdFontPtr f, int x, int y, int c, int color)
 {
 	int cx, cy;
@@ -1744,9 +1760,28 @@ BGD_DECLARE(void) gdImageCharUp (gdImagePtr im, gdFontPtr f, int x, int y, int c
 	}
 }
 
-/*
-	Function: gdImageString
-*/
+/**
+ * Function: gdImageString
+ * 
+ * Draws a character string.
+ *
+ * Parameters:
+ *  im    - The image to draw onto.
+ *  f     - The raster font.
+ *  x     - The x coordinate of the upper left pixel.
+ *  y     - The y coordinate of the upper left pixel.
+ *  c     - The character string.
+ *  color - The color.
+ *
+ * Variants:
+ *  - <gdImageStringUp>
+ *  - <gdImageString16>
+ *  - <gdImageStringUp16>
+ *
+ * See also:
+ *  - <gdFontPtr>
+ *  - <gdImageStringTTF>
+ */
 BGD_DECLARE(void) gdImageString (gdImagePtr im, gdFontPtr f,
 								 int x, int y, unsigned char *s, int color)
 {
@@ -1759,9 +1794,9 @@ BGD_DECLARE(void) gdImageString (gdImagePtr im, gdFontPtr f,
 	}
 }
 
-/*
-	Function: gdImageStringUp
-*/
+/**
+ * Function: gdImageStringUp
+ */
 BGD_DECLARE(void) gdImageStringUp (gdImagePtr im, gdFontPtr f,
 								   int x, int y, unsigned char *s, int color)
 {
@@ -1776,9 +1811,9 @@ BGD_DECLARE(void) gdImageStringUp (gdImagePtr im, gdFontPtr f,
 
 static int strlen16 (unsigned short *s);
 
-/*
-	Function: gdImageString16
-*/
+/**
+ * Function: gdImageString16
+ */
 BGD_DECLARE(void) gdImageString16 (gdImagePtr im, gdFontPtr f,
 								   int x, int y, unsigned short *s, int color)
 {
@@ -1791,9 +1826,9 @@ BGD_DECLARE(void) gdImageString16 (gdImagePtr im, gdFontPtr f,
 	}
 }
 
-/*
-	Function: gdImageStringUp16
-*/
+/**
+ * Function: gdImageStringUp16
+ */
 BGD_DECLARE(void) gdImageStringUp16 (gdImagePtr im, gdFontPtr f,
 									 int x, int y, unsigned short *s, int color)
 {

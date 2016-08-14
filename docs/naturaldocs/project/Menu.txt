@@ -46,23 +46,23 @@ Format: 1.52
 # --------------------------------------------------------------------------
 
 
-File: About LibGD 2.3.0-dev  (preamble.txt)
+File: About LibGD 2.3.0-dev  (no auto-title, preamble.txt)
 
 Group: Image Formats  {
 
-   File: BMP IO  (gd_bmp.c)
-   File: GD IO  (gd_gd.c)
-   File: GD2 IO  (gd_gd2.c)
-   File: GIF Input  (gd_gif_in.c)
-   File: GIF Output  (gd_gif_out.c)
-   File: JPEG IO  (gd_jpeg.c)
-   File: PNG IO  (gd_png.c)
-   File: TGA Input  (gd_tga.c)
-   File: TIFF IO  (gd_tiff.c)
-   File: WBMP IO  (gd_wbmp.c)
-   File: WebP IO  (gd_webp.c)
-   File: XBM IO  (gd_xbm.c)
-   File: XPM Input  (gdxpm.c)
+   File: BMP IO  (no auto-title, gd_bmp.c)
+   File: GD IO  (no auto-title, gd_gd.c)
+   File: GD2 IO  (no auto-title, gd_gd2.c)
+   File: GIF Input  (no auto-title, gd_gif_in.c)
+   File: GIF Output  (no auto-title, gd_gif_out.c)
+   File: JPEG IO  (no auto-title, gd_jpeg.c)
+   File: PNG IO  (no auto-title, gd_png.c)
+   File: TGA Input  (no auto-title, gd_tga.c)
+   File: TIFF IO  (no auto-title, gd_tiff.c)
+   File: WBMP IO  (no auto-title, gd_wbmp.c)
+   File: WebP IO  (no auto-title, gd_webp.c)
+   File: XBM IO  (no auto-title, gd_xbm.c)
+   File: XPM Input  (no auto-title, gdxpm.c)
    }  # Group: Image Formats
 
 File: gd.c  (gd.c)
@@ -78,11 +78,6 @@ File: gd_topal.c  (gd_topal.c)
 File: gd_transform.c  (gd_transform.c)
 File: gd_version.c  (gd_version.c)
 File: gdColorMapLookup  (gd_color_map.c)
-File: gdFontGetGiant  (gdfontg.c)
-File: gdFontGetLarge  (gdfontl.c)
-File: gdFontGetMediumBold  (gdfontmb.c)
-File: gdFontGetSmall  (gdfonts.c)
-File: gdFontGetTiny  (gdfontt.c)
 File: gdFree  (gdhelpers.c)
 File: gdft.c  (gdft.c)
 File: gdfx.c  (gdfx.c)
@@ -92,6 +87,15 @@ File: gdNewFileCtx  (gd_io_file.c)
 File: gdNewSSCtx  (gd_io_ss.c)
 File: License  (license.txt)
 File: Matrix  (gd_matrix.c)
+
+Group: Built-in Fonts  {
+
+   File: Giant Font  (no auto-title, gdfontg.c)
+   File: Large Font  (no auto-title, gdfontl.c)
+   File: Medium Bold Font  (no auto-title, gdfontmb.c)
+   File: Small Font  (no auto-title, gdfonts.c)
+   File: Tiny Font  (no auto-title, gdfontt.c)
+   }  # Group: Built-in Fonts
 
 Group: Index  {
 
