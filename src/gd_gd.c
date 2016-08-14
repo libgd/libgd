@@ -3,9 +3,36 @@
  *
  * Read and write GD images.
  *
- * The GD image format is a proprietary image format of libgd. It has to be
- * regarded as being obsolete, and should only be used for development and
- * testing purposes.
+ * The GD image format is a proprietary image format of libgd. *It has to be*
+ * *regarded as being obsolete, and should only be used for development and*
+ * *testing purposes.*
+ *
+ * Structure of a GD image file:
+ *  - file header
+ *  - color header (either truecolor or palette)
+ *  - image data
+ *
+ * All numbers are stored in big-endian format.
+ *
+ * File header structure:
+ *  signature     - 1 word ("\xFF\xFE" for truecolor, "\xFF\xFF" for palette)
+ *  width         - 1 word
+ *  height        - 1 word
+ *
+ * Truecolor image color header:
+ *  truecolor   - 1 byte (always "\001")
+ *  transparent - 1 dword (ARGB color)
+ *
+ * Palette image color header:
+ *  truecolor   - 1 byte (always "\0")
+ *  count       - 1 word (the number of used palette colors)
+ *  transparent - 1 dword (ARGB color)
+ *  palette     - 256 dwords (RGBA colors)
+ *
+ * Image data:
+ *  Sequential pixel data; row-major from top to bottom, left to right:
+ *   - 1 byte per pixel for palette images
+ *   - 1 dword (ARGB) per pixel for truecolor images
  */
 
 #ifdef HAVE_CONFIG_H
