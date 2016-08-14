@@ -1,3 +1,13 @@
+/**
+ * File: GD IO
+ *
+ * Read and write GD images.
+ *
+ * The GD image format is a proprietary image format of libgd. It has to be
+ * regarded as being obsolete, and should only be used for development and
+ * testing purposes.
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif

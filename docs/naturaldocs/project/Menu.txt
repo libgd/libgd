@@ -1,0 +1,104 @@
+Format: 1.52
+
+
+# You can add a title and sub-title to your menu like this:
+# Title: [project name]
+# SubTitle: [subtitle]
+
+# You can add a footer to your documentation like this:
+# Footer: [text]
+# If you want to add a copyright notice, this would be the place to do it.
+
+# You can add a timestamp to your documentation like one of these:
+# Timestamp: Generated on month day, year
+# Timestamp: Updated mm/dd/yyyy
+# Timestamp: Last updated mon day
+#
+#   m     - One or two digit month.  January is "1"
+#   mm    - Always two digit month.  January is "01"
+#   mon   - Short month word.  January is "Jan"
+#   month - Long month word.  January is "January"
+#   d     - One or two digit day.  1 is "1"
+#   dd    - Always two digit day.  1 is "01"
+#   day   - Day with letter extension.  1 is "1st"
+#   yy    - Two digit year.  2006 is "06"
+#   yyyy  - Four digit year.  2006 is "2006"
+#   year  - Four digit year.  2006 is "2006"
+
+
+# --------------------------------------------------------------------------
+# 
+# Cut and paste the lines below to change the order in which your files
+# appear on the menu.  Don't worry about adding or removing files, Natural
+# Docs will take care of that.
+# 
+# You can further organize the menu by grouping the entries.  Add a
+# "Group: [name] {" line to start a group, and add a "}" to end it.
+# 
+# You can add text and web links to the menu by adding "Text: [text]" and
+# "Link: [name] ([URL])" lines, respectively.
+# 
+# The formatting and comments are auto-generated, so don't worry about
+# neatness when editing the file.  Natural Docs will clean it up the next
+# time it is run.  When working with groups, just deal with the braces and
+# forget about the indentation and comments.
+# 
+# --------------------------------------------------------------------------
+
+
+File: About LibGD 2.3.0-dev  (preamble.txt)
+
+Group: Image Formats  {
+
+   File: BMP IO  (gd_bmp.c)
+   File: GD IO  (gd_gd.c)
+   File: GD2 IO  (gd_gd2.c)
+   File: GIF Input  (gd_gif_in.c)
+   File: GIF Output  (gd_gif_out.c)
+   File: JPEG IO  (gd_jpeg.c)
+   File: PNG IO  (gd_png.c)
+   File: TGA Input  (gd_tga.c)
+   File: TIFF IO  (gd_tiff.c)
+   File: WBMP IO  (gd_wbmp.c)
+   File: WebP IO  (gd_webp.c)
+   File: XBM IO  (gd_xbm.c)
+   File: XPM Input  (gdxpm.c)
+   }  # Group: Image Formats
+
+File: gd.c  (gd.c)
+File: gd.h  (gd.h)
+File: gd_crop.c  (gd_crop.c)
+File: gd_filename.c  (gd_filename.c)
+File: gd_filter.c  (gd_filter.c)
+File: gd_interpolation.c  (gd_interpolation.c)
+File: gd_io.h  (gd_io.h)
+File: gd_io_dp.c  (gd_io_dp.c)
+File: gd_ss.c  (gd_ss.c)
+File: gd_topal.c  (gd_topal.c)
+File: gd_transform.c  (gd_transform.c)
+File: gd_version.c  (gd_version.c)
+File: gdColorMapLookup  (gd_color_map.c)
+File: gdFontGetGiant  (gdfontg.c)
+File: gdFontGetLarge  (gdfontl.c)
+File: gdFontGetMediumBold  (gdfontmb.c)
+File: gdFontGetSmall  (gdfonts.c)
+File: gdFontGetTiny  (gdfontt.c)
+File: gdFree  (gdhelpers.c)
+File: gdft.c  (gdft.c)
+File: gdfx.c  (gdfx.c)
+File: gdImageColorMatch  (gd_color_match.c)
+File: gdImageNeuQuant  (gd_nnquant.c)
+File: gdNewFileCtx  (gd_io_file.c)
+File: gdNewSSCtx  (gd_io_ss.c)
+File: License  (license.txt)
+File: Matrix  (gd_matrix.c)
+
+Group: Index  {
+
+   Constant Index: Constants
+   Index: Everything
+   File Index: Files
+   Function Index: Functions
+   Type Index: Types
+   }  # Group: Index
+

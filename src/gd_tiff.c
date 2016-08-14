@@ -29,6 +29,15 @@
  */
 /* $Id$ */
 
+/**
+ * File: TIFF IO
+ *
+ * Read and write TIFF images.
+ *
+ * There is only most basic support for the TIFF format available for now;
+ * for instance, multiple pages are not yet supported.
+ */
+
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
 #endif

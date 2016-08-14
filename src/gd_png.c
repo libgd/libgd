@@ -42,6 +42,12 @@
 
   ---------------------------------------------------------------------------*/
 
+/**
+ * File: PNG IO
+ *
+ * Read and write PNG images.
+ */
+
 #ifdef PNG_SETJMP_SUPPORTED
 typedef struct _jmpbuf_wrapper {
 	jmp_buf jmpbuf;
