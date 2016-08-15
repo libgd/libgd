@@ -1,4 +1,5 @@
 LIST(APPEND TESTS_FILES
+	bug_289
 	gd2_empty_file
 	gd2_im2im
 	gd2_null
