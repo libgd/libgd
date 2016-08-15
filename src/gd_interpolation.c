@@ -1015,6 +1015,8 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
 	gdImagePtr dst = NULL;
 	int scale_pass_res;
 
+	assert(src != NULL);
+
     /* First, handle the trivial case. */
     if (src_width == new_width && src_height == new_height) {
         return gdImageClone(src);
@@ -1055,7 +1057,7 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
         scale_pass_res = _gdScalePass(tmp_im, src_height, dst, new_height, new_width, VERTICAL);
 		if (scale_pass_res != 1) {
 			gdImageDestroy(dst);
-			if (tmp_im != NULL && src != tmp_im) {
+			if (src != tmp_im) {
 				gdImageDestroy(tmp_im);
 			}
 			return NULL;
@@ -1063,7 +1065,7 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
     }/* if */
 
 
-	if (tmp_im != NULL && src != tmp_im) {
+	if (src != tmp_im) {
         gdImageDestroy(tmp_im);
     }/* if */
 
