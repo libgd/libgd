@@ -5,6 +5,7 @@ SET(TESTS_FILES
 	bug00247a
 	bug00248
 	bug00248a
+	heap_overflow
 	tga_read
 )
 
