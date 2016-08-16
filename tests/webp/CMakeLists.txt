@@ -1,6 +1,7 @@
 IF(WEBP_FOUND)
 LIST(APPEND TESTS_FILES
 	bug00111
+	bug_double_free
 )
 ENDIF(WEBP_FOUND)
 
