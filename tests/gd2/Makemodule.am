@@ -3,7 +3,8 @@ libgd_test_programs += \
 	gd2/bug00309 \
 	gd2/gd2_empty_file \
 	gd2/php_bug_72339 \
-	gd2/gd2_read_corrupt
+	gd2/gd2_read_corrupt \
+	gd2/too_few_image_data
 
 if HAVE_LIBZ
 libgd_test_programs += \
@@ -23,4 +24,6 @@ EXTRA_DIST += \
 	gd2/conv_test_exp.png \
 	gd2/empty.gd2 \
 	gd2/invalid_header.gd2 \
-	gd2/invalid_neg_size.gd2
+	gd2/invalid_neg_size.gd2 \
+	gd2/php_bug_72339_exp.gd2 \
+	gd2/too_few_image_data.gd2
