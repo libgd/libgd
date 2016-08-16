@@ -5,6 +5,7 @@ SET(TESTS_FILES
 	bug00247a
 	bug00248
 	bug00248a
+	tga_read
 )
 
 ADD_GD_TESTS()
