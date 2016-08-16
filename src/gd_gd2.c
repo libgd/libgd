@@ -503,18 +503,16 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 
 						if (im->trueColor) {
 							if (!gdGetInt (&im->tpixels[y][x], in)) {
-								/*printf("EOF while reading\n"); */
-								/*gdImageDestroy(im); */
-								/*return 0; */
-								im->tpixels[y][x] = 0;
+								gd_error("gd2: EOF while reading\n");
+								gdImageDestroy(im);
+								return NULL;
 							}
 						} else {
 							int ch;
 							if (!gdGetByte (&ch, in)) {
-								/*printf("EOF while reading\n"); */
-								/*gdImageDestroy(im); */
-								/*return 0; */
-								ch = 0;
+								gd_error("gd2: EOF while reading\n");
+								gdImageDestroy(im);
+								return NULL;
 							}
 							im->pixels[y][x] = ch;
 						}

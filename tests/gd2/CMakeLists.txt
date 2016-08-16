@@ -5,6 +5,7 @@ SET(TESTS_FILES
 	gd2_im2im
 	gd2_null
 	php_bug_72339
+	too_few_image_data
 )
 
 ADD_GD_TESTS()
