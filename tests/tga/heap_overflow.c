@@ -1,5 +1,5 @@
 /**
- * Test that the crafted TGA file doesn't trigger OOB reads.
+ * Test that crafted TGA files don't trigger OOB reads.
  */
 
 
@@ -7,21 +7,29 @@
 #include "gdtest.h"
 
 
+static void check_file(char *basename);
 static size_t read_test_file(char **buffer, char *basename);
 
 
 int main()
 {
+    check_file("heap_overflow_1.tga");
+    check_file("heap_overflow_2.tga");
+
+    return gdNumFailures();
+}
+
+
+static void check_file(char *basename)
+{
     gdImagePtr im;
     char *buffer;
     size_t size;
 
-    size = read_test_file(&buffer, "heap_overflow.tga");
+    size = read_test_file(&buffer, basename);
     im = gdImageCreateFromTgaPtr(size, (void *) buffer);
     gdTestAssert(im == NULL);
     free(buffer);
-
-    return gdNumFailures();
 }
 
 
