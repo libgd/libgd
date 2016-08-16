@@ -1,7 +1,9 @@
 if HAVE_LIBWEBP
 libgd_test_programs += \
-	webp/bug00111
+	webp/bug00111 \
+	webp/bug_double_free
 endif
 
 EXTRA_DIST += \
-	webp/CMakeLists.txt
+	webp/CMakeLists.txt \
+	webp/bug_double_free.jpg

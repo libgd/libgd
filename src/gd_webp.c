@@ -162,37 +162,24 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 	return im;
 }
 
-/*
-  Function: gdImageWebpCtx
 
-    Write the image as WebP data via a <gdIOCtx>. See <gdImageWebpEx>
-    for more details.
-
-  Parameters:
-
-    im      - The image to write.
-    outfile - The output sink.
-    quality - Image quality.
-
-  Returns:
-
-    Nothing.
-*/
-BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
+/* returns 0 on success, 1 on failure */
+static int _gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 {
 	uint8_t *argb;
 	int x, y;
 	uint8_t *p;
 	uint8_t *out;
 	size_t out_size;
+    int ret = 0;
 
 	if (im == NULL) {
-		return;
+		return 1;
 	}
 
 	if (!gdImageTrueColor(im)) {
-		gd_error("Paletter image not supported by webp");
-		return;
+		gd_error("Palette image not supported by webp");
+		return 1;
 	}
 
 	if (quality == -1) {
@@ -200,16 +187,16 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 	}
 
 	if (overflow2(gdImageSX(im), 4)) {
-		return;
+		return 1;
 	}
 
 	if (overflow2(gdImageSX(im) * 4, gdImageSY(im))) {
-		return;
+		return 1;
 	}
 
 	argb = (uint8_t *)gdMalloc(gdImageSX(im) * 4 * gdImageSY(im));
 	if (!argb) {
-		return;
+		return 1;
 	}
 	p = argb;
 	for (y = 0; y < gdImageSY(im); y++) {
@@ -232,6 +219,7 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 	out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
 	if (out_size == 0) {
 		gd_error("gd-webp encoding failed");
+        ret = 1;
 		goto freeargb;
 	}
 	gdPutBuf(out, out_size, outfile);
@@ -239,6 +227,30 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 
 freeargb:
 	gdFree(argb);
+
+    return ret;
+}
+
+
+/*
+  Function: gdImageWebpCtx
+
+    Write the image as WebP data via a <gdIOCtx>. See <gdImageWebpEx>
+    for more details.
+
+  Parameters:
+
+    im      - The image to write.
+    outfile - The output sink.
+    quality - Image quality.
+
+  Returns:
+
+    Nothing.
+*/
+BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
+{
+	_gdImageWebpCtx(im, outfile, quality);
 }
 
 /*
@@ -278,7 +290,7 @@ BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quality)
 	if (out == NULL) {
 		return;
 	}
-	gdImageWebpCtx(im, out, quality);
+	_gdImageWebpCtx(im, out, quality);
 	out->gd_free(out);
 }
 
@@ -302,7 +314,7 @@ BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 	if (out == NULL) {
 		return;
 	}
-	gdImageWebpCtx(im, out, -1);
+	_gdImageWebpCtx(im, out, -1);
 	out->gd_free(out);
 }
 
@@ -318,8 +330,11 @@ BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 	if (out == NULL) {
 		return NULL;
 	}
-	gdImageWebpCtx(im, out, -1);
-	rv = gdDPExtractData(out, size);
+	if (_gdImageWebpCtx(im, out, -1)) {
+		rv = NULL;
+	} else {
+		rv = gdDPExtractData(out, size);
+	}
 	out->gd_free(out);
 
 	return rv;
@@ -337,8 +352,11 @@ BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 	if (out == NULL) {
 		return NULL;
 	}
-	gdImageWebpCtx(im, out, quality);
-	rv = gdDPExtractData(out, size);
+	if (_gdImageWebpCtx(im, out, quality)) {
+        rv = NULL;
+    } else {
+        rv = gdDPExtractData(out, size);
+    }
 	out->gd_free(out);
 	return rv;
 }
