@@ -49,14 +49,17 @@
     A pointer to the new image or NULL if an error occurred.
 
   Example:
+    (start code)
 
-    > gdImagePtr im;
-    > FILE *in;
-    > in = fopen("myxbm.xbm", "rb");
-    > im = gdImageCreateFromXbm(in);
-    > fclose(in);
-    > // ... Use the image ...
-    > gdImageDestroy(im);
+    gdImagePtr im;
+    FILE *in;
+    in = fopen("myxbm.xbm", "rb");
+    im = gdImageCreateFromXbm(in);
+    fclose(in);
+    // ... Use the image ...
+    gdImageDestroy(im);
+
+    (end code)
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm(FILE * fd)
 {

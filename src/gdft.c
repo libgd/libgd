@@ -980,23 +980,26 @@ BGD_DECLARE(int) gdFontCacheSetup (void)
   If the strex parameter is not null, it must point to a
   gdFTStringExtra structure. As of gd 2.0.5, this structure is defined
   as follows:
+  (start code)
 
-  > typedef struct {
-  >     // logical OR of gdFTEX_ values
-  >     int flags; 
-  > 
-  >     // fine tune line spacing for '\n'
-  >     double linespacing; 
-  > 
-  >     // Preferred character mapping
-  >     int charmap;
-  > 
-  >     // Rendering resolution
-  >     int hdpi;
-  >     int vdpi;
-  >     char *xshow;
-  >     char *fontpath;
-  > } gdFTStringExtra, *gdFTStringExtraPtr;
+  typedef struct {
+      // logical OR of gdFTEX_ values
+      int flags;
+   
+      // fine tune line spacing for '\n'
+      double linespacing;
+   
+      // Preferred character mapping
+      int charmap;
+   
+      // Rendering resolution
+      int hdpi;
+      int vdpi;
+      char *xshow;
+      char *fontpath;
+  } gdFTStringExtra, *gdFTStringExtraPtr;
+
+  (end code)
 
   To output multiline text with a specific line spacing, include
   gdFTEX_LINESPACE in the setting of flags:

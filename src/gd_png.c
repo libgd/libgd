@@ -149,16 +149,18 @@ gdPngFlushData (png_structp png_ptr)
     A pointer to the new image or NULL if an error occurred.
 
   Example:
+    (start code)
 
-    > gdImagePtr im;
-    > ... inside a function ...
-    > FILE *in;
-    > in = fopen("mypng.png", "rb");
-    > im = gdImageCreateFromPng(in);
-    > fclose(in);
-    > // ... Use the image ...
-    > gdImageDestroy(im);
+    gdImagePtr im;
+    ... inside a function ...
+    FILE *in;
+    in = fopen("mypng.png", "rb");
+    im = gdImageCreateFromPng(in);
+    fclose(in);
+    // ... Use the image ...
+    gdImageDestroy(im);
 
+    (end code)
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * inFile)
 {
@@ -585,20 +587,22 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
     Nothing.
 
   Example:
+    (start code)
 
-    > gdImagePtr im;
-    > int black, white;
-    > FILE *out;
-    > 
-    > im = gdImageCreate(100, 100);              // Create the image 
-    > white = gdImageColorAllocate(im, 255, 255, 255); // Alloc background 
-    > black = gdImageColorAllocate(im, 0, 0, 0); // Allocate drawing color 
-    > gdImageRectangle(im, 0, 0, 99, 99, black); // Draw rectangle 
-    > out = fopen("rect.png", "wb");             // Open output file (binary) 
-    > gdImagePngEx(im, out, 9);                  // Write PNG, max compression
-    > fclose(out);                               // Close file 
-    > gdImageDestroy(im);                        // Destroy image 
+    gdImagePtr im;
+    int black, white;
+    FILE *out;
+     
+    im = gdImageCreate(100, 100);              // Create the image
+    white = gdImageColorAllocate(im, 255, 255, 255); // Alloc background
+    black = gdImageColorAllocate(im, 0, 0, 0); // Allocate drawing color
+    gdImageRectangle(im, 0, 0, 99, 99, black); // Draw rectangle
+    out = fopen("rect.png", "wb");             // Open output file (binary)
+    gdImagePngEx(im, out, 9);                  // Write PNG, max compression
+    fclose(out);                               // Close file
+    gdImageDestroy(im);                        // Destroy image
 
+    (end code)
 */
 BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
 {

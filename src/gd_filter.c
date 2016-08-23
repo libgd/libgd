@@ -838,15 +838,17 @@ applyCoeffs(gdImagePtr src, gdImagePtr dst, double *coeffs, int radius,
     truecolor.
 
   Example:
+    (start code)
 
-    > FILE *in;
-    > gdImagePtr result, src;
-    > 
-    > in = fopen("foo.png", "rb");
-    > src = gdImageCreateFromPng(in);
-    >
-    > result = gdImageCopyGaussianBlurred(im, src->sx / 10, -1.0);
+    FILE *in;
+    gdImagePtr result, src;
+     
+    in = fopen("foo.png", "rb");
+    src = gdImageCreateFromPng(in);
+    
+    result = gdImageCopyGaussianBlurred(im, src->sx / 10, -1.0);
 
+    (end code)
 */
 
 /* TODO: Look into turning this into a generic seperable filter

@@ -162,11 +162,14 @@ BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
         A pointer to the new image or NULL if an error occurred.
 
     Example:
+      (start code)
 
-        >   gdImagePtr im;
-        >   im = gdImageCreate(64, 64);
-        >   // ... Use the image ...
-        >   gdImageDestroy(im);
+      gdImagePtr im;
+      im = gdImageCreate(64, 64);
+      // ... Use the image ...
+      gdImageDestroy(im);
+
+      (end code)
 
     See Also:
 
@@ -263,11 +266,14 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
         A pointer to the new image or NULL if an error occurred.
 
     Example:
+      (start code)
 
-        > gdImagePtr im;
-        > im = gdImageCreateTrueColor(64, 64);
-        > // ... Use the image ...
-        > gdImageDestroy(im);
+      gdImagePtr im;
+      im = gdImageCreateTrueColor(64, 64);
+      // ... Use the image ...
+      gdImageDestroy(im);
+
+      (end code)
 
     See Also:
 
@@ -362,12 +368,15 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
     Nothing.
 
   Example:
+    (start code)
 
-    > gdImagePtr im;
-    > im = gdImageCreate(10, 10);
-    > // ... Use the image ...
-    > // Now destroy it
-    > gdImageDestroy(im);
+    gdImagePtr im;
+    im = gdImageCreate(10, 10);
+    // ... Use the image ...
+    // Now destroy it
+    gdImageDestroy(im);
+
+	(end code)
 
 */
 
@@ -673,9 +682,11 @@ BGD_DECLARE(int) gdImageColorAllocateAlpha (gdImagePtr im, int r, int g, int b, 
 	Function: gdImageColorResolve
 
 	gdImageColorResolve is an alternative for the code fragment
-	| if ((color=gdImageColorExact(im,R,G,B)) < 0)
-	|   if ((color=gdImageColorAllocate(im,R,G,B)) < 0)
-	|     color=gdImageColorClosest(im,R,G,B);
+	(start code)
+	if ((color=gdImageColorExact(im,R,G,B)) < 0)
+	  if ((color=gdImageColorAllocate(im,R,G,B)) < 0)
+	    color=gdImageColorClosest(im,R,G,B);
+	(end code)
 	in a single function.    Its advantage is that it is guaranteed to
 	return a color index in one search over the color table.
 */
