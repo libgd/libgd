@@ -60,14 +60,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)
     A pointer to the new image or NULL if an error occurred.
 
   Example:
+    (start code)
 
-    > gdImagePtr im;
-    > FILE *in;
-    > in = fopen("myxpm.xpm", "rb");
-    > im = gdImageCreateFromXpm(in);
-    > fclose(in);
-    > // ... Use the image ...
-    > gdImageDestroy(im);
+    gdImagePtr im;
+    FILE *in;
+    in = fopen("myxpm.xpm", "rb");
+    im = gdImageCreateFromXpm(in);
+    fclose(in);
+    // ... Use the image ...
+    gdImageDestroy(im);
+
+    (end code)
 
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename)

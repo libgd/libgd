@@ -174,27 +174,29 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
     Nothing.
 
   Example:
+    (start code)
 
-    > gdImagePtr im;
-    > int black, white;
-    > FILE *out;
-    > // Create the image
-    > im = gdImageCreate(100, 100);
-    > // Allocate background
-    > white = gdImageColorAllocate(im, 255, 255, 255);
-    > // Allocate drawing color
-    > black = gdImageColorAllocate(im, 0, 0, 0);
-    > // Draw rectangle
-    > gdImageRectangle(im, 0, 0, 99, 99, black);
-    > // Open output file in binary mode
-    > out = fopen("rect.jpg", "wb");
-    > // Write JPEG using default quality
-    > gdImageJpeg(im, out, -1);
-    > // Close file
-    > fclose(out);
-    > // Destroy image
-    > gdImageDestroy(im);
+    gdImagePtr im;
+    int black, white;
+    FILE *out;
+    // Create the image
+    im = gdImageCreate(100, 100);
+    // Allocate background
+    white = gdImageColorAllocate(im, 255, 255, 255);
+    // Allocate drawing color
+    black = gdImageColorAllocate(im, 0, 0, 0);
+    // Draw rectangle
+    gdImageRectangle(im, 0, 0, 99, 99, black);
+    // Open output file in binary mode
+    out = fopen("rect.jpg", "wb");
+    // Write JPEG using default quality
+    gdImageJpeg(im, out, -1);
+    // Close file
+    fclose(out);
+    // Destroy image
+    gdImageDestroy(im);
 
+    (end code)
 */
 
 BGD_DECLARE(void) gdImageJpeg(gdImagePtr im, FILE *outFile, int quality)
@@ -468,15 +470,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *inFile)
     On error, returns NULL.
 
   Example:
+    (start code)
 
-    > gdImagePtr im;
-    > FILE *in;
-    > in = fopen("myjpeg.jpg", "rb");
-    > im = gdImageCreateFromJpegEx(in, GD_TRUE);
-    > fclose(in);
-    > // ... Use the image ...
-    > gdImageDestroy(im);
+    gdImagePtr im;
+    FILE *in;
+    in = fopen("myjpeg.jpg", "rb");
+    im = gdImageCreateFromJpegEx(in, GD_TRUE);
+    fclose(in);
+    // ... Use the image ...
+    gdImageDestroy(im);
 
+    (end code)
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx(FILE *inFile, int ignore_warning)
 {
