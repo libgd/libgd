@@ -25,10 +25,39 @@
 #define MAXY(x) MAX4(x[1],x[3],x[5],x[7])
 #define MINY(x) MIN4(x[1],x[3],x[5],x[7])
 
-/*
-	Function: gdImageStringFTCircle
-*/
-BGD_DECLARE(char *)
+/**
+ * Function: gdImageStringFTCircle
+ *
+ * Draw text curved along the top and bottom of a circular area of an image.
+ *
+ * Parameters:
+ *  im          - The image to draw onto.
+ *  cx          - The x-coordinate of the center of the circular area.
+ *  cy          - The y-coordinate of the center of the circular area.
+ *  radius      - The radius of the circular area.
+ *  textRadius  - The height of each character; if textRadius is 1/2 of radius,
+ *	              characters extend halfway from the edge to the center.
+ *  fillPortion - The percentage of the 180 degrees of the circular area
+ *                assigned to each section of text, that is actually occupied
+ *                by text. The value has to be in range 0.0 to 1.0, with useful
+ *                values from about 0.4 to 0.9; 0.9 looks better than 1.0 which
+ *                is rather crowded.
+ *  font        - The fontlist that is passed to <gdImageStringFT>.
+ *  points      - The point size, which functions as a hint. Although the size
+ *                of the text is determined by radius, textRadius and
+ *                fillPortion, a point size that 'hints' appropriately should be
+ *                passed. If it's known that the text will be large, a large
+ *                point size such as 24.0 should be passed to get the best
+ *                results.
+ *  top         - The text to draw clockwise at the top of the circular area.
+ *  bottom      - The text to draw counterclockwise at the bottom of the
+ *                circular area.
+ *  fgcolor     - The font color.
+ *
+ * Returns:
+ *  NULL on success, or an error string on failure.
+ */
+BGD_DECLARE(char*)
 gdImageStringFTCircle (gdImagePtr im,
                        int cx,
                        int cy,
@@ -257,9 +286,21 @@ main (int argc, char *argv[])
 #define SUPERBITS1 1
 #define SUPERBITS2 2
 
-/*
-	Function: gdImageSquareToCircle
-*/
+/**
+ * Function: gdImageSquareToCircle
+ *
+ * Apply polar coordinate transformation to an image.
+ *
+ * The X axis of the original will be remapped to theta (angle) and the Y axis
+ * of the original will be remapped to rho (distance from center).
+ *
+ * Parameters:
+ *  im     - The image, which must be square, i.e. width == height.
+ *  radius - The radius of the new image, i.e. width == height == radius * 2.
+ *
+ * Returns:
+ *  The transformed image, or NULL on failure.
+ */
 BGD_DECLARE(gdImagePtr)
 gdImageSquareToCircle (gdImagePtr im, int radius)
 {
@@ -386,19 +427,21 @@ gdImageSubSharpen (int pc, int c, int nc, float inner_coeff, float
 	return gdTrueColorAlpha ((int) red, (int) green, (int) blue, (int) alpha);
 }
 
-/*
-	Function: gdImageSharpen
-
-	Sharpen function added on 2003-11-19
-	by Paul Troughton (paul<dot>troughton<at>ieee<dot>org)
-	Simple 3x3 convolution kernel
-	Makes use of seperability
-	Faster, but less flexible, than full-blown unsharp masking
-	pct is sharpening percentage, and can be greater than 100
-	Silently does nothing to non-truecolor images
-	Silently does nothing for pct<0, as not a useful blurring function
-	Leaves transparency/alpha-channel untouched
-*/
+/**
+ * Function: gdImageSharpen
+ *
+ * Sharpen an image.
+ *
+ * Uses a simple 3x3 convolution kernel and makes use of separability.
+ * It's faster, but less flexible, than full-blown unsharp masking.
+ * Silently does nothing to non-truecolor images and for pct<0, as it's not a useful blurring function.
+ *
+ * Parameters:
+ *  pct - The sharpening percentage, which can be greater than 100.
+ *
+ * Author:
+ *  Paul Troughton (paul<dot>troughton<at>ieee<dot>org)
+ */
 BGD_DECLARE(void)
 gdImageSharpen (gdImagePtr im, int pct)
 {
