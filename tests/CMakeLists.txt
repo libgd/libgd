@@ -19,6 +19,7 @@ if (BUILD_TEST)
 
 	SET(TESTS_DIRS
 		bmp
+		fontconfig
 		freetype
 		gd
 		gd2

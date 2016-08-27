@@ -14,6 +14,7 @@ EXTRA_DIST =
 TESTS =
 
 include bmp/Makemodule.am
+include fontconfig/Makemodule.am
 include freetype/Makemodule.am
 include gd/Makemodule.am
 include gd2/Makemodule.am

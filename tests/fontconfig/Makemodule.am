@@ -1,0 +1,9 @@
+if HAVE_LIBFONTCONFIG
+if HAVE_LIBFREETYPE
+libgd_test_programs += \
+	fontconfig/basic
+endif
+endif
+
+EXTRA_DIST += \
+	fontconfig/CMakeLists.txt
