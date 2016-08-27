@@ -147,16 +147,6 @@ BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fon
 }
 #else
 
-#ifndef HAVE_LIBFONTCONFIG
-static char * font_pattern(char **fontpath, char *fontpattern)
-{
-	(void)fontpath;
-	(void)fontpattern;
-
-	return "libgd was not built with FontConfig support\n";
-}
-#endif /* HAVE_LIBFONTCONFIG */
-
 #include "gdcache.h"
 /* 2.0.16 Christophe Thomas: starting with FreeType 2.1.6, this is
   mandatory, and it has been supported for a long while. */
@@ -454,15 +444,15 @@ fontTest (void *element, void *key)
 	return (strcmp (a->fontlist, b->fontlist) == 0 && a->flags == b->flags);
 }
 
+#ifdef HAVE_LIBFONTCONFIG
 static int useFontConfig(int flag)
 {
-#ifdef HAVE_LIBFONTCONFIG
 	if (fontConfigFlag) {
 		return (!(flag & gdFTEX_FONTPATHNAME));
 	}
-#endif
 	return flag & gdFTEX_FONTCONFIG;
 }
+#endif
 
 static void *
 fontFetch (char **error, void *key)
