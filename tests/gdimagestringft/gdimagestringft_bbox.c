@@ -73,6 +73,7 @@ int main()
 	fclose(fp);
 done:
 	gdImageDestroy(im);
+	gdFontCacheShutdown();
 	free(path);
 	return error;
 }

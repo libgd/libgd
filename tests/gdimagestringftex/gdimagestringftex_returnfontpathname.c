@@ -18,6 +18,7 @@ int main()
 		return 2;
 	}
 	gdFree(strex.fontpath);
+	gdFontCacheShutdown();
 	free(path);
 	return 0;
 }

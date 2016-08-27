@@ -27,6 +27,7 @@ int main()
     gdTestAssertMsg(error == NULL, "%s", error);
 
     gdImageDestroy(im);
+    gdFontCacheShutdown();
 
     return gdNumFailures();
 }
