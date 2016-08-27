@@ -34,5 +34,6 @@ int main()
 		}
 	}
 	gdImageDestroy(im);
+	gdFontCacheShutdown();
 	return error;
 }
