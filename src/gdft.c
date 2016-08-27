@@ -1413,7 +1413,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	FT_Activate_Size (platform_independent);
 
 	count = textLayout (text , i, face, strex, &info);
-	gdFree (text);
 
 	if (!count) {
 		gdFree (tmpstr);
@@ -1455,6 +1454,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 				if (!strex->xshow) {
 					if (tmpstr)
 						gdFree (tmpstr);
+					gdFree(text);
 					gdCacheDelete (tc_cache);
 					gdMutexUnlock (gdFontCacheMutex);
 					return "Problem allocating memory";
@@ -1466,6 +1466,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 				if (!strex->xshow) {
 					if (tmpstr)
 						gdFree (tmpstr);
+					gdFree(text);
 					gdCacheDelete (tc_cache);
 					gdMutexUnlock (gdFontCacheMutex);
 					return "Problem allocating memory";
@@ -1481,6 +1482,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 		if (err) {
 			if (tmpstr)
 				gdFree (tmpstr);
+			gdFree(text);
 			gdCacheDelete (tc_cache);
 			gdMutexUnlock (gdFontCacheMutex);
 			return "Problem loading glyph";
@@ -1528,6 +1530,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 			if (err) {
 				if (tmpstr)
 					gdFree (tmpstr);
+				gdFree(text);
 				gdCacheDelete (tc_cache);
 				gdMutexUnlock (gdFontCacheMutex);
 				return "Problem loading glyph";
@@ -1542,6 +1545,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 					FT_Done_Glyph(image);
 					if (tmpstr)
 						gdFree (tmpstr);
+					gdFree(text);
 					gdCacheDelete (tc_cache);
 					gdMutexUnlock (gdFontCacheMutex);
 					return "Problem rendering glyph";
@@ -1565,6 +1569,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 		penf.x += horiAdvance;
 	}
 
+	gdFree(text);
 	gdFree(info);
 
 	/* Save the (unkerned) advance from the last character in the xshow vector */
