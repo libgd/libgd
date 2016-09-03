@@ -2,5 +2,11 @@
 libgd_test_programs += \
 	gdimagetruecolortopalette/php_bug_72512
 
+if HAVE_LIBJPEG
+libgd_test_programs += \
+	gdimagetruecolortopalette/php_bug_67325
+endif
+
 EXTRA_DIST += \
-	gdimagetruecolortopalette/CMakeLists.txt
+	gdimagetruecolortopalette/CMakeLists.txt \
+	gdimagetruecolortopalette/php_bug_67325.jpeg
