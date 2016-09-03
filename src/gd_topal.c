@@ -659,7 +659,7 @@ compute_color (gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize,
 		}
 
 	/* 2.0.16: Paul den Dulk found an occasion where total can be 0 */
-	if (count) {
+	if (total) {
 		nim->red[icolor] = (int) ((c0total + (total >> 1)) / total);
 		nim->green[icolor] = (int) ((c1total + (total >> 1)) / total);
 		nim->blue[icolor] = (int) ((c2total + (total >> 1)) / total);
