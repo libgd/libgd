@@ -13,7 +13,9 @@ int main(void)
 	return 0;
 #else
 	char *error;
+#ifdef HAVE_LIBJPEG
 	FILE *in = 0;
+#endif
 	FILE *out;
 	gdImagePtr im;
 	int radius;
