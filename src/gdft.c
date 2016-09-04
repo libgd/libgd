@@ -912,9 +912,7 @@ BGD_DECLARE(void) gdFontCacheShutdown ()
  *             specify the lower left, lower right, upper right and upper left
  *             corner.
  *	fg       - The font color.
- *	fontlist - The list of font filenames to look for. This is expected to be
- *	           a concatenated char array of zero-terminated filenames followed
- *	           by an empty zero-terminated string (i.e. a single NUL character).
+ *	fontlist - The semicolon delimited list of font filenames to look for.
  *	ptsize   - The height of the font in typographical points (pt).
  *	angle    - The angle in radian to rotate the font counter-clockwise.
  *	x        - The x-coordinate of the basepoint (roughly the lower left corner) of the first letter.
