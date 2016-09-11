@@ -260,6 +260,9 @@ typedef double (* interpolation_method )(double);
 
    *gdImagePtr* is a pointer to *gdImage*.
 
+   See also:
+     <Accessor Macros>
+
    (Previous versions of this library encouraged directly manipulating
    the contents ofthe struct but we are attempting to move away from
    this practice so the fields are no longer documented here.  If you
@@ -977,7 +980,7 @@ BGD_DECLARE(void *) gdImageGifAnimEndPtr(int *size);
   typedef: gdSinkPtr
 
     *Note:* This interface is *obsolete* and kept only for
-    *compatibility.  Use <gdIOCtx> instead.
+    *compatibility*.  Use <gdIOCtx> instead.
 
     Represents a "sink" (destination) to which a PNG can be
     written. Programmers who do not wish to write PNGs to a file can
@@ -1141,35 +1144,182 @@ BGD_DECLARE(gdImagePtr) gdImageCopyGaussianBlurred(gdImagePtr src, int radius,
                                                    double sigma);
 
 
-/* Macros to access information about images. */
+/**
+ * Group: Accessor Macros
+ */
 
-/* Returns nonzero if the image is a truecolor image,
-   zero for a palette image. */
+/**
+ * Macro: gdImageTrueColor
+ *
+ * Whether an image is a truecolor image.
+ *
+ * Parameters:
+ *   im - The image.
+ *
+ * Returns:
+ *   Non-zero if the image is a truecolor image, zero for palette images.
+ */
 #define gdImageTrueColor(im) ((im)->trueColor)
 
+/**
+ * Macro: gdImageSX
+ *
+ * Gets the width (in pixels) of an image.
+ * 
+ * Parameters:
+ *   im - The image.
+ */
 #define gdImageSX(im) ((im)->sx)
+
+/**
+ * Macro: gdImageSY
+ *
+ * Gets the height (in pixels) of an image.
+ *
+ * Parameters:
+ *   im - The image.
+ */
 #define gdImageSY(im) ((im)->sy)
+
+/**
+ * Macro: gdImageColorsTotal
+ *
+ * Gets the number of colors in the palette.
+ *
+ * This macro is only valid for palette images.
+ *
+ * Parameters:
+ *   im - The image
+ */
 #define gdImageColorsTotal(im) ((im)->colorsTotal)
+
+/**
+ * Macro: gdImageRed
+ *
+ * Gets the red component value of a given color.
+ *
+ * Parameters:
+ *   im - The image.
+ *   c  - The color.
+ */
 #define gdImageRed(im, c) ((im)->trueColor ? gdTrueColorGetRed(c) : \
 			   (im)->red[(c)])
+
+/**
+ * Macro: gdImageGreen
+ *
+ * Gets the green component value of a given color.
+ *
+ * Parameters:
+ *   im - The image.
+ *   c  - The color.
+ */
 #define gdImageGreen(im, c) ((im)->trueColor ? gdTrueColorGetGreen(c) : \
 			     (im)->green[(c)])
+
+/**
+ * Macro: gdImageBlue
+ *
+ * Gets the blue component value of a given color.
+ *
+ * Parameters:
+ *   im - The image.
+ *   c  - The color.
+ */
 #define gdImageBlue(im, c) ((im)->trueColor ? gdTrueColorGetBlue(c) : \
 			    (im)->blue[(c)])
+
+/**
+ * Macro: gdImageAlpha
+ *
+ * Gets the alpha component value of a given color.
+ *
+ * Parameters:
+ *   im - The image.
+ *   c  - The color.
+ */
 #define gdImageAlpha(im, c) ((im)->trueColor ? gdTrueColorGetAlpha(c) : \
 			     (im)->alpha[(c)])
+
+/**
+ * Macro: gdImageGetTransparent
+ *
+ * Gets the transparent color of the image.
+ *
+ * Parameters:
+ *   im - The image.
+ */
 #define gdImageGetTransparent(im) ((im)->transparent)
+
+/**
+ * Macro: gdImageGetInterlaced
+ *
+ * Whether an image is interlaced.
+ *
+ * Parameters:
+ *   im - The image.
+ *
+ * Returns:
+ *   Non-zero for interlaced images, zero otherwise.
+ */
 #define gdImageGetInterlaced(im) ((im)->interlace)
 
-/* These macros provide direct access to pixels in
-   palette-based and truecolor images, respectively.
-   If you use these macros, you must perform your own
-   bounds checking. Use of the macro for the correct type
-   of image is also your responsibility. */
+/**
+ * Macro: gdImagePalettePixel
+ *
+ * Gets the color of a pixel.
+ *
+ * Calling this macro is only valid for palette images.
+ * No bounds checking is done for the coordinates.
+ *
+ * Parameters:
+ *   im - The image.
+ *   x  - The x-coordinate.
+ *   y  - The y-coordinate.
+ *
+ * See also:
+ *   - <gdImageTrueColorPixel>
+ *   - <gdImageGetPixel>
+ */
 #define gdImagePalettePixel(im, x, y) (im)->pixels[(y)][(x)]
+
+/**
+ * Macro: gdImageTrueColorPixel
+ *
+ * Gets the color of a pixel.
+ *
+ * Calling this macro is only valid for truecolor images.
+ * No bounds checking is done for the coordinates.
+ *
+ * Parameters:
+ *   im - The image.
+ *   x  - The x-coordinate.
+ *   y  - The y-coordinate.
+ *
+ * See also:
+ *   - <gdImagePalettePixel>
+ *   - <gdImageGetTrueColorPixel>
+ */
 #define gdImageTrueColorPixel(im, x, y) (im)->tpixels[(y)][(x)]
 
+/**
+ * Macro: gdImageResolution
+ *
+ * Gets the horizontal resolution in DPI.
+ *
+ * Parameters:
+ *   im - The image.
+ */
 #define gdImageResolutionX(im) (im)->res_x
+
+/**
+ * Macro: gdImageResolution
+ *
+ * Gets the vertical resolution in DPI.
+ *
+ * Parameters:
+ *   im - The image.
+ */
 #define gdImageResolutionY(im) (im)->res_y
 
 /* I/O Support routines. */
