@@ -13,7 +13,7 @@
 int main()
 {
     gdImagePtr src, dst;
-    gdRect rect = {x: 0, y: 0, width: 8, height: 8};
+    gdRect rect = {0, 0, 8, 8};
 
     src = gdImageCreate(8, 8);
     dst = gdImageCrop(src, &rect);
