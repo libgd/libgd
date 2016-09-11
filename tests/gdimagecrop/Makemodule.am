@@ -1,4 +1,5 @@
 libgd_test_programs += \
+	gdimagecrop/bug00297 \
 	gdimagecrop/php_bug_72494
 
 EXTRA_DIST += \
