@@ -139,9 +139,6 @@ BGD_DECLARE(void) gdClearErrorMethod(void)
 static void gdImageBrushApply (gdImagePtr im, int x, int y);
 static void gdImageTileApply (gdImagePtr im, int x, int y);
 
-/*
-	Function: gdImageGetTrueColorPixel
-*/
 BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 
 
@@ -1289,9 +1286,21 @@ gdImageTileApply (gdImagePtr im, int x, int y)
 	}
 }
 
-/*
-	Function: gdImageGetPixel
-*/
+/**
+ * Function: gdImageGetPixel
+ *
+ * Gets a pixel color as stored in the image.
+ *
+ * Parameters:
+ *   im - The image.
+ *   x  - The x-coordinate.
+ *   y  - The y-coordinate.
+ *
+ * See also:
+ *   - <gdImageGetTrueColorPixel>
+ *   - <gdImagePalettePixel>
+ *   - <gdImageTrueColorPixel>
+ */
 BGD_DECLARE(int) gdImageGetPixel (gdImagePtr im, int x, int y)
 {
 	if (gdImageBoundsSafeMacro (im, x, y)) {
@@ -1305,9 +1314,20 @@ BGD_DECLARE(int) gdImageGetPixel (gdImagePtr im, int x, int y)
 	}
 }
 
-/*
-	Function: gdImageGetTrueColorPixel
-*/
+/**
+ * Function: gdImageGetTrueColorPixel
+ *
+ * Gets a pixel color always as truecolor value.
+ *
+ * Parameters:
+ *   im - The image.
+ *   x  - The x-coordinate.
+ *   y  - The y-coordinate.
+ *
+ * See also:
+ *   - <gdImageGetPixel>
+ *   - <gdImageTrueColorPixel>
+ */
 BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
 {
 	int p = gdImageGetPixel (im, x, y);
