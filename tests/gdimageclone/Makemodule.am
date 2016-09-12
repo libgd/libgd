@@ -1,0 +1,5 @@
+libgd_test_programs += \
+	gdimageclone/bug00300
+
+EXTRA_DIST += \
+	gdimagearc/CMakeLists.txt

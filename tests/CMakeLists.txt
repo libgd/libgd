@@ -24,6 +24,7 @@ if (BUILD_TEST)
 		gd
 		gd2
 		gdimagearc
+		gdimageclone
 		gdimagecolorclosest
 		gdimagecolordeallocate
 		gdimagecolorexact
