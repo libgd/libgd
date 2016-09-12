@@ -2711,7 +2711,7 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 	dst->cy2 = src->cy2;
 
 	dst->res_x = src->res_x;
-	dst->res_y = src->res_x;
+	dst->res_y = src->res_y;
 
 	dst->paletteQuantizationMethod     = src->paletteQuantizationMethod;
 	dst->paletteQuantizationSpeed      = src->paletteQuantizationSpeed;
@@ -3818,9 +3818,20 @@ BGD_DECLARE(void) gdImageGetClip (gdImagePtr im, int *x1P, int *y1P, int *x2P, i
 	*y2P = im->cy2;
 }
 
-/*
-	Function: gdImageSetResolution
-*/
+/**
+ * Function: gdImageSetResolution
+ *
+ * Sets the resolution of an image.
+ *
+ * Parameters:
+ *   im    - The image.
+ *   res_x - The horizontal resolution in DPI.
+ *   res_y - The vertical resolution in DPI.
+ *
+ * See also:
+ *   - <gdImageResolutionX>
+ *   - <gdImageResolutionY>
+ */
 BGD_DECLARE(void) gdImageSetResolution(gdImagePtr im, const unsigned int res_x, const unsigned int res_y)
 {
 	if (res_x > 0) im->res_x = res_x;

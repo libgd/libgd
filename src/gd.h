@@ -1303,22 +1303,30 @@ BGD_DECLARE(gdImagePtr) gdImageCopyGaussianBlurred(gdImagePtr src, int radius,
 #define gdImageTrueColorPixel(im, x, y) (im)->tpixels[(y)][(x)]
 
 /**
- * Macro: gdImageResolution
+ * Macro: gdImageResolutionX
  *
  * Gets the horizontal resolution in DPI.
  *
  * Parameters:
  *   im - The image.
+ *
+ * See also:
+ *   - <gdImageResolutionY>
+ *   - <gdImageSetResolution>
  */
 #define gdImageResolutionX(im) (im)->res_x
 
 /**
- * Macro: gdImageResolution
+ * Macro: gdImageResolutionY
  *
  * Gets the vertical resolution in DPI.
  *
  * Parameters:
  *   im - The image.
+ *
+ * See also:
+ *   - <gdImageResolutionX>
+ *   - <gdImageSetResolution>
  */
 #define gdImageResolutionY(im) (im)->res_y
 
