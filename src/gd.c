@@ -2489,16 +2489,6 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 		return;
 	}
 
-	if (x1 == x2 && y1 == y2) {
-		gdImageSetPixel(im, x1, y1, color);
-		return;
-	}
-
-	if (x1 == x2 || y1 == y2) {
-		gdImageLine(im, x1, y1, x2, y2, color);
-		return;
-	}
-
 	if (y2 < y1) {
 		int t;
 		t = y1;
@@ -2553,10 +2543,14 @@ BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y
 
 		return;
 	} else {
-		gdImageLine(im, x1, y1, x2, y1, color);
-		gdImageLine(im, x1, y2, x2, y2, color);
-		gdImageLine(im, x1, y1 + 1, x1, y2 - 1, color);
-		gdImageLine(im, x2, y1 + 1, x2, y2 - 1, color);
+		if (x1 == x2 || y1 == y2) {
+			gdImageLine(im, x1, y1, x2, y2, color);
+		} else {
+			gdImageLine(im, x1, y1, x2, y1, color);
+			gdImageLine(im, x1, y2, x2, y2, color);
+			gdImageLine(im, x1, y1 + 1, x1, y2 - 1, color);
+			gdImageLine(im, x2, y1 + 1, x2, y2 - 1, color);
+		}
 	}
 }
 
