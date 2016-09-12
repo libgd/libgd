@@ -2460,9 +2460,22 @@ skip:
 	gdFree(stack);
 }
 
-/*
-	Function: gdImageRectangle
-*/
+/**
+ * Function: gdImageRectangle
+ *
+ * Draws a rectangle.
+ *
+ * Parameters:
+ *   im    - The image.
+ *   x1    - The x-coordinate of one of the corners.
+ *   y1    - The y-coordinate of one of the corners.
+ *   x2    - The x-coordinate of another corner.
+ *   y2    - The y-coordinate of another corner.
+ *   color - The color.
+ *
+ * See also:
+ *   - <gdImageFilledRectangle>
+ */
 BGD_DECLARE(void) gdImageRectangle (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
 	int thick = im->thick;
