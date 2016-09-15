@@ -698,6 +698,7 @@ BGD_DECLARE(int) gdImageColorExact (gdImagePtr im, int r, int g, int b)
  *
  * See also:
  *   - <gdImageColorClosestAlpha>
+ *   - <gdTrueColorAlpha>
  */
 BGD_DECLARE(int) gdImageColorExactAlpha (gdImagePtr im, int r, int g, int b, int a)
 {
@@ -3435,9 +3436,21 @@ BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
  * Group: Polygons
  */
 
-/*
-	Function: gdImagePolygon
-*/
+/**
+ * Function: gdImagePolygon
+ *
+ * Draws a closed polygon
+ *
+ * Parameters:
+ *   im - The image.
+ *   p  - The vertices as array of <gdPoint>s.
+ *   n  - The number of vertices.
+ *   c  - The color.
+ *
+ * See also:
+ *   - <gdImageOpenPolygon>
+ *   - <gdImageFilledPolygon>
+ */
 BGD_DECLARE(void) gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 {
 	if (n <= 0) {
@@ -3449,9 +3462,20 @@ BGD_DECLARE(void) gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 	gdImageOpenPolygon (im, p, n, c);
 }
 
-/*
-	Function: gdImageOpenPolygon
-*/
+/**
+ * Function: gdImageOpenPolygon
+ *
+ * Draws an open polygon
+ *
+ * Parameters:
+ *   im - The image.
+ *   p  - The vertices.
+ *   n  - The number of vertices as array of <gdPoint>s.
+ *   c  - The color
+ *
+ * See also:
+ *   - <gdImagePolygon>
+ */
 BGD_DECLARE(void) gdImageOpenPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 {
 	int i;
@@ -3479,9 +3503,20 @@ BGD_DECLARE(void) gdImageOpenPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 /* That could help to adjust intersections  to produce a nice */
 /* interior_extrema. */
 
-/*
-	Function: gdImageFilledPolygon
-*/
+/**
+ * Function: gdImageFilledPolygon
+ *
+ * Draws a filled polygon
+ *
+ * Parameters:
+ *   im - The image.
+ *   p  - The vertices as array of <gdPoint>s.
+ *   n  - The number of vertices.
+ *   c  - The color
+ *
+ * See also:
+ *   - <gdImagePolygon>
+ */
 BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 {
 	int i;
@@ -3629,9 +3664,16 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
 
 static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t);
 
-/*
-	Function: gdImageSetStyle
-*/
+/**
+ * Function: gdImageSetStyle
+ *
+ * Sets the style for following drawing operations
+ *
+ * Parameters:
+ *   im        - The image.
+ *   style     - An array of color values.
+ *   noOfPixel - The number of color values.
+ */
 BGD_DECLARE(void) gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels)
 {
 	if (im->style) {
@@ -3649,17 +3691,29 @@ BGD_DECLARE(void) gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels)
 	im->stylePos = 0;
 }
 
-/*
-	Function: gdImageSetThickness
-*/
+/**
+ * Function: gdImageSetThickness
+ *
+ * Sets the thickness for following drawing operations
+ *
+ * Parameters:
+ *   im        - The image.
+ *   thickness - The thickness in pixels.
+ */
 BGD_DECLARE(void) gdImageSetThickness (gdImagePtr im, int thickness)
 {
 	im->thick = thickness;
 }
 
-/*
-	Function: gdImageSetBrush
-*/
+/**
+ * Function: gdImageSetBrush
+ *
+ * Sets the brush for following drawing operations
+ *
+ * Parameters:
+ *   im    - The image.
+ *   brush - The brush image.
+ */
 BGD_DECLARE(void) gdImageSetBrush (gdImagePtr im, gdImagePtr brush)
 {
 	int i;
