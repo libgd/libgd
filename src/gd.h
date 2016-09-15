@@ -148,10 +148,63 @@ extern "C" {
 #define gdRedMax 255
 #define gdGreenMax 255
 #define gdBlueMax 255
+
+/**
+ * Group: Color Decomposition
+ */
+
+/**
+ * Macro: gdTrueColorGetAlpha
+ *
+ * Gets the alpha channel value
+ *
+ * Parameters:
+ *   c - The color
+ *
+ * See also:
+ *   - <gdTrueColorAlpha>
+ */
 #define gdTrueColorGetAlpha(c) (((c) & 0x7F000000) >> 24)
+
+/**
+ * Macro: gdTrueColorGetRed
+ *
+ * Gets the red channel value
+ *
+ * Parameters:
+ *   c - The color
+ *
+ * See also:
+ *   - <gdTrueColorAlpha>
+ */
 #define gdTrueColorGetRed(c) (((c) & 0xFF0000) >> 16)
+
+/**
+ * Macro: gdTrueColorGetGreen
+ *
+ * Gets the green channel value
+ *
+ * Parameters:
+ *   c - The color
+ *
+ * See also:
+ *   - <gdTrueColorAlpha>
+ */
 #define gdTrueColorGetGreen(c) (((c) & 0x00FF00) >> 8)
+
+/**
+ * Macro: gdTrueColorGetBlue
+ *
+ * Gets the blue channel value
+ *
+ * Parameters:
+ *   c - The color
+ *
+ * See also:
+ *   - <gdTrueColorAlpha>
+ */
 #define gdTrueColorGetBlue(c) ((c) & 0x0000FF)
+
 #define gdEffectReplace 0
 #define gdEffectAlphaBlend 1
 #define gdEffectNormal 2
@@ -462,17 +515,39 @@ BGD_DECLARE(void) gdClearErrorMethod(void);
    gdImageSetBrush(). */
 #define gdDashSize 4
 
-/* Special colors. */
+/**
+ * Group: Colors
+ *
+ * Colors are always of type int which is supposed to be at least 32 bit large.
+ *
+ * Kinds of colors:
+ *   true colors     - ARGB values where the alpha channel is stored as most
+ *                     significant, and the blue channel as least significant
+ *                     byte. Note that the alpha channel only uses the 7 least
+ *                     significant bits.
+ *                     Don't rely on the internal representation, though, and
+ *                     use <gdTrueColorAlpha> to compose a truecolor value, and
+ *                     <gdTrueColorGetAlpha>, <gdTrueColorGetRed>,
+ *                     <gdTrueColorGetGreen> and <gdTrueColorGetBlue> to access
+ *                     the respective channels.
+ *   palette indexes - The index of a color palette entry (0-255).
+ *   special colors  - As listed in the following section.
+ *
+ * Constants: Special Colors
+ *   gdStyled        - use the current style, see <gdImageSetStyle>
+ *   gdBrushed       - use the current brush, see <gdImageSetBrush>
+ *   gdStyledBrushed - use the current style and brush
+ *   gdTiled         - use the current tile, see <gdImageSetTile>
+ *   gdTransparent   - indicate transparency, what is not the same as the
+ *                     transparent color index; used for lines only
+ *   gdAntiAliased   - draw anti aliased
+ */
 
 #define gdStyled (-2)
 #define gdBrushed (-3)
 #define gdStyledBrushed (-4)
 #define gdTiled (-5)
-
-/* NOT the same as the transparent color index.
-   This is used in line styles only. */
 #define gdTransparent (-6)
-
 #define gdAntiAliased (-7)
 
 /* Functions to manipulate images. */
@@ -804,10 +879,27 @@ BGD_DECLARE(int) gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, i
 			      ((g) << 8) +  \
 			      (b))
 
-/* Returns a truecolor value with an alpha channel component.
-   gdAlphaMax (127, **NOT 255**) is transparent, 0 is completely
-   opaque. */
-
+/**
+ * Group: Color Composition
+ *
+ * Macro: gdTrueColorAlpha
+ *
+ * Compose a truecolor value from its components
+ *
+ * Parameters:
+ *   r - The red channel (0-255)
+ *   g - The green channel (0-255)
+ *   b - The blue channel (0-255)
+ *   a - The alpha channel (0-127, where 127 is fully transparent, and 0 is
+ *       completely opaque).
+ *
+ * See also:
+ *   - <gdTrueColorGetAlpha>
+ *   - <gdTrueColorGetRed>
+ *   - <gdTrueColorGetGreen>
+ *   - <gdTrueColorGetBlue>
+ *   - <gdImageColorExactAlpha>
+ */
 #define gdTrueColorAlpha(r, g, b, a) (((a) << 24) + \
 				      ((r) << 16) + \
 				      ((g) << 8) +  \
@@ -951,7 +1043,8 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantiza
  *   gdDisposalRestoreBackground    - First allocated color of palette
  *   gdDisposalRestorePrevious      - Restore to before start of frame
  *
- * See also: <gdImageGifAnimAdd>
+ * See also:
+ *   - <gdImageGifAnimAdd>
  */
 enum {
 	gdDisposalUnknown,
