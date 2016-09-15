@@ -1248,6 +1248,9 @@ BGD_DECLARE(gdImagePtr) gdImageCopyGaussianBlurred(gdImagePtr src, int radius,
  *
  * Parameters:
  *   im - The image.
+ *
+ * See also:
+ *   - <gdImageColorTransparent>
  */
 #define gdImageGetTransparent(im) ((im)->transparent)
 
@@ -1261,6 +1264,9 @@ BGD_DECLARE(gdImagePtr) gdImageCopyGaussianBlurred(gdImagePtr src, int radius,
  *
  * Returns:
  *   Non-zero for interlaced images, zero otherwise.
+ *
+ * See also:
+ *   - <gdImageInterlace>
  */
 #define gdImageGetInterlaced(im) ((im)->interlace)
 
