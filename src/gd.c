@@ -71,6 +71,10 @@ static const unsigned char gd_toascii[256] = {
 extern const int gdCosT[];
 extern const int gdSinT[];
 
+/**
+ * Group: Error Handling
+ */
+
 void gd_stderr_error(int priority, const char *format, va_list args)
 {
 	switch (priority) {
@@ -141,6 +145,9 @@ static void gdImageTileApply (gdImagePtr im, int x, int y);
 
 BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 
+/**
+ * Group: Creation and Destruction
+ */
 
 /*
     Function: gdImageCreate
@@ -401,17 +408,55 @@ BGD_DECLARE(void) gdImageDestroy (gdImagePtr im)
 	gdFree (im);
 }
 
-/*
-	Function: gdImageColorClosest
-*/
+/**
+ * Group: Color
+ */
+
+/**
+ * Function: gdImageColorClosest
+ * 
+ * Gets the closest color of the image
+ *
+ * This is a simplified variant of <gdImageColorClosestAlpha> where the alpha
+ * channel is always opaque.
+ *
+ * Parameters:
+ *   im - The image.
+ *   r  - The value of the red component.
+ *   g  - The value of the green component.
+ *   b  - The value of the blue component.
+ *
+ * Returns:
+ *   The closest color already available in the palette for palette images;
+ *   the color value of the given components for truecolor images.
+ *
+ * See also:
+ *   - <gdImageColorExact>
+ */
 BGD_DECLARE(int) gdImageColorClosest (gdImagePtr im, int r, int g, int b)
 {
 	return gdImageColorClosestAlpha (im, r, g, b, gdAlphaOpaque);
 }
 
-/*
-	Function: gdImageColorClosestAlpha
-*/
+/**
+ * Function: gdImageColorClosestAlpha
+ *
+ * Gets the closest color of the image
+ *
+ * Parameters:
+ *   im - The image.
+ *   r  - The value of the red component.
+ *   g  - The value of the green component.
+ *   b  - The value of the blue component.
+ *   a  - The value of the alpha component.
+ *
+ * Returns:
+ *   The closest color already available in the palette for palette images;
+ *   the color value of the given components for truecolor images.
+ *
+ * See also:
+ *   - <gdImageColorExactAlpha>
+ */
 BGD_DECLARE(int) gdImageColorClosestAlpha (gdImagePtr im, int r, int g, int b, int a)
 {
 	int i;
@@ -607,17 +652,53 @@ BGD_DECLARE(int) gdImageColorClosestHWB (gdImagePtr im, int r, int g, int b)
 	return ct;
 }
 
-/*
-	Function: gdImageColorExact
-*/
+/**
+ * Function: gdImageColorExact
+ *
+ * Gets the exact color of the image
+ *
+ * This is a simplified variant of <gdImageColorExactAlpha> where the alpha
+ * channel is always opaque.
+ *
+ * Parameters:
+ *   im - The image.
+ *   r  - The value of the red component.
+ *   g  - The value of the green component.
+ *   b  - The value of the blue component.
+ *
+ * Returns:
+ *   The exact color already available in the palette for palette images; if
+ *   there is no exact color, -1 is returned.
+ *   For truecolor images the color value of the given components is returned.
+ *
+ * See also:
+ *   - <gdImageColorClosest>
+ */
 BGD_DECLARE(int) gdImageColorExact (gdImagePtr im, int r, int g, int b)
 {
 	return gdImageColorExactAlpha (im, r, g, b, gdAlphaOpaque);
 }
 
-/*
-	Function: gdImageColorExactAlpha
-*/
+/**
+ * Function: gdImageColorExactAlpha
+ *
+ * Gets the exact color of the image
+ *
+ * Parameters:
+ *   im - The image.
+ *   r  - The value of the red component.
+ *   g  - The value of the green component.
+ *   b  - The value of the blue component.
+ *   a  - The value of the alpha component.
+ *
+ * Returns:
+ *   The exact color already available in the palette for palette images; if
+ *   there is no exact color, -1 is returned.
+ *   For truecolor images the color value of the given components is returned.
+ *
+ * See also:
+ *   - <gdImageColorClosestAlpha>
+ */
 BGD_DECLARE(int) gdImageColorExactAlpha (gdImagePtr im, int r, int g, int b, int a)
 {
 	int i;
@@ -636,17 +717,51 @@ BGD_DECLARE(int) gdImageColorExactAlpha (gdImagePtr im, int r, int g, int b, int
 	return -1;
 }
 
-/*
-	Function: gdImageColorAllocate
-*/
+/**
+ * Function: gdImageColorAllocate
+ *
+ * Allocates a color
+ *
+ * This is a simplified variant of <gdImageColorAllocateAlpha> where the alpha
+ * channel is always opaque.
+ *
+ * Parameters:
+ *   im - The image.
+ *   r  - The value of the red component.
+ *   g  - The value of the green component.
+ *   b  - The value of the blue component.
+ *
+ * Returns:
+ *   The color value.
+ *
+ * See also:
+ *   - <gdImageColorDeallocate>
+ */
 BGD_DECLARE(int) gdImageColorAllocate (gdImagePtr im, int r, int g, int b)
 {
 	return gdImageColorAllocateAlpha (im, r, g, b, gdAlphaOpaque);
 }
 
-/*
-	Function: gdImageColorAllocateAlpha
-*/
+/**
+ * Function: gdImageColorAllocateAlpha
+ *
+ * Allocates a color
+ *
+ * This is typically used for palette images, but can be used for truecolor
+ * images as well.
+ *
+ * Parameters:
+ *   im - The image.
+ *   r  - The value of the red component.
+ *   g  - The value of the green component.
+ *   b  - The value of the blue component.
+ *
+ * Returns:
+ *   The color value.
+ *
+ * See also:
+ *   - <gdImageColorDeallocate>
+ */
 BGD_DECLARE(int) gdImageColorAllocateAlpha (gdImagePtr im, int r, int g, int b, int a)
 {
 	int i;
@@ -747,9 +862,21 @@ BGD_DECLARE(int) gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, i
 	return op;			/* Return newly allocated color */
 }
 
-/*
-	Function: gdImageColorDeallocate
-*/
+/**
+ * Function: gdImageColorDeallocate
+ *
+ * Removes a palette entry
+ *
+ * This is a no-op for truecolor images.
+ *
+ * Parameters:
+ *   im    - The image.
+ *   color - The palette index.
+ *
+ * See also:
+ *   - <gdImageColorAllocate>
+ *   - <gdImageColorAllocateAlpha>
+ */
 BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color)
 {
 	if (im->trueColor || (color >= gdMaxColors) || (color < 0)) {
@@ -759,9 +886,18 @@ BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color)
 	im->open[color] = 1;
 }
 
-/*
-	Function: gdImageColorTransparent
-*/
+/**
+ * Function: gdImageColorTransparent
+ *
+ * Sets the transparent color of the image
+ *
+ * Parameter:
+ *   im    - The image.
+ *   color - The color.
+ *
+ * See also:
+ *   - <gdImageGetTransparent>
+ */
 BGD_DECLARE(void) gdImageColorTransparent (gdImagePtr im, int color)
 {
 	if (color < 0) {
@@ -1092,6 +1228,10 @@ clip_1d (int *x0, int *y0, int *x1, int *y1, int mindim, int maxdim)
 
 /* end of line clipping code */
 
+/**
+ * Group: Pixels
+ */
+
 /*
 	Function: gdImageSetPixel
 */
@@ -1339,6 +1479,10 @@ BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
 		return p;
 	}
 }
+
+/**
+ * Group: Primitives
+ */
 
 /*
 	Function: gdImageAABlend
@@ -2653,6 +2797,10 @@ BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2,
 	_gdImageFilledVRectangle(im, x1, y1, x2, y2, color);
 }
 
+/**
+ * Group: Cloning and Copying
+ */
+
 /*
 	Function: gdImageClone
 */
@@ -3283,6 +3431,10 @@ BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
 	}
 }
 
+/**
+ * Group: Polygons
+ */
+
 /*
 	Function: gdImagePolygon
 */
@@ -3471,6 +3623,10 @@ BGD_DECLARE(void) gdImageFilledPolygon (gdImagePtr im, gdPointPtr p, int n, int 
 	}
 }
 
+/**
+ * Group: other
+ */
+
 static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t);
 
 /*
@@ -3561,8 +3717,20 @@ BGD_DECLARE(void) gdImageSetAntiAliasedDontBlend (gdImagePtr im, int c, int dont
 	im->AA_dont_blend = dont_blend;
 }
 
-/*
-	Function: gdImageInterlace
+/**
+ * Function: gdImageInterlace
+ *
+ * Sets whether an image is interlaced
+ *
+ * This is relevant only when saving the image in a format that supports
+ * interlacing.
+ *
+ * Parameters:
+ *   im           - The image.
+ *   interlaceArg - Whether the image is interlaced.
+ *
+ * See also:
+ *   - <gdImageGetInterlaced>
 */
 BGD_DECLARE(void) gdImageInterlace (gdImagePtr im, int interlaceArg)
 {
@@ -3759,25 +3927,56 @@ BGD_DECLARE(int) gdLayerMultiply (int dst, int src)
 		);
 }
 
-/*
-	Function: gdImageAlphaBlending
-*/
+/**
+ *	Function: gdImageAlphaBlending
+ *
+ *	Sets the alpha blending flag
+ *
+ *	The alpha blending flag is used for truecolor images only, and specifies
+ *	whether the alpha channel should be copied or applied each time a pixel
+ *	is drawn.
+ *
+ * Parameters:
+ *   im               - The image.
+ *   alphaBlendingArg - Whether the alpha blending flag should be set.
+ */
 BGD_DECLARE(void) gdImageAlphaBlending (gdImagePtr im, int alphaBlendingArg)
 {
 	im->alphaBlendingFlag = alphaBlendingArg;
 }
 
-/*
-	Function: gdImageSaveAlpha
-*/
+/**
+ * Function: gdImageSaveAlpha
+ *
+ * Sets the save alpha flag
+ *
+ * The save alpha flag specifies whether the alpha channel of the pixels should
+ * be saved. This is supported only for image formats that support full alpha
+ * transparency, e.g. PNG.
+ */
 BGD_DECLARE(void) gdImageSaveAlpha (gdImagePtr im, int saveAlphaArg)
 {
 	im->saveAlphaFlag = saveAlphaArg;
 }
 
-/*
-	Function: gdImageSetClip
-*/
+/**
+ * Function: gdImageSetClip
+ *
+ * Sets the clipping rectangle
+ *
+ * The clipping rectangle restricts the drawing area for following drawing
+ * operations.
+ *
+ * Parameters:
+ *   im - The image.
+ *   x1 - The x-coordinate of the upper left corner.
+ *   y1 - The y-coordinate of the upper left corner.
+ *   x2 - The x-coordinate of the lower right corner.
+ *   y2 - The y-coordinate of the lower right corner.
+ *
+ * See also:
+ *   - <gdImageGetClip>
+ */
 BGD_DECLARE(void) gdImageSetClip (gdImagePtr im, int x1, int y1, int x2, int y2)
 {
 	if (x1 < 0) {
@@ -3810,9 +4009,21 @@ BGD_DECLARE(void) gdImageSetClip (gdImagePtr im, int x1, int y1, int x2, int y2)
 	im->cy2 = y2;
 }
 
-/*
-	Function: gdImageGetClip
-*/
+/**
+ * Function: gdImageGetClip
+ *
+ * Gets the current clipping rectangle
+ *
+ * Parameters:
+ *   im - The image.
+ *   x1P - (out) The x-coordinate of the upper left corner.
+ *   y1P - (out) The y-coordinate of the upper left corner.
+ *   x2P - (out) The x-coordinate of the lower right corner.
+ *   y2P - (out) The y-coordinate of the lower right corner.
+ *
+ * See also:
+ *   - <gdImageSetClip>
+ */
 BGD_DECLARE(void) gdImageGetClip (gdImagePtr im, int *x1P, int *y1P, int *x2P, int *y2P)
 {
 	*x1P = im->cx1;
@@ -3992,11 +4203,20 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 }
 
 
-/*
-	Function: gdImagePaletteToTrueColor
-	
-	Convert a palette image to true color.
-*/
+/**
+ * Function: gdImagePaletteToTrueColor
+ *
+ * Convert a palette image to true color
+ *
+ * Parameters:
+ *   src - The image.
+ *
+ * Returns:
+ *   Non-zero if the conversion succeeded, zero otherwise.
+ *
+ * See also:
+ *   - <gdImageTrueColorToPalette>
+ */
 BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src)
 {
 	unsigned int y;
