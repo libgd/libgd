@@ -52,12 +52,6 @@ AC_SUBST(GDLIB_LT_CURRENT)
 AC_SUBST(GDLIB_LT_REVISION)
 AC_SUBST(GDLIB_LT_AGE)
 
-#Expanded by tests later in this file. TBB 2.0.26
-#2.0.28: GIF is standard now. Doesn't depend on anything else,
-#so we always build it.
-FEATURES="GD_GIF GD_GIFANIM GD_OPENPOLYGON"
-AC_SUBST(FEATURES)
-
 AM_INIT_AUTOMAKE([1.11 foreign dist-xz -Wall -Werror subdir-objects])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
@@ -173,7 +167,6 @@ m4_define([GD_LIB_CHECK], [dnl
 
     if test "$gd_found_lib" = "yes"; then
       AC_DEFINE([HAVE_$1], [1], [Define if you have $3])
-      AS_VAR_APPEND([FEATURES], [" GD_$2"])
       dnl Merge the flags into the main LIBS/CPPFLAGS.
       $1][_LIBS="$gd_lib_ldflags $][$1][_LIBS"
       $1][_CFLAGS="$gd_lib_cflags $][$1][_CFLAGS"
@@ -334,7 +327,6 @@ AC_CONFIG_FILES([Makefile
                 src/Makefile
                 tests/Makefile
                 config/Makefile
-                config/gdlib-config
                 config/gdlib.pc])
 
 AC_OUTPUT
