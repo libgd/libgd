@@ -1550,6 +1550,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 			return FALSE;
 		} else {
 			gdImageCopy(oim, nim, 0, 0, 0, 0, oim->sx, oim->sy);
+			oim->trueColor = 0;
 			gdImageDestroy(nim);
 		}
 		return TRUE;
