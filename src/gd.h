@@ -227,13 +227,34 @@ extern "C" {
 BGD_DECLARE(int) gdAlphaBlend (int dest, int src);
 BGD_DECLARE(int) gdLayerOverlay (int dest, int src);
 BGD_DECLARE(int) gdLayerMultiply (int dest, int src);
-	
+
+
+/**
+ * Group: Color Quantization
+ *
+ * Enum: gdPaletteQuantizationMethod
+ *
+ * Constants:
+ *   GD_QUANT_DEFAULT  - The default quantization method.
+ *   GD_QUANT_JQUANT   - libjpeg's old median cut. Fast, but only uses 16-bit
+ *                       color.
+ *   GD_QUANT_NEUQUANT - NeuQuant - approximation using Kohonen neural network.
+ *   GD_QUANT_LIQ      - A combination of algorithms used in libimagequant
+ *                       aiming for the highest quality at cost of speed.
+ *
+ * Note that GD_QUANT_JQUANT does not retain the alpha channel, and
+ * GD_QUANT_DEFAULT only does so if libimagequant is available.
+ *
+ * See also:
+ *   - <gdImageTrueColorToPaletteSetMethod>
+ */
 enum gdPaletteQuantizationMethod {
 	GD_QUANT_DEFAULT = 0,
-	GD_QUANT_JQUANT = 1,  /* libjpeg's old median cut. Fast, but only uses 16-bit color. */
-	GD_QUANT_NEUQUANT = 2, /* neuquant - approximation using kohonen neural network. */
-	GD_QUANT_LIQ = 3 /* combination of algorithms used in libimagequant/pngquant2 aiming for highest quality at cost of speed */
+	GD_QUANT_JQUANT = 1,
+	GD_QUANT_NEUQUANT = 2,
+	GD_QUANT_LIQ = 3
 };
+
 
 /**
  * Group: Transform
