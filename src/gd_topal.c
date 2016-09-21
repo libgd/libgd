@@ -28,6 +28,11 @@
  * fundamental assumptions even hold with an irregularly spaced color map.
  */
 
+/**
+ * File: Color Quantization
+ *
+ * Functions for truecolor to palette conversion
+ */
 
 /*
  * THOMAS BOUTELL & BAREND GEHRELS, february 2003
@@ -1365,16 +1370,26 @@ zeroHistogram (hist3d histogram)
 }
 
 
-/*
-	Function: gdImageTrueColorToPaletteSetMethod
-
-	Selects quantization method used for subsequent <gdImageTrueColorToPalette> calls.
-	See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT, GD_QUANT_LIQ).
-	Speed is from 1 (highest quality) to 10 (fastest).
-	Speed 0 selects method-specific default (recommended).
-
-	Returns FALSE if the given method is invalid or not available.
-*/
+/**
+ * Function: gdImageTrueColorToPaletteSetMethod
+ *
+ * Selects the quantization method
+ *
+ * That quantization method is used for all subsequent
+ * <gdImageTrueColorToPalette> and <gdImageCreatePaletteFromTrueColor> calls.
+ *
+ * Parameters:
+ *   im     - The image.
+ *   method - The quantization method, see <gdPaletteQuantizationMethod>.
+ *   speed  - The quantization speed between 1 (highest quality) and
+ *            10 (fastest). 0 selects a method-specific default (recommended).
+ *   
+ * Returns:
+ *   Zero if the given method is invalid or not available; non-zero otherwise.
+ *
+ * See also:
+ *   - <gdImageTrueColorToPaletteSetQuality>
+ */
 BGD_DECLARE(int) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, int speed)
 {
 #ifndef HAVE_LIBIMAGEQUANT
@@ -1394,15 +1409,25 @@ BGD_DECLARE(int) gdImageTrueColorToPaletteSetMethod (gdImagePtr im, int method, 
 	return TRUE;
 }
 
-/*
-	Function: gdImageTrueColorToPaletteSetQuality
-
-	Chooses quality range that subsequent call to <gdImageTrueColorToPalette> will aim for.
-	Min and max quality is in range 1-100 (1 = ugly, 100 = perfect). Max must be higher than min.
-	If palette cannot represent image with at least min_quality, then image will remain true-color.
-	If palette can represent image with quality better than max_quality, then lower number of colors will be used.
-	This function has effect only when GD_QUANT_LIQ method has been selected.
-*/
+/**
+ * Function: gdImageTrueColorToPaletteSetQuality
+ *
+ * Chooses a quality range for quantization
+ *
+ * That quality range is used in all subsequent calls to
+ * <gdImageTrueColorToPalette> and <gdImageCreatePaletteFromTrueColor>
+ * if the quantization method is <GD_QUANT_LIQ>.
+ *
+ * Parameters:
+ *   im          - The image.
+ *   min_quality - The minimum quality in range 1-100 (1 = ugly, 100 = perfect).
+ *                 If the palette cannot represent the image with at least
+ *                 min_quality, then no conversion is done.
+ *   max_quality - The maximum quality in range 1-100 (1 = ugly, 100 = perfect),
+ *                 which must be higher than the min_quality. If the palette can
+ *                 represent the image with a quality better than max_quality,
+ *                 then fewer colors than requested will be used.
+ */
 BGD_DECLARE(void) gdImageTrueColorToPaletteSetQuality (gdImagePtr im, int min_quality, int max_quality)
 {
 	if (min_quality >= 0 && min_quality <= 100 &&
@@ -1414,9 +1439,24 @@ BGD_DECLARE(void) gdImageTrueColorToPaletteSetQuality (gdImagePtr im, int min_qu
 
 static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colorsWanted, gdImagePtr *cimP);
 
-/*
-	Function: gdImageCreatePaletteFromTrueColor
-*/
+/**
+ * Function: gdImageCreatePaletteFromTrueColor
+ *
+ * Creates a new palette image from a truecolor image
+ *
+ * Parameters:
+ *   im           - The image.
+ *   dither       - Whether dithering should be applied.
+ *   colorsWanted - The number of desired palette entries.
+ *
+ * Returns:
+ *   A newly create palette image; NULL on failure.
+ *   
+ * See also:
+ *   - <gdImageCreatePaletteFromTrueColor>
+ *   - <gdImageTrueColorToPaletteSetMethod>
+ *   - <gdImageNeuQuant>
+ */
 BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int dither, int colorsWanted)
 {
 	gdImagePtr nim;
@@ -1429,7 +1469,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int di
 /**
  * Function: gdImageTrueColorToPalette
  *
- * Converts a truecolor image to a palette image.
+ * Converts a truecolor image to a palette image
  *
  * Parameters:
  *   im           - The image.
@@ -1440,6 +1480,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int di
  *   Non-zero if the conversion succeeded, zero otherwise.
  *
  * See also:
+ *   - <gdImageCreatePaletteFromTrueColor>
  *   - <gdImageTrueColorToPaletteSetMethod>
  *   - <gdImagePaletteToTrueColor>
  */
