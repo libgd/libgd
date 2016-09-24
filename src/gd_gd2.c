@@ -21,6 +21,7 @@
  *
  * Structure of a GD2 image file:
  *  - file header
+ *  - chunk headers (only for compressed data)
  *  - color header (either truecolor or palette)
  *  - chunks of image data (chunk-row-major, top to bottom, left to right)
  *
@@ -41,6 +42,12 @@
  *  2 - compressed palette image data
  *  3 - raw truecolor image data
  *  4 - compressed truecolor image data
+ *
+ * Chunk header:
+ *  offset - 1 dword
+ *  size   - 1 dword
+ *
+ * There are x_chunk_count * y_chunk_count chunk headers. 
  *
  * Truecolor image color header:
  *  truecolor   - 1 byte (always "\001")
