@@ -49,6 +49,7 @@ if (BUILD_TEST)
 		gdimagefilltoborder
 		gdimagefilter
 		gdimageflip
+		gdimagegammacorrect
 		gdimagegrayscale
 		gdimageline
 		gdimagenegate

@@ -1,0 +1,8 @@
+libgd_test_programs += \
+	gdimagegammacorrect/basic
+
+EXTRA_DIST += \
+	gdimagegammacorrect/CMakeLists.txt \
+	gdimagegammacorrect/basic_0.5.png \
+	gdimagegammacorrect/basic_1.0.png \
+	gdimagegammacorrect/basic_2.0.png

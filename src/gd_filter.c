@@ -413,22 +413,55 @@ BGD_DECLARE(int) gdImageContrast(gdImagePtr src, double contrast)
 
 
 /**
- * Function: gdImageColor
+ * Function: gdImageGammaCorrect
  *
- * Change channel values of an image
+ * Apply gamma correction to an image
  *
  * Parameters:
- *   src   - The image.
- *   red   - The value to add to the red channel of all pixels.
- *   green - The value to add to the green channel of all pixels.
- *   blue  - The value to add to the blue channel of all pixels.
- *   alpha - The value to add to the alpha channel of all pixels.
+ *   im    - The image.
+ *   gamma - The gamma value (must be positive).
  *
  * Returns:
- *   Non-zero on success, zero on failure.
- *
- * See also:
- *   - <gdImageBrightness>
+ *   Non-zero on success; zero on failure.
+ */
+BGD_DECLARE(int) gdImageGammaCorrect(gdImagePtr im, double gamma)
+{
+	if (gamma <= 0) {
+		return 0;
+	}
+
+	if (gdImageTrueColor(im)) {
+		int x, y, c;
+
+		for (y = 0; y < gdImageSY(im); y++)	{
+			for (x = 0; x < gdImageSX(im); x++)	{
+				c = gdImageGetPixel(im, x, y);
+				gdImageSetPixel(im, x, y,
+					gdTrueColorAlpha(
+						(int) ((pow((gdTrueColorGetRed(c)   / 255.0), gamma) * 255) + .5),
+						(int) ((pow((gdTrueColorGetGreen(c) / 255.0), gamma) * 255) + .5),
+						(int) ((pow((gdTrueColorGetBlue(c)  / 255.0), gamma) * 255) + .5),
+						gdTrueColorGetAlpha(c)
+					)
+				);
+			}
+		}
+	} else {
+		int i;
+
+		for (i = 0; i < gdImageColorsTotal(im); i++) {
+			im->red[i]   = (int)((pow((im->red[i]   / 255.0), gamma) * 255) + .5);
+			im->green[i] = (int)((pow((im->green[i] / 255.0), gamma) * 255) + .5);
+			im->blue[i]  = (int)((pow((im->blue[i]  / 255.0), gamma) * 255) + .5);
+		}
+	}
+
+	return 1;
+}
+
+
+/*
+	Function: gdImageColor
  */
 BGD_DECLARE(int) gdImageColor(gdImagePtr src, const int red, const int green, const int blue, const int alpha)
 {

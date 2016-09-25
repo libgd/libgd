@@ -1290,6 +1290,7 @@ BGD_DECLARE(int) gdImageConvolution(gdImagePtr src, float filter[3][3], float fi
 BGD_DECLARE(int) gdImageColor(gdImagePtr src, const int red, const int green, const int blue, const int alpha);
 BGD_DECLARE(int) gdImageContrast(gdImagePtr src, double contrast);
 BGD_DECLARE(int) gdImageBrightness(gdImagePtr src, int brightness);
+BGD_DECLARE(int) gdImageGammaCorrect(gdImagePtr src, double gamma);
 BGD_DECLARE(int) gdImageGrayScale(gdImagePtr src);
 BGD_DECLARE(int) gdImageNegate(gdImagePtr src);
 
