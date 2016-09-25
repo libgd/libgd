@@ -1,0 +1,9 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagegrayscale/basic
+endif
+
+EXTRA_DIST += \
+	gdimagegrayscale/CMakeLists.txt \
+	gdimagegrayscale/basic.png \
+	gdimagegrayscale/basic_exp.png

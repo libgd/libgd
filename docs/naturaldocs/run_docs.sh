@@ -67,6 +67,7 @@ sed -e "s/@VERSION@/$VERSION/g" preamble.txt > tmp/preamble.txt
 # Run naturaldocs to create the manual.
 $(nd) --rebuild --rebuild-output --documented-only \
     -i tmp/ \
+    -img images/ \
     -o html html  \
     --project project/ \
     -s Default libgd

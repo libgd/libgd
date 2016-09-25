@@ -24,13 +24,17 @@ if (BUILD_TEST)
 		gd
 		gd2
 		gdimagearc
+		gdimagebrightness
 		gdimageclone
+		gdimagecolor
 		gdimagecolorclosest
 		gdimagecolordeallocate
 		gdimagecolorexact
 		gdimagecolorreplace
 		gdimagecolorresolve
 		gdimagecolortransparent
+		gdimagecontrast
+		gdimageconvolution
 		gdimagecopy
 		gdimagecopyresampled
 		gdimagecopyrotated
@@ -43,7 +47,9 @@ if (BUILD_TEST)
 		gdimagefilledrectangle
 		gdimagefilltoborder
 		gdimagefilter
+		gdimagegrayscale
 		gdimageline
+		gdimagenegate
 		gdimageopenpolygon
 		gdimagepixelate
 		gdimagepolygon
