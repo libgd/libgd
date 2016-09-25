@@ -1,0 +1,10 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagebrightness/basic
+endif
+
+EXTRA_DIST += \
+	gdimagebrightness/CMakeLists.txt \
+	gdimagebrightness/basic.png \
+	gdimagebrightness/basic+100.png \
+	gdimagebrightness/basic-100.png

@@ -19,13 +19,17 @@ include freetype/Makemodule.am
 include gd/Makemodule.am
 include gd2/Makemodule.am
 include gdimagearc/Makemodule.am
+include gdimagebrightness/Makemodule.am
 include gdimageclone/Makemodule.am
+include gdimagecolor/Makemodule.am
 include gdimagecolorclosest/Makemodule.am
 include gdimagecolordeallocate/Makemodule.am
 include gdimagecolorexact/Makemodule.am
 include gdimagecolorreplace/Makemodule.am
 include gdimagecolorresolve/Makemodule.am
 include gdimagecolortransparent/Makemodule.am
+include gdimagecontrast/Makemodule.am
+include gdimageconvolution/Makemodule.am
 include gdimagecopy/Makemodule.am
 include gdimagecopyresampled/Makemodule.am
 include gdimagecopyrotated/Makemodule.am
@@ -38,7 +42,9 @@ include gdimagefilledpolygon/Makemodule.am
 include gdimagefilledrectangle/Makemodule.am
 include gdimagefilltoborder/Makemodule.am
 include gdimagefilter/Makemodule.am
+include gdimagegrayscale/Makemodule.am
 include gdimageline/Makemodule.am
+include gdimagenegate/Makemodule.am
 include gdimageopenpolygon/Makemodule.am
 include gdimagepixelate/Makemodule.am
 include gdimagepolygon/Makemodule.am

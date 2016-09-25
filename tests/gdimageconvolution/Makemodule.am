@@ -1,0 +1,12 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimageconvolution/basic
+endif
+
+EXTRA_DIST += \
+	gdimageconvolution/CMakeLists.txt \
+	gdimageconvolution/basic.png \
+	gdimageconvolution/basic_edge_detect_quick.png \
+	gdimageconvolution/basic_emboss.png \
+	gdimageconvolution/basic_mean_removal.png \
+	gdimageconvolution/basic_smooth.png

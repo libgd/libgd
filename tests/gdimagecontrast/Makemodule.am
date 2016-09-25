@@ -1,0 +1,10 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagecontrast/basic
+endif
+
+EXTRA_DIST += \
+	gdimagecontrast/CMakeLists.txt \
+	gdimagecontrast/basic.png \
+	gdimagecontrast/basic+50.png \
+	gdimagecontrast/basic-50.png
