@@ -4165,7 +4165,7 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 
 	if (dx == 0 && dy == 0) {
 		/* TBB: allow setting points */
-		gdImageSetAAPixelColor(im, x1, y1, col, 0xFF);
+		gdImageSetPixel(im, x1, y1, col);
 		return;
 	} else {
 		double ag;

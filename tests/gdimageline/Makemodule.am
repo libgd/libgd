@@ -6,6 +6,7 @@ libgd_test_programs += \
 	gdimageline/bug00072 \
 	gdimageline/bug00077 \
 	gdimageline/bug00111 \
+	gdimageline/bug00315 \
 	gdimageline/gdimageline_aa \
 	gdimageline/gdimageline_bug5 \
 	gdimageline/gdImageAALine_thickness \
@@ -17,6 +18,7 @@ EXTRA_DIST += \
 	gdimageline/bug00072_exp.png \
 	gdimageline/bug00077_exp.png \
 	gdimageline/bug00111_exp.png \
+	gdimageline/bug00315_exp.png \
 	gdimageline/gdimageline_aa_a_1_exp.png \
 	gdimageline/gdimageline_aa_b_0_exp.png \
 	gdimageline/gdimageline_aa_c_0_exp.png \
