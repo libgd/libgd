@@ -5,7 +5,8 @@ libgd_test_programs += \
 	gdimagefilledpolygon/gdimagefilledpolygon1 \
 	gdimagefilledpolygon/gdimagefilledpolygon2 \
 	gdimagefilledpolygon/gdimagefilledpolygon3 \
-	gdimagefilledpolygon/php_bug_64641
+	gdimagefilledpolygon/php_bug_64641 \
+	gdimagefilledpolygon/self_intersecting
 endif
 
 EXTRA_DIST += \
@@ -15,4 +16,5 @@ EXTRA_DIST += \
 	gdimagefilledpolygon/gdimagefilledpolygon1.png \
 	gdimagefilledpolygon/gdimagefilledpolygon2.png \
 	gdimagefilledpolygon/gdimagefilledpolygon3.png \
-	gdimagefilledpolygon/php_bug_64641.png
+	gdimagefilledpolygon/php_bug_64641.png \
+	gdimagefilledpolygon/self_intersecting_exp.png
