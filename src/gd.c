@@ -3469,8 +3469,8 @@ BGD_DECLARE(void) gdImagePolygon (gdImagePtr im, gdPointPtr p, int n, int c)
  *
  * Parameters:
  *   im - The image.
- *   p  - The vertices.
- *   n  - The number of vertices as array of <gdPoint>s.
+ *   p  - The vertices as array of <gdPoint>s.
+ *   n  - The number of vertices.
  *   c  - The color
  *
  * See also:
@@ -3507,6 +3507,10 @@ BGD_DECLARE(void) gdImageOpenPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
  * Function: gdImageFilledPolygon
  *
  * Draws a filled polygon
+ *
+ * The polygon is filled using the even-odd fillrule what can leave unfilled
+ * regions inside of self-intersecting polygons. This behavior might change in
+ * a future version.
  *
  * Parameters:
  *   im - The image.
