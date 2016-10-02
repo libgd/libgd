@@ -3906,9 +3906,20 @@ BGD_DECLARE(int) gdImageCompare (gdImagePtr im1, gdImagePtr im2)
 	of gdAlphaBlend(), which merges alpha in the
 	destination color much better. */
 
-/*
-	Function: gdAlphaBlend
-*/
+/**
+ * Function: gdAlphaBlend
+ *
+ * Blend two colors
+ *
+ * Parameters:
+ *   dst - The color to blend onto.
+ *   src - The color to blend.
+ *
+ * See also:
+ *   - <gdImageAlphaBlending>
+ *   - <gdLayerOverlay>
+ *   - <gdLayerMultiply>
+ */
 BGD_DECLARE(int) gdAlphaBlend (int dst, int src)
 {
 	int src_alpha = gdTrueColorGetAlpha(src);
@@ -3956,9 +3967,20 @@ BGD_DECLARE(int) gdAlphaBlend (int dst, int src)
 
 static int gdAlphaOverlayColor (int src, int dst, int max );
 
-/*
-	Function: gdLayerOverlay
-*/
+/**
+ * Function: gdLayerOverlay
+ *
+ * Overlay two colors
+ *
+ * Parameters:
+ *   dst - The color to overlay onto.
+ *   src - The color to overlay.
+ *
+ * See also:
+ *   - <gdImageAlphaBlending>
+ *   - <gdAlphaBlend>
+ *   - <gdLayerMultiply>
+ */
 BGD_DECLARE(int) gdLayerOverlay (int dst, int src)
 {
 	int a1, a2;
@@ -3984,11 +4006,20 @@ static int gdAlphaOverlayColor (int src, int dst, int max )
 	}
 }
 
-/*
-	Function: gdLayerMultiply
-
-	Apply 'multiply' effect.
-*/
+/**
+ * Function: gdLayerMultiply
+ *
+ * Overlay two colors with multiply effect
+ *
+ * Parameters:
+ *   dst - The color to overlay onto.
+ *   src - The color to overlay.
+ *
+ * See also:
+ *   - <gdImageAlphaBlending>
+ *   - <gdAlphaBlend>
+ *   - <gdLayerOverlay>
+ */
 BGD_DECLARE(int) gdLayerMultiply (int dst, int src)
 {
 	int a1, a2, r1, r2, g1, g2, b1, b2;
@@ -4014,15 +4045,16 @@ BGD_DECLARE(int) gdLayerMultiply (int dst, int src)
 /**
  *	Function: gdImageAlphaBlending
  *
- *	Sets the alpha blending flag
+ *	Set the effect for subsequent drawing operations
  *
- *	The alpha blending flag is used for truecolor images only, and specifies
- *	whether the alpha channel should be copied or applied each time a pixel
- *	is drawn.
+ *	Note that the effect is used for truecolor images only.
  *
  * Parameters:
  *   im               - The image.
- *   alphaBlendingArg - Whether the alpha blending flag should be set.
+ *   alphaBlendingArg - The effect.
+ *
+ * See also:
+ *   - <Effects>
  */
 BGD_DECLARE(void) gdImageAlphaBlending (gdImagePtr im, int alphaBlendingArg)
 {
