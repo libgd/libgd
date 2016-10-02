@@ -205,6 +205,28 @@ extern "C" {
  */
 #define gdTrueColorGetBlue(c) ((c) & 0x0000FF)
 
+/**
+ * Group: Effects
+ *
+ * The layering effect
+ * 
+ * When pixels are drawn the new colors are "mixed" with the background
+ * depending on the effect.
+ *
+ * Note that the effect does not apply to palette images, where pixels
+ * are always replaced.
+ *
+ * Modes:
+ *   gdEffectReplace    - replace pixels
+ *   gdEffectAlphaBlend - blend pixels, see <gdAlphaBlend>
+ *   gdEffectNormal     - default mode; same as gdEffectAlphaBlend
+ *   gdEffectOverlay    - overlay pixels, see <gdLayerOverlay>
+ *   gdEffectMultiply   - overlay pixels with multiply effect, see
+ *                        <gdLayerMultiply>
+ *
+ * See also:
+ *   - <gdImageAlphaBlending>
+ */
 #define gdEffectReplace 0
 #define gdEffectAlphaBlend 1
 #define gdEffectNormal 2

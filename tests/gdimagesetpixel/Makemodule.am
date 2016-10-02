@@ -1,7 +1,9 @@
 libgd_test_programs += \
+	gdimagesetpixel/alpha_blending \
 	gdimagesetpixel/bug00186 \
 	gdimagesetpixel/gdeffectmultiply \
 	gdimagesetpixel/gdeffectoverlay
 
 EXTRA_DIST += \
-	gdimagesetpixel/CMakeLists.txt
+	gdimagesetpixel/CMakeLists.txt \
+	gdimagesetpixel/alphablending_exp.png
