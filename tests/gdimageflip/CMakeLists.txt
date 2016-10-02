@@ -1,0 +1,5 @@
+LIST(APPEND TESTS_FILES
+	gdimageflip
+)
+
+ADD_GD_TESTS()

@@ -47,6 +47,7 @@ if (BUILD_TEST)
 		gdimagefilledrectangle
 		gdimagefilltoborder
 		gdimagefilter
+		gdimageflip
 		gdimagegrayscale
 		gdimageline
 		gdimagenegate
