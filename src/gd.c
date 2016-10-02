@@ -3755,9 +3755,26 @@ BGD_DECLARE(void) gdImageSetTile (gdImagePtr im, gdImagePtr tile)
 	}
 }
 
-/*
-	Function: gdImageSetAntiAliased
-*/
+/**
+ * Function: gdImageSetAntiAliased
+ *
+ * Set the color for subsequent anti-aliased drawing
+ *
+ * If <gdAntiAliased> is passed as color to drawing operations that support
+ * anti-aliased drawing (such as <gdImageLine> and <gdImagePolygon>), the actual
+ * color to be used can be set with this function.
+ *
+ * Example: draw an anti-aliased blue line:
+ * | gdImageSetAntiAliased(im, gdTrueColorAlpha(0, 0, gdBlueMax, gdAlphaOpaque));
+ * | gdImageLine(im, 10,10, 20,20, gdAntiAliased);
+ *
+ * Parameters:
+ *   im - The image.
+ *   c  - The color.
+ *
+ * See also:
+ *   - <gdImageSetAntiAliasedDontBlend>
+ */
 BGD_DECLARE(void) gdImageSetAntiAliased (gdImagePtr im, int c)
 {
 	im->AA = 1;
@@ -3765,9 +3782,20 @@ BGD_DECLARE(void) gdImageSetAntiAliased (gdImagePtr im, int c)
 	im->AA_dont_blend = -1;
 }
 
-/*
-	Function: gdImageSetAntiAliasedDontBlend
-*/
+/**
+ * Function: gdImageSetAntiAliasedDontBlend
+ *
+ * Set the color and "dont_blend" color for subsequent anti-aliased drawing
+ *
+ * This extended variant of <gdImageSetAntiAliased> allows to also specify a
+ * (background) color that will not be blended in anti-aliased drawing
+ * operations.
+ *
+ * Parameters:
+ *   im         - The image.
+ *   c          - The color.
+ *   dont_blend - Whether to blend.
+ */
 BGD_DECLARE(void) gdImageSetAntiAliasedDontBlend (gdImagePtr im, int c, int dont_blend)
 {
 	im->AA = 1;
