@@ -1,0 +1,11 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimageflip/gdimageflip
+endif
+
+EXTRA_DIST += \
+	gdimageflip/CMakeLists.txt \
+	gdimageflip/remi.png \
+	gdimageflip/gdimageflipvertical_exp.png \
+	gdimageflip/gdimagefliphorizontal_exp.png \
+	gdimageflip/gdimageflipboth_exp.png
