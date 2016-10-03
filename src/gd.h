@@ -257,7 +257,8 @@ BGD_DECLARE(int) gdLayerMultiply (int dest, int src);
  * Enum: gdPaletteQuantizationMethod
  *
  * Constants:
- *   GD_QUANT_DEFAULT  - The default quantization method.
+ *   GD_QUANT_DEFAULT  - GD_QUANT_LIQ if libimagequant is available,
+ *                       GD_QUANT_JQUANT otherwise.
  *   GD_QUANT_JQUANT   - libjpeg's old median cut. Fast, but only uses 16-bit
  *                       color.
  *   GD_QUANT_NEUQUANT - NeuQuant - approximation using Kohonen neural network.
@@ -265,7 +266,7 @@ BGD_DECLARE(int) gdLayerMultiply (int dest, int src);
  *                       aiming for the highest quality at cost of speed.
  *
  * Note that GD_QUANT_JQUANT does not retain the alpha channel, and
- * GD_QUANT_DEFAULT only does so if libimagequant is available.
+ * GD_QUANT_NEUQUANT does not support dithering.
  *
  * See also:
  *   - <gdImageTrueColorToPaletteSetMethod>
