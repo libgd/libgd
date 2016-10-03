@@ -1,3 +1,11 @@
+/**
+ * Regression test for <https://github.com/libgd/libgd/issues/319>
+ *
+ * We're testing that the rotated image actually has the requested background
+ * color.
+ */
+
+
 #include "gd.h"
 #include "gdtest.h"
 
@@ -17,7 +25,7 @@ int main()
 	dst = gdImageRotateInterpolated(src, 30.0, black);
 
 	path = gdTestFilePath2("gdimagerotate", "php_bug_65070_exp.png");
-    gdAssertImageEqualsToFile(path, dst);
+	gdAssertImageEqualsToFile(path, dst);
 	gdFree(path);
 
 	gdImageDestroy(src);
