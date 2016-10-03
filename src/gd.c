@@ -4387,6 +4387,12 @@ BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src)
 	src->pixels = NULL;
 	src->alphaBlendingFlag = 0;
 	src->saveAlphaFlag = 1;
+
+	if (src->transparent >= 0) {
+		const unsigned char c = src->transparent;
+		src->transparent =  gdTrueColorAlpha(src->red[c], src->green[c], src->blue[c], src->alpha[c]);
+	}
+
 	return 1;
 
 clean_on_error:

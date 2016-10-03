@@ -1686,13 +1686,6 @@ gdImageRotateNearestNeighbour(gdImagePtr src, const float degrees,
 	gdRect bbox;
 	int new_height, new_width;
 
-	/* impact perf a bit, but not that much. Implementation for palette
-	   images can be done at a later point.
-	*/
-	if (src->trueColor == 0) {
-		gdImagePaletteToTrueColor(src);
-	}
-
     gdRotatedImageSize(src, degrees, &bbox);
     new_width = bbox.width;
     new_height = bbox.height;
@@ -1750,13 +1743,6 @@ gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
 		return NULL;
 	}
 
-	/* impact perf a bit, but not that much. Implementation for palette
-	   images can be done at a later point.
-	*/
-	if (src->trueColor == 0) {
-		gdImagePaletteToTrueColor(src);
-	}
-
 	if (src->interpolation == NULL) {
 		gdImageSetInterpolationMethod(src, GD_DEFAULT);
 	}
@@ -1805,6 +1791,16 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 
 	if (bgcolor < 0) {
 		return NULL;
+	}
+
+	/* impact perf a bit, but not that much. Implementation for palette
+	   images can be done at a later point.
+	*/
+	if (src->trueColor == 0) {
+		if (bgcolor < gdMaxColors) {
+			bgcolor =  gdTrueColorAlpha(src->red[bgcolor], src->green[bgcolor], src->blue[bgcolor], src->alpha[bgcolor]);
+		}
+		gdImagePaletteToTrueColor(src);
 	}
 
 	/* 0 && 90 degrees multiple rotation, 0 rotation simply clones the return image and convert it

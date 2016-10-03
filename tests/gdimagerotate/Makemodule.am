@@ -5,7 +5,8 @@ endif
 
 if HAVE_LIBPNG
 libgd_test_programs += \
-	gdimagerotate/php_bug_64898
+	gdimagerotate/php_bug_64898 \
+	gdimagerotate/php_bug_65070
 endif
 
 EXTRA_DIST += \
@@ -25,4 +26,6 @@ EXTRA_DIST += \
 	gdimagerotate/bug00067_180_exp.png \
 	gdimagerotate/php_bug_64898.png \
 	gdimagerotate/php_bug_64898_exp.png \
+	gdimagerotate/php_bug_65070.gif \
+	gdimagerotate/php_bug_65070_exp.png \
 	gdimagerotate/remirh128.png
