@@ -3943,9 +3943,19 @@ BGD_DECLARE(void) gdImageInterlace (gdImagePtr im, int interlaceArg)
 	im->interlace = interlaceArg;
 }
 
-/*
-	Function: gdImageCompare
-*/
+/**
+ * Function: gdImageCompare
+ *
+ * Compare two images
+ *
+ * Parameters:
+ *   im1 - An image.
+ *   im2 - Another image.
+ *
+ * Returns:
+ *   A bitmask of <Image Comparison> flags where each set flag signals
+ *   which attributes of the images are different.
+ */
 BGD_DECLARE(int) gdImageCompare (gdImagePtr im1, gdImagePtr im2)
 {
 	int x, y;

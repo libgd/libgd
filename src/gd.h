@@ -1581,15 +1581,32 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
 */
 BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine[6], gdRectPtr bbox);
 
-#define GD_CMP_IMAGE		1	/* Actual image IS different */
-#define GD_CMP_NUM_COLORS	2	/* Number of Colours in pallette differ */
-#define GD_CMP_COLOR		4	/* Image colours differ */
-#define GD_CMP_SIZE_X		8	/* Image width differs */
-#define GD_CMP_SIZE_Y		16	/* Image heights differ */
-#define GD_CMP_TRANSPARENT	32	/* Transparent colour */
-#define GD_CMP_BACKGROUND	64	/* Background colour */
-#define GD_CMP_INTERLACE	128	/* Interlaced setting */
-#define GD_CMP_TRUECOLOR	256	/* Truecolor vs palette differs */
+/**
+ * Group: Image Comparison
+ *
+ * Constants:
+ *   GD_CMP_IMAGE       - Actual image IS different
+ *   GD_CMP_NUM_COLORS  - Number of colors in pallette differ
+ *   GD_CMP_COLOR       - Image colors differ
+ *   GD_CMP_SIZE_X      - Image width differs
+ *   GD_CMP_SIZE_Y      - Image heights differ
+ *   GD_CMP_TRANSPARENT - Transparent color differs
+ *   GD_CMP_BACKGROUND  - Background color differs
+ *   GD_CMP_INTERLACE   - Interlaced setting differs
+ *   GD_CMP_TRUECOLOR   - Truecolor vs palette differs
+ *
+ * See also:
+ *   - <gdImageCompare>
+ */
+#define GD_CMP_IMAGE		1
+#define GD_CMP_NUM_COLORS	2
+#define GD_CMP_COLOR		4
+#define GD_CMP_SIZE_X		8
+#define GD_CMP_SIZE_Y		16
+#define GD_CMP_TRANSPARENT	32
+#define GD_CMP_BACKGROUND	64
+#define GD_CMP_INTERLACE	128
+#define GD_CMP_TRUECOLOR	256
 
 /* resolution affects ttf font rendering, particularly hinting */
 #define GD_RESOLUTION           96      /* pixels per inch */
