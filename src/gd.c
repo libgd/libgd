@@ -2802,9 +2802,19 @@ BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2,
  * Group: Cloning and Copying
  */
 
-/*
-	Function: gdImageClone
-*/
+/**
+ * Function: gdImageClone
+ *
+ * Clones an image
+ *
+ * Creates an exact duplicate of the given image.
+ *
+ * Parameters:
+ *   src - The source image.
+ *
+ * Returns:
+ *   The cloned image on success, NULL on failure.
+ */
 BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 	gdImagePtr dst;
 	register int i, x;
@@ -2900,9 +2910,25 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 	return dst;
 }
 
-/*
-	Function: gdImageCopy
-*/
+/**
+ * Function: gdImageCopy
+ *
+ * Copy an area of an image to another image
+ *
+ * Parameters:
+ *   dst  - The destination image.
+ *   src  - The source image.
+ *   dstX - The x-coordinate of the upper left corner to copy to.
+ *   dstY - The y-coordinate of the upper left corner to copy to.
+ *   srcX - The x-coordinate of the upper left corner to copy from.
+ *   srcY - The y-coordinate of the upper left corner to copy from.
+ *   w    - The width of the area to copy.
+ *   h    - The height of the area to copy.
+ *
+ * See also:
+ *   - <gdImageCopyMerge>
+ *   - <gdImageCopyMergeGray>
+ */
 BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
 							   int srcY, int w, int h)
 {
@@ -2990,12 +3016,32 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 	}
 }
 
-/*
-	Function: gdImageCopyMerge
-
-	This function is a substitute for real alpha channel operations,
-	so it doesn't pay attention to the alpha channel.
-*/
+/**
+ * Function: gdImageCopyMerge
+ *
+ * Copy an area of an image to another image ignoring alpha
+ *
+ * The source area will be copied to the destination are by merging the pixels.
+ *
+ * Note:
+ *   This function is a substitute for real alpha channel operations,
+ *   so it doesn't pay attention to the alpha channel.
+ *
+ * Parameters:
+ *   dst  - The destination image.
+ *   src  - The source image.
+ *   dstX - The x-coordinate of the upper left corner to copy to.
+ *   dstY - The y-coordinate of the upper left corner to copy to.
+ *   srcX - The x-coordinate of the upper left corner to copy from.
+ *   srcY - The y-coordinate of the upper left corner to copy from.
+ *   w    - The width of the area to copy.
+ *   h    - The height of the area to copy.
+ *   pct  - The percentage in range 0..100.
+ *
+ * See also:
+ *   - <gdImageCopy>
+ *   - <gdImageCopyMergeGray>
+ */
 BGD_DECLARE(void) gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 									int srcX, int srcY, int w, int h, int pct)
 {
@@ -3038,12 +3084,33 @@ BGD_DECLARE(void) gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, in
 	}
 }
 
-/*
-	Function: gdImageCopyMergeGray
-
-	This function is a substitute for real alpha channel operations,
-	so it doesn't pay attention to the alpha channel.
-*/
+/**
+ * Function: gdImageCopyMergeGray
+ *
+ * Copy an area of an image to another image ignoring alpha
+ *
+ * The source area will be copied to the grayscaled destination area by merging
+ * the pixels.
+ *
+ * Note:
+ *   This function is a substitute for real alpha channel operations,
+ *   so it doesn't pay attention to the alpha channel.
+ * 
+ * Parameters:
+ *   dst  - The destination image.
+ *   src  - The source image.
+ *   dstX - The x-coordinate of the upper left corner to copy to.
+ *   dstY - The y-coordinate of the upper left corner to copy to.
+ *   srcX - The x-coordinate of the upper left corner to copy from.
+ *   srcY - The y-coordinate of the upper left corner to copy from.
+ *   w    - The width of the area to copy.
+ *   h    - The height of the area to copy.
+ *   pct  - The percentage of the source color intensity in range 0..100.
+ *
+ * See also:
+ *   - <gdImageCopy>
+ *   - <gdImageCopyMerge>
+ */
 BGD_DECLARE(void) gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 										int srcX, int srcY, int w, int h, int pct)
 {
@@ -3102,9 +3169,30 @@ BGD_DECLARE(void) gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX
 	}
 }
 
-/*
-	Function: gdImageCopyResized
-*/
+/**
+ * Function: gdImageCopyResized
+ *
+ * Copy a resized area from an image to another image
+ *
+ * If the source and destination area differ in size, the area will be resized
+ * using nearest-neighbor interpolation.
+ * 
+ * Parameters:
+ *   dst  - The destination image.
+ *   src  - The source image.
+ *   dstX - The x-coordinate of the upper left corner to copy to.
+ *   dstY - The y-coordinate of the upper left corner to copy to.
+ *   srcX - The x-coordinate of the upper left corner to copy from.
+ *   srcY - The y-coordinate of the upper left corner to copy from.
+ *   dstW - The width of the area to copy to.
+ *   dstH - The height of the area to copy to.
+ *   srcW - The width of the area to copy from.
+ *   srcH - The height of the area to copy from.
+ *
+ * See also:
+ *   - <gdImageCopyResampled>
+ *   - <gdImageScale>
+ */
 BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 									  int srcX, int srcY, int dstW, int dstH, int srcW,
 									  int srcH)
@@ -3233,17 +3321,27 @@ BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, 
 	gdFree (sty);
 }
 
-/* gd 2.0.8: gdImageCopyRotated is added. Source
-	is a rectangle, with its upper left corner at
-	srcX and srcY. Destination is the *center* of
-		the rotated copy. Angle is in degrees, same as
-		gdImageArc. Floating point destination center
-	coordinates allow accurate rotation of
-	objects of odd-numbered width or height. */
-
-/*
-	Function: gdImageCopyRotated
-*/
+/**
+ * Function: gdImageCopyRotated
+ *
+ * Copy a rotated area from an image to another image
+ *
+ * The area is counter-clockwise rotated using nearest-neighbor interpolation.
+ *
+ * Parameters:
+ *   dst   - The destination image.
+ *   src   - The source image.
+ *   dstX  - The x-coordinate of the center of the area to copy to.
+ *   dstY  - The y-coordinate of the center of the area to copy to.
+ *   srcX  - The x-coordinate of the upper left corner to copy from.
+ *   srcY  - The y-coordinate of the upper left corner to copy from.
+ *   srcW  - The width of the area to copy from.
+ *   srcH  - The height of the area to copy from.
+ *   angle - The angle in degrees.
+ *
+ * See also:
+ *   - <gdImageRotateInterpolated>
+ */
 BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
 									  gdImagePtr src,
 									  double dstX, double dstY,
@@ -3327,9 +3425,31 @@ BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
 #define floor2(exp) ((long) exp)
 /*#define floor2(exp) floor(exp)*/
 
-/*
-	Function: gdImageCopyResampled
-*/
+/**
+ * Function: gdImageCopyResampled
+ *
+ * Copy a resampled area from an image to another image
+ *
+ * If the source and destination area differ in size, the area will be resized
+ * using bilinear interpolation for truecolor images, and nearest-neighbor
+ * interpolation for palette images.
+ * 
+ * Parameters:
+ *   dst  - The destination image.
+ *   src  - The source image.
+ *   dstX - The x-coordinate of the upper left corner to copy to.
+ *   dstY - The y-coordinate of the upper left corner to copy to.
+ *   srcX - The x-coordinate of the upper left corner to copy from.
+ *   srcY - The y-coordinate of the upper left corner to copy from.
+ *   dstW - The width of the area to copy to.
+ *   dstH - The height of the area to copy to.
+ *   srcW - The width of the area to copy from.
+ *   srcH - The height of the area to copy from.
+ *
+ * See also:
+ *   - <gdImageCopyResized>
+ *   - <gdImageScale>
+ */
 BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
 										gdImagePtr src,
 										int dstX, int dstY,

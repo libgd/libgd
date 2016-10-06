@@ -1604,9 +1604,26 @@ gdImageScaleBicubicFixed(gdImagePtr src, const unsigned int width,
 	return dst;
 }
 
-/*
-	Function: gdImageScale
-*/
+/**
+ * Function: gdImageScale
+ *
+ * Scale an image
+ *
+ * Creates a new image, scaled to the requested size using the current
+ * <gdInterpolationMethod>.
+ *
+ * Parameters:
+ *   src        - The source image.
+ *   new_width  - The new width.
+ *   new_height - The new height.
+ *
+ * Returns:
+ *   The scaled image on success, NULL on failure.
+ *
+ * See also:
+ *   - <gdImageCopyResized>
+ *   - <gdImageCopyResampled>
+ */
 BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int new_width, const unsigned int new_height)
 {
 	gdImagePtr im_scaled = NULL;
@@ -1779,9 +1796,26 @@ gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
 	return dst;
 }
 
-/*
-	Function: gdImageRotateInterpolated
-*/
+/** 
+ * Function: gdImageRotateInterpolated
+ *
+ * Rotate an image
+ *
+ * Creates a new image, counter-clockwise rotated by the requested angle
+ * using the current <gdInterpolationMethod>. Non-square angles will add a
+ * border with bgcolor.
+ *
+ * Parameters:
+ *   src     - The source image.
+ *   angle   - The angle in degrees.
+ *   bgcolor - The color to fill the added background with.
+ *
+ * Returns:
+ *   The rotated image on success, NULL on failure.
+ *
+ * See also:
+ *   - <gdImageCopyRotated>
+ */
 BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const float angle, int bgcolor)
 {
 	/* round to two decimals and keep the 100x multiplication to use it in the common square angles 
@@ -1849,11 +1883,7 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 }
 
 /**
- * Title: Affine transformation
- **/
-
-/**
- * Group: Transform
+ * Group: Affine Transformation
  **/
 
  static void gdImageClipRectangle(gdImagePtr im, gdRectPtr r)
@@ -2110,9 +2140,26 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 	return GD_TRUE;
 }
 
-/*
-	Function: gdImageSetInterpolationMethod
-*/
+/**
+ * Group: Interpolation Method
+ */
+
+/**
+ * Function: gdImageSetInterpolationMethod
+ *
+ * Set the interpolation method for subsequent operations
+ *
+ * Parameters:
+ *   im - The image.
+ *   id - The interpolation method.
+ *
+ * Returns:
+ *   Non-zero on success, zero on failure.
+ *
+ * See also:
+ *   - <gdInterpolationMethod>
+ *   - <gdImageGetInterpolationMethod>
+ */
 BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMethod id)
 {
 	if (im == NULL || (uintmax_t)id > GD_METHOD_COUNT) {
@@ -2195,13 +2242,24 @@ BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMet
 }
 
 
-/*
-	Function: gdImageGetInterpolationMethod
-
-	Return the interpolation mode set in 'im'.  This is here so that
-	the value can be read via a language or VM with an FFI but no
-	(portable) way to extract the value from the struct.
-*/
+/**
+ * Function: gdImageGetInterpolationMethod
+ *
+ * Get the current interpolation method
+ *
+ * This is here so that the value can be read via a language or VM with an FFI
+ * but no (portable) way to extract the value from the struct.
+ *
+ * Parameters:
+ *   im - The image.
+ *
+ * Returns:
+ *   The current interpolation method.
+ *
+ * See also:
+ *   - <gdInterpolationMethod>
+ *   - <gdImageSetInterpolationMethod>
+ */
 BGD_DECLARE(gdInterpolationMethod) gdImageGetInterpolationMethod(gdImagePtr im)
 {
     return im->interpolation_id;

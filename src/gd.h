@@ -308,8 +308,9 @@ enum gdPaletteQuantizationMethod {
  *  GD_LINEAR            - bilinear interpolation
  *
  * See also:
- *  <gdSetInterpolationMethod>
- **/
+ *  - <gdImageSetInterpolationMethod>
+ *  - <gdImageGetInterpolationMethod>
+ */
 typedef enum {
 	GD_DEFAULT          = 0,
 	GD_BELL,
