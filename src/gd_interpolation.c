@@ -1789,7 +1789,7 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 	   slow animations, f.e. */
 	const int angle_rounded = fmod((int) floorf(angle * 100), 360 * 100);
 
-	if (bgcolor < 0) {
+	if (src == NULL || bgcolor < 0) {
 		return NULL;
 	}
 
@@ -1831,7 +1831,7 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 			return gdImageRotate270(src, 0);
 	}
 
-	if (src == NULL || src->interpolation_id < 1 || src->interpolation_id > GD_METHOD_COUNT) {
+	if (src->interpolation_id < 1 || src->interpolation_id > GD_METHOD_COUNT) {
 		return NULL;
 	}
 
