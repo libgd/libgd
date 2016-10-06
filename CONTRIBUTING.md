@@ -64,4 +64,75 @@ Explain the problem and include additional details to help maintainers reproduce
 * **If you're reporting that libGD crashed**, include a crash report with a stack trace from the operating system. Include the crash report in the issue in a [code block](https://help.github.com/articles/markdown-basics/#multiple-lines), a [file attachment](https://help.github.com/articles/file-attachments-on-issues-and-pull-requests/), or put it in a [gist](https://gist.github.com/) and provide link to that gist.
 
 
-This text has been largely inspired by the Atom contributing notes, which amazingly complete
+This text has been largely inspired by the Atom contributing notes, which are amazingly complete.
+
+
+## Styleguides
+
+These sections tend to bore people. But if you don't follow them, it slows
+down reviews from developers (and tends to tire/annoy them). Please give it
+a look over and feel free to ask questions.
+
+### Git Commit Messages
+
+Rather than duplicate a ton of great explanations, please read this site:
+http://chris.beams.io/posts/git-commit/
+
+Yes, it's long, but once you read and understand it once, it applies to
+every git project out there, not just GD.
+
+In case that site is broken, here is an archived link:
+http://web.archive.org/web/20160706012209/http://chris.beams.io/posts/git-commit/
+
+### Coding standard
+
+#### Style
+
+First, coding style should be consistent. If you're modifying a file that
+might not follow this section, stick with that file's style. If we want to
+fix the style later, we can.
+
+As for the rest, TBD!
+
+#### Practices
+
+Check for invalid settings (where reasonable) and return an error directly.
+Do not use `assert` and do not require the user to follow the documented API.
+e.g. Check for `NULL` pointers, and check enum values are within range. The
+GD library is used in a lot of hostile environments (like websites) and is
+given hostile (user controlled) data. When GD mishandles memory, that can be
+used to attack servers. When GD crashes (or calls `assert`), that can take
+out a web session.
+
+#### Testing
+
+We love unit tests. Every bugfix, new API, etc... should include a test update
+to make sure future work doesn't break things or regress. We want to fix bugs
+just once, not over and over again.
+
+Note that we say "should". While we really like tests, we understand that not
+all changes are trivial to verify.
+
+Some general guidelines:
+
+* Tests should be standalone: One test should test one thing only.
+* Tests should be reproducible: Avoid relying on system settings like /etc.
+* Tests must be fast: A good guideline is that they should take <1 second,
+  and must take <5 seconds.
+* Tests must be documented: Just add a comment block to the top of the file
+  with a short description and any existing bugs/URLs.
+
+### Documentation Styleguide
+
+Do everything in markdown. It's readable even in plain text, and converts
+well into other formats (e.g. HTML). The question is which flavor!
+
+For files that end in `.md`, use
+[GitHub markdown](https://guides.github.com/features/mastering-markdown/).
+
+For API documentation (embedded in the code), we use
+[Natural Docs](http://www.naturaldocs.org/). You can find more info about
+it under the [docs/naturaldocs/](docs/naturaldocs/) subdirectory.
+
+Try to keep the file linewrapped to 80 cols. Sometimes you won't be able to
+because of long strings (like links), and that's OK.
