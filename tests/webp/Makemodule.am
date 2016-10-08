@@ -1,7 +1,12 @@
 if HAVE_LIBWEBP
 libgd_test_programs += \
+	webp/basic \
 	webp/bug00111
 endif
 
 EXTRA_DIST += \
-	webp/CMakeLists.txt
+	webp/CMakeLists.txt \
+	webp/basic_lossless.webp \
+	webp/basic_lossless_exp.png \
+	webp/basic_lossy.webp \
+	webp/basic_lossy_exp.png
