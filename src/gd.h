@@ -1068,6 +1068,18 @@ BGD_DECLARE(void) gdImageJpegCtx (gdImagePtr im, gdIOCtx * out, int quality);
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImageJpegPtr (gdImagePtr im, int *size, int quality);
 
+/**
+ * Group: WebP
+ *
+ * Constant: gdWebpLossless
+ *
+ * Lossless quality
+ *
+ * See also:
+ *   - <gdImageWebpEx>
+ */
+#define gdWebpLossless 0x7FFFFFFF
+
 BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quantization);
 BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile);
 BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size);
