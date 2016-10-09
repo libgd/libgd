@@ -2168,7 +2168,6 @@ BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMet
 
 	switch (id) {
 		case GD_NEAREST_NEIGHBOUR:
-		case GD_WEIGHTED4:
 			im->interpolation = NULL;
 			break;
 
