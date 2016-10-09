@@ -5,6 +5,11 @@
 #include "gd.h"
 #include "gd_color.h"
 
+/**
+ * The threshold method works relatively well but it can be improved.
+ * Maybe L*a*b* and Delta-E will give better results (and a better
+ * granularity).
+ */
 int gdColorMatch(gdImagePtr im, int col1, int col2, float threshold)
 {
 	const int dr = gdImageRed(im, col1) - gdImageRed(im, col2);

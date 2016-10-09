@@ -1,12 +1,23 @@
-/* Crop support
- * manual crop using a gdRect or automatic crop using a background
- * color (automatic detections or using either the transparent color,
- * black or white).
- * An alternative method allows to crop using a given color and a
- * threshold. It works relatively well but it can be improved.
- * Maybe L*a*b* and Delta-E will give better results (and a better
- * granularity).
+/**
+ * File: Cropping
+ *
+ * Crop an image
+ *
+ * Some functions to crop images, automatically (auto detection of the border
+ * color), using a given color (with or without tolerance) or using a given
+ * rectangle.
+ * 
+ * Example:
+ *   (start code)
+ *   im2 = gdImageAutoCrop(im, GD_CROP_SIDES);
+ *   if (im2) {
+ *       gdImageDestroy(im); // unless you need the original image subsequently
+ *       // do something with the cropped image
+ *   }
+ *   gdImageDestroy(im2);
+ *   (end code)
  */
+
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -18,8 +29,21 @@
 
 static int gdGuessBackgroundColorFromCorners(gdImagePtr im, int *color);
 
-/*
-	Function: gdImageCrop
+/**
+ * Function: gdImageCrop
+ *
+ * Crop an image to a given rectangle
+ *
+ * Parameters:
+ *   src  - The image.
+ *   crop - The cropping rectangle, see <gdRect>.
+ *
+ * Returns:
+ *   The newly created cropped image, or NULL on failure.
+ *
+ * See also:
+ *   - <gdImageCropAuto>
+ *   - <gdImageCropThreshold>
  */
 BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop)
 {
@@ -36,8 +60,23 @@ BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop)
 	return dst;
 }
 
-/*
-	Function: gdImageCropAuto
+/**
+ * Function: gdImageCropAuto
+ *
+ * Crop an image automatically
+ *
+ * This function detects the cropping area according to the given _mode_.
+ *
+ * Parameters:
+ *   im   - The image.
+ *   mode - The cropping mode, see <gdCropMode>.
+ *
+ * Returns:
+ *   The newly created cropped image, or NULL on failure.
+ *
+ * See also:
+ *   - <gdImageCrop>
+ *   - <gdImageCropThreshold>
  */
 BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 {
@@ -127,8 +166,26 @@ BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 	return gdImageCrop(im, &crop);
 }
 
-/*
-	Function: gdImageCropThreshold
+/**
+ * Function: gdImageCropThreshold
+ *
+ * Crop an image using a given color
+ *
+ * The _threshold_ defines the tolerance to be used while comparing the image
+ * color and the color to crop. The method used to calculate the color
+ * difference is based on the color distance in the RGB(A) cube.
+ *
+ * Parameters:
+ *   im        - The image.
+ *   color     - The crop color.
+ *   threshold - The crop threshold.
+ * 
+ * Returns:
+ *   The newly created cropped image, or NULL on failure.
+ *
+ * See also:
+ *   - <gdImageCrop>
+ *   - <gdImageCropAuto>
  */
 BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int color, const float threshold)
 {
