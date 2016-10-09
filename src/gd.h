@@ -883,6 +883,21 @@ typedef struct {
 }
 gdPoint, *gdPointPtr;
 
+/**
+ * Typedef: gdRect
+ *
+ * A rectangle in the coordinate space of the image
+ *
+ * Members:
+ *   x      - The x-coordinate of the upper left corner.
+ *   y      - The y-coordinate of the upper left corner.
+ *   width  - The width.
+ *   height - The height.
+ *
+ * Typedef: gdRectPtr
+ *
+ * A pointer to a <gdRect>
+ */
 typedef struct {
 	int x, y;
 	int width, height;
@@ -1528,7 +1543,7 @@ BGD_DECLARE(void) gdImageFlipBoth(gdImagePtr im);
  *  GD_CROP_SIDES - Crop using colors of the 4 corners
  *
  * See also:
- *  <gdImageAutoCrop>
+ *   - <gdImageCropAuto>
  **/
 enum gdCropMode {
 	GD_CROP_DEFAULT = 0,
