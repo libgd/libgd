@@ -1612,6 +1612,8 @@ gdImageScaleBicubicFixed(gdImagePtr src, const unsigned int width,
  * Creates a new image, scaled to the requested size using the current
  * <gdInterpolationMethod>.
  *
+ * Note that GD_WEIGHTED4 is not yet supported by this function.
+ *
  * Parameters:
  *   src        - The source image.
  *   new_width  - The new width.
