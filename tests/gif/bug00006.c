@@ -27,6 +27,10 @@ int main()
 		gdTestErrorMsg("Cannot open <%s> for writing\n", file);
 		return 1;
 	}
+
+	gdImageTrueColorToPaletteSetMethod(im, GD_QUANT_JQUANT, 0);
+	gdImageTrueColorToPalette(im, 1, 256);
+
 	gdImageGif(im,fp);
 	fclose(fp);
 
