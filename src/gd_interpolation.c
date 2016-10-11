@@ -884,12 +884,15 @@ static inline LineContribType *_gdContributionsCalc(unsigned int line_size, unsi
 	int windows_size;
 	unsigned int u;
 	LineContribType *res;
+	double shift;
 
 	if (scale_d < 1.0) {
 		width_d = filter_width_d / scale_d;
 		scale_f_d = scale_d;
+		shift = 1 / (2 * scale_d) - 0.5;
 	}  else {
 		width_d= filter_width_d;
+		shift = -(((line_size - 1) / scale_d - (src_size - 1)) / 2);
 	}
 
 	windows_size = 2 * (int)ceil(width_d) + 1;
@@ -898,7 +901,7 @@ static inline LineContribType *_gdContributionsCalc(unsigned int line_size, unsi
 		return NULL;
 	}
 	for (u = 0; u < line_size; u++) {
-		const double dCenter = (double)u / scale_d;
+		const double dCenter = (double)u / scale_d + shift;
 		/* get the significant edge points affecting the pixel */
 		register int iLeft = MAX(0, (int)floor (dCenter - width_d));
 		int iRight = MIN((int)ceil(dCenter + width_d), (int)src_size - 1);
