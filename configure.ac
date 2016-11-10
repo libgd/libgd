@@ -300,7 +300,8 @@ AX_CFLAGS_WARN_ALL
 
 dnl Enable -Werror if possible.  Do it after all other tests.
 AC_ARG_ENABLE([werror], [AS_HELP_STRING([--enable-werror], [treat compile warnings as errors])])
-if test "$enable_werror" = "yes" || test "$GCC" = "yes" -a "$enable_werror" != "no"; then
+if test "$enable_werror" = "yes" || \
+   test "$GCC" = "yes" -a "$enable_werror" != "no" -a -d "$srcdir/.git"; then
   CFLAGS="-Werror $CFLAGS"
   CXXFLAGS="-Werror $CXXFLAGS"
 fi
