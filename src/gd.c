@@ -185,6 +185,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 	int i;
 	gdImagePtr im;
 
+	if (overflow2(sx, sy)) {
+		return NULL;
+	}
+
 	if (overflow2(sizeof (unsigned char *), sy)) {
 		return NULL;
 	}
