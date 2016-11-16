@@ -108,7 +108,7 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 	char buffer[JMSG_LENGTH_MAX];
 
 	(*cinfo->err->format_message)(cinfo, buffer);
-	gd_error_ex(GD_ERROR, "gd-jpeg: JPEG library reports unrecoverable error: %s", buffer);
+	gd_error_ex(GD_WARNING, "gd-jpeg: JPEG library reports unrecoverable error: %s", buffer);
 
 	jmpbufw = (jmpbuf_wrapper *)cinfo->client_data;
 	jpeg_destroy(cinfo);

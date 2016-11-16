@@ -5,6 +5,7 @@ LIST(APPEND TESTS_FILES
 	jpeg_read
 	jpeg_empty_file
 	jpeg_resolution
+	bug00338
 	bug_github_18
 )
 ENDIF(JPEG_FOUND)
