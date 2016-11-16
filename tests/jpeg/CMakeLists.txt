@@ -10,6 +10,7 @@ LIST(APPEND TESTS_FILES
 	bug_github_18
 	jpeg_read
 	jpeg_resolution
+	bug00338
 )
 ENDIF(PNG_FOUND)
 ENDIF(JPEG_FOUND)
