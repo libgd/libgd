@@ -263,6 +263,7 @@ static void dynamicPutchar(struct gdIOCtx *ctx, int a)
 	appendDynamic(dctx->dp, &b, 1);
 }
 
+/* returns the number of bytes actually read; 0 on EOF and error */
 static int dynamicGetbuf(gdIOCtxPtr ctx, void *buf, int len)
 {
 	int rlen, remain;
@@ -272,19 +273,23 @@ static int dynamicGetbuf(gdIOCtxPtr ctx, void *buf, int len)
 	dctx = (dpIOCtxPtr) ctx;
 	dp = dctx->dp;
 
+	if (dp->pos < 0 || dp->pos >= dp->realSize) {
+		return 0;
+	}
+
 	remain = dp->logicalSize - dp->pos;
 	if(remain >= len) {
 		rlen = len;
 	} else {
 		if(remain <= 0) {
-			/* 2.0.34: EOF is incorrect. We use 0 for
-			 * errors and EOF, just like fileGetbuf,
-			 * which is a simple fread() wrapper.
-			 * TBB. Original bug report: Daniel Cowgill. */
-			return 0; /* NOT EOF */
+			return 0;
 		}
 
 		rlen = remain;
+	}
+
+	if (dp->pos + rlen > dp->realSize) {
+		rlen = dp->realSize - dp->pos;
 	}
 
 	memcpy(buf, (void *) ((char *)dp->data + dp->pos), rlen);
