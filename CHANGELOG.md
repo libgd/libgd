@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.2.4] - 2017-01-XX
 
+### Security
+- gdImageCreate() doesn't check for oversized images and as such is
+  prone to DoS vulnerabilities. (CVE-2016-9317)
+- double-free in gdImageWebPtr() (CVE-2016-6912)
+- potential unsigned underflow in gd_interpolation.c
+- DOS vulnerability in gdImageCreateFromGd2Ctx()
+
 ### Fixed
 - Fix #354: Signed Integer Overflow gd_io.c
 - Fix #340: System frozen
