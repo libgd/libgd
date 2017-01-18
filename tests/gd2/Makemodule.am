@@ -28,5 +28,4 @@ EXTRA_DIST += \
 	gd2/empty.gd2 \
 	gd2/invalid_header.gd2 \
 	gd2/invalid_neg_size.gd2 \
-	gd2/php_bug_72339_exp.gd2 \
 	gd2/too_few_image_data.gd2
