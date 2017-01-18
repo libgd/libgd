@@ -74,6 +74,7 @@
 
 /* 2.0.29: no more errno.h, makes windows happy */
 #include <math.h>
+#include <limits.h>
 #include <string.h>
 #include "gd.h"
 #include "gd_errors.h"
