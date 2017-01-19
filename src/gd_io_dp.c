@@ -292,6 +292,10 @@ static int dynamicGetbuf(gdIOCtxPtr ctx, void *buf, int len)
 		rlen = dp->realSize - dp->pos;
 	}
 
+	if (rlen < 0) {
+		return 0;
+	}
+
 	memcpy(buf, (void *) ((char *)dp->data + dp->pos), rlen);
 	dp->pos += rlen;
 
