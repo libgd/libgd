@@ -99,7 +99,7 @@ LIB_OBJS= \
 LIBS=kernel32.lib ole32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib Dnsapi.lib Gdi32.Lib
 LIBS_GD=libjpeg_a.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib libwebp_a.lib libxpm_a.lib
 
-INCLUDES=/Isrc /I$(WITH_DEVEL)\include -I$(WITH_DEVEL)\include\libpng16 -I$(WITH_DEVEL)\include\freetype /Itests /Itests\gdtest -I$(WITH_DEVEL)\include\
+INCLUDES=/Isrc /I$(WITH_DEVEL)\include -I$(WITH_DEVEL)\include\libpng16 -I$(WITH_DEVEL)\include\freetype -I$(WITH_DEVEL)\include\freetype2 /Itests /Itests\gdtest -I$(WITH_DEVEL)\include\
 
 LDFLAGS=/nologo /nodefaultlib:libcmt /libpath:$(WITH_DEVEL)\lib /MACHINE:$(PLATFORM)
 
