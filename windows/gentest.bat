@@ -22,7 +22,7 @@ for /D %%d in (!testsdir!/*) do (
 
 for /D %%d in (!testsdir!/*) do (
     if NOT "%%d"=="gdtest" if NOT "%%d"=="tiff" for %%f in (!testsdir!/%%d/*.c) do (
-		echo !builddir!\%%d_%%~nf.obj: !testsdir!\%%d\%%f; ^$^(CC^) ^$^(TEST_CFLAGS^) /c ^$** /Fo:$@  >> !TESTMK!
+		echo !builddir!\%%d_%%~nf.obj: !testsdir!\%%d\%%f; ^$^(CC^) ^$^(TEST_CFLAGS^) /c ^$** /Fd$*.pdb /Fo:$@  >> !TESTMK!
 	)
 )
 
