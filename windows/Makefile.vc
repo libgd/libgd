@@ -209,18 +209,12 @@ $(TARGETLIB): $(LIB_OBJS)
   @$(LB) /OUT:$@ $(LIB_OBJS) $(LDFLAGS)
 
 {$(LIBGD_SRC_DIR)\}.c{$(LIBGD_OBJ_DIR)\}.obj:
-	$(CC) $(CFLAGS) /Fo"$@"  $<
+	$(CC) $(CFLAGS) /c /Fo"$@" $<
 
 all: $(LIBGD_OBJ_DIR) $(LIBGD_BIN_DIR) $(LIB_OBJS) $(STATICLIB)
 
 .SUFFIXES: .c .obj .res
 
-{$(LIBGD_SRC_DIR)\}.c{$(LIBGD_OBJ_DIR)\}.obj:
-	$(CC) $(CFLAGS) /Fo"$@" $<
-
-{src\}.c{$(SDR)}.obj::
-    $(CC) $(CFLAGS) /c $< /Fo$(SDR)
-  
 # tests
 
 !INCLUDE $(TEST_MK)
