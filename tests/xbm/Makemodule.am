@@ -1,7 +1,10 @@
 if HAVE_LIBPNG
 libgd_test_programs += \
+	xbm/github_bug_109 \
 	xbm/github_bug_170
 endif
 
 EXTRA_DIST += \
-	xbm/CMakeLists.txt
+	xbm/CMakeLists.txt \
+	xbm/github_bug_109.xbm \
+	xbm/github_bug_109_exp.png
