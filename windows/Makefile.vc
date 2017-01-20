@@ -102,9 +102,12 @@ LIBS_GD=libjpeg_a.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib lib
 INCLUDES=/Isrc /I$(WITH_DEVEL)\include -I$(WITH_DEVEL)\include\libpng16 -I$(WITH_DEVEL)\include\freetype -I$(WITH_DEVEL)\include\freetype2 /Itests /Itests\gdtest -I$(WITH_DEVEL)\include\
 
 LDFLAGS=/nologo /nodefaultlib:libcmt /libpath:$(WITH_DEVEL)\lib /MACHINE:$(PLATFORM)
+!IF $(DEBUG)
+LDFLAGS=$(LDFLAGS) /DEBUG
+!ENDIF
 
 !IF $(DEBUG)
-CFLAGS=/nologo /Qvec-report:1 /MD /TC /Zi /Debug
+CFLAGS=/nologo /Qvec-report:1 /MD /TC /Zi
 !ELSE
 CFLAGS=/nologo /O2 /Qvec-report:1 /MD /TC
 !ENDIF
@@ -209,7 +212,7 @@ $(TARGETLIB): $(LIB_OBJS)
   @$(LB) /OUT:$@ $(LIB_OBJS) $(LDFLAGS)
 
 {$(LIBGD_SRC_DIR)\}.c{$(LIBGD_OBJ_DIR)\}.obj:
-	$(CC) $(CFLAGS) /c /Fo"$@" $<
+	$(CC) $(CFLAGS) /c /Fo"$@" /Fd$*.pdb $<
 
 all: $(LIBGD_OBJ_DIR) $(LIBGD_BIN_DIR) $(LIB_OBJS) $(STATICLIB)
 
@@ -221,10 +224,10 @@ all: $(LIBGD_OBJ_DIR) $(LIBGD_BIN_DIR) $(LIB_OBJS) $(STATICLIB)
 build_tests: $(TEST_LIST) $(SDR)readdir.obj $(SDR)gdtest.obj $(TEST_EXES)
 
 $(SDR)gdtest.obj: $(TARGETDLL) tests\gdtest\gdtest.c
-  @$(CC) $(CFLAGS) /DGDTEST_TOP_DIR=\"$(MAKEDIR:\=\\)\\tests\" /c tests\gdtest\gdtest.c /Fo$(SDR)gdtest.obj
+  @$(CC) $(CFLAGS) /DGDTEST_TOP_DIR=\"$(MAKEDIR:\=\\)\\tests\" /c tests\gdtest\gdtest.c /Fd$(SDR)gdtest.pdb /Fo$(SDR)gdtest.obj
 
 $(SDR)readdir.obj: $(TARGETDLL) tests\gdtest\readdir.c
-  @$(CC) $(CFLAGS) /c tests\gdtest\readdir.c /Fo$(SDR)readdir.obj
+  @$(CC) $(CFLAGS) /c tests\gdtest\readdir.c /Fd$(SDR)readdir.pdb /Fo$(SDR)readdir.obj
 
 pretest: $(TARGETDLL)
 	if not exist $(TDR) mkdir $(TDR)
