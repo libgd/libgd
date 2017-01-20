@@ -1,4 +1,5 @@
 LIST(APPEND TESTS_FILES
+	github_bug_109
 	github_bug_170
 )
 
