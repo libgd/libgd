@@ -7,7 +7,7 @@
 #include "gdtest.h"
 
 
-static void test_flip(void (*func)(gdImagePtr), const char *filename)
+static void test_flip(void (BGD_STDCALL *func)(gdImagePtr), const char *filename)
 {
     gdImagePtr im;
     FILE *fp;
