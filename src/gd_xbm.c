@@ -40,6 +40,9 @@
     its size. The image must eventually be destroyed using
     <gdImageDestroy>.
 
+    X11 X bitmaps (which define a char[]) as well as X10 X bitmaps (which define
+    a short[]) are supported.
+
   Parameters:
 
     fd - The input FILE pointer
@@ -203,10 +206,22 @@ static void gdCtxPrintf(gdIOCtx * out, const char *format, ...)
 /* The compiler will optimize strlen(constant) to a constant number. */
 #define gdCtxPuts(out, s) out->putBuf(out, s, strlen(s))
 
-/* {{{ gdImageXbmCtx */
-/*
-    Function: gdImageXbmCtx
-*/
+
+/**
+ * Function: gdImageXbmCtx
+ *
+ *  Writes an image to an IO context in X11 bitmap format.
+ *
+ * Parameters:
+ *
+ *  image     - The <gdImagePtr> to write.
+ *  file_name - The prefix of the XBM's identifiers. Illegal characters are
+ *              automatically stripped.
+ *  gd        - Which color to use as forground color. All pixels with another
+ *              color are unset.
+ *  out       - The <gdIOCtx> to write the image file to.
+ * 
+ */
 BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOCtx * out)
 {
 	int x, y, c, b, sx, sy, p;
@@ -282,4 +297,3 @@ BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOC
 	}
 	gdCtxPuts(out, "};\n");
 }
-/* }}} */
