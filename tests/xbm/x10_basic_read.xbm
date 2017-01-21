@@ -1,0 +1,4 @@
+#define x10_basic_read_width 17
+#define x10_basic_read_height 3
+static unsigned short x10_basic_read_bits[] = {
+  0xFFFF, 0x0001, 0x0000, 0x0000, 0xFFFF, 0x0001};
