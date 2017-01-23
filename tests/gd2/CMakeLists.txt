@@ -1,5 +1,6 @@
 LIST(APPEND TESTS_FILES
 	bug_289
+	bug00209
 	bug00309
 	bug00354
 	gd2_empty_file
