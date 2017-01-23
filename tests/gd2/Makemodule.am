@@ -1,5 +1,6 @@
 libgd_test_programs += \
 	gd2/bug_289 \
+	gd2/bug00209 \
 	gd2/bug00309 \
 	gd2/bug00354 \
 	gd2/gd2_empty_file \
@@ -20,6 +21,7 @@ endif
 
 EXTRA_DIST += \
 	gd2/CMakeLists.txt \
+	gd2/bug00209.gd2 \
 	gd2/bug00354a.gd2 \
 	gd2/bug00354b.gd2 \
 	gd2/conv_gd2_exp.gd2 \
