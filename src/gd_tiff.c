@@ -535,14 +535,14 @@ static void readTiffBw (const unsigned char *src,
 	(void)align;
 
 	for (y = starty; y < starty + height; y++) {
-		for (x = startx; x < startx + width; x++) {
+		for (x = startx; x < startx + width;) {
 			register unsigned char curr = *src++;
 			register unsigned char mask;
 
 			if (photometric == PHOTOMETRIC_MINISWHITE) {
 				curr = ~curr;
 			}
-			for (mask = 0x80; mask != 0 && x < startx + width; mask >>= 1) {
+			for (mask = 0x80; mask != 0 && x < startx + width; x++, mask >>= 1) {
 				gdImageSetPixel(im, x, y, ((curr & mask) != 0)?0:1);
 			}
 		}
@@ -646,6 +646,7 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 	int tile_width, tile_height;
 	int  x, y, height, width;
 	unsigned char *buffer;
+	int success = GD_SUCCESS;
 
 	if (!TIFFGetField (tif, TIFFTAG_PLANARCONFIG, &planar)) {
 		planar = PLANARCONFIG_CONTIG;
@@ -664,7 +665,10 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 
 	for (y = 0; y < im_height; y += tile_height) {
 		for (x = 0; x < im_width; x += tile_width) {
-			TIFFReadTile(tif, buffer, x, y, 0, 0);
+			if (TIFFReadTile(tif, buffer, x, y, 0, 0) < 0) {
+				success = GD_FAILURE;
+				goto end;
+			}
 			width = MIN(im_width - x, tile_width);
 			height = MIN(im_height - y, tile_height);
 			if (bps == 16) {
@@ -677,8 +681,9 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 			}
 		}
 	}
+end:
 	gdFree(buffer);
-	return TRUE;
+	return success;
 }
 
 static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 photometric,
@@ -688,6 +693,7 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 	uint32 im_height, im_width, y;
 
 	unsigned char *buffer;
+	int success = GD_SUCCESS;
 
 	if (!TIFFGetField(tif, TIFFTAG_PLANARCONFIG, &planar)) {
 		planar = PLANARCONFIG_CONTIG;
@@ -717,8 +723,9 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 
 		case 8:
 			for (y = 0; y < im_height; y++ ) {
-				if (!TIFFReadScanline (tif, buffer, y, 0)) {
+				if (TIFFReadScanline (tif, buffer, y, 0) < 0) {
 					gd_error("Error while reading scanline %i", y);
+					success = GD_FAILURE;
 					break;
 				}
 				/* reading one line at a time */
@@ -729,8 +736,9 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 		default:
 			if (is_bw) {
 				for (y = 0; y < im_height; y++ ) {
-					if (!TIFFReadScanline (tif, buffer, y, 0)) {
+					if (TIFFReadScanline (tif, buffer, y, 0) < 0) {
 						gd_error("Error while reading scanline %i", y);
+						success = GD_FAILURE;
 						break;
 					}
 					/* reading one line at a time */
@@ -746,7 +754,7 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16 bps, uint16 phot
 	}
 
 	gdFree(buffer);
-	return GD_SUCCESS;
+	return success;
 }
 
 static int createFromTiffRgba(TIFF * tif, gdImagePtr im)
@@ -852,7 +860,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	TIFFGetFieldDefaulted (tif, TIFFTAG_BITSPERSAMPLE, &bps);
 
 	/* Unsupported bps, force to RGBA */
-	if (1/*bps > 8 && bps != 16*/) {
+	if (bps != 1 /*bps > 8 && bps != 16*/) {
 		force_rgba = TRUE;
 	}
 
@@ -933,6 +941,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	default:
 		force_rgba = TRUE;
 		break;
+	}
+
+	/* Force rgba if image has 1bps, but is not bw */
+	if (bps == 1 && !is_bw) {
+		force_rgba = TRUE;
 	}
 
 	if (!TIFFGetField (tif, TIFFTAG_PLANARCONFIG, &planar)) {
