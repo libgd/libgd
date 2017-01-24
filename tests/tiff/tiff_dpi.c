@@ -3,14 +3,7 @@
  * works correctly.  Set the image resolution, write the file, read the file
  * back and test that the image resolution comes back correct.
  */
-#ifdef _WIN32
-#include <stdio.h>
-int main()
-{
-	printf("skip");
-	return 0;
-}
-#else
+
 #include "gd.h"
 #include "gdtest.h"
 
@@ -81,4 +74,3 @@ door0:
 	gdImageDestroy(src);
 	return status;
 }
-#endif

@@ -1,13 +1,15 @@
 # Building on Windows with Visual Studio 2015
 
 * Get the required dependencies from
-  http://windows.php.net/downloads/php-sdk/deps/vc14/. Choose the x86 or x64
-  packages depending on your needs.
+  http://windows.php.net/downloads/php-sdk/deps/vc14/ and
+  http://windows.php.net/downloads/pecl/deps/, respectively. Choose the x86 or
+  x64 packages depending on your needs.
   
   * freetype
   * libiconv
   * libjpeg
   * libpng
+  * libtiff
   * libwebp
   * libxpm
   * zlib
