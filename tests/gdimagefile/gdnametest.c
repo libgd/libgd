@@ -69,13 +69,10 @@ do_test() {
         {"img.wbmp",    0,  1,  0},
         {"img.bmp",     0,  1,  0},
         {"img-ref.xpm", 0,  0,  1},
-        
-        // These break the test so I'm skipping them since the point
-        // of this test is not those loaders.
-        {"img-ref.xbm", 0, -1,  1},
-        {"img-ref.tga", 0, -1,  1},
-        {"img.webp",    0, -1,  0},
-        {"img.tiff",    0, -1,  0},
+        {"img-ref.xbm", 0,  1,  1},
+        {"img-ref.tga", 0,  1,  1},
+        {"img.webp",   10,  1,  0},
+        {"img.tiff",    0,  1,  0},
 
         {NULL, 0}
     };
