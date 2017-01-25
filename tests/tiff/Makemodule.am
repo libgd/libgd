@@ -12,4 +12,5 @@ EXTRA_DIST += \
 	tiff/tiff_invalid_read_1.tiff \
 	tiff/tiff_invalid_read_2.tiff \
 	tiff/tiff_invalid_read_3.tiff \
-	tiff/tiff_read_bw.tiff
+	tiff/tiff_read_bw.tiff \
+	tiff/tiff_read_bw_exp.png
