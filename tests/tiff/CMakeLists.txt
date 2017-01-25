@@ -4,6 +4,7 @@ LIST(APPEND TESTS_FILES
 	tiff_invalid_read
 	tiff_null
 	tiff_dpi
+	tiff_read_bw
 )
 ENDIF(TIFF_FOUND)
 

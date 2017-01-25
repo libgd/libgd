@@ -3,11 +3,14 @@ libgd_test_programs += \
 	tiff/tiff_dpi \
 	tiff/tiff_im2im \
 	tiff/tiff_invalid_read \
-	tiff/tiff_null
+	tiff/tiff_null \
+	tiff/tiff_read_bw
 endif
 
 EXTRA_DIST += \
 	tiff/CMakeLists.txt \
 	tiff/tiff_invalid_read_1.tiff \
 	tiff/tiff_invalid_read_2.tiff \
-	tiff/tiff_invalid_read_3.tiff
+	tiff/tiff_invalid_read_3.tiff \
+	tiff/tiff_read_bw.tiff \
+	tiff/tiff_read_bw_exp.png
