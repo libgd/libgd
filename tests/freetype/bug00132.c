@@ -11,6 +11,9 @@ int main()
 	char *path;
 	char *ret = NULL;
 
+	/* disable subpixel hinting */
+	putenv("FREETYPE_PROPERTIES=truetype:interpreter-version=35");
+
 	im = gdImageCreateTrueColor(50, 30);
 
 	if (!im) {
