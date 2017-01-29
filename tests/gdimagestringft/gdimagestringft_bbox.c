@@ -38,6 +38,9 @@ int main()
 	int error = 0;
 	FILE *fp;
 
+	/* disable subpixel hinting */
+	putenv("FREETYPE_PROPERTIES=truetype:interpreter-version=35");
+
 	path = gdTestFilePath("freetype/DejaVuSans.ttf");
 	im = gdImageCreate(800, 800);
 	gdImageColorAllocate(im, 0xFF, 0xFF, 0xFF); /* allocate white for background color */
