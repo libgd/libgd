@@ -7,6 +7,7 @@ LIST(APPEND TESTS_FILES
 	bug00060
 	bug00066
 	bug00181
+	bug00209
 	bug00227
 )
 
