@@ -769,16 +769,16 @@ static int createFromTiffRgba(TIFF * tif, gdImagePtr im)
 	uint32 rgba;
 	int success;
 
+	buffer = (uint32 *) gdCalloc(sizeof(uint32), width * height);
+	if (!buffer) {
+		return GD_FAILURE;
+	}
+
 	/* switch off colour merging on target gd image just while we write out
 	 * content - we want to preserve the alpha data until the user chooses
 	 * what to do with the image */
 	alphaBlendingFlag = im->alphaBlendingFlag;
 	gdImageAlphaBlending(im, 0);
-
-	buffer = (uint32 *) gdCalloc(sizeof(uint32), width * height);
-	if (!buffer) {
-		return GD_FAILURE;
-	}
 
 	success = TIFFReadRGBAImage(tif, width, height, buffer, 1);
 
