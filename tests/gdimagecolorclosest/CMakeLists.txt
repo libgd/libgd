@@ -1,5 +1,7 @@
+IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
 	gdimagecolorclosest
 )
+ENDIF(PNG_FOUND)
 
 ADD_GD_TESTS()

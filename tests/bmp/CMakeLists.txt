@@ -1,8 +1,13 @@
 LIST(APPEND TESTS_FILES
-	bmp_im2im
 	bmp_null
 	bug00275
 	bug00276
 )
+
+IF(PNG_FOUND)
+LIST(APPEND TESTS_FILES
+	bmp_im2im
+)
+ENDIF(PNG_FOUND)
 
 ADD_GD_TESTS()

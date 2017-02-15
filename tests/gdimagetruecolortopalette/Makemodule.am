@@ -1,4 +1,3 @@
-
 libgd_test_programs += \
 	gdimagetruecolortopalette/bug00307 \
 	gdimagetruecolortopalette/php_bug_72512

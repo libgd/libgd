@@ -1,4 +1,3 @@
-
 libgd_test_programs += \
 	gdtransformaffineboundingbox/github_bug_00221
 
