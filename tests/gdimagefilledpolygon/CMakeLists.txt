@@ -1,3 +1,4 @@
+IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
 	gdimagefilledpolygon0
 	gdimagefilledpolygon1
@@ -7,5 +8,6 @@ LIST(APPEND TESTS_FILES
 	php_bug_64641
 	self_intersecting
 )
+ENDIF(PNG_FOUND)
 
 ADD_GD_TESTS()

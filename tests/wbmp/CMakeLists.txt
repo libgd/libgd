@@ -1,6 +1,11 @@
 LIST(APPEND TESTS_FILES
-	wbmp_im2im
 	wbmp_null
 )
+
+IF(PNG_FOUND)
+LIST(APPEND TESTS_FILES
+	wbmp_im2im
+)
+ENDIF(PNG_FOUND)
 
 ADD_GD_TESTS()

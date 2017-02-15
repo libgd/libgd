@@ -1,4 +1,3 @@
-
 libgd_test_programs += \
 	gdimagescale/bug00329 \
 	gdimagescale/bug00330 \
