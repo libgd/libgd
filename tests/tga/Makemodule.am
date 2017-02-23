@@ -5,8 +5,12 @@ libgd_test_programs += \
 	tga/bug00248 \
 	tga/bug00248a \
 	tga/heap_overflow \
-	tga/tga_null \
+	tga/tga_null
+
+if HAVE_LIBPNG
+libgd_test_programs += \
 	tga/tga_read
+endif
 
 EXTRA_DIST += \
 	tga/CMakeLists.txt \
