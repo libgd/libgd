@@ -1,6 +1,5 @@
 IF(JPEG_FOUND)
 LIST(APPEND TESTS_FILES
-	bug_github_18
 	jpeg_empty_file
 	jpeg_im2im
 	jpeg_null
@@ -8,6 +7,7 @@ LIST(APPEND TESTS_FILES
 
 IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
+	bug_github_18
 	jpeg_read
 	jpeg_resolution
 )

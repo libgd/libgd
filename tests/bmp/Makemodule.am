@@ -1,11 +1,11 @@
 libgd_test_programs += \
 	bmp/bmp_null \
-	bmp/bug00275 \
-	bmp/bug00276
+	bmp/bug00275
 
 if HAVE_LIBPNG
 libgd_test_programs += \
-	bmp/bmp_im2im
+	bmp/bmp_im2im \
+	bmp/bug00276
 endif
 
 EXTRA_DIST += \

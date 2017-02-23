@@ -1,7 +1,9 @@
+if HAVE_LIBPNG
 libgd_test_programs += \
 	xbm/github_bug_109 \
 	xbm/github_bug_170 \
 	xbm/x10_basic_read
+endif
 
 EXTRA_DIST += \
 	xbm/CMakeLists.txt \

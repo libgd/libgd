@@ -1,5 +1,9 @@
+if HAVE_LIBTIFF
+if HAVE_LIBWEBP
 libgd_test_programs += \
 	gdimagefile/gdnametest
+endif
+endif
 
 EXTRA_DIST += \
 	gdimagefile/CMakeLists.txt \

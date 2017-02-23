@@ -3,8 +3,12 @@ libgd_test_programs += \
 	tiff/tiff_dpi \
 	tiff/tiff_im2im \
 	tiff/tiff_invalid_read \
-	tiff/tiff_null \
+	tiff/tiff_null
+
+if HAVE_LIBPNG
+libgd_test_programs += \
 	tiff/tiff_read_bw
+endif
 endif
 
 EXTRA_DIST += \

@@ -1,9 +1,13 @@
 libgd_test_programs += \
 	gdimagerectangle/bug00003 \
 	gdimagerectangle/bug00106_gdimagerectangle \
-	gdimagerectangle/bug00299 \
 	gdimagerectangle/github_bug_00172 \
 	gdimagerectangle/point_ordering
+
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagerectangle/bug00299
+endif
 
 EXTRA_DIST += \
 	gdimagerectangle/CMakeLists.txt \
