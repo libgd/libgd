@@ -258,8 +258,11 @@ else(WIN32)
 endif(WIN32)
 
 IF (ENABLE_LIQ AND LIQ_BUILD)
+  if (BUILD_SHARED_LIBS)
     ADD_DEPENDENCIES(${GD_LIB} libimagequant)
+  elseif (BUILD_STATIC_LIBS)
     ADD_DEPENDENCIES(${GD_LIB_STATIC} libimagequant)
+  endif()
 ENDIF(ENABLE_LIQ AND LIQ_BUILD)
 
 
