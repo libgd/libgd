@@ -27,6 +27,8 @@ For security related issues, please contact us at security@libgd.org
 
 Please visit our [homepage](http://www.libgd.org/) for more details.
 
+API documentation can be found here: http://libgd.github.io/libgd
+
 ## Supported Image Formats
 
 GD has builtin support for:
