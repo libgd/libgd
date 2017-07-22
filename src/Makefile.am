@@ -81,6 +81,7 @@ libgd_la_SOURCES = \
 	gd_io_dp.c \
 	gd_io_file.c \
 	gd_io_ss.c \
+	gd_io_stream.cxx \
 	gd_io_stream.h \
 	gd_jpeg.c \
 	gd_matrix.c \
@@ -117,6 +118,8 @@ libgd_la_SOURCES = \
 	gdhelpers.c \
 	gdhelpers.h \
 	gdkanji.c \
+	gdpp.cxx \
+	gdpp.h \
 	gdtables.c \
 	gdxpm.c \
 	jisx0208.h \
