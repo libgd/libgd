@@ -98,7 +98,7 @@ iconv_close (iconv_t cd)
 /* DetectKanjiCode() derived from DetectCodeType() by Ken Lunde. */
 
 static int
-DetectKanjiCode (unsigned char *str)
+DetectKanjiCode (const unsigned char *str)
 {
 	static int whatcode = ASCII;
 	int oldcode = ASCII;
@@ -334,10 +334,10 @@ han2zen (int *p1, int *p2)
 #define ustrncpy(A,B, maxsize) (strncpy((char*)(A),(const char*)(B), maxsize))
 
 static void
-do_convert (unsigned char **to_p, unsigned char **from_p, const char *code)
+do_convert (unsigned char **to_p, const unsigned char **from_p, const char *code)
 {
 	unsigned char *to = *to_p;
-	unsigned char *from = *from_p;
+	const unsigned char *from = *from_p;
 #ifdef HAVE_ICONV
 	iconv_t cd;
 	size_t from_len, to_len;
@@ -436,7 +436,7 @@ do_convert (unsigned char **to_p, unsigned char **from_p, const char *code)
 }
 
 static int
-do_check_and_conv (unsigned char *to, unsigned char *from)
+do_check_and_conv (unsigned char *to, const unsigned char *from)
 {
 	static unsigned char tmp[BUFSIZ];
 	unsigned char *tmp_p = &tmp[0];
@@ -527,7 +527,7 @@ do_check_and_conv (unsigned char *to, unsigned char *from)
 }
 
 int
-any2eucjp (unsigned char *dest, unsigned char *src, unsigned int dest_max)
+any2eucjp (unsigned char *dest, const unsigned char *src, unsigned int dest_max)
 {
 	static unsigned char tmp_dest[BUFSIZ];
 	int ret;

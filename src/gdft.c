@@ -103,8 +103,8 @@ static char *font_path(char **fontpath, char *name_list);
  *
  * Alias of <gdImageStringFT>.
  */
-BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
-                                      double ptsize, double angle, int x, int y, char *string)
+BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, const char *fontlist,
+                                      double ptsize, double angle, int x, int y, const char *string)
 {
 	/* 2.0.6: valid return */
 	return gdImageStringFT (im, brect, fg, fontlist, ptsize,
@@ -112,8 +112,8 @@ BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, char *fo
 }
 
 #ifndef HAVE_LIBFREETYPE
-BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
-                                       double ptsize, double angle, int x, int y, char *string,
+BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const char *fontlist,
+                                       double ptsize, double angle, int x, int y, const char *string,
                                        gdFTStringExtraPtr strex)
 {
 	(void)im;
@@ -131,7 +131,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 }
 
 BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
-                                     double ptsize, double angle, int x, int y, char *string)
+                                     double ptsize, double angle, int x, int y, const char *string)
 {
 	(void)im;
 	(void)brect;
@@ -184,7 +184,7 @@ typedef struct {
 font_t;
 
 typedef struct {
-	char *fontlist;		/* key */
+	const char *fontlist;		/* key */
 	int flags;			/* key */
 	FT_Library *library;
 }
@@ -260,7 +260,7 @@ static int comp_entities(const void *e1, const void *e2)
 	return strcmp(en1->name, en2->name);
 }
 
-extern int any2eucjp (char *, char *, unsigned int);
+extern int any2eucjp (char *, const char *, unsigned int);
 
 /* Persistent font cache until explicitly cleared */
 /* Fonts can be used across multiple images */
@@ -273,7 +273,7 @@ static FT_Library library;
 #define Tcl_UniChar int
 #define TCL_UTF_MAX 3
 static int
-gdTcl_UtfToUniChar (char *str, Tcl_UniChar * chPtr)
+gdTcl_UtfToUniChar (const char *str, Tcl_UniChar * chPtr)
 /* str is the UTF8 next character pointer */
 /* chPtr is the int for the result */
 {
@@ -925,8 +925,8 @@ BGD_DECLARE(void) gdFontCacheShutdown ()
  * See also:
  *  - <gdImageString>
  */
-BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
-                                     double ptsize, double angle, int x, int y, char *string)
+BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, const char *fontlist,
+                                     double ptsize, double angle, int x, int y, const char *string)
 {
 	return gdImageStringFTEx (im, brect, fg, fontlist,
 	                          ptsize, angle, x, y, string, 0);
@@ -1090,8 +1090,8 @@ BGD_DECLARE(int) gdFontCacheSetup (void)
 /*    the size of the error introduced by rounding is affected by this number */
 #define METRIC_RES 300
 
-BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
-                                       double ptsize, double angle, int x, int y, char *string,
+BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const char *fontlist,
+                                       double ptsize, double angle, int x, int y, const char *string,
                                        gdFTStringExtraPtr strex)
 {
 	FT_Matrix matrix;
@@ -1107,7 +1107,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	int  i, ch;
 	font_t *font;
 	fontkey_t fontkey;
-	char *next;
+	const char *next;
 	char *tmpstr = 0;
 	uint32_t *text;
 	glyphInfo *info = NULL;
