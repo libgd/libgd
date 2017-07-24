@@ -130,7 +130,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	return "libgd was not built with FreeType font support\n";
 }
 
-BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
+BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, const char *fontlist,
                                      double ptsize, double angle, int x, int y, const char *string)
 {
 	(void)im;
