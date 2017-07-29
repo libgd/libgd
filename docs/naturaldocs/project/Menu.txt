@@ -65,28 +65,28 @@ Group: Image Formats  {
    File: XPM Input  (no auto-title, gdxpm.c)
    }  # Group: Image Formats
 
+File: Color Quantization  (gd_topal.c)
+File: Cropping  (gd_crop.c)
+File: FreeType font rendering  (gdft.c)
 File: gd.c  (gd.c)
 File: gd.h  (gd.h)
-File: gd_crop.c  (gd_crop.c)
 File: gd_filename.c  (gd_filename.c)
-File: gd_filter.c  (gd_filter.c)
 File: gd_interpolation.c  (gd_interpolation.c)
 File: gd_io.h  (gd_io.h)
 File: gd_io_dp.c  (gd_io_dp.c)
 File: gd_ss.c  (gd_ss.c)
-File: gd_topal.c  (gd_topal.c)
-File: gd_transform.c  (gd_transform.c)
 File: gd_version.c  (gd_version.c)
 File: gdColorMapLookup  (gd_color_map.c)
 File: gdFree  (gdhelpers.c)
-File: gdft.c  (gdft.c)
 File: gdfx.c  (gdfx.c)
 File: gdImageColorMatch  (gd_color_match.c)
 File: gdImageNeuQuant  (gd_nnquant.c)
 File: gdNewFileCtx  (gd_io_file.c)
 File: gdNewSSCtx  (gd_io_ss.c)
+File: Image Filters  (gd_filter.c)
 File: License  (license.txt)
 File: Matrix  (gd_matrix.c)
+File: Transformations  (gd_transform.c)
 
 Group: Built-in Fonts  {
 
@@ -103,6 +103,7 @@ Group: Index  {
    Index: Everything
    File Index: Files
    Function Index: Functions
+   Macro Index: Macros
    Type Index: Types
    }  # Group: Index
 
