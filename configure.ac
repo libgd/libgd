@@ -317,7 +317,7 @@ AC_MSG_RESULT([
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG
    Support for Xpm library:          $gd_with_LIBXPM
    Support for liq library:          $gd_with_LIBIMAGEQUANT
-   Support for complext text:        $gd_with_LIBRAQM
+   Support for complex text:         $gd_with_LIBRAQM
    Support for pthreads:             $ax_pthread_ok
 ])
 
