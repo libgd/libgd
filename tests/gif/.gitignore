@@ -7,3 +7,4 @@
 /bug00227
 /gif_im2im
 /gif_null
+/uninitialized_memory_read
