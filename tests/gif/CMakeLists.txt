@@ -12,7 +12,7 @@ LIST(APPEND TESTS_FILES
 	bug00060
 	bug00066
 	gif_im2im
-	uninititalized_memory_read
+	uninitialized_memory_read
 )
 ENDIF(PNG_FOUND)
 
