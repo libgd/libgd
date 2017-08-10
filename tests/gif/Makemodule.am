@@ -2,7 +2,8 @@ libgd_test_programs += \
 	gif/bug00005_2 \
 	gif/bug00181 \
 	gif/bug00227 \
-	gif/gif_null
+	gif/gif_null \
+	gif/uninitialized_memory_read
 
 if HAVE_LIBPNG
 libgd_test_programs += \
@@ -22,4 +23,5 @@ EXTRA_DIST += \
 	gif/bug00005_3.gif \
 	gif/bug00060.gif \
 	gif/bug00066.gif \
-	gif/bug00066_exp.png
+	gif/bug00066_exp.png \
+	gif/unitialized_memory_read.gif

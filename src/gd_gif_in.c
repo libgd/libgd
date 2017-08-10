@@ -216,6 +216,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 
 	gdImagePtr im = 0;
 
+	memset(ColorMap, 0, 3 * MAXCOLORMAPSIZE);
+	memset(localColorMap, 0, 3 * MAXCOLORMAPSIZE);
+
 	if(!ReadOK(fd, buf, 6)) {
 		return 0;
 	}
