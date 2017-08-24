@@ -38,6 +38,11 @@ nmake /f windows\Makefile.vc
 nmake /f windows\Makefile.vc check
 ````
 
+* To build the executable programs, do:
+````
+nmake /f windows\Makefile.vc build_progs
+````
+
 * After a successful build, you find the libraries and test executables in
   `..\gdbuild`. You can change the build folder by setting the environment
   variable `WITH_BUILD` to the desired path.
