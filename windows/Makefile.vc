@@ -99,6 +99,19 @@ LIB_OBJS= \
 LIBS=kernel32.lib ole32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib Dnsapi.lib Gdi32.Lib
 LIBS_GD=libjpeg_a.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib libwebp_a.lib libxpm_a.lib libtiff.lib
 
+PROG_EXES= \
+	$(LIBGD_OBJ_DIR)\gdcmpgif.exe \
+	$(LIBGD_OBJ_DIR)\gdtopng.exe \
+	$(LIBGD_OBJ_DIR)\pngtogd.exe \
+	$(LIBGD_OBJ_DIR)\gdparttopng.exe \
+	$(LIBGD_OBJ_DIR)\gd2topng.exe \
+	$(LIBGD_OBJ_DIR)\pngtogd2.exe \
+	$(LIBGD_OBJ_DIR)\annotate.exe \
+	$(LIBGD_OBJ_DIR)\gd2copypal.exe \
+	$(LIBGD_OBJ_DIR)\gd2togif.exe \
+	$(LIBGD_OBJ_DIR)\giftogd2.exe
+PROG_OBJS=$(PROG_EXES:exe=obj)
+
 INCLUDES=/Isrc /I$(WITH_DEVEL)\include -I$(WITH_DEVEL)\include\libpng16 -I$(WITH_DEVEL)\include\freetype -I$(WITH_DEVEL)\include\freetype2 /Itests /Itests\gdtest -I$(WITH_DEVEL)\include\
 
 LDFLAGS=/nologo /nodefaultlib:libcmt /libpath:$(WITH_DEVEL)\lib /MACHINE:$(PLATFORM)
@@ -150,7 +163,8 @@ TEST_OBJS=$(TEST_OBJS:exe=obj)
 
 # pseudotargets
 build_libs: make_dirs $(TARGETDLL) $(TARGETLIB)
-all: build_libs build_tests
+build_progs: build_libs $(PROG_OBJS) $(PROG_EXES)
+all: build_libs build_tests build_progs
 check: all run_tests
 
 clean:
@@ -219,7 +233,7 @@ $(TARGETLIB): $(LIB_OBJS)
 
 all: $(LIBGD_OBJ_DIR) $(LIBGD_BIN_DIR) $(LIB_OBJS) $(STATICLIB)
 
-.SUFFIXES: .c .obj .res
+.SUFFIXES: .c .obj .res .exe
 
 # tests
 
@@ -235,3 +249,8 @@ $(SDR)readdir.obj: $(TARGETDLL) tests\gdtest\readdir.c
 pretest: $(TARGETDLL)
 	if not exist $(TDR) mkdir $(TDR)
 	copy $(TARGETDLL) $(TDR)$(GD_DLL)
+
+# programs
+
+{$(LIBGD_OBJ_DIR)}.obj{$(LIBGD_OBJ_DIR)}.exe:
+	$(LD) $(LDFLAGS) $** $(BUILD_DIR)\libgd.lib /out:$@
