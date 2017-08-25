@@ -26,6 +26,8 @@
 /* Bring in the gd library functions */
 #include "gd.h"
 
+#define KEEP_TRANS (-100)
+
 static const char argv0[] = "webpng";
 
 static void usage(const char *msg)
@@ -74,7 +76,7 @@ main(int argc, char **argv)
 
 	int interlace = -100;
 	int list_color_table = 0;
-	int trans_col = -1;
+	int trans_col = KEEP_TRANS;
 	int report_details = 0;
 	int print_alpha = 0;
 
@@ -251,7 +253,7 @@ main(int argc, char **argv)
 	else if (interlace == 0)
 		gdImageInterlace(im, 0);
 
-	if (trans_col != -100)
+	if (trans_col != KEEP_TRANS)
 		gdImageColorTransparent(im, trans_col);
 
 	if (use_stdin_stdout) {
