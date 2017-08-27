@@ -236,6 +236,12 @@ BGD_DECLARE(int) gdImageNegate(gdImagePtr src)
  *
  * Convert an image to grayscale
  *
+ * The red, green and blue components of each pixel are replaced by their
+ * weighted sum using the same coefficients as the REC.601 luma (Y')
+ * calculation. The alpha components are retained.
+ *
+ * For palette images the result may differ due to palette limitations.
+ *
  * Parameters:
  *   src - The image.
  *
@@ -248,10 +254,14 @@ BGD_DECLARE(int) gdImageGrayScale(gdImagePtr src)
 	int r,g,b,a;
 	int new_pxl, pxl;
 	FuncPtr f;
+	int alpha_blending;
 
 	if (src==NULL) {
 		return 0;
 	}
+
+	alpha_blending = src->alphaBlendingFlag;
+	gdImageAlphaBlending(src, gdEffectReplace);
 
 	f = GET_PIXEL_FUNCTION(src);
 
@@ -271,6 +281,8 @@ BGD_DECLARE(int) gdImageGrayScale(gdImagePtr src)
 			gdImageSetPixel (src, x, y, new_pxl);
 		}
 	}
+	gdImageAlphaBlending(src, alpha_blending);
+
 	return 1;
 }
 
