@@ -634,6 +634,7 @@ BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * outFile)
 	out->gd_free (out);
 }
 
+static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level);
 
 /*
   Function: gdImagePngPtr
@@ -657,8 +658,11 @@ BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
 	if (out == NULL) return NULL;
-	gdImagePngCtxEx (im, out, -1);
-	rv = gdDPExtractData (out, size);
+	if (!_gdImagePngCtxEx (im, out, -1)) {
+		rv = gdDPExtractData (out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free (out);
 	return rv;
 }
@@ -692,8 +696,11 @@ BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
 	if (out == NULL) return NULL;
-	gdImagePngCtxEx (im, out, level);
-	rv = gdDPExtractData (out, size);
+	if (!_gdImagePngCtxEx (im, out, level)) {
+		rv = gdDPExtractData (out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free (out);
 	return rv;
 }
@@ -742,12 +749,17 @@ BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
     Nothing.
 
 */
+BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
+{
+	_gdImagePngCtxEx(im, outfile, level);
+}
 
 /* This routine is based in part on code from Dale Lutz (Safe Software Inc.)
  *  and in part on demo code from Chapter 15 of "PNG: The Definitive Guide"
  *  (http://www.libpng.org/pub/png/book/).
  */
-BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
+/* returns 0 on success, 1 on failure */
+static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 {
 	int i, j, bit_depth = 0, interlace_type;
 	int width = im->sx;
@@ -765,10 +777,11 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 #ifdef PNG_SETJMP_SUPPORTED
 	jmpbuf_wrapper jbw;
 #endif
+	int ret = 0;
 
 	/* width or height of value 0 is invalid in IHDR;
 	   see http://www.w3.org/TR/PNG-Chunks.html */
-	if (width == 0 || height ==0) return;
+	if (width == 0 || height ==0) return 1;
 
 #ifdef PNG_SETJMP_SUPPORTED
 	png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING,
@@ -779,21 +792,21 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 #endif
 	if (png_ptr == NULL) {
 		gd_error("gd-png error: cannot allocate libpng main struct\n");
-		return;
+		return 1;
 	}
 
 	info_ptr = png_create_info_struct (png_ptr);
 	if (info_ptr == NULL) {
 		gd_error("gd-png error: cannot allocate libpng info struct\n");
 		png_destroy_write_struct (&png_ptr, (png_infopp) NULL);
-		return;
+		return 1;
 	}
 
 #ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(jbw.jmpbuf)) {
 		gd_error("gd-png error: setjmp returns error condition\n");
 		png_destroy_write_struct (&png_ptr, &info_ptr);
-		return;
+		return 1;
 	}
 #endif
 
@@ -845,6 +858,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		}
 		if (colors == 0) {
 			gd_error("gd-png error: no colors in palette\n");
+			ret = 1;
 			goto bail;
 		}
 		if (colors < im->colorsTotal) {
@@ -976,11 +990,13 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		png_bytep *prow_pointers;
 		int saveAlphaFlag = im->saveAlphaFlag;
 		if (overflow2(sizeof (png_bytep), height)) {
+			ret = 1;
 			goto bail;
 		}
 		row_pointers = gdMalloc (sizeof (png_bytep) * height);
 		if (row_pointers == NULL) {
 			gd_error("gd-png error: unable to allocate row_pointers\n");
+			ret = 1;
 			goto bail;
 		}
 		prow_pointers = row_pointers;
@@ -992,6 +1008,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 					gdFree (row_pointers[i]);
 				/* 2.0.29: memory leak TBB */
 				gdFree(row_pointers);
+				ret = 1;
 				goto bail;
 			}
 			pOutputRow = *prow_pointers++;
@@ -1025,11 +1042,13 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		if (remap) {
 			png_bytep *row_pointers;
 			if (overflow2(sizeof (png_bytep), height)) {
+				ret = 1;
 				goto bail;
 			}
 			row_pointers = gdMalloc (sizeof (png_bytep) * height);
 			if (row_pointers == NULL) {
 				gd_error("gd-png error: unable to allocate row_pointers\n");
+				ret = 1;
 				goto bail;
 			}
 			for (j = 0; j < height; ++j) {
@@ -1039,6 +1058,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 						gdFree (row_pointers[i]);
 					/* TBB: memory leak */
 					gdFree (row_pointers);
+					ret = 1;
 					goto bail;
 				}
 				for (i = 0; i < width; ++i)
@@ -1059,6 +1079,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	/* 1.6.3: maybe we should give that memory BACK! TBB */
 bail:
 	png_destroy_write_struct (&png_ptr, &info_ptr);
+	return ret;
 }
 
 
