@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.5] - 2017-08-29
+
+### Security
+- Double-free in gdImagePngPtr(). (CVE-2017-6362)
+- Buffer over-read into uninitialized memory. (CVE-2017-7890)
+
+### Fixed
+- Fix #109: XBM reading fails with printed error
+- Fix #338: Fatal and normal libjpeg/ibpng errors not distinguishable
+- Fix #357: 2.2.4: Segfault in test suite
+- Fix #386: gdImageGrayScale() may produce colors
+- Fix #406: webpng -i removes the transparent color
+- Fix Coverity #155475: Failure to restore alphaBlendingFlag
+- Fix Coverity #155476: potential resource leak
+- Fix several build issues and test failures
+- Fix and reenable optimized support for reading 1 bps TIFFs
+
+### Added
+- The native MSVC buildchain now supports libtiff and most executables
+
 ## [2.2.4] - 2017-01-18
 
 ### Security
