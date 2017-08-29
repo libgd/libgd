@@ -1413,6 +1413,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	count = textLayout (text , i, face, strex, &info);
 
 	if (!count) {
+		gdFree (text);
 		gdFree (tmpstr);
 		gdCacheDelete (tc_cache);
 		gdMutexUnlock (gdFontCacheMutex);
