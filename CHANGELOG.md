@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.2.5] - 2017-08-29
+## [2.2.5] - 2017-08-30
 
 ### Security
 - Double-free in gdImagePngPtr(). (CVE-2017-6362)

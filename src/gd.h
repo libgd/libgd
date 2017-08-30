@@ -13,7 +13,7 @@ extern "C" {
  * trailing comment. */
 #define GD_MAJOR_VERSION    2           /*version605b5d1778*/
 #define GD_MINOR_VERSION    2           /*version605b5d1778*/
-#define GD_RELEASE_VERSION  4           /*version605b5d1778*/
+#define GD_RELEASE_VERSION  5           /*version605b5d1778*/
 #define GD_EXTRA_VERSION    ""          /*version605b5d1778*/
 /* End parsable section. */
 
