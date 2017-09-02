@@ -563,6 +563,7 @@ int gdTestImageCompareToImage(const char* file, unsigned int line, const char* m
 		if (!fp) goto fail;
 		gdImagePng(surface_diff,fp);
 		fclose(fp);
+		gdImageDestroy(surface_diff);
 
 		fp = fopen(file_out, "wb");
 		if (!fp) goto fail;
