@@ -12,22 +12,33 @@
  *  - color header (either truecolor or palette)
  *  - image data
  *
- * All numbers are stored in big-endian format.
+ * All numbers are stored in big-endian format. Note that all GD output is done
+ * in the GD 2.x format (not to be confused with the GD2 format), but input may
+ * also be in the GD 1.x format.
  *
- * File header structure:
+ * GD 1.x file header structure:
+ *  width  - 1 word
+ *  height - 1 word
+ *
+ * GD 1.x color header (palette only):
+ *  count       - 1 byte (the number of used palette colors)
+ *  transparent - 1 word (257 signals no transparency)
+ *  palette     - 3×count bytes (RGB triplets)
+ * 
+ * GD 2.x file header structure:
  *  signature     - 1 word ("\xFF\xFE" for truecolor, "\xFF\xFF" for palette)
  *  width         - 1 word
  *  height        - 1 word
  *
- * Truecolor image color header:
+ * GD 2.x truecolor image color header:
  *  truecolor   - 1 byte (always "\001")
  *  transparent - 1 dword (ARGB color)
  *
- * Palette image color header:
+ * GD 2.x palette image color header:
  *  truecolor   - 1 byte (always "\0")
  *  count       - 1 word (the number of used palette colors)
- *  transparent - 1 dword (ARGB color)
- *  palette     - 256 dwords (RGBA colors)
+ *  transparent - 1 dword (palette index)
+ *  palette     - count dwords (RGBA colors)
  *
  * Image data:
  *  Sequential pixel data; row-major from top to bottom, left to right:
