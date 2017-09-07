@@ -51,12 +51,14 @@
  *
  * Truecolor image color header:
  *  truecolor   - 1 byte (always "\001")
- *  transparent - 1 dword (ARGB color)
+ *  transparent - 1 dword (ARGB color); "\377\377\377\377" means that no
+ *				  transparent color is set
  *
  * Palette image color header:
  *  truecolor   - 1 byte (always "\0")
  *  count       - 1 word (the number of used palette colors)
- *  transparent - 1 dword (ARGB color)
+ *  transparent - 1 dword (palette index); "\377\377\377\377" means that no
+ *				  transparent color is set
  *  palette     - 256 dwords (RGBA colors)
  *
  * Chunk structure:
