@@ -23,7 +23,7 @@
  * GD 1.x color header (palette only):
  *  count       - 1 byte (the number of used palette colors)
  *  transparent - 1 word (257 signals no transparency)
- *  palette     - 3×count bytes (RGB triplets)
+ *  palette     - 256×3 bytes (RGB triplets)
  * 
  * GD 2.x file header structure:
  *  signature     - 1 word ("\xFF\xFE" for truecolor, "\xFF\xFF" for palette)
@@ -32,13 +32,15 @@
  *
  * GD 2.x truecolor image color header:
  *  truecolor   - 1 byte (always "\001")
- *  transparent - 1 dword (ARGB color)
+ *  transparent - 1 dword (ARGB color); "\377\377\377\377" means that no
+ *				  transparent color is set
  *
  * GD 2.x palette image color header:
  *  truecolor   - 1 byte (always "\0")
  *  count       - 1 word (the number of used palette colors)
- *  transparent - 1 dword (palette index)
- *  palette     - count dwords (RGBA colors)
+ *  transparent - 1 dword (palette index); "\377\377\377\377" means that no
+ *				  transparent color is set
+ *  palette     - 256 dwords (RGBA colors)
  *
  * Image data:
  *  Sequential pixel data; row-major from top to bottom, left to right:
