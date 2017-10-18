@@ -5,6 +5,7 @@ libgd_test_programs += \
 	png/bug00086 \
 	png/bug00088 \
 	png/bug00193 \
+	png/bug00295 \
 	png/bug00338 \
 	png/bug00381_1 \
 	png/bug00381_2 \
@@ -20,5 +21,6 @@ EXTRA_DIST += \
 	png/bug00088_1_exp.png \
 	png/bug00088_2.png \
 	png/bug00088_2_exp.png \
+	png/bug00295.png \
 	png/bug00381_2.gd \
 	png/emptyfile
