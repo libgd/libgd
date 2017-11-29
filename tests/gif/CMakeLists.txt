@@ -4,6 +4,7 @@ LIST(APPEND TESTS_FILES
 	bug00227
 	gif_null
 	ossfuzz5700
+	php_bug_75571
 	uninitialized_memory_read
 )
 

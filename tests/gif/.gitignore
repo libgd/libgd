@@ -8,4 +8,5 @@
 /gif_im2im
 /gif_null
 /ossfuzz5700
+/php_bug_75571
 /uninitialized_memory_read
