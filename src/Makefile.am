@@ -46,6 +46,7 @@ EXTRA_DIST = \
 	config.h.cmake \
 	gd_io_stream.cxx \
 	gdpp.cxx \
+	getopt.c \
 	snprintf.c \
 	msinttypes/inttypes.h \
 	msinttypes/stdint.h
