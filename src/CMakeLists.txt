@@ -179,3 +179,6 @@ install(FILES
 	gdfx.h
 	gdpp.h
 	DESTINATION include)
+
+CONFIGURE_FILE(../config/gdlib.pc.cmake gdlib.pc @ONLY)
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/gdlib.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
