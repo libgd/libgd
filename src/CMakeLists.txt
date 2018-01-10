@@ -69,11 +69,19 @@ SET (LIBGD_SRC_FILES
 	wbmp.h
 )
 
-if(MSVC AND MSVC_VERSION LESS 1900)
-	set(LIBGD_SRC_FILES ${LIBGD_SRC_FILES}
-		snprintf.c
+# Static library just for utility programs.
+SET (GD_PROGRAMS_LIB_SRC_FILES)
+
+if(MSVC)
+	set(GD_PROGRAMS_LIB_SRC_FILES ${GD_PROGRAMS_LIB_SRC_FILES}
+		getopt.c
 	)
-endif(MSVC AND MSVC_VERSION LESS 1900)
+	if(MSVC_VERSION LESS 1900)
+		set(LIBGD_SRC_FILES ${LIBGD_SRC_FILES}
+			snprintf.c
+		)
+	endif(MSVC_VERSION LESS 1900)
+endif(MSVC)
 
 include(GNUInstallDirs)
 
@@ -92,6 +100,10 @@ if (BUILD_STATIC_LIBS)
 	if (UNIX)
 		set_target_properties(${GD_LIB_STATIC} PROPERTIES OUTPUT_NAME ${GD_LIB})
 	endif()
+endif()
+
+if (NOT "${GD_PROGRAMS_LIB_SRC_FILES}" STREQUAL "")
+	add_library(gd_programs_lib STATIC ${GD_PROGRAMS_LIB_SRC_FILES})
 endif()
 
 if (WIN32 AND NOT MINGW AND NOT MSYS)
@@ -149,6 +161,9 @@ foreach(program ${GD_PROGRAMS})
     else()
         target_link_libraries(${program} ${GD_LIB_STATIC})
     endif()
+	if (NOT "${GD_PROGRAMS_LIB_SRC_FILES}" STREQUAL "")
+		target_link_libraries(${program} gd_programs_lib)
+	endif()
 endforeach(program)
 
 set(GD_INSTALL_TARGETS ${GD_PROGRAMS})
