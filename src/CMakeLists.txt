@@ -180,3 +180,6 @@ install(FILES
 
 CONFIGURE_FILE(../config/gdlib.pc.cmake gdlib.pc @ONLY)
 INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/gdlib.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+
+CONFIGURE_FILE(../config/gdlib-config.cmake gdlib-config @ONLY)
+INSTALL(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/gdlib-config" DESTINATION bin)
