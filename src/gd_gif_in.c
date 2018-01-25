@@ -53,7 +53,7 @@ static int set_verbose(void)
 
 #define BitSet(byte, bit)	(((byte) & (bit)) == (bit))
 
-#define ReadOK(file, buffer, len) (gdGetBuf(buffer, len, file) > 0)
+#define ReadOK(file, buffer, len) (gdGetBuf(buffer, len, file) == len)
 
 #define LM_to_uint(a, b)	(((b)<<8)|(a))
 
