@@ -11,7 +11,7 @@ v() { echo "$@"; "$@"; }
 v docs/naturaldocs/run_docs.sh --nonfatal
 
 if echo "${OSTYPE:-$(uname)}" | grep -q '^darwin' ; then
-	echo "Having trouble on OS X? Try: brew install autoconf libtool automake gettext apple-gcc42 pkg-config cmake"
+	echo "Having trouble on OS X? Try: brew install autoconf libtool automake gettext pkg-config cmake"
 fi
 
 if ! v autoreconf -f -i ; then
