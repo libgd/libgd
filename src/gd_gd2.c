@@ -438,7 +438,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 	}
 
 	bytesPerPixel = im->trueColor ? 4 : 1;
+	if (overflow2(ncx, ncy))
+		goto fail;
 	nc = ncx * ncy;
+
+	if (overflow2(ncy, cs) || overflow2(ncx, cs) || overflow2(bytesPerPixel, cs))
+		goto fail;
 
 	if (gd2_compressed (fmt)) {
 		/* Find the maximum compressed chunk size. */
