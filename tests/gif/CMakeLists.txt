@@ -3,6 +3,8 @@ LIST(APPEND TESTS_FILES
 	bug00181
 	bug00227
 	gif_null
+	ossfuzz5700
+	uninitialized_memory_read
 )
 
 IF(PNG_FOUND)
@@ -12,7 +14,6 @@ LIST(APPEND TESTS_FILES
 	bug00060
 	bug00066
 	gif_im2im
-	uninitialized_memory_read
 )
 ENDIF(PNG_FOUND)
 
