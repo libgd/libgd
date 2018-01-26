@@ -7,4 +7,5 @@
 /bug00227
 /gif_im2im
 /gif_null
+/ossfuzz5700
 /uninitialized_memory_read
