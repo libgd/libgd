@@ -51,14 +51,14 @@ extern "C" {
 #   define BGD_EXPORT_DATA_PROT
 #  else
 #   ifdef __GNUC__
-#    define BGD_EXPORT_DATA_PROT __attribute__ ((dllexport))
+#    define BGD_EXPORT_DATA_PROT __attribute__ ((__dllexport__))
 #   else
 #    define BGD_EXPORT_DATA_PROT __declspec(dllexport)
 #   endif
 #  endif
 # else
 #  ifdef __GNUC__
-#   define BGD_EXPORT_DATA_PROT __attribute__ ((dllimport))
+#   define BGD_EXPORT_DATA_PROT __attribute__ ((__dllimport__))
 #  else
 #   define BGD_EXPORT_DATA_PROT __declspec(dllimport)
 #  endif
@@ -67,8 +67,8 @@ extern "C" {
 # define BGD_EXPORT_DATA_IMPL
 #else
 # if defined(__GNUC__) || defined(__clang__)
-#  define BGD_EXPORT_DATA_PROT __attribute__ ((visibility ("default")))
-#  define BGD_EXPORT_DATA_IMPL __attribute__ ((visibility ("hidden")))
+#  define BGD_EXPORT_DATA_PROT __attribute__ ((__visibility__ ("default")))
+#  define BGD_EXPORT_DATA_IMPL __attribute__ ((__visibility__ ("hidden")))
 # else
 #  define BGD_EXPORT_DATA_PROT
 #  define BGD_EXPORT_DATA_IMPL
