@@ -164,7 +164,7 @@ int gdGetInt(int *result, gdIOCtx *ctx)
 
 int gdGetIntLSB(signed int *result, gdIOCtx *ctx)
 {
-	int c = 0;
+	unsigned int c;
 	unsigned int r = 0;
 
 	c = (ctx->getC) (ctx);
