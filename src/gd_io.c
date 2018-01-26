@@ -130,34 +130,37 @@ int gdGetWordLSB(signed short int *result, gdIOCtx *ctx)
 int gdGetInt(int *result, gdIOCtx *ctx)
 {
 	int r;
+	unsigned int collector;
 
 	r = (ctx->getC)(ctx);
 	if(r == EOF) {
 		return 0;
 	}
 
-	*result = r << 24;
+	collector = (unsigned int) r << 24;
 
 	r = (ctx->getC)(ctx);
 	if(r == EOF) {
 		return 0;
 	}
 
-	*result += r << 16;
+	collector += r << 16;
 
 	r = (ctx->getC)(ctx);
 	if(r == EOF) {
 		return 0;
 	}
 
-	*result += r << 8;
+	collector += r << 8;
 
 	r = (ctx->getC)(ctx);
 	if(r == EOF) {
 		return 0;
 	}
 
-	*result += r;
+	collector += r;
+
+	memcpy(result, &collector, sizeof(int));
 
 	return 1;
 }
