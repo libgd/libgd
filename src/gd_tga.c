@@ -206,7 +206,7 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga)
 int read_image_tga( gdIOCtx *ctx, oTga *tga )
 {
 	int pixel_block_size = (tga->bits / 8);
-	int image_block_size = (tga->width * tga->height) * pixel_block_size;
+	int image_block_size;
 	int* decompression_buffer = NULL;
 	unsigned char* conversion_buffer = NULL;
 	int buffer_caret = 0;
@@ -223,6 +223,7 @@ int read_image_tga( gdIOCtx *ctx, oTga *tga )
 		return -1;
 	}
 
+	image_block_size = (tga->width * tga->height) * pixel_block_size;
 	if(overflow2(image_block_size, sizeof(int))) {
 		return -1;
 	}
