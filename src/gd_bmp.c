@@ -25,6 +25,7 @@
 #endif
 
 #include <stdio.h>
+#include <limits.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -636,6 +637,9 @@ static int bmp_read_windows_v3_info(gdIOCtxPtr infile, bmp_info_t *info)
 		return 1;
 	}
 
+	/* Unlikely, but possible -- largest signed value won't fit in unsigned. */
+	if (info->height == 0 || info->height == INT_MIN)
+		return 1;
 	if (info->height < 0) {
 		info->topdown = 1;
 		info->height = -info->height;
@@ -645,8 +649,9 @@ static int bmp_read_windows_v3_info(gdIOCtxPtr infile, bmp_info_t *info)
 
 	info->type = BMP_PALETTE_4;
 
-	if (info->width <= 0 || info->height <= 0 || info->numplanes <= 0 ||
-	        info->depth <= 0  || info->numcolors < 0 || info->mincolors < 0) {
+	/* Height was checked above. */
+	if (info->width <= 0 || info->numplanes <= 0 || info->depth <= 0 ||
+	        info->numcolors < 0 || info->mincolors < 0) {
 		return 1;
 	}
 
@@ -706,6 +711,9 @@ static int bmp_read_os2_v2_info(gdIOCtxPtr infile, bmp_info_t *info)
 		return 1;
 	}
 
+	/* Unlikely, but possible -- largest signed value won't fit in unsigned. */
+	if (info->height == 0 || info->height == INT_MIN)
+		return 1;
 	if (info->height < 0) {
 		info->topdown = 1;
 		info->height = -info->height;
@@ -715,11 +723,11 @@ static int bmp_read_os2_v2_info(gdIOCtxPtr infile, bmp_info_t *info)
 
 	info->type = BMP_PALETTE_4;
 
-	if (info->width <= 0 || info->height <= 0 || info->numplanes <= 0 ||
-	        info->depth <= 0  || info->numcolors < 0 || info->mincolors < 0) {
+	/* Height was checked above. */
+	if (info->width <= 0 || info->numplanes <= 0 || info->depth <= 0 ||
+	        info->numcolors < 0 || info->mincolors < 0) {
 		return 1;
 	}
-
 
 	return 0;
 }
