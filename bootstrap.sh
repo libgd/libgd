@@ -20,8 +20,9 @@ fi
 
 (
 echo "/* Generated from config.hin via autoheader for cmake; see bootstrap.sh. */"
-sed \
+sed -E \
 	-e '1d' \
+	-e '/\bENABLE_/{s:#undef:#define:;s:([^ ]*)$:\1 @\1@:}' \
 	-e 's:#undef:#cmakedefine:' \
 	src/config.hin
 ) > src/config.h.cmake

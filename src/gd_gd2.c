@@ -85,7 +85,7 @@
 /* 2.03: gd2 is no longer mandatory */
 /* JCE - test after including gd.h so that HAVE_LIBZ can be set in
  * a config.h file included by gd.h */
-#ifdef HAVE_LIBZ
+#if defined(HAVE_LIBZ) && ENABLE_GD_FORMATS
 #include <zlib.h>
 
 #define TRUE 1
@@ -1134,57 +1134,61 @@ BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
 	return rv;
 }
 
-#else /* no HAVE_LIBZ */
-static void _noLibzError (void)
+#else /* no HAVE_LIBZ or !ENABLE_GD_FORMATS */
+static void _noGd2Error (void)
 {
+#if !ENABLE_GD_FORMATS
+	gd_error("GD2 image support has been disabled\n");
+#else
 	gd_error("GD2 support is not available - no libz\n");
+#endif
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2 (FILE * inFile)
 {
-	_noLibzError();
+	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 {
-	_noLibzError();
+	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Part (FILE * inFile, int srcx, int srcy, int w, int h)
 {
-	_noLibzError();
+	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ptr (int size, void *data)
 {
-	_noLibzError();
+	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 {
-	_noLibzError();
+	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartPtr (int size, void *data, int srcx, int srcy, int w,
         int h)
 {
-	_noLibzError();
+	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(void) gdImageGd2 (gdImagePtr im, FILE * outFile, int cs, int fmt)
 {
-	_noLibzError();
+	_noGd2Error();
 }
 
 BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
 {
-	_noLibzError();
+	_noGd2Error();
 	return NULL;
 }
 #endif /* HAVE_LIBZ */

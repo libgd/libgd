@@ -1,7 +1,9 @@
 if HAVE_LIBTIFF
 if HAVE_LIBWEBP
+if ENABLE_GD_FORMATS
 libgd_test_programs += \
 	gdimagefile/gdnametest
+endif
 endif
 endif
 

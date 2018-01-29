@@ -1,3 +1,5 @@
+if ENABLE_GD_FORMATS
+if HAVE_LIBZ
 libgd_test_programs += \
 	gd2/bug_289 \
 	gd2/bug00209 \
@@ -5,17 +7,15 @@ libgd_test_programs += \
 	gd2/bug00354 \
 	gd2/gd2_empty_file \
 	gd2/php_bug_72339 \
+	gd2/gd2_null \
 	gd2/gd2_read_corrupt \
 	gd2/too_few_image_data
-
-if HAVE_LIBZ
-libgd_test_programs += \
-	gd2/gd2_null
 
 if HAVE_LIBPNG
 libgd_test_programs += \
 	gd2/gd2_im2im \
 	gd2/gd2_read
+endif
 endif
 endif
 
