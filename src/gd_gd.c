@@ -57,6 +57,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gd_errors.h"
+
+/* 2.3: gd is no longer mandatory */
+#if ENABLE_GD_FORMATS
 
 #define TRUE 1
 #define FALSE 0
@@ -400,3 +404,41 @@ BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size)
 	out->gd_free (out);
 	return rv;
 }
+
+#else /* no HAVE_LIBZ or !ENABLE_GD_FORMATS */
+
+static void _noGdError (void)
+{
+	gd_error("GD image support has been disabled\n");
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGd (FILE * inFile)
+{
+	_noGdError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGdPtr (int size, void *data)
+{
+	_noGdError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGdCtx (gdIOCtxPtr in)
+{
+	_noGdError();
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * outFile)
+{
+	_noGdError();
+}
+
+BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size)
+{
+	_noGdError();
+	return NULL;
+}
+
+#endif /* ENABLE_GD_FORMATS */

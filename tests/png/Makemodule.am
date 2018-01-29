@@ -7,10 +7,14 @@ libgd_test_programs += \
 	png/bug00193 \
 	png/bug00338 \
 	png/bug00381_1 \
-	png/bug00381_2 \
 	png/png_im2im \
 	png/png_null \
 	png/png_resolution
+
+if ENABLE_GD_FORMATS
+libgd_test_programs += \
+	png/bug00381_2
+endif
 endif
 
 EXTRA_DIST += \

@@ -71,6 +71,7 @@ build_autotools() {
 		--prefix=/usr/local \
 		--libdir=/usr/local/lib \
 		--enable-werror \
+		--enable-gd-formats \
 		--with-fontconfig \
 		--with-freetype \
 		--with-jpeg \
@@ -100,6 +101,7 @@ build_cmake() {
 		-DBUILD_TEST=1
 		-DCMAKE_INSTALL_PREFIX=/usr/local
 		-DCMAKE_INSTALL_LIBDIR=/usr/local/lib
+		-DENABLE_GD_FORMATS=1
 		-DENABLE_FONTCONFIG=1
 		-DENABLE_FREETYPE=1
 		-DENABLE_JPEG=1

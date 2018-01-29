@@ -3,6 +3,9 @@
 /* Define is you are building for Win32 API */
 #cmakedefine BGDWIN32
 
+/* Whether to support gd image formats */
+#define ENABLE_GD_FORMATS @ENABLE_GD_FORMATS@
+
 /* Define to 1 if you have the <dirent.h> header file. */
 #cmakedefine HAVE_DIRENT_H
 

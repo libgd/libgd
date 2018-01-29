@@ -121,6 +121,21 @@ AC_CHECK_FUNC(sin,,[AC_CHECK_LIB(m,sin)])
 AX_PTHREAD()
 AX_OPENMP()
 
+dnl We should default this to off in future releases.
+AC_MSG_CHECKING([whether to support gd image formats])
+AC_ARG_ENABLE([gd-formats],
+  [AS_HELP_STRING([--disable-gd-formats], [Disable support for the legacy/testing gd image formats])],
+  [gd_enable_gd_formats=$enableval],
+  [gd_enable_gd_formats=yes])
+AC_MSG_RESULT([$gd_enable_gd_formats])
+if test "$gd_enable_gd_formats" = yes; then
+  gd_ac_value=1
+else
+  gd_ac_value=0
+fi
+AC_DEFINE_UNQUOTED([ENABLE_GD_FORMATS], [$gd_ac_value], [Whether to support gd image formats])
+AM_CONDITIONAL([ENABLE_GD_FORMATS], test "$gd_enable_gd_formats" = yes)
+
 dnl Helper macro for working with external libraries.
 dnl GD_LIB_CHECK([SYM], [FEATURE], [name], [...test...])
 dnl $1 - upper case symbol
@@ -308,6 +323,7 @@ dnl report configuration
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE $VERSION:
 
+   Support for gd/gd2 images:        $gd_enable_gd_formats
    Support for Zlib:                 $gd_with_LIBZ
    Support for PNG library:          $gd_with_LIBPNG
    Support for JPEG library:         $gd_with_LIBJPEG

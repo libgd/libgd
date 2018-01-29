@@ -11,6 +11,7 @@ SET(CMAKE_MODULE_PATH "${GD_SOURCE_DIR}/cmake/modules")
 
 include(gd)
 
+OPTION(ENABLE_GD_FORMATS "Enable GD image formats" 0)
 OPTION(ENABLE_PNG "Enable PNG support" 0)
 OPTION(ENABLE_LIQ "Enable libimagequant support" 0)
 OPTION(ENABLE_JPEG "Enable JPEG support" 0)
@@ -143,6 +144,8 @@ else (USE_EXT_GD)
 	if (ENABLE_FONTCONFIG)
 		FIND_PACKAGE(FontConfig)
 	endif (ENABLE_FONTCONFIG)
+
+	SET(ENABLE_GD_FORMATS ${ENABLE_GD_FORMATS})
 
 	if (FREETYPE_FOUND)
 		INCLUDE_DIRECTORIES(${FREETYPE_INCLUDE_DIRS})
