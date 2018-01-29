@@ -238,7 +238,7 @@ _gd2GetHeader (gdIOCtxPtr in, int *sx, int *sy,
 			if (gdGetInt (&cidx[i].size, in) != 1) {
 				goto fail2;
 			};
-			if (cidx[i].offset < 0 || cidx[i].size < 0)
+			if (cidx[i].offset < 0 || cidx[i].size < 0 || cidx[i].size == INT_MAX)
 				goto fail2;
 		};
 		*chunkIdx = cidx;
