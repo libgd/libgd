@@ -104,7 +104,8 @@ _gdGetColors (gdIOCtx * in, gdImagePtr im, int gd2xFlag)
 		if (!gdGetWord (&im->transparent, in)) {
 			goto fail1;
 		}
-		if (im->transparent == 257) {
+		/* Make sure transparent index is within bounds of the palette. */
+		if (im->transparent >= 256 || im->transparent < 0) {
 			im->transparent = (-1);
 		}
 	}
