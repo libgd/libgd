@@ -1,5 +1,6 @@
 SET(TESTS_FILES
 	bug00297
+	bug00432
 	php_bug_72494
 )
 
