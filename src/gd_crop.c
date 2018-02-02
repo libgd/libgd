@@ -48,6 +48,7 @@ static int gdGuessBackgroundColorFromCorners(gdImagePtr im, int *color);
 BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop)
 {
 	gdImagePtr dst;
+	int alphaBlendingFlag;
 
 	if (gdImageTrueColor(src)) {
 		dst = gdImageCreateTrueColor(crop->width, crop->height);
@@ -55,7 +56,10 @@ BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop)
 		dst = gdImageCreate(crop->width, crop->height);
 	}
 	if (!dst) return NULL;
+	alphaBlendingFlag = dst->alphaBlendingFlag;
+	gdImageAlphaBlending(dst, gdEffectReplace);
 	gdImageCopy(dst, src, 0, 0, crop->x, crop->y, crop->width, crop->height);
+	gdImageAlphaBlending(dst, alphaBlendingFlag);
 
 	return dst;
 }
