@@ -25,7 +25,7 @@ EXTRA_DIST += \
 	gd2/bug00209.gd2 \
 	gd2/bug00354a.gd2 \
 	gd2/bug00354b.gd2 \
-	gd2/bug00383 \
+	gd2/bug00383.gd2 \
 	gd2/conv_gd2_exp.gd2 \
 	gd2/conv_test.gd2 \
 	gd2/conv_test_exp.png \

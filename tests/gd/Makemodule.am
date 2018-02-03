@@ -14,6 +14,6 @@ endif
 endif
 
 EXTRA_DIST += \
-	gd/bug00383 \
+	gd/bug00383.gd \
 	gd/crafted_num_colors.gd \
 	gd/CMakeLists.txt
