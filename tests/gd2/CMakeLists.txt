@@ -5,6 +5,7 @@ LIST(APPEND TESTS_FILES
 	bug00209
 	bug00309
 	bug00354
+	bug00383
 	gd2_empty_file
 	php_bug_72339
 	gd2_null

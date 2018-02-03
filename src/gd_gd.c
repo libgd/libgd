@@ -108,10 +108,10 @@ _gdGetColors (gdIOCtx * in, gdImagePtr im, int gd2xFlag)
 		if (!gdGetWord (&im->transparent, in)) {
 			goto fail1;
 		}
-		/* Make sure transparent index is within bounds of the palette. */
-		if (im->transparent >= 256 || im->transparent < 0) {
-			im->transparent = (-1);
-		}
+	}
+	/* Make sure transparent index is within bounds of the palette. */
+	if (!(im->trueColor) && (im->transparent >= im->colorsTotal || im->transparent < 0)) {
+		im->transparent = (-1);
 	}
 	GD2_DBG (printf
 	         ("Palette had %d colours (T=%d)\n", im->colorsTotal,
