@@ -239,7 +239,8 @@ BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOC
 	} else {
 		for (i=0; i<l; i++) {
 			/* only in C-locale isalnum() would work */
-			if (!isupper(name[i]) && !islower(name[i]) && !isdigit(name[i])) {
+			unsigned char ch = name[i];
+			if (!isupper(ch) && !islower(ch) && !isdigit(ch)) {
 				name[i] = '_';
 			}
 		}
