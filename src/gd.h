@@ -76,7 +76,16 @@ extern "C" {
 # define BGD_STDCALL
 #endif
 
+#if defined(__GNUC__) || defined(__clang__)
+# define BGD_ATTR_DEPRECATED __attribute__((__deprecated__))
+#elif defined(_MSC_VER)
+# define BGD_ATTR_DEPRECATED __declspec(deprecated)
+#else
+# define BGD_ATTR_DEPRECATED
+#endif
+
 #define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt BGD_STDCALL
+#define BGD_DEPRECATED(rt) BGD_ATTR_DEPRECATED BGD_EXPORT_DATA_PROT rt BGD_STDCALL
 
 /* VS2012+ disable keyword macroizing unless _ALLOW_KEYWORD_MACROS is set
    We define inline, snprintf, and strcasecmp if they're missing 
@@ -726,7 +735,7 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 
 /* For backwards compatibility only. Use gdImageSetStyle()
    for much more flexible line drawing. */
-BGD_DECLARE(void) gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2,
+BGD_DEPRECATED(void) gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2,
                                      int color);
 /* Corners specified (not width and height). Upper left first, lower right
    second. */

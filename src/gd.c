@@ -1541,10 +1541,23 @@ static void gdImageVLine(gdImagePtr im, int x, int y1, int y2, int col)
 }
 
 /*
-	Function: gdImageLine
-	
-	Bresenham as presented in Foley & Van Dam.
-*/
+ * Function: gdImageLine
+ *
+ * Draws a line
+ * 
+ * Uses the Bresenham algorithm as presented in Foley & Van Dam.
+ *
+ * Parameters:
+ *   im    - The image.
+ *   x1    - The x-coordinate of the start point.
+ *   y1    - The y-coordinate of the start point.
+ *   x2    - The x-coordinate of the end point.
+ *   y2    - The y-coordinate of the end point.
+ *   color - The color.
+ *
+ * See also:
+ *   - <gdImageSetStyle>
+ */
 BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
 	int dx, dy, incr1, incr2, d, x, y, xend, yend, xdirflag, ydirflag;
@@ -1713,8 +1726,26 @@ static void dashedSet (gdImagePtr im, int x, int y, int color,
 					   int *onP, int *dashStepP, int wid, int vert);
 
 /*
-	Function: gdImageDashedLine
-*/
+ * Function: gdImageDashedLine
+ *
+ * Draws a dashed line
+ *
+ * Deprecated:
+ *   This function has been deprecated as of GD 2.3.0.  Use an appropriate
+ *   combination of <gdImageLine> and <gdImageSetStyle> instead.
+ *
+ * Parameters:
+ *   im    - The image.
+ *   x1    - The x-coordinate of the start point.
+ *   y1    - The y-coordinate of the start point.
+ *   x2    - The x-coordinate of the end point.
+ *   y2    - The y-coordinate of the end point.
+ *   color - The color.
+ *
+ * See also:
+ *   - <gdImageLine>
+ *   - <gdImageSetStyle>
+ */
 BGD_DECLARE(void) gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
 	int dx, dy, incr1, incr2, d, x, y, xend, yend, xdirflag, ydirflag;
@@ -1724,6 +1755,7 @@ BGD_DECLARE(void) gdImageDashedLine (gdImagePtr im, int x1, int y1, int x2, int 
 	int vert;
 	int thick = im->thick;
 
+	gd_error_ex(GD_NOTICE, "gdImageDashedLine is deprecated");
 	dx = abs (x2 - x1);
 	dy = abs (y2 - y1);
 	if (dy <= dx) {
@@ -3790,12 +3822,25 @@ static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t
 /**
  * Function: gdImageSetStyle
  *
- * Sets the style for following drawing operations
+ * Sets the style for following drawing operations with the <gdStyled> color
  *
  * Parameters:
  *   im        - The image.
  *   style     - An array of color values.
  *   noOfPixel - The number of color values.
+ *
+ * Example:
+ *   Creating an image with a dashed line
+ *
+ *   (start code)
+ *   gdImagePtr im;
+ *   int style[] = {0x000000, 0x000000, 0x000000, 0xffffff, 0xffffff, 0xffffff};
+ *
+ *   im = gdImageCreateTrueColor(100, 20);
+ *   gdImageFilledRectangle(im, 0, 0, 99, 29, 0xffffff);
+ *   gdImageSetStyle(im, style, sizeof(style)/sizeof(int));
+ *   gdImageLine(im, 9, 10, 90, 10, gdStyled);
+ *   (end code)
  */
 BGD_DECLARE(void) gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels)
 {
