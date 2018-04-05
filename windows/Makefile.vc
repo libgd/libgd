@@ -130,15 +130,16 @@ CFLAGS= $(CFLAGS) \
        /D_WIN32=1\
        /DMSWIN32=1\
        /DBGDWIN32=1\
+       /DENABLE_GD_FORMATS=1\
        /DHAVE_FT2BUILD_H=1\
        /DHAVE_GD_H=1\
        /DHAVE_ICONV_H=1\
        /DHAVE_LIBFREETYPE=1\
        /DHAVE_LIBJPEG=1\
        /DHAVE_LIBPNG=1\
-	   /DHAVE_LIBWEBP=1\
+       /DHAVE_LIBWEBP=1\
        /DHAVE_LIBZ=1\
-	   /DHAVE_LIBXPM=1\
+       /DHAVE_LIBXPM=1\
        /DHAVE_LIBTIFF=1\
        $(INCLUDES)
 
