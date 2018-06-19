@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 					fprintf(stderr, "Font maximum length is 1024, %d given\n", font_len);
 					goto badLine;
 				}
-				strncpy(font, st, font_len);
+				memcpy(font, st, font_len);
 			}
 		} else if(!strcmp(st, "align")) {
 			char *st = strtok(0, " \t\r\n");

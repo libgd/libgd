@@ -1809,7 +1809,7 @@ static char * font_path(char **fontpath, char *name_list)
 		gdFree(path);
 		return "could not alloc full list of fonts";
 	}
-	strncpy(fontlist, name_list, name_list_len);
+	memcpy(fontlist, name_list, name_list_len);
 	fontlist[name_list_len] = 0;
 
 	/*
