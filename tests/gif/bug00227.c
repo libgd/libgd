@@ -65,5 +65,7 @@ int main()
 	if (buf[PROBE_SIZE-1] & 0x80) return 1;
 	free(buf);
 	fclose(fp);
+
+	free(file);
 	return 0;
 }

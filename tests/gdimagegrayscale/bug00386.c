@@ -47,5 +47,7 @@ int main()
         }
     }
 
+    gdImageDestroy(im);
+
     return gdNumFailures();
 }

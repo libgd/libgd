@@ -49,5 +49,7 @@ int main()
 	/* "save" the image as BMP */
 	gdImageBmpCtx(im, &ctx, 2);
 
+	gdImageDestroy(im);
+
 	return gdNumFailures();
 }

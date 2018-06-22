@@ -92,6 +92,7 @@ int main()
         }
 	error = !im->interlace;
 	gdImageDestroy(im);
+	free(file);
 
 	return error;
 }

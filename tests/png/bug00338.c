@@ -41,6 +41,7 @@ int main()
     fp = gdTestTempFp();
     gdImagePngEx(im, fp, 100);
     gdImageDestroy(im);
+    fclose(fp);
 
     gdTestAssert(error_handler_called);
 

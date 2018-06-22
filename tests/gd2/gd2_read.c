@@ -33,17 +33,18 @@ int main(int argc, char *argv[])
 			fp = gdTestFileOpen2("gd2", path_exp[i]);
 			if (!fp) {
 				gdTestErrorMsg("failed, cannot open file: %s\n", path_exp[i]);
+				gdImageDestroy(im);
 				return 1;
 			}
 			exp = gdImageCreateFromPng(fp);
 			if (!gdAssertImageEquals(exp, im)) {
 				gdTestErrorMsg("image %s differs from expected result\n", path[i]);
-				gdImageDestroy(im);
 				error = 1;
 			}
 			if (exp) {
 				gdImageDestroy(exp);
 			}
+			gdImageDestroy(im);
 		} else {
 			/* expected to fail */
 			if (im) {

@@ -29,5 +29,7 @@ int main()
     gdTestAssertMsg(buffer[12] == 0, MSG, "1st", 0, buffer[12]);
     gdTestAssertMsg(buffer[13] == GD2_FMT_TRUECOLOR_COMPRESSED, MSG, "2nd", GD2_FMT_TRUECOLOR_COMPRESSED, buffer[13]);
 
+    gdFree(buffer);
+
     return gdNumFailures();
 }
