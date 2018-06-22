@@ -772,6 +772,7 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 	png_color palette[gdMaxColors];
 	png_structp png_ptr;
 	png_infop info_ptr;
+	png_bytep *row_pointers = NULL;
 	volatile int transparent = im->transparent;
 	volatile int remap = FALSE;
 #ifdef PNG_SETJMP_SUPPORTED
@@ -806,6 +807,13 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 	if (setjmp(jbw.jmpbuf)) {
 		gd_error("gd-png error: setjmp returns error condition\n");
 		png_destroy_write_struct (&png_ptr, &info_ptr);
+
+		if (row_pointers) {
+			for (i = 0; i < height; ++i)
+				gdFree(row_pointers[i]);
+			gdFree(row_pointers);
+		}
+
 		return 1;
 	}
 #endif
@@ -981,7 +989,6 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 		/* performance optimizations by Phong Tran */
 		int channels = im->saveAlphaFlag ? 4 : 3;
 		/* Our little 7-bit alpha channel trick costs us a bit here. */
-		png_bytep *row_pointers;
 		unsigned char *pOutputRow;
 		int **ptpixels = im->tpixels;
 		int *pThisRow;
@@ -993,7 +1000,8 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 			ret = 1;
 			goto bail;
 		}
-		row_pointers = gdMalloc (sizeof (png_bytep) * height);
+		/* Need to use calloc so we can clean it up sanely in the error handler. */
+		row_pointers = gdCalloc(height, sizeof (png_bytep));
 		if (row_pointers == NULL) {
 			gd_error("gd-png error: unable to allocate row_pointers\n");
 			ret = 1;
