@@ -576,7 +576,7 @@ fontFetch (char **error, void *key)
 		gdFree(a);
 		return "could not alloc full list of fonts";
 	}
-	strncpy(a->fontlist, b->fontlist, b_font_list_len);
+	memcpy(a->fontlist, b->fontlist, b_font_list_len);
 	a->fontlist[b_font_list_len] = 0;
 
 	a->flags = b->flags;
@@ -1204,7 +1204,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 				gdMutexUnlock(gdFontCacheMutex);
 				return "could not alloc full list of fonts";
 			}
-			strncpy(strex->fontpath, font->fontpath, fontpath_len);
+			memcpy(strex->fontpath, font->fontpath, fontpath_len);
 			strex->fontpath[fontpath_len] = 0;
 		}
 	}
@@ -1769,7 +1769,7 @@ static char * font_pattern(char **fontpath, char *fontpattern)
 		if (*fontpath == NULL) {
 			return "could not alloc font path";
 		}
-		strncpy(*fontpath, (const char *)file, file_len);
+		memcpy(*fontpath, (const char *)file, file_len);
 		(*fontpath)[file_len] = 0;
 	}
 	FcPatternDestroy(font);
@@ -1809,7 +1809,7 @@ static char * font_path(char **fontpath, char *name_list)
 		gdFree(path);
 		return "could not alloc full list of fonts";
 	}
-	strncpy(fontlist, name_list, name_list_len);
+	memcpy(fontlist, name_list, name_list_len);
 	fontlist[name_list_len] = 0;
 
 	/*
