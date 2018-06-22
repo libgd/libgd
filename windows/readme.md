@@ -4,7 +4,7 @@
   http://windows.php.net/downloads/php-sdk/deps/vc14/ and
   http://windows.php.net/downloads/pecl/deps/, respectively. Choose the x86 or
   x64 packages depending on your needs.
-  
+
   * freetype
   * libiconv
   * libjpeg
@@ -13,7 +13,7 @@
   * libwebp
   * libxpm
   * zlib
-  
+
 * Unpack all dependency packages into the same folder.
 
 * Open the VS2015 x86 or x64 Native Tools Command Prompt.
@@ -25,7 +25,7 @@
 ````
 set DEBUG=1
 ````
-  
+
 * `cd` into the libgd source folder.
 
 * To build the libraries, do:

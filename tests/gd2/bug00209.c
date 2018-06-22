@@ -8,21 +8,19 @@
  * See <https://github.com/libgd/libgd/issues/209>.
  */
 
-
 #include "gd.h"
 #include "gdtest.h"
 
-
 int main()
 {
-    gdImagePtr im;
-    FILE *fp;
+	gdImagePtr im;
+	FILE *fp;
 
-    fp = gdTestFileOpen2("gd2", "bug00209.gd2");
-    gdTestAssert(fp != NULL);
-    im = gdImageCreateFromGd2(fp);
-    gdTestAssert(im == NULL);
-    fclose(fp);
+	fp = gdTestFileOpen2("gd2", "bug00209.gd2");
+	gdTestAssert(fp != NULL);
+	im = gdImageCreateFromGd2(fp);
+	gdTestAssert(im == NULL);
+	fclose(fp);
 
-    return gdNumFailures();
+	return gdNumFailures();
 }

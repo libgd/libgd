@@ -15,16 +15,16 @@ for /f %%T in (testlist.txt) do (
   set target=%%~nT.exe
   if not exist !target! SET result=NotFound
   call !target! && (SET result=Passed) || (SET result=Failed)
-  
+
   rem > last_test.out 2> last_test.err
   rem set /p testerr=<last_test.err
   rem set /p testout=<last_test.out
-  
+
   echo !output:~0,70!!result!
-  
+
   rem if defined testerr echo error: !testerr!
   rem if defined testout echo msg: !testout!
-  
+
   set /a total=total+1
   if "!result!"=="Passed" set /a total_passed=total_passed+1
   if "!result!"=="Failed" set /a total_failed=total_failed+1

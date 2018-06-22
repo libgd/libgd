@@ -6,27 +6,25 @@
  * which is 2 bytes instead of 1, and the endianess.
  */
 
-
 #include "gd.h"
 #include "gdtest.h"
 
-
 int main()
 {
-    gdImagePtr im;
-    FILE *fp;
-    char *path;
+	gdImagePtr im;
+	FILE *fp;
+	char *path;
 
-    fp = gdTestFileOpen2("xbm", "x10_basic_read.xbm");
-    im = gdImageCreateFromXbm(fp);
-    fclose(fp);
-    gdTestAssert(im != NULL);
+	fp = gdTestFileOpen2("xbm", "x10_basic_read.xbm");
+	im = gdImageCreateFromXbm(fp);
+	fclose(fp);
+	gdTestAssert(im != NULL);
 
-    path = gdTestFilePath2("xbm", "x10_basic_read_exp.png");
-    gdAssertImageEqualsToFile(path, im);
-    gdFree(path);
+	path = gdTestFilePath2("xbm", "x10_basic_read_exp.png");
+	gdAssertImageEqualsToFile(path, im);
+	gdFree(path);
 
-    gdImageDestroy(im);
+	gdImageDestroy(im);
 
-    return gdNumFailures();
+	return gdNumFailures();
 }

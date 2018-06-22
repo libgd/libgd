@@ -1,4 +1,4 @@
-/* 
+/*
  * Test that reading and writing image resolution values to/from TIFF files
  * works correctly.  Set the image resolution, write the file, read the file
  * back and test that the image resolution comes back correct.
@@ -23,7 +23,7 @@ int main()
 	r = gdImageColorAllocate(src, 0xFF, 0, 0);
 	gdImageFilledRectangle(src, 0, 0, 99, 99, r);
 
-	// gd default DPI is 96; libtiff default is 72.  
+	// gd default DPI is 96; libtiff default is 72.
 	// Use something else so we know the value has been
 	// written / read correctly.
 	res_x = 100;
