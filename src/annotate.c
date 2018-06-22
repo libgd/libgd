@@ -16,17 +16,6 @@ enum { left, center, right };
 
 int main(int argc, char *argv[])
 {
-#ifndef HAVE_LIBFREETYPE
-	(void)argc;
-	(void)argv;
-
-	/* 2.0.12 */
-	fprintf(stderr, "annotate is not useful without freetype.\n"
-	         "Install freetype, then './configure; make clean; make install'\n"
-	         "the gd library again.\n"
-	        );
-	return 1;
-#else
 	gdImagePtr im;
 	char *iin, *iout;
 	FILE *in, *out;
@@ -70,12 +59,7 @@ int main(int argc, char *argv[])
 		exit(2);
 	}
 
-#ifdef HAVE_LIBJPEG
 	im = gdImageCreateFromJpeg(in);
-#else
-	fprintf(stderr, "No JPEG library support available.\n");
-	exit(1);
-#endif
 
 	fclose(in);
 
@@ -200,13 +184,8 @@ badLine:
 		fprintf(stderr, "Cannot create %s\n", iout);
 		exit(5);
 	}
-#ifdef HAVE_LIBJPEG
 	gdImageJpeg(im, out, 95);
-#else
-	fprintf(stderr, "No JPEG library support available.\n");
-#endif
 	gdImageDestroy(im);
 	fclose(out);
 	return 0;
-#endif /* HAVE_LIBFREETYPE */
 }

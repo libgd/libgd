@@ -23,7 +23,9 @@ check_PROGRAMS += fontconfigtest
 endif
 
 if HAVE_LIBFREETYPE
+if HAVE_LIBJPEG
 bin_PROGRAMS += annotate
+endif
 check_PROGRAMS += gdtestft testtr
 endif
 

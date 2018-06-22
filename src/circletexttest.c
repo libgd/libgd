@@ -8,10 +8,6 @@
 int main(void)
 {
 	/* 2.0.22: can't depend on PNG either  */
-#ifndef HAVE_LIBPNG
-	fprintf(stderr, "Requires PNG support, gd was compiled without it\n");
-	return 0;
-#else
 	char *error;
 #ifdef HAVE_LIBJPEG
 	FILE *in = 0;
@@ -64,6 +60,5 @@ int main(void)
 	gdImagePng(im, out);
 	fclose(out);
 	gdImageDestroy(im);
-#endif /* HAVE_LIBPNG */
 	return 0;
 }

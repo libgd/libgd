@@ -11,7 +11,6 @@
 int
 main(void)
 {
-#ifdef HAVE_LIBFREETYPE
 	int transparent, green, black;
 	gdImagePtr im;
 
@@ -47,8 +46,4 @@ main(void)
 	gdImageDestroy (im);
 
 	return 0;
-#else
-	fprintf(stderr, "Compiled without freetype support\n");
-	return 0;
-#endif /* HAVE_LIBFREETYPE */
 }

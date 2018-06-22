@@ -146,7 +146,7 @@ if (PNG_FOUND)
 	endif()
 endif()
 
-if (FREETYPE_FOUND)
+if (FREETYPE_FOUND AND JPEG_FOUND)
 	set(GD_PROGRAMS ${GD_PROGRAMS} annotate)
 endif()
 

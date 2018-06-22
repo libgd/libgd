@@ -12,11 +12,7 @@ void save_png(gdImagePtr im, const char *filename)
 		fprintf(stderr, "Can't save png image %s\n", filename);
 		return;
 	}
-#ifdef HAVE_LIBPNG
 	gdImagePng(im, fp);
-#else
-	printf("No PNG support. Cannot save image.\n");
-#endif
 	fclose(fp);
 }
 
@@ -30,12 +26,7 @@ gdImagePtr read_png(const char *filename)
 		fprintf(stderr, "Can't read png image %s\n", filename);
 		return NULL;
 	}
-#ifdef HAVE_LIBPNG
 	im = gdImageCreateFromPng(fp);
-#else
-	im = NULL;
-	printf("No PNG support. Cannot read image.\n");
-#endif
 	fclose(fp);
 	return im;
 }
