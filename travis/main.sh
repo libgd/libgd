@@ -135,11 +135,20 @@ compare_builds() {
 	diff -ur install-autotools install-cmake || true
 }
 
+source_tests() {
+	# Run lint/source tests against the codebase.
+	# Reset any files in case the build modified them.
+	git checkout -f
+	./tests/source/run.sh
+}
+
 main() {
 	update_os
 	build_autotools
 	build_cmake
 	compare_builds
 	v --fold="coverity_scan" coverity_scan
+	# Run the source tests last.
+	v --fold="source_tests" source_tests
 }
 main "$@"
