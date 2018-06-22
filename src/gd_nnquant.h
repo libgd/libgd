@@ -15,5 +15,3 @@
 #define prime4		503
 
 #define minpicturebytes	(4*prime4)		/* minimum size for input image */
-
-

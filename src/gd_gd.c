@@ -24,7 +24,7 @@
  *  count       - 1 byte (the number of used palette colors)
  *  transparent - 1 word (257 signals no transparency)
  *  palette     - 256×3 bytes (RGB triplets)
- * 
+ *
  * GD 2.x file header structure:
  *  signature     - 1 word ("\xFF\xFE" for truecolor, "\xFF\xFF" for palette)
  *  width         - 1 word
@@ -234,7 +234,7 @@ fail1:
     > in = fopen("mygd.gd", "rb");
     > im = gdImageCreateFromGd(in);
     > fclose(in);
-    > // ... Use the image ... 
+    > // ... Use the image ...
     > gdImageDestroy(im);
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd (FILE * inFile)

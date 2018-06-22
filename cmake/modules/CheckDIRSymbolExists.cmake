@@ -7,16 +7,16 @@
 #
 #  * Redistributions of source code must retain the above copyright notice,
 #    this list of conditions and the following disclaimer.
-# 
+#
 #  * Redistributions in binary form must reproduce the above copyright notice,
 #    this list of conditions and the following disclaimer in the documentation
 #    and/or other materials provided with the distribution.
-# 
+#
 #  * The names of Kitware, Inc., the Insight Consortium, or the names of
 #    any consortium members, or of any contributors, may not be used to
 #    endorse or promote products derived from this software without
 #    specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS ``AS IS''
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -39,7 +39,7 @@
 # the AC_HEADER_DIRENT test programme rather than the CheckSymbolExists.cmake
 # test programme which always fails since DIR tends to be typedef'd
 # rather than #define'd.
-# 
+#
 # The following variables may be set before calling this macro to
 # modify the way the check is run:
 #
@@ -53,7 +53,7 @@ MACRO(CHECK_DIRSYMBOL_EXISTS FILES VARIABLE)
     SET(CMAKE_CONFIGURABLE_FILE_CONTENT "/* */\n")
     SET(MACRO_CHECK_DIRSYMBOL_EXISTS_FLAGS ${CMAKE_REQUIRED_FLAGS})
     IF(CMAKE_REQUIRED_LIBRARIES)
-      SET(CHECK_DIRSYMBOL_EXISTS_LIBS 
+      SET(CHECK_DIRSYMBOL_EXISTS_LIBS
         "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
     ELSE(CMAKE_REQUIRED_LIBRARIES)
       SET(CHECK_DIRSYMBOL_EXISTS_LIBS)
@@ -79,7 +79,7 @@ MACRO(CHECK_DIRSYMBOL_EXISTS FILES VARIABLE)
       ${CMAKE_BINARY_DIR}
       ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/CheckDIRSymbolExists.c
       COMPILE_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS}
-      CMAKE_FLAGS 
+      CMAKE_FLAGS
       -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_DIRSYMBOL_EXISTS_FLAGS}
       "${CHECK_DIRSYMBOL_EXISTS_LIBS}"
       "${CMAKE_DIRSYMBOL_EXISTS_INCLUDES}"
@@ -87,7 +87,7 @@ MACRO(CHECK_DIRSYMBOL_EXISTS FILES VARIABLE)
     IF(${VARIABLE})
       MESSAGE(STATUS "Looking for DIR in ${FILES} - found")
       SET(${VARIABLE} 1 CACHE INTERNAL "Have symbol DIR")
-      FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log 
+      FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
         "Determining if the DIR symbol is defined as in AC_HEADER_DIRENT "
         "passed with the following output:\n"
         "${OUTPUT}\nFile ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/CheckDIRSymbolExists.c:\n"
@@ -95,7 +95,7 @@ MACRO(CHECK_DIRSYMBOL_EXISTS FILES VARIABLE)
     ELSE(${VARIABLE})
       MESSAGE(STATUS "Looking for DIR in ${FILES} - not found.")
       SET(${VARIABLE} "" CACHE INTERNAL "Have symbol DIR")
-      FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log 
+      FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
         "Determining if the DIR symbol is defined as in AC_HEADER_DIRENT "
         "failed with the following output:\n"
         "${OUTPUT}\nFile ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/CheckDIRSymbolExists.c:\n"

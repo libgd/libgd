@@ -126,4 +126,3 @@ libgd_la_LDFLAGS = -version-info $(GDLIB_LT_CURRENT):$(GDLIB_LT_REVISION):$(GDLI
 libgd_la_LIBADD = $(LTLIBICONV)
 
 LDADD = libgd.la $(LIBICONV)
-

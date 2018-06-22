@@ -23,5 +23,3 @@ void _NonAppStop()
 	printf("<Press any key to close screen> ");
 	getcharacter();
 }
-
-

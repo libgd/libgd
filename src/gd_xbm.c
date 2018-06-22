@@ -220,7 +220,7 @@ static void gdCtxPrintf(gdIOCtx * out, const char *format, ...)
  *  gd        - Which color to use as forground color. All pixels with another
  *              color are unset.
  *  out       - The <gdIOCtx> to write the image file to.
- * 
+ *
  */
 BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOCtx * out)
 {

@@ -255,7 +255,7 @@ void jpeg_gdIOCtx_dest(j_compress_ptr cinfo, gdIOCtx *outfile);
 
     im      - The image to write.
     outfile - The output sink.
-    quality - Image quality. 
+    quality - Image quality.
 
 */
 BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
@@ -496,7 +496,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx(FILE *inFile, int ignore_warning
   Function: gdImageCreateFromJpegPtr
 
   Parameters:
-  
+
     size    - size of JPEG data in bytes.
     data    - pointer to JPEG data.
 
@@ -511,7 +511,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data)
   Function: gdImageCreateFromJpegPtrEx
 
   Parameters:
-  
+
     size            - size of JPEG data in bytes.
     data            - pointer to JPEG data.
     ignore_warning  - if true, ignore recoverable warnings

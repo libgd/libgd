@@ -5,7 +5,7 @@ set -e
 # Parameters
 DLLPATH_EXTRA=$1        # Path to supporting DLLs
 CFLAGS_EXTRA=$2         # Extra C flags
-    
+
 
 LOG=run_tests.log
 
@@ -49,7 +49,7 @@ for test in `find . -name \*.c | grep -v '^./gdtest'`; do
         compile_failures=`expr $compile_failures + 1`
         continue
     fi
-    
+
     echo "Running $exe:" >> $LOG
     if $exe 2>&1 >> $LOG; then
         echo "PASS: $test"
@@ -62,6 +62,3 @@ done
 
 echo "$failures failures and $compile_failures compile failures out of $count tests."
 echo "Error messages in $LOG"
-
-
-

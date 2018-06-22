@@ -29,7 +29,7 @@ extern "C" {
                       GDXXX_STR(GD_RELEASE_VERSION),                    \
                       GD_EXTRA_VERSION)
 
-    
+
 /* Do the DLL dance: dllexport when building the DLL,
    dllimport when importing from it, nothing when
    not on Silly Silly Windows (tm Aardman Productions). */
@@ -79,20 +79,20 @@ extern "C" {
 #define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt BGD_STDCALL
 
 /* VS2012+ disable keyword macroizing unless _ALLOW_KEYWORD_MACROS is set
-   We define inline, snprintf, and strcasecmp if they're missing 
+   We define inline, snprintf, and strcasecmp if they're missing
 */
 #ifdef _MSC_VER
 #  define _ALLOW_KEYWORD_MACROS
 #  ifndef inline
 #    define inline __inline
-#  endif 
+#  endif
 #  ifndef strcasecmp
 #    define strcasecmp _stricmp
-#  endif 
+#  endif
 #if _MSC_VER < 1900
      extern int snprintf(char*, size_t, const char*, ...);
 #endif
-#endif 
+#endif
 
 #ifdef __cplusplus
 	extern "C"
@@ -131,9 +131,9 @@ extern "C" {
    must be 32 bits wide or more.
 
    True colors are repsented as follows:
-   
+
    ARGB
-	
+
    Where 'A' (alpha channel) occupies only the
    LOWER 7 BITS of the MSB. This very small
    loss of alpha channel resolution allows gd 2.x
@@ -209,7 +209,7 @@ extern "C" {
  * Group: Effects
  *
  * The layering effect
- * 
+ *
  * When pixels are drawn the new colors are "mixed" with the background
  * depending on the effect.
  *
@@ -286,7 +286,7 @@ enum gdPaletteQuantizationMethod {
  *
  *  GD_BELL				 - Bell
  *  GD_BESSEL			 - Bessel
- *  GD_BILINEAR_FIXED 	 - fixed point bilinear 
+ *  GD_BILINEAR_FIXED 	 - fixed point bilinear
  *  GD_BICUBIC 			 - Bicubic
  *  GD_BICUBIC_FIXED 	 - fixed point bicubic integer
  *  GD_BLACKMAN			 - Blackman
@@ -346,7 +346,7 @@ typedef double (* interpolation_method )(double);
 
 /*
    Group: Types
- 
+
    typedef: gdImage
 
    typedef: gdImagePtr
@@ -513,7 +513,7 @@ gdPointF, *gdPointFPtr;
   structure.
 
   Please see the files gdfontl.c and gdfontl.h for an example of
-  the proper declaration of this structure. 
+  the proper declaration of this structure.
 
   > typedef struct {
   >   // # of characters in font
@@ -710,7 +710,7 @@ BGD_DECLARE(void) gdImageDestroy (gdImagePtr im);
    alpha channel value of 'color'; default is to overwrite.
    Tiling and line styling are also implemented
    here. All other gd drawing functions pass through this call,
-   allowing for many useful effects. 
+   allowing for many useful effects.
    Overlay and multiply effects are used when gdImageAlphaBlending
    is passed gdEffectOverlay and gdEffectMultiply */
 
@@ -808,7 +808,7 @@ typedef struct {
 				    then, on return, xshow is a malloc'ed
 				    string containing xshow position data for
 				    the last string.
-				    
+
 				    NB. The caller is responsible for gdFree'ing
 				    the xshow string.
 				 */
@@ -817,7 +817,7 @@ typedef struct {
 				    string containing the actual font file path name
 				    used, which can be interesting when fontconfig
 				    is in use.
-				    
+
 				    The caller is responsible for gdFree'ing the
 				    fontpath string.
 				 */
@@ -977,16 +977,16 @@ BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color);
    anything up to 256. If the original source image
    includes photographic information or anything that
    came out of a JPEG, 256 is strongly recommended.
-   
+
    Better yet, don't use these function -- write real
    truecolor PNGs and JPEGs. The disk space gain of
    conversion to palette is not great (for small images
    it can be negative) and the quality loss is ugly.
-   
+
    DIFFERENCES: gdImageCreatePaletteFromTrueColor creates and
    returns a new image. gdImageTrueColorToPalette modifies
    an existing image, and the truecolor pixels are discarded.
-   
+
    gdImageTrueColorToPalette() returns TRUE on success, FALSE on failure.
 */
 
@@ -1092,7 +1092,7 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantiza
 
 /**
  * Group: GifAnim
- * 
+ *
  *   Legal values for Disposal. gdDisposalNone is always used by
  *   the built-in optimizer if previm is passed.
  *
@@ -1318,7 +1318,7 @@ BGD_DECLARE(gdImagePtr) gdImageCopyGaussianBlurred(gdImagePtr src, int radius,
  * Macro: gdImageSX
  *
  * Gets the width (in pixels) of an image.
- * 
+ *
  * Parameters:
  *   im - The image.
  */

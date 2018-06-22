@@ -29,7 +29,7 @@ int main()
 
 	im = gdImageCreateFromGd2(fp);
 	fclose(fp);
-	
+
 	gdTestAssertMsg(im == NULL, "Image should have failed to be loaded\n");
 
 	return gdNumFailures();

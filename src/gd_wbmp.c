@@ -134,7 +134,7 @@ BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out)
   Function: gdImageCreateFromWBMPCtx
 
   Reads in a WBMP image via a <gdIOCtx> struct.  See
-  <gdImageCreateFromWBMP>.  
+  <gdImageCreateFromWBMP>.
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx(gdIOCtx *infile)
 {

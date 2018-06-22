@@ -55,7 +55,7 @@ you can use the following command line options:
 --with-xpm=DIR
 
   Dto. for xpm library.
-  
+
  --with-tiff=DIR
 
 Dto. for TIFF library.

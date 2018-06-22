@@ -62,14 +62,14 @@ program; it demonstrates additional features!)
 >  /* Allocate the color black (red, green and blue all minimum).
 >    Since this is the first color in a new image, it will
 >    be the background color. */
->  black = gdImageColorAllocate(im, 0, 0, 0);  
+>  black = gdImageColorAllocate(im, 0, 0, 0);
 >
 >  /* Allocate the color white (red, green and blue all maximum). */
->  white = gdImageColorAllocate(im, 255, 255, 255);  
->  
+>  white = gdImageColorAllocate(im, 255, 255, 255);
+>
 >  /* Draw a line from the upper left to the lower right,
 >    using white color index. */
->  gdImageLine(im, 0, 0, 63, 63, white);  
+>  gdImageLine(im, 0, 0, 63, 63, white);
 >
 >  /* Open a file for writing. "wb" means "write binary", important
 >    under MSDOS, harmless under Unix. */

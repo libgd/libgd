@@ -286,5 +286,3 @@ void DisposeThreadData
 		free(data);
 	}
 }
-
-

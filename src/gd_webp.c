@@ -212,7 +212,7 @@ static int _gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 			}
 			*(p++) = gdTrueColorGetRed(c);
 			*(p++) = gdTrueColorGetGreen(c);
-			*(p++) = gdTrueColorGetBlue(c); 
+			*(p++) = gdTrueColorGetBlue(c);
 			*(p++) = a;
 		}
 	}

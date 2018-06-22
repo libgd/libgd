@@ -89,5 +89,3 @@ void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2)
 		printf("-%s: INFO actual colours of pixels differ\n",msg);
 	}
 }
-
-

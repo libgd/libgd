@@ -1,5 +1,5 @@
 if HAVE_LIBFREETYPE
-if HAVE_LIBPNG 
+if HAVE_LIBPNG
 libgd_test_programs += \
 	freetype/bug00132
 endif

@@ -12,7 +12,7 @@ GD 2.0.36 (2007-11-xx)
      (Pierre, Mark Fisher)
  88, Fixed support of PNG grayscale image with alpha channel (Pierre)
  95, Added Netware builds script (Guenter)
- 97, ease the creation of regexp to match symbols/functions in the sources 
+ 97, ease the creation of regexp to match symbols/functions in the sources
      (Guenter)
 100, spurious horizontal line drawn by gdImageFilledPolygon (Takeshi Abe)
 101, _gdCreateFromFile() can crash if gdImageCreate fails (Mattias Bengtsson)
@@ -37,17 +37,17 @@ GD 2.0.36 (2007-11-xx)
 198, Fixed useFontConfig() to work as documented (Mojca Miklavec, Ethan Merritt)
 
 GD 2.0.35 (2007-06-21)
-41, Fix valgrind error in gdImageFillTiled (Nuno Lopes) 
+41, Fix valgrind error in gdImageFillTiled (Nuno Lopes)
 45, Add missing custom cmake macros (required for the tests suite)
 51, Avoid signature buffer copy  in gd_gif_c (Nuno Lopes)
-48, Race condition in gdImageStringFTEx (Antony Dogval, Pierre 
+48, Race condition in gdImageStringFTEx (Antony Dogval, Pierre
     Scott MacVicar)
 52, Reading GIF images is not thread safe (static usage in private
     functions) (Roman Nemecek, Nuno Lopes, Pierre)
 60, GIF Local palette is read twice
-66, GIF, Use local frame dimension when possible instead of the 
+66, GIF, Use local frame dimension when possible instead of the
     logical screen size (Pierre)
-68, OpenVMS build support, see VMS/README.VMS for the details 
+68, OpenVMS build support, see VMS/README.VMS for the details
     (Alexey Chupahin)
 70, GIF, do not try to use the global colmap if it does not exist
     (Nuno Lopes, Pierre)
@@ -58,7 +58,7 @@ GD 2.0.35 (2007-06-21)
     (Pierre)
 86, Possible infinite loop in libgd/gd_png.c, flaw found by Xavier Roche
     (Pierre)
-87, Fixed segfault when an invalid color index is present in a GIF 
+87, Fixed segfault when an invalid color index is present in a GIF
     image data, reported by Elliot <wccode at gmail dot com> (Pierre)
 89, Possible integer overflow in gdImageCreateTrueColor (Pierre)
 94, gdImageCreateXbm can crash if gdImageCreate fails (Pierre)

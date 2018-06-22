@@ -15,7 +15,7 @@ int main()
 		return 1;
 	}
 	gdImageSetInterpolationMethod(im, GD_BELL);
-	
+
 	/* here the call may pass if the system has enough memory (physical or swap)
 	   or fails (overflow check or alloc fails.
 	   in both cases the tests pass */

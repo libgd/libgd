@@ -40,4 +40,3 @@ int main (int argc, char *argv[])
 #endif /* HAVE_LIBPNG */
 	return 0;
 }
-

@@ -592,7 +592,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
     gdImagePtr im;
     int black, white;
     FILE *out;
-     
+
     im = gdImageCreate(100, 100);              // Create the image
     white = gdImageColorAllocate(im, 255, 255, 255); // Alloc background
     black = gdImageColorAllocate(im, 0, 0, 0); // Allocate drawing color

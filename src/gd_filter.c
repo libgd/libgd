@@ -898,7 +898,7 @@ applyCoeffsLine(gdImagePtr src, gdImagePtr dst, int line, int linelen,
             const int srcpx = (axis == HORIZONTAL) ?
                 src->tpixels[line][rndx] :
                 src->tpixels[rndx][line];
-                
+
             r += coeff * (double)gdTrueColorGetRed(srcpx);
             g += coeff * (double)gdTrueColorGetGreen(srcpx);
             b += coeff * (double)gdTrueColorGetBlue(srcpx);
@@ -912,7 +912,7 @@ applyCoeffsLine(gdImagePtr src, gdImagePtr dst, int line, int linelen,
 
 
 static void
-applyCoeffs(gdImagePtr src, gdImagePtr dst, double *coeffs, int radius, 
+applyCoeffs(gdImagePtr src, gdImagePtr dst, double *coeffs, int radius,
             gdAxis axis)
 {
     int line, numlines, linelen;
@@ -939,7 +939,7 @@ applyCoeffs(gdImagePtr src, gdImagePtr dst, double *coeffs, int radius,
     _radius_ is a radius, not a diameter so a radius of 2 (for
     example) will blur across a region 5 pixels across (2 to the
     center, 1 for the center itself and another 2 to the other edge).
-    
+
     _sigma_ represents the "fatness" of the curve (lower == fatter).
     If _sigma_ is less than or equal to 0,
     <gdImageCopyGaussianBlurred> ignores it and instead computes an
@@ -987,10 +987,10 @@ applyCoeffs(gdImagePtr src, gdImagePtr dst, double *coeffs, int radius,
 
     FILE *in;
     gdImagePtr result, src;
-     
+
     in = fopen("foo.png", "rb");
     src = gdImageCreateFromPng(in);
-    
+
     result = gdImageCopyGaussianBlurred(im, src->sx / 10, -1.0);
 
     (end code)
@@ -1034,7 +1034,7 @@ gdImageCopyGaussianBlurred(gdImagePtr src, int radius, double sigma)
 			gdFree(coeffs);
             return NULL;
         }/* if */
-		
+
         freeSrc = 1;
 	}/* if */
 
@@ -1059,4 +1059,3 @@ gdImageCopyGaussianBlurred(gdImagePtr src, int radius, double sigma)
 
     return result;
 }/* gdImageCopyGaussianBlurred*/
-

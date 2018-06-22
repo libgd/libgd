@@ -87,4 +87,3 @@ gdImagePtr gdImageRotate270(gdImagePtr src, int ignoretransparent);
 
 
 #endif
-

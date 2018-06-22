@@ -790,7 +790,7 @@ static int createFromTiffRgba(TIFF * tif, gdImagePtr im)
 				rgba = buffer[(y * width + x)];
 				a = (0xff - TIFFGetA(rgba)) / 2;
 				color = gdTrueColorAlpha(TIFFGetR(rgba), TIFFGetG(rgba), TIFFGetB(rgba), a);
-	
+
 				/* set pixel colour to this colour */
 				gdImageSetPixel(im, x, height - y - 1, color);
 			}
@@ -993,10 +993,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 		goto error;
 	}
 
-	if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &res_float)) { 
+	if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &res_float)) {
 		im->res_x = (unsigned int)res_float;  //truncate
 	}
-	if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &res_float)) { 
+	if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &res_float)) {
 		im->res_y = (unsigned int)res_float;  //truncate
 	}
 

@@ -1,6 +1,6 @@
 $! (c) Alexey Chupahin  18-APR-2006, 15-DEC-2007
 $! OpenVMS 8.2  Alpha DEC 2000 model 300
-$! OpenVMS 8.3  Itanium rx1620 
+$! OpenVMS 8.3  Itanium rx1620
 $! GNU
 $!
 $!
@@ -26,9 +26,9 @@ $       SHARED=32
 $ENDIF
 $DECC = F$SEARCH("SYS$SYSTEM:DECC$COMPILER.EXE") .NES. ""
 $IF (DECC) THEN $WRITE SYS$OUTPUT  "Compiler		...  DEC C"
-$IF (.NOT. DECC) THEN $WRITE SYS$OUTPUT  "BAD compiler" GOTO EXIT 
+$IF (.NOT. DECC) THEN $WRITE SYS$OUTPUT  "BAD compiler" GOTO EXIT
 $MMS = F$SEARCH("SYS$SYSTEM:MMS.EXE") .NES. ""
-$MMK = F$TYPE(MMK) 
+$MMK = F$TYPE(MMK)
 $IF (MMS .OR. MMK.NES."") THEN GOTO TEST_LIBRARIES
 $WRITE SYS$OUTPUT "Please install MMS from DECSET or MMK"
 $! I cant find any make tool
@@ -150,7 +150,7 @@ $ CC/OBJECT=TEST.OBJ/INCLUDE=(FREETYPE2) SYS$INPUT
 int main(int argc, char *argv[])
 {
 
-#if FREETYPE_MAJOR == 2 && FREETYPE_MINOR <= 1 
+#if FREETYPE_MAJOR == 2 && FREETYPE_MINOR <= 1
         printf("This version is too old. Please get newest\n");
         printf("From fafner.dyndns.org/~alexey/libsdl/required.html\n");
 	exit(2);
@@ -220,8 +220,8 @@ $ CC/OBJECT=TEST.OBJ/INCLUDE=(PNG,ZLIB) SYS$INPUT
 	 n=png_access_version_number();
 	 n3=n%100; n=n/100;
 	 n2=n%100; n=n/100;
-	 n1=n%100; 
-	if ( (n1<=1)&&(n2<2) ) 
+	 n1=n%100;
+	if ( (n1<=1)&&(n2<2) )
 		{ printf("checking version  libPNG:  %d.%d.%d\n",n1,n2,n3);
 		  printf("This version is too old. Please get newest\n");
 		  printf("From fafner.dyndns.org/~alexey/libsdl/public.html\n");
@@ -252,7 +252,7 @@ $		LIBPNG_STATIC=0
 $       	HAVE_LIBPNG=0
 $       	GOTO NEXT2
 $	 ELSE
-$		HAVE_LIBPNG=1 
+$		HAVE_LIBPNG=1
 $		LIBPNG_STATIC=1
 $       ENDIF
 $  ELSE
@@ -287,7 +287,7 @@ $ CC/OBJECT=TEST.OBJ/INCLUDE=(JPEG) SYS$INPUT
       #include <stdlib.h>
       #include <stdio.h>
       #include <jpeglib.h>
-      #include <jversion.h>	
+      #include <jversion.h>
    int main()
      {
 	printf("checking version jpeg:  %s\n",JVERSION);
@@ -805,7 +805,7 @@ $  THEN
 $	IF (ZLIB_STATIC.EQ.0)
 $	  THEN
 $		APP SYS$INPUT [.SRC]LIBGD.OPT
-		SYS$SHARE:LIBZSHR/SHARE	
+		SYS$SHARE:LIBZSHR/SHARE
 $	  ELSE
 $		APP SYS$INPUT [.SRC]LIBGD.OPT
 		ZLIB:LIBZ/LIB
@@ -954,29 +954,29 @@ $	APP SYS$INPUT [.SRC]CONFIG.H
 	/* Define if <iconv.h> defines iconv_t. */
 	#define HAVE_ICONV_T_DEF 1
 $ENDIF
-$IF HAVE_TIFF.EQ.1 
-$  THEN 
+$IF HAVE_TIFF.EQ.1
+$  THEN
 $	APP SYS$INPUT [.SRC]CONFIG.H
 	#define HAVE_LIBTIFF 1
 $ENDIF
-$IF HAVE_LIBPNG.EQ.1   
-$   THEN 
+$IF HAVE_LIBPNG.EQ.1
+$   THEN
 $	APP SYS$INPUT [.SRC]CONFIG.H
 	#define HAVE_LIBPNG 1
 $ENDIF
 $IF HAVE_FREETYPE.EQ.1
-$   THEN 
+$   THEN
 $	APP SYS$INPUT [.SRC]CONFIG.H
 	#define HAVE_LIBFREETYPE 1
 	#define HAVE_FT2BUILD_H 1
 $ENDIF
-$IF HAVE_JPEG.EQ.1 
-$   THEN 
+$IF HAVE_JPEG.EQ.1
+$   THEN
 $	APP SYS$INPUT [.SRC]CONFIG.H
 	#define HAVE_LIBJPEG 1
 $ENDIF
-$IF HAVE_ZLIB.EQ.1 
-$   THEN 
+$IF HAVE_ZLIB.EQ.1
+$   THEN
 $	APP SYS$INPUT [.SRC]CONFIG.H
 	#define HAVE_LIBZ 1
 $ENDIF
@@ -994,7 +994,7 @@ $COP SYS$INPUT [.SRC]DESCRIP.MMS
 # Alexey Chupahin elvis_75@mail.ru
 # OpenVMS 7.3-1,8.2  DEC 2000 mod.300
 # OpenVMS 8.3        HP  rx1620
-  
+
 
 .FIRST
 	DEF LIBGD []

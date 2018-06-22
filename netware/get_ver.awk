@@ -24,5 +24,3 @@ BEGIN {
     print "LIBGD_VERSION = " libgd_ver "";
     print "LIBGD_VERSION_STR = " libgd_ver_str "";
 }
-
-

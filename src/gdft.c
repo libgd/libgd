@@ -973,13 +973,13 @@ BGD_DECLARE(int) gdFontCacheSetup (void)
   typedef struct {
       // logical OR of gdFTEX_ values
       int flags;
-   
+
       // fine tune line spacing for '\n'
       double linespacing;
-   
+
       // Preferred character mapping
       int charmap;
-   
+
       // Rendering resolution
       int hdpi;
       int vdpi;
@@ -1083,7 +1083,7 @@ BGD_DECLARE(int) gdFontCacheSetup (void)
 
     > flags | gdFTEX_FONTPATHNAME;
 
-  For more information, see <gdImageStringFT>. 
+  For more information, see <gdImageStringFT>.
 */
 
 /* the platform-independent resolution used for size and position calculations */
@@ -1923,4 +1923,3 @@ BGD_DECLARE(int) gdFTUseFontConfig(int flag)
 	return 0;
 #endif /* HAVE_LIBFONTCONFIG */
 }
-

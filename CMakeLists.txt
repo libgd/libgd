@@ -32,24 +32,24 @@ endif(BUILD_TEST)
 IF(CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
-SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY 
-  ${PROJECT_BINARY_DIR}/Bin 
-  CACHE PATH 
-  "Single Directory for all Libraries" 
+SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
+  ${PROJECT_BINARY_DIR}/Bin
+  CACHE PATH
+  "Single Directory for all Libraries"
   )
 
-# --------- Setup the Executable output Directory ------------- 
-SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY 
-  ${PROJECT_BINARY_DIR}/Bin 
-  CACHE PATH 
-  "Single Directory for all Executables." 
+# --------- Setup the Executable output Directory -------------
+SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY
+  ${PROJECT_BINARY_DIR}/Bin
+  CACHE PATH
+  "Single Directory for all Executables."
   )
 
-# --------- Setup the Executable output Directory ------------- 
-SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY 
-  ${PROJECT_BINARY_DIR}/Bin 
-  CACHE PATH 
-  "Single Directory for all static libraries." 
+# --------- Setup the Executable output Directory -------------
+SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
+  ${PROJECT_BINARY_DIR}/Bin
+  CACHE PATH
+  "Single Directory for all static libraries."
   )
 
 if (USE_EXT_GD)
@@ -106,7 +106,7 @@ else (USE_EXT_GD)
 	if (ENABLE_PNG)
 		FIND_PACKAGE(PNG REQUIRED)
 	endif (ENABLE_PNG)
-	
+
 	if (ENABLE_ICONV)
 		FIND_PACKAGE(ICONV REQUIRED)
 	endif (ENABLE_ICONV)
@@ -167,7 +167,7 @@ else (USE_EXT_GD)
 		INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
 		SET(HAVE_LIBPNG 1)
 	ENDIF(PNG_FOUND)
-	
+
 	IF(ICONV_FOUND)
 		INCLUDE_DIRECTORIES(${ICONV_INCLUDE_DIR})
 		SET(HAVE_ICONV 1)
@@ -302,4 +302,3 @@ set(CPACK_SOURCE_IGNORE_FILES
 )
 install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
 INCLUDE(CPack)
-

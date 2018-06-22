@@ -47,7 +47,7 @@
  *  offset - 1 dword
  *  size   - 1 dword
  *
- * There are x_chunk_count * y_chunk_count chunk headers. 
+ * There are x_chunk_count * y_chunk_count chunk headers.
  *
  * Truecolor image color header:
  *  truecolor   - 1 byte (always "\001")
@@ -407,7 +407,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ptr (int size, void *data)
   Function: gdImageCreateFromGd2Ctx
 
   Reads in a GD2 image via a <gdIOCtx> struct.  See
-  <gdImageCreateFromGd2>.  
+  <gdImageCreateFromGd2>.
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 {

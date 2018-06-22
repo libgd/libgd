@@ -87,12 +87,12 @@ main (int argc, char **argv)
 	}
 	im2 = gdImageCreateFromPng (in);
 	fclose (in);
-	
+
 	if (!im2) {
 		fprintf(stderr, "gdImageCreateFromPng failed.\n");
 		exit (1);
 	}
-	
+
 	CompareImages ("GD->PNG File->GD", ref, im2);
 
 	unlink (of);
@@ -196,7 +196,7 @@ main (int argc, char **argv)
 		fprintf(stderr, "gdImageCreateFromGdPtr failed.\n");
 		exit (1);
 	}
-	
+
 	CompareImages ("GD->GD ptr->GD", ref, im2);
 
 	gdImageDestroy (im2);

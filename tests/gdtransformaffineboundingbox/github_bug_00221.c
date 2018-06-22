@@ -10,7 +10,7 @@ int main()
 		gdRect bbox;
 		gdRect area;
 		double affine[6];
-		
+
 		affine[0] = -0.965926;
 		affine[1] = -0.258819;
 		affine[2] =  0.258819;

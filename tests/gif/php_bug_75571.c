@@ -1,6 +1,6 @@
 /**
  * Test that GIF reading does not loop infinitely
- * 
+ *
  * We are reading a crafted GIF image which has been truncated.  This would
  * trigger an infinite loop formerly, but know bails out early, returning
  * NULL from gdImageCreateFromGif().

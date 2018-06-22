@@ -333,4 +333,3 @@ BGD_DECLARE(int) gdAffineEqual (const double m1[6], const double m2[6])
 	  fabs (m1[4] - m2[4]) < GD_EPSILON &&
 	  fabs (m1[5] - m2[5]) < GD_EPSILON);
 }
-

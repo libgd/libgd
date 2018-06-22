@@ -46,18 +46,18 @@ while (<>)
 	my ($tag, $value) = split / /, $_, 2;
 	die "Font is not fixed width\n"
 			if $tag eq 'SPACING' and not $value =~ /[CM]/i;
-	
+
 	$currentchar = $value if $tag eq 'ENCODING';
 	$minchar = $currentchar if not defined $minchar
 		or $currentchar < $minchar;
 	$maxchar = $currentchar if not defined $maxchar
 		or $currentchar > $maxchar;
-	
+
 	if ($tag eq 'ENDCHAR')
 		{
 		$gobitmap = 0;
 		my $bottom = $globaltop - $bottom[$currentchar];
-		
+
 
 		if ($bottom > 0)
 			{ $data[$currentchar] = substr $data[$currentchar], 0, length($data[$currentchar]) - $bottom * $width; }
@@ -80,7 +80,7 @@ while (<>)
 		{ $fontdef = $value; }
 	if ($tag eq 'COPYRIGHT' and not defined $copyright)
 		{ $copyright = $value; }
-	
+
 	if ($tag eq 'BBX')
 		{
 		my ($tag, $wid, $hei, $left, $bottom) = split / /;
@@ -100,7 +100,7 @@ while (<>)
 		$bits = substr $bits, 0, $width;
 		$data[$currentchar] .= $bits;
 		}
-	
+
 	if ($tag eq 'BITMAP')
 		{
 		$gobitmap = 1;
@@ -150,7 +150,7 @@ for (my $i = $minchar; $i <= $maxchar; $i++)
 	{
 	$data[$i] = '' unless defined $data[$i];
 	$data[$i] = '0' x ($width * $height - length $data[$i]) . $data[$i];
-	
+
 	print FILEC "/* Char $i */\n";
 	for my $line (0 .. $height - 1)
 		{ print FILEC join ',', split(//, substr($data[$i], $line * $width, $width)), "\n"; }
@@ -158,7 +158,7 @@ for (my $i = $minchar; $i <= $maxchar; $i++)
 	print FILEC "\n";
 
 	next;
-	
+
 	for my $line (0 .. $height - 1)
 		{ print substr($data[$i], $line * $width, $width), "\n"; }
 	}
@@ -202,4 +202,3 @@ extern gdFontPtr $gdname;
 EOF
 
 1;
-

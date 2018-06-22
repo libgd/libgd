@@ -6,7 +6,7 @@
  * Some functions to crop images, automatically (auto detection of the border
  * color), using a given color (with or without tolerance) or using a given
  * rectangle.
- * 
+ *
  * Example:
  *   (start code)
  *   im2 = gdImageAutoCrop(im, GD_CROP_SIDES);
@@ -183,7 +183,7 @@ BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
  *   im        - The image.
  *   color     - The crop color.
  *   threshold - The crop threshold.
- * 
+ *
  * Returns:
  *   The newly created cropped image, or NULL on failure.
  *

@@ -59,7 +59,3 @@ use one of the other build systems (or add them yourself.)
   worth.
 * LibFontconfig: I couldn't find Windows binaries for it anywhere
   reputable.
-
- 
-
-

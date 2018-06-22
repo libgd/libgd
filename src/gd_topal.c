@@ -1383,7 +1383,7 @@ zeroHistogram (hist3d histogram)
  *   method - The quantization method, see <gdPaletteQuantizationMethod>.
  *   speed  - The quantization speed between 1 (highest quality) and
  *            10 (fastest). 0 selects a method-specific default (recommended).
- *   
+ *
  * Returns:
  *   Zero if the given method is invalid or not available; non-zero otherwise.
  *
@@ -1451,7 +1451,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
  *
  * Returns:
  *   A newly create palette image; NULL on failure.
- *   
+ *
  * See also:
  *   - <gdImageCreatePaletteFromTrueColor>
  *   - <gdImageTrueColorToPaletteSetMethod>
@@ -1586,7 +1586,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 		nim = gdImageNeuQuant(oim, colorsWanted, oim->paletteQuantizationSpeed ? oim->paletteQuantizationSpeed : 2);
 		if (cimP) {
 			*cimP = nim;
-		} 
+		}
 		if (!nim) {
 			return FALSE;
 		} else {

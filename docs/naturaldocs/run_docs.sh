@@ -74,5 +74,3 @@ $(nd) --rebuild --rebuild-output --documented-only \
 
 # And cleanup the temp files.
 rm -rf Data tmp
-
-

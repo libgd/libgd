@@ -177,7 +177,7 @@ BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 
     See Also:
 
-        <gdImageCreateTrueColor>        
+        <gdImageCreateTrueColor>
 
  */
 BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
@@ -285,7 +285,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 
     See Also:
 
-        <gdImageCreateTrueColor>        
+        <gdImageCreateTrueColor>
 
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
@@ -416,7 +416,7 @@ BGD_DECLARE(void) gdImageDestroy (gdImagePtr im)
 
 /**
  * Function: gdImageColorClosest
- * 
+ *
  * Gets the closest color of the image
  *
  * This is a simplified variant of <gdImageColorClosestAlpha> where the alpha
@@ -1489,7 +1489,7 @@ BGD_DECLARE(int) gdImageGetTrueColorPixel (gdImagePtr im, int x, int y)
 
 /*
 	Function: gdImageAABlend
-	
+
 	NO-OP, kept for library compatibility.
 */
 BGD_DECLARE(void) gdImageAABlend (gdImagePtr im)
@@ -1542,7 +1542,7 @@ static void gdImageVLine(gdImagePtr im, int x, int y1, int y2, int col)
 
 /*
 	Function: gdImageLine
-	
+
 	Bresenham as presented in Foley & Van Dam.
 */
 BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
@@ -1587,7 +1587,7 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 	if (dy <= dx) {
 		/* More-or-less horizontal. use wid for vertical stroke */
 		/* Doug Claar: watch out for NaN in atan2 (2.0.5) */
-		
+
 		/* 2.0.12: Michael Schwartz: divide rather than multiply;
 			  TBB: but watch out for /0! */
 		double ac = cos (atan2 (dy, dx));
@@ -1940,7 +1940,7 @@ BGD_DECLARE(void) gdImageCharUp (gdImagePtr im, gdFontPtr f, int x, int y, int c
 
 /**
  * Function: gdImageString
- * 
+ *
  * Draws a character string.
  *
  * Parameters:
@@ -2299,7 +2299,7 @@ BGD_DECLARE(void) gdImageFillToBorder (gdImagePtr im, int x, int y, int border, 
 	} else if (y < 0) {
 		y = 0;
 	}
-	
+
 	for (i = x; (i >= 0); i--) {
 		if (gdImageGetPixel (im, i, y) == border) {
 			break;
@@ -3094,7 +3094,7 @@ BGD_DECLARE(void) gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, in
  * Note:
  *   This function is a substitute for real alpha channel operations,
  *   so it doesn't pay attention to the alpha channel.
- * 
+ *
  * Parameters:
  *   dst  - The destination image.
  *   src  - The source image.
@@ -3175,7 +3175,7 @@ BGD_DECLARE(void) gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX
  *
  * If the source and destination area differ in size, the area will be resized
  * using nearest-neighbor interpolation.
- * 
+ *
  * Parameters:
  *   dst  - The destination image.
  *   src  - The source image.
@@ -3432,7 +3432,7 @@ BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
  * If the source and destination area differ in size, the area will be resized
  * using bilinear interpolation for truecolor images, and nearest-neighbor
  * interpolation for palette images.
- * 
+ *
  * Parameters:
  *   dst  - The destination image.
  *   src  - The source image.
@@ -4340,8 +4340,8 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 	/* keep them as 32bits */
 	long x, y, inc, frac;
 	long dx, dy,tmp;
-	int w, wid, wstart; 
-	int thick = im->thick; 
+	int w, wid, wstart;
+	int thick = im->thick;
 
 	if (!im->trueColor) {
 		/* TBB: don't crash when the image is of the wrong type */

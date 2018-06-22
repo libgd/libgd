@@ -464,7 +464,7 @@ int verbose;
 	radius = initradius;
 
 	rad = radius >> radiusbiasshift;
-	
+
 	for (i=0; i<rad; i++)
 		nnq->radpower[i] = alpha*(((rad*rad - i*i)*radbias)/(rad*rad));
 

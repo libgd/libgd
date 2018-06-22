@@ -6,7 +6,7 @@
 *******************************************************************************/
 /** \file gd_io_stream.cxx
 	\brief Implementation of the methods of the gdIOCtx std stream specialization.
-	
+
 	Implements the derived specializations of gdIOCtx.
 	These methods are not called by users of libgd, they
 	are internal implementation.
@@ -22,7 +22,7 @@
 #include "gd_io_stream.h"
 
 /**	Read into buffer from stream
-	Return the number of bytes successfully read.  
+	Return the number of bytes successfully read.
 	If an error occurs, or the end-of-file is reached, the return value
 	is a short byte	count (or zero).
 */
@@ -33,7 +33,7 @@ int	istreamIOCtx::Getbuf (struct gdIOCtx * ctx, void * buf, int size)
 	return _str->gcount();
 	}
 /**	Write from buffer to stream
-	Return the number of bytes successfully written.  
+	Return the number of bytes successfully written.
 	If an error occurs, or the end-of-file is reached, the return value
 	is a short byte	count (or zero).
 */
@@ -58,7 +58,7 @@ void	istreamIOCtx::Putchar (struct gdIOCtx * , int )
 	}
 
 /** Seek to position offset from the beginning of the stream
-	must return 1 on SUCCESS, 0 on FAILURE. Unlike fseek! 
+	must return 1 on SUCCESS, 0 on FAILURE. Unlike fseek!
 */
 int	istreamIOCtx::Seek (struct gdIOCtx * ctx, const int pos)
 	{
@@ -82,7 +82,7 @@ void	istreamIOCtx::FreeCtx (struct gdIOCtx * ctx)
 	}
 
 /**	Read into buffer from stream
-	Return the number of bytes successfully read.  
+	Return the number of bytes successfully read.
 	If an error occurs, or the end-of-file is reached, the return value
 	is a short byte	count (or zero).
 */
@@ -91,7 +91,7 @@ int	ostreamIOCtx::Getbuf (struct gdIOCtx * , void * , int )
 	return 0;
 	}
 /**	Write from buffer to stream
-	Return the number of bytes successfully written.  
+	Return the number of bytes successfully written.
 	If an error occurs, or the end-of-file is reached, the return value
 	is a short byte	count (or zero).
 */
@@ -119,7 +119,7 @@ void	ostreamIOCtx::Putchar (struct gdIOCtx * ctx, int c)
 	}
 
 /** Seek to position offset from the beginning of the stream
-	must return 1 on SUCCESS, 0 on FAILURE. Unlike fseek! 
+	must return 1 on SUCCESS, 0 on FAILURE. Unlike fseek!
 */
 int	ostreamIOCtx::Seek (struct gdIOCtx * ctx, const int pos)
 	{

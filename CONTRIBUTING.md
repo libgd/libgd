@@ -18,7 +18,7 @@
   * [Git Commit Messages](#git-commit-messages)
   * [Coding standard](#coding-standard)
   * [Documentation Styleguide](#documentation-styleguide)
- 
+
 ## What should I know before I get started?
 
 ### Code of Conduct
@@ -49,7 +49,7 @@ Before creating bug reports, please check [this list](#before-submitting-a-bug-r
 
 #### How Do I Submit A (Good) Bug Report?
 
-For security related bugs, github does not support private issues, that's why we have to handle security issues outside the issues tracker for now. Please drop a mail to [security@libg.org](mailto:security@libgd.org). 
+For security related bugs, github does not support private issues, that's why we have to handle security issues outside the issues tracker for now. Please drop a mail to [security@libg.org](mailto:security@libgd.org).
 
 Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/). After you've determined [which repository](#repositories) your bug is related to, create an issue on that repository and provide the following information.
 

@@ -12,7 +12,7 @@ int main()
 		goto exit;
 	}
 
-	gdImageAlphaBlending(im, gdEffectNormal);	
+	gdImageAlphaBlending(im, gdEffectNormal);
 	gdImageFilledRectangle(im, 0, 0, 140, 199, gdTrueColorAlpha(0,0,0,127));
 
 	gdImageAlphaBlending(im, gdEffectAlphaBlend);

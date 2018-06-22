@@ -18,7 +18,7 @@ endif
 ifndef LIBBASE
 LIBBASE	= ../..
 endif
-# All library code is statically linked to avoid problems with other lib NLMs. 
+# All library code is statically linked to avoid problems with other lib NLMs.
 
 # Edit the path below to point to your libpng sources or set environment var.
 ifndef LIBPNG
@@ -135,7 +135,7 @@ NDK_ROOT = $(NDKBASE)/ndk
 SDK_CLIB = $(NDK_ROOT)/nwsdk
 SDK_LIBC = $(NDK_ROOT)/libc
 
-INCLUDES = -I. -I$(LIBGD) -I$(LIBPNG) -I$(LIBJPEG) -I$(LIBFT2)/include -I$(ZLIBSDK) 
+INCLUDES = -I. -I$(LIBGD) -I$(LIBPNG) -I$(LIBJPEG) -I$(LIBFT2)/include -I$(ZLIBSDK)
 
 ifeq ($(LIBARCH),LIBC)
 	INCLUDES += -I$(SDK_LIBC)/include
@@ -549,5 +549,3 @@ help:
 	@echo $(DL)$(MAKE) test-cmds$(DL)
 	@echo $(DL)$(MAKE) patch$(DL)
 	@echo $(DL)===========================================================$(DL)
-
-

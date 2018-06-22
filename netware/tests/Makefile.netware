@@ -21,7 +21,7 @@ INSTDIR	= ../libgd-$(LIBGD_VERSION_STR)-bin-nw
 endif
 
 # Edit the vars below to change NLM target settings.
-TARGETS = gddemo.nlm gdtest.nlm gdtestft.nlm gdtopng.nlm gdcmpgif.nlm 
+TARGETS = gddemo.nlm gdtest.nlm gdtestft.nlm gdtopng.nlm gdcmpgif.nlm
 TARGETS += gd2time.nlm gd2togif.nlm gd2topng.nlm gd2copypal.nlm
 TARGETS += gifanimtest.nlm giftogd2.nlm pngtogd2.nlm pngtogd.nlm webpng.nlm
 TARGETS += annotate.nlm circletexttest.nlm fontsizetest.nlm fontwheeltest.nlm
@@ -159,7 +159,7 @@ endif
 .PHONY: all prebuild dist install clean
 .PRECIOUS: $(OBJDIR)/%.o $(OBJDIR)/%.def $(OBJDIR)/%.xdc $(LTARGET) $(DTARGET)
 
-all: prebuild $(TARGETS) 
+all: prebuild $(TARGETS)
 
 prebuild: $(OBJDIR) $(OBJDIR)/version.inc
 ifdef LSTATIC
@@ -281,5 +281,3 @@ ifdef LSTATIC
 endif
 	@echo $(DL)output $(notdir $(@:.def=.nlm))$(DL) >> $@
 endif
-
-

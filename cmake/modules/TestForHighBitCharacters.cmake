@@ -19,11 +19,11 @@
 
 # Check if ctype.h macros work on characters with the high bit set.
 if(NOT DEFINED CMAKE_HIGH_BIT_CHARACTERS)
-   message(STATUS 
+   message(STATUS
       "Check for whether ctype.h macros work on characters with the\n"
    "   high bit set."
    )
-  try_compile(CMAKE_HIGH_BIT_CHARACTERS  
+  try_compile(CMAKE_HIGH_BIT_CHARACTERS
     ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/CMakeModules/TestForHighBitCharacters.c
     OUTPUT_VARIABLE OUTPUT)

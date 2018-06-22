@@ -149,7 +149,7 @@ static void ReadImage (gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned
     > in = fopen("mygif.gif", "rb");
     > im = gdImageCreateFromGif(in);
     > fclose(in);
-    > // ... Use the image ... 
+    > // ... Use the image ...
     > gdImageDestroy(im);
 
 */

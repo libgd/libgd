@@ -41,8 +41,8 @@
 	downscaling using the fixed point implementations are usually much faster
 	than the existing gdImageCopyResampled while having a similar or better
 	quality.
-	
-	For image rotations, the optimized versions have a lazy antialiasing for 
+
+	For image rotations, the optimized versions have a lazy antialiasing for
 	the edges of the images. For a much better antialiased result, the affine
 	function is recommended.
 */
@@ -78,7 +78,7 @@ TODO:
 # include <emmintrin.h>
 #endif
 
-static gdImagePtr gdImageScaleBilinear(gdImagePtr im, 
+static gdImagePtr gdImageScaleBilinear(gdImagePtr im,
                                        const unsigned int new_width,
                                        const unsigned int new_height);
 static gdImagePtr gdImageScaleBicubicFixed(gdImagePtr src,
@@ -278,7 +278,7 @@ static double KernelBessel_Q1(const double x)
 static double KernelBessel_Order1(double x)
 {
 	double p, q;
-	
+
 	if (x == 0.0)
 		return (0.0f);
 	p = x;
@@ -617,7 +617,7 @@ static double filter_welsh(const double x)
 
 #if defined(_MSC_VER) && !defined(inline)
 # define inline __inline
-#endif 
+#endif
 
 /* keep it for future usage for affine copy over an existing image, targetting fix for 2.2.2 */
 #ifdef FUNCTION_NOT_USED_YET
@@ -654,7 +654,7 @@ static inline int _color_blend (const int dst, const int src)
 	}
 }
 
-static inline int _setEdgePixel(const gdImagePtr src, unsigned int x, unsigned int y, gdFixed coverage, const int bgColor) 
+static inline int _setEdgePixel(const gdImagePtr src, unsigned int x, unsigned int y, gdFixed coverage, const int bgColor)
 {
 	const gdFixed f_127 = gd_itofx(127);
 	register int c = src->tpixels[y][x];
@@ -948,8 +948,8 @@ _gdScaleOneAxis(gdImagePtr pSrc, gdImagePtr dst,
 		double r = 0, g = 0, b = 0, a = 0;
 		const int left = contrib->ContribRow[ndx].Left;
 		const int right = contrib->ContribRow[ndx].Right;
-		int *dest = (axis == HORIZONTAL) ? 
-			&dst->tpixels[row][ndx] : 
+		int *dest = (axis == HORIZONTAL) ?
+			&dst->tpixels[row][ndx] :
 			&dst->tpixels[ndx][row];
 
 		int i;
@@ -958,7 +958,7 @@ _gdScaleOneAxis(gdImagePtr pSrc, gdImagePtr dst,
 		for (i = left; i <= right; i++) {
 			const int left_channel = i - left;
 			const int srcpx = (axis == HORIZONTAL) ?
-				pSrc->tpixels[row][i] : 
+				pSrc->tpixels[row][i] :
 				pSrc->tpixels[i][row];
 
 			r += contrib->ContribRow[ndx].Weights[left_channel]
@@ -1686,7 +1686,7 @@ static int gdRotatedImageSize(gdImagePtr src, const float angle, gdRectPtr bbox)
     return GD_TRUE;
 }
 
-static gdImagePtr 
+static gdImagePtr
 gdImageRotateNearestNeighbour(gdImagePtr src, const float degrees,
                               const int bgColor)
 {
@@ -1799,7 +1799,7 @@ gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
 	return dst;
 }
 
-/** 
+/**
  * Function: gdImageRotateInterpolated
  *
  * Rotate an image
@@ -1821,7 +1821,7 @@ gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
  */
 BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const float angle, int bgcolor)
 {
-	/* round to two decimals and keep the 100x multiplication to use it in the common square angles 
+	/* round to two decimals and keep the 100x multiplication to use it in the common square angles
 	   case later. Keep the two decimal precisions so smaller rotation steps can be done, useful for
 	   slow animations, f.e. */
 	const int angle_rounded = fmod((int) floorf(angle * 100), 360 * 100);
@@ -1953,7 +1953,7 @@ BGD_DECLARE(int) gdTransformAffineGetImage(gdImagePtr *dst,
 	if (!src->trueColor) {
 		gdImagePaletteToTrueColor(src);
 	}
-	
+
 	/* Translate to dst origin (0,0) */
 	gdAffineTranslate(m, -bbox.x, -bbox.y);
 	gdAffineConcat(m, affine, m);
@@ -2010,7 +2010,7 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 	/* These methods use special implementations */
 	if (src->interpolation_id == GD_BILINEAR_FIXED || src->interpolation_id == GD_BICUBIC_FIXED || src->interpolation_id == GD_NEAREST_NEIGHBOUR) {
 		interpolation_id_bak = src->interpolation_id;
-		
+
 		gdImageSetInterpolationMethod(src, GD_BICUBIC);
 	}
 
