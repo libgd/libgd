@@ -8,10 +8,7 @@ if (PNG_FOUND)
 	LIST(APPEND TEST_FILES arc crop tgaread)
 
 	if (JPEG_FOUND)
-		LIST(APPEND TESTS_FILES copyrotated flip nnquantnnquant)
-		if (UNIX)
-			target_link_libraries(copyrotated m)
-		endif (UNIX)
+		LIST(APPEND TESTS_FILES copyrotated flip nnquant)
 	endif (JPEG_FOUND)
 endif (PNG_FOUND)
 
@@ -33,6 +30,14 @@ FOREACH(test_name ${TESTS_FILES})
 	add_executable(${test_name} "${test_name}.c")
 	target_link_libraries (${test_name} ${GD_LINK_LIB})
 ENDFOREACH(test_name)
+
+# Add libraries *after* we've called add_executable on all the tests.
+
+if (PNG_FOUND AND JPEG_FOUND)
+	if (UNIX)
+		target_link_libraries(copyrotated m)
+	endif (UNIX)
+endif(PNG_FOUND AND JPEG_FOUND)
 
 if (WIN32 AND NOT MINGW AND NOT MSYS)
 	add_executable(windows WIN32 "windows.c")
