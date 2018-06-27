@@ -1,5 +1,4 @@
 #!/bin/sh --
-# $Id$
 # Small shell script to build gd from source
 
 v() { echo "$@"; "$@"; }

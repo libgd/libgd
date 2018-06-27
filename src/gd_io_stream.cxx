@@ -1,5 +1,4 @@
 /* *****************************************************************************
-** $Id$
 ** Initial file written and documented by:
 ** Kevin Shepherd <kshepherd@php.net> December 2007
 ** of Scarlet Line http://www.scarletline.com/
