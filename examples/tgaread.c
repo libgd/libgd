@@ -1,4 +1,3 @@
-/* $Id$ */
 /*
  * You can fetch a set of samples TIFF images here:
  * ftp://ftp.remotesensing.org/pub/libtiff/

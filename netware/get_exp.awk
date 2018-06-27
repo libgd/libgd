@@ -2,7 +2,6 @@
 # awk hack to fetch libgd export functions from header
 # and write them to STDOUT. Here you can get an awk version for Win32:
 # http://www.gknw.net/development/prgtools/awk.zip
-# $Id$
 #
 BEGIN {
   print "# Exports extracted from " ARGV[1] "";

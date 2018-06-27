@@ -1,7 +1,5 @@
 #############################################################################
 #
-# $Id: FindPTHREAD.cmake 4056 2013-01-05 13:04:42Z fspindle $
-#
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2013 by INRIA. All rights reserved.
 #

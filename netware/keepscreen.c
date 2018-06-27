@@ -6,8 +6,6 @@
  * 2004-Aug-11  by Guenter Knauf
  *
  * URL: http://www.gknw.com/development/mk_nlm/
- *
- * $Id$
  */
 
 #include <stdio.h>

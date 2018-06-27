@@ -3,7 +3,6 @@ Sample usage of GD on windows. This little program opens a window, fetch its DIB
 and assigns to a GD truecolor image.
 
 Thanks to Mateusz Loskot (http://mateusz.loskot.net) for the AttachBuffer function!
-$Id$
 */
 #include <windows.h>
 #include <gd.h>
