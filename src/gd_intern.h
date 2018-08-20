@@ -44,7 +44,7 @@
 
 typedef enum {
     HORIZONTAL,
-    VERTICAL,
+    VERTICAL
 } gdAxis;
 
 /* Convert a double to an unsigned char, rounding to the nearest
