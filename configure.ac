@@ -18,22 +18,6 @@ AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 
-# This is not used anywhere.  However, Makefile.netware searches
-# through configure for these definitions to find the version numbers.
-# (Assuming anyone still uses Netware, that should be changed to use
-# gd.h via getver.pl instead.)
-GDLIB_MAJOR=gd_MAJOR
-GDLIB_MINOR=gd_MINOR
-GDLIB_REVISION=gd_REVISION
-GDLIB_EXTRA=gd_EXTRA
-GDLIB_VERSION=gd_PKG_VERSION
-
-AC_SUBST(GDLIB_MAJOR)
-AC_SUBST(GDLIB_MINOR)
-AC_SUBST(GDLIB_REVISION)
-AC_SUBST(GDLIB_EXTRA)
-AC_SUBST(GDLIB_VERSION)
-
 dnl Keep the libtool version details in an external script so cmake can
 dnl access the values too.
 define([lt_gv], [config/getlib.sh ]$1)

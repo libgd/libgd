@@ -72,9 +72,7 @@ static char *font_path(char **fontpath, char *name_list);
  */
 
 #ifndef DEFAULT_FONTPATH
-#  ifdef NETWARE
-#    define DEFAULT_FONTPATH "sys:/java/nwgfx/lib/x11/fonts/ttf;."
-#  elif defined(_WIN32)
+#  if defined(_WIN32)
 #    define DEFAULT_FONTPATH "C:\\WINDOWS\\FONTS;C:\\WINNT\\FONTS"
 #  elif defined(__APPLE__) || (defined(__MWERKS__) && defined(macintosh))
 #    define DEFAULT_FONTPATH "/usr/share/fonts/truetype:/System/Library/Fonts:/Library/Fonts"
@@ -85,7 +83,7 @@ static char *font_path(char **fontpath, char *name_list);
 #endif
 
 #ifndef PATHSEPARATOR
-#  if defined(NETWARE) || defined(_WIN32)
+#  if defined(_WIN32)
 #    define PATHSEPARATOR ";"
 #  else
 #    define PATHSEPARATOR ":"
@@ -1834,14 +1832,9 @@ static char * font_path(char **fontpath, char *name_list)
 			return "could not alloc full path of font";
 		}
 		/* if name is an absolute or relative pathname then test directly */
-#ifdef NETWARE
-		/* netware uses the format "volume:/path" or the standard "/path" */
-		if (name[0] != 0 && (strstr(name, ":/") || name[0] == '/'))
-#else
 		if (strchr (name, '/')
 		        || (name[0] != 0 && name[1] == ':'
 		            && (name[2] == '/' || name[2] == '\\')))
-#endif
 		{
 			sprintf (fullname, "%s", name);
 			if (access (fullname, R_OK) == 0) {
