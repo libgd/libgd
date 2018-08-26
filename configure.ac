@@ -239,7 +239,7 @@ GD_LIB_PKG_CHECK([LIBFONTCONFIG], [FONTCONFIG], [fontconfig], [fontconfig], [
 ])
 
 dnl Check for jpeg support.
-GD_LIB_CHECK([LIBJPEG], [JPEG], [jpeg], [
+GD_LIB_PKG_CHECK([LIBJPEG], [JPEG], [jpeg], [libjpeg], [
   AC_CHECK_LIB([jpeg], [jpeg_set_defaults], [dnl
     AS_VAR_APPEND([LIBJPEG_LIBS], [" -ljpeg"])
     gd_found_lib=yes
