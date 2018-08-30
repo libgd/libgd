@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/libgd/libgd.svg?branch=master)](https://travis-ci.org/libgd/libgd)
 [![Build Status](https://scan.coverity.com/projects/3810/badge.svg)](https://scan.coverity.com/projects/libgd)
 [![Chat](https://badges.gitter.im/libgd/libgd.svg)](https://gitter.im/libgd/libgd)
+[![Code Quality: Cpp](https://img.shields.io/lgtm/grade/cpp/g/libgd/libgd.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/libgd/libgd/context:cpp)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/libgd/libgd.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/libgd/libgd/alerts)
 
 GD is an open source code library for the dynamic creation of images by
 programmers.
