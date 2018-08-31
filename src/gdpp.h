@@ -19,9 +19,9 @@
 		im.Gif(out);
 		}
 */
-#ifdef __cplusplus
 #ifndef _gdpp_h
 #define _gdpp_h
+#ifdef __cplusplus
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -1541,5 +1541,5 @@ protected:
 /// Read in an image from a standard library input stream
 std::istream & operator>> (std::istream & in, GD::Image & img);
 
-#endif /* _gdpp_h */
 #endif /* __cplusplus */
+#endif /* _gdpp_h */
