@@ -4,9 +4,7 @@
 
 /* Bring in standard I/O and string manipulation functions */
 #include <stdarg.h>
-#ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>

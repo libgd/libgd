@@ -11,11 +11,7 @@
 #include "gd.h"
 #include "gdhelpers.h"
 #include "gd_errors.h"
-
-#ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif
-
 #include <stdarg.h>
 #if defined(HAVE_ICONV_H)
 #include <iconv.h>
@@ -344,10 +340,10 @@ do_convert (unsigned char **to_p, const unsigned char **from_p, const char *code
 
 	if ((cd = iconv_open (EUCSTR, code)) == (iconv_t) - 1) {
 		gd_error ("iconv_open() error");
-#ifdef HAVE_ERRNO_H
+
 		if (errno == EINVAL)
 			gd_error ("invalid code specification: \"%s\" or \"%s\"", EUCSTR, code);
-#endif
+
 		ustrcpy (to, from);
 		return;
 	}
@@ -357,7 +353,7 @@ do_convert (unsigned char **to_p, const unsigned char **from_p, const char *code
 
 	if ((int) (iconv (cd, (char **)from_p, &from_len, (char **)to_p, &to_len))
 	        == -1) {
-#ifdef HAVE_ERRNO_H
+
 		if (errno == EINVAL)
 			gd_error ("invalid end of input string");
 		else if (errno == EILSEQ)
@@ -365,7 +361,7 @@ do_convert (unsigned char **to_p, const unsigned char **from_p, const char *code
 		else if (errno == E2BIG)
 			gd_error ("output buffer overflow at do_convert()");
 		else
-#endif
+
 			gd_error ("something happen");
 		ustrcpy (to, from);
 		return;
