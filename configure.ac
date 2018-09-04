@@ -60,7 +60,6 @@ dnl Keep in sync with cmake/modules/AC_HEADER_STDC.cmake.
 AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE(m4_flatten([
 	dirent.h
-	errno.h
 	inttypes.h
 	limits.h
 	stddef.h

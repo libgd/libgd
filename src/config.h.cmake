@@ -12,9 +12,6 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine HAVE_DLFCN_H
 
-/* Define to 1 if you have the <errno.h> header file. */
-#cmakedefine HAVE_ERRNO_H
-
 /* Define if you have the ft2build.h header. */
 #cmakedefine HAVE_FT2BUILD_H
 
