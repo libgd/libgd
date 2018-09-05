@@ -72,9 +72,6 @@
 /* Have PTHREAD_PRIO_INHERIT. */
 #cmakedefine HAVE_PTHREAD_PRIO_INHERIT
 
-/* Define to 1 if you have the <stddef.h> header file. */
-#cmakedefine HAVE_STDDEF_H
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine HAVE_STDINT_H
 

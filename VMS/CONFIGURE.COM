@@ -896,9 +896,6 @@ $COPY SYS$INPUT [.SRC]CONFIG.H
 /* Define if you have POSIX threads libraries and header files. */
 #define HAVE_PTHREAD 1
 
-/* Define to 1 if you have the <stddef.h> header file. */
-#define HAVE_STDDEF_H 1
-
 /* Define to 1 if you have the <stdint.h> header file. */
 //#define HAVE_STDINT_H 1
 
