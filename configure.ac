@@ -61,7 +61,6 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE(m4_flatten([
 	dirent.h
 	inttypes.h
-	stddef.h
 	stdint.h
 	stdlib.h
 	string.h
