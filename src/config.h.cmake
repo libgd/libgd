@@ -60,9 +60,6 @@
 /* Define if you have zlib */
 #cmakedefine HAVE_LIBZ
 
-/* Define to 1 if you have the <limits.h> header file. */
-#cmakedefine HAVE_LIMITS_H
-
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H
 

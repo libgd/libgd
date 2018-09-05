@@ -1,10 +1,7 @@
 #ifndef GD_INTERN_H
 #define GD_INTERN_H
 
-#ifdef HAVE_LIMITS_H
 #include <limits.h>
-#endif
-
 
 #ifndef MAXPATHLEN
 # ifdef PATH_MAX
