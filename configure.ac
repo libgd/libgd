@@ -85,7 +85,6 @@ AC_CHECK_HEADERS(iconv.h,
       AC_MSG_RESULT(no))])
 
 # Checks for typedefs, structures, and compiler characteristics.
-#AC_C_CONST
 #AC_TYPE_SIZE_T
 
 # Checks for library functions.
