@@ -63,7 +63,6 @@ AC_CHECK_HEADERS_ONCE(m4_flatten([
 	inttypes.h
 	stdint.h
 	stdlib.h
-	string.h
 	strings.h
 	unistd.h
 	sys/stat.h
