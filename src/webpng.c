@@ -6,9 +6,7 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <stdio.h>
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 #include <string.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
