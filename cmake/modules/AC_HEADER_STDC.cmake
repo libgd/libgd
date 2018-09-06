@@ -3,7 +3,6 @@
 check_include_files(dirent.h HAVE_DIRENT_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
 check_include_files(stdint.h HAVE_STDINT_H)
-check_include_files(stdlib.h HAVE_STDLIB_H)
 check_include_files(strings.h HAVE_STRINGS_H)
 check_include_files(unistd.h HAVE_UNISTD_H)
 
