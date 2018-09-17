@@ -47,11 +47,6 @@
 # define HAVE_BOOLEAN
 #endif
 
-/* JCE undef symbols that we don't need anymore but which are
-   may be defined in config.h from ./configure but which are
-   redefined incompatibly in jpeglib.h */
-#undef HAVE_STDLIB_H
-
 /* 1.8.1: remove dependency on jinclude.h */
 #include "jpeglib.h"
 #include "jerror.h"

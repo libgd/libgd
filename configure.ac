@@ -62,8 +62,6 @@ AC_CHECK_HEADERS_ONCE(m4_flatten([
 	dirent.h
 	inttypes.h
 	stdint.h
-	stdlib.h
-	string.h
 	strings.h
 	unistd.h
 	sys/stat.h
@@ -86,14 +84,12 @@ AC_CHECK_HEADERS(iconv.h,
       AC_MSG_RESULT(no))])
 
 # Checks for typedefs, structures, and compiler characteristics.
-#AC_C_CONST
 #AC_TYPE_SIZE_T
 
 # Checks for library functions.
 #AC_FUNC_ERROR_AT_LINE
 #AC_FUNC_MALLOC
 #AC_FUNC_REALLOC
-#AC_FUNC_VPRINTF
 #AC_CHECK_FUNCS([floor memset sqrt strchr strdup strtol])
 
 dnl do we need to specify -lm explicitly?
