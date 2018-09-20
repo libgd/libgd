@@ -362,3 +362,210 @@ gdImagePtr gdImageRotate270 (gdImagePtr src, int ignoretransparent)
 
 	return dst;
 }
+
+/* Rotates an horizontal flipped image by 90 degrees (counter clockwise) */
+gdImagePtr gdImageFlipHRotate90 (gdImagePtr src, int ignoretransparent)
+{
+	int uY, uX;
+	int c,r,g,b,a;
+	gdImagePtr dst;
+	FuncPtr f;
+
+	if (src->trueColor) {
+		f = gdImageGetTrueColorPixel;
+	} else {
+		f = gdImageGetPixel;
+	}
+	dst = gdImageCreateTrueColor(src->sy, src->sx);
+	if (dst != NULL) {
+		int old_blendmode = dst->alphaBlendingFlag;
+		dst->alphaBlendingFlag = 0;
+
+		dst->transparent = src->transparent;
+
+		gdImagePaletteCopy (dst, src);
+
+		for (uY = 0; uY<src->sy; uY++) {
+			for (uX = 0; uX<src->sx; uX++) {
+				c = f (src, uX, uY);
+				if (!src->trueColor) {
+					r = gdImageRed(src,c);
+					g = gdImageGreen(src,c);
+					b = gdImageBlue(src,c);
+					a = gdImageAlpha(src,c);
+					c = gdTrueColorAlpha(r, g, b, a);
+				}
+				if (ignoretransparent && c == dst->transparent) {
+					gdImageSetPixel(dst, (dst->sx - uY - 1), (dst->sy - uX - 1), dst->transparent);
+				} else {
+					gdImageSetPixel(dst, (dst->sx - uY - 1), (dst->sy - uX - 1), c);
+				}
+			}
+		}
+		dst->alphaBlendingFlag = old_blendmode;
+	}
+
+	return dst;
+}
+
+/* Rotates an horizontal flipped image by 180 degrees (counter clockwise) */
+gdImagePtr gdImageFlipHRotate180 (gdImagePtr src, int ignoretransparent)
+{
+	return gdImageFlipV(src, ignoretransparent);
+}
+
+/* Rotates an horizontal flipped image by 270 degrees (counter clockwise) */
+gdImagePtr gdImageFlipHRotate270 (gdImagePtr src, int ignoretransparent)
+{
+	int uY, uX;
+	int c,r,g,b,a;
+	gdImagePtr dst;
+	FuncPtr f;
+
+	if (src->trueColor) {
+		f = gdImageGetTrueColorPixel;
+	} else {
+		f = gdImageGetPixel;
+	}
+	dst = gdImageCreateTrueColor (src->sy, src->sx);
+
+	if (dst != NULL) {
+		int old_blendmode = dst->alphaBlendingFlag;
+		dst->alphaBlendingFlag = 0;
+
+		dst->transparent = src->transparent;
+
+		gdImagePaletteCopy (dst, src);
+
+		for (uY = 0; uY<src->sy; uY++) {
+			for (uX = 0; uX<src->sx; uX++) {
+				c = f (src, uX, uY);
+				if (!src->trueColor) {
+					r = gdImageRed(src,c);
+					g = gdImageGreen(src,c);
+					b = gdImageBlue(src,c);
+					a = gdImageAlpha(src,c);
+					c = gdTrueColorAlpha(r, g, b, a);
+				}
+
+				if (ignoretransparent && c == dst->transparent) {
+					gdImageSetPixel(dst, uY, uX, dst->transparent);
+				} else {
+					gdImageSetPixel(dst, uY, uX, c);
+				}
+			}
+		}
+		dst->alphaBlendingFlag = old_blendmode;
+	}
+
+	return dst;
+}
+
+/* Rotates an vertical flipped image by 90 degrees (counter clockwise) */
+gdImagePtr gdImageFlipVRotate90 (gdImagePtr src, int ignoretransparent)
+{
+	return gdImageFlipHRotate270(src, ignoretransparent);
+}
+
+/* Rotates an vertical flipped image by 180 degrees (counter clockwise) */
+gdImagePtr gdImageFlipVRotate180 (gdImagePtr src, int ignoretransparent)
+{
+	return gdImageFlipH(src, ignoretransparent);
+}
+
+/* Rotates an vertical flipped image by 270 degrees (counter clockwise) */
+gdImagePtr gdImageFlipVRotate270 (gdImagePtr src, int ignoretransparent)
+{
+	return gdImageFlipHRotate90(src, ignoretransparent);
+}
+
+/* Flip an image horizontally */
+gdImagePtr gdImageFlipH (gdImagePtr src, int ignoretransparent)
+{
+	int uY, uX;
+	int c,r,g,b,a;
+	gdImagePtr dst;
+	FuncPtr f;
+
+	if (src->trueColor) {
+		f = gdImageGetTrueColorPixel;
+	} else {
+		f = gdImageGetPixel;
+	}
+	dst = gdImageCreateTrueColor(src->sx, src->sy);
+	if (dst != NULL) {
+		int old_blendmode = dst->alphaBlendingFlag;
+		dst->alphaBlendingFlag = 0;
+
+		dst->transparent = src->transparent;
+
+		gdImagePaletteCopy (dst, src);
+
+		for (uY = 0; uY<src->sy; uY++) {
+			for (uX = 0; uX<src->sx; uX++) {
+				c = f (src, uX, uY);
+				if (!src->trueColor) {
+					r = gdImageRed(src,c);
+					g = gdImageGreen(src,c);
+					b = gdImageBlue(src,c);
+					a = gdImageAlpha(src,c);
+					c = gdTrueColorAlpha(r, g, b, a);
+				}
+				if (ignoretransparent && c == dst->transparent) {
+					gdImageSetPixel(dst, (dst->sx - uX - 1), uY, dst->transparent);
+				} else {
+					gdImageSetPixel(dst, (dst->sx - uX - 1), uY, c);
+				}
+			}
+		}
+		dst->alphaBlendingFlag = old_blendmode;
+	}
+
+	return dst;
+}
+
+/* Flip an image vertically */
+gdImagePtr gdImageFlipV (gdImagePtr src, int ignoretransparent)
+{
+	int uY, uX;
+	int c,r,g,b,a;
+	gdImagePtr dst;
+	FuncPtr f;
+
+	if (src->trueColor) {
+		f = gdImageGetTrueColorPixel;
+	} else {
+		f = gdImageGetPixel;
+	}
+	dst = gdImageCreateTrueColor(src->sx, src->sy);
+	if (dst != NULL) {
+		int old_blendmode = dst->alphaBlendingFlag;
+		dst->alphaBlendingFlag = 0;
+
+		dst->transparent = src->transparent;
+
+		gdImagePaletteCopy (dst, src);
+
+		for (uY = 0; uY<src->sy; uY++) {
+			for (uX = 0; uX<src->sx; uX++) {
+				c = f (src, uX, uY);
+				if (!src->trueColor) {
+					r = gdImageRed(src,c);
+					g = gdImageGreen(src,c);
+					b = gdImageBlue(src,c);
+					a = gdImageAlpha(src,c);
+					c = gdTrueColorAlpha(r, g, b, a);
+				}
+				if (ignoretransparent && c == dst->transparent) {
+					gdImageSetPixel(dst, uX, (dst->sy - uY - 1), dst->transparent);
+				} else {
+					gdImageSetPixel(dst, uX, (dst->sy - uY - 1), c);
+				}
+			}
+		}
+		dst->alphaBlendingFlag = old_blendmode;
+	}
+
+	return dst;
+}
+

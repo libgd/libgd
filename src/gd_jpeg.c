@@ -36,7 +36,10 @@
 #include <limits.h>
 #include <string.h>
 
+#include <libexif/exif-data.h>
+
 #include "gd.h"
+#include "gd_intern.h"
 #include "gd_errors.h"
 /* TBB: move this up so include files are not brought in */
 /* JCE: arrange HAVE_LIBJPEG so that it can be set in gd.h */
@@ -55,7 +58,7 @@ static const char *const GD_JPEG_VERSION = "1.0";
 
 typedef struct _jmpbuf_wrapper {
 	jmp_buf jmpbuf;
-        int ignore_warning;
+	int ignore_warning;
 }
 jmpbuf_wrapper;
 
@@ -115,6 +118,34 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 	}
 
 	exit(99);
+}
+
+static int get_orientation(unsigned char* exif, int exif_size)
+{
+	ExifData *d;
+	ExifEntry* entry;
+	ExifByteOrder byte_order;
+
+	int orientation;
+
+   d = exif_data_new_from_data((const unsigned char*)exif, exif_size);
+	if (d == NULL)
+		return 0;
+
+	entry = exif_data_get_entry(d, EXIF_TAG_ORIENTATION);
+	if (entry)
+	{
+		byte_order = exif_data_get_byte_order(d);
+		orientation = exif_get_short(entry->data, byte_order);
+	}
+	else
+	{
+		orientation = 0;
+	}
+
+	exif_data_free(d);
+
+	return orientation;
 }
 
 /*
@@ -547,6 +578,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 {
 	struct jpeg_decompress_struct cinfo;
 	struct jpeg_error_mgr jerr;
+	jpeg_saved_marker_ptr marker;
 	jmpbuf_wrapper jmpbufw;
 	/* volatile so we can gdFree them after longjmp */
 	volatile JSAMPROW row = 0;
@@ -557,6 +589,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 	JDIMENSION nrows;
 	int channels = 3;
 	int inverted = 0;
+
+	gdImagePtr im2;
 
 #ifdef JPEG_DEBUG
 	gd_error_ex(GD_DEBUG, "gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
@@ -571,7 +605,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 
 	cinfo.err = jpeg_std_error(&jerr);
 	cinfo.client_data = &jmpbufw;
-
 	cinfo.err->emit_message = jpeg_emit_message;
 
 	if(setjmp(jmpbufw.jmpbuf) != 0) {
@@ -594,6 +627,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 	/* 2.0.22: save the APP14 marker to check for Adobe Photoshop CMYK
 	 * files with inverted components.
 	 */
+	jpeg_save_markers(&cinfo, JPEG_APP0 , 0xFFFF);
+	jpeg_save_markers(&cinfo, JPEG_APP0 + 1, 0xFFFF);
 	jpeg_save_markers(&cinfo, JPEG_APP0 + 14, 256);
 
 	retval = jpeg_read_header(&cinfo, TRUE);
@@ -714,7 +749,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 		}
 		channels = 3;
 	} else if(cinfo.out_color_space == JCS_CMYK) {
-		jpeg_saved_marker_ptr marker;
 		if(cinfo.output_components != 4) {
 			gd_error("gd-jpeg: error: JPEG color quantization"
 			         " request resulted in output_components == %d"
@@ -785,6 +819,45 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 		}
 	}
 
+	// apply orientation
+	marker = cinfo.marker_list;
+	while(marker) {
+		if(marker->marker == (JPEG_APP0 + 1)) {
+			im2 = NULL;
+
+			switch (get_orientation(marker->data, marker->data_length)) {
+				case 2:
+					im2 = gdImageFlipH(im, 0);
+					break;
+				case 3:
+					im2 = gdImageRotate180(im, 0);
+					break;
+				case 4:
+					im2 = gdImageFlipV(im, 0);
+					break;
+				case 5:
+					im2 = gdImageFlipHRotate90(im, 0);
+					break;
+				case 6:
+					im2 = gdImageRotate270(im, 0);
+					break;
+				case 7:
+					im2 = gdImageFlipHRotate270(im, 0);
+					break;
+				case 8:
+					im2 = gdImageRotate90(im, 0);
+			}
+
+			if (im2 != NULL) {
+				gdImageDestroy(im);
+				im = im2;
+			}
+
+			break;
+		}
+		marker = marker->next;
+	}
+
 	if(jpeg_finish_decompress (&cinfo) != TRUE) {
 		gd_error("gd-jpeg: warning: jpeg_finish_decompress"
 		         " reports suspended data source\n");
@@ -799,6 +872,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 
 	jpeg_destroy_decompress(&cinfo);
 	gdFree(row);
+
 	return im;
 
 error:
