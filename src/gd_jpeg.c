@@ -627,7 +627,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 	/* 2.0.22: save the APP14 marker to check for Adobe Photoshop CMYK
 	 * files with inverted components.
 	 */
-	jpeg_save_markers(&cinfo, JPEG_APP0 , 0xFFFF);
 	jpeg_save_markers(&cinfo, JPEG_APP0 + 1, 0xFFFF);
 	jpeg_save_markers(&cinfo, JPEG_APP0 + 14, 256);
 
