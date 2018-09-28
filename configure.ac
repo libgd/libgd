@@ -316,6 +316,7 @@ AC_MSG_RESULT([
    Support for TIFF library:         $gd_with_LIBTIFF
    Support for Freetype 2.x library: $gd_with_LIBFREETYPE
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG
+   Support for EXIF library:         $gd_with_LIBEXIF
    Support for Xpm library:          $gd_with_LIBXPM
    Support for liq library:          $gd_with_LIBIMAGEQUANT
    Support for complex text:         $gd_with_LIBRAQM
