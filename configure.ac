@@ -239,6 +239,14 @@ GD_LIB_PKG_CHECK([LIBJPEG], [JPEG], [jpeg], [libjpeg], [
   ])
 ])
 
+dnl Check for exif support.
+GD_LIB_PKG_CHECK([LIBEXIF], [EXIF], [exif], [libexif], [
+  AC_CHECK_LIB([exif], [exif_data_new_from_data], [dnl
+    AS_VAR_APPEND([LIBEXIF_LIBS], [" -lexif"])
+    gd_found_lib=yes
+  ])
+])
+
 dnl Check for libimagequant support.
 GD_LIB_CHECK([LIBIMAGEQUANT], [LIQ], [liq], [
   AC_CHECK_HEADER([libimagequant.h], [
