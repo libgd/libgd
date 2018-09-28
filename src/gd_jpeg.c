@@ -122,7 +122,7 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 	exit(99);
 }
 
-#if HAVE_LIBEXIF
+#ifdef HAVE_LIBEXIF
 static int get_orientation(unsigned char* exif, int exif_size)
 {
 	ExifData *d;
@@ -626,7 +626,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 
 	jpeg_gdIOCtx_src(&cinfo, infile);
 
-#if HAVE_LIBEXIF
+#ifdef HAVE_LIBEXIF
 	/* save APP1 marker to get EXIF orientation */
 	jpeg_save_markers(&cinfo, JPEG_APP0 + 1, 0xFFFF);
 #endif
@@ -824,7 +824,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 		}
 	}
 
-#if HAVE_LIBEXIF
+#ifdef HAVE_LIBEXIF
 	// apply orientation
 	marker = cinfo.marker_list;
 	while(marker) {
