@@ -1,4 +1,3 @@
-
 const int gdCosT[] = {
 	1024,
 	1023,
