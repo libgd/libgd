@@ -1,4 +1,3 @@
-
 # Simple makefile for building and testing libgd under MSYS/MinGW on
 # Windows
 

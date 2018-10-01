@@ -1,4 +1,3 @@
-
 # MSYS Fallback Makefile
 
 This is a simple, straightforward Makefile for building LibGD with

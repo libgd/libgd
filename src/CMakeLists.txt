@@ -1,4 +1,3 @@
-
 SET (LIBGD_SRC_FILES
 	bmp.h
 	gd.c
