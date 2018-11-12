@@ -6,6 +6,9 @@
 /* Whether to support gd image formats */
 #define ENABLE_GD_FORMATS @ENABLE_GD_FORMATS@
 
+/* Define to 1 if you have the `aligned_alloc' function. */
+#cmakedefine HAVE_ALIGNED_ALLOC
+
 /* Define to 1 if you have the <dirent.h> header file. */
 #cmakedefine HAVE_DIRENT_H
 
@@ -66,6 +69,9 @@
 /* Define if OpenMP is enabled */
 #cmakedefine HAVE_OPENMP
 
+/* Define to 1 if you have the `posix_memalign' function. */
+#cmakedefine HAVE_POSIX_MEMALIGN
+
 /* Define if you have POSIX threads libraries and header files. */
 #cmakedefine HAVE_PTHREAD
 
@@ -75,8 +81,14 @@
 /* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine HAVE_STDINT_H
 
+/* Define to 1 if you have the <stdlib.h> header file. */
+#cmakedefine HAVE_STDLIB_H
+
 /* Define to 1 if you have the <strings.h> header file. */
 #cmakedefine HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#cmakedefine HAVE_STRING_H
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine HAVE_SYS_STAT_H

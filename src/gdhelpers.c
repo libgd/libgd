@@ -69,10 +69,26 @@ void * gdCalloc (size_t nmemb, size_t size)
 	return calloc (nmemb, size);
 }
 
+#ifdef HAVE_ALIGNED_ALLOC
+# define USE_ALIGNED_ALLOC 1
+#elif defined HAVE_POSIX_MEMALIGN
+# define USE_ALIGNED_ALLOC 1
+static void *
+aligned_alloc (size_t alignment, size_t size)
+{
+	void *p;
+	return posix_memalign (&p, 16, size) == 0 ? p : 0;
+}
+#endif
+
 void *
 gdMalloc (size_t size)
 {
+#if defined HAVE_LIBIMAGEQUANT && defined USE_ALIGNED_ALLOC
+	return aligned_alloc (16, size);
+#else
 	return malloc (size);
+#endif
 }
 
 void *

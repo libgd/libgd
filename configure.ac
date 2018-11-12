@@ -95,6 +95,9 @@ AC_CHECK_HEADERS(iconv.h,
 dnl do we need to specify -lm explicitly?
 AC_CHECK_FUNC(sin,,[AC_CHECK_LIB(m,sin)])
 
+dnl No need to check for posix_memalign if aligned_alloc works.
+AC_CHECK_FUNCS([aligned_alloc posix_memalign], [break])
+
 AX_PTHREAD()
 AX_OPENMP()
 
