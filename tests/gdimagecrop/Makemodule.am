@@ -1,6 +1,8 @@
 libgd_test_programs += \
 	gdimagecrop/bug00297 \
 	gdimagecrop/bug00432 \
+	gdimagecrop/bug00485_auto \
+	gdimagecrop/bug00485_threshold \
 	gdimagecrop/php_bug_72494
 
 EXTRA_DIST += \
