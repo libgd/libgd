@@ -1523,6 +1523,15 @@ static void free_truecolor_image_data(gdImagePtr oim)
 	oim->tpixels = 0;
 }
 
+#ifdef HAVE_LIBIMAGEQUANT
+/* liq requires 16 byte aligned heap memory */
+static void *malloc16(size_t size)
+{
+	void *p;
+	return posix_memalign(&p, 16, size) == 0 ? p : NULL;
+}
+#endif
+
 /*
  * Module initialization routine for 2-pass color quantization.
  */
@@ -1601,7 +1610,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 #ifdef HAVE_LIBIMAGEQUANT
 	if (oim->paletteQuantizationMethod == GD_QUANT_DEFAULT ||
 	        oim->paletteQuantizationMethod == GD_QUANT_LIQ) {
-		liq_attr *attr = liq_attr_create_with_allocator(gdMalloc, gdFree);
+		liq_attr *attr = liq_attr_create_with_allocator(malloc16, free);
 		liq_image *image;
 		liq_result *remap;
 		int remapped_ok = 0;

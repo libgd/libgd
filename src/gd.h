@@ -1,11 +1,11 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef GD_H
+#define GD_H 1
 
 #include <stdlib.h>
 
-#ifndef GD_H
-#define GD_H 1
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Version information.  This gets parsed by build scripts as well as
  * gcc so each #define line in this group must also be splittable on
@@ -92,11 +92,6 @@ extern "C" {
 #if _MSC_VER < 1900
      extern int snprintf(char*, size_t, const char*, ...);
 #endif
-#endif
-
-#ifdef __cplusplus
-	extern "C"
-	{
 #endif
 
 /* gd.h: declarations file for the graphic-draw module.
@@ -1536,11 +1531,11 @@ BGD_DECLARE(void) gdImageFlipBoth(gdImagePtr im);
  * Group: Crop
  *
  * Constants: gdCropMode
- *  GD_CROP_DEFAULT - Default crop mode (4 corners or background)
+ *  GD_CROP_DEFAULT     - Same as GD_CROP_TRANSPARENT
  *  GD_CROP_TRANSPARENT - Crop using the transparent color
- *  GD_CROP_BLACK - Crop black borders
- *  GD_CROP_WHITE - Crop white borders
- *  GD_CROP_SIDES - Crop using colors of the 4 corners
+ *  GD_CROP_BLACK       - Crop black borders
+ *  GD_CROP_WHITE       - Crop white borders
+ *  GD_CROP_SIDES       - Crop using colors of the 4 corners
  *
  * See also:
  *   - <gdImageCropAuto>
@@ -1634,16 +1629,11 @@ BGD_DECLARE(int) gdReleaseVersion(void);
 BGD_DECLARE(const char *) gdExtraVersion(void);
 BGD_DECLARE(const char *) gdVersionString(void);
 
-
-#ifdef __cplusplus
-}
-#endif
-
 /* newfangled special effects */
 #include "gdfx.h"
 
-#endif				/* GD_H */
-
 #ifdef __cplusplus
 }
 #endif
+
+#endif				/* GD_H */

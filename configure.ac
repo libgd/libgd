@@ -18,22 +18,6 @@ AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 
-# This is not used anywhere.  However, Makefile.netware searches
-# through configure for these definitions to find the version numbers.
-# (Assuming anyone still uses Netware, that should be changed to use
-# gd.h via getver.pl instead.)
-GDLIB_MAJOR=gd_MAJOR
-GDLIB_MINOR=gd_MINOR
-GDLIB_REVISION=gd_REVISION
-GDLIB_EXTRA=gd_EXTRA
-GDLIB_VERSION=gd_PKG_VERSION
-
-AC_SUBST(GDLIB_MAJOR)
-AC_SUBST(GDLIB_MINOR)
-AC_SUBST(GDLIB_REVISION)
-AC_SUBST(GDLIB_EXTRA)
-AC_SUBST(GDLIB_VERSION)
-
 dnl Keep the libtool version details in an external script so cmake can
 dnl access the values too.
 define([lt_gv], [config/getlib.sh ]$1)
@@ -76,13 +60,8 @@ dnl Keep in sync with cmake/modules/AC_HEADER_STDC.cmake.
 AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE(m4_flatten([
 	dirent.h
-	errno.h
 	inttypes.h
-	limits.h
-	stddef.h
 	stdint.h
-	stdlib.h
-	string.h
 	strings.h
 	unistd.h
 	sys/stat.h
@@ -105,14 +84,12 @@ AC_CHECK_HEADERS(iconv.h,
       AC_MSG_RESULT(no))])
 
 # Checks for typedefs, structures, and compiler characteristics.
-#AC_C_CONST
 #AC_TYPE_SIZE_T
 
 # Checks for library functions.
 #AC_FUNC_ERROR_AT_LINE
 #AC_FUNC_MALLOC
 #AC_FUNC_REALLOC
-#AC_FUNC_VPRINTF
 #AC_CHECK_FUNCS([floor memset sqrt strchr strdup strtol])
 
 dnl do we need to specify -lm explicitly?
@@ -255,7 +232,7 @@ GD_LIB_PKG_CHECK([LIBFONTCONFIG], [FONTCONFIG], [fontconfig], [fontconfig], [
 ])
 
 dnl Check for jpeg support.
-GD_LIB_CHECK([LIBJPEG], [JPEG], [jpeg], [
+GD_LIB_PKG_CHECK([LIBJPEG], [JPEG], [jpeg], [libjpeg], [
   AC_CHECK_LIB([jpeg], [jpeg_set_defaults], [dnl
     AS_VAR_APPEND([LIBJPEG_LIBS], [" -ljpeg"])
     gd_found_lib=yes

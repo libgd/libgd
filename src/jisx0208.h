@@ -1,9 +1,9 @@
+#ifndef JISX0208_H
+#define JISX0208_H
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef JISX0208_H
-#define JISX0208_H
 	/* This file was derived from "src/VF_Ftype.c" in VFlib2-2.24.2
 	   by Dr. Kakugawa */
 
@@ -1299,8 +1299,8 @@ extern "C" {
 		}
 	};
 
-#endif /* JISX0208_H */
-
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* JISX0208_H */

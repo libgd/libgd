@@ -137,8 +137,13 @@ void * gdCacheGet(gdCache_head_t *head, void *keydata)
 		}
 	} else {
 		/* cache full - replace least-recently-used */
-		/* preveprev becomes new end of list */
-		prevprev->next = NULL;
+		if(!prevprev) {
+			/* cache size is 1 */
+			head->mru = NULL;
+		} else {
+			/* prevprev becomes new end of list */
+			prevprev->next = NULL;
+		}
 		elem = prev;
 		(*(head->gdCacheRelease))(elem->userdata);
 	}

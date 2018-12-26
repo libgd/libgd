@@ -1,5 +1,3 @@
-
-
 /*
    This is a header file for gd font, generated using
    bdftogd version 0.5 by Jan Pazdziora, adelton@fi.muni.cz

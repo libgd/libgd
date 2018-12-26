@@ -12,9 +12,6 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine HAVE_DLFCN_H
 
-/* Define to 1 if you have the <errno.h> header file. */
-#cmakedefine HAVE_ERRNO_H
-
 /* Define if you have the ft2build.h header. */
 #cmakedefine HAVE_FT2BUILD_H
 
@@ -63,9 +60,6 @@
 /* Define if you have zlib */
 #cmakedefine HAVE_LIBZ
 
-/* Define to 1 if you have the <limits.h> header file. */
-#cmakedefine HAVE_LIMITS_H
-
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H
 
@@ -78,20 +72,11 @@
 /* Have PTHREAD_PRIO_INHERIT. */
 #cmakedefine HAVE_PTHREAD_PRIO_INHERIT
 
-/* Define to 1 if you have the <stddef.h> header file. */
-#cmakedefine HAVE_STDDEF_H
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine HAVE_STDINT_H
 
-/* Define to 1 if you have the <stdlib.h> header file. */
-#cmakedefine HAVE_STDLIB_H
-
 /* Define to 1 if you have the <strings.h> header file. */
 #cmakedefine HAVE_STRINGS_H
-
-/* Define to 1 if you have the <string.h> header file. */
-#cmakedefine HAVE_STRING_H
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine HAVE_SYS_STAT_H

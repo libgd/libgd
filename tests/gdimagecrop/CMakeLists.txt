@@ -1,6 +1,9 @@
 SET(TESTS_FILES
 	bug00297
 	bug00432
+	bug00485_auto
+	bug00485_threshold
+	bug00486
 	php_bug_72494
 )
 

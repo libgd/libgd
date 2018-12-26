@@ -906,15 +906,13 @@ BGD_DECLARE(void) gdImageColorTransparent (gdImagePtr im, int color)
 	}
 
 	if (!im->trueColor) {
-		if((color < -1) || (color >= gdMaxColors)) {
+		if (color >= gdMaxColors) {
 			return;
 		}
 		if (im->transparent != -1) {
 			im->alpha[im->transparent] = gdAlphaOpaque;
 		}
-		if (color != -1) {
-			im->alpha[color] = gdAlphaTransparent;
-		}
+		im->alpha[color] = gdAlphaTransparent;
 	}
 	im->transparent = color;
 }
@@ -2277,7 +2275,7 @@ BGD_DECLARE(void) gdImageFillToBorder (gdImagePtr im, int x, int y, int border, 
 	}
 
 	if (!im->trueColor) {
-		if ((color > (im->colorsTotal - 1)) || (border > (im->colorsTotal - 1)) || (color < 0)) {
+		if (color > (im->colorsTotal - 1) || border > (im->colorsTotal - 1)) {
 			return;
 		}
 	}

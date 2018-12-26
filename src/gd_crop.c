@@ -130,30 +130,24 @@ BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 		}
 	}
 
-	/* Nothing to do > bye
-	 * Duplicate the image?
-	 */
-	if (y == height - 1) {
+	/* Whole image would be cropped > bye */
+	if (match) {
 		return NULL;
 	}
 
-	crop.y = y -1;
+	crop.y = y - 1;
+
 	match = 1;
 	for (y = height - 1; match && y >= 0; y--) {
 		for (x = 0; match && x < width; x++) {
 			match = (color == gdImageGetPixel(im, x,y));
 		}
 	}
-
-	if (y == 0) {
-		crop.height = height - crop.y + 1;
-	} else {
-		crop.height = y - crop.y + 2;
-	}
+	crop.height = y - crop.y + 2;
 
 	match = 1;
 	for (x = 0; match && x < width; x++) {
-		for (y = 0; match && y < crop.y + crop.height - 1; y++) {
+		for (y = 0; match && y < crop.y + crop.height; y++) {
 			match = (color == gdImageGetPixel(im, x,y));
 		}
 	}
@@ -161,7 +155,7 @@ BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 
 	match = 1;
 	for (x = width - 1; match && x >= 0; x--) {
-		for (y = 0; match &&  y < crop.y + crop.height - 1; y++) {
+		for (y = 0; match &&  y < crop.y + crop.height; y++) {
 			match = (color == gdImageGetPixel(im, x,y));
 		}
 	}
@@ -225,31 +219,24 @@ BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int c
 		}
 	}
 
-	/* Pierre
-	 * Nothing to do > bye
-	 * Duplicate the image?
-	 */
-	if (y == height - 1) {
+	/* Whole image would be cropped > bye */
+	if (match) {
 		return NULL;
 	}
 
-	crop.y = y -1;
+	crop.y = y - 1;
+
 	match = 1;
 	for (y = height - 1; match && y >= 0; y--) {
 		for (x = 0; match && x < width; x++) {
 			match = (gdColorMatch(im, color, gdImageGetPixel(im, x, y), threshold)) > 0;
 		}
 	}
-
-	if (y == 0) {
-		crop.height = height - crop.y + 1;
-	} else {
-		crop.height = y - crop.y + 2;
-	}
+	crop.height = y - crop.y + 2;
 
 	match = 1;
 	for (x = 0; match && x < width; x++) {
-		for (y = 0; match && y < crop.y + crop.height - 1; y++) {
+		for (y = 0; match && y < crop.y + crop.height; y++) {
 			match = (gdColorMatch(im, color, gdImageGetPixel(im, x,y), threshold)) > 0;
 		}
 	}
@@ -257,7 +244,7 @@ BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int c
 
 	match = 1;
 	for (x = width - 1; match && x >= 0; x--) {
-		for (y = 0; match &&  y < crop.y + crop.height - 1; y++) {
+		for (y = 0; match &&  y < crop.y + crop.height; y++) {
 			match = (gdColorMatch(im, color, gdImageGetPixel(im, x,y), threshold)) > 0;
 		}
 	}
@@ -294,7 +281,7 @@ static int gdGuessBackgroundColorFromCorners(gdImagePtr im, int *color)
 	} else if (tl == tr  || tl == bl || tl == br) {
 		*color = tl;
 		return 2;
-	} else if (tr == bl) {
+	} else if (tr == bl || tr == br) {
 		*color = tr;
 		return 2;
 	} else if (br == bl) {

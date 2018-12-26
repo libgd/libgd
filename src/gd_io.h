@@ -1,11 +1,11 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef GD_IO_H
 #define GD_IO_H 1
 
 #include <stdio.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifdef VMS
 #	define Putchar gdPutchar
@@ -93,8 +93,8 @@ int gdGetIntLSB(signed int *result, gdIOCtx *ctx);
 int gdSeek(gdIOCtx *ctx, const int offset);
 long gdTell(gdIOCtx *ctx);
 
-#endif
-
 #ifdef __cplusplus
 }
+#endif
+
 #endif
