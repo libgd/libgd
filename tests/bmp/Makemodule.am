@@ -10,4 +10,5 @@ libgd_test_programs += \
 endif
 
 EXTRA_DIST += \
+	bmp/bug00450.bmp \
 	bmp/CMakeLists.txt
