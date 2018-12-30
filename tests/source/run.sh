@@ -18,7 +18,7 @@ export LC_ALL=C
 files=".tmp.files"
 trap 'rm -f "${files}"' EXIT
 git ls-tree -r --name-only HEAD | \
-	grep -Ev '\.(bin|gd|gd2|gif|jpg|jpeg|png|pic|sgi|tga|tiff|ttf|xbm|xpm)$' \
+	grep -Ev '\.(bin|bmp|gd|gd2|gif|jpg|jpeg|png|pic|sgi|tga|tiff|ttf|xbm|xpm)$' \
 	> "${files}"
 
 banner() {

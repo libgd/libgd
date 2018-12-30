@@ -1,6 +1,7 @@
 LIST(APPEND TESTS_FILES
 	bmp_null
 	bug00275
+	bug00450
 )
 
 IF(PNG_FOUND)
