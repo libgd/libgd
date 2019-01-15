@@ -40,7 +40,6 @@ void gdSilence(int priority, const char *format, va_list args)
 	(void)args;
 }
 
-#ifdef HAVE_LIBPNG
 gdImagePtr gdTestImageFromPng(const char *filename)
 {
 	gdImagePtr image;
@@ -65,7 +64,6 @@ gdImagePtr gdTestImageFromPng(const char *filename)
 	fclose(fp);
 	return image;
 }
-#endif
 
 static char *tmpdir_base;
 
@@ -503,7 +501,6 @@ unsigned int gdMaxPixelDiff(gdImagePtr a, gdImagePtr b)
     return diff;
 }
 
-#ifdef HAVE_LIBPNG
 int gdTestImageCompareToImage(const char* file, unsigned int line, const char* message,
                               gdImagePtr expected, gdImagePtr actual)
 {
@@ -583,9 +580,7 @@ fail:
 	}
 	return 1;
 }
-#endif
 
-#ifdef HAVE_LIBPNG
 int gdTestImageCompareToFile(const char* file, unsigned int line, const char* message,
                              const char *expected_file, gdImagePtr actual)
 {
@@ -603,7 +598,6 @@ int gdTestImageCompareToFile(const char* file, unsigned int line, const char* me
 	}
 	return res;
 }
-#endif
 
 static int failureCount = 0;
 

@@ -291,7 +291,7 @@ public:
 		:im(0) {
 		CreateFrom(size, data);
 	}
-#ifdef HAVE_LIBPNG
+
 	/** Construct an image by reading from \p in.
 		The tag is an empty struct which simply tells the compiler which image read function to use.
 		e.g. GD::Image img(input, GD::Png_tag()); // read a png file from input
@@ -329,7 +329,6 @@ public:
 		:im(0) {
 		CreateFromPng(size, data);
 	}
-#endif
 
 	/** Construct an image by reading from \p in.
 		The tag is an empty struct which simply tells the compiler which image read function to use.
@@ -607,7 +606,6 @@ public:
 	/// Read an image from a memory block, after determining the image format
 	bool CreateFrom(int size, void * data);
 
-#ifdef HAVE_LIBPNG
 	// Png
 	bool CreateFromPng(FILE * in) {
 		clear();
@@ -626,7 +624,6 @@ public:
 		istreamIOCtx _in_ctx(in);
 		return ((im = gdImageCreateFromPngCtx( & _in_ctx)) != 0);
 	}
-#endif
 
 	// Gif
 	bool CreateFromGif(FILE * in) {

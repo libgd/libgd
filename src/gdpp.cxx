@@ -39,11 +39,10 @@ namespace GD
 		   0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
 		   == .PNG\r\n.\n
 		*/
-#ifdef HAVE_LIBPNG
 		case 0x89: // PNG
 			rtn = CreateFromPng(in);
 			break;
-#endif
+
 		/* GIF
 			0x47 0x49 0x46
 		*/
@@ -121,7 +120,6 @@ namespace GD
 		bool rtn;
 		switch (in.peek())
 			{
-#ifdef HAVE_LIBPNG
 		/* PNG
 		The first eight bytes of a PNG file always contain the following (decimal) values:
 		   0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
@@ -130,7 +128,6 @@ namespace GD
 		case 0x89: // PNG
 			rtn = CreateFromPng(in);
 			break;
-#endif
 
 		/* GIF
 			0x47 0x49 0x46
@@ -192,7 +189,6 @@ namespace GD
 		switch (((unsigned char * )data)[0])
 			{
 
-#ifdef HAVE_LIBPNG
 		/* PNG
 		The first eight bytes of a PNG file always contain the following (decimal) values:
 		   0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
@@ -201,7 +197,7 @@ namespace GD
 		case 0x89: // PNG
 			rtn = CreateFromPng(size, data);
 			break;
-#endif
+
 		/* GIF
 			0x47 0x49 0x46
 		*/

@@ -32,7 +32,6 @@ main (int argc, char *argv[])
 	int brect[8];
 	int x, y, sx, sy;
 	char *err;
-	FILE *out;
 #ifdef JISX0208
 	char *s = "Hello. ‚±‚ñ‚É‚¿‚Í Qyjpqg,";	/* String to draw. */
 #else
@@ -147,7 +146,7 @@ main (int argc, char *argv[])
 	/* TBB: Write img to test/fttest.jpg or test/fttest.png */
 	if (im->trueColor) {
 #ifdef HAVE_LIBJPEG
-		out = fopen ("test/fttest.jpg", "wb");
+		FILE *out = fopen ("test/fttest.jpg", "wb");
 		if (!out) {
 			fprintf(stderr, "Can't create test/fttest.jpg\n");
 			exit (1);
@@ -161,7 +160,7 @@ main (int argc, char *argv[])
 #endif
 	} else {
 #ifdef HAVE_LIBPNG
-		out = fopen ("test/fttest.png", "wb");
+		FILE *out = fopen ("test/fttest.png", "wb");
 		if (!out) {
 			fprintf(stderr, "Can't create test/fttest.png\n");
 			exit (1);
