@@ -1204,4 +1204,63 @@ void jpeg_gdIOCtx_dest(j_compress_ptr cinfo, gdIOCtx *outfile)
 	dest->outfile = outfile;
 }
 
+#else /* !HAVE_LIBJPEG */
+
+static void _noJpegError(void)
+{
+	gd_error("JPEG image support has been disabled\n");
+}
+
+BGD_DECLARE(void) gdImageJpeg(gdImagePtr im, FILE *outFile, int quality)
+{
+	_noJpegError();
+}
+
+BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
+{
+	_noJpegError();
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *inFile)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx(FILE *inFile, int ignore_warning)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx(int size, void *data, int ignore_warning)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning)
+{
+	_noJpegError();
+	return NULL;
+}
+
 #endif /* HAVE_LIBJPEG */

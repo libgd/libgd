@@ -1069,4 +1069,45 @@ BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size)
 	return rv;
 }
 
+#else
+
+static void _noTiffError(void)
+{
+	gd_error("TIFF image support has been disabled\n");
+}
+
+BGD_DECLARE(void) gdImageTiffCtx(gdImagePtr image, gdIOCtx *out)
+{
+	_noTiffError();
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
+{
+	_noTiffError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile)
+{
+	_noTiffError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffPtr(int size, void *data)
+{
+	_noTiffError();
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile)
+{
+	_noTiffError();
+}
+
+BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size)
+{
+	_noTiffError();
+	return NULL;
+}
+
 #endif

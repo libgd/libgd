@@ -1089,5 +1089,57 @@ bail:
 	return ret;
 }
 
+#else /* !HAVE_LIBPNG */
+
+static void _noPngError(void)
+{
+	gd_error("PNG image support has been disabled\n");
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * inFile)
+{
+	_noPngError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data)
+{
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
+{
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
+{
+	_noPngError();
+}
+
+BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * outFile)
+{
+	_noPngError();
+}
+
+BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size)
+{
+	return NULL;
+}
+
+BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level)
+{
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
+{
+	_noPngError();
+}
+
+BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
+{
+	_noPngError();
+}
 
 #endif /* HAVE_LIBPNG */

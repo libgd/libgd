@@ -9,7 +9,6 @@
 #endif /* HAVE_CONFIG_H */
 
 
-#ifdef HAVE_LIBWEBP
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -17,6 +16,8 @@
 #include "gd.h"
 #include "gd_errors.h"
 #include "gdhelpers.h"
+
+#ifdef HAVE_LIBWEBP
 #include "webp/decode.h"
 #include "webp/encode.h"
 
@@ -360,4 +361,57 @@ BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 	out->gd_free(out);
 	return rv;
 }
+
+#else /* !HAVE_LIBWEBP */
+
+static void _noWebpError(void)
+{
+	gd_error("WEBP image support has been disabled\n");
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile)
+{
+	_noWebpError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
+{
+	_noWebpError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
+{
+	_noWebpError();
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
+{
+	_noWebpError();
+}
+
+BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quality)
+{
+	_noWebpError();
+}
+
+BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
+{
+	_noWebpError();
+}
+
+BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
+{
+	_noWebpError();
+	return NULL;
+}
+
+BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
+{
+	_noWebpError();
+	return NULL;
+}
+
 #endif /* HAVE_LIBWEBP */
