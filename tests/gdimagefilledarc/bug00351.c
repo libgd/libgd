@@ -1,6 +1,6 @@
 /**
  * Test drawing of pies starting and/or ending near 90°
- * 
+ *
  * See <https://github.com/libgd/libgd/issues/351>.
  */
 
