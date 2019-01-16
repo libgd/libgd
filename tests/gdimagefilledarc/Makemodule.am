@@ -1,8 +1,10 @@
 if HAVE_LIBPNG
 libgd_test_programs += \
+	gdimagefilledarc/bug00351 \
 	gdimagefilledarc/php_bug43828
 endif
 
 EXTRA_DIST += \
 	gdimagefilledarc/CMakeLists.txt \
+	gdimagefilledarc/bug00351_exp.png \
 	gdimagefilledarc/php_bug43828_exp.png

@@ -2062,6 +2062,7 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
 	int i, pti;
 	int lx = 0, ly = 0;
 	int fx = 0, fy = 0;
+	int startx = -1, starty = -1, endx = -1, endy = -1;
 
 	if ((s % 360)  == (e % 360)) {
 		s = 0;
@@ -2091,8 +2092,8 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
 
 	for (i = s, pti = 1; (i <= e); i++, pti++) {
 		int x, y;
-		x = ((long) gdCosT[i % 360] * (long) w / (2 * 1024)) + cx;
-		y = ((long) gdSinT[i % 360] * (long) h / (2 * 1024)) + cy;
+		x = endx = ((long) gdCosT[i % 360] * (long) w / (2 * 1024)) + cx;
+		y = endy = ((long) gdSinT[i % 360] * (long) h / (2 * 1024)) + cy;
 		if (i != s) {
 			if (!(style & gdChord)) {
 				if (style & gdNoFill) {
@@ -2118,8 +2119,8 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
 			if (!(style & (gdChord | gdNoFill))) {
 				pts[0].x = cx;
 				pts[0].y = cy;
-				pts[pti].x = x;
-				pts[pti].y = y;
+				pts[pti].x = startx = x;
+				pts[pti].y = starty = y;
 			}
 		}
 		lx = x;
@@ -2148,6 +2149,24 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
 				gdImageLine (im, cx, cy, fx, fy, color);
 			}
 		} else {
+			if (e - s < 360) {
+				if (pts[1].x != startx && pts[1].y == starty) {
+					/* start point has been removed due to y-coord fix => insert it */
+					for (i = pti; i > 1; i--) {
+						pts[i].x = pts[i-1].x;
+						pts[i].y = pts[i-1].y;
+					}
+					pts[1].x = startx;
+					pts[1].y = starty;
+					pti++;
+				}
+				if (pts[pti-1].x != endx && pts[pti-1].y == endy) {
+					/* end point has been removed due to y-coord fix => insert it */
+					pts[pti].x = endx;
+					pts[pti].y = endy;
+					pti++;
+				}
+			}
 			pts[pti].x = cx;
 			pts[pti].y = cy;
 			gdImageFilledPolygon(im, pts, pti+1, color);
