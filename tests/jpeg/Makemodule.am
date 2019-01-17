@@ -2,7 +2,8 @@ if HAVE_LIBJPEG
 libgd_test_programs += \
 	jpeg/jpeg_empty_file \
 	jpeg/jpeg_im2im \
-	jpeg/jpeg_null
+	jpeg/jpeg_null \
+	jpeg/jpeg_ptr_double_free
 
 if HAVE_LIBPNG
 libgd_test_programs += \

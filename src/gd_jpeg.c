@@ -117,6 +117,8 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 	exit(99);
 }
 
+static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality);
+
 /*
  * Write IM to OUTFILE as a JFIF-formatted JPEG image, using quality
  * QUALITY.  If QUALITY is in the range 0-100, increasing values
@@ -231,8 +233,11 @@ BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
-	gdImageJpegCtx(im, out, quality);
-	rv = gdDPExtractData(out, size);
+	if (!_gdImageJpegCtx(im, out, quality)) {
+		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free(out);
 	return rv;
 }
@@ -253,6 +258,12 @@ void jpeg_gdIOCtx_dest(j_compress_ptr cinfo, gdIOCtx *outfile);
 
 */
 BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
+{
+	_gdImageJpegCtx(im, outfile, quality);
+}
+
+/* returns 0 on success, 1 on failure */
+static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 {
 	struct jpeg_compress_struct cinfo;
 	struct jpeg_error_mgr jerr;
@@ -287,7 +298,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 		if(row) {
 			gdFree(row);
 		}
-		return;
+		return 1;
 	}
 
 	cinfo.err->emit_message = jpeg_emit_message;
@@ -328,7 +339,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	if(row == 0) {
 		gd_error("gd-jpeg: error: unable to allocate JPEG row structure: gdCalloc returns NULL\n");
 		jpeg_destroy_compress(&cinfo);
-		return;
+		return 1;
 	}
 
 	rowptr[0] = row;
@@ -405,6 +416,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	jpeg_finish_compress(&cinfo);
 	jpeg_destroy_compress(&cinfo);
 	gdFree(row);
+	return 0;
 }
 
 
