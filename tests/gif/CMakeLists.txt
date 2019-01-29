@@ -3,6 +3,7 @@ LIST(APPEND TESTS_FILES
 	bug00181
 	bug00227
 	gif_null
+	git_nocolormaps
 	ossfuzz5700
 	php_bug_75571
 	uninitialized_memory_read

@@ -3,6 +3,7 @@ libgd_test_programs += \
 	gif/bug00181 \
 	gif/bug00227 \
 	gif/gif_null \
+	gif/gif_nocolormaps \
 	gif/ossfuzz5700 \
 	gif/php_bug_75571 \
 	gif/uninitialized_memory_read
@@ -26,6 +27,7 @@ EXTRA_DIST += \
 	gif/bug00060.gif \
 	gif/bug00066.gif \
 	gif/bug00066_exp.png \
+	gif/gif_nocolormaps.gif \
 	gif/ossfuzz5700.gif \
 	gif/php_bug_75571.gif \
 	gif/unitialized_memory_read.gif
