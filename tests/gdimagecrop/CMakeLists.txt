@@ -3,8 +3,13 @@ SET(TESTS_FILES
 	bug00432
 	bug00485_auto
 	bug00485_threshold
-	bug00486
 	php_bug_72494
 )
+
+IF(PNG_FOUND)
+LIST(APPEND TESTS_FILES
+	bug00486
+)
+ENDIF(PNG_FOUND)
 
 ADD_GD_TESTS()
