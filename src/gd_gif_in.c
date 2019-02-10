@@ -315,7 +315,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 			ReadImage(im, fd, width, height, localColorMap, BitSet(buf[8], INTERLACE), &ZeroDataBlock);
 		} else {
 			if(!haveGlobalColormap) {
-				ColorMap[CM_RED][1] = 0xff;	//Still a valid gif, apply simple default palette as per spec
+				// Still a valid gif, apply simple default palette as per spec
+				ColorMap[CM_RED][1] = 0xff;
 				ColorMap[CM_GREEN][1] = 0xff;
 				ColorMap[CM_BLUE][1] = 0xff;
 			}
