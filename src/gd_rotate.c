@@ -329,6 +329,7 @@ BGD_DECLARE(gdImagePtr) gdImageFlipV(gdImagePtr src, int ignoretransparent)
 static BGD_DECLARE(gdImagePtr) gdImageRotateHelper(gdImagePtr src, int ignoretransparent, int dstW, int dstH, FuncPtr transX, FuncPtr transY)
 {
 	int uY, uX;
+	int dstX, dstY;
 	int c,r,g,b,a;
 	gdImagePtr dst;
 	FuncPtr f;
@@ -348,6 +349,7 @@ static BGD_DECLARE(gdImagePtr) gdImageRotateHelper(gdImagePtr src, int ignoretra
 		gdImagePaletteCopy(dst, src);
 
 		for (uY = 0; uY < src->sy; uY++) {
+			dstY = transY(dst, uX, uY);
 			for (uX = 0; uX < src->sx; uX++) {
 				c = f (src, uX, uY);
 				if (!src->trueColor) {
@@ -357,10 +359,11 @@ static BGD_DECLARE(gdImagePtr) gdImageRotateHelper(gdImagePtr src, int ignoretra
 					a = gdImageAlpha(src,c);
 					c = gdTrueColorAlpha(r, g, b, a);
 				}
+				dstX = transX(dst, uX, uY);
 				if (ignoretransparent && c == dst->transparent) {
-					gdImageSetPixel(dst, transX(dst, uX, uY), transY(dst, uX, uY), dst->transparent);
+					gdImageSetPixel(dst, dstX, dstY, dst->transparent);
 				} else {
-					gdImageSetPixel(dst, transX(dst, uX, uY), transY(dst, uX, uY), c);
+					gdImageSetPixel(dst, dstX, dstY, c);
 				}
 			}
 		}
