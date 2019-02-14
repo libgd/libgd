@@ -37,7 +37,7 @@
 #include <string.h>
 
 #ifdef HAVE_LIBEXIF
-# include <exif-data.h>
+# include <libexif/exif-data.h>
 #endif
 
 #include "gd.h"
