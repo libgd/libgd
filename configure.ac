@@ -241,9 +241,11 @@ GD_LIB_PKG_CHECK([LIBJPEG], [JPEG], [jpeg], [libjpeg], [
 
 dnl Check for exif support.
 GD_LIB_PKG_CHECK([LIBEXIF], [EXIF], [exif], [libexif], [
-  AC_CHECK_LIB([exif], [exif_data_new_from_data], [dnl
-    AS_VAR_APPEND([LIBEXIF_LIBS], [" -lexif"])
-    gd_found_lib=yes
+  AC_CHECK_HEADER([exif-data.h], [
+    AC_CHECK_LIB([exif], [exif_data_new_from_data], [dnl
+      AS_VAR_APPEND([LIBEXIF_LIBS], [" -lexif"])
+      gd_found_lib=yes
+    ])
   ])
 ])
 
