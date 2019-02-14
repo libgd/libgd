@@ -372,110 +372,110 @@ static BGD_DECLARE(gdImagePtr) gdImageRotateHelper(gdImagePtr src, int ignoretra
 
 static int rot90x(gdImagePtr dst, int x, int y)
 {
-	return uY;
+	return y;
 }
 
 static int rot90y(gdImagePtr dst, int x, int y)
 {
-	return (dst->sy - uX - 1);
+	return (dst->sy - x - 1);
 }
 
 static int rot180x(gdImagePtr dst, int x, int y)
 {
-	return (dst->sx - uX - 1);
+	return (dst->sx - x - 1);
 }
 
 static int rot180y(gdImagePtr dst, int x, int y)
 {
-	return (dst->sy - uY - 1);
+	return (dst->sy - y - 1);
 }
 
 static int rot270x(gdImagePtr dst, int x, int y)
 {
-	return (dst->sx - uY - 1);
+	return (dst->sx - y - 1);
 }
 
 static int rot270y(gdImagePtr dst, int x, int y)
 {
-	return uX;
+	return x;
 }
 
 static int flipHrot90x(gdImagePtr dst, int x, int y)
 {
-	return (dst->sx - uY - 1);
+	return (dst->sx - y - 1);
 }
 
 static int flipHrot90y(gdImagePtr dst, int x, int y)
 {
-	return (dst->sy - uX - 1);
+	return (dst->sy - x - 1);
 }
 
 static int flipHrot180x(gdImagePtr dst, int x, int y)
 {
-	return uX;
+	return x;
 }
 
 static int flipHrot180y(gdImagePtr dst, int x, int y)
 {
-	return (dst->sy - uY - 1);
+	return (dst->sy - y - 1);
 }
 
 static int flipHrot270x(gdImagePtr dst, int x, int y)
 {
-	return uY;
+	return y;
 }
 
 static int flipHrot270y(gdImagePtr dst, int x, int y)
 {
-	return uX;
+	return x;
 }
 
 static int flipVrot90x(gdImagePtr dst, int x, int y)
 {
-	return uY;
+	return y;
 }
 
 static int flipVrot90y(gdImagePtr dst, int x, int y)
 {
-	return uX;
+	return x;
 }
 
 static int flipVrot180x(gdImagePtr dst, int x, int y)
 {
-	return (dst->sx - uX - 1);
+	return (dst->sx - x - 1);
 }
 
 static int flipVrot180y(gdImagePtr dst, int x, int y)
 {
-	return uY;
+	return y;
 }
 
 static int flipVrot270x(gdImagePtr dst, int x, int y)
 {
-	return (dst->sx - uY - 1);
+	return (dst->sx - y - 1);
 }
 
 static int flipVrot270y(gdImagePtr dst, int x, int y)
 {
-	return (dst->sy - uX - 1);
+	return (dst->sy - x - 1);
 }
 
 static int flipHx(gdImagePtr dst, int x, int y)
 {
-	return (dst->sx - uX - 1);
+	return (dst->sx - x - 1);
 }
 
 static int flipHy(gdImagePtr dst, int x, int y)
 {
-	return uY;
+	return y;
 }
 
 static int flipVx(gdImagePtr dst, int x, int y)
 {
-	return uX;
+	return x;
 }
 
 static int flipVy(gdImagePtr dst, int x, int y)
 {
-	return (dst->sy - uY - 1);
+	return (dst->sy - y - 1);
 }
