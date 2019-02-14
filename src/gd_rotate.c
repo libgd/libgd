@@ -501,8 +501,8 @@ gdImagePtr gdImageFlipH (gdImagePtr src, int ignoretransparent)
 
 		gdImagePaletteCopy (dst, src);
 
-		for (uY = 0; uY<src->sy; uY++) {
-			for (uX = 0; uX<src->sx; uX++) {
+		for (uY = 0; uY < src->sy; uY++) {
+			for (uX = 0; uX < src->sx; uX++) {
 				c = f (src, uX, uY);
 				if (!src->trueColor) {
 					r = gdImageRed(src,c);
@@ -546,8 +546,8 @@ gdImagePtr gdImageFlipV (gdImagePtr src, int ignoretransparent)
 
 		gdImagePaletteCopy (dst, src);
 
-		for (uY = 0; uY<src->sy; uY++) {
-			for (uX = 0; uX<src->sx; uX++) {
+		for (uY = 0; uY < src->sy; uY++) {
+			for (uX = 0; uX < src->sx; uX++) {
 				c = f (src, uX, uY);
 				if (!src->trueColor) {
 					r = gdImageRed(src,c);
@@ -568,4 +568,3 @@ gdImagePtr gdImageFlipV (gdImagePtr src, int ignoretransparent)
 
 	return dst;
 }
-

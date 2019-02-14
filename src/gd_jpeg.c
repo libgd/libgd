@@ -37,7 +37,7 @@
 #include <string.h>
 
 #ifdef HAVE_LIBEXIF
-#	include <libexif/exif-data.h>
+# include <exif-data.h>
 #endif
 
 #include "gd.h"
@@ -123,15 +123,15 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 }
 
 #ifdef HAVE_LIBEXIF
-static int get_orientation(unsigned char* exif, int exif_size)
+static int get_orientation(unsigned char *exif, int exif_size)
 {
 	ExifData *d;
-	ExifEntry* entry;
+	ExifEntry *entry;
 	ExifByteOrder byte_order;
 
 	int orientation;
 
-   d = exif_data_new_from_data((const unsigned char*)exif, exif_size);
+	d = exif_data_new_from_data((const unsigned char*)exif, exif_size);
 	if (d == NULL)
 		return 0;
 
