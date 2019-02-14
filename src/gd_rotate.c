@@ -367,7 +367,7 @@ gdImagePtr gdImageRotate270 (gdImagePtr src, int ignoretransparent)
 gdImagePtr gdImageFlipHRotate90 (gdImagePtr src, int ignoretransparent)
 {
 	int uY, uX;
-	int c,r,g,b,a;
+	int c, r, g, b, a;
 	gdImagePtr dst;
 	FuncPtr f;
 
@@ -383,10 +383,10 @@ gdImagePtr gdImageFlipHRotate90 (gdImagePtr src, int ignoretransparent)
 
 		dst->transparent = src->transparent;
 
-		gdImagePaletteCopy (dst, src);
+		gdImagePaletteCopy(dst, src);
 
-		for (uY = 0; uY<src->sy; uY++) {
-			for (uX = 0; uX<src->sx; uX++) {
+		for (uY = 0; uY < src->sy; uY++) {
+			for (uX = 0; uX < src->sx; uX++) {
 				c = f (src, uX, uY);
 				if (!src->trueColor) {
 					r = gdImageRed(src,c);

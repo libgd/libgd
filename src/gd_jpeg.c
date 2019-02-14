@@ -60,7 +60,7 @@ static const char *const GD_JPEG_VERSION = "1.0";
 
 typedef struct _jmpbuf_wrapper {
 	jmp_buf jmpbuf;
-	int ignore_warning;
+        int ignore_warning;
 }
 jmpbuf_wrapper;
 
@@ -136,13 +136,11 @@ static int get_orientation(unsigned char *exif, int exif_size)
 		return 0;
 
 	entry = exif_data_get_entry(d, EXIF_TAG_ORIENTATION);
-	if (entry)
-	{
+	if (entry) {
 		byte_order = exif_data_get_byte_order(d);
 		orientation = exif_get_short(entry->data, byte_order);
 	}
-	else
-	{
+	else {
 		orientation = 0;
 	}
 
@@ -825,10 +823,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 	}
 
 #ifdef HAVE_LIBEXIF
-	// apply orientation
+	/* apply orientation */
 	marker = cinfo.marker_list;
-	while(marker) {
-		if(marker->marker == (JPEG_APP0 + 1)) {
+	while (marker) {
+		if (marker->marker == (JPEG_APP0 + 1)) {
 			gdImagePtr im2 = NULL;
 
 			switch (get_orientation(marker->data, marker->data_length)) {
@@ -852,6 +850,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 					break;
 				case 8:
 					im2 = gdImageRotate90(im, 0);
+					break;
 			}
 
 			if (im2 != NULL) {
@@ -879,7 +878,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 
 	jpeg_destroy_decompress(&cinfo);
 	gdFree(row);
-
 	return im;
 
 error:
