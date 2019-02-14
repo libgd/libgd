@@ -330,7 +330,7 @@ static BGD_DECLARE(gdImagePtr) gdImageRotateHelper(gdImagePtr src, int ignoretra
 {
 	int uY, uX;
 	int dstX, dstY;
-	int c,r,g,b,a;
+	int c, r, g, b, a;
 	gdImagePtr dst;
 	FuncPtr f;
 
