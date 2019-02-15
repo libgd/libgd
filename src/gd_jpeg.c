@@ -582,6 +582,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 	struct jpeg_error_mgr jerr;
 	jpeg_saved_marker_ptr marker;
 	jmpbuf_wrapper jmpbufw;
+
 	/* volatile so we can gdFree them after longjmp */
 	volatile JSAMPROW row = 0;
 	volatile gdImagePtr im = 0;
