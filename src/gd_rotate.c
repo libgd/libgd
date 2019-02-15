@@ -349,7 +349,6 @@ static gdImagePtr gdImageRotateHelper(gdImagePtr src, int ignoretransparent, int
 		gdImagePaletteCopy(dst, src);
 
 		for (uY = 0; uY < src->sy; uY++) {
-			dstY = transY(dst, uX, uY);
 			for (uX = 0; uX < src->sx; uX++) {
 				c = f (src, uX, uY);
 				if (!src->trueColor) {
@@ -359,7 +358,10 @@ static gdImagePtr gdImageRotateHelper(gdImagePtr src, int ignoretransparent, int
 					a = gdImageAlpha(src,c);
 					c = gdTrueColorAlpha(r, g, b, a);
 				}
+
 				dstX = transX(dst, uX, uY);
+				dstY = transY(dst, uX, uY);
+
 				if (ignoretransparent && c == dst->transparent) {
 					gdImageSetPixel(dst, dstX, dstY, dst->transparent);
 				} else {
