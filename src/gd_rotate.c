@@ -50,7 +50,7 @@ static int flipHy(gdImagePtr dst, int x, int y);
 static int flipVx(gdImagePtr dst, int x, int y);
 static int flipVy(gdImagePtr dst, int x, int y);
 
-static BGD_DECLARE(gdImagePtr) gdImageRotateHelper(gdImagePtr src, int ignoretransparent, int dstW, int dstH, FuncPtr transX, FuncPtr transY);
+static gdImagePtr gdImageRotateHelper(gdImagePtr src, int ignoretransparent, int dstW, int dstH, FuncPtr transX, FuncPtr transY);
 
 #define ROTATE_DEG2RAD  3.1415926535897932384626433832795/180
 void gdImageSkewX (gdImagePtr dst, gdImagePtr src, int uRow, int iOffset, double dWeight, int clrBack, int ignoretransparent)
@@ -326,7 +326,7 @@ BGD_DECLARE(gdImagePtr) gdImageFlipV(gdImagePtr src, int ignoretransparent)
 }
 
 /* Rotates an image */
-static BGD_DECLARE(gdImagePtr) gdImageRotateHelper(gdImagePtr src, int ignoretransparent, int dstW, int dstH, FuncPtr transX, FuncPtr transY)
+static gdImagePtr gdImageRotateHelper(gdImagePtr src, int ignoretransparent, int dstW, int dstH, FuncPtr transX, FuncPtr transY)
 {
 	int uY, uX;
 	int dstX, dstY;
