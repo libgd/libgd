@@ -64,6 +64,34 @@ typedef struct _jmpbuf_wrapper {
 }
 jmpbuf_wrapper;
 
+#ifdef HAVE_LIBEXIF
+static int get_orientation(unsigned char *exif, int exif_size)
+{
+	ExifData *d;
+	ExifEntry *entry;
+	ExifByteOrder byte_order;
+
+	int orientation;
+
+	d = exif_data_new_from_data((const unsigned char*)exif, exif_size);
+	if (d == NULL)
+		return 0;
+
+	entry = exif_data_get_entry(d, EXIF_TAG_ORIENTATION);
+	if (entry) {
+		byte_order = exif_data_get_byte_order(d);
+		orientation = exif_get_short(entry->data, byte_order);
+	}
+	else {
+		orientation = 0;
+	}
+
+	exif_data_free(d);
+
+	return orientation;
+}
+#endif
+
 static void jpeg_emit_message(j_common_ptr jpeg_info, int level)
 {
 	char message[JMSG_LENGTH_MAX];
@@ -121,34 +149,6 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 
 	exit(99);
 }
-
-#ifdef HAVE_LIBEXIF
-static int get_orientation(unsigned char *exif, int exif_size)
-{
-	ExifData *d;
-	ExifEntry *entry;
-	ExifByteOrder byte_order;
-
-	int orientation;
-
-	d = exif_data_new_from_data((const unsigned char*)exif, exif_size);
-	if (d == NULL)
-		return 0;
-
-	entry = exif_data_get_entry(d, EXIF_TAG_ORIENTATION);
-	if (entry) {
-		byte_order = exif_data_get_byte_order(d);
-		orientation = exif_get_short(entry->data, byte_order);
-	}
-	else {
-		orientation = 0;
-	}
-
-	exif_data_free(d);
-
-	return orientation;
-}
-#endif
 
 /*
  * Write IM to OUTFILE as a JFIF-formatted JPEG image, using quality
