@@ -6,7 +6,7 @@
  * Based on GD.pm code by Lincoln Stein for interfacing to libgd.
  * Added support for reading as well as support for 'tell' and 'seek'.
  *
- * As will all I/O modules, most functions are for local use only (called
+ * As with all I/O modules, most functions are for local use only (called
  * via function pointers in the I/O context).
  *
  * gdDPExtractData is the exception to this: it will return the pointer to
