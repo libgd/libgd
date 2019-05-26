@@ -100,6 +100,10 @@ static void char_out(int c, GifCtx *ctx);
 static void flush_char(GifCtx *ctx);
 
 static int _gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out);
+static int _gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
+                                       int LocalCM, int LeftOfs, int TopOfs,
+                                       int Delay, int Disposal,
+                                       gdImagePtr previm);
 
 
 
@@ -487,8 +491,11 @@ BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM,
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
-	gdImageGifAnimAddCtx(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm);
-	rv = gdDPExtractData(out, size);
+	if (!_gdImageGifAnimAddCtx(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm)) {
+		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free(out);
 	return rv;
 }
@@ -649,6 +656,15 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
                                        int Delay, int Disposal,
                                        gdImagePtr previm)
 {
+	_gdImageGifAnimAddCtx(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm);
+}
+
+/* returns 0 on success, 1 on failure */
+static int _gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
+                                       int LocalCM, int LeftOfs, int TopOfs,
+                                       int Delay, int Disposal,
+                                       gdImagePtr previm)
+{
 	gdImagePtr pim = NULL, tim = im;
 	int interlace, transparent, BitsPerPixel;
 	interlace = im->interlace;
@@ -665,7 +681,7 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
 			based temporary image. */
 		pim = gdImageCreatePaletteFromTrueColor(im, 1, 256);
 		if (!pim) {
-			return;
+			return 1;
 		}
 		tim = pim;
 	}
@@ -838,12 +854,14 @@ break_right:
 	    out, tim->sx, tim->sy, LeftOfs, TopOfs, interlace, transparent,
 	    Delay, Disposal, BitsPerPixel,
 	    LocalCM ? tim->red : 0, tim->green, tim->blue, tim);
+	return 0;
 
 fail_end:
 	if(pim) {
 		/* Destroy palette based temporary image. */
 		gdImageDestroy(pim);
 	}
+	return 1;
 }
 
 

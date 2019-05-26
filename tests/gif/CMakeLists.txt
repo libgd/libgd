@@ -2,6 +2,7 @@ LIST(APPEND TESTS_FILES
 	bug00005_2
 	bug00181
 	bug00227
+	bug00499
 	gif_null
 	ossfuzz5700
 	php_bug_75571
