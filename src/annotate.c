@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 
 			fontError = gdImageStringFT(im, 0, color, font, size, 0, rx, y, text);
 			if(fontError) {
-				fprintf(stderr, "font error at line %d: %s\n", lines, fontError);
+				fprintf(stderr, "Font error at line %d: %s\n", lines, fontError);
 				exit(7);
 			}
 
