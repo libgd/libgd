@@ -5,9 +5,12 @@ libgd_test_programs += \
 	xbm/x10_basic_read
 endif
 
+libgd_test_programs += xbm/github_bug_501
+
 EXTRA_DIST += \
 	xbm/CMakeLists.txt \
 	xbm/github_bug_109.xbm \
 	xbm/github_bug_109_exp.png \
 	xbm/x10_basic_read.xbm \
-	xbm/x10_basic_read_exp.png
+	xbm/x10_basic_read_exp.png \
+	xbm/github_bug_501.xbm
