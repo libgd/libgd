@@ -1,3 +1,7 @@
+LIST(APPEND TESTS_FILES
+	github_bug_501
+)
+
 IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
 	github_bug_109
