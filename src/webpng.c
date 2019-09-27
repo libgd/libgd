@@ -11,6 +11,11 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef WIN32
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#endif
 
 #ifdef __clang__
 /* Workaround broken clang behavior: https://llvm.org/bugs/show_bug.cgi?id=20144 */
@@ -264,7 +269,14 @@ main(int argc, char **argv)
 		memcpy(tmpfile, infile, filelen);
 		strcpy(tmpfile + filelen, ".XXXXXX");
 
+#ifdef WIN32
+		if (_mktemp_s(tmpfile, strlen(tmpfile) + 1) == EINVAL)
+			err("could not get a tempfile name");
+		outfd = _open(tmpfile, _O_CREAT | _O_EXCL | _O_RDWR | _O_BINARY,
+				_S_IREAD | _S_IWRITE);
+#else
 		outfd = mkstemp(tmpfile);
+#endif
 		if (outfd == -1)
 			err("could not open %s", tmpfile);
 
