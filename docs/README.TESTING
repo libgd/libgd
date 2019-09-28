@@ -40,11 +40,11 @@ If you use a packaged version of the GD Library (installed from RPM, deb or
 ports, gentoo packages or any other packages format or distribution), please try
 to run the tests using the source releases available at:
 
-http://www.libgd.org/Downloads
+https://github.com/libgd/libgd/releases
 
 If the tests fail using our source release, please report a bug here:
 
-http://bugs.libgd.org
+https://github.com/libgd/libgd/issues
 
 You can attach the two files available in:
 
