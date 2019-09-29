@@ -17,5 +17,5 @@ mkstemp(char *template)
 	if (_mktemp_s(template, strlen(template) + 1) == EINVAL)
 		return -1;
 	return _open(template, _O_CREAT | _O_EXCL | _O_RDWR | _O_BINARY,
-			_S_IREAD | _S_IWREITE);
+			_S_IREAD | _S_IWRITE);
 }
