@@ -38,7 +38,7 @@ echo "Running tests:"
 count=0
 failures=0
 compile_failures=0
-for test in `find . -name \*.c | grep -v '^./gdtest'`; do
+for test in `find . \( -path ./xpm -o -path ./fontconfig \) -prune -o -type f -name \*.c | grep -v '^./gdtest'`; do
     count=`expr $count + 1`
 
     exe=${test%.c}.exe
