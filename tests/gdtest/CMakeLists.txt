@@ -1,3 +1,7 @@
 add_definitions(-DGDTEST_TOP_DIR="${CMAKE_CURRENT_SOURCE_DIR}/..")
-add_library (gdTest STATIC gdtest.c)
+if(WIN32)
+	add_library (gdTest STATIC gdtest.c readdir.c)
+else()
+	add_library (gdTest STATIC gdtest.c)
+endif()
 target_link_libraries(gdTest ${GD_LIB})
