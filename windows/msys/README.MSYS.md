@@ -39,7 +39,7 @@ use one of the other build systems (or add them yourself.)
     here.  This is fine.  As long as most tests pass, you're probably
     okay.)
 
-5.   Type
+5.  Type
 
        make dist
 
