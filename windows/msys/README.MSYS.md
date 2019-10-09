@@ -47,7 +47,7 @@ use one of the other build systems (or add them yourself.)
     library and its dependants.  Note that this step may pick up extra
     DLLs; it sweeps up all of the DLLs in the directories pointed to
     by *_DLLDIR Makefile variables.
-    
+
     Before type "make dist", please make sure you have installed 
     zip command in msys. Or You can try to solve it by following ways:
     * If you use msys, you can install msys-zip(lib, docs, lic) 
