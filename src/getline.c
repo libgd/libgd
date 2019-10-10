@@ -33,7 +33,6 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
-
 /*
  * getline from stdio
  */
@@ -74,4 +73,5 @@ BGD_DECLARE(size_t) getline(char **lineptr, size_t *n, FILE *stream)
 	}
 
 	return -1;
+
 }
