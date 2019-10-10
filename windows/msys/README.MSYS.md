@@ -49,10 +49,10 @@ use one of the other build systems (or add them yourself.)
     by *_DLLDIR Makefile variables.
 
     Before type "make dist", please make sure you have installed
-    zip command in msys. Or You can try to solve it by following ways:
+    zip command in msys. Or you can try:
     * If you use msys, you can install msys-zip(lib, docs, lic)
     in MinGW Installation Manager/all package.
-    * If you use msys2, you can install msys/zip by pacman and type:
+    * If you use msys2, you can install msys/zip by pacman and running:
 
        pacman -S msys/zip
 
