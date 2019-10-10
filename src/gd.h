@@ -110,6 +110,10 @@ extern "C" {
 #include <stdarg.h>
 #include "gd_io.h"
 
+#if defined(_WIN32)
+	 BGD_DECLARE(size_t) getline(char** lineptr, size_t* n, FILE* stream);
+#endif
+
 /* The maximum number of palette entries in palette-based images.
    In the wonderful new world of gd 2.0, you can of course have
    many more colors when using truecolor mode. */
