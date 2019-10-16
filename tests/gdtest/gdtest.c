@@ -33,6 +33,10 @@
 #define HAVE_SYS_STAT_H
 #endif
 
+#ifndef GDTEST_TOP_DIR
+#include "test_config.h"
+#endif
+
 #include "gd.h"
 
 #include "gdtest.h"
