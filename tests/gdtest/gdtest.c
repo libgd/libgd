@@ -1,4 +1,6 @@
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
 #include <assert.h>
 #include <setjmp.h>
 #include <stdlib.h>
@@ -20,8 +22,15 @@
 #include <sys/types.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_MINGW32_)
 # include "readdir.h"
+#endif
+
+#ifdef _WIN32
+#include<windows.h>
+#include<errno.h>
+#else
+#define HAVE_SYS_STAT_H
 #endif
 
 #include "gd.h"
