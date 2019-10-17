@@ -15,6 +15,11 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
+#ifndef HAVE_SYS_STAT_H
+#define HAVE_SYS_STAT_H
+#endif
+
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
@@ -29,8 +34,6 @@
 #ifdef _WIN32
 #include<windows.h>
 #include<errno.h>
-#else
-#define HAVE_SYS_STAT_H
 #endif
 
 #ifndef GDTEST_TOP_DIR
