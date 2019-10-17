@@ -23,14 +23,12 @@
 #include <sys/types.h>
 #endif
 
-#if defined(_WIN32) && !defined(_MINGW32_)
-# include "readdir.h"
-#endif
-
 #ifdef _WIN32
-#include<errno.h>
+#include "readdir.h"
+#include <errno.h>
 #endif
 
+/*test_config.h is created by run_test.sh and GDTEST_TOP_DIR is never defined in msys*/
 #ifndef GDTEST_TOP_DIR
 #include "test_config.h"
 #endif
