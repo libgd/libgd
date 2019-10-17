@@ -16,10 +16,6 @@
 #include <unistd.h>
 #endif
 
-#ifndef HAVE_SYS_STAT_H
-#define HAVE_SYS_STAT_H
-#endif
-
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
@@ -32,7 +28,6 @@
 #endif
 
 #ifdef _WIN32
-#include<windows.h>
 #include<errno.h>
 #endif
 
