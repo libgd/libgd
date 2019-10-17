@@ -9,7 +9,7 @@ CFLAGS_EXTRA=$2         # Extra C flags
 
 LOG=run_tests.log
 
-CFLAGS="-g -Igdtest/ -I. -I../src/ -D_WIN32 $CFLAGS_EXTRA"
+CFLAGS="-g -Igdtest/ -I. -I../src/ -D_WIN32 -DHAVE_SYS_STAT_H $CFLAGS_EXTRA"
 LDFLAGS='-L../src -llibgd'
 DLLPATH=../src:$DLLPATH_EXTRA
 
