@@ -1,4 +1,6 @@
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
 #include <assert.h>
 #include <setjmp.h>
 #include <stdlib.h>
@@ -21,7 +23,14 @@
 #endif
 
 #ifdef _WIN32
-# include "readdir.h"
+#include "readdir.h"
+#include <errno.h>
+#endif
+
+/* GDTEST_TOP_DIR is defined in other compile ways except msys
+ * test_config.h is created by windows/msys/run_test.sh*/
+#ifndef GDTEST_TOP_DIR
+#include <test_config.h>
 #endif
 
 #include "gd.h"
@@ -186,11 +195,11 @@ static int getfilesystemtime(struct timeval *tv)
 	fft.LowPart = ft.dwLowDateTime;
 	ff = fft.QuadPart;
 
-	ff /= 10Ui64; /* convert to microseconds */
-	ff -= 11644473600000000Ui64; /* convert to unix epoch */
+	ff /= 10ULL; /* convert to microseconds */
+	ff -= 11644473600000000ULL; /* convert to unix epoch */
 
-	tv->tv_sec = (long)(ff / 1000000Ui64);
-	tv->tv_usec = (long)(ff % 1000000Ui64);
+	tv->tv_sec = (long)(ff / 1000000ULL);
+	tv->tv_usec = (long)(ff % 1000000ULL);
 
 	return 0;
 }
@@ -203,7 +212,7 @@ mkdtemp (char *tmpl)
 	static int counter = 0;
 	char *XXXXXX;
 	struct timeval tv;
-	_int64 value;
+	__int64 value;
 	int count;
 
 	/* find the last occurrence of "XXXXXX" */
@@ -219,7 +228,7 @@ mkdtemp (char *tmpl)
 	value = (tv.tv_usec ^ tv.tv_sec) + counter++;
 
 	for (count = 0; count < 100; value += 7777, ++count) {
-		_int64 v = value;
+		__int64 v = value;
 
 		/* Fill in the random bits.  */
 		XXXXXX[0] = letters[v % NLETTERS];
