@@ -63,7 +63,6 @@ int _gdTestErrorMsg(const char* file, unsigned int line, const char* string, ...
 
 /* public assert functions */
 #define gdAssertImageEqualsToFile(ex,ac) gdTestImageCompareToFile(__FILE__,__LINE__,NULL,(ex),(ac))
-#define gdAssertImageFileEqualsMsg(ex,ac,ms) gdTestImageCompareToFile(__FILE__,__LINE__,(ms),(ex),(ac))
 
 #define gdAssertImageEquals(ex,ac) gdTestImageCompareToImage(__FILE__,__LINE__,NULL,(ex),(ac))
 #define gdAssertImageEqualsMsg(ex,ac,ms) gdTestImageCompareToImage(__FILE__,__LINE__,(ms),(ex),(ac))
