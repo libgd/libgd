@@ -30,13 +30,11 @@
  */
 
 #include <stdio.h>
-#include "gd.h"
-#include "gdhelpers.h"
 
 /*
  * getline from stdio
  */
-BGD_DECLARE(size_t) getline(char **lineptr, size_t *n, FILE *stream)
+size_t getline(char **lineptr, size_t *n, FILE *stream)
 {
 	size_t count = 0;
 	int c;
@@ -44,7 +42,7 @@ BGD_DECLARE(size_t) getline(char **lineptr, size_t *n, FILE *stream)
 
 	if (!*lineptr) {
 		*n = (*n > 0) ? *n : BUFSIZ;
-		*lineptr = (char*)gdCalloc(*n, sizeof(char));
+		*lineptr = (char*)calloc(*n, sizeof(char));
 	}
 
 	if (!*lineptr) {
@@ -56,7 +54,7 @@ BGD_DECLARE(size_t) getline(char **lineptr, size_t *n, FILE *stream)
 
 		if (*n <= count) {
 			*n = *n * 2 > count ? *n * 2 : count * 2;
-			newLineptr = (char*)gdReallocEx(*lineptr, *n);
+			newLineptr = (char*)realloc(*lineptr, *n);
 			if (!newLineptr) {
 				return -1;
 			}
@@ -73,5 +71,4 @@ BGD_DECLARE(size_t) getline(char **lineptr, size_t *n, FILE *stream)
 	}
 
 	return -1;
-
 }

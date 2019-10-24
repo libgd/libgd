@@ -42,12 +42,13 @@ BUILD_DIR=$(WITH_BUILD)
 GD_DLL=libgd.dll
 GD_LIB=libgd_a.lib
 GD_CONFIG_H=$(LIBGD_SRC_DIR)\config.h
-
+GD_PROG_LIB=gd_programs_lib.lib
 
 SDR=$(BUILD_DIR)^\
 TDR=$(BUILD_DIR)\tests^\
 TARGETDLL=$(BUILD_DIR)\$(GD_DLL)
 TARGETLIB=$(BUILD_DIR)\$(GD_LIB)
+TARGETPROGLIB=$(BUILD_DIR)\$(GD_PROG_LIB)
 
 LIB_OBJS= \
   $(LIBGD_OBJ_DIR)\gd.obj \
@@ -94,8 +95,10 @@ LIB_OBJS= \
   $(LIBGD_OBJ_DIR)\gd_version.obj \
   $(LIBGD_OBJ_DIR)\gd_crop.obj \
   $(LIBGD_OBJ_DIR)\gd_color_map.obj \
-  $(LIBGD_OBJ_DIR)\gd_webp.obj \
-  $(LIBGD_OBJ_DIR)\getline.obj
+  $(LIBGD_OBJ_DIR)\gd_webp.obj 
+
+PROG_LIB_OBJS= \
+  $(LIBGD_OBJ_DIR)\getline.obj 
 
 LIBS=kernel32.lib ole32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib Dnsapi.lib Gdi32.Lib
 LIBS_GD=libjpeg_a.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib libwebp_a.lib libxpm_a.lib libtiff.lib
@@ -164,7 +167,7 @@ TEST_OBJS=$(TEST_OBJS:exe=obj)
 !ENDIF
 
 # pseudotargets
-build_libs: make_dirs $(TARGETDLL) $(TARGETLIB)
+build_libs: make_dirs $(TARGETDLL) $(TARGETLIB) $(TARGETPROGLIB)
 build_progs: build_libs $(PROG_OBJS) $(PROG_EXES)
 all: build_libs build_tests build_progs
 check: all run_tests
@@ -230,10 +233,13 @@ $(TARGETDLL): $(LIB_OBJS)
 $(TARGETLIB): $(LIB_OBJS)
   @$(LB) /OUT:$@ $(LIB_OBJS) $(LDFLAGS)
 
+$(TARGETPROGLIB): $(PROG_LIB_OBJS)
+  @$(LB) /OUT:$@ $(PROG_LIB_OBJS) $(LDFLAGS)
+
 {$(LIBGD_SRC_DIR)\}.c{$(LIBGD_OBJ_DIR)\}.obj:
 	$(CC) $(CFLAGS) /c /Fo"$@" /Fd$*.pdb $<
 
-all: $(LIBGD_OBJ_DIR) $(LIBGD_BIN_DIR) $(LIB_OBJS) $(STATICLIB)
+all: $(LIBGD_OBJ_DIR) $(LIBGD_BIN_DIR) $(LIB_OBJS) $(STATICLIB) $(PROG_LIB_OBJS)
 
 .SUFFIXES: .c .obj .res .exe
 
@@ -255,4 +261,4 @@ pretest: $(TARGETDLL)
 # programs
 
 {$(LIBGD_OBJ_DIR)}.obj{$(LIBGD_OBJ_DIR)}.exe:
-	$(LD) $(LDFLAGS) $** $(BUILD_DIR)\libgd.lib /out:$@
+	$(LD) $(LDFLAGS) $** $(BUILD_DIR)\libgd.lib $(BUILD_DIR)\$(GD_PROG_LIB) /out:$@
