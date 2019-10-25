@@ -12,6 +12,10 @@
 #include <unistd.h>
 #endif
 
+#ifdef _WIN32
+extern int mkstemp(char *template);
+#endif
+
 #ifdef __clang__
 /* Workaround broken clang behavior: https://llvm.org/bugs/show_bug.cgi?id=20144 */
 #undef strcmp
