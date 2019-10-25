@@ -34,7 +34,7 @@
 /*
  * getline from stdio
  */
-size_t getline(char **lineptr, size_t *n, FILE *stream)
+size_t getline (char **lineptr, size_t *n, FILE *stream)
 {
 	size_t count = 0;
 	int c;
