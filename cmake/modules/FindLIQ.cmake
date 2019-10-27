@@ -4,15 +4,16 @@
 # This module defines
 #  LIQ_INCLUDE_DIR, where to find libimagequant.h
 #  LIQ_LIBRARIES, the libraries to link against to use libimagequant.
-#  LIQ_FOUND, If false, do not try to use libimagequant.
+#  LIQ_FOUND, if false, do not try to use libimagequant.
+#  LIQ_BUILD, if undefined, libgd will not download and build libimagequant
 
 SET(LIQ_FOUND "NO")
 
 FIND_PATH(LIQ_INCLUDE_DIR libimagequant.h
-"${PROJECT_SOURCE_DIR}/libimagequant"
-"${PROJECT_SOURCE_DIR}/pngquant/lib"
-/usr/local/include
-/usr/include
+  "${PROJECT_SOURCE_DIR}/libimagequant"
+  "${PROJECT_SOURCE_DIR}/pngquant/lib"
+  /usr/local/include
+  /usr/include
 )
 
 FIND_LIBRARY(LIQ_LIBRARY
@@ -49,8 +50,8 @@ ELSE (LIQ_FOUND)
 
       SET(LIQ_FOUND "SORTOF")
       SET(LIQ_BUILD "YES")
-    SET(LIQ_LIBRARIES "${PROJECT_BINARY_DIR}/libimagequant/libimagequant.a")
-    SET(LIQ_INCLUDE_DIR "${PROJECT_BINARY_DIR}/libimagequant/")
+      SET(LIQ_LIBRARIES "${PROJECT_BINARY_DIR}/libimagequant/libimagequant.a")
+      SET(LIQ_INCLUDE_DIR "${PROJECT_BINARY_DIR}/libimagequant/")
       SET(HAVE_LIBIMAGEQUANT 1)
     ENDIF(CMAKE_VERSION VERSION_GREATER "2.8.1")
   ENDIF(NOT WIN32 OR CYGWIN OR MINGW)
