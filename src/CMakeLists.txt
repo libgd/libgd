@@ -143,6 +143,12 @@ if (BUILD_STATIC_LIBS)
 	target_link_libraries(${GD_LIB_STATIC} ${LIBGD_DEP_LIBS})
 endif()
 
+SET(LIBS_PRIVATES
+	${ICONV_LIBRARIES}
+	${LIQ_LIBRARIES}
+	${WEBP_LIBRARIES}
+)
+
 set(GD_PROGRAMS gdcmpgif)
 
 if (PNG_FOUND)

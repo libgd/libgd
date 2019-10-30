@@ -6,6 +6,8 @@ includedir=@includedir@
 Name: gd
 Description: GD graphics library
 Version: @VERSION@
+Requires:
+Requires.private: @PKG_REQUIRES_PRIVATES@
 Cflags: -I${includedir}
-Libs.private: @LIBS@ @LIBICONV@
+Libs.private: @LIBS_PRIVATES@ @LIBICONV@
 Libs: -L${libdir} -lgd
