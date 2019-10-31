@@ -9,15 +9,13 @@
 SET(LIQ_FOUND "NO")
 
 FIND_PATH(LIQ_INCLUDE_DIR libimagequant.h
-  "${PROJECT_SOURCE_DIR}/libimagequant"
-  "${PROJECT_SOURCE_DIR}/pngquant/lib"
   /usr/local/include
   /usr/include
 )
 
 FIND_LIBRARY(LIQ_LIBRARY
   NAMES libimagequant imagequant
-  PATHS "${PROJECT_SOURCE_DIR}/libimagequant" "${PROJECT_SOURCE_DIR}/pngquant/lib" /usr/lib64 /usr/lib /usr/local/lib
+  PATHS /usr/lib64 /usr/lib /usr/local/lib
 )
 
 IF (LIQ_LIBRARY AND LIQ_INCLUDE_DIR)
