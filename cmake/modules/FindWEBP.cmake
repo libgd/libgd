@@ -2,9 +2,8 @@
 #
 
 # This module defines
-#  WEBP_INCLUDE_DIR, where to find png.h, etc.
+#  WEBP_INCLUDE_DIR, where to find decode.h, etc.
 #  WEBP_LIBRARIES, the libraries to link against to use WEBP.
-#  WEBP_DEFINITIONS - You should ADD_DEFINITONS(${WEBP_DEFINITIONS}) before compiling code that includes png library files.
 #  WEBP_FOUND, If false, do not try to use WEBP.
 # also defined, but not for general use are
 #  WEBP_LIBRARY, where to find the WEBP library.
