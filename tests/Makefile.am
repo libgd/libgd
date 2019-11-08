@@ -55,6 +55,7 @@ include gdimagerotate/Makemodule.am
 include gdimagescale/Makemodule.am
 include gdimagescatterex/Makemodule.am
 include gdimagesetpixel/Makemodule.am
+include gdimagestring/Makemodule.am
 include gdimagestringft/Makemodule.am
 include gdimagestringftex/Makemodule.am
 include gdimagetruecolortopalette/Makemodule.am
