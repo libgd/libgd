@@ -61,6 +61,7 @@ if (BUILD_TEST)
 		gdimagesetpixel
 		gdimagestringft
 		gdimagestringftex
+		gdimagestringup
 		gdimagetruecolortopalette
 		gdinterpolatedscale
 		gdnewfilectx
