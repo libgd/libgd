@@ -1,0 +1,7 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagecopymergegray/gdimagecopymergegray
+endif
+
+EXTRA_DIST += \
+	gdimagecopymergegray/gdimagecopymergegray_exp.png
