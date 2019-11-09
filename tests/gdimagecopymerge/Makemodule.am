@@ -1,9 +1,6 @@
-libgd_test_programs += \
-	gdimagecopymerge/gdimagecopymerge
-
 if HAVE_LIBPNG
-libgd_test_programs += \
-	gdimagecopymerge/gdimagecopymerge
+	libgd_test_programs += \
+		gdimagecopymerge/gdimagecopymerge
 endif
 
 EXTRA_DIST += \
