@@ -53,6 +53,7 @@ include gdimagepixelate/Makemodule.am
 include gdimagepolygon/Makemodule.am
 include gdimagerectangle/Makemodule.am
 include gdimagerotate/Makemodule.am
+include gdimagestring16/Makemodule.am
 include gdimagescale/Makemodule.am
 include gdimagescatterex/Makemodule.am
 include gdimagesetpixel/Makemodule.am
