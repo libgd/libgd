@@ -7,10 +7,6 @@
 extern "C" {
 #endif
 
-#ifdef VMS
-#	define Putchar gdPutchar
-#endif
-
 /*
   Group: Types
 
