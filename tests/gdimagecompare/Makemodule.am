@@ -1,0 +1,9 @@
+libgd_test_programs += \
+	gdimagecompare/interlacecompare \
+	gdimagecompare/transparentcompare \
+	gdimagecompare/truecolorcompare \
+	gdimagecompare/colorstotalcompare \
+	gdimagecompare/xycompare
+
+EXTRA_DIST += \
+	gdimagecompare/CMakeLists.txt

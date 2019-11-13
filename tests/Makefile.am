@@ -28,6 +28,7 @@ include gdimagecolorexact/Makemodule.am
 include gdimagecolorreplace/Makemodule.am
 include gdimagecolorresolve/Makemodule.am
 include gdimagecolortransparent/Makemodule.am
+include gdimagecompare/Makemodule.am
 include gdimagecontrast/Makemodule.am
 include gdimageconvolution/Makemodule.am
 include gdimagecopy/Makemodule.am

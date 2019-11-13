@@ -33,6 +33,7 @@ if (BUILD_TEST)
 		gdimagecolorresolve
 		gdimagecolortransparent
 		gdimagecontrast
+		gdimagecompare
 		gdimageconvolution
 		gdimagecopy
 		gdimagecopyresampled
