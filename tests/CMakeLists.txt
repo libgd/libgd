@@ -29,6 +29,7 @@ if (BUILD_TEST)
 		gdimagecolorclosest
 		gdimagecolordeallocate
 		gdimagecolorexact
+		gdimagecolormatch
 		gdimagecolorreplace
 		gdimagecolorresolve
 		gdimagecolortransparent
