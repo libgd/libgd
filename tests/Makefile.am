@@ -25,6 +25,7 @@ include gdimagecolor/Makemodule.am
 include gdimagecolorclosest/Makemodule.am
 include gdimagecolordeallocate/Makemodule.am
 include gdimagecolorexact/Makemodule.am
+include gdimagecolormatch/Makemodule.am
 include gdimagecolorreplace/Makemodule.am
 include gdimagecolorresolve/Makemodule.am
 include gdimagecolortransparent/Makemodule.am
