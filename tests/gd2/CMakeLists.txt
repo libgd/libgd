@@ -11,6 +11,7 @@ LIST(APPEND TESTS_FILES
 	gd2_null
 	gd2_read_corrupt
 	too_few_image_data
+	createimagefromgd2partptr
 )
 
 IF(PNG_FOUND)
