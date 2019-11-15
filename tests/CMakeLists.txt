@@ -27,6 +27,7 @@ if (BUILD_TEST)
 		gdimageclone
 		gdimagecolor
 		gdimagecolorclosest
+		gdimagecolorclosesthwb
 		gdimagecolordeallocate
 		gdimagecolorexact
 		gdimagecolorreplace

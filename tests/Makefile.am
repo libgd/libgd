@@ -23,6 +23,7 @@ include gdimagebrightness/Makemodule.am
 include gdimageclone/Makemodule.am
 include gdimagecolor/Makemodule.am
 include gdimagecolorclosest/Makemodule.am
+include gdimagecolorclosesthwb/Makemodule.am
 include gdimagecolordeallocate/Makemodule.am
 include gdimagecolorexact/Makemodule.am
 include gdimagecolorreplace/Makemodule.am
