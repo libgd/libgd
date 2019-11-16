@@ -37,6 +37,7 @@ AM_INIT_AUTOMAKE([1.11 foreign dist-xz -Wall -Werror subdir-objects])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
 AM_PROG_AR
+AC_PROG_CXX
 AC_PROG_CC_STDC
 AM_PROG_CC_C_O
 AC_PROG_INSTALL

@@ -191,6 +191,7 @@ install(FILES
 	gd_color_map.h
 	gd_errors.h
 	gd_io.h
+	gd_io_stream.h
 	gdcache.h
 	gdfontg.h
 	gdfontl.h
