@@ -1,0 +1,6 @@
+libgd_test_programs += \
+	gdimagesquaretocircle/squaretocircle
+
+EXTRA_DIST += \
+	gdimagesquaretocircle/CMakeLists.txt \
+	gdimagesquaretocircle/circle_exp.png
