@@ -1,0 +1,9 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagecopyresized/gdimagecopyresized
+endif
+
+EXTRA_DIST += \
+	gdimagecopyresized/CMakeLists.txt \
+	gdimagecopyresized/gdimagecopyresized.png \
+	gdimagecopyresized/gdimagecopyresized_exp.png
