@@ -2180,11 +2180,7 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
 BGD_DECLARE(void) gdImageEllipse(gdImagePtr im, int mx, int my, int w, int h, int c)
 {
 	int x=0,mx1=0,mx2=0,my1=0,my2=0;
-#ifdef HAVE_STDINT_H
 	int64_t aq,bq,dx,dy,r,rx,ry,a,b;
-#else
-	long long aq,bq,dx,dy,r,rx,ry,a,b;
-#endif
 
 	a=w>>1;
 	b=h>>1;
@@ -2231,11 +2227,7 @@ BGD_DECLARE(void) gdImageEllipse(gdImagePtr im, int mx, int my, int w, int h, in
 BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int mx, int my, int w, int h, int c)
 {
 	int x=0,mx1=0,mx2=0,my1=0,my2=0;
-#ifdef HAVE_STDINT_H
 	int64_t aq,bq,dx,dy,r,rx,ry,a,b;
-#else
-	long long aq,bq,dx,dy,r,rx,ry,a,b;
-#endif
 	int i;
 	int old_y2;
 
