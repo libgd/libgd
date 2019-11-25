@@ -17,7 +17,7 @@ int main()
 		error = 1;
 		goto done;
 	}
-	if (!gdTestAssert(!src)) {
+	if (gdTestAssert(!src)) {
 		error = 1;
 		goto done;
 	}
