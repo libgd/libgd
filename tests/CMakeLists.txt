@@ -36,9 +36,9 @@ if (BUILD_TEST)
 		gdimageconvolution
 		gdimagecopy
 		gdimagecopymerge
+		gdimagecopymergegray
 		gdimagecopyresampled
 		gdimagecopyrotated
-		gdimagecopymergegray
 		gdimagecreate
 		gdimagecrop
 		gdimagefile
