@@ -824,7 +824,6 @@ $ WRITE OUT "$TMP=CURRENT"
 $ WRITE OUT "$OPEN/WRITE OUTT [-]LIBGD$STARTUP.COM"
 $ WRITE OUT "$WRITE OUTT ""DEFINE LIBGD """"", "'","'","TMP'"""""""
 $ WRITE OUT "$WRITE OUTT ""GD2COPYPAL==""""$","'","'","TMP'"",""GD2COPYPAL"""" "
-$ WRITE OUT "$WRITE OUTT ""GD2TIME==""""$","'","'","TMP'"",""GD2TIME"""" "
 $ WRITE OUT "$WRITE OUTT ""GD2TOGIF==""""$","'","'","TMP'"",""GD2TOGIF"""" "
 $ WRITE OUT "$WRITE OUTT ""GD2TOPNG==""""$","'","'","TMP'"",""GD2TOPNG"""" "
 $ WRITE OUT "$WRITE OUTT ""GDCMPGIF==""""$","'","'","TMP'"",""GDCMPGIF"""" "
@@ -994,27 +993,14 @@ $ENDIF
 $!
 $APP SYS$INPUT [.SRC]DESCRIP.MMS
 annotate.exe,\
-circletexttest.exe,\
-fontconfigtest.exe,\
-circletexttest.exe,\
-fontconfigtest.exe,\
-fontsizetest.exe,\
-fontwheeltest.exe,\
 gd2copypal.exe,\
-gd2time.exe,\
 gd2togif.exe,\
 gd2topng.exe,\
 gdcmpgif.exe,\
-gddemo.exe,\
-gdtest.exe,\
-gdtestft.exe,\
 gdtopng.exe,\
-gifanimtest.exe,\
 giftogd2.exe,\
 pngtogd.exe,\
 pngtogd2.exe,\
-testac.exe,\
-testtr.exe,\
 webpng.exe,\
 gdparttopng.exe
 	$!
@@ -1024,32 +1010,7 @@ annotate.exe : annotate.c
        LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
        DEL TMP.OBJ;*
 
-circletexttest.exe : circletexttest.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
-fontconfigtest.exe : fontconfigtest.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
-fontsizetest.exe : fontsizetest.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
-fontwheeltest.exe : fontwheeltest.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
 gd2copypal.exe : gd2copypal.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
-gd2time.exe : gd2time.c
        $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
        LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
        DEL TMP.OBJ;*
@@ -1071,34 +1032,11 @@ gdcmpgif.exe : gdcmpgif.c
        DEL TMP.OBJ;*
 
 
-gddemo.exe : gddemo.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
-
-gdtest.exe : gdtest.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
-
-gdtestft.exe : gdtestft.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
-
 gdtopng.exe : gdtopng.c
        $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
        LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
        DEL TMP.OBJ;*
 
-
-gifanimtest.exe : gifanimtest.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
 
 giftogd2.exe : giftogd2.c
        $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
@@ -1118,18 +1056,6 @@ pngtogd.exe : pngtogd.c
 
 
 pngtogd2.exe : pngtogd2.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
-
-testac.exe : testac.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
-
-testtr.exe : testtr.c
        $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
        LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
        DEL TMP.OBJ;*

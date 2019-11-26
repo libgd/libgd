@@ -1,32 +1,18 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-
 
 bin_PROGRAMS = gdcmpgif
-check_PROGRAMS = gifanimtest gd_color_map_test
 
 if HAVE_LIBPNG
 bin_PROGRAMS += gdtopng pngtogd webpng
-check_PROGRAMS += circletexttest fontsizetest fontwheeltest gddemo testac
 if HAVE_LIBZ
 bin_PROGRAMS += gdparttopng gd2topng pngtogd2
-check_PROGRAMS += gdtest
 endif
-endif
-
-if HAVE_LIBJPEG
-if !HAVE_LIBPNG
-check_PROGRAMS += fontsizetest fontwheeltest
-endif
-endif
-
-if HAVE_LIBFONTCONFIG
-check_PROGRAMS += fontconfigtest
 endif
 
 if HAVE_LIBFREETYPE
 if HAVE_LIBJPEG
 bin_PROGRAMS += annotate
 endif
-check_PROGRAMS += gdtestft testtr
 endif
 
 if HAVE_LIBZ
@@ -35,13 +21,8 @@ endif
 
 bin_SCRIPTS = bdftogd
 
-if HAVE_LIBZ
-check_PROGRAMS += gd2time
-endif
-
 EXTRA_DIST = \
 	bdftogd \
-	demoin.png \
 	entities.html \
 	entities.tcl \
 	CMakeLists.txt \

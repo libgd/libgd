@@ -276,20 +276,31 @@ INSTALL(FILES docs/README.TXT DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MI
 
 
 INSTALL(FILES examples/arc.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/circletexttest.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/copyrotated.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/crop.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/flip.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/fontconfigtest.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/fontwheeltest.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/fontsizetest.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/gd_color_map_test.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/gd2time.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/gddemo.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/gdtest.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/gdtestft.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/gif.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/gifanimtest.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/nnquant.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/noIcon.pic DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/noIcon.sgi DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/noIcon.tga DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/noIconAlpha.tga DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/test_crop_threshold.png DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/testac.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/testtr.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/tgaread.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/tiffread.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/windows.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
-
 
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
 

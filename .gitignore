@@ -69,27 +69,15 @@ Testing
 /config/gdlib.pc
 /src/config.h
 /src/annotate
-/src/circletexttest
-/src/fontconfigtest
-/src/fontsizetest
-/src/fontwheeltest
 /src/gd2copypal
-/src/gd2time
 /src/gd2togif
 /src/gd2topng
-/src/gd_color_map_test
 /src/gdcmpgif
-/src/gddemo
 /src/gdparttopng
-/src/gdtest
-/src/gdtestft
 /src/gdtopng
-/src/gifanimtest
 /src/giftogd2
 /src/pngtogd
 /src/pngtogd2
-/src/testac
-/src/testtr
 /src/webpng
 
 # Doc artifacts
