@@ -1,3 +1,6 @@
+/**
+ * Base test for gdImageString()
+ */
 #include <gd.h>
 #include <gdfontl.h>
 #include "gdtest.h"
