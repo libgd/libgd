@@ -1,3 +1,6 @@
+/**
+ * Base test for gdImageStringUp()
+ */
 #include <gd.h>
 #include <gdfontl.h>
 #include "gdtest.h"
@@ -6,7 +9,7 @@
 int main()
 {
 	/* Declare the image */
-	gdImagePtr im;
+	gdImagePtr im = NULL;
 	char *s = "Hello gd";
 	int errorcode = 0;
 	int foreground;
