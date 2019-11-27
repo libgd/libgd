@@ -31,6 +31,7 @@ include gdimagecolortransparent/Makemodule.am
 include gdimagecontrast/Makemodule.am
 include gdimageconvolution/Makemodule.am
 include gdimagecopy/Makemodule.am
+include gdimagecopymerge/Makemodule.am
 include gdimagecopyresampled/Makemodule.am
 include gdimagecopyrotated/Makemodule.am
 include gdimagecreate/Makemodule.am
