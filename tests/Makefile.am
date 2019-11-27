@@ -53,11 +53,11 @@ include gdimagepixelate/Makemodule.am
 include gdimagepolygon/Makemodule.am
 include gdimagerectangle/Makemodule.am
 include gdimagerotate/Makemodule.am
-include gdimagestring16/Makemodule.am
 include gdimagescale/Makemodule.am
 include gdimagescatterex/Makemodule.am
 include gdimagesetpixel/Makemodule.am
 include gdimagestring/Makemodule.am
+include gdimagestring16/Makemodule.am
 include gdimagestringft/Makemodule.am
 include gdimagestringftex/Makemodule.am
 include gdimagetruecolortopalette/Makemodule.am

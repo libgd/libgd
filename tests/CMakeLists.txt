@@ -57,11 +57,11 @@ if (BUILD_TEST)
 		gdimagepolygon
 		gdimagerectangle
 		gdimagerotate
-		gdimagestring16
 		gdimagescale
 		gdimagescatterex
 		gdimagesetpixel
 		gdimagestring
+		gdimagestring16
 		gdimagestringft
 		gdimagestringftex
 		gdimagetruecolortopalette

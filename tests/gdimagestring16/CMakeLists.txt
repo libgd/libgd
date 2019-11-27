@@ -1,7 +1,7 @@
 IF(PNG_FOUND)
-    LIST(APPEND TESTS_FILES
-            gdimagestring16
-        )
+LIST(APPEND TESTS_FILES
+	gdimagestring16
+)
 ENDIF(PNG_FOUND)
 
 ADD_GD_TESTS()

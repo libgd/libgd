@@ -1,3 +1,6 @@
+/**
+ * Base test for gdImageString16()
+ */
 #include <gd.h>
 #include <gdfontl.h>
 #include "gdtest.h"
@@ -5,7 +8,7 @@
 int main()
 {
 	/* Declare the image */
-	gdImagePtr im;
+	gdImagePtr im = NULL;
 	wchar_t *wchr = L"H";
 	unsigned short *sptr;
 	sptr = (unsigned short *)wchr;
