@@ -60,6 +60,7 @@ if (BUILD_TEST)
 		gdimagescale
 		gdimagescatterex
 		gdimagesetpixel
+		gdimagestring
 		gdimagestringft
 		gdimagestringftex
 		gdimagetruecolortopalette
