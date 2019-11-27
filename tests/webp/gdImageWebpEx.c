@@ -12,7 +12,7 @@ int main()
 
 	im = gdImageCreateTrueColor(20, 20);
 	if (!im) {
-		return 0;
+		return 1;
 	}
 
 	fp1 = gdTestTempFp();
