@@ -1,6 +1,6 @@
 IF(PNG_FOUND)
-	LIST(APPEND TESTS_FILES
-		gdimagecopymerge
+LIST(APPEND TESTS_FILES
+	gdimagecopymerge
 )
 ENDIF(PNG_FOUND)
 
