@@ -35,6 +35,8 @@ if (BUILD_TEST)
 		gdimagecontrast
 		gdimageconvolution
 		gdimagecopy
+		gdimagecopymerge
+		gdimagecopymergegray
 		gdimagecopyresampled
 		gdimagecopyrotated
 		gdimagecreate
@@ -59,9 +61,12 @@ if (BUILD_TEST)
 		gdimagescale
 		gdimagescatterex
 		gdimagesetpixel
+		gdimagestring
+		gdimagestring16
 		gdimagestringft
 		gdimagestringftex
 		gdimagestringup
+		gdimagestringup16
 		gdimagetruecolortopalette
 		gdinterpolatedscale
 		gdnewfilectx

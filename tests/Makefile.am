@@ -31,6 +31,8 @@ include gdimagecolortransparent/Makemodule.am
 include gdimagecontrast/Makemodule.am
 include gdimageconvolution/Makemodule.am
 include gdimagecopy/Makemodule.am
+include gdimagecopymerge/Makemodule.am
+include gdimagecopymergegray/Makemodule.am
 include gdimagecopyresampled/Makemodule.am
 include gdimagecopyrotated/Makemodule.am
 include gdimagecreate/Makemodule.am
@@ -55,9 +57,12 @@ include gdimagerotate/Makemodule.am
 include gdimagescale/Makemodule.am
 include gdimagescatterex/Makemodule.am
 include gdimagesetpixel/Makemodule.am
+include gdimagestring/Makemodule.am
+include gdimagestring16/Makemodule.am
 include gdimagestringft/Makemodule.am
 include gdimagestringftex/Makemodule.am
 include gdimagestringup/Makemodule.am
+include gdimagestringup16/Makemodule.am
 include gdimagetruecolortopalette/Makemodule.am
 include gdinterpolatedscale/Makemodule.am
 include gdnewfilectx/Makemodule.am
