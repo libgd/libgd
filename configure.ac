@@ -165,7 +165,7 @@ m4_define([GD_LIB_CHECK], [dnl
       $1][_CFLAGS="$gd_lib_cflags $][$1][_CFLAGS"
       AS_VAR_APPEND([LIBS], [" $][$1][_LIBS"])
       AS_VAR_APPEND([CPPFLAGS], [" $][$1][_CFLAGS"])
-      if test "$gd_require_pkg_name" = ""; then
+      if test -z "$gd_require_pkg_name"; then
         AS_VAR_APPEND([LIBS_PRIVATES], [" $][$1][_LIBS"])
       else
         AS_VAR_APPEND([PKG_REQUIRES_PRIVATES], ["  $gd_require_pkg_name"])
@@ -189,7 +189,7 @@ dnl $4 - pkg-config module to look for
 dnl $5 - fallback test for the feature
 m4_define([GD_LIB_PKG_CHECK], [dnl
   GD_LIB_CHECK([$1], [$2], [$3], [dnl
-    PKG_CHECK_MODULES([$1], [$4], [gd_found_lib=yes gd_require_pkg_name=["$4"]], [$5])
+    PKG_CHECK_MODULES([$1], [$4], [gd_found_lib=yes gd_require_pkg_name="$4"], [$5])
   ])
 ])
 
