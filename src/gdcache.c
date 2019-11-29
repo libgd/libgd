@@ -197,7 +197,7 @@ static void cacheRelease(void *map)
 	gdFree((char *)map);
 }
 
-int main(char *argv[], int argc)
+int main(int arg, char **argv)
 {
 	gdCache_head_t *cacheTable;
 	int elem, key;
