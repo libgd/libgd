@@ -68,6 +68,14 @@ SET (LIBGD_SRC_FILES
 	wbmp.h
 )
 
+if (ENABLE_CXX)
+	list(APPEND LIB_GD_SRC_FILES
+		gd_io_stream.cxx
+		gd_io_stream.h
+		gdpp.cxx
+		gdpp.h)
+endif (ENABLE_CXX)
+
 # Static library just for utility programs.
 SET (GD_PROGRAMS_LIB_SRC_FILES)
 
