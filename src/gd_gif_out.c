@@ -1404,7 +1404,7 @@ static void compress(int init_bits, gdIOCtxPtr outfile, gdImagePtr im, GifCtx *c
 	output((code_int)ctx->ClearCode, ctx);
 
 #ifdef SIGNED_COMPARE_SLOW
-	while((c = GIFNextPixel(im)) != (unsigned) EOF) {
+	while((c = GIFNextPixel(im, ctx)) != (unsigned) EOF) {
 #else /* SIGNED_COMPARE_SLOW */
 	while((c = GIFNextPixel(im, ctx)) != EOF) {
 #endif /* SIGNED_COMPARE_SLOW */
