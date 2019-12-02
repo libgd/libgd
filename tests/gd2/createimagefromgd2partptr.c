@@ -1,3 +1,6 @@
+/**
+ * Base test for gdImageCreateFromGd2PartPtr()
+ */
 #include "gd.h"
 #include "gdtest.h"
 #include <stdio.h>
@@ -9,6 +12,8 @@ int main()
 	void *pg;
 	int size = 0;
 	int status = 0;
+	int actual_color = 0;
+	int expected_color = 0xffffff;
 
 	p = gdTestFileOpen2("gd2", "conv_test.gd2");
 	if (!p) {
@@ -35,12 +40,14 @@ int main()
 		goto done0;
 	}
 
-	partim =  gdImageCreateFromGd2PartPtr(size, pg, 5, 5, 5, 5);
+	partim =  gdImageCreateFromGd2PartPtr(size, pg, 3, 3, 3, 3);
 	if (!partim) {
 		status = 1;
 		goto done0;
 	}
 
+	actual_color = gdImageGetPixel(partim, 2, 2);
+	status = (expected_color == actual_color) ? 0 : 1;
 	gdImageDestroy(partim);
 
 done0:
