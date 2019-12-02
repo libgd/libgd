@@ -532,6 +532,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 						if (im->trueColor) {
 							/* 2.0.1: work around a gcc bug by being verbose.
 							   TBB */
+							if (!chunkBuf) {
+								goto fail;
+							}
 							int a = chunkBuf[chunkPos++] << 24;
 							int r = chunkBuf[chunkPos++] << 16;
 							int g = chunkBuf[chunkPos++] << 8;
@@ -539,6 +542,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 							/* 2.0.11: tpixels */
 							im->tpixels[y][x] = a + r + g + b;
 						} else {
+							if (!chunkBuf) {
+								goto fail;
+							}
 							im->pixels[y][x] = chunkBuf[chunkPos++];
 						}
 					};
