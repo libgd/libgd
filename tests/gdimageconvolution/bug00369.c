@@ -8,7 +8,6 @@
 int main()
 {
 	gdImagePtr im;
-	FILE *fp;
 	int pxl;
 	int error = 0;
 	float matrix[3][3] = {
