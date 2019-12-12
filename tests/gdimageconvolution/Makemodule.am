@@ -1,5 +1,5 @@
 libgd_test_programs += \
-	gdimageconvolution/bug00369.c
+	gdimageconvolution/bug00369
 
 if HAVE_LIBPNG
 libgd_test_programs += \
