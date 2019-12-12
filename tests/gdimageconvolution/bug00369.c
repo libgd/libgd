@@ -5,7 +5,7 @@
 #include "gd.h"
 #include "gdtest.h"
 
-int mai()
+int main()
 {
 	gdImagePtr im;
 	FILE *fp;
@@ -15,7 +15,7 @@ int mai()
 		{1, 0, 1},
 		{0, 5, 0},
 		{1, 0, 0}
-	}
+	};
 
 	im = gdImageCreateTrueColor(40, 40);
 	gdImageAlphaBlending(im, gdEffectReplace);
@@ -25,9 +25,9 @@ int mai()
 
 	gdImageConvolution(im, matrix, 9, 1);
 
-	pxl = gdImageGetPixel(im, 0, 0)
+	pxl = gdImageGetPixel(im, 0, 0);
 	if (!gdTestAssert(pxl != 0x7F010101)) {
-		error = 1
+		error = 1;
 	}
 
 	gdImageDestroy(im);
