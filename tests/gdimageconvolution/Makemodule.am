@@ -1,3 +1,6 @@
+libgd_test_programs += \
+	bug00369.c
+
 if HAVE_LIBPNG
 libgd_test_programs += \
 	gdimageconvolution/basic
