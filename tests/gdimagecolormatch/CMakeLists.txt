@@ -1,5 +1,5 @@
 LIST(APPEND TESTS_FILES
-	gdimagecolorclosest
+	gdimagecolormatch
 )
 
 ADD_GD_TESTS()
