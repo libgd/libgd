@@ -10,7 +10,7 @@ if HAVE_LIBPNG
 libgd_test_programs += \
 	jpeg/bug_github_18 \
 	jpeg/bug00338 \
-	jpeg/jpeg_read \
+	jpeg/jpeg_read
 endif
 endif
 
