@@ -1,10 +1,6 @@
 if HAVE_LIBPNG
-if HAVE_LIBJPEG
 libgd_test_programs += \
-	gdimagerotate/bug00067
-endif
-
-libgd_test_programs += \
+	gdimagerotate/bug00067 \
 	gdimagerotate/php_bug_64898 \
 	gdimagerotate/php_bug_65070
 endif
