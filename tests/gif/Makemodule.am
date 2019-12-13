@@ -14,7 +14,7 @@ libgd_test_programs += \
 if HAVE_LIBPNG
 libgd_test_programs += \
 	gif/bug00005 \
-	gif/bug00066 \
+	gif/bug00066
 endif
 
 EXTRA_DIST += \
