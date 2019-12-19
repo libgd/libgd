@@ -9,7 +9,7 @@ CFLAGS_EXTRA=$2         # Extra C flags
 
 LOG=run_tests.log
 
-CFLAGS="-g -Igdtest/ -I. -I../src/ -D_WIN32 $CFLAGS_EXTRA"
+CFLAGS="-g -Igdtest/ -I. -I../src/ -D_WIN32 -DHAVE_SYS_STAT_H $CFLAGS_EXTRA"
 LDFLAGS='-L../src -llibgd'
 DLLPATH=../src:$DLLPATH_EXTRA
 
@@ -38,7 +38,7 @@ echo "Running tests:"
 count=0
 failures=0
 compile_failures=0
-for test in `find . -name \*.c | grep -v '^./gdtest'`; do
+for test in `find . -name \*.c | grep -vE '^./(fontconfig|gdtest|gdhelpers|xpm)'`; do
     count=`expr $count + 1`
 
     exe=${test%.c}.exe

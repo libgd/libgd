@@ -1,14 +1,14 @@
-# - Find JPEG
-# Find the native JPEG includes and library
-# This module defines
-#  JPEG_INCLUDE_DIR, where to find jpeglib.h, etc.
-#  JPEG_LIBRARIES, the libraries needed to use JPEG.
-#  JPEG_FOUND, If false, do not try to use JPEG.
-# also defined, but not for general use are
-#  JPEG_LIBRARY, where to find the JPEG library.
+# - Find the native RAQM includes and library
+#
 
-#=============================================================================
-# Copyright 2001-2009 Kitware, Inc.
+# This module defines
+#  RAQM_INCLUDE_DIR, where to find raqm.h, etc.
+#  RAQM_LIBRARIES, the libraries to link against to use RAQM.
+#  RAQM_FOUND, If false, do not try to use RAQM.
+# Also defined, but not for general use are
+#  RAQM_LIBRARY, where to find the RAQM library.
+
+# Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -37,24 +37,33 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_path(JPEG_INCLUDE_DIR jpeglib.h)
+SET(RAQM_FOUND "NO")
 
-set(JPEG_NAMES ${JPEG_NAMES} jpeg libjpeg_a)
-find_library(JPEG_LIBRARY NAMES ${JPEG_NAMES} )
+FIND_PATH(RAQM_INCLUDE_DIR raqm.h
+  /usr/local/include
+  /usr/include
+)
 
-# handle the QUIETLY and REQUIRED arguments and set JPEG_FOUND to TRUE if
-# all listed variables are TRUE
-include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(JPEG DEFAULT_MSG JPEG_LIBRARY JPEG_INCLUDE_DIR)
+SET(RAQM_NAMES ${RAQM_NAMES} raqm)
+FIND_LIBRARY(RAQM_LIBRARY
+  NAMES ${RAQM_NAMES}
+  PATH /usr/local/lib /usr/lib
+)
 
-if(JPEG_FOUND)
-  set(JPEG_LIBRARIES ${JPEG_LIBRARY})
-endif()
+IF (RAQM_LIBRARY AND RAQM_INCLUDE_DIR)
+	SET(RAQM_FOUND "YES")
+	SET(HAVE_LIBRAQM 1)
+	SET(RAQM_LIBRARIES ${RAQM_LIBRARY})
+ENDIF (RAQM_LIBRARY AND RAQM_INCLUDE_DIR)
 
-# Deprecated declarations.
-set (NATIVE_JPEG_INCLUDE_PATH ${JPEG_INCLUDE_DIR} )
-if(JPEG_LIBRARY)
-  get_filename_component (NATIVE_JPEG_LIB_PATH ${JPEG_LIBRARY} PATH)
-endif()
+IF (RAQM_FOUND)
+	IF (NOT RAQM_FIND_QUIETLY)
+		MESSAGE(STATUS "Find RAQM: ${RAQM_LIBRARY}")
+	ENDIF (NOT RAQM_FIND_QUIETLY)
+ELSE (RAQM_FOUDN)
+	IF (RAQM_FIND_REQUIRED)
+		MESSAGE(FATAL_ERROR "Could not find RAQM library")
+	ENDIF (RAQM_FIND_REQUIRED)
+ENDIF (RAQM_FOUND)
 
-mark_as_advanced(JPEG_LIBRARY JPEG_INCLUDE_DIR )
+MARK_AS_ADVANCED(RAQM_INCLUDE_DIR RAQM_LIBRARY)

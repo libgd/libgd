@@ -1,0 +1,8 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagestringup16/gdimagestringup16
+endif
+
+EXTRA_DIST += \
+	gdimagestringup16/CMakeLists.txt \
+	gdimagestringup16/gdimagestringup16_exp.png
