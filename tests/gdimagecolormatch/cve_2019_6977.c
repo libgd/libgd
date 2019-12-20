@@ -1,6 +1,5 @@
 /**
  * Test for CVE-2019-6977
-
  */
 
 #include "gd.h"
