@@ -2865,14 +2865,6 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 		}
 	}
 
-	if (src->styleLength > 0) {
-		dst->styleLength = src->styleLength;
-		dst->stylePos    = src->stylePos;
-		for (i = 0; i < src->styleLength; i++) {
-			dst->style[i] = src->style[i];
-		}
-	}
-
 	dst->interlace   = src->interlace;
 
 	dst->alphaBlendingFlag = src->alphaBlendingFlag;
@@ -2907,6 +2899,7 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 
 	if (src->style) {
 		gdImageSetStyle(dst, src->style, src->styleLength);
+		dst->stylePos = src->stylePos;
 	}
 
 	for (i = 0; i < gdMaxColors; i++) {
