@@ -1,8 +1,6 @@
-if HAVE_LIBPNG
 libgd_test_programs += \
 	gdimagefilltoborder/bug00037 \
 	gdimagefilltoborder/github_bug_215
-endif
 
 EXTRA_DIST += \
 	gdimagefilltoborder/CMakeLists.txt

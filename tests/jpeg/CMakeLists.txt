@@ -4,13 +4,13 @@ LIST(APPEND TESTS_FILES
 	jpeg_im2im
 	jpeg_ptr_double_free
 	jpeg_null
+	jpeg_resolution
 )
 
 IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
 	bug_github_18
 	jpeg_read
-	jpeg_resolution
 	bug00338
 )
 ENDIF(PNG_FOUND)

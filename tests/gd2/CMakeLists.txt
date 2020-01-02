@@ -12,11 +12,11 @@ LIST(APPEND TESTS_FILES
 	gd2_null
 	gd2_read_corrupt
 	too_few_image_data
+	gd2_im2im
 )
 
 IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
-	gd2_im2im
 	gd2_read
 )
 ENDIF(PNG_FOUND)
