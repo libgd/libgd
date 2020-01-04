@@ -75,6 +75,7 @@ if (BUILD_TEST)
 		gdtest
 		gdtiled
 		gdtransformaffineboundingbox
+		gdtransformaffinecopy
 		gif
 		jpeg
 		png

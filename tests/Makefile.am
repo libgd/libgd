@@ -71,6 +71,7 @@ include gdnewfilectx/Makemodule.am
 include gdtest/Makemodule.am
 include gdtiled/Makemodule.am
 include gdtransformaffineboundingbox/Makemodule.am
+include gdtransformaffinecopy/Makemodule.am
 include gif/Makemodule.am
 include jpeg/Makemodule.am
 include png/Makemodule.am
