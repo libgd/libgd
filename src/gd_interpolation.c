@@ -2239,9 +2239,9 @@ BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMet
 		case GD_DEFAULT:
 			id = GD_LINEAR;
 			im->interpolation = filter_linear;
+			break;
 		default:
 			return 0;
-			break;
 	}
 	im->interpolation_id = id;
 	return 1;

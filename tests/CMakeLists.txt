@@ -62,6 +62,7 @@ if (BUILD_TEST)
 		gdimagerotate
 		gdimagescale
 		gdimagescatterex
+		gdimagesetinterpolationmethod
 		gdimagesetpixel
 		gdimagestring
 		gdimagestring16
