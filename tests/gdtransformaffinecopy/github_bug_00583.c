@@ -1,6 +1,6 @@
 /**
  * Test that a zero determinant matrix causes gdTransformAffineCopy() to fail
- * 
+ *
  * See <https://github.com/libgd/libgd/issues/583>
  */
 
