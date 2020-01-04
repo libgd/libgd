@@ -1,5 +1,6 @@
 libgd_test_programs += \
-	gdtransformaffinecopy/github_bug_00583
+	gdtransformaffinecopy/github_bug_00583 \
+	gdtransformaffinecopy/github_bug_00585
 
 EXTRA_DIST += \
 	gdtransformaffinecopy/CMakeLists.txt
