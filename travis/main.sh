@@ -91,7 +91,6 @@ cmake_args=(
 	-DENABLE_TIFF=1
 	-DENABLE_WEBP=1
 	-DENABLE_XPM=1
-	-DENABLE_ZLIB=1
 )
 
 build_cmake() {
