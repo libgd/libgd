@@ -42,3 +42,10 @@ addons:
     - autoconf
     - libtool
     - html2text
+  homebrew:
+    packages:
+    - gettext
+    - freetype
+    - fontconfig
+    - webp
+    - xz

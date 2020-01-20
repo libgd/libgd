@@ -29,19 +29,6 @@ coverity_scan() {
 	curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || :
 }
 
-update_os() {
-	# Note: Linux deps are maintained in .travis.yml.
-	case ${TRAVIS_OS_NAME} in
-	osx)
-		v --fold="brew_update" brew update
-		# These packages are already installed in Travis, so omit them or brew fails.
-		# autoconf automake pkg-config cmake libpng jpeg libtiff
-		v --fold="brew_install" brew install \
-			gettext freetype fontconfig webp xz
-		;;
-	esac
-}
-
 check_git_status() {
 	local status
 
@@ -139,7 +126,6 @@ source_tests() {
 }
 
 main() {
-	update_os
 	build_autotools
 	build_cmake
 	compare_builds
