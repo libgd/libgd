@@ -36,6 +36,7 @@ include gdimagecopy/Makemodule.am
 include gdimagecopymerge/Makemodule.am
 include gdimagecopymergegray/Makemodule.am
 include gdimagecopyresampled/Makemodule.am
+include gdimagecopyresized/Makemodule.am
 include gdimagecopyrotated/Makemodule.am
 include gdimagecreate/Makemodule.am
 include gdimagecrop/Makemodule.am
