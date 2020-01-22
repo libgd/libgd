@@ -18,7 +18,6 @@ int main()
 	dst = gdImageCreate(128, 128);
 	gdImageColorAllocate(dst, 0, 0, 0);
 	dst_tc = gdImageCreateTrueColor(128, 128);
-	gdImageColorAllocate(dst_tc, 0, 0, 0);
 
 	/* Copy src to two image type separately */
 	/* We copy src to the center of dst and dst_tc */
