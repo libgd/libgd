@@ -40,6 +40,7 @@ if (BUILD_TEST)
 		gdimagecopymerge
 		gdimagecopymergegray
 		gdimagecopyresampled
+		gdimagecopyresized
 		gdimagecopyrotated
 		gdimagecreate
 		gdimagecrop
