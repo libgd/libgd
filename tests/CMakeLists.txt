@@ -53,7 +53,7 @@ if (BUILD_TEST)
 		gdimagefilltoborder
 		gdimagefilter
 		gdimageflip
-    gdimageellipse
+		gdimageellipse
 		gdimagegrayscale
 		gdimageline
 		gdimagenegate
