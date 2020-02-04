@@ -1,6 +1,7 @@
 if HAVE_LIBPNG
 libgd_test_programs += \
 	gdimagefilledellipse/bug00010 \
+	gdimagefilledellipse/bug00169 \
 	gdimagefilledellipse/bug00191 \
 	gdimagefilledellipse/github_bug_00238
 endif
@@ -8,5 +9,6 @@ endif
 EXTRA_DIST += \
 	gdimagefilledellipse/CMakeLists.txt \
 	gdimagefilledellipse/bug00010_exp.png \
+	gdimagefilledellipse/bug00169_exp.png \
 	gdimagefilledellipse/bug00191.png \
 	gdimagefilledellipse/github_bug_00238_exp.png

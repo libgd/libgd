@@ -49,6 +49,7 @@ include gdimagefilledrectangle/Makemodule.am
 include gdimagefilltoborder/Makemodule.am
 include gdimagefilter/Makemodule.am
 include gdimageflip/Makemodule.am
+include gdimageellipse/Makemodule.am
 include gdimagegrayscale/Makemodule.am
 include gdimageline/Makemodule.am
 include gdimagenegate/Makemodule.am
