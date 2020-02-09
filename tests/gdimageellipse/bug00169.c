@@ -14,7 +14,7 @@ int main()
 	white = gdImageColorAllocate(im, 255, 255, 255);
 
 	gdImageEllipse(im, 1100, 1100, 2200, 2200, white);
-  gdAssertImageEqualsToFile("gdimageellipse/bug00169_exp.png", im);
+	gdAssertImageEqualsToFile("gdimageellipse/bug00169_exp.png", im);
 
 	gdImageDestroy(im);
 
