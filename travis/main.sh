@@ -77,35 +77,35 @@ build_autotools() {
 	m distclean
 }
 
-build_cmake() {
-	local args=(
-		-DBUILD_SHARED_LIBS=1
-		-DBUILD_STATIC_LIBS=1
-		-DBUILD_TEST=1
-		-DCMAKE_INSTALL_PREFIX=/usr/local
-		-DCMAKE_INSTALL_LIBDIR=/usr/local/lib
-		-DENABLE_GD_FORMATS=1
-		-DENABLE_FONTCONFIG=1
-		-DENABLE_FREETYPE=1
-		-DENABLE_JPEG=1
-		-DENABLE_PNG=1
-		-DENABLE_TIFF=1
-		-DENABLE_WEBP=1
-		-DENABLE_XPM=1
-		-DENABLE_ZLIB=1
-	)
+cmake_args=(
+	-DBUILD_SHARED_LIBS=1
+	-DBUILD_STATIC_LIBS=1
+	-DBUILD_TEST=1
+	-DCMAKE_INSTALL_PREFIX=/usr/local
+	-DCMAKE_INSTALL_LIBDIR=/usr/local/lib
+	-DENABLE_GD_FORMATS=1
+	-DENABLE_FONTCONFIG=1
+	-DENABLE_FREETYPE=1
+	-DENABLE_JPEG=1
+	-DENABLE_PNG=1
+	-DENABLE_TIFF=1
+	-DENABLE_WEBP=1
+	-DENABLE_XPM=1
+	-DENABLE_ZLIB=1
+)
 
+build_cmake() {
 	# First try building out of tree.
 	mkdir build
 	cd build
-	v cmake "${args[@]}" ..
+	v cmake "${cmake_args[@]}" ..
 	m
 	v ctest -j${ncpus}
 	cd ..
 	rm -rf build
 
 	# Then build in-tree.
-	v cmake "${args[@]}" .
+	v cmake "${cmake_args[@]}" .
 	m
 	v ctest -j${ncpus}
 	m install DESTDIR=$PWD/install-cmake
@@ -125,6 +125,29 @@ source_tests() {
 	./tests/source/run.sh
 }
 
+build_codecov() {
+	# Only genenrate code coverage report in Linux with gcc
+	if [ ${TRAVIS_OS_NAME} != "linux" -o ${TRAVIS_COMPILER} != "gcc" ]; then
+		exit 0
+	fi
+
+	# Delete these two files so that we can build out of tree again
+	rm -f CMakeCache.txt
+	rm -rf CMakeFiles
+
+	# Delete test run time limit. Or tests/gdimageline/gdimgaeline_bug5 will run timeout
+	sed -i '/TIMEOUT/d' tests/CMakeLists.txt
+
+	# Build out of tree
+	mkdir build
+	cd build
+	export CFLAGS="-fprofile-arcs -ftest-coverage"
+	v cmake "${cmake_args[@]}" ..
+	m
+	v ctest -j${ncpus}
+  bash <(curl -s https://codecov.io/bash)
+}
+
 main() {
 	build_autotools
 	build_cmake
@@ -132,5 +155,6 @@ main() {
 	v --fold="coverity_scan" coverity_scan
 	# Run the source tests last.
 	v --fold="source_tests" source_tests
+	build_codecov
 }
 main "$@"
