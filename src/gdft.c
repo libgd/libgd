@@ -1579,12 +1579,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 		double scalex = (double)hdpi / (64 * METRIC_RES);
 		double scaley = (double)vdpi / (64 * METRIC_RES);
 
-		/* increase by 1 pixel to allow for rounding */
-		//total_min.x -= METRIC_RES;
-		//total_min.y -= METRIC_RES;
-		//total_max.x += METRIC_RES;
-		//total_max.y += METRIC_RES;
-
 		/* rotate bounding rectangle, scale and round to int pixels, and translate */
 		brect[0] = x + (total_min.x * cos_a + total_max.y * sin_a)*scalex;
 		brect[1] = y - (total_min.x * sin_a - total_max.y * cos_a)*scaley;
