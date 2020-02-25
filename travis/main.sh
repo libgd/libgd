@@ -145,7 +145,7 @@ build_codecov() {
 	v cmake "${cmake_args[@]}" ..
 	m
 	v ctest -j${ncpus}
-  bash <(curl -s https://codecov.io/bash)
+	bash <(curl -s https://codecov.io/bash)
 }
 
 main() {
