@@ -40,6 +40,7 @@ if (BUILD_TEST)
 		gdimagecopymerge
 		gdimagecopymergegray
 		gdimagecopyresampled
+		gdimagecopyresized
 		gdimagecopyrotated
 		gdimagecreate
 		gdimagecrop
@@ -52,6 +53,7 @@ if (BUILD_TEST)
 		gdimagefilltoborder
 		gdimagefilter
 		gdimageflip
+		gdimageellipse
 		gdimagegrayscale
 		gdimageline
 		gdimagenegate
@@ -62,6 +64,7 @@ if (BUILD_TEST)
 		gdimagerotate
 		gdimagescale
 		gdimagescatterex
+		gdimagesetinterpolationmethod
 		gdimagesetpixel
 		gdimagestring
 		gdimagestring16
@@ -75,6 +78,7 @@ if (BUILD_TEST)
 		gdtest
 		gdtiled
 		gdtransformaffineboundingbox
+		gdtransformaffinecopy
 		gif
 		jpeg
 		png

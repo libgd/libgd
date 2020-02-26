@@ -7,15 +7,15 @@ LIST(APPEND TESTS_FILES
 	ossfuzz5700
 	php_bug_75571
 	uninitialized_memory_read
+	bug00006
+	bug00060
+	gif_im2im
 )
 
 IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
 	bug00005
-	bug00006
-	bug00060
 	bug00066
-	gif_im2im
 )
 ENDIF(PNG_FOUND)
 

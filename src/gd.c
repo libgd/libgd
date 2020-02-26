@@ -2180,7 +2180,7 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
 BGD_DECLARE(void) gdImageEllipse(gdImagePtr im, int mx, int my, int w, int h, int c)
 {
 	int x=0,mx1=0,mx2=0,my1=0,my2=0;
-	long aq,bq,dx,dy,r,rx,ry,a,b;
+	int64_t aq,bq,dx,dy,r,rx,ry,a,b;
 
 	a=w>>1;
 	b=h>>1;
@@ -2227,7 +2227,7 @@ BGD_DECLARE(void) gdImageEllipse(gdImagePtr im, int mx, int my, int w, int h, in
 BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int mx, int my, int w, int h, int c)
 {
 	int x=0,mx1=0,mx2=0,my1=0,my2=0;
-	long aq,bq,dx,dy,r,rx,ry,a,b;
+	int64_t aq,bq,dx,dy,r,rx,ry,a,b;
 	int i;
 	int old_y2;
 
@@ -2865,14 +2865,6 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 		}
 	}
 
-	if (src->styleLength > 0) {
-		dst->styleLength = src->styleLength;
-		dst->stylePos    = src->stylePos;
-		for (i = 0; i < src->styleLength; i++) {
-			dst->style[i] = src->style[i];
-		}
-	}
-
 	dst->interlace   = src->interlace;
 
 	dst->alphaBlendingFlag = src->alphaBlendingFlag;
@@ -2907,6 +2899,7 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 
 	if (src->style) {
 		gdImageSetStyle(dst, src->style, src->styleLength);
+		dst->stylePos = src->stylePos;
 	}
 
 	for (i = 0; i < gdMaxColors; i++) {

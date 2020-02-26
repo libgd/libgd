@@ -1,8 +1,10 @@
+libgd_test_programs += \
+	gdimagecopyresampled/exact_alpha
+
 if HAVE_LIBPNG
 libgd_test_programs += \
 	gdimagecopyresampled/basic \
 	gdimagecopyresampled/basic_alpha \
-	gdimagecopyresampled/exact_alpha \
 	gdimagecopyresampled/bug00201
 endif
 

@@ -1,7 +1,5 @@
-IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
 	gdimagecolorresolve
 )
-ENDIF(PNG_FOUND)
 
 ADD_GD_TESTS()

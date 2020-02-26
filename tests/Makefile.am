@@ -36,6 +36,7 @@ include gdimagecopy/Makemodule.am
 include gdimagecopymerge/Makemodule.am
 include gdimagecopymergegray/Makemodule.am
 include gdimagecopyresampled/Makemodule.am
+include gdimagecopyresized/Makemodule.am
 include gdimagecopyrotated/Makemodule.am
 include gdimagecreate/Makemodule.am
 include gdimagecrop/Makemodule.am
@@ -48,6 +49,7 @@ include gdimagefilledrectangle/Makemodule.am
 include gdimagefilltoborder/Makemodule.am
 include gdimagefilter/Makemodule.am
 include gdimageflip/Makemodule.am
+include gdimageellipse/Makemodule.am
 include gdimagegrayscale/Makemodule.am
 include gdimageline/Makemodule.am
 include gdimagenegate/Makemodule.am
@@ -58,6 +60,7 @@ include gdimagerectangle/Makemodule.am
 include gdimagerotate/Makemodule.am
 include gdimagescale/Makemodule.am
 include gdimagescatterex/Makemodule.am
+include gdimagesetinterpolationmethod/Makemodule.am
 include gdimagesetpixel/Makemodule.am
 include gdimagestring/Makemodule.am
 include gdimagestring16/Makemodule.am
@@ -71,6 +74,7 @@ include gdnewfilectx/Makemodule.am
 include gdtest/Makemodule.am
 include gdtiled/Makemodule.am
 include gdtransformaffineboundingbox/Makemodule.am
+include gdtransformaffinecopy/Makemodule.am
 include gif/Makemodule.am
 include jpeg/Makemodule.am
 include png/Makemodule.am
