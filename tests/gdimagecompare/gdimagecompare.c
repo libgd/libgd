@@ -49,5 +49,8 @@ int main()
 
 	gdTestAssert(ret == (GD_CMP_INTERLACE | GD_CMP_TRANSPARENT | GD_CMP_TRUECOLOR | GD_CMP_SIZE_X | GD_CMP_SIZE_Y | GD_CMP_COLOR | GD_CMP_IMAGE | GD_CMP_NUM_COLORS));
 
+	gdImageDestroy(im1);
+	gdImageDestroy(im2);
+
 	return gdNumFailures();
 }
