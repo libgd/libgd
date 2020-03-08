@@ -19,12 +19,11 @@ int main()
 	/* Draw a cross line in the middle of im1 */
 	/* The horizonal line will become a circle in im2 */
 	/* The vertical line will become a horizonal with half len in im2 */
-	gdImageSetThickness(im, 3);
 	gdImageLine(im1, 0, 63, 127, 63, black);
 	gdImageLine(im1, 63, 0, 63, 127, black);
 	im2 = gdImageSquareToCircle(im1, 64);
 
-	gdAssertImageEqualsToFile("gdimagesquaretocircle/circle_exp.png", im2);
+	gdAssertImageEqualsToFile("gdimagesquaretocircle/gdimagesquaretocircle_exp.png", im2);
 
 	gdImageDestroy(im1);
 	gdImageDestroy(im2);
