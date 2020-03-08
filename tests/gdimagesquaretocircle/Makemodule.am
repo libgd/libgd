@@ -3,4 +3,4 @@ libgd_test_programs += \
 
 EXTRA_DIST += \
 	gdimagesquaretocircle/CMakeLists.txt \
-	gdimagesquaretocircle/circle_exp.png
+	gdimagesquaretocircle/gdimagesquaretocircle_exp.png
