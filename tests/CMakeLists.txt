@@ -67,6 +67,7 @@ if (BUILD_TEST)
 		gdimagescatterex
 		gdimagesetinterpolationmethod
 		gdimagesetpixel
+		gdimagesquaretocircle
 		gdimagestring
 		gdimagestring16
 		gdimagestringft
