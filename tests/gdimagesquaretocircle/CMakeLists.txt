@@ -1,6 +1,6 @@
 IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
-	squaretocircle
+	gdimagesquaretocircle
 )
 ENDIF(PNG_FOUND)
 
