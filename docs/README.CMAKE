@@ -10,13 +10,17 @@ $ cmake -DBUILD_TEST=1 <options> ..
 $ make
 
 The available options are:
+ENABLE_GD_FORMATS=1
 ENABLE_PNG=1
+ENABLE_LIQ=1
 ENABLE_JPEG=1
 ENABLE_TIFF=1
+ENABLE_ICONV=1
 ENABLE_FREETYPE=1
 ENABLE_FONTCONFIG=1
 ENABLE_XPM=1
 ENABLE_WEBP=1
+ENABLE_RAQM=1
 
 You can optionally run our tests suite using:
 $ ctest .
