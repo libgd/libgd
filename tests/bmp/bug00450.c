@@ -4,7 +4,8 @@
 #include "gdtest.h"
 
 int main(void) {
-	gdImagePtr im = gdImageCreateFromFile(gdTestFilePath("bmp/bug00450.bmp"));
+	char *path = gdTestFilePath("bmp/bug00450.bmp");
+	gdImagePtr im = gdImageCreateFromFile(path);
 	gdTestAssert(im != NULL);
 
 	if (im) {
@@ -32,6 +33,8 @@ int main(void) {
 
 		gdImageDestroy(im);
 	}
+
+	free(path);
 
 	return gdNumFailures();
 }
