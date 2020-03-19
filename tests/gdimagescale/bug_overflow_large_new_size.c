@@ -22,6 +22,7 @@ int main()
 	im2 = gdImageScale(im,0x15555556, 1);
 	if (im2 == NULL) {
 		printf("gdImageScale failed, expected (out of memory or overflow validation\n");
+		gdImageDestroy(im);
 		return 0;
 	}
 	gdImageDestroy(im);
