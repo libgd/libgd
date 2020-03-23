@@ -65,7 +65,6 @@
 /* defs for decreasing alpha factor */
 #define alphabiasshift	10			/* alpha starts at 1.0 */
 #define initalpha	(((int) 1)<<alphabiasshift)
-int alphadec;
 
 /* radbias and alpharadbias used for radpower calculation */
 #define radbiasshift	8
@@ -113,7 +112,7 @@ typedef struct {
 
 /* Initialise network in range (0,0,0,0) to (255,255,255,255) and set parameters
    ----------------------------------------------------------------------- */
-void initnet(nnq, thepic, len, sample, colours)
+static void initnet(nnq, thepic, len, sample, colours)
 nn_quant *nnq;
 unsigned char *thepic;
 int len;
@@ -147,7 +146,7 @@ int colours;
  */
 /* -------------------------- */
 
-void unbiasnet(nn_quant *nnq)
+static void unbiasnet(nn_quant *nnq)
 {
 	int i,j,temp;
 
@@ -163,21 +162,8 @@ void unbiasnet(nn_quant *nnq)
 	}
 }
 
-/* Output colour map
-	 ----------------- */
-void writecolourmap(nnq, f)
-nn_quant *nnq;
-FILE *f;
-{
-	int i,j;
-
-	for (i=3; i>=0; i--)
-		for (j=0; j < nnq->netsize; j++)
-			putc(nnq->network[j][i], f);
-}
-
 /* Output colormap to unsigned char ptr in RGBA format */
-void getcolormap(nnq, map)
+static void getcolormap(nnq, map)
 nn_quant *nnq;
 unsigned char *map;
 {
@@ -192,7 +178,7 @@ unsigned char *map;
 
 /* Insertion sort of network and building of netindex[0..255] (to do after unbias)
    ------------------------------------------------------------------------------- */
-void inxbuild(nn_quant *nnq)
+static void inxbuild(nn_quant *nnq)
 {
 	register int i,j,smallpos,smallval;
 	register int *p,*q;
@@ -246,7 +232,7 @@ void inxbuild(nn_quant *nnq)
 
 /* Search for ABGR values 0..255 (after net is unbiased) and return colour index
 	 ---------------------------------------------------------------------------- */
-unsigned int inxsearch(nnq, al,b,g,r)
+static unsigned int inxsearch(nnq, al,b,g,r)
 nn_quant *nnq;
 register int al, b, g, r;
 {
@@ -320,7 +306,7 @@ register int al, b, g, r;
 
 /* Search for biased ABGR values
    ---------------------------- */
-int contest(nnq, al,b,g,r)
+static int contest(nnq, al,b,g,r)
 nn_quant *nnq;
 register int al,b,g,r;
 {
@@ -376,7 +362,7 @@ register int al,b,g,r;
 /* Move neuron i towards biased (a,b,g,r) by factor alpha
 	 ---------------------------------------------------- */
 
-void altersingle(nnq, alpha,i,al,b,g,r)
+static void altersingle(nnq, alpha,i,al,b,g,r)
 nn_quant *nnq;
 register int alpha,i,al,b,g,r;
 {
@@ -396,7 +382,7 @@ register int alpha,i,al,b,g,r;
 /* Move adjacent neurons by precomputed alpha*(1-((i-j)^2/[r]^2)) in radpower[|i-j|]
 	 --------------------------------------------------------------------------------- */
 
-void alterneigh(nnq, rad,i,al,b,g,r)
+static void alterneigh(nnq, rad,i,al,b,g,r)
 nn_quant *nnq;
 int rad,i;
 register int al,b,g,r;
@@ -443,7 +429,7 @@ register int al,b,g,r;
 /* Main Learning Loop
    ------------------ */
 
-void learn(nnq, verbose) /* Stu: N.B. added parameter so that main() could control verbosity. */
+static void learn(nnq, verbose) /* Stu: N.B. added parameter so that main() could control verbosity. */
 nn_quant *nnq;
 int verbose;
 {
