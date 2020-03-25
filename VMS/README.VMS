@@ -4,7 +4,7 @@ Dear OpenVMS user,
 
 We will drop support to VMS in version v2.4.0. We never test on VMS,
 and we have no way of doing so. And we haven't had any report on the
-topic in years. Pleas feedback if you still need the support.
+topic in years. Pleas provide feedback if you still need the support.
 
 https://github.com/libgd/libgd/issues/453
 
