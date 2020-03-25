@@ -1989,6 +1989,7 @@ static int getPixelRgbInterpolated(gdImagePtr im, const int tcolor)
 {
 	unsigned char r, g, b, a;
 	int ct;
+	int i;
 
 	b = (unsigned char)tcolor;
 	g = (unsigned char)tcolor >> 8;
@@ -2000,8 +2001,8 @@ static int getPixelRgbInterpolated(gdImagePtr im, const int tcolor)
 	r = CLAMP(r, 0, 255);
 	a = CLAMP(a, 0, 127);
 
-	for (int i = 0; i < im->colorsTotal; i++) {
-	    if (im->red[i] == r && im->green[i] == g && im->blue[i] == b && im->alpha[i] == a) {
+	for (i = 0; i < im->colorsTotal; i++) {
+		if (im->red[i] == r && im->green[i] == g && im->blue[i] == b && im->alpha[i] == a) {
 			return i;
 		}
 	}
