@@ -1,5 +1,13 @@
 Dear OpenVMS user,
 
+**Important**
+
+We will drop support to VMS in version v2.4.0. We never test on VMS,
+and we have no way of doing so. And we haven't had any report on the
+topic in years. Pleas provide feedback if you still need the support.
+
+https://github.com/libgd/libgd/issues/453
+
 Installation process is identical to one in *nix* world and consist to
 four simple steps:
 1. Installing required libraries
