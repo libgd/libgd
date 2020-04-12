@@ -9,7 +9,7 @@ int main()
 {
 	/* Declare the image */
 	gdImagePtr im = NULL;
-  short s[2] = {'H', 0};
+  unsigned short s[2] = {'H', 0};
 	int foreground;
 	int errorcode = 0;
 	gdFontPtr fontptr = gdFontGetLarge();
