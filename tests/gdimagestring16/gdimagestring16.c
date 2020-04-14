@@ -9,9 +9,7 @@ int main()
 {
 	/* Declare the image */
 	gdImagePtr im = NULL;
-	wchar_t *wchr = L"H";
-	unsigned short *sptr;
-	sptr = (unsigned short *)wchr;
+	unsigned short s[2] = {'H', 0};
 	int foreground;
 	int errorcode = 0;
 	gdFontPtr fontptr = gdFontGetLarge();
@@ -20,7 +18,7 @@ int main()
 	gdImageColorAllocate(im, 255, 255, 255);
 	foreground = gdImageColorAllocate(im, 22, 4, 238);
 
-	gdImageString16(im, fontptr, 2, 2, sptr, foreground);
+	gdImageString16(im, fontptr, 2, 2, s, foreground);
 
 	if (!gdAssertImageEqualsToFile("gdimagestring16/gdimagestring16_exp.png", im))
 		errorcode = 1;
