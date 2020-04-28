@@ -45,3 +45,13 @@ It also has optional support for more formats via external libraries:
 * [TIFF](https://en.wikipedia.org/wiki/Tagged_Image_File_Format) via [libtiff](http://www.libtiff.org/)
 * [WebP](https://en.wikipedia.org/wiki/WebP) via [libwebp](https://developers.google.com/speed/webp/)
 * [XPM](https://en.wikipedia.org/wiki/X_PixMap) via [libXpm](http://xorg.freedesktop.org/)
+
+Besides that, GD depends on some external libraries, which are all optional
+and disabled by default:
+
+* [libiconv](https://gnu.org/software/libiconv)
+* [FreeType](https://freetype.org)
+* [Fontconfig](https://fontconfig.org)
+* [libraqm](https://github.com/HOST-Oman/libraqm)
+* [libimagequant](https://pngquant.org/lib)
+  * **NOTE** libimagequant is dual-licensed: GPLv3 and commercial license
