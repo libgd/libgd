@@ -49,7 +49,6 @@ It also has optional support for more formats via external libraries:
 Besides that, GD depends on some external libraries, which are all optional
 and disabled by default:
 
-* [libiconv](https://gnu.org/software/libiconv)
 * [FreeType](https://freetype.org)
 * [Fontconfig](https://fontconfig.org)
 * [libraqm](https://github.com/HOST-Oman/libraqm)
