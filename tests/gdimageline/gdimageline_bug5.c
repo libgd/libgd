@@ -14,7 +14,7 @@ int main() {
 	 * gdImageCrateTrueColor will return NULL.
 	 * See https://github.com/libgd/libgd/issues/621 */
 	im = gdImageCreateTrueColor(63318, 771);
-	if (gdTestAssert(im != NULL) == 0) {
+	if (gdTestAssertMsg(im != NULL, "gdImageCreateTrueColor() returns NULL\n") == 0) {
 		return gdNumFailures();
 	}
 
