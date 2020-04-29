@@ -49,8 +49,8 @@ It also has optional support for more formats via external libraries:
 Besides that, GD depends on some external libraries, which are all optional
 and disabled by default:
 
-* [FreeType](https://freetype.org)
-* [Fontconfig](https://fontconfig.org)
-* [libraqm](https://github.com/HOST-Oman/libraqm)
-* [libimagequant](https://pngquant.org/lib)
+* [FreeType](https://freetype.org) for rendering fonts
+* [Fontconfig](https://fontconfig.org) for configuring and customizing font access
+* [libraqm](https://github.com/HOST-Oman/libraqm) for complex text layout
+* [libimagequant](https://pngquant.org/lib) for conversion of RGBA images to 8-bit indexed-color images
   * **NOTE** libimagequant is dual-licensed: GPLv3 and commercial license
