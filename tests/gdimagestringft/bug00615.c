@@ -3,7 +3,7 @@
  *
  * Rendering an empty string with gdImageStringFT() is not supposed to fail;
  * it is just a no-op.
- * 
+ *
  * See <https://github.com/libgd/libgd/issues/615>
  */
 
