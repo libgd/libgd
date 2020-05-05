@@ -1,5 +1,6 @@
 if HAVE_LIBFREETYPE
 libgd_test_programs += \
+	gdimagestringft/bug00615 \
 	gdimagestringft/gdimagestringft_bbox
 endif
 
