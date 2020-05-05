@@ -149,6 +149,12 @@ BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, const cha
   mandatory, and it has been supported for a long while. */
 #ifdef HAVE_FT2BUILD_H
 #include <ft2build.h>
+#ifdef HAVE_STDINT_H
+#undef HAVE_STDINT_H
+#endif
+#ifdef HAVE_UNISTD_H
+#undef HAVE_UNISTD_H
+#endif
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_SIZES_H
