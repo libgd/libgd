@@ -22,6 +22,7 @@ if (BUILD_TEST)
 		freetype
 		gd
 		gd2
+		gdcolormaplookup
 		gdimagearc
 		gdimagebrightness
 		gdimageclone
