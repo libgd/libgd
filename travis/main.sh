@@ -90,8 +90,13 @@ cmake_args=(
 	-DENABLE_PNG=1
 	-DENABLE_TIFF=1
 	-DENABLE_WEBP=1
-	-DENABLE_XPM=1
 )
+
+# libxpm-dev is unavaible in brew repo
+# Once it gets avaible, please modify this code block.
+if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+	cmake_args[${#cmake_args[@]}]="-DENABLE_XPM=1"
+fi
 
 build_cmake() {
 	# First try building out of tree.
