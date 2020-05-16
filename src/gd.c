@@ -3277,6 +3277,14 @@ BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, 
 					c = gdImageGetPixel (src, x, y);
 					/* Added 7/24/95: support transparent copies */
 					if (gdImageGetTransparent (src) == c) {
+						if (colorMap[c] == (-1)) {
+							colorMap[c] = gdImageColorResolveAlpha(dst,
+																	gdImageRed (src, c),
+																	gdImageGreen(src, c),
+																	gdImageBlue (src, c),
+																	gdAlphaTransparent);
+							gdImageColorTransparent(dst, c);
+						}
 						tox += stx[x - srcX];
 						continue;
 					}

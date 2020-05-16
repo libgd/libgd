@@ -1,6 +1,7 @@
 if HAVE_LIBPNG
 libgd_test_programs += \
 	gdimagecopyresized/gdimagecopyresized
+	gdimagecopyresized/github_bug_00638_transparent_png
 endif
 
 EXTRA_DIST += \
