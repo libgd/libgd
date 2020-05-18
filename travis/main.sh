@@ -94,8 +94,8 @@ cmake_args=(
 
 # libxpm-dev is unavaible in brew repo
 # Once it gets avaible, please modify this code block.
-if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
-	cmake_args[${#cmake_args[@]}]="-DENABLE_XPM=1"
+if [[ ${TRAVIS_OS_NAME} == "linux" ]]; then
+  cmake_args+=("-DENABLE_XPM=1")
 fi
 
 build_cmake() {
@@ -131,7 +131,7 @@ source_tests() {
 
 build_codecov() {
 	# Only genenrate code coverage report in Linux with gcc
-	if [ ${TRAVIS_OS_NAME} != "linux" -o ${TRAVIS_COMPILER} != "gcc" ]; then
+	if [[ ${TRAVIS_OS_NAME} != "linux" || ${TRAVIS_COMPILER} != "gcc" ]]; then
 		exit 0
 	fi
 
