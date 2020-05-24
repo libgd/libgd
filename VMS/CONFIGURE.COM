@@ -1005,7 +1005,6 @@ gd2time.exe,\
 gd2togif.exe,\
 gd2topng.exe,\
 gdcmpgif.exe,\
-gddemo.exe,\
 gdtest.exe,\
 gdtestft.exe,\
 gdtopng.exe,\
@@ -1066,12 +1065,6 @@ gd2topng.exe : gd2topng.c
 
 
 gdcmpgif.exe : gdcmpgif.c
-       $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
-       LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
-       DEL TMP.OBJ;*
-
-
-gddemo.exe : gddemo.c
        $(CC) $(CFLAGS) $(MMS$SOURCE) /OBJ=TMP.OBJ
        LINK/EXE=$(MMS$TARGET)  TMP.OBJ, $(LIBS)
        DEL TMP.OBJ;*
