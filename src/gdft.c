@@ -35,6 +35,12 @@
 #ifndef R_OK
 #define R_OK 04			/* Needed in Windows */
 #endif
+
+#define ssize_t int
+#ifndef SSIZE_MAX
+#define SSIZE_MAX 32767
+#endif
+
 #endif
 
 /* number of antialised colors for indexed bitmaps */
@@ -1130,6 +1136,9 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	int hdpi, vdpi, horiAdvance, xshow_alloc = 0, xshow_pos = 0;
 	FT_Size platform_specific, platform_independent;
 
+	FT_Pos pen_x = 0;
+	FT_Pos pen_y = 0;
+
 	if (strex) {
 		if ((strex->flags & gdFTEX_LINESPACE) == gdFTEX_LINESPACE) {
 			linespace = strex->linespacing;
@@ -1552,8 +1561,10 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			bm = (FT_BitmapGlyph) image;
 			/* position rounded down to nearest pixel at current dpi
 			(the estimate was rounded up to next 1/METRIC_RES, so this should fit) */
-			FT_Pos pen_x = penf.x + info[i].x_offset;
-			FT_Pos pen_y = penf.y - info[i].y_offset;
+
+			pen_x = penf.x + info[i].x_offset;
+			pen_y = penf.y - info[i].y_offset;
+
 			gdft_draw_bitmap (tc_cache, im, fg, bm->bitmap,
 					  (int)(x + (pen_x * cos_a + pen_y * sin_a)*hdpi/(METRIC_RES*64) + bm->left),
 					  (int)(y - (pen_x * sin_a - pen_y * cos_a)*vdpi/(METRIC_RES*64) - bm->top));
