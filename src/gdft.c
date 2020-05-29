@@ -36,10 +36,9 @@
 #define R_OK 04			/* Needed in Windows */
 #endif
 
-#define ssize_t int
-#ifndef SSIZE_MAX
-#define SSIZE_MAX 32767
-#endif
+#include <basetsd.h>
+typedef SSIZE_T ssize_t;
+#define SSIZE_MAX ((ssize_t)~((ssize_t)0))
 
 #endif
 
