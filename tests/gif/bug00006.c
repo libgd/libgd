@@ -64,5 +64,6 @@ int main()
 
 	/* Destroy it */
 	gdImageDestroy(im);
+	free(file);
 	return error;
 }

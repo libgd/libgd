@@ -1,7 +1,5 @@
-if HAVE_LIBPNG
 libgd_test_programs += \
 	gdimagecolorexact/gdimagecolorexact
-endif
 
 EXTRA_DIST += \
 	gdimagecolorexact/CMakeLists.txt

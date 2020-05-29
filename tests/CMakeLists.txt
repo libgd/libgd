@@ -27,15 +27,21 @@ if (BUILD_TEST)
 		gdimageclone
 		gdimagecolor
 		gdimagecolorclosest
+		gdimagecolorclosesthwb
 		gdimagecolordeallocate
 		gdimagecolorexact
+		gdimagecolormatch
 		gdimagecolorreplace
 		gdimagecolorresolve
 		gdimagecolortransparent
+		gdimagecompare
 		gdimagecontrast
 		gdimageconvolution
 		gdimagecopy
+		gdimagecopymerge
+		gdimagecopymergegray
 		gdimagecopyresampled
+		gdimagecopyresized
 		gdimagecopyrotated
 		gdimagecreate
 		gdimagecrop
@@ -48,6 +54,7 @@ if (BUILD_TEST)
 		gdimagefilltoborder
 		gdimagefilter
 		gdimageflip
+		gdimageellipse
 		gdimagegrayscale
 		gdimageline
 		gdimagenegate
@@ -58,15 +65,22 @@ if (BUILD_TEST)
 		gdimagerotate
 		gdimagescale
 		gdimagescatterex
+		gdimagesetinterpolationmethod
 		gdimagesetpixel
+		gdimagesquaretocircle
+		gdimagestring
+		gdimagestring16
 		gdimagestringft
 		gdimagestringftex
+		gdimagestringup
+		gdimagestringup16
 		gdimagetruecolortopalette
 		gdinterpolatedscale
 		gdnewfilectx
 		gdtest
 		gdtiled
 		gdtransformaffineboundingbox
+		gdtransformaffinecopy
 		gif
 		jpeg
 		png

@@ -49,7 +49,6 @@ namespace GD
 		case 0x47: // GIF
 			rtn = CreateFromGif(in);
 			break;
-#ifdef HAVE_LIBJPEG
 		/* JPEG
 		A JFIF-standard file will start with the four bytes (hex) FF D8 FF E0,
 		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.
@@ -57,7 +56,6 @@ namespace GD
 		case 0xFF: // JPEG
 			rtn = CreateFromJpeg(in);
 			break;
-#endif
 		/* WBMP
 		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type
 		*/
@@ -136,7 +134,6 @@ namespace GD
 			rtn = CreateFromGif(in);
 			break;
 
-#ifdef HAVE_LIBJPEG
 		/* JPEG
 		A JFIF-standard file will start with the four bytes (hex) FF D8 FF E0,
 		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.
@@ -144,7 +141,6 @@ namespace GD
 		case 0xFF: // JPEG
 			rtn = CreateFromJpeg(in);
 			break;
-#endif
 
 		/* WBMP
 		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type
@@ -205,7 +201,6 @@ namespace GD
 			rtn = CreateFromGif(size, data);
 			break;
 
-#ifdef HAVE_LIBJPEG
 		/* JPEG
 		A JFIF-standard file will start with the four bytes (hex) FF D8 FF E0,
 		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.
@@ -213,7 +208,6 @@ namespace GD
 		case 0xFF: // JPEG
 			rtn = CreateFromJpeg(size, data);
 			break;
-#endif
 
 		/* WBMP
 		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type

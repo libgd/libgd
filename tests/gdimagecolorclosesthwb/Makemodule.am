@@ -1,0 +1,7 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagecolorclosesthwb/gdImageColorClosestHWB
+endif
+
+EXTRA_DIST += \
+	gdimagecolorclosesthwb/CMakeLists.txt

@@ -2,9 +2,9 @@
 #
 
 # This module defines
-#  XPM_INCLUDE_DIR, where to find png.h, etc.
+#  XPM_INCLUDE_DIR, where to find xpm.h, etc.
 #  XPM_LIBRARIES, the libraries to link against to use XPM.
-#  XPM_DEFINITIONS - You should ADD_DEFINITONS(${XPM_DEFINITIONS}) before compiling code that includes png library files.
+#  XPM_DEFINITIONS - You should ADD_DEFINITONS(${XPM_DEFINITIONS}) before compiling code that includes xpm library files.
 #  XPM_FOUND, If false, do not try to use XPM.
 # also defined, but not for general use are
 #  XPM_LIBRARY, where to find the XPM library.

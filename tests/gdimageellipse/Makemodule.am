@@ -1,0 +1,8 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimageellipse/bug00169
+endif
+
+EXTRA_DIST += \
+	gdimageellipse/CMakeLists.txt \
+	gdimageellipse/bug00169_exp.png

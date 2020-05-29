@@ -1,6 +1,7 @@
 IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
 	bug00010
+	bug00169
 	bug00191
 	github_bug_00238
 )

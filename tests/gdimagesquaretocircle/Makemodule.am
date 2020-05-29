@@ -1,0 +1,8 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagesquaretocircle/gdimagesquaretocircle
+endif
+
+EXTRA_DIST += \
+	gdimagesquaretocircle/CMakeLists.txt \
+	gdimagesquaretocircle/gdimagesquaretocircle_exp.png

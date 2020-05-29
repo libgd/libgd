@@ -5,12 +5,8 @@ if ENABLE_GD_FORMATS
 libgd_test_programs += \
 	gd/bug00383 \
 	gd/gd_null \
-	gd/gd_num_colors
-
-if HAVE_LIBPNG
-libgd_test_programs += \
+	gd/gd_num_colors \
 	gd/gd_im2im
-endif
 endif
 
 EXTRA_DIST += \

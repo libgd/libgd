@@ -14,7 +14,7 @@ extern "C" {
 #define GD_MAJOR_VERSION    2           /*version605b5d1778*/
 #define GD_MINOR_VERSION    3           /*version605b5d1778*/
 #define GD_RELEASE_VERSION  0           /*version605b5d1778*/
-#define GD_EXTRA_VERSION    "-dev"      /*version605b5d1778*/
+#define GD_EXTRA_VERSION    ""      /*version605b5d1778*/
 /* End parsable section. */
 
 /* The version string.  This is constructed from the version number
@@ -1523,7 +1523,8 @@ BGD_DECLARE(void) gdImageFlipHorizontal(gdImagePtr im);
 BGD_DECLARE(void) gdImageFlipVertical(gdImagePtr im);
 BGD_DECLARE(void) gdImageFlipBoth(gdImagePtr im);
 
-#define GD_FLIP_HORINZONTAL 1
+#define GD_FLIP_HORINZONTAL 1 /* typo, kept for BC */
+#define GD_FLIP_HORIZONTAL 1
 #define GD_FLIP_VERTICAL 2
 #define GD_FLIP_BOTH 3
 

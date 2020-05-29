@@ -40,5 +40,9 @@ int main()
 
     gdAssertImageEquals(croppedRight, croppedLeft);
 
+	gdImageDestroy(orig);
+	gdImageDestroy(croppedLeft);
+	gdImageDestroy(croppedRight);
+
     return gdNumFailures();
 }

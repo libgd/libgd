@@ -1,7 +1,10 @@
+libgd_test_programs += \
+	xbm/github_bug_501 \
+	xbm/github_bug_170
+
 if HAVE_LIBPNG
 libgd_test_programs += \
 	xbm/github_bug_109 \
-	xbm/github_bug_170 \
 	xbm/x10_basic_read
 endif
 
@@ -10,4 +13,5 @@ EXTRA_DIST += \
 	xbm/github_bug_109.xbm \
 	xbm/github_bug_109_exp.png \
 	xbm/x10_basic_read.xbm \
-	xbm/x10_basic_read_exp.png
+	xbm/x10_basic_read_exp.png \
+	xbm/github_bug_501.xbm

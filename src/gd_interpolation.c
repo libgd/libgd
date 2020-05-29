@@ -1975,6 +1975,52 @@ BGD_DECLARE(int) gdTransformAffineGetImage(gdImagePtr *dst,
 	}
 }
 
+/** Function: getPixelRgbInterpolated
+ *   get the index of the image's colors
+ *
+ * Parameters:
+ *  im - Image to draw the transformed image
+ *  tcolor - TrueColor
+ *
+ * Return:
+ *  index of colors
+ */
+static int getPixelRgbInterpolated(gdImagePtr im, const int tcolor)
+{
+	unsigned char r, g, b, a;
+	int ct;
+	int i;
+
+	b = (unsigned char)tcolor;
+	g = (unsigned char)tcolor >> 8;
+	r = (unsigned char)tcolor >> 16;
+	a = (unsigned char)tcolor >> 24;
+
+	b = CLAMP(b, 0, 255);
+	g = CLAMP(g, 0, 255);
+	r = CLAMP(r, 0, 255);
+	a = CLAMP(a, 0, 127);
+
+	for (i = 0; i < im->colorsTotal; i++) {
+		if (im->red[i] == r && im->green[i] == g && im->blue[i] == b && im->alpha[i] == a) {
+			return i;
+		}
+	}
+
+	ct = im->colorsTotal;
+	if (ct == gdMaxColors) {
+		return -1;
+	}
+
+	im->colorsTotal++;
+	im->red[ct] = r;
+	im->green[ct] = g;
+	im->blue[ct] = b;
+	im->alpha[ct] = a;
+	im->open[ct] = 0;
+
+	return ct;
+}
 /**
  * Function: gdTransformAffineCopy
  *  Applies an affine transformation to a region and copy the result
@@ -1988,7 +2034,7 @@ BGD_DECLARE(int) gdTransformAffineGetImage(gdImagePtr *dst,
  *  src_area - Rectangular region to rotate in the src image
  *
  * Returns:
- *  GD_TRUE if the affine is rectilinear or GD_FALSE
+ *  GD_TRUE on success or GD_FALSE on failure
  */
 BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 		  int dst_x, int dst_y,
@@ -2001,21 +2047,21 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 	int backup_clipx1, backup_clipy1, backup_clipx2, backup_clipy2;
 	register int x, y, src_offset_x, src_offset_y;
 	double inv[6];
-	int *dst_p;
 	gdPointF pt, src_pt;
 	gdRect bbox;
 	int end_x, end_y;
-	gdInterpolationMethod interpolation_id_bak = GD_DEFAULT;
+	gdInterpolationMethod interpolation_id_bak = src->interpolation_id;
 
 	/* These methods use special implementations */
 	if (src->interpolation_id == GD_BILINEAR_FIXED || src->interpolation_id == GD_BICUBIC_FIXED || src->interpolation_id == GD_NEAREST_NEIGHBOUR) {
-		interpolation_id_bak = src->interpolation_id;
-
 		gdImageSetInterpolationMethod(src, GD_BICUBIC);
 	}
 
-
 	gdImageClipRectangle(src, src_region);
+	c1x = src_region->x;
+	c1y = src_region->y;
+	c2x = src_region->x + src_region->width -1;
+	c2y = src_region->y + src_region->height -1;
 
 	if (src_region->x > 0 || src_region->y > 0
 		|| src_region->width < gdImageSX(src)
@@ -2039,13 +2085,14 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 		return GD_FALSE;
 	}
 
-	gdImageGetClip(dst, &c1x, &c1y, &c2x, &c2y);
-
 	end_x = bbox.width  + abs(bbox.x);
 	end_y = bbox.height + abs(bbox.y);
 
 	/* Get inverse affine to let us work with destination -> source */
-	gdAffineInvert(inv, affine);
+	if (gdAffineInvert(inv, affine) == GD_FALSE) {
+		gdImageSetInterpolationMethod(src, interpolation_id_bak);
+		return GD_FALSE;
+	}
 
 	src_offset_x =  src_region->x;
 	src_offset_y =  src_region->y;
@@ -2053,28 +2100,51 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 	if (dst->alphaBlendingFlag) {
 		for (y = bbox.y; y <= end_y; y++) {
 			pt.y = y + 0.5;
-			for (x = 0; x <= end_x; x++) {
+			for (x = bbox.x; x <= end_x; x++) {
 				pt.x = x + 0.5;
 				gdAffineApplyToPointF(&src_pt, &pt, inv);
-				gdImageSetPixel(dst, dst_x + x, dst_y + y, getPixelInterpolated(src, src_offset_x + src_pt.x, src_offset_y + src_pt.y, 0));
+				if (floor(src_offset_x + src_pt.x) < c1x
+					|| floor(src_offset_x + src_pt.x) > c2x
+					|| floor(src_offset_y + src_pt.y) < c1y
+					|| floor(src_offset_y + src_pt.y) > c2y) {
+					continue;
+				}
+				gdImageSetPixel(dst, dst_x + x, dst_y + y, getPixelInterpolated(src, (int)(src_offset_x + src_pt.x), (int)(src_offset_y + src_pt.y), 0));
 			}
 		}
 	} else {
-		for (y = 0; y <= end_y; y++) {
-			pt.y = y + 0.5 + bbox.y;
+		for (y = bbox.y; y <= end_y; y++) {
+			unsigned char *dst_p = NULL;
+			int *tdst_p = NULL;
+
+			pt.y = y + 0.5;
 			if ((dst_y + y) < 0 || ((dst_y + y) > gdImageSY(dst) -1)) {
 				continue;
 			}
-			dst_p = dst->tpixels[dst_y + y] + dst_x;
+			if (dst->trueColor) {
+				tdst_p = dst->tpixels[dst_y + y] + dst_x;
+			} else {
+				dst_p = dst->pixels[dst_y + y] + dst_x;
+			}
 
-			for (x = 0; x <= end_x; x++) {
-				pt.x = x + 0.5 + bbox.x;
+			for (x = bbox.x; x <= end_x; x++) {
+				pt.x = x + 0.5;
 				gdAffineApplyToPointF(&src_pt, &pt, inv);
 
 				if ((dst_x + x) < 0 || (dst_x + x) > (gdImageSX(dst) - 1)) {
 					break;
 				}
-				*(dst_p++) = getPixelInterpolated(src, src_offset_x + src_pt.x, src_offset_y + src_pt.y, -1);
+				if (floor(src_offset_x + src_pt.x) < c1x
+					|| floor(src_offset_x + src_pt.x) > c2x
+					|| floor(src_offset_y + src_pt.y) < c1y
+					|| floor(src_offset_y + src_pt.y) > c2y) {
+					continue;
+				}
+				if (dst->trueColor) {
+					*(tdst_p + dst_x + x) = getPixelInterpolated(src, (int)(src_offset_x + src_pt.x), (int)(src_offset_y + src_pt.y), -1);
+				} else {
+					*(dst_p + dst_x + x) = getPixelRgbInterpolated(dst, getPixelInterpolated(src, (int)(src_offset_x + src_pt.x), (int)(src_offset_y + src_pt.y), -1));
+				}
 			}
 		}
 	}
@@ -2137,8 +2207,8 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 	}
 	bbox->x = (int) min.x;
 	bbox->y = (int) min.y;
-	bbox->width  = (int) ceil((max.x - min.x)) + 1;
-	bbox->height = (int) ceil(max.y - min.y) + 1;
+	bbox->width  = (int) ceil((max.x - min.x));
+	bbox->height = (int) ceil(max.y - min.y);
 
 	return GD_TRUE;
 }
@@ -2236,9 +2306,9 @@ BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMet
 		case GD_DEFAULT:
 			id = GD_LINEAR;
 			im->interpolation = filter_linear;
+			break;
 		default:
 			return 0;
-			break;
 	}
 	im->interpolation_id = id;
 	return 1;

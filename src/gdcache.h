@@ -12,7 +12,9 @@ extern "C" {
 	 * John Ellson  (ellson@graphviz.org)  Oct 31, 1997
 	 *
 	 * Test this with:
-	 *		 gcc -o gdcache -g -Wall -DTEST gdcache.c
+	 *		 gcc -o gdcache -g -Wall -DTEST -DNEED_CACHE gdcache.c -lgd
+   *		 or
+	 *		 gcc -o gdcache -g -Wall -DTEST -DNEED_CACHE gdcache.c libgd.a
 	 *
 	 * The cache is implemented by a singly-linked list of elements
 	 * each containing a pointer to a user struct that is being managed by

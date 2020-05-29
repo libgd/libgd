@@ -1,0 +1,4 @@
+#define width 8
+#define height 2
+static char bits[] ={
+xzzxzz
