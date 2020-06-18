@@ -33,6 +33,9 @@ AC_SUBST(GDLIB_LT_CURRENT)
 AC_SUBST(GDLIB_LT_REVISION)
 AC_SUBST(GDLIB_LT_AGE)
 
+AC_SUBST(LIBS_PRIVATES)
+AC_SUBST(PKG_REQUIRES_PRIVATES)
+
 AM_INIT_AUTOMAKE([1.11 foreign dist-xz -Wall -Werror subdir-objects])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
@@ -130,6 +133,7 @@ m4_define([GD_LIB_CHECK], [dnl
   AC_MSG_RESULT([$gd_with_lib])
 
   gd_found_lib=no
+  gd_require_pkg_name=""
   if test "$gd_with_lib" != "no"; then
     save_CPPFLAGS=$CPPFLAGS
     save_LDFLAGS=$LDFLAGS
@@ -161,6 +165,11 @@ m4_define([GD_LIB_CHECK], [dnl
       $1][_CFLAGS="$gd_lib_cflags $][$1][_CFLAGS"
       AS_VAR_APPEND([LIBS], [" $][$1][_LIBS"])
       AS_VAR_APPEND([CPPFLAGS], [" $][$1][_CFLAGS"])
+      if test -z "$gd_require_pkg_name"; then
+        AS_VAR_APPEND([LIBS_PRIVATES], [" $][$1][_LIBS"])
+      else
+        AS_VAR_APPEND([PKG_REQUIRES_PRIVATES], ["  $gd_require_pkg_name"])
+      fi
     elif test "$gd_with_lib" = "yes"; then
       AC_MSG_ERROR([$3 requested but not found])
     else
@@ -180,7 +189,7 @@ dnl $4 - pkg-config module to look for
 dnl $5 - fallback test for the feature
 m4_define([GD_LIB_PKG_CHECK], [dnl
   GD_LIB_CHECK([$1], [$2], [$3], [dnl
-    PKG_CHECK_MODULES([$1], [$4], [gd_found_lib=yes], [$5])
+    PKG_CHECK_MODULES([$1], [$4], [gd_found_lib=yes gd_require_pkg_name="$4"], [$5])
   ])
 ])
 
