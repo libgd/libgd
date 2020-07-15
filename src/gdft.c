@@ -449,6 +449,10 @@ textLayout(uint32_t *text, int len,
 	size_t count;
 	glyphInfo *info;
 
+	if (!len) {
+		return 0;
+	}
+
 #ifdef HAVE_LIBRAQM
 	size_t i;
 	raqm_glyph_t *glyphs;
@@ -1566,7 +1570,9 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	}
 
 	gdFree(text);
-	gdFree(info);
+	if (info) {
+		gdFree(info);
+	}
 
 	/* Save the (unkerned) advance from the last character in the xshow vector */
 	if (strex && (strex->flags & gdFTEX_XSHOW) && strex->xshow) {
