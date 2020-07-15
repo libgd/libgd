@@ -1570,7 +1570,9 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	}
 
 	gdFree(text);
-	gdFree(info);
+	if (info) {
+		gdFree(info);
+	}
 
 	/* Save the (unkerned) advance from the last character in the xshow vector */
 	if (strex && (strex->flags & gdFTEX_XSHOW) && strex->xshow) {
