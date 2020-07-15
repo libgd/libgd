@@ -449,6 +449,10 @@ textLayout(uint32_t *text, int len,
 	size_t count;
 	glyphInfo *info;
 
+	if (!len) {
+		return 0;
+	}
+
 #ifdef HAVE_LIBRAQM
 	size_t i;
 	raqm_glyph_t *glyphs;
