@@ -60,7 +60,7 @@
 #include "gd_errors.h"
 
 /* 2.3: gd is no longer mandatory */
-#if ENABLE_GD_FORMATS
+#ifdef ENABLE_GD_FORMATS
 
 #define TRUE 1
 #define FALSE 0

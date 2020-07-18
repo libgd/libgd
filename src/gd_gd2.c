@@ -85,7 +85,7 @@
 /* 2.03: gd2 is no longer mandatory */
 /* JCE - test after including gd.h so that HAVE_LIBZ can be set in
  * a config.h file included by gd.h */
-#if defined(HAVE_LIBZ) && ENABLE_GD_FORMATS
+#if defined(HAVE_LIBZ) && defined(ENABLE_GD_FORMATS)
 #include <zlib.h>
 
 #define TRUE 1
