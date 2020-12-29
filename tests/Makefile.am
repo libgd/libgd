@@ -13,6 +13,7 @@ CLEANFILES =
 EXTRA_DIST =
 TESTS =
 
+include avif/Makemodule.am
 include bmp/Makemodule.am
 include fontconfig/Makemodule.am
 include freetype/Makemodule.am

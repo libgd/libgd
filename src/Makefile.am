@@ -61,6 +61,7 @@ libgd_la_SOURCES = \
 	bmp.h \
 	gd.c \
 	gd.h \
+	gd_avif.c \
 	gd_bmp.c \
 	gd_color.c \
 	gd_color.h \

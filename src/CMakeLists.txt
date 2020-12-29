@@ -2,6 +2,7 @@ SET (LIBGD_SRC_FILES
 	bmp.h
 	gd.c
 	gd.h
+	gd_avif.c
 	gd_bmp.c
 	gd_color.c
 	gd_color.h
