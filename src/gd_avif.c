@@ -27,10 +27,6 @@
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx * infile)
 {
-  int blah;
-
-  blah = 3;
-  return blah;
 
 /*
 	int    width, height;
@@ -38,17 +34,18 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx * infile)
 	uint8_t    *argb = NULL;
 	unsigned char   *read, *temp;
 	size_t size = 0, n;
-	gdImagePtr im;
 	int x, y;
 	uint8_t *p; 
 */
+	gdImagePtr im;
+
 	/* do not use gdFree here, in case gdFree/alloc is mapped to something else than libc */
 /*
 	free(argb);
 	gdFree(temp);
+*/
 	im->saveAlphaFlag = 1;
 	return im;
-*/
 }
 
 
@@ -71,12 +68,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx * infile)
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif (FILE * inFile)
 {
 
-  int blah;
-
-  blah = 3;
-  return blah;
-
-/*
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
 	if (!in) {
@@ -86,5 +77,4 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif (FILE * inFile)
 	in->gd_free(in);
 
 	return im;
-*/
 }
