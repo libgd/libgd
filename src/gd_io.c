@@ -31,14 +31,6 @@
 /*
  * Write out a word to the I/O context pointer
  */
-void Putword(int w, gdIOCtx *ctx)
-{
-	unsigned char buf[2];
-	buf[0] = w & 0xff;
-	buf[1] = (w / 256) & 0xff;
-	(ctx->putBuf)(ctx, (char *)buf, 2);
-}
-
 void Putchar(int c, gdIOCtx *ctx)
 {
 	(ctx->putC)(ctx, c & 0xff);

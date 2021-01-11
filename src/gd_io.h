@@ -74,7 +74,6 @@ typedef struct gdIOCtx {
 
 typedef struct gdIOCtx *gdIOCtxPtr;
 
-void Putword(int w, gdIOCtx *ctx);
 void Putchar(int c, gdIOCtx *ctx);
 
 void gdPutC(const unsigned char c, gdIOCtx *ctx);
