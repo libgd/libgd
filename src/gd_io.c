@@ -28,14 +28,6 @@
 		return 0; \
 	}
 
-/*
- * Write out a word to the I/O context pointer
- */
-void Putchar(int c, gdIOCtx *ctx)
-{
-	(ctx->putC)(ctx, c & 0xff);
-}
-
 void gdPutC(const unsigned char c, gdIOCtx *ctx)
 {
 	(ctx->putC)(ctx, c);
