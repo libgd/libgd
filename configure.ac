@@ -278,7 +278,7 @@ GD_LIB_PKG_CHECK([LIBTIFF], [TIFF], [tiff], [libtiff-4], [
 ])
 
 dnl Check for webp support.
-GD_LIB_CHECK([LIBWEBP], [WEBP], [webp], [
+GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [webp], [libwebp], [
   AC_CHECK_LIB([webp], [WebPGetInfo], [dnl
     AS_VAR_APPEND([LIBWEBP_LIBS], [" -lwebp"])
     gd_found_lib=yes
