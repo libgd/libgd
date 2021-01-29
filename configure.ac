@@ -212,6 +212,7 @@ GD_LIB_PKG_CHECK([LIBPNG], [PNG], [png], [libpng], [
 ])
 
 dnl Check for FreeType support.
+dnl NB: "9.8.3" corresponds to freetype-2.1.10.
 GD_LIB_PKG_CHECK([LIBFREETYPE], [FREETYPE], [freetype], [freetype2 >= 9.8.3], [
   FREETYPE_CONFIG=$gd_with_lib/bin/freetype-config
   if test -e "$FREETYPE_CONFIG"; then

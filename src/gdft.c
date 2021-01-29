@@ -1244,7 +1244,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	for (i = 0; i < face->num_charmaps; i++) {
 		charmap = face->charmaps[i];
 
-#if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
 		if (encoding == gdFTEX_Unicode) {
 			if (charmap->encoding == FT_ENCODING_MS_SYMBOL
 			        || charmap->encoding == FT_ENCODING_UNICODE
@@ -1277,27 +1276,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 				break;
 			}
 		}
-#else
-		if (encoding == gdFTEX_Unicode) {
-			if ((charmap->platform_id = 3 && charmap->encoding_id == 1)     /* Windows Unicode */
-			        || (charmap->platform_id == 3 && charmap->encoding_id == 0) /* Windows Symbol */
-			        || (charmap->platform_id == 2 && charmap->encoding_id == 1) /* ISO Unicode */
-			        || (charmap->platform_id == 0)) {                        /* Apple Unicode */
-				encodingfound++;
-				break;
-			}
-		} else if (encoding == gdFTEX_Big5) {
-			if (charmap->platform_id == 3 && charmap->encoding_id == 4) {   /* Windows Big5 */
-				encodingfound++;
-				break;
-			}
-		} else if (encoding == gdFTEX_Shift_JIS) {
-			if (charmap->platform_id == 3 && charmap->encoding_id == 2) {   /* Windows Sjis */
-				encodingfound++;
-				break;
-			}
-		}
-#endif
 	}
 	if (encodingfound) {
 		FT_Set_Charmap(face, charmap);
@@ -1337,12 +1315,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			/* EAM DEBUG */
 			/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
 			/* 2.0.24: David R. Morrison: use the more complete ifdef here. */
-#if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
-			if (charmap->encoding == FT_ENCODING_MS_SYMBOL)
-#else
-			if (charmap->platform_id == 3 && charmap->encoding_id == 0)
-#endif /* Freetype 2.1 or better */
-			{
+			if (charmap->encoding == FT_ENCODING_MS_SYMBOL) {
 				/* I do not know the significance of the constant 0xf000. */
 				/* It was determined by inspection of the character codes */
 				/* stored in Microsoft font symbol.ttf                    */
