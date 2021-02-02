@@ -15,6 +15,7 @@ SET (LIBGD_SRC_FILES
 	gd_gd2.c
 	gd_gif_in.c
 	gd_gif_out.c
+	gd_heif.c
 	gd_intern.h
 	gd_interpolation.c
 	gd_io.c
@@ -130,6 +131,7 @@ SET(LIBGD_DEP_LIBS
 	${FONTCONFIG_LIBRARY}
 	${WEBP_LIBRARIES}
 	${RAQM_LIBRARIES}
+	${HEIF_LIBRARIES}
 )
 if (BUILD_SHARED_LIBS)
 	target_link_libraries(${GD_LIB} ${LIBGD_DEP_LIBS})

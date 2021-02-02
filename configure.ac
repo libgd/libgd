@@ -285,6 +285,14 @@ GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [webp], [libwebp], [
   ])
 ])
 
+dnl Check for heif support.
+GD_LIB_PKG_CHECK([LIBHEIF], [HEIF], [heif], [libheif], [
+  AC_CHECK_LIB([heif], [heif_get_version], [dnl
+    AS_VAR_APPEND([LIBHEIF_LIBS], [" -lheif"])
+    gd_found_lib=yes
+  ])
+])
+
 gl_VISIBILITY()
 CFLAGS="$CFLAGS $CFLAG_VISIBILITY"
 
@@ -314,6 +322,7 @@ AC_MSG_RESULT([
    Support for PNG library:          $gd_with_LIBPNG
    Support for JPEG library:         $gd_with_LIBJPEG
    Support for WebP library:         $gd_with_LIBWEBP
+   Support for HEIF library:         $gd_with_LIBHEIF
    Support for TIFF library:         $gd_with_LIBTIFF
    Support for Freetype 2.x library: $gd_with_LIBFREETYPE
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG
