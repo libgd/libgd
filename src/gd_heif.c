@@ -158,6 +158,11 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 	}
 
 	heif_ctx = heif_context_alloc();
+	if (heif_ctx == NULL) {
+		gd_error("gd-heif could not allocate context\n");
+		gdFree(temp);
+		return NULL;
+	}
 	err = heif_context_read_from_memory_without_copy(heif_ctx, filedata, size, NULL);
 	if (err.code != heif_error_Ok) {
 		gd_error("gd-heif context creation failed\n");
@@ -177,6 +182,13 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 
 	heif_im = NULL;
 	heif_dec_opts = heif_decoding_options_alloc();
+	if (heif_dec_opts == NULL) {
+		gd_error("gd-heif could not allocate decode options\n");
+		gdFree(temp);
+		heif_image_handle_release(heif_imhandle);
+		heif_context_free(heif_ctx);
+		return NULL;
+	}
 #if LIBHEIF_NUMERIC_VERSION >= 0x01070000
 	heif_dec_opts->convert_hdr_to_8bit = GD_TRUE;
 #endif /* LIBHEIF_NUMERIC_VERSION >= 0x01070000 */
@@ -367,6 +379,10 @@ static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHei
 	}
 
 	heif_ctx = heif_context_alloc();
+	if (heif_ctx == NULL) {
+		gd_error("gd-heif could not allocate context\n");
+		return NULL;
+	}
 	err = heif_context_get_encoder_for_format(heif_ctx, codec, &heif_enc);
 	if (err.code != heif_error_Ok) {
 		gd_error("gd-heif image creation failed\n");
@@ -495,11 +511,11 @@ BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality,
     is no penalty for doing so. <gdImageHeifEx> does not close the file;
     your code must do so.
 
-	If _quality_ is -1, a reasonable quality value (which should yield a
-	good general quality / size tradeoff for most situations) is used. Otherwise
-	_quality_ should be a value in the range 0-100, higher quality values
-	usually implying both higher quality and larger image sizes or 200, for
-	lossless codec.
+    If _quality_ is -1, a reasonable quality value (which should yield a
+    good general quality / size tradeoff for most situations) is used. Otherwise
+    _quality_ should be a value in the range 0-100, higher quality values
+    usually implying both higher quality and larger image sizes or 200, for
+    lossless codec.
 
   Variants:
 
@@ -592,10 +608,10 @@ BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdH
 		return NULL;
 	}
 	if (_gdImageHeifCtx(im, out, quality, codec, chroma)) {
-        rv = gdDPExtractData(out, size);
-    } else {
-        rv = NULL;
-    }
+		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free(out);
 	return rv;
 }
@@ -636,11 +652,11 @@ BGD_DECLARE(void) gdImageAvifCtx (gdImagePtr im, gdIOCtx * outfile, int quality,
     is no penalty for doing so. <gdImageAvifEx> does not close the file;
     your code must do so.
 
-	If _quality_ is -1, a reasonable quality value (which should yield a
-	good general quality / size tradeoff for most situations) is used. Otherwise
-	_quality_ should be a value in the range 0-100, higher quality values
-	usually implying both higher quality and larger image sizes or 200, for
-	lossless codec.
+    If _quality_ is -1, a reasonable quality value (which should yield a
+    good general quality / size tradeoff for most situations) is used. Otherwise
+    _quality_ should be a value in the range 0-100, higher quality values
+    usually implying both higher quality and larger image sizes or 200, for
+    lossless codec.
 
   Variants:
 
@@ -731,10 +747,10 @@ BGD_DECLARE(void *) gdImageAvifPtrEx (gdImagePtr im, int *size, int quality, gdH
 		return NULL;
 	}
 	if (_gdImageHeifCtx(im, out, quality, GD_HEIF_CODEC_AV1, chroma)) {
-        rv = gdDPExtractData(out, size);
-    } else {
-        rv = NULL;
-    }
+		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free(out);
 	return rv;
 }
