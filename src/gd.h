@@ -331,28 +331,28 @@ typedef enum {
 } gdInterpolationMethod;
 
 /**
- * Group: HEIF Compression Method
- * 
- * Values that select the HEIF compression method.
+ * Group: HEIF Coding Format
  *
- * Constants: gdHeifCompression
+ * Values that select the HEIF coding format.
  *
- *  GD_HEIF_COMPRESSION_UNKNOWN
- *  GD_HEIF_COMPRESSION_HEVC
- *  GD_HEIF_COMPRESSION_AV1
+ * Constants: gdHeifCodec
+ *
+ *  GD_HEIF_CODEC_UNKNOWN
+ *  GD_HEIF_CODEC_HEVC
+ *  GD_HEIF_CODEC_AV1
  *
  * See also:
  *  - <gdImageHeif>
  */
 typedef enum {
-	GD_HEIF_COMPRESSION_UNKNOWN = 0,
-	GD_HEIF_COMPRESSION_HEVC,
-	GD_HEIF_COMPRESSION_AV1 = 4,
-} gdHeifCompression;
+	GD_HEIF_CODEC_UNKNOWN = 0,
+	GD_HEIF_CODEC_HEVC,
+	GD_HEIF_CODEC_AV1 = 4,
+} gdHeifCodec;
 
 /**
  * Group: HEIF Chroma Subsampling
- * 
+ *
  * Values that select the HEIF chroma subsampling.
  *
  * Constants: gdHeifCompression
@@ -1129,11 +1129,11 @@ BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size);
 BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quantization);
 BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantization);
 
-BGD_DECLARE(void) gdImageHeifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifCompression compression, gdHeifChroma chroma);
+BGD_DECLARE(void) gdImageHeifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifCodec codec, gdHeifChroma chroma);
 BGD_DECLARE(void) gdImageHeif (gdImagePtr im, FILE * outFile);
 BGD_DECLARE(void *) gdImageHeifPtr (gdImagePtr im, int *size);
-BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdHeifCompression compression, gdHeifChroma chroma);
-BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCompression compression, gdHeifChroma chroma);
+BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma);
+BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma);
 
 BGD_DECLARE(void) gdImageAvifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifChroma chroma);
 BGD_DECLARE(void) gdImageAvif (gdImagePtr im, FILE * outFile);

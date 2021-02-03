@@ -66,11 +66,13 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif (FILE * inFile)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
-	if (!in) {
-		return 0;
-	}
+
+	if (!in)
+		return NULL;
 	im = gdImageCreateFromHeifCtx(in);
 	in->gd_free(in);
+	if (!im)
+		return NULL;
 
 	return im;
 }
@@ -89,10 +91,13 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr (int size, void *data)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
+
 	if (!in)
-		return 0;
+		return NULL;
 	im = gdImageCreateFromHeifCtx(in);
 	in->gd_free(in);
+	if (!im)
+		return NULL;
 	return im;
 }
 
@@ -122,40 +127,35 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 	int    width, height;
 	uint8_t   *filedata = NULL;
 	uint8_t    *rgba = NULL;
-	unsigned char   *read, *temp, *magic;
-	size_t size = 0, n;
+	unsigned char   *read, *temp, magic[GD_HEIF_HEADER];
+	size_t size = 0, n = GD_HEIF_ALLOC_STEP;
 	gdImagePtr im;
 	int x, y;
 	uint8_t *p;
 
-	magic = gdMalloc(GD_HEIF_HEADER);
 	gdGetBuf(magic, GD_HEIF_HEADER, infile);
 	if (!_gdHeifCheckBrand(magic, expected_brand)) {
 		gd_error("gd-heif incorrect type of file\n");
-		gdFree(magic);
 		return NULL;
 	}
-	gdFree(magic);
 	gdSeek(infile, 0);
 
-	do {
-		temp = gdRealloc(filedata, size+GD_HEIF_ALLOC_STEP);
+	while (n == GD_HEIF_ALLOC_STEP) {
+		temp = gdRealloc(filedata, size + GD_HEIF_ALLOC_STEP);
 		if (temp) {
 			filedata = temp;
 			read = temp + size;
 		} else {
-			if (filedata) {
-				gdFree(filedata);
-			}
+			gdFree(filedata);
 			gd_error("gd-heif decode realloc failed\n");
 			return NULL;
 		}
 
 		n = gdGetBuf(read, GD_HEIF_ALLOC_STEP, infile);
-		if (n>0 && n!=EOF) {
+		if (n > 0) {
 			size += n;
 		}
-	} while (n>0 && n!=EOF);
+	}
 
 	heif_ctx = heif_context_alloc();
 	err = heif_context_read_from_memory_without_copy(heif_ctx, filedata, size, NULL);
@@ -214,10 +214,10 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 	}
 	for (y = 0, p = rgba; y < height; y++) {
 		for (x = 0; x < width; x++) {
-			register uint8_t r = *(p++);
-			register uint8_t g = *(p++);
-			register uint8_t b = *(p++);
-			register uint8_t a = gdAlphaMax - (*(p++) >> 1);
+			uint8_t r = *(p++);
+			uint8_t g = *(p++);
+			uint8_t b = *(p++);
+			uint8_t a = gdAlphaMax - (*(p++) >> 1);
 			im->tpixels[y][x] = gdTrueColorAlpha(r, g, b, a);
 		}
 	}
@@ -332,8 +332,8 @@ static struct heif_error _gdImageWriteHeif (struct heif_context *heif_ctx, const
 	return err;
 }
 
-/* returns 0 on success, 1 on failure */
-static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCompression compression, gdHeifChroma chroma)
+/* returns GD_TRUE on success, GD_FALSE on failure */
+static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	struct heif_context *heif_ctx;
 	struct heif_encoder *heif_enc;
@@ -345,33 +345,33 @@ static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHei
 	uint8_t *p;
 
 	if (im == NULL) {
-		return 1;
+		return GD_FALSE;
 	}
 
-	if (compression != GD_HEIF_COMPRESSION_HEVC && compression != GD_HEIF_COMPRESSION_AV1) {
+	if (codec != GD_HEIF_CODEC_HEVC && codec != GD_HEIF_CODEC_AV1) {
 		gd_error("Unsupported format by heif");
-		return 1;
+		return GD_FALSE;
 	}
 
 	if (!gdImageTrueColor(im)) {
 		gd_error("Palette image not supported by heif\n");
-		return 1;
+		return GD_FALSE;
 	}
 
 	if (overflow2(gdImageSX(im), 4)) {
-		return 1;
+		return GD_FALSE;
 	}
 
 	if (overflow2(gdImageSX(im) * 4, gdImageSY(im))) {
-		return 1;
+		return GD_FALSE;
 	}
-	
+
 	heif_ctx = heif_context_alloc();
-	err = heif_context_get_encoder_for_format(heif_ctx, compression, &heif_enc);
+	err = heif_context_get_encoder_for_format(heif_ctx, codec, &heif_enc);
 	if (err.code != heif_error_Ok) {
 		gd_error("gd-heif image creation failed\n");
 		heif_context_free(heif_ctx);
-		return 1;
+		return GD_FALSE;
 	}
 
 	if (quality == 200) {
@@ -385,15 +385,15 @@ static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHei
 		gd_error("gd-heif invalid quality number\n");
 		heif_encoder_release(heif_enc);
 		heif_context_free(heif_ctx);
-		return 1;
+		return GD_FALSE;
 	}
-	
+
 	err = heif_encoder_set_parameter_string(heif_enc, "chroma", chroma);
 	if (err.code != heif_error_Ok) {
 		gd_error("gd-heif invalid chroma subsampling parameter\n");
 		heif_encoder_release(heif_enc);
 		heif_context_free(heif_ctx);
-		return 1;
+		return GD_FALSE;
 	}
 
 	err = heif_image_create(gdImageSX(im), gdImageSY(im), heif_colorspace_RGB, heif_chroma_interleaved_RGBA, &heif_im);
@@ -401,7 +401,7 @@ static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHei
 		gd_error("gd-heif image creation failed");
 		heif_encoder_release(heif_enc);
 		heif_context_free(heif_ctx);
-		return 1;
+		return GD_FALSE;
 	}
 
 	err = heif_image_add_plane(heif_im, heif_channel_interleaved, gdImageSX(im), gdImageSY(im), 32);
@@ -410,7 +410,7 @@ static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHei
 		heif_image_release(heif_im);
 		heif_encoder_release(heif_enc);
 		heif_context_free(heif_ctx);
-		return 1;
+		return GD_FALSE;
 	}
 
 	rgba = (uint8_t *)heif_image_get_plane_readonly(heif_im, heif_channel_interleaved, NULL);
@@ -419,13 +419,13 @@ static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHei
 		heif_image_release(heif_im);
 		heif_encoder_release(heif_enc);
 		heif_context_free(heif_ctx);
-		return 1;
+		return GD_FALSE;
 	}
 	p = rgba;
 	for (y = 0; y < gdImageSY(im); y++) {
 		for (x = 0; x < gdImageSX(im); x++) {
-			register int c;
-			register char a;
+			int c;
+			char a;
 			c = im->tpixels[y][x];
 			a = gdTrueColorGetAlpha(c);
 			if (a == 127) {
@@ -445,7 +445,7 @@ static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHei
 		gd_error("gd-heif encoding failed\n");
 		heif_image_release(heif_im);
 		heif_context_free(heif_ctx);
-		return 1;
+		return GD_FALSE;
 	}
 	heif_wr.write = _gdImageWriteHeif;
 	heif_wr.writer_api_version = 1;
@@ -454,7 +454,7 @@ static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHei
 	heif_image_release(heif_im);
 	heif_context_free(heif_ctx);
 
-	return 0;
+	return GD_TRUE;
 }
 
 
@@ -473,16 +473,16 @@ static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHei
     im          - The image to write.
     outfile     - The output sink.
     quality     - Image quality.
-    compression - The compression method.
-    chroma      - The chroma subsampling format.
+    codec       - The output coding format.
+    chroma      - The output chroma subsampling format.
 
   Returns:
 
     Nothing.
 */
-BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCompression compression, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
-	_gdImageHeifCtx(im, outfile, quality, compression, chroma);
+	_gdImageHeifCtx(im, outfile, quality, codec, chroma);
 }
 
 /*
@@ -499,7 +499,7 @@ BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality,
 	good general quality / size tradeoff for most situations) is used. Otherwise
 	_quality_ should be a value in the range 0-100, higher quality values
 	usually implying both higher quality and larger image sizes or 200, for
-	lossless compression.
+	lossless codec.
 
   Variants:
 
@@ -513,21 +513,21 @@ BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality,
 
     im          - The image to save.
     outFile     - The FILE pointer to write to.
-    quality     - Compression quality (0-100).
-    compression - The compression method.
-    chroma      - The chroma subsampling format.
+    quality     - Codec quality (0-100).
+    codec       - The output coding format.
+    chroma      - The output chroma subsampling format.
 
   Returns:
 
     Nothing.
 */
-BGD_DECLARE(void) gdImageHeifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifCompression compression, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageHeifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
 	if (out == NULL) {
 		return;
 	}
-	_gdImageHeifCtx(im, out, quality, compression, chroma);
+	_gdImageHeifCtx(im, out, quality, codec, chroma);
 	out->gd_free(out);
 }
 
@@ -535,7 +535,7 @@ BGD_DECLARE(void) gdImageHeifEx (gdImagePtr im, FILE * outFile, int quality, gdH
   Function: gdImageHeif
 
     Variant of <gdImageHeifEx> which uses the default quality (-1), the
-    default compression (GD_HEIF_COMPRESSION_HEVC) and the default chroma
+    default codec (GD_HEIF_Codec_HEVC) and the default chroma
     subsampling (GD_HEIF_CHROMA_444).
 
   Parameters:
@@ -553,7 +553,7 @@ BGD_DECLARE(void) gdImageHeif (gdImagePtr im, FILE * outFile)
 	if (out == NULL) {
 		return;
 	}
-	_gdImageHeifCtx(im, out, -1, GD_HEIF_COMPRESSION_HEVC, GD_HEIF_CHROMA_444);
+	_gdImageHeifCtx(im, out, -1, GD_HEIF_CODEC_HEVC, GD_HEIF_CHROMA_444);
 	out->gd_free(out);
 }
 
@@ -569,10 +569,10 @@ BGD_DECLARE(void *) gdImageHeifPtr (gdImagePtr im, int *size)
 	if (out == NULL) {
 		return NULL;
 	}
-	if (_gdImageHeifCtx(im, out, -1, GD_HEIF_COMPRESSION_HEVC, GD_HEIF_CHROMA_444)) {
-		rv = NULL;
-	} else {
+	if (_gdImageHeifCtx(im, out, -1, GD_HEIF_CODEC_HEVC, GD_HEIF_CHROMA_444)) {
 		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
 	}
 	out->gd_free(out);
 
@@ -584,17 +584,17 @@ BGD_DECLARE(void *) gdImageHeifPtr (gdImagePtr im, int *size)
 
     See <gdImageHeifEx>.
 */
-BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdHeifCompression compression, gdHeifChroma chroma)
+BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) {
 		return NULL;
 	}
-	if (_gdImageHeifCtx(im, out, quality, compression, chroma)) {
-        rv = NULL;
-    } else {
+	if (_gdImageHeifCtx(im, out, quality, codec, chroma)) {
         rv = gdDPExtractData(out, size);
+    } else {
+        rv = NULL;
     }
 	out->gd_free(out);
 	return rv;
@@ -615,7 +615,7 @@ BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdH
     im          - The image to write.
     outfile     - The output sink.
     quality     - Image quality.
-    chroma      - The chroma subsampling format.
+    chroma      - The output chroma subsampling format.
 
   Returns:
 
@@ -623,7 +623,7 @@ BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdH
 */
 BGD_DECLARE(void) gdImageAvifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifChroma chroma)
 {
-	_gdImageHeifCtx(im, outfile, quality, GD_HEIF_COMPRESSION_AV1, chroma);
+	_gdImageHeifCtx(im, outfile, quality, GD_HEIF_CODEC_AV1, chroma);
 }
 
 /*
@@ -640,7 +640,7 @@ BGD_DECLARE(void) gdImageAvifCtx (gdImagePtr im, gdIOCtx * outfile, int quality,
 	good general quality / size tradeoff for most situations) is used. Otherwise
 	_quality_ should be a value in the range 0-100, higher quality values
 	usually implying both higher quality and larger image sizes or 200, for
-	lossless compression.
+	lossless codec.
 
   Variants:
 
@@ -654,8 +654,8 @@ BGD_DECLARE(void) gdImageAvifCtx (gdImagePtr im, gdIOCtx * outfile, int quality,
 
     im          - The image to save.
     outFile     - The FILE pointer to write to.
-    quality     - Compression quality (0-100).
-    chroma      - The chroma subsampling format.
+    quality     - Codec quality (0-100).
+    chroma      - The output chroma subsampling format.
 
   Returns:
 
@@ -667,7 +667,7 @@ BGD_DECLARE(void) gdImageAvifEx (gdImagePtr im, FILE * outFile, int quality, gdH
 	if (out == NULL) {
 		return;
 	}
-	_gdImageHeifCtx(im, out, quality, GD_HEIF_COMPRESSION_AV1, chroma);
+	_gdImageHeifCtx(im, out, quality, GD_HEIF_CODEC_AV1, chroma);
 	out->gd_free(out);
 }
 
@@ -692,7 +692,7 @@ BGD_DECLARE(void) gdImageAvif (gdImagePtr im, FILE * outFile)
 	if (out == NULL) {
 		return;
 	}
-	_gdImageHeifCtx(im, out, -1, GD_HEIF_COMPRESSION_AV1, GD_HEIF_CHROMA_444);
+	_gdImageHeifCtx(im, out, -1, GD_HEIF_CODEC_AV1, GD_HEIF_CHROMA_444);
 	out->gd_free(out);
 }
 
@@ -708,10 +708,10 @@ BGD_DECLARE(void *) gdImageAvifPtr (gdImagePtr im, int *size)
 	if (out == NULL) {
 		return NULL;
 	}
-	if (_gdImageHeifCtx(im, out, -1, GD_HEIF_COMPRESSION_AV1, GD_HEIF_CHROMA_444)) {
-		rv = NULL;
-	} else {
+	if (_gdImageHeifCtx(im, out, -1, GD_HEIF_CODEC_AV1, GD_HEIF_CHROMA_444)) {
 		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
 	}
 	out->gd_free(out);
 
@@ -730,10 +730,10 @@ BGD_DECLARE(void *) gdImageAvifPtrEx (gdImagePtr im, int *size, int quality, gdH
 	if (out == NULL) {
 		return NULL;
 	}
-	if (_gdImageHeifCtx(im, out, quality, GD_HEIF_COMPRESSION_AV1, chroma)) {
-        rv = NULL;
-    } else {
+	if (_gdImageHeifCtx(im, out, quality, GD_HEIF_CODEC_AV1, chroma)) {
         rv = gdDPExtractData(out, size);
+    } else {
+        rv = NULL;
     }
 	out->gd_free(out);
 	return rv;
@@ -782,12 +782,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx * infile)
 	return NULL;
 }
 
-BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCompression compression, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	_noHeifError();
 }
 
-BGD_DECLARE(void) gdImageHeifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifCompression compression, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageHeifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	_noHeifError();
 }
@@ -803,7 +803,7 @@ BGD_DECLARE(void *) gdImageHeifPtr (gdImagePtr im, int *size)
 	return NULL;
 }
 
-BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdHeifCompression compression, gdHeifChroma chroma)
+BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	_noHeifError();
 	return NULL;

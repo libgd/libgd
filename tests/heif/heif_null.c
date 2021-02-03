@@ -1,3 +1,9 @@
+/**
+ * Simple test case that confirms the failure of using `gdImageCreateFromHeif`
+ * with a NULL pointer.
+ */
+
+
 #include "gd.h"
 
 int main()

@@ -1,3 +1,13 @@
+/**
+ * Test that failure to convert to AVIF returns NULL
+ *
+ * We are creating an image, set its width to zero, and pass this image to
+ * `gdImageAvifPtr()` which is supposed to fail, and as such should return NULL.
+ *
+ * See also <https://github.com/libgd/libgd/issues/381>
+ */
+
+
 #include "gd.h"
 #include "gdtest.h"
 

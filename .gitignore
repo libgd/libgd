@@ -103,5 +103,3 @@ build_msvc12_x86
 build_msvc12_x64
 build_mingw_x86
 build_mingw_x64
-
-.vscode

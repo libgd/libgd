@@ -1,3 +1,9 @@
+/**
+ * Check if it's any difference between the original bitmap and a encoded and
+ * decoded `4:4:4` HEIF lossless image.
+ */
+
+
 #include "gd.h"
 #include "gdtest.h"
 
@@ -26,12 +32,12 @@ int main()
 #define OUTPUT_HEIF(name) do {							\
 		FILE *fp = gdTestTempFp();						\
 		gdImageHeifEx(name, fp, 200,					\
-		GD_HEIF_COMPRESSION_HEVC, GD_HEIF_CHROMA_444);	\
+		GD_HEIF_CODEC_HEVC, GD_HEIF_CHROMA_444);		\
 		fclose(fp);										\
 	} while (0)
 
 	OUTPUT_HEIF(src);
-	p = gdImageHeifPtrEx(src, &size, 200, GD_HEIF_COMPRESSION_HEVC, GD_HEIF_CHROMA_444);
+	p = gdImageHeifPtrEx(src, &size, 200, GD_HEIF_CODEC_HEVC, GD_HEIF_CHROMA_444);
 	if (p == NULL) {
 		status = 1;
 		gdTestErrorMsg("p is null\n");
