@@ -11,6 +11,7 @@ syntax: glob
 *.dir
 [Bb]in
 win32
+.vscode
 
 Makefile
 CMakeCache.txt
@@ -96,6 +97,7 @@ Testing
 /docs/naturaldocs/html/
 /docs/naturaldocs/project/Data/
 
+# AppVeyor build artifacts.
 gd-dotnet-bindings-generator
 build_msvc12_x86
 build_msvc12_x64
