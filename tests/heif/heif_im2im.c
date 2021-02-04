@@ -17,10 +17,7 @@ int main()
 	CuTestImageResult result = {0, 0};
 
 	src = gdImageCreateTrueColor(100, 100);
-	if (src == NULL) {
-		gdTestErrorMsg("could not create src\n");
-		return 1;
-	}
+	gdTestAssertMsg(src != NULL, "could not create src\n");
 	/* libheif seems to have some rounding issues */
 	r = gdImageColorAllocate(src, 0xFE, 0, 0);
 	g = gdImageColorAllocate(src, 0, 0xFE, 0);
@@ -29,42 +26,22 @@ int main()
 	gdImageRectangle(src, 20, 20, 79, 79, g);
 	gdImageEllipse(src, 70, 25, 30, 20, b);
 
-#define OUTPUT_HEIF(name) do {							\
-		FILE *fp = gdTestTempFp();						\
-		gdImageHeifEx(name, fp, 200,					\
-		GD_HEIF_CODEC_HEVC, GD_HEIF_CHROMA_444);		\
-		fclose(fp);										\
-	} while (0)
-
-	OUTPUT_HEIF(src);
 	p = gdImageHeifPtrEx(src, &size, 200, GD_HEIF_CODEC_HEVC, GD_HEIF_CHROMA_444);
-	if (p == NULL) {
-		status = 1;
-		gdTestErrorMsg("p is null\n");
-		goto door0;
-	}
-	if (size <= 0) {
-		status = 1;
-		gdTestErrorMsg("size is non-positive\n");
-		goto door1;
-	}
+	gdTestAssertMsg(p != NULL, "return value of gdImageHeifPtrEx() is null\n");
+	gdTestAssertMsg(size > 0, "gdImageHeifPtrEx() output size is non-positive\n");
 
 	dst = gdImageCreateFromHeifPtr(size, p);
-	if (dst == NULL) {
-		status = 1;
-		gdTestErrorMsg("could not create dst\n");
-		goto door1;
-	}
-	OUTPUT_HEIF(dst);
-	gdTestImageDiff(src, dst, NULL, &result);
-	if (result.pixels_changed > 0) {
-		status = 1;
-		gdTestErrorMsg("pixels changed: %d\n", result.pixels_changed);
-	}
+	gdTestAssertMsg(dst != NULL, "return value of gdImageCreateFromHeifPtr() is null\n");
+
+	if (gdTestAssertMsg(src != NULL && dst != NULL, "cannot compare with NULL buffer"))
+		gdTestImageDiff(src, dst, NULL, &result);
+	else
+		result.pixels_changed == 0;
+	gdTestAssertMsg(result.pixels_changed == 0, "pixels changed: %d\n", result.pixels_changed);
+
 	gdImageDestroy(dst);
-door1:
 	gdFree(p);
-door0:
 	gdImageDestroy(src);
-	return status;
+
+	return gdNumFailures();
 }

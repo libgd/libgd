@@ -5,16 +5,16 @@
 
 
 #include "gd.h"
+#include "gdtest.h"
 
 int main()
 {
 	gdImagePtr im;
 
 	im = gdImageCreateFromHeif(NULL);
-	if (im != NULL) {
+	if (!gdTestAssert(im == NULL))
 		gdImageDestroy(im);
-		return 1;
-	}
 	gdImageHeif(im, NULL); /* noop safely */
-	return 0;
+
+	return gdNumFailures();
 }

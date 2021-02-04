@@ -18,7 +18,7 @@
 #include "gdhelpers.h"
 
 #ifdef HAVE_LIBHEIF
-#include "libheif/heif.h"
+#include <libheif/heif.h>
 
 #define GD_HEIF_ALLOC_STEP (4*1024)
 #define GD_HEIF_HEADER 12
@@ -62,7 +62,7 @@ typedef enum gd_heif_brand {
 
     On error, returns NULL.
 */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif (FILE * inFile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
@@ -87,7 +87,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif (FILE * inFile)
     size            - size of HEIF data in bytes.
     data            - pointer to HEIF data.
 */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr (int size, void *data)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
@@ -101,7 +101,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr (int size, void *data)
 	return im;
 }
 
-static int _gdHeifCheckBrand (unsigned char *magic, gd_heif_brand expected_brand)
+static int _gdHeifCheckBrand(unsigned char *magic, gd_heif_brand expected_brand)
 {
 	if (memcmp(magic + 4, "ftyp", 4) != 0)
 		return GD_FALSE;
@@ -117,7 +117,7 @@ static int _gdHeifCheckBrand (unsigned char *magic, gd_heif_brand expected_brand
 	return GD_FALSE;
 }
 
-static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand expected_brand)
+static gdImagePtr _gdImageCreateFromHeifCtx(gdIOCtx *infile, gd_heif_brand expected_brand)
 {
 	struct heif_context *heif_ctx;
 	struct heif_decoding_options *heif_dec_opts;
@@ -160,13 +160,13 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 	heif_ctx = heif_context_alloc();
 	if (heif_ctx == NULL) {
 		gd_error("gd-heif could not allocate context\n");
-		gdFree(temp);
+		gdFree(filedata);
 		return NULL;
 	}
 	err = heif_context_read_from_memory_without_copy(heif_ctx, filedata, size, NULL);
 	if (err.code != heif_error_Ok) {
 		gd_error("gd-heif context creation failed\n");
-		gdFree(temp);
+		gdFree(filedata);
 		heif_context_free(heif_ctx);
 		return NULL;
 	}
@@ -175,7 +175,7 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 	err = heif_context_get_primary_image_handle(heif_ctx, &heif_imhandle);
 	if (err.code != heif_error_Ok) {
 		gd_error("gd-heif cannot retreive handle\n");
-		gdFree(temp);
+		gdFree(filedata);
 		heif_context_free(heif_ctx);
 		return NULL;
 	}
@@ -184,7 +184,7 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 	heif_dec_opts = heif_decoding_options_alloc();
 	if (heif_dec_opts == NULL) {
 		gd_error("gd-heif could not allocate decode options\n");
-		gdFree(temp);
+		gdFree(filedata);
 		heif_image_handle_release(heif_imhandle);
 		heif_context_free(heif_ctx);
 		return NULL;
@@ -197,7 +197,7 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 	heif_decoding_options_free(heif_dec_opts);
 	if (err.code != heif_error_Ok) {
 		gd_error("gd-heif decoding failed\n");
-		gdFree(temp);
+		gdFree(filedata);
 		heif_image_handle_release(heif_imhandle);
 		heif_context_free(heif_ctx);
 		return NULL;
@@ -208,7 +208,7 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 
 	im = gdImageCreateTrueColor(width, height);
 	if (!im) {
-		gdFree(temp);
+		gdFree(filedata);
 		heif_image_release(heif_im);
 		heif_image_handle_release(heif_imhandle);
 		heif_context_free(heif_ctx);
@@ -217,7 +217,7 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 	rgba = (uint8_t *)heif_image_get_plane_readonly(heif_im, heif_channel_interleaved, NULL);
 	if (!rgba) {
 		gd_error("gd-heif cannot get image plane\n");
-		gdFree(temp);
+		gdFree(filedata);
 		heif_image_release(heif_im);
 		heif_image_handle_release(heif_imhandle);
 		heif_context_free(heif_ctx);
@@ -233,7 +233,7 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 			im->tpixels[y][x] = gdTrueColorAlpha(r, g, b, a);
 		}
 	}
-	gdFree(temp);
+	gdFree(filedata);
 	heif_image_release(heif_im);
 	heif_image_handle_release(heif_imhandle);
 	heif_context_free(heif_ctx);
@@ -246,7 +246,7 @@ static gdImagePtr _gdImageCreateFromHeifCtx (gdIOCtx * infile, gd_heif_brand exp
 
     See <gdImageCreateFromHeif>.
 */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx (gdIOCtx * infile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtx *infile)
 {
 	return _gdImageCreateFromHeifCtx(infile, GD_HEIF_BRAND_AVIF | GD_HEIF_BRAND_MIF1 | GD_HEIF_BRAND_HEIC | GD_HEIF_BRAND_HEIX);
 }
@@ -283,7 +283,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx (gdIOCtx * infile)
 
     On error, returns NULL.
 */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif (FILE * inFile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *inFile)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
@@ -306,7 +306,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif (FILE * inFile)
     size            - size of AVIF data in bytes.
     data            - pointer to AVIF data.
 */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr (int size, void *data)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
@@ -322,13 +322,13 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr (int size, void *data)
 
     See <gdImageCreateFromAvif>.
 */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx * infile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *infile)
 {
 	return _gdImageCreateFromHeifCtx(infile, GD_HEIF_BRAND_AVIF | GD_HEIF_BRAND_MIF1);
 }
 
 
-static struct heif_error _gdImageWriteHeif (struct heif_context *heif_ctx, const void *data, size_t size, void *userdata)
+static struct heif_error _gdImageWriteHeif(struct heif_context *heif_ctx, const void *data, size_t size, void *userdata)
 {
 	gdIOCtx *outfile;
 	struct heif_error err;
@@ -345,7 +345,7 @@ static struct heif_error _gdImageWriteHeif (struct heif_context *heif_ctx, const
 }
 
 /* returns GD_TRUE on success, GD_FALSE on failure */
-static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
+static int _gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	struct heif_context *heif_ctx;
 	struct heif_encoder *heif_enc;
@@ -496,7 +496,7 @@ static int _gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHei
 
     Nothing.
 */
-BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	_gdImageHeifCtx(im, outfile, quality, codec, chroma);
 }
@@ -537,7 +537,7 @@ BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality,
 
     Nothing.
 */
-BGD_DECLARE(void) gdImageHeifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageHeifEx(gdImagePtr im, FILE *outFile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
 	if (out == NULL) {
@@ -563,7 +563,7 @@ BGD_DECLARE(void) gdImageHeifEx (gdImagePtr im, FILE * outFile, int quality, gdH
 
     Nothing.
 */
-BGD_DECLARE(void) gdImageHeif (gdImagePtr im, FILE * outFile)
+BGD_DECLARE(void) gdImageHeif(gdImagePtr im, FILE *outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
 	if (out == NULL) {
@@ -578,7 +578,7 @@ BGD_DECLARE(void) gdImageHeif (gdImagePtr im, FILE * outFile)
 
     See <gdImageHeifEx>.
 */
-BGD_DECLARE(void *) gdImageHeifPtr (gdImagePtr im, int *size)
+BGD_DECLARE(void *) gdImageHeifPtr(gdImagePtr im, int *size)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
@@ -600,7 +600,7 @@ BGD_DECLARE(void *) gdImageHeifPtr (gdImagePtr im, int *size)
 
     See <gdImageHeifEx>.
 */
-BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma)
+BGD_DECLARE(void *) gdImageHeifPtrEx(gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
@@ -637,7 +637,7 @@ BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdH
 
     Nothing.
 */
-BGD_DECLARE(void) gdImageAvifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifChroma chroma)
 {
 	_gdImageHeifCtx(im, outfile, quality, GD_HEIF_CODEC_AV1, chroma);
 }
@@ -677,7 +677,7 @@ BGD_DECLARE(void) gdImageAvifCtx (gdImagePtr im, gdIOCtx * outfile, int quality,
 
     Nothing.
 */
-BGD_DECLARE(void) gdImageAvifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, gdHeifChroma chroma)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
 	if (out == NULL) {
@@ -702,7 +702,7 @@ BGD_DECLARE(void) gdImageAvifEx (gdImagePtr im, FILE * outFile, int quality, gdH
 
     Nothing.
 */
-BGD_DECLARE(void) gdImageAvif (gdImagePtr im, FILE * outFile)
+BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
 	if (out == NULL) {
@@ -717,7 +717,7 @@ BGD_DECLARE(void) gdImageAvif (gdImagePtr im, FILE * outFile)
 
     See <gdImageAvifEx>.
 */
-BGD_DECLARE(void *) gdImageAvifPtr (gdImagePtr im, int *size)
+BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
@@ -739,7 +739,7 @@ BGD_DECLARE(void *) gdImageAvifPtr (gdImagePtr im, int *size)
 
     See <gdImageAvifEx>.
 */
-BGD_DECLARE(void *) gdImageAvifPtrEx (gdImagePtr im, int *size, int quality, gdHeifChroma chroma)
+BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, gdHeifChroma chroma)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
@@ -762,91 +762,91 @@ static void _noHeifError(void)
 	gd_error("HEIF image support has been disabled\n");
 }
 
-BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif (FILE * inFile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile)
 {
 	_noHeifError();
 	return NULL;
 }
 
-BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr (int size, void *data)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data)
 {
 	_noHeifError();
 	return NULL;
 }
 
-BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx (gdIOCtx * infile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtx *infile)
 {
 	_noHeifError();
 	return NULL;
 }
 
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif (FILE * inFile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *inFile)
 {
 	_noHeifError();
 	return NULL;
 }
 
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr (int size, void *data)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data)
 {
 	_noHeifError();
 	return NULL;
 }
 
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx * infile)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *infile)
 {
 	_noHeifError();
 	return NULL;
 }
 
-BGD_DECLARE(void) gdImageHeifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	_noHeifError();
 }
 
-BGD_DECLARE(void) gdImageHeifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageHeifEx(gdImagePtr im, FILE *outFile, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	_noHeifError();
 }
 
-BGD_DECLARE(void) gdImageHeif (gdImagePtr im, FILE * outFile)
+BGD_DECLARE(void) gdImageHeif(gdImagePtr im, FILE *outFile)
 {
 	_noHeifError();
 }
 
-BGD_DECLARE(void *) gdImageHeifPtr (gdImagePtr im, int *size)
-{
-	_noHeifError();
-	return NULL;
-}
-
-BGD_DECLARE(void *) gdImageHeifPtrEx (gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma)
+BGD_DECLARE(void *) gdImageHeifPtr(gdImagePtr im, int *size)
 {
 	_noHeifError();
 	return NULL;
 }
 
-BGD_DECLARE(void) gdImageAvifCtx (gdImagePtr im, gdIOCtx * outfile, int quality, gdHeifChroma chroma)
-{
-	_noHeifError();
-}
-
-BGD_DECLARE(void) gdImageAvifEx (gdImagePtr im, FILE * outFile, int quality, gdHeifChroma chroma)
-{
-	_noHeifError();
-}
-
-BGD_DECLARE(void) gdImageAvif (gdImagePtr im, FILE * outFile)
-{
-	_noHeifError();
-}
-
-BGD_DECLARE(void *) gdImageAvifPtr (gdImagePtr im, int *size)
+BGD_DECLARE(void *) gdImageHeifPtrEx(gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma)
 {
 	_noHeifError();
 	return NULL;
 }
 
-BGD_DECLARE(void *) gdImageAvifPtrEx (gdImagePtr im, int *size, int quality, gdHeifChroma chroma)
+BGD_DECLARE(void) gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifChroma chroma)
+{
+	_noHeifError();
+}
+
+BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, gdHeifChroma chroma)
+{
+	_noHeifError();
+}
+
+BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile)
+{
+	_noHeifError();
+}
+
+BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size)
+{
+	_noHeifError();
+	return NULL;
+}
+
+BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, gdHeifChroma chroma)
 {
 	_noHeifError();
 	return NULL;

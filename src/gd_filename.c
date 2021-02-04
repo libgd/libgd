@@ -60,6 +60,12 @@ static const struct FileType {
     {".jpeg",   gdImageCreateFromJpeg,  writejpeg,      NULL},
 #endif
 
+#ifdef HAVE_LIBHEIF
+    {".heic",   gdImageCreateFromHeif,  gdImageHeif,    NULL},
+    {".heix",   gdImageCreateFromHeif,  NULL,           NULL},
+    {".avif" ,  gdImageCreateFromAvif,  gdImageAvif,    NULL},
+#endif
+
 #ifdef HAVE_LIBTIFF
     {".tiff",   gdImageCreateFromTiff,  gdImageTiff,    NULL},
     {".tif" ,   gdImageCreateFromTiff,  gdImageTiff,    NULL},
@@ -128,6 +134,8 @@ ftype(const char *filename) {
         - .tga
         - .png
         - .jpg, .jpeg
+        - .heif, .heix
+        - .avif
         - .tiff, .tif
         - .webp
         - .xpm
