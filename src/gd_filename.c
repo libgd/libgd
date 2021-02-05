@@ -37,8 +37,7 @@ static void BGD_STDCALL writebmp(gdImagePtr im, FILE *out) {
 }/* writejpeg*/
 
 
-enum FType {UNKNOWN, PNG, JPG, GIF, TIFF, GD, GD2, WEBP};
-static struct FileType {
+static const struct FileType {
     const char *ext;
     ReadFn reader;
     WriteFn writer;
@@ -82,7 +81,7 @@ static struct FileType {
 };
 
 
-struct FileType *
+static const struct FileType *
 ftype(const char *filename) {
     int n;
     char *ext;
@@ -147,7 +146,7 @@ ftype(const char *filename) {
 */
 BGD_DECLARE(int)
 gdSupportsFileType(const char *filename, int writing) {
-    struct FileType *entry = ftype(filename);
+    const struct FileType *entry = ftype(filename);
     return !!entry && (!writing || !!entry->writer);
 }/* gdSupportsFileType*/
 
@@ -181,7 +180,7 @@ gdSupportsFileType(const char *filename, int writing) {
 
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromFile(const char *filename) {
-    struct FileType *entry = ftype(filename);
+    const struct FileType *entry = ftype(filename);
     FILE *fh;
     gdImagePtr result;
 
@@ -237,7 +236,7 @@ gdImageCreateFromFile(const char *filename) {
 
 BGD_DECLARE(int)
 gdImageFile(gdImagePtr im, const char *filename) {
-    struct FileType *entry = ftype(filename);
+    const struct FileType *entry = ftype(filename);
     FILE *fh;
 
     if (!entry || !entry->writer) return GD_FALSE;
