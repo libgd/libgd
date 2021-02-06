@@ -499,12 +499,6 @@ BGD_DECLARE(int) gdImageColorClosestAlpha (gdImagePtr im, int r, int g, int b, i
 #define HWB_UNDEFINED -1
 #define SETUP_RGB(s, r, g, b) {s.R = r/255.0; s.G = g/255.0; s.B = b/255.0;}
 
-#define MIN(a,b) ((a)<(b)?(a):(b))
-#define MIN3(a,b,c) ((a)<(b)?(MIN(a,c)):(MIN(b,c)))
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MAX3(a,b,c) ((a)<(b)?(MAX(b,c)):(MAX(a,c)))
-
-
 /*
  * Theoretically, hue 0 (pure red) is identical to hue 6 in these transforms. Pure
  * red always maps to 6 in this implementation. Therefore UNDEFINED can be

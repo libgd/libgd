@@ -4,6 +4,7 @@
 
 #include "gd.h"
 #include "gd_errors.h"
+#include "gd_intern.h"
 #include <math.h>
 
 /* In tests this is sufficient to prevent obvious artifacts */
@@ -11,9 +12,6 @@
 
 #define PI 3.141592
 #define DEG2RAD(x) ((x)*PI/180.)
-
-#define MAX(x,y) ((x) > (y) ? (x) : (y))
-#define MIN(x,y) ((x) < (y) ? (x) : (y))
 
 #define MAX4(x,y,z,w) \
 	((MAX((x),(y))) > (MAX((z),(w))) ? (MAX((x),(y))) : (MAX((z),(w))))

@@ -30,8 +30,6 @@
 typedef int (BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
 
 #define GET_PIXEL_FUNCTION(src)(src->trueColor?gdImageGetTrueColorPixel:gdImageGetPixel)
-#define MIN(a,b) ((a)<(b)?(a):(b))
-#define MAX(a,b) ((a)<(b)?(b):(a))
 
 #ifdef _WIN32
 # define GD_SCATTER_SEED() (unsigned int)(time(0) * GetCurrentProcessId())

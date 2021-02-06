@@ -93,9 +93,6 @@ static gdImagePtr gdImageRotateNearestNeighbour(gdImagePtr src,
 static gdImagePtr gdImageRotateGeneric(gdImagePtr src, const float degrees,
                                        const int bgColor);
 
-
-#define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
-
 /* only used here, let do a generic fixed point integers later if required by other
    part of GD */
 typedef long gdFixed;
