@@ -9,8 +9,12 @@ CFLAGS_EXTRA=$2         # Extra C flags
 
 LOG=run_tests.log
 
-CFLAGS="-g -Igdtest/ -I. -I../src/ -D_WIN32 -DHAVE_SYS_STAT_H $CFLAGS_EXTRA"
-LDFLAGS='-L../src -llibgd'
+CFLAGS=( -g -Igdtest/ -I. -I../src/ -D_WIN32 -DHAVE_SYS_STAT_H )
+if [[ -n "${CFLAGS_EXTRA}" ]]; then
+	# shellcheck disable=SC2206
+	CFLAGS+=( ${CFLAGS_EXTRA} )
+fi
+LDFLAGS=( -L../src -llibgd )
 DLLPATH=../src:$DLLPATH_EXTRA
 
 run_gcc() {
@@ -32,7 +36,7 @@ cd ../../tests
 echo "Setting up..."
 rm -f "${LOG}"
 [ -f test_config.h ] || echo '#define GDTEST_TOP_DIR "."' > test_config.h
-run_gcc -c $CFLAGS gdtest/gdtest.c
+run_gcc -c "${CFLAGS[@]}" gdtest/gdtest.c
 
 
 echo "Running tests:"
@@ -43,7 +47,7 @@ for test in $(find . -name '*.c' | grep -vE '^./(fontconfig|gdtest|gdhelpers|xpm
 	: $(( count += 1 ))
 
 	exe=${test%.c}.exe
-	if run_gcc -o "${exe}" ${CFLAGS} ${LDFLAGS} "${test}" gdtest.o; then
+	if run_gcc -o "${exe}" "${CFLAGS[@]}" "${LDFLAGS[@]}" "${test}" gdtest.o; then
 		true
 	else
 		echo "COMPILE_FAIL: $test"
