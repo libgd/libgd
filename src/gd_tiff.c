@@ -43,6 +43,7 @@
 
 #include "gd.h"
 #include "gd_errors.h"
+#include "gd_intern.h"
 #include "gdfonts.h"
 #include <stdio.h>
 #include <stdlib.h>
