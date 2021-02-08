@@ -9,7 +9,7 @@ v() { echo "$@"; "$@"; }
 # so that random hackers don't need it just to build the code.
 v docs/naturaldocs/run_docs.sh --nonfatal
 
-if echo "${OSTYPE:-$(uname)}" | grep -q '^darwin' ; then
+if uname | grep -qi '^darwin' ; then
 	echo "Having trouble on OS X? Try: brew install autoconf libtool automake gettext pkg-config cmake"
 fi
 

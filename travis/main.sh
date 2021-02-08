@@ -4,6 +4,7 @@
 
 # TODO: Add support for building/testing w/ASAN/etc... enabled.
 
+# shellcheck source=travis/lib.sh
 . "${0%/*}"/lib.sh
 
 # We have to do this by hand rather than use the coverity addon because of
@@ -78,18 +79,18 @@ build_autotools() {
 }
 
 cmake_args=(
-	-DBUILD_SHARED_LIBS=1
-	-DBUILD_STATIC_LIBS=1
-	-DBUILD_TEST=1
-	-DCMAKE_INSTALL_PREFIX=/usr/local
-	-DCMAKE_INSTALL_LIBDIR=/usr/local/lib
-	-DENABLE_GD_FORMATS=1
-	-DENABLE_FONTCONFIG=1
-	-DENABLE_FREETYPE=1
-	-DENABLE_JPEG=1
-	-DENABLE_PNG=1
-	-DENABLE_TIFF=1
-	-DENABLE_WEBP=1
+	"-DBUILD_SHARED_LIBS=1"
+	"-DBUILD_STATIC_LIBS=1"
+	"-DBUILD_TEST=1"
+	"-DCMAKE_INSTALL_PREFIX=/usr/local"
+	"-DCMAKE_INSTALL_LIBDIR=/usr/local/lib"
+	"-DENABLE_GD_FORMATS=1"
+	"-DENABLE_FONTCONFIG=1"
+	"-DENABLE_FREETYPE=1"
+	"-DENABLE_JPEG=1"
+	"-DENABLE_PNG=1"
+	"-DENABLE_TIFF=1"
+	"-DENABLE_WEBP=1"
 )
 
 # libxpm-dev is unavaible in brew repo
@@ -104,15 +105,15 @@ build_cmake() {
 	cd build
 	v cmake "${cmake_args[@]}" ..
 	m
-	v ctest -j${ncpus}
+	v ctest -j"${ncpus}"
 	cd ..
 	rm -rf build
 
 	# Then build in-tree.
 	v cmake "${cmake_args[@]}" .
 	m
-	v ctest -j${ncpus}
-	m install DESTDIR=$PWD/install-cmake
+	v ctest -j"${ncpus}"
+	m install DESTDIR="${PWD}/install-cmake"
 }
 
 compare_builds() {
@@ -148,7 +149,7 @@ build_codecov() {
 	export CFLAGS="-fprofile-arcs -ftest-coverage"
 	v cmake "${cmake_args[@]}" ..
 	m
-	v ctest -j${ncpus}
+	v ctest -j"${ncpus}"
 	bash <(curl -s https://codecov.io/bash)
 }
 

@@ -15,11 +15,10 @@ export GIT_PAGER=cat
 export LC_ALL=C
 
 # List all the non-binary files we know about in the tree.
-files=".tmp.files"
-trap 'rm -f "${files}"' EXIT
-git ls-tree -r --name-only HEAD | \
-	grep -Ev '\.(bin|bmp|gd|gd2|gif|jpg|jpeg|png|pic|sgi|tga|tiff|ttf|xbm|xpm)$' \
-	> "${files}"
+read -r -d'\n' -a files < <(
+	git ls-tree -r --name-only HEAD | \
+		grep -Ev '\.(bin|bmp|gd|gd2|gif|jpg|jpeg|png|pic|sgi|tga|tiff|ttf|xbm|xpm)$'
+) || :
 
 banner() {
 	echo
@@ -28,7 +27,7 @@ banner() {
 
 do_grep() {
 	# Use -a so UTF-8 files don't get flagged as binary & skipped.
-	if git grep -aHnE "$@" $(<"${files}") ; then
+	if git grep -aHnE "$@" "${files[@]}" ; then
 		ret=1
 	fi
 }
@@ -42,6 +41,6 @@ banner "Check for Windows line endings."
 do_grep $'\r$'
 
 banner "Checking trailing lines."
-"${TEST_DIR}"/whitespace.py $(<"${files}")
+"${TEST_DIR}"/whitespace.py "${files[@]}"
 
 exit ${ret}

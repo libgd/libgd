@@ -13,7 +13,7 @@ if [[ -n ${TRAVIS_OS_NAME} ]] ; then
 	normal=$(tput sgr0)
 else
 	whitebg=
-	blackbg=
+	blackfg=
 	normal=
 fi
 v() {
@@ -34,5 +34,5 @@ v() {
 
 ncpus=$(getconf _NPROCESSORS_ONLN)
 m() {
-	v make -j${ncpus} "$@"
+	v make -j"${ncpus}" "$@"
 }

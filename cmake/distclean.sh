@@ -12,7 +12,7 @@ Clean all the cmake generated output files.
 Options:
   --automake  Do not clean files autotools also creates
 EOF
-	exit ${1:-0}
+	exit "${1:-0}"
 }
 
 AUTOMAKE="false"

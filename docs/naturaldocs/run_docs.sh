@@ -15,9 +15,9 @@ usage() {
 
 nd() {
 	# Figure out the name of this tool.
-	if which naturaldocs 2>/dev/null ; then
+	if command -v naturaldocs >/dev/null ; then
 		return
-	elif which NaturalDocs 2>/dev/null ; then
+	elif command -v NaturalDocs >/dev/null ; then
 		return
 	else
 		return 1
@@ -46,7 +46,7 @@ elif [ $# -ne 0 ] ; then
 fi
 
 # Version number
-VERSION=`(cd ../../; perl config/getver.pl)`
+VERSION=$(cd ../../; perl config/getver.pl)
 
 # Clear away old docs and ensure the doc dir. is present.
 rm -rf html
@@ -66,11 +66,11 @@ sed -e "s/@VERSION@/$VERSION/g" preamble.txt > tmp/preamble.txt
 
 # Run naturaldocs to create the manual.
 $(nd) --rebuild --rebuild-output --documented-only \
-    -i tmp/ \
-    -img images/ \
-    -o html html  \
-    --project project/ \
-    -s Default libgd
+	-i tmp/ \
+	-img images/ \
+	-o html html  \
+	--project project/ \
+	-s Default libgd
 
 # And cleanup the temp files.
 rm -rf Data tmp
