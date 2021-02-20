@@ -15,9 +15,9 @@ usage() {
 
 nd() {
 	# Figure out the name of this tool.
-	if command -v naturaldocs >/dev/null ; then
+	if command -v naturaldocs ; then
 		return
-	elif command -v NaturalDocs >/dev/null ; then
+	elif command -v NaturalDocs ; then
 		return
 	else
 		return 1
@@ -45,7 +45,10 @@ elif [ $# -ne 0 ] ; then
 	usage "unknown options: $*"
 fi
 
-# Version number
+# Dump the tool version info for debugging.
+echo "Found '$(nd)': $($(nd) -h | head -n1)"
+
+# Library version number.
 VERSION=$(cd ../../; perl config/getver.pl)
 
 # Clear away old docs and ensure the doc dir. is present.
