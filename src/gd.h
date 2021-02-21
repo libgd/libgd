@@ -79,7 +79,7 @@ extern "C" {
 #define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt BGD_STDCALL
 
 /* VS2012+ disable keyword macroizing unless _ALLOW_KEYWORD_MACROS is set
-   We define inline, snprintf, and strcasecmp if they're missing
+   We define inline, and strcasecmp if they're missing
 */
 #ifdef _MSC_VER
 #  define _ALLOW_KEYWORD_MACROS
@@ -89,9 +89,6 @@ extern "C" {
 #  ifndef strcasecmp
 #    define strcasecmp _stricmp
 #  endif
-#if _MSC_VER < 1900
-     extern int snprintf(char*, size_t, const char*, ...);
-#endif
 #endif
 
 /* gd.h: declarations file for the graphic-draw module.
