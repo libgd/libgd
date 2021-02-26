@@ -399,15 +399,15 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 			im->tpixels[y][x] = gdTrueColorAlpha(r, g, b, a);
 		}
 	}
-
+	
 cleanup:
-		// if io has been allocated, this frees it
-		avifDecoderDestroy(decoder);
+	// if io has been allocated, this frees it
+	avifDecoderDestroy(decoder);
 
-		if (rgb.pixels)
-			avifRGBImageFreePixels(&rgb);
+	if (rgb.pixels)
+		avifRGBImageFreePixels(&rgb);
 
-		return im;
+	return im;
 }
 
 
