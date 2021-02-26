@@ -47,7 +47,7 @@ find_path(WEBP_INCLUDE_DIR decode.h
 set(WEBP_NAMES ${WEBP_NAMES} webp)
 find_library(WEBP_LIBRARY
   NAMES ${WEBP_NAMES}
-  PATHS "${PROJECT_SOURCE_DIR}/../deps/lib" /usr/lib64 /usr/lib /usr/local/lib
+  PATHS /usr/lib64 /usr/lib /usr/local/lib
   )
 
 if (WEBP_LIBRARY AND WEBP_INCLUDE_DIR)
