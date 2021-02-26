@@ -1,5 +1,10 @@
 TESTS=bmp\bmp_im2im \
 bmp\bmp_null \
+avif\avif_ptr_double_free \
+avif\avif_im2im \
+avif\avif_null \
+avif\compare_avif_to_png \
+avif\bad_input \
 freetype\bug00132 \
 gd\gd_im2im \
 gd\gd_null \

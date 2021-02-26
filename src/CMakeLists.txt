@@ -2,6 +2,7 @@ SET (LIBGD_SRC_FILES
 	bmp.h
 	gd.c
 	gd.h
+	gd_avif.c
 	gd_bmp.c
 	gd_color.c
 	gd_color.h
@@ -76,6 +77,11 @@ if(MSVC)
 	set(GD_PROGRAMS_LIB_SRC_FILES ${GD_PROGRAMS_LIB_SRC_FILES}
 		getopt.c
 	)
+	if(MSVC_VERSION LESS 1900)
+		set(LIBGD_SRC_FILES ${LIBGD_SRC_FILES}
+			snprintf.c
+		)
+	endif(MSVC_VERSION LESS 1900)
 endif(MSVC)
 
 include(GNUInstallDirs)
@@ -130,6 +136,7 @@ SET(LIBGD_DEP_LIBS
 	${XPM_LIBRARIES}
 	${FONTCONFIG_LIBRARY}
 	${WEBP_LIBRARIES}
+	${AVIF_LIBRARIES}
 	${RAQM_LIBRARIES}
 	${HEIF_LIBRARIES}
 )

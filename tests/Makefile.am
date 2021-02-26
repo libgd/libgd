@@ -13,6 +13,7 @@ CLEANFILES =
 EXTRA_DIST =
 TESTS =
 
+include avif/Makemodule.am
 include bmp/Makemodule.am
 include fontconfig/Makemodule.am
 include freetype/Makemodule.am
@@ -99,6 +100,7 @@ EXTRA_DIST += \
 
 # We don't keep any media files in the top dir ... just generated outputs.
 CLEANFILES += \
+	*.avif \
 	*.bmp \
 	*.gd \
 	*.gd2 \

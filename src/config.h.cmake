@@ -57,6 +57,9 @@
 /* Define if you have heif */
 #cmakedefine HAVE_LIBHEIF
 
+/* Define if you have avif */
+#cmakedefine HAVE_LIBAVIF
+
 /* Define if you have xpm */
 #cmakedefine HAVE_LIBXPM
 

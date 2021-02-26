@@ -46,6 +46,7 @@ It also has optional support for more formats via external libraries:
 * [PNG](https://en.wikipedia.org/wiki/Portable_Network_Graphics) via [libpng](http://www.libpng.org/)
 * [TIFF](https://en.wikipedia.org/wiki/Tagged_Image_File_Format) via [libtiff](http://www.libtiff.org/)
 * [WebP](https://en.wikipedia.org/wiki/WebP) via [libwebp](https://developers.google.com/speed/webp/)
+* [AVIF](https://en.wikipedia.org/wiki/AV1#AV1_Image_File_Format_(AVIF)) via [libavif](https://github.com/AOMediaCodec/libavif)
 * [XPM](https://en.wikipedia.org/wiki/X_PixMap) via [libXpm](http://xorg.freedesktop.org/)
 
 Besides that, GD depends on some external libraries, which are all optional

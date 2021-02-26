@@ -79,7 +79,7 @@ extern "C" {
 #define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt BGD_STDCALL
 
 /* VS2012+ disable keyword macroizing unless _ALLOW_KEYWORD_MACROS is set
-   We define inline, and strcasecmp if they're missing
+   We define inline, snprintf, and strcasecmp if they're missing
 */
 #ifdef _MSC_VER
 #  define _ALLOW_KEYWORD_MACROS
@@ -89,6 +89,9 @@ extern "C" {
 #  ifndef strcasecmp
 #    define strcasecmp _stricmp
 #  endif
+#if _MSC_VER < 1900
+     extern int snprintf(char*, size_t, const char*, ...);
+#endif
 #endif
 
 /* gd.h: declarations file for the graphic-draw module.
@@ -668,6 +671,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtx *infile);
 
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *inFile);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *infile);
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffPtr(int size, void *data);
@@ -1131,6 +1138,11 @@ BGD_DECLARE(void *) gdImageHeifPtr(gdImagePtr im, int *size);
 BGD_DECLARE(void *) gdImageHeifPtrEx(gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma);
 BGD_DECLARE(void) gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma);
 
+BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile);
+BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int speed);
+BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed);
+BGD_DECLARE(void) gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, int speed);
 
 /**
  * Group: GifAnim
