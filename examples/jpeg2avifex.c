@@ -17,7 +17,6 @@
 #include "gd.h"
 
 #ifdef HAVE_LIBAVIF
-#include <avif/avif.h>
 
 static void usage() {
 	fprintf(stderr, "Usage: jpeg2avifex [-q quality] [-s speed] infile.jpg outfile.avif\n");
