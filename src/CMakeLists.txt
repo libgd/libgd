@@ -77,11 +77,6 @@ if(MSVC)
 	set(GD_PROGRAMS_LIB_SRC_FILES ${GD_PROGRAMS_LIB_SRC_FILES}
 		getopt.c
 	)
-	if(MSVC_VERSION LESS 1900)
-		set(LIBGD_SRC_FILES ${LIBGD_SRC_FILES}
-			snprintf.c
-		)
-	endif(MSVC_VERSION LESS 1900)
 endif(MSVC)
 
 include(GNUInstallDirs)
