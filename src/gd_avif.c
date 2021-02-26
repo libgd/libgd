@@ -502,8 +502,8 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 
 	avifPixelFormat subsampling = quality >= HIGH_QUALITY_SUBSAMPLING_THRESHOLD ?
                                 CHROMA_SUBAMPLING_HIGH_QUALITY : CHROMA_SUBSAMPLING_DEFAULT;
-
-  // Create the AVIF image.
+	
+	// Create the AVIF image.
 	// Set the ICC to sRGB, as that's what gd supports right now.
 	// Note that MATRIX_COEFFICIENTS_IDENTITY enables lossless conversion from RGB to YUV.
 

@@ -65,6 +65,7 @@ int main() {
 		// Then, decode each AVIF into a GD format, and compare that with the orginal PNG.
 
 avif2png:
+		continue;
 
 /* Skip this reverse test for now, until we can find images that encode to PNGs
 	 losslessly.
@@ -79,8 +80,9 @@ avif2png:
 
 		strcat(strcpy(errMsg, filenames[i]), ".avif: Encoded PNG image did not match original AVIF\n");
 		gdTestAssertMsg(gdAssertImageEqualsToFile(pngFilePath, imFromAvif), errMsg);
-	}
 */
+
+}
 
 	if (imFromPng)
 		gdImageDestroy(imFromPng);
