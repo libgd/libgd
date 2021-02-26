@@ -174,7 +174,7 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 	void *dataBuf = NULL;
 	gdIOCtx *ctx = (gdIOCtx *) io->data;
 
-	//TODO: if we set sizeHint, this will be more efficient.
+	// TODO: if we set sizeHint, this will be more efficient.
 
 	if (offset > LONG_MAX || size < 0)
 		return AVIF_RESULT_IO_ERROR;
@@ -216,7 +216,7 @@ static void destroyAvifIO(struct avifIO *io) {
 	 Returns NULL if memory for the object can't be allocated.
 */
 
-//TODO: can we get sizeHint somehow?
+// TODO: can we get sizeHint somehow?
 static avifIO *createAvifIOFromCtx(gdIOCtx *ctx) {
 	avifIO *io;
 
@@ -224,7 +224,7 @@ static avifIO *createAvifIOFromCtx(gdIOCtx *ctx) {
 	if (io == NULL)
 		return NULL;
 
-// TODO: setting persistent=FALSE is safe, but it's less efficient. Is it necessary?
+	// TODO: setting persistent=FALSE is safe, but it's less efficient. Is it necessary?
 	io->persistent = AVIF_FALSE;
 	io->read = readFromCtx;
 	io->write = NULL; // this function is currently unused; see avif.h
@@ -386,7 +386,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 
 	im->saveAlphaFlag = 1;
 
-// Read the pixels from the AVIF image and copy them into the GD image.
+	// Read the pixels from the AVIF image and copy them into the GD image.
 
 	uint8_t *p = rgb.pixels;
 
@@ -401,7 +401,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 	}
 
 cleanup:
-		avifDecoderDestroy(decoder);		// if io has been allocated, this frees it
+		// if io has been allocated, this frees it
+		avifDecoderDestroy(decoder);
 
 		if (rgb.pixels)
 			avifRGBImageFreePixels(&rgb);
@@ -501,7 +502,7 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 		speed = CLAMP(speed, AVIF_SPEED_SLOWEST, AVIF_SPEED_FASTEST);
 
 	avifPixelFormat subsampling = quality >= HIGH_QUALITY_SUBSAMPLING_THRESHOLD ?
-                                CHROMA_SUBAMPLING_HIGH_QUALITY : CHROMA_SUBSAMPLING_DEFAULT;
+		CHROMA_SUBAMPLING_HIGH_QUALITY : CHROMA_SUBSAMPLING_DEFAULT;
 
 	// Create the AVIF image.
 	// Set the ICC to sRGB, as that's what gd supports right now.
@@ -514,7 +515,8 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 	avifIm->matrixCoefficients = lossless ? AVIF_MATRIX_COEFFICIENTS_IDENTITY : AVIF_MATRIX_COEFFICIENTS_BT709;
 
 	avifRGBImageSetDefaults(&rgb, avifIm);
-	avifRGBImageAllocatePixels(&rgb); // this allocates memory, and sets rgb.rowBytes and rgb.pixels.
+	// this allocates memory, and sets rgb.rowBytes and rgb.pixels.
+	avifRGBImageAllocatePixels(&rgb);
 
 	// Parse RGB data from the GD image, and copy it into the AVIF RGB image.
 	// Convert 7-bit GD alpha channel values to 8-bit AVIF values.
@@ -542,7 +544,7 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 
 	encoder = avifEncoderCreate();
 	int quantizerQuality = quality == QUALITY_DEFAULT ?
-												 QUANTIZER_DEFAULT : quality2Quantizer(quality);
+		QUANTIZER_DEFAULT : quality2Quantizer(quality);
 
 	encoder->minQuantizer = quantizerQuality;
 	encoder->maxQuantizer = quantizerQuality;
@@ -554,7 +556,8 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 	if (failed)
 		goto cleanup;
 
-	result = avifEncoderAddImage(encoder, avifIm, 1, AVIF_ADD_IMAGE_FLAG_SINGLE); //TODO: is there a reason to use timeSscales != 1?
+	//TODO: is there a reason to use timeSscales != 1?
+	result = avifEncoderAddImage(encoder, avifIm, 1, AVIF_ADD_IMAGE_FLAG_SINGLE);
 	failed = isAvifError(result, "Could not encode image");
 	if (failed)
 		goto cleanup;
@@ -569,16 +572,16 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 	gdPutBuf(avifOutput.data, avifOutput.size, outfile);
 
 cleanup:
-		if (rgb.pixels)
-			avifRGBImageFreePixels(&rgb);
+	if (rgb.pixels)
+		avifRGBImageFreePixels(&rgb);
 
-		if (encoder)
-			avifEncoderDestroy(encoder);
+	if (encoder)
+		avifEncoderDestroy(encoder);
 
-		if (avifOutput.data)
-			avifRWDataFree(&avifOutput);
+	if (avifOutput.data)
+		avifRWDataFree(&avifOutput);
 
-		return failed;
+	return failed;
 }
 
 BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int speed)
