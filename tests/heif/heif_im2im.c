@@ -39,9 +39,12 @@ int main()
 		result.pixels_changed == 0;
 	gdTestAssertMsg(result.pixels_changed == 0, "pixels changed: %d\n", result.pixels_changed);
 
-	gdImageDestroy(dst);
-	gdFree(p);
-	gdImageDestroy(src);
+	if (dst != NULL)
+		gdImageDestroy(dst);
+	if (p != NULL)
+		gdFree(p);
+	if (src != NULL)
+		gdImageDestroy(src);
 
 	return gdNumFailures();
 }

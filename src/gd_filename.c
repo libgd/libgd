@@ -63,7 +63,6 @@ static const struct FileType {
 #ifdef HAVE_LIBHEIF
     {".heic",   gdImageCreateFromHeif,  gdImageHeif,    NULL},
     {".heix",   gdImageCreateFromHeif,  NULL,           NULL},
-    {".avif" ,  gdImageCreateFromAvif,  gdImageAvif,    NULL},
 #endif
 
 #ifdef HAVE_LIBTIFF

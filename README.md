@@ -41,6 +41,8 @@ It also has optional support for more formats via external libraries:
 
 * [JPEG](https://en.wikipedia.org/wiki/JPEG) via [IJG/libjpeg](http://www.ijg.org/) or [libjpeg-turbo](http://libjpeg-turbo.virtualgl.org/)
   * Does not include [JPEG 2000](https://en.wikipedia.org/wiki/JPEG_2000)
+* [HEIF](https://en.wikipedia.org/wiki/High_Efficiency_Image_File_Format) via [libheif](https://github.com/strukturag/libheif/)
+  * Also it includes [AVIF](https://en.wikipedia.org/wiki/AV1#AV1_Image_File_Format_%28AVIF%29) read support if your system's `libheif` has AV1 decoding.
 * [PNG](https://en.wikipedia.org/wiki/Portable_Network_Graphics) via [libpng](http://www.libpng.org/)
 * [TIFF](https://en.wikipedia.org/wiki/Tagged_Image_File_Format) via [libtiff](http://www.libtiff.org/)
 * [WebP](https://en.wikipedia.org/wiki/WebP) via [libwebp](https://developers.google.com/speed/webp/)

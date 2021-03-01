@@ -22,7 +22,7 @@ int main()
 
 	src->sx = 0;
 
-	dst = gdImageAvifPtrEx(src, &size, 0, GD_HEIF_CHROMA_444);
+	dst = gdImageHeifPtrEx(src, &size, 100, GD_HEIF_CODEC_AV1, GD_HEIF_CHROMA_444);
 	gdTestAssert(dst == NULL);
 
 	gdImageDestroy(src);

@@ -251,82 +251,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtx *infile)
 	return _gdImageCreateFromHeifCtx(infile, GD_HEIF_BRAND_AVIF | GD_HEIF_BRAND_MIF1 | GD_HEIF_BRAND_HEIC | GD_HEIF_BRAND_HEIX);
 }
 
-/*
-  Function: gdImageCreateFromAvif
-
-    <gdImageCreateFromAvif> is called to load truecolor images from
-    AVIF format files. Invoke <gdImageCreateFromAvif> with an
-    already opened pointer to a file containing the desired
-    image. <gdImageCreateFromAvif> returns a <gdImagePtr> to the new
-    truecolor image, or NULL if unable to load the image (most often
-    because the file is corrupt or does not contain a AVIF
-    image). <gdImageCreateFromAvif> does not close the file.
-
-    You can inspect the sx and sy members of the image to determine
-    its size. The image must eventually be destroyed using
-    <gdImageDestroy>.
-
-    *The returned image is always a truecolor image.*
-
-  Variants:
-
-    <gdImageCreateFromHeif> AVIF method counterpart.
-
-  Parameters:
-
-    infile - The input FILE pointer.
-
-  Returns:
-
-    A pointer to the new *truecolor* image.  This will need to be
-    destroyed with <gdImageDestroy> once it is no longer needed.
-
-    On error, returns NULL.
-*/
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *inFile)
-{
-	gdImagePtr im;
-	gdIOCtx *in = gdNewFileCtx(inFile);
-	if (!in) {
-		return 0;
-	}
-	im = _gdImageCreateFromHeifCtx(in, GD_HEIF_BRAND_AVIF | GD_HEIF_BRAND_MIF1);
-	in->gd_free(in);
-
-	return im;
-}
-
-/*
-  Function: gdImageCreateFromAvifPtr
-
-    See <gdImageCreateFromAvif>.
-
-  Parameters:
-
-    size            - size of AVIF data in bytes.
-    data            - pointer to AVIF data.
-*/
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data)
-{
-	gdImagePtr im;
-	gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
-	if (!in)
-		return 0;
-	im = _gdImageCreateFromHeifCtx(in, GD_HEIF_BRAND_AVIF | GD_HEIF_BRAND_MIF1);
-	in->gd_free(in);
-	return im;
-}
-
-/*
-  Function: gdImageCreateFromAvifCtx
-
-    See <gdImageCreateFromAvif>.
-*/
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *infile)
-{
-	return _gdImageCreateFromHeifCtx(infile, GD_HEIF_BRAND_AVIF | GD_HEIF_BRAND_MIF1);
-}
-
 
 static struct heif_error _gdImageWriteHeif(struct heif_context *heif_ctx, const void *data, size_t size, void *userdata)
 {
@@ -381,11 +305,11 @@ static int _gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifC
 	heif_ctx = heif_context_alloc();
 	if (heif_ctx == NULL) {
 		gd_error("gd-heif could not allocate context\n");
-		return NULL;
+		return GD_FALSE;
 	}
 	err = heif_context_get_encoder_for_format(heif_ctx, codec, &heif_enc);
 	if (err.code != heif_error_Ok) {
-		gd_error("gd-heif image creation failed\n");
+		gd_error("gd-heif encoder acquisition failed (missing codec support?)\n");
 		heif_context_free(heif_ctx);
 		return GD_FALSE;
 	}
@@ -616,145 +540,6 @@ BGD_DECLARE(void *) gdImageHeifPtrEx(gdImagePtr im, int *size, int quality, gdHe
 	return rv;
 }
 
-/*
-  Function: gdImageAvifCtx
-
-    Write the image as AVIF data via a <gdIOCtx>. See <gdImageAvifEx>
-    for more details.
-
-  Variants:
-
-    <gdImageHeifCtx> HEIF method counterpart.
-
-  Parameters:
-
-    im          - The image to write.
-    outfile     - The output sink.
-    quality     - Image quality.
-    chroma      - The output chroma subsampling format.
-
-  Returns:
-
-    Nothing.
-*/
-BGD_DECLARE(void) gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifChroma chroma)
-{
-	_gdImageHeifCtx(im, outfile, quality, GD_HEIF_CODEC_AV1, chroma);
-}
-
-/*
-  Function: gdImageAvifEx
-
-    <gdImageAvifEx> outputs the specified image to the specified file in
-    AVIF format. The file must be open for writing. Under MSDOS and
-    all versions of Windows, it is important to use "wb" as opposed to
-    simply "w" as the mode when opening the file, and under Unix there
-    is no penalty for doing so. <gdImageAvifEx> does not close the file;
-    your code must do so.
-
-    If _quality_ is -1, a reasonable quality value (which should yield a
-    good general quality / size tradeoff for most situations) is used. Otherwise
-    _quality_ should be a value in the range 0-100, higher quality values
-    usually implying both higher quality and larger image sizes or 200, for
-    lossless codec.
-
-  Variants:
-
-    <gdImageAvifCtx> stores the image using a <gdIOCtx> struct.
-
-    <gdImageAvifPtrEx> stores the image to RAM.
-
-    <gdImageHeifEx> HEIF method counterpart.
-
-  Parameters:
-
-    im          - The image to save.
-    outFile     - The FILE pointer to write to.
-    quality     - Codec quality (0-100).
-    chroma      - The output chroma subsampling format.
-
-  Returns:
-
-    Nothing.
-*/
-BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, gdHeifChroma chroma)
-{
-	gdIOCtx *out = gdNewFileCtx(outFile);
-	if (out == NULL) {
-		return;
-	}
-	_gdImageHeifCtx(im, out, quality, GD_HEIF_CODEC_AV1, chroma);
-	out->gd_free(out);
-}
-
-/*
-  Function: gdImageAvif
-
-    Variant of <gdImageAvifEx> which uses the default quality (-1) and the
-    default chroma subsampling (GD_HEIF_CHROMA_444).
-
-  Parameters:
-
-    im      - The image to save
-    outFile - The FILE pointer to write to.
-
-  Returns:
-
-    Nothing.
-*/
-BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile)
-{
-	gdIOCtx *out = gdNewFileCtx(outFile);
-	if (out == NULL) {
-		return;
-	}
-	_gdImageHeifCtx(im, out, -1, GD_HEIF_CODEC_AV1, GD_HEIF_CHROMA_444);
-	out->gd_free(out);
-}
-
-/*
-  Function: gdImageAvifPtr
-
-    See <gdImageAvifEx>.
-*/
-BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size)
-{
-	void *rv;
-	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
-	if (out == NULL) {
-		return NULL;
-	}
-	if (_gdImageHeifCtx(im, out, -1, GD_HEIF_CODEC_AV1, GD_HEIF_CHROMA_444)) {
-		rv = gdDPExtractData(out, size);
-	} else {
-		rv = NULL;
-	}
-	out->gd_free(out);
-
-	return rv;
-}
-
-/*
-  Function: gdImageAvifPtrEx
-
-    See <gdImageAvifEx>.
-*/
-BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, gdHeifChroma chroma)
-{
-	void *rv;
-	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
-	if (out == NULL) {
-		return NULL;
-	}
-	if (_gdImageHeifCtx(im, out, quality, GD_HEIF_CODEC_AV1, chroma)) {
-		rv = gdDPExtractData(out, size);
-	} else {
-		rv = NULL;
-	}
-	out->gd_free(out);
-	return rv;
-}
-
 #else /* HAVE_LIBHEIF */
 
 static void _noHeifError(void)
@@ -775,24 +560,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data)
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtx *infile)
-{
-	_noHeifError();
-	return NULL;
-}
-
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *inFile)
-{
-	_noHeifError();
-	return NULL;
-}
-
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data)
-{
-	_noHeifError();
-	return NULL;
-}
-
-BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *infile)
 {
 	_noHeifError();
 	return NULL;
@@ -820,33 +587,6 @@ BGD_DECLARE(void *) gdImageHeifPtr(gdImagePtr im, int *size)
 }
 
 BGD_DECLARE(void *) gdImageHeifPtrEx(gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma)
-{
-	_noHeifError();
-	return NULL;
-}
-
-BGD_DECLARE(void) gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifChroma chroma)
-{
-	_noHeifError();
-}
-
-BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, gdHeifChroma chroma)
-{
-	_noHeifError();
-}
-
-BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile)
-{
-	_noHeifError();
-}
-
-BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size)
-{
-	_noHeifError();
-	return NULL;
-}
-
-BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, gdHeifChroma chroma)
 {
 	_noHeifError();
 	return NULL;
