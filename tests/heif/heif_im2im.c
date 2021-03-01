@@ -13,7 +13,6 @@ int main()
 	int r, g, b;
 	void *p;
 	int size = 0;
-	int status = 0;
 	CuTestImageResult result = {0, 0};
 
 	src = gdImageCreateTrueColor(100, 100);
@@ -36,7 +35,7 @@ int main()
 	if (gdTestAssertMsg(src != NULL && dst != NULL, "cannot compare with NULL buffer"))
 		gdTestImageDiff(src, dst, NULL, &result);
 	else
-		result.pixels_changed == 0;
+		result.pixels_changed = 0;
 	gdTestAssertMsg(result.pixels_changed == 0, "pixels changed: %d\n", result.pixels_changed);
 
 	if (dst != NULL)

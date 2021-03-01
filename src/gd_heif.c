@@ -67,8 +67,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile)
 		return NULL;
 	im = gdImageCreateFromHeifCtx(in);
 	in->gd_free(in);
-	if (!im)
-		return NULL;
 
 	return im;
 }
@@ -92,8 +90,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data)
 		return NULL;
 	im = gdImageCreateFromHeifCtx(in);
 	in->gd_free(in);
-	if (!im)
-		return NULL;
+
 	return im;
 }
 
@@ -124,13 +121,14 @@ static gdImagePtr _gdImageCreateFromHeifCtx(gdIOCtx *infile, gd_heif_brand expec
 	uint8_t   *filedata = NULL;
 	uint8_t    *rgba = NULL;
 	unsigned char   *read, *temp, magic[GD_HEIF_HEADER];
+	int magic_len;
 	size_t size = 0, n = GD_HEIF_ALLOC_STEP;
 	gdImagePtr im;
 	int x, y;
 	uint8_t *p;
 
-	gdGetBuf(magic, GD_HEIF_HEADER, infile);
-	if (!_gdHeifCheckBrand(magic, expected_brand)) {
+	magic_len = gdGetBuf(magic, GD_HEIF_HEADER, infile);
+	if (magic_len != GD_HEIF_HEADER || !_gdHeifCheckBrand(magic, expected_brand)) {
 		gd_error("gd-heif incorrect type of file\n");
 		return NULL;
 	}
@@ -185,9 +183,8 @@ static gdImagePtr _gdImageCreateFromHeifCtx(gdIOCtx *infile, gd_heif_brand expec
 		heif_context_free(heif_ctx);
 		return NULL;
 	}
-#if LIBHEIF_NUMERIC_VERSION >= 0x01070000
+
 	heif_dec_opts->convert_hdr_to_8bit = GD_TRUE;
-#endif /* LIBHEIF_NUMERIC_VERSION >= 0x01070000 */
 	heif_dec_opts->ignore_transformations = GD_TRUE;
 	err = heif_decode_image(heif_imhandle, &heif_im, heif_colorspace_RGB, heif_chroma_interleaved_RGBA, heif_dec_opts);
 	heif_decoding_options_free(heif_dec_opts);
@@ -303,7 +300,7 @@ static int _gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifC
 		gd_error("gd-heif could not allocate context\n");
 		return GD_FALSE;
 	}
-	err = heif_context_get_encoder_for_format(heif_ctx, codec, &heif_enc);
+	err = heif_context_get_encoder_for_format(heif_ctx, (enum heif_compression_format)codec, &heif_enc);
 	if (err.code != heif_error_Ok) {
 		gd_error("gd-heif encoder acquisition failed (missing codec support?)\n");
 		heif_context_free(heif_ctx);

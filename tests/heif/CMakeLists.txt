@@ -4,6 +4,7 @@ LIST(APPEND TESTS_FILES
 	heif_im2im
 	heif_null
 	heif_ptr_double_free
+	heif_read
 )
 ENDIF(HEIF_FOUND)
 
