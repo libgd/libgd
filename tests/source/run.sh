@@ -17,7 +17,7 @@ export LC_ALL=C
 # List all the non-binary files we know about in the tree.
 read -r -d'\n' -a files < <(
 	git ls-tree -r --name-only HEAD | \
-		grep -Ev '\.(bin|bmp|gd|gd2|gif|jpg|jpeg|png|pic|sgi|tga|tiff|ttf|xbm|xpm)$'
+		grep -Ev '\.(avif|bin|bmp|gd|gd2|gif|heic|jpg|jpeg|png|pic|sgi|tga|tiff|ttf|xbm|xpm)$'
 ) || :
 
 banner() {

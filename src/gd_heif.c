@@ -47,10 +47,6 @@ typedef enum gd_heif_brand {
 
     *The returned image is always a truecolor image.*
 
-  Variants:
-
-    <gdImageCreateFromAvif> AVIF method counterpart.
-
   Parameters:
 
     infile - The input FILE pointer.
@@ -404,10 +400,6 @@ static int _gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifC
     Write the image as HEIF data via a <gdIOCtx>. See <gdImageHeifEx>
     for more details.
 
-  Variants:
-
-    <gdImageAvifCtx> AVIF method counterpart.
-
   Parameters:
 
     im          - The image to write.
@@ -446,8 +438,6 @@ BGD_DECLARE(void) gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, g
     <gdImageHeifCtx> stores the image using a <gdIOCtx> struct.
 
     <gdImageHeifPtrEx> stores the image to RAM.
-
-    <gdImageAvifEx> AVIF method counterpart.
 
   Parameters:
 
