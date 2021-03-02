@@ -10,14 +10,14 @@
 int main()
 {
 	gdImagePtr im;
-    FILE *fp;
+	FILE *fp;
 
-    fp = gdTestFileOpen2("heif", "label.heic");
-    gdTestAssert(fp != NULL);
+	fp = gdTestFileOpen2("heif", "label.heic");
+	gdTestAssert(fp != NULL);
 	im = gdImageCreateFromHeif(fp);
 	if (gdTestAssert(im != NULL))
 		gdImageDestroy(im);
-    fclose(fp);
+	fclose(fp);
 
 	return gdNumFailures();
 }
