@@ -55,6 +55,7 @@ Group: Image Formats  {
    File: GD2 IO  (no auto-title, gd_gd2.c)
    File: GIF Input  (no auto-title, gd_gif_in.c)
    File: GIF Output  (no auto-title, gd_gif_out.c)
+   File: HEIF IO  (no auto-title, gd_heif.c)
    File: JPEG IO  (no auto-title, gd_jpeg.c)
    File: PNG IO  (no auto-title, gd_png.c)
    File: TGA Input  (no auto-title, gd_tga.c)

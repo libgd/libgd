@@ -94,10 +94,11 @@ LIB_OBJS= \
   $(LIBGD_OBJ_DIR)\gd_version.obj \
   $(LIBGD_OBJ_DIR)\gd_crop.obj \
   $(LIBGD_OBJ_DIR)\gd_color_map.obj \
+  $(LIBGD_OBJ_DIR)\gd_heif.obj \
   $(LIBGD_OBJ_DIR)\gd_webp.obj
 
 LIBS=kernel32.lib ole32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib Dnsapi.lib Gdi32.Lib
-LIBS_GD=libjpeg_a.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib libwebp_a.lib libxpm_a.lib libtiff.lib
+LIBS_GD=libjpeg_a.lib freetype_a.lib libpng_a.lib libiconv_a.lib  zlib_a.lib libheif_a.lib libwebp_a.lib libxpm_a.lib libtiff.lib
 
 PROG_EXES= \
 	$(LIBGD_OBJ_DIR)\gdcmpgif.exe \
@@ -138,6 +139,7 @@ CFLAGS= $(CFLAGS) \
        /DHAVE_LIBJPEG=1\
        /DHAVE_LIBPNG=1\
        /DHAVE_LIBWEBP=1\
+       /DHAVE_LIBHEIF=1\
        /DHAVE_LIBZ=1\
        /DHAVE_LIBXPM=1\
        /DHAVE_LIBTIFF=1\
@@ -195,6 +197,9 @@ make_dirs:
 	@echo #endif>> $(GD_CONFIG_H)
 	@echo #ifndef HAVE_LIBWEBP>> $(GD_CONFIG_H)
 	@echo #define HAVE_LIBWEBP>> $(GD_CONFIG_H)
+	@echo #endif>> $(GD_CONFIG_H)
+	@echo #ifndef HAVE_LIBHEIF>> $(GD_CONFIG_H)
+	@echo #define HAVE_LIBHEIF>> $(GD_CONFIG_H)
 	@echo #endif>> $(GD_CONFIG_H)
 	@echo #ifndef HAVE_LIBZ>> $(GD_CONFIG_H)
 	@echo #define HAVE_LIBZ>> $(GD_CONFIG_H)

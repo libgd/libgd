@@ -73,6 +73,7 @@ libgd_la_SOURCES = \
 	gd_gd2.c \
 	gd_gif_in.c \
 	gd_gif_out.c \
+	gd_heif.c \
 	gd_intern.h \
 	gd_interpolation.c \
 	gd_io.c \

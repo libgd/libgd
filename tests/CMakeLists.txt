@@ -82,6 +82,7 @@ if (BUILD_TEST)
 		gdtransformaffineboundingbox
 		gdtransformaffinecopy
 		gif
+		heif
 		jpeg
 		png
 		tga
