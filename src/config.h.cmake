@@ -27,11 +27,17 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine HAVE_INTTYPES_H
 
+/* Define if you have avif */
+#cmakedefine HAVE_LIBAVIF
+
 /* Define if you have fontconfig */
 #cmakedefine HAVE_LIBFONTCONFIG
 
 /* Define if you have freetype */
 #cmakedefine HAVE_LIBFREETYPE
+
+/* Define if you have heif */
+#cmakedefine HAVE_LIBHEIF
 
 /* Define if you have liq */
 #cmakedefine HAVE_LIBIMAGEQUANT
@@ -53,12 +59,6 @@
 
 /* Define if you have webp */
 #cmakedefine HAVE_LIBWEBP
-
-/* Define if you have heif */
-#cmakedefine HAVE_LIBHEIF
-
-/* Define if you have avif */
-#cmakedefine HAVE_LIBAVIF
 
 /* Define if you have xpm */
 #cmakedefine HAVE_LIBXPM
