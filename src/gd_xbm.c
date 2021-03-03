@@ -18,10 +18,6 @@
 #include "gd_errors.h"
 #include "gdhelpers.h"
 
-#ifdef _MSC_VER
-# define strcasecmp _stricmp
-#endif
-
 #define MAX_XBM_LINE_SIZE 255
 
 
