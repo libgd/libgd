@@ -50,6 +50,7 @@ File: About LibGD 2.3.0-dev  (no auto-title, preamble.txt)
 
 Group: Image Formats  {
 
+   File: AVIF IO  (no auto-title, gd_avif.c)
    File: BMP IO  (no auto-title, gd_bmp.c)
    File: GD IO  (no auto-title, gd_gd.c)
    File: GD2 IO  (no auto-title, gd_gd2.c)
