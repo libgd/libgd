@@ -5,7 +5,7 @@ check_PROGRAMS = gifanimtest gd_color_map_test
 
 if HAVE_LIBPNG
 bin_PROGRAMS += gdtopng pngtogd webpng
-check_PROGRAMS += circletexttest fontsizetest fontwheeltest gddemo testac
+check_PROGRAMS += circletexttest fontsizetest fontwheeltest testac
 if HAVE_LIBZ
 bin_PROGRAMS += gdparttopng gd2topng pngtogd2
 check_PROGRAMS += gdtest
