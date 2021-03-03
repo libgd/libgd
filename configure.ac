@@ -289,6 +289,8 @@ dnl Check for heif support.
 GD_LIB_PKG_CHECK([LIBHEIF], [HEIF], [heif], [libheif >= 1.7.0], [
   AC_CHECK_LIB([heif], [heif_get_version], [dnl
     AS_VAR_APPEND([LIBHEIF_LIBS], [" -lheif"])
+  ])
+])
     
 dnl Check for avif support.
 GD_LIB_PKG_CHECK([LIBAVIF], [AVIF], [avif], [libavif >= 0.8.2], [
