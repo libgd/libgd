@@ -289,6 +289,13 @@ dnl Check for heif support.
 GD_LIB_PKG_CHECK([LIBHEIF], [HEIF], [heif], [libheif >= 1.7.0], [
   AC_CHECK_LIB([heif], [heif_get_version], [dnl
     AS_VAR_APPEND([LIBHEIF_LIBS], [" -lheif"])
+  ])
+])
+
+dnl Check for avif support.
+GD_LIB_PKG_CHECK([LIBAVIF], [AVIF], [avif], [libavif >= 0.8.2], [
+  AC_CHECK_LIB([avif], [avifVersion], [dnl
+    AS_VAR_APPEND([LIBAVIF_LIBS], [" -lavif"])
     gd_found_lib=yes
   ])
 ])
@@ -323,6 +330,7 @@ AC_MSG_RESULT([
    Support for JPEG library:         $gd_with_LIBJPEG
    Support for WebP library:         $gd_with_LIBWEBP
    Support for HEIF library:         $gd_with_LIBHEIF
+   Support for AVIF library:         $gd_with_LIBAVIF
    Support for TIFF library:         $gd_with_LIBTIFF
    Support for Freetype 2.x library: $gd_with_LIBFREETYPE
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG

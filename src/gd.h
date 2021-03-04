@@ -668,6 +668,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtx *infile);
 
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *inFile);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *infile);
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffPtr(int size, void *data);
@@ -1131,6 +1135,11 @@ BGD_DECLARE(void *) gdImageHeifPtr(gdImagePtr im, int *size);
 BGD_DECLARE(void *) gdImageHeifPtrEx(gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma);
 BGD_DECLARE(void) gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma);
 
+BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile);
+BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int speed);
+BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed);
+BGD_DECLARE(void) gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, int speed);
 
 /**
  * Group: GifAnim

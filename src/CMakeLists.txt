@@ -2,6 +2,7 @@ SET (LIBGD_SRC_FILES
 	bmp.h
 	gd.c
 	gd.h
+	gd_avif.c
 	gd_bmp.c
 	gd_color.c
 	gd_color.h
@@ -130,6 +131,7 @@ SET(LIBGD_DEP_LIBS
 	${XPM_LIBRARIES}
 	${FONTCONFIG_LIBRARY}
 	${WEBP_LIBRARIES}
+	${AVIF_LIBRARIES}
 	${RAQM_LIBRARIES}
 	${HEIF_LIBRARIES}
 )

@@ -51,6 +51,10 @@ static const struct FileType {
     {".xbm",    gdImageCreateFromXbm,   NULL,           NULL},
     {".tga",    gdImageCreateFromTga,   NULL,           NULL},
 
+#ifdef HAVE_LIBAVIF
+    {".avif",   gdImageCreateFromAvif,  gdImageAvif,    NULL},
+#endif
+
 #ifdef HAVE_LIBPNG
     {".png",    gdImageCreateFromPng,   gdImagePng,     NULL},
 #endif

@@ -42,10 +42,10 @@
 
   Variants:
 
-    <gdImageCreateFromJpegPtr> creates an image from WebP data
+    <gdImageCreateFromWebpPtr> creates an image from WebP data
     already in memory.
 
-    <gdImageCreateFromJpegCtx> reads its data via the function
+    <gdImageCreateFromWebpCtx> reads its data via the function
     pointers in a <gdIOCtx> structure.
 
   Parameters:

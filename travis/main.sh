@@ -78,6 +78,9 @@ build_autotools() {
 	m distclean
 }
 
+# TODO: When we switch to Ubuntu 21+ (Hirsute), we can reenable libavif coverage,
+# as Ubuntu 21+ supports libavif 0.8.2+.
+#	"-DENABLE_AVIF=1"
 cmake_args=(
 	"-DBUILD_SHARED_LIBS=1"
 	"-DBUILD_STATIC_LIBS=1"
@@ -94,7 +97,7 @@ cmake_args=(
 )
 
 # libxpm-dev is unavaible in brew repo
-# Once it gets avaible, please modify this code block.
+# Once it gets available, please modify this code block.
 if [[ ${TRAVIS_OS_NAME} == "linux" ]]; then
 	cmake_args+=("-DENABLE_XPM=1")
 fi
