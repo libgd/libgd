@@ -28,8 +28,8 @@ int main() {
 	char filePath[MAX_FILEPATH_LENGTH], pngFilePath[MAX_FILEPATH_LENGTH], avifFilePath[MAX_FILEPATH_LENGTH];
 	char errMsg[MAX_FILEPATH_LENGTH + 100];
 
-	const int filesCount = 4;
-	const char *filenames[filesCount] = {"baboon", "dice_with_alpha", "plum_blossom_12bit", "sunset"};
+	static const char * const filenames[] = {"baboon", "dice_with_alpha", "plum_blossom_12bit", "sunset"};
+	const int filesCount = sizeof(filenames) / sizeof(filenames[0]);
 
 	for (int i = 0; i < filesCount; i++) {
 

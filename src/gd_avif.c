@@ -477,7 +477,6 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 
 	uint32_t val;
 	uint8_t *p;
-	uint8_t a;
 	int x, y;
 
 	if (im == NULL)
