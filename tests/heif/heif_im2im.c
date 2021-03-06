@@ -18,7 +18,7 @@ int main()
 	CuTestImageResult result = {0, 0};
 
 	if (!gdTestAssertMsg(heif_have_decoder_for_format(heif_compression_HEVC) && heif_have_encoder_for_format(heif_compression_HEVC), "HEVC codec support missing from libheif\n"))
-		return 0;
+		return 77;
 
 	src = gdImageCreateTrueColor(100, 100);
 	gdTestAssertMsg(src != NULL, "could not create src\n");
