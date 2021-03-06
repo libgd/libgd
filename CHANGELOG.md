@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.3.2] - 2021-03-06
+
+### Fixed
+
+- gif: allow decodin when both Global and Local Colormaps (#494)
+
+### Added
+
+- avif: Support for AVIF images via libavif (#557)
+- heif: Support for HEIF/AVIF images via libheif (#395) (#557)
+- webp: Drop ../deps/ search when building with cmake
+- Windows: Remove unused snprintf fallback
+
 ## [2.3.1] - 2021-01-30
 
 ### Fixed
