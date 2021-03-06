@@ -13,4 +13,12 @@ endif
 endif
 
 EXTRA_DIST += \
-	avif/CMakeLists.txt
+	avif/CMakeLists.txt \
+	avif/baboon.avif \
+	avif/baboon.png \
+	avif/dice_with_alpha.avif \
+	avif/dice_with_alpha.png \
+	avif/plum_blossom_12bit.avif \
+	avif/plum_blossom_12bit.png \
+	avif/sunset.avif \
+	avif/sunset.png
