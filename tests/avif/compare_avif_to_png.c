@@ -17,16 +17,13 @@
 #include "gd.h"
 #include "gdtest.h"
 
-#define PATH "avif/"
-#define MAX_FILEPATH_LENGTH 200
-
 int main() {
 	FILE *fp;
 	gdImagePtr imFromPng = NULL, imFromAvif = NULL;
 	void *avifImDataPtr = NULL, *pngImDataPtr = NULL;
 	int size;
-	char filePath[MAX_FILEPATH_LENGTH], pngFilePath[MAX_FILEPATH_LENGTH], avifFilePath[MAX_FILEPATH_LENGTH];
-	char errMsg[MAX_FILEPATH_LENGTH + 100];
+	char pngFilename[100], avifFilename[100], *pngFilePath;
+	char errMsg[4096];
 
 	static const char * const filenames[] = {"baboon", "dice_with_alpha", "plum_blossom_12bit", "sunset"};
 	const int filesCount = sizeof(filenames) / sizeof(filenames[0]);
@@ -35,13 +32,9 @@ int main() {
 
 		// First, encode each PNG into an AVIF (with the GD format as an intermediary),
 		// then compare the result with the original PNG.
+		sprintf(pngFilename, "%s.png", filenames[i]);
 
-		strcpy(filePath, PATH);
-		strcat(filePath, filenames[i]);
-		strcat(strcpy(pngFilePath, filePath), ".png");
-		strcat(strcpy(avifFilePath, filePath), ".avif");
-
-		fp = gdTestFileOpen(pngFilePath);
+		fp = gdTestFileOpen2("avif", pngFilename);
 		imFromPng = gdImageCreateFromPng(fp);
 		fclose(fp);
 
@@ -63,14 +56,12 @@ int main() {
 		gdTestAssertMsg(gdAssertImageEquals(imFromPng, imFromAvif), errMsg);
 
 		// Then, decode each AVIF into a GD format, and compare that with the orginal PNG.
-
 avif2png:
-		continue;
 
-/* Skip this reverse test for now, until we can find images that encode to PNGs
-	 losslessly.
-
-		fp = gdTestFileOpen(avifFilePath);
+		// Skip this reverse test for now, until we can find images that encode to PNGs losslessly.
+if (0) {
+		sprintf(avifFilename, "%s.avif", filenames[i]);
+		fp = gdTestFileOpen2("avif", avifFilename);
 		imFromAvif = gdImageCreateFromAvif(fp);
 		fclose(fp);
 
@@ -79,10 +70,11 @@ avif2png:
 			continue;
 
 		strcat(strcpy(errMsg, filenames[i]), ".avif: Encoded PNG image did not match original AVIF\n");
+		pngFilePath = gdTestFilePath2("avif", pngFilename);
 		gdTestAssertMsg(gdAssertImageEqualsToFile(pngFilePath, imFromAvif), errMsg);
-*/
-
+		free(pngFilePath);
 }
+	}
 
 	if (imFromPng)
 		gdImageDestroy(imFromPng);

@@ -9,38 +9,23 @@
 #include "gd.h"
 #include "gdtest.h"
 
-#define PATH "avif/"
-#define MAX_FILEPATH_LENGTH 50
-
-#define NON_AVIF_FILE_NAME "sunset.png"
-#define AVIF_FILE_NAME "sunset.avif"
-
 int main() {
 	FILE *fp;
 	int retval;
-	char nonAvifFilePath[MAX_FILEPATH_LENGTH], avifFilePath[MAX_FILEPATH_LENGTH];
 	gdImagePtr realIm, badIm;
 	void *rv;
 	int size;
 
-// Create paths for our files.
-	strcpy(avifFilePath, PATH);
-	strcat(avifFilePath, AVIF_FILE_NAME);
+	// Read in an AVIF image for testing.
 
-	strcpy(nonAvifFilePath, PATH);
-	strcat(nonAvifFilePath, NON_AVIF_FILE_NAME);
-
-// Read in an AVIF image for testing.
-
-	fp = gdTestFileOpen(avifFilePath);
+	fp = gdTestFileOpen2("avif", "sunset.avif");
 	realIm = gdImageCreateFromAvif(fp);
 	fclose(fp);
 	if (!gdTestAssertMsg(realIm != NULL, "gdImageCreateFromAvif() failed\n"))
 		return 1;
 
-// Try to decode a non-AVIF file.
-
-	fp = gdTestFileOpen(nonAvifFilePath);
+	// Try to decode a non-AVIF file.
+	fp = gdTestFileOpen2("avif", "sunset.png");
 	badIm = gdImageCreateFromAvif(fp);
 	fclose(fp);
 	gdTestAssertMsg(badIm == NULL, "gdImageCreateFromAvif() failed to return NULL when passed a non-AVIF file\n");
@@ -48,7 +33,7 @@ int main() {
 	if (badIm)
 		gdImageDestroy(badIm);
 
- // Try to encode a valid image with bad quality parameters. This should still work.
+	// Try to encode a valid image with bad quality parameters. This should still work.
 
 	rv = gdImageAvifPtrEx(realIm, &size, 400, 10);
 	gdTestAssertMsg(rv != NULL, "gdImageAvifPtrEx() rejected an overly high quality param instead of clamping it to a valid value");
