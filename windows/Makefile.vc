@@ -146,6 +146,7 @@ CFLAGS= $(CFLAGS) \
        /DHAVE_LIBZ=1\
        /DHAVE_LIBXPM=1\
        /DHAVE_LIBTIFF=1\
+       /DHAVE_CONFIG_H\
        $(INCLUDES)
 
 TEST_CFLAGS=$(CFLAGS)
@@ -225,6 +226,8 @@ make_dirs:
 	@echo #ifndef HAVE_LIBTIFF>> $(GD_CONFIG_H)
 	@echo #define HAVE_LIBTIFF>> $(GD_CONFIG_H)
 	@echo #endif>> $(GD_CONFIG_H)
+	@echo #define ssize_t SSIZE_T>> $(GD_CONFIG_H)
+	@echo #define SSIZE_MAX MAXSSIZE_T>> $(GD_CONFIG_H)
 
 run_tests: pretest
 	@cd $(TDR)
