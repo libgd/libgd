@@ -165,9 +165,6 @@ static avifBool isAvifError(avifResult result, const char *msg) {
 
 	We ignore readFlags, just as the avifIO*ReaderRead() functions do.
 
-	In libavif 0.8.2, it's normal to get 0 bytes on the last read.
-	Thus we don't complain if charsRead < size.
-
 	If there's a problem, this returns an avifResult error.
 	If things go well, return AVIF_RESULT_OK.
 	Of course these AVIF codes shouldn't be returned by any top-level GD function.
@@ -176,6 +173,11 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 {
 	void *dataBuf = NULL;
 	gdIOCtx *ctx = (gdIOCtx *) io->data;
+
+	// readFlags is unsupported
+	if (readFlags != 0) {
+		return AVIF_RESULT_IO_ERROR;
+	}
 
 	// TODO: if we set sizeHint, this will be more efficient.
 
