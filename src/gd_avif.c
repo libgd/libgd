@@ -441,7 +441,7 @@ cleanup:
 		im			- The image to save.
 		outFile - The FILE pointer to write to.
 		quality - Compression quality (0-100). 0 is lowest-quality, 100 is highest.
-		speed	 - The speed of compression (0-10). 0 is slowest, 10 is fastest.
+		speed	  - The speed of compression (0-10). 0 is slowest, 10 is fastest.
 
 	Notes on parameters:
 		quality - If quality = -1, we use a default quality as defined in QUALITY_DEFAULT.
@@ -450,7 +450,9 @@ cleanup:
 		speed - At slower speeds, encoding may be quite slow. Use judiciously.
 
 		Qualities or speeds that are lower than the minimum value get clamped to the minimum value,
-		abd qualities or speeds that are lower than the maximum value get clamped to the maxmum value.
+		and qualities or speeds that are lower than the maximum value get clamped to the maxmum value.
+		Note that AVIF_SPEED_DEFAULT is -1. If we ever set SPEED_DEFAULT = AVIF_SPEED_DEFAULT,
+		we'd want to add a conditional to ensure that value doesn't get clamped.
 
 
 	Returns:
@@ -500,8 +502,7 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 		return 1;
 	}
 
-	if (speed != SPEED_DEFAULT)
-		speed = CLAMP(speed, AVIF_SPEED_SLOWEST, AVIF_SPEED_FASTEST);
+	speed = CLAMP(speed, AVIF_SPEED_SLOWEST, AVIF_SPEED_FASTEST);
 
 	avifPixelFormat subsampling = quality >= HIGH_QUALITY_SUBSAMPLING_THRESHOLD ?
 		CHROMA_SUBAMPLING_HIGH_QUALITY : CHROMA_SUBSAMPLING_DEFAULT;
