@@ -321,6 +321,7 @@ static int _gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifC
 		return GD_FALSE;
 	}
 
+#if LIBHEIF_HAVE_VERSION(1, 9, 0)
 	err = heif_encoder_set_parameter_string(heif_enc, "chroma", chroma);
 	if (err.code != heif_error_Ok) {
 		gd_error("gd-heif invalid chroma subsampling parameter\n");
@@ -328,6 +329,9 @@ static int _gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifC
 		heif_context_free(heif_ctx);
 		return GD_FALSE;
 	}
+#else
+	(void)chroma;
+#endif
 
 	err = heif_image_create(gdImageSX(im), gdImageSY(im), heif_colorspace_RGB, heif_chroma_interleaved_RGBA, &heif_im);
 	if (err.code != heif_error_Ok) {
