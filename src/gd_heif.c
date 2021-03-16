@@ -321,12 +321,14 @@ static int _gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifC
 		return GD_FALSE;
 	}
 
-	err = heif_encoder_set_parameter_string(heif_enc, "chroma", chroma);
-	if (err.code != heif_error_Ok) {
-		gd_error("gd-heif invalid chroma subsampling parameter\n");
-		heif_encoder_release(heif_enc);
-		heif_context_free(heif_ctx);
-		return GD_FALSE;
+	if (heif_get_version_number_major() >= 1 && heif_get_version_number_minor() >= 9) {
+		err = heif_encoder_set_parameter_string(heif_enc, "chroma", chroma);
+		if (err.code != heif_error_Ok) {
+			gd_error("gd-heif invalid chroma subsampling parameter\n");
+			heif_encoder_release(heif_enc);
+			heif_context_free(heif_ctx);
+			return GD_FALSE;
+		}
 	}
 
 	err = heif_image_create(gdImageSX(im), gdImageSY(im), heif_colorspace_RGB, heif_chroma_interleaved_RGBA, &heif_im);
