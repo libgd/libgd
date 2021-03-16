@@ -16,8 +16,8 @@ int main()
 	void *p;
 	int size = 0;
 	CuTestImageResult result = {0, 0};
-	
-	if (gdTestAssertMsg(heif_get_version_number_major() == 1 && heif_get_version_number_minor() >= 9, "changing chroma subsampling is not supported in this libheif version\n"))
+
+	if (!gdTestAssertMsg(heif_get_version_number_major() == 1 && heif_get_version_number_minor() >= 9, "changing chroma subsampling is not supported in this libheif version\n"))
 		return 77;
 
 	if (!gdTestAssertMsg(heif_have_decoder_for_format(heif_compression_HEVC) && heif_have_encoder_for_format(heif_compression_HEVC), "HEVC codec support missing from libheif\n"))
