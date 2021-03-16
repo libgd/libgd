@@ -33,7 +33,10 @@
 			We need more testing to really know what quantizer settings are optimal,
 			but teams at Google have been using maximum=30 as a starting point.
 		QUALITY_DEFAULT: following gd conventions, -1 indicates the default.
-		SPEED_DEFAULT: AVIF_SPEED_DEFAULT is -1. This simply tells the AVIF encoder to use the default speed.
+		SPEED_DEFAULT:
+			AVIF_SPEED_DEFAULT is simply the default encoding speed of the AV1 codec.
+			This could be as slow as 0. So we use 6, which is currently considered to be a fine default.
+
 */
 
 #define CHROMA_SUBSAMPLING_DEFAULT AVIF_PIXEL_FORMAT_YUV420
@@ -41,7 +44,7 @@
 #define HIGH_QUALITY_SUBSAMPLING_THRESHOLD 90
 #define QUANTIZER_DEFAULT 30
 #define QUALITY_DEFAULT -1
-#define SPEED_DEFAULT AVIF_SPEED_DEFAULT
+#define SPEED_DEFAULT 6
 
 // This initial size for the gdIOCtx is standard among GD image conversion functions.
 #define NEW_DYNAMIC_CTX_SIZE 2048
@@ -438,7 +441,7 @@ cleanup:
 		im			- The image to save.
 		outFile - The FILE pointer to write to.
 		quality - Compression quality (0-100). 0 is lowest-quality, 100 is highest.
-		speed	 - The speed of compression (0-10). 0 is slowest, 10 is fastest.
+		speed	  - The speed of compression (0-10). 0 is slowest, 10 is fastest.
 
 	Notes on parameters:
 		quality - If quality = -1, we use a default quality as defined in QUALITY_DEFAULT.
@@ -447,7 +450,9 @@ cleanup:
 		speed - At slower speeds, encoding may be quite slow. Use judiciously.
 
 		Qualities or speeds that are lower than the minimum value get clamped to the minimum value,
-		abd qualities or speeds that are lower than the maximum value get clamped to the maxmum value.
+		and qualities or speeds that are lower than the maximum value get clamped to the maxmum value.
+		Note that AVIF_SPEED_DEFAULT is -1. If we ever set SPEED_DEFAULT = AVIF_SPEED_DEFAULT,
+		we'd want to add a conditional to ensure that value doesn't get clamped.
 
 
 	Returns:
@@ -497,8 +502,7 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 		return 1;
 	}
 
-	if (speed != AVIF_SPEED_DEFAULT)
-		speed = CLAMP(speed, AVIF_SPEED_SLOWEST, AVIF_SPEED_FASTEST);
+	speed = CLAMP(speed, AVIF_SPEED_SLOWEST, AVIF_SPEED_FASTEST);
 
 	avifPixelFormat subsampling = quality >= HIGH_QUALITY_SUBSAMPLING_THRESHOLD ?
 		CHROMA_SUBAMPLING_HIGH_QUALITY : CHROMA_SUBSAMPLING_DEFAULT;
@@ -596,7 +600,7 @@ BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int s
 
 BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile)
 {
-	gdImageAvifEx(im, outFile, QUALITY_DEFAULT, AVIF_SPEED_DEFAULT);
+	gdImageAvifEx(im, outFile, QUALITY_DEFAULT, SPEED_DEFAULT);
 }
 
 BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed)
