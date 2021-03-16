@@ -8,4 +8,5 @@ libgd_test_programs += \
 endif
 
 EXTRA_DIST += \
-	heif/CMakeLists.txt
+	heif/CMakeLists.txt \
+	heif/label.heic
