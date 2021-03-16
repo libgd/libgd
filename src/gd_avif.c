@@ -151,7 +151,7 @@ static avifBool isAvifSrgbImage(avifImage *avifIm) {
 */
 static avifBool isAvifError(avifResult result, const char *msg) {
 	if (result != AVIF_RESULT_OK) {
-		gd_error("avif error - %s: %s", msg, avifResultToString(result));
+		gd_error("avif error - %s: %s\n", msg, avifResultToString(result));
 		return AVIF_TRUE;
 	}
 
@@ -177,13 +177,18 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 	void *dataBuf = NULL;
 	gdIOCtx *ctx = (gdIOCtx *) io->data;
 
+	// readFlags is unsupported
+	if (readFlags != 0) {
+		return AVIF_RESULT_IO_ERROR;
+	}
+
 	// TODO: if we set sizeHint, this will be more efficient.
 
-	if (offset > LONG_MAX || size < 0)
+	if (offset > INT_MAX || size > INT_MAX)
 		return AVIF_RESULT_IO_ERROR;
 
 	// Try to seek offset bytes forward. If we pass the end of the buffer, throw an error.
-	if (!ctx->seek(ctx, offset))
+	if (!ctx->seek(ctx, (int) offset))
 		return AVIF_RESULT_IO_ERROR;
 
 	dataBuf = gdMalloc(size);
@@ -194,7 +199,7 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 
 	// Read the number of bytes requested.
 	// If getBuf() returns a negative value, that means there was an error.
-	int charsRead = ctx->getBuf(ctx, dataBuf, size);
+	int charsRead = ctx->getBuf(ctx, dataBuf, (int) size);
 	if (charsRead < 0) {
 		gdFree(dataBuf);
 		return AVIF_RESULT_IO_ERROR;
@@ -202,7 +207,7 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 
 	out->data = dataBuf;
 	out->size = charsRead;
-	return charsRead == size ? AVIF_RESULT_OK : AVIF_RESULT_TRUNCATED_DATA;
+	return AVIF_RESULT_OK;
 }
 
 // avif.h says this is optional, but it seemed easy to implement.
@@ -339,7 +344,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data)
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 {
-	int x, y;
+	uint32_t x, y;
 	gdImage *im = NULL;
 	avifResult result;
 	avifIO *io;
@@ -482,7 +487,7 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 
 	uint32_t val;
 	uint8_t *p;
-	int x, y;
+	uint32_t x, y;
 
 	if (im == NULL)
 		return 1;
