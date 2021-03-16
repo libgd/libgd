@@ -286,7 +286,7 @@ GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [webp], [libwebp], [
 ])
 
 dnl Check for heif support.
-GD_LIB_PKG_CHECK([LIBHEIF], [HEIF], [heif], [libheif >= 1.7.0], [
+GD_LIB_PKG_CHECK([LIBHEIF], [HEIF], [heif], [libheif >= 1.9.0], [
   AC_CHECK_LIB([heif], [heif_get_version], [dnl
     AS_VAR_APPEND([LIBHEIF_LIBS], [" -lheif"])
   ])
