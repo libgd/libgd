@@ -329,8 +329,6 @@ static int _gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifC
 			heif_context_free(heif_ctx);
 			return GD_FALSE;
 		}
-	} else {
-		(void)chroma;
 	}
 
 	err = heif_image_create(gdImageSX(im), gdImageSY(im), heif_colorspace_RGB, heif_chroma_interleaved_RGBA, &heif_im);
