@@ -55,7 +55,7 @@ int main()
 			goto done;
 		}
 		for (j = 0; j < 8; j++) {
-			if (brect[j] != EXPECT[i][j]) {
+			if (brect[j] < EXPECT[i][j] - 1 || brect[j] > EXPECT[i][j] + 1) {
 				gdTestErrorMsg("(%d, %d) (%d, %d) (%d, %d) (%d, %d) expected, but (%d, %d) (%d, %d) (%d, %d) (%d, %d)\n",
 				       EXPECT[i][0], EXPECT[i][1], EXPECT[i][2], EXPECT[i][3],
 				       EXPECT[i][4], EXPECT[i][5], EXPECT[i][6], EXPECT[i][7],
