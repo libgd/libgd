@@ -79,6 +79,7 @@ if (BUILD_TEST)
 		gdimagetruecolortopalette
 		gdinterpolatedscale
 		gdmatrix
+		gdmem
 		gdnewfilectx
 		gdtest
 		gdtiled
