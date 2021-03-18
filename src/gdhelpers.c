@@ -14,6 +14,11 @@
 
 #define SEP_TEST (separators[*((unsigned char *) s)])
 
+static gdCallocf gdMemCallocf = calloc;
+static gdMallocf gdMemMallocf = malloc;
+static gdReallocf gdMemReallocf = realloc;
+static gdFreef gdMemFreef = free;
+
 char *
 gd_strtok_r (char *s, char *sep, char **state)
 {
@@ -66,19 +71,19 @@ gd_strtok_r (char *s, char *sep, char **state)
 
 void * gdCalloc (size_t nmemb, size_t size)
 {
-	return calloc (nmemb, size);
+	return gdMemCallocf (nmemb, size);
 }
 
 void *
 gdMalloc (size_t size)
 {
-	return malloc (size);
+	return gdMemMallocf (size);
 }
 
 void *
 gdRealloc (void *ptr, size_t size)
 {
-	return realloc (ptr, size);
+	return gdMemReallocf (ptr, size);
 }
 
 void *
@@ -112,5 +117,149 @@ gdReallocEx (void *ptr, size_t size)
 */
 BGD_DECLARE(void) gdFree (void *ptr)
 {
-	free (ptr);
+	gdMemFreef (ptr);
+}
+
+/*
+  Function gdSetMemoryCallocMethod
+
+    <gdSetMemoryCallocMethod> sets the memory allocation (initialized with
+    zeroes) method used by GD.
+
+    This function is not thread-safe. Should be called once and before any
+    operation with the library.
+
+  Parameters:
+
+    callocf - Function pointer to the memory allocation method. If it is NULL,
+              no operation is performed.
+
+  Returns:
+
+    Nothing.
+*/
+BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocf callocf)
+{
+	if (callocf != NULL)
+		gdMemCallocf = callocf;
+}
+
+/*
+  Function gdSetMemoryMallocMethod
+
+    <gdSetMemoryMallocMethod> sets the memory allocation method used by GD.
+
+    This function is not thread-safe. Should be called once and before any
+    operation with the library.
+
+  Parameters:
+
+    mallocf - Function pointer to the memory allocation method. If it is NULL,
+              no operation is performed.
+
+  Returns:
+
+    Nothing.
+
+  Example:
+    (start code)
+
+	// ... set a custom malloc first before any operation ...
+	gdSetMemoryMallocMethod(customMalloc);
+
+    gdImagePtr im;
+    FILE *in;
+    in = fopen("mypng.png", "rb");
+    im = gdImageCreateFromPng(in);
+    fclose(in);
+    gdImageDestroy(im);
+
+    (end code)
+*/
+BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocf mallocf)
+{
+	if (mallocf != NULL)
+		gdMemMallocf = mallocf;
+}
+
+/*
+  Function gdSetMemoryReallocMethod
+
+    <gdSetMemoryReallocMethod> sets the memory allocation method used by GD.
+
+    This function is not thread-safe. Should be called once and before any
+    operation with the library.
+
+  Parameters:
+
+    reallocf - Function pointer to the memory reallocation method. If it is
+               NULL, no operation is performed.
+
+  Returns:
+
+    Nothing.
+*/
+BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocf reallocf)
+{
+	if (reallocf != NULL)
+		gdMemReallocf = reallocf;
+}
+
+/*
+  Function gdSetMemoryFreeMethod
+
+    <gdSetMemoryFreeMethod> sets the memory release method used by GD.
+
+    This function is not thread-safe. Should be called once and before any
+    operation with the library.
+
+  Parameters:
+
+    freef - Function pointer to the memory release method. If it is NULL, no
+            operation is performed.
+
+  Returns:
+
+    Nothing.
+*/
+BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreef freef)
+{
+	if (freef != NULL)
+		gdMemFreef = freef;
+}
+
+/*
+  Function gdSetMemoryAllocationMethods
+
+    <gdSetMemoryAllocationMethods> sets the memory allocation methods used by
+    GD.
+
+    This function is not thread-safe. Should be called once and before any
+    operation with the library.
+
+  Parameters:
+
+    callocf - Function pointer to the memory allocation method, initialized
+              with zeroes. If it is NULL, the assignation is not performed.
+    mallocf - Function pointer to the memory allocation method. If it is NULL,
+              the assignation is not performed.
+    reallocf - Function pointer to the memory reallocation method. If it is
+               NULL, the assignation is not performed.
+    freef - Function pointer to the memory release method. If it is NULL, the
+            assignation is not performed.
+
+  Returns:
+
+    Nothing.
+*/
+BGD_DECLARE(void) gdSetMemoryAllocationMethods(gdCallocf callocf, gdMallocf mallocf, gdReallocf reallocf, gdFreef freef)
+{
+	if (callocf != NULL)
+		gdMemCallocf = callocf;
+	if (mallocf != NULL)
+		gdMemMallocf = mallocf;
+	if (reallocf != NULL)
+		gdMemReallocf = reallocf;
+	if (freef != NULL)
+		gdMemFreef = freef;
 }

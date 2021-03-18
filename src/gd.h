@@ -1678,6 +1678,16 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 /* resolution affects ttf font rendering, particularly hinting */
 #define GD_RESOLUTION           96      /* pixels per inch */
 
+typedef void *(*gdCallocf)(size_t nmemb, size_t size);
+typedef void *(*gdMallocf)(size_t size);
+typedef void *(*gdReallocf)(void *ptr, size_t size);
+typedef void (*gdFreef)(void *ptr);
+
+BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocf callocf);
+BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocf mallocf);
+BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocf reallocf);
+BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreef freef);
+BGD_DECLARE(void) gdSetMemoryAllocationMethods(gdCallocf callocf, gdMallocf mallocf, gdReallocf reallocf, gdFreef freef);
 
 /* Version information functions */
 BGD_DECLARE(int) gdMajorVersion(void);
