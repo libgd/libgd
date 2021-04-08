@@ -42,12 +42,49 @@
 #############################################################################
 
 
-include(FindThreads)
-FIND_PACKAGE(Threads)
+  FIND_PATH(PTHREAD_INCLUDE_DIR pthread.h
+    "$ENV{PTHREAD_HOME}/include"
+    "$ENV{PTHREAD_DIR}/include"
+    /usr/include
+    "C:/MinGW/include"
+  )
+  #MESSAGE("DBG PTHREAD_INCLUDE_DIR=${PTHREAD_INCLUDE_DIR}")
 
-IF(CMAKE_THREAD_LIBS_INIT)
-  SET(HAVE_PTHREAD TRUE)
-  SET(PTHREAD_FOUND TRUE)
+  # pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2 are comming from web
+  FIND_LIBRARY(PTHREAD_LIBRARY
+    NAMES pthread pthreadGC2 pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2
+    PATHS
+    "$ENV{PTHREAD_HOME}/lib"
+    "$ENV{PTHREAD_DIR}/lib"
+    /usr/lib
+    /usr/local/lib
+    /lib
+    "C:/MinGW/lib"
+    )
 
-  MESSAGE(STATUS "Find PThreads: ${PTHREAD_FOUND}")
-ENDIF(CMAKE_THREAD_LIBS_INIT)
+  #MESSAGE(STATUS "DBG PTHREAD_LIBRARY=${PTHREAD_LIBRARY}")
+
+  ## --------------------------------
+
+  IF(PTHREAD_LIBRARY)
+    SET(PTHREAD_LIBRARIES ${PTHREAD_LIBRARY})
+  ELSE(PTHREAD_LIBRARY)
+    #MESSAGE(SEND_ERROR "pthread library not found.")
+  ENDIF(PTHREAD_LIBRARY)
+
+  IF(NOT PTHREAD_INCLUDE_DIR)
+    #MESSAGE(SEND_ERROR "pthread include dir not found.")
+  ENDIF(NOT PTHREAD_INCLUDE_DIR)
+
+  IF(PTHREAD_LIBRARIES AND PTHREAD_INCLUDE_DIR)
+    SET(PTHREAD_INCLUDE_DIRS ${PTHREAD_INCLUDE_DIR})
+    SET(PTHREAD_FOUND TRUE)
+  ELSE(PTHREAD_LIBRARIES AND PTHREAD_INCLUDE_DIR)
+    SET(PTHREAD_FOUND FALSE)
+  ENDIF(PTHREAD_LIBRARIES AND PTHREAD_INCLUDE_DIR)
+
+  MARK_AS_ADVANCED(
+    PTHREAD_INCLUDE_DIR
+    PTHREAD_LIBRARY
+  )
+  #MESSAGE(STATUS "PTHREAD_FOUND : ${PTHREAD_FOUND}")

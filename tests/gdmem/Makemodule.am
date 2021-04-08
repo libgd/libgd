@@ -4,4 +4,5 @@ libgd_test_programs += \
 endif
 
 EXTRA_DIST += \
-	gdmem/CMakeLists.txt
+	gdmem/CMakeLists.txt \
+	gdmem/coin.png
