@@ -14,10 +14,10 @@
 
 #define SEP_TEST (separators[*((unsigned char *) s)])
 
-static gdCallocf gdMemCallocf = calloc;
-static gdMallocf gdMemMallocf = malloc;
-static gdReallocf gdMemReallocf = realloc;
-static gdFreef gdMemFreef = free;
+static gdCallocMethod gdMemoryCallocMethod = calloc;
+static gdMallocMethod gdMemoryMallocMethod = malloc;
+static gdReallocMethod gdMemoryReallocMethod = realloc;
+static gdFreeMethod gdMemoryFreeMethod = free;
 
 char *
 gd_strtok_r (char *s, char *sep, char **state)
@@ -71,19 +71,19 @@ gd_strtok_r (char *s, char *sep, char **state)
 
 void * gdCalloc (size_t nmemb, size_t size)
 {
-	return gdMemCallocf (nmemb, size);
+	return gdMemoryCallocMethod (nmemb, size);
 }
 
 void *
 gdMalloc (size_t size)
 {
-	return gdMemMallocf (size);
+	return gdMemoryMallocMethod (size);
 }
 
 void *
 gdRealloc (void *ptr, size_t size)
 {
-	return gdMemReallocf (ptr, size);
+	return gdMemoryReallocMethod (ptr, size);
 }
 
 void *
@@ -117,7 +117,7 @@ gdReallocEx (void *ptr, size_t size)
 */
 BGD_DECLARE(void) gdFree (void *ptr)
 {
-	gdMemFreef (ptr);
+	gdMemoryFreeMethod (ptr);
 }
 
 /*
@@ -138,10 +138,10 @@ BGD_DECLARE(void) gdFree (void *ptr)
 
     Nothing.
 */
-BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocf callocf)
+BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod callocf)
 {
 	if (callocf != NULL)
-		gdMemCallocf = callocf;
+		gdMemoryCallocMethod = callocf;
 }
 
 /*
@@ -164,8 +164,8 @@ BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocf callocf)
   Example:
     (start code)
 
-	// ... set a custom malloc first before any operation ...
-	gdSetMemoryMallocMethod(customMalloc);
+    // ... set a custom malloc first before any operation ...
+    gdSetMemoryMallocMethod(customMalloc);
 
     gdImagePtr im;
     FILE *in;
@@ -176,10 +176,10 @@ BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocf callocf)
 
     (end code)
 */
-BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocf mallocf)
+BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod mallocf)
 {
 	if (mallocf != NULL)
-		gdMemMallocf = mallocf;
+		gdMemoryMallocMethod = mallocf;
 }
 
 /*
@@ -199,10 +199,10 @@ BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocf mallocf)
 
     Nothing.
 */
-BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocf reallocf)
+BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod reallocf)
 {
 	if (reallocf != NULL)
-		gdMemReallocf = reallocf;
+		gdMemoryReallocMethod = reallocf;
 }
 
 /*
@@ -222,10 +222,10 @@ BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocf reallocf)
 
     Nothing.
 */
-BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreef freef)
+BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod freef)
 {
 	if (freef != NULL)
-		gdMemFreef = freef;
+		gdMemoryFreeMethod = freef;
 }
 
 /*
@@ -252,14 +252,14 @@ BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreef freef)
 
     Nothing.
 */
-BGD_DECLARE(void) gdSetMemoryAllocationMethods(gdCallocf callocf, gdMallocf mallocf, gdReallocf reallocf, gdFreef freef)
+BGD_DECLARE(void) gdSetMemoryAllocationMethods(gdCallocMethod callocf, gdMallocMethod mallocf, gdReallocMethod reallocf, gdFreeMethod freef)
 {
 	if (callocf != NULL)
-		gdMemCallocf = callocf;
+		gdMemoryCallocMethod = callocf;
 	if (mallocf != NULL)
-		gdMemMallocf = mallocf;
+		gdMemoryMallocMethod = mallocf;
 	if (reallocf != NULL)
-		gdMemReallocf = reallocf;
+		gdMemoryReallocMethod = reallocf;
 	if (freef != NULL)
-		gdMemFreef = freef;
+		gdMemoryFreeMethod = freef;
 }
