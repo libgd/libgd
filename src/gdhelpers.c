@@ -131,17 +131,17 @@ BGD_DECLARE(void) gdFree (void *ptr)
 
   Parameters:
 
-    callocf - Function pointer to the memory allocation method. If it is NULL,
-              no operation is performed.
+    calloc_method - Function pointer to the memory allocation method. If it is
+                    NULL, no operation is performed.
 
   Returns:
 
     Nothing.
 */
-BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod callocf)
+BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod calloc_method)
 {
-	if (callocf != NULL)
-		gdMemoryCallocMethod = callocf;
+	if (calloc_method != NULL)
+		gdMemoryCallocMethod = calloc_method;
 }
 
 /*
@@ -154,8 +154,8 @@ BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod callocf)
 
   Parameters:
 
-    mallocf - Function pointer to the memory allocation method. If it is NULL,
-              no operation is performed.
+    malloc_method - Function pointer to the memory allocation method. If it is
+                    NULL, no operation is performed.
 
   Returns:
 
@@ -176,10 +176,10 @@ BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod callocf)
 
     (end code)
 */
-BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod mallocf)
+BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod malloc_method)
 {
-	if (mallocf != NULL)
-		gdMemoryMallocMethod = mallocf;
+	if (malloc_method != NULL)
+		gdMemoryMallocMethod = malloc_method;
 }
 
 /*
@@ -192,17 +192,17 @@ BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod mallocf)
 
   Parameters:
 
-    reallocf - Function pointer to the memory reallocation method. If it is
-               NULL, no operation is performed.
+    realloc_method - Function pointer to the memory reallocation method. If it
+                     is NULL, no operation is performed.
 
   Returns:
 
     Nothing.
 */
-BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod reallocf)
+BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod realloc_method)
 {
-	if (reallocf != NULL)
-		gdMemoryReallocMethod = reallocf;
+	if (realloc_method != NULL)
+		gdMemoryReallocMethod = realloc_method;
 }
 
 /*
@@ -215,17 +215,17 @@ BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod reallocf)
 
   Parameters:
 
-    freef - Function pointer to the memory release method. If it is NULL, no
-            operation is performed.
+    free_method - Function pointer to the memory release method. If it is NULL,
+                  no operation is performed.
 
   Returns:
 
     Nothing.
 */
-BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod freef)
+BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod free_method)
 {
-	if (freef != NULL)
-		gdMemoryFreeMethod = freef;
+	if (free_method != NULL)
+		gdMemoryFreeMethod = free_method;
 }
 
 /*
@@ -239,27 +239,28 @@ BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod freef)
 
   Parameters:
 
-    callocf - Function pointer to the memory allocation method, initialized
-              with zeroes. If it is NULL, the assignation is not performed.
-    mallocf - Function pointer to the memory allocation method. If it is NULL,
-              the assignation is not performed.
-    reallocf - Function pointer to the memory reallocation method. If it is
-               NULL, the assignation is not performed.
-    freef - Function pointer to the memory release method. If it is NULL, the
-            assignation is not performed.
+    calloc_method - Function pointer to the memory allocation method,
+                    initialized with zeroes. If it is NULL, the assignation is
+                    not performed.
+    malloc_method - Function pointer to the memory allocation method. If it is
+                    NULL, the assignation is not performed.
+    realloc_method - Function pointer to the memory reallocation method. If it
+                     is NULL, the assignation is not performed.
+    free_method - Function pointer to the memory release method. If it is NULL,
+                  the assignation is not performed.
 
   Returns:
 
     Nothing.
 */
-BGD_DECLARE(void) gdSetMemoryAllocationMethods(gdCallocMethod callocf, gdMallocMethod mallocf, gdReallocMethod reallocf, gdFreeMethod freef)
+BGD_DECLARE(void) gdSetMemoryAllocationMethods(gdCallocMethod calloc_method, gdMallocMethod malloc_method, gdReallocMethod realloc_method, gdFreeMethod free_method)
 {
-	if (callocf != NULL)
-		gdMemoryCallocMethod = callocf;
-	if (mallocf != NULL)
-		gdMemoryMallocMethod = mallocf;
-	if (reallocf != NULL)
-		gdMemoryReallocMethod = reallocf;
-	if (freef != NULL)
-		gdMemoryFreeMethod = freef;
+	if (calloc_method != NULL)
+		gdMemoryCallocMethod = calloc_method;
+	if (malloc_method != NULL)
+		gdMemoryMallocMethod = malloc_method;
+	if (realloc_method != NULL)
+		gdMemoryReallocMethod = realloc_method;
+	if (free_method != NULL)
+		gdMemoryFreeMethod = free_method;
 }

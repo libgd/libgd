@@ -1683,11 +1683,11 @@ typedef void *(*gdMallocMethod)(size_t size);
 typedef void *(*gdReallocMethod)(void *ptr, size_t size);
 typedef void (*gdFreeMethod)(void *ptr);
 
-BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod callocf);
-BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod mallocf);
-BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod reallocf);
-BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod freef);
-BGD_DECLARE(void) gdSetMemoryAllocationMethods(gdCallocMethod callocf, gdMallocMethod mallocf, gdReallocMethod reallocf, gdFreeMethod freef);
+BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod calloc_method);
+BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod malloc_method);
+BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod realloc_method);
+BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod free_method);
+BGD_DECLARE(void) gdSetMemoryAllocationMethods(gdCallocMethod calloc_method, gdMallocMethod malloc_method, gdReallocMethod realloc_method, gdFreeMethod free_method);
 
 /* Version information functions */
 BGD_DECLARE(int) gdMajorVersion(void);
