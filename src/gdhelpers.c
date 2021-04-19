@@ -121,7 +121,7 @@ BGD_DECLARE(void) gdFree (void *ptr)
 }
 
 /*
-  Function gdSetMemoryCallocMethod
+  Function: gdSetMemoryCallocMethod
 
     <gdSetMemoryCallocMethod> sets the memory allocation (initialized with
     zeroes) method used by GD.
@@ -145,7 +145,7 @@ BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod calloc_method)
 }
 
 /*
-  Function gdSetMemoryMallocMethod
+  Function: gdSetMemoryMallocMethod
 
     <gdSetMemoryMallocMethod> sets the memory allocation method used by GD.
 
@@ -183,7 +183,7 @@ BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod malloc_method)
 }
 
 /*
-  Function gdSetMemoryReallocMethod
+  Function: gdSetMemoryReallocMethod
 
     <gdSetMemoryReallocMethod> sets the memory allocation method used by GD.
 
@@ -206,7 +206,7 @@ BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod realloc_method)
 }
 
 /*
-  Function gdSetMemoryFreeMethod
+  Function: gdSetMemoryFreeMethod
 
     <gdSetMemoryFreeMethod> sets the memory release method used by GD.
 
@@ -229,7 +229,7 @@ BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod free_method)
 }
 
 /*
-  Function gdSetMemoryAllocationMethods
+  Function: gdSetMemoryAllocationMethods
 
     <gdSetMemoryAllocationMethods> sets the memory allocation methods used by
     GD.
