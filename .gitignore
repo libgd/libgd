@@ -96,6 +96,7 @@ Testing
 # Doc artifacts
 /docs/naturaldocs/html/
 /docs/naturaldocs/project/Data/
+/docs/naturaldocs/tmp/
 
 # AppVeyor build artifacts.
 gd-dotnet-bindings-generator

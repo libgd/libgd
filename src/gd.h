@@ -1706,7 +1706,11 @@ BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod calloc_method);
 BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod malloc_method);
 BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod realloc_method);
 BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod free_method);
-BGD_DECLARE(void) gdSetMemoryAllocationMethods(gdCallocMethod calloc_method, gdMallocMethod malloc_method, gdReallocMethod realloc_method, gdFreeMethod free_method);
+
+BGD_DECLARE(void) gdClearMemoryCallocMethod();
+BGD_DECLARE(void) gdClearMemoryMallocMethod();
+BGD_DECLARE(void) gdClearMemoryReallocMethod();
+BGD_DECLARE(void) gdClearMemoryFreeMethod();
 
 /* Version information functions */
 BGD_DECLARE(int) gdMajorVersion(void);
