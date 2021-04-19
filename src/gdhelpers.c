@@ -137,6 +137,9 @@ BGD_DECLARE(void) gdFree (void *ptr)
   Returns:
 
     Nothing.
+
+  See also:
+    - <gdClearMemoryCallocMethod>
 */
 BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod calloc_method)
 {
@@ -160,6 +163,9 @@ BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod calloc_method)
   Returns:
 
     Nothing.
+
+  See also:
+    - <gdClearMemoryMallocMethod>
 
   Example:
     (start code)
@@ -198,6 +204,9 @@ BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod malloc_method)
   Returns:
 
     Nothing.
+
+  See also:
+    - <gdClearMemoryReallocMethod>
 */
 BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod realloc_method)
 {
@@ -229,38 +238,95 @@ BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod free_method)
 }
 
 /*
-  Function: gdSetMemoryAllocationMethods
+  Function: gdClearMemoryCallocMethod
 
-    <gdSetMemoryAllocationMethods> sets the memory allocation methods used by
-    GD.
+    <gdClearMemoryCallocMethod> clears the memory allocation (initialized with
+    zeroes) method used by GD.
 
-    This function is not thread-safe. Should be called once and before any
-    operation with the library.
-
-  Parameters:
-
-    calloc_method - Function pointer to the memory allocation method,
-                    initialized with zeroes. If it is NULL, the assignation is
-                    not performed.
-    malloc_method - Function pointer to the memory allocation method. If it is
-                    NULL, the assignation is not performed.
-    realloc_method - Function pointer to the memory reallocation method. If it
-                     is NULL, the assignation is not performed.
-    free_method - Function pointer to the memory release method. If it is NULL,
-                  the assignation is not performed.
+    This function is not thread-safe and it should not be called during
+    operations.
 
   Returns:
 
     Nothing.
+
+  See also:
+    - <gdSetMemoryCallocMethod>
 */
-BGD_DECLARE(void) gdSetMemoryAllocationMethods(gdCallocMethod calloc_method, gdMallocMethod malloc_method, gdReallocMethod realloc_method, gdFreeMethod free_method)
+BGD_DECLARE(void) gdClearMemoryCallocMethod()
 {
-	if (calloc_method != NULL)
-		gdMemoryCallocMethod = calloc_method;
-	if (malloc_method != NULL)
-		gdMemoryMallocMethod = malloc_method;
-	if (realloc_method != NULL)
-		gdMemoryReallocMethod = realloc_method;
-	if (free_method != NULL)
-		gdMemoryFreeMethod = free_method;
+	gdMemoryCallocMethod = calloc;
+}
+
+/*
+  Function: gdClearMemoryMallocMethod
+
+    <gdClearMemoryMallocMethod> clears the memory allocation method used by GD.
+
+    This function is not thread-safe and it should not be called during
+    operations.
+
+  Returns:
+
+    Nothing.
+
+  See also:
+    - <gdSetMemoryMallocMethod>
+
+  Example:
+    (start code)
+
+    gdSetMemoryMallocMethod(customMalloc);
+
+    // ... do the desired operations ...
+
+    // ... clear the custom malloc so it uses the default one ...
+    gdClearMemoryMallocMethod();
+
+    (end code)
+*/
+BGD_DECLARE(void) gdClearMemoryMallocMethod()
+{
+	gdMemoryMallocMethod = malloc;
+}
+
+/*
+  Function: gdClearMemoryReallocMethod
+
+    <gdClearMemoryReallocMethod> clears the memory allocation method used by
+    GD.
+
+    This function is not thread-safe and it should not be called during
+    operations.
+
+  Returns:
+
+    Nothing.
+
+  See also:
+    - <gdSetMemoryReallocMethod>
+*/
+BGD_DECLARE(void) gdClearMemoryReallocMethod()
+{
+	gdMemoryReallocMethod = realloc;
+}
+
+/*
+  Function: gdClearMemoryFreeMethod
+
+    <gdSetMemClearFreeMethod> clears the memory release method used by GD.
+
+    This function is not thread-safe and it should not be called during
+    operations.
+
+  Returns:
+
+    Nothing.
+
+  See also:
+    - <gdSetMemoryFreeMethod>
+*/
+BGD_DECLARE(void) gdClearMemoryFreeMethod()
+{
+	gdMemoryFreeMethod = free;
 }
