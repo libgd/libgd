@@ -1698,6 +1698,25 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 /* resolution affects ttf font rendering, particularly hinting */
 #define GD_RESOLUTION           96      /* pixels per inch */
 
+/*
+  Group: Types
+
+    typedef: gdCallocMethod
+
+    Memory allocation method (initialized with zeroes) function pointer type.
+
+    typedef: gdMallocMethod
+
+    Memory allocation method function pointer type.
+
+    typedef: gdReallocMethod
+
+    Memory reallocation method function pointer type.
+
+    typedef: gdFreeMethod
+
+    Memory release method function pointer type.
+*/
 typedef void *(*gdCallocMethod)(size_t nmemb, size_t size);
 typedef void *(*gdMallocMethod)(size_t size);
 typedef void *(*gdReallocMethod)(void *ptr, size_t size);
