@@ -75,5 +75,12 @@ $(nd) --rebuild --rebuild-output --documented-only \
 	--project project/ \
 	-s Default libgd
 
+# Strip whitespace.
+sed -i.tmp -E \
+  -e 's:[[:space:]]+$::' \
+  -e '${/^[[:space:]]*$/d}' \
+  project/*.txt
+rm project/*.txt.tmp
+
 # And cleanup the temp files.
 rm -rf Data tmp
