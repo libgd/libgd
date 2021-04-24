@@ -43,7 +43,7 @@ EXTRA_DIST = \
 	bdftogd \
 	demoin.png \
 	entities.html \
-	entities.tcl \
+	entities_gen.c \
 	CMakeLists.txt \
 	config.h.cmake \
 	gd_io_stream.cxx \
