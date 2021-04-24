@@ -40,12 +40,7 @@ int main(int argc, char **argv){
 
         memset((void*) linestring, '\0', 1024);
 
-                if(linestring[0] != '\n')
-
-//	<tr title="U+000C6 LATIN CAPITAL LETTER AE" data-block="C1 Controls and Latin-1 Supplement" data-category="Lu" data-set="xhtml1-lat1 9573-2003-isolat1"><td class="character"> &#x000C6;<td class="named"><code>&amp;AElig;</code><td class="hex"><code>&amp;#x000C6;</code><td class="dec"><code>&amp;#198;</code><td class="desc">LATIN CAPITAL LETTER AE
 	while( fgets(linestring, 1024, infile) != NULL){
-		//while(cur_char != '\n'
-		//cur_char = 0;
 		memset((void*)buff, '\0', 128);
 		delimiter_count = 0;
 		cur_char = 0;
@@ -129,7 +124,6 @@ int main(int argc, char **argv){
 	fprintf(outfile, "%s\n", "#ifdef __cplusplus");
 	fprintf(outfile, "%s\n", "}");
 	fprintf(outfile, "%s\n", "#endif");
-
 
 	fclose(infile);
 	fclose(outfile);
