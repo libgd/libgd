@@ -358,7 +358,7 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr){
 
 #ifdef JISX0208
 
-static int gd_JISX0208_To_Unicode(const char *str, uint32_t *chPtr){
+static int gd_JISx0208_To_Unicode(const char *str, uint32_t *chPtr){
 	int byte = *(uint8_t *)str;
 	int ku, ten;
 	if(0xA1 <= byte && byte <= 0xFE){
@@ -1331,7 +1331,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			len = gd_Entity_To_Unicode((const char *)next, &ch);
 #ifdef JISX0208
 			if(len == 0)
-				len = gd_JISX0208_To_Unicode((const char *)next, &ch);
+				len = gd_JISx0208_To_Unicode((const char *)next, &ch);
 #else
 			//UTF-8
 			if(len == 0)
