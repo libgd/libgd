@@ -23,10 +23,10 @@ getpart() {
 case $# in
 0)
 	printf '%s.%s.%s%s\n' \
-		$(getpart MAJOR) \
-		$(getpart MINOR) \
-		$(getpart RELEASE) \
-		$(getpart EXTRA)
+		"$(getpart MAJOR)" \
+		"$(getpart MINOR)" \
+		"$(getpart RELEASE)" \
+		"$(getpart EXTRA)"
 	;;
 1)
 	case $1 in
