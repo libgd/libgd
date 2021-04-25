@@ -11,7 +11,7 @@ HEADER="${TOPDIR}/src/gd.h"
 SENTINEL="/*version605b5d1778*/"
 
 getpart() {
-	awk -vfield="GD_${1}_VERSION" -vsentinel="${SENTINEL}" '
+	awk -v field="GD_${1}_VERSION" -v sentinel="${SENTINEL}" '
 		$1 == "#define" && $2 == field && $NF == sentinel {
 			gsub(/^"/, "", $3)
 			gsub(/"$/, "", $3)
