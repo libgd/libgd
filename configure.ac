@@ -4,7 +4,7 @@
 AC_PREREQ(2.64)
 
 # We extract version numbers from src/versions.h
-define([gv],[perl config/getver.pl ]$1)
+define([gv],[config/getver.sh ]$1)
 
 m4_define([gd_MAJOR],esyscmd(gv(MAJOR)))dnl
 m4_define([gd_MINOR],esyscmd(gv(MINOR)))dnl

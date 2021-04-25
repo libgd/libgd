@@ -49,7 +49,7 @@ fi
 echo "Found '$(nd)': $($(nd) -h | head -n1)"
 
 # Library version number.
-VERSION=$(cd ../../; perl config/getver.pl)
+VERSION=$(cd ../../; config/getver.sh)
 
 # Clear away old docs and ensure the doc dir. is present.
 rm -rf html
