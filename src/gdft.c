@@ -310,6 +310,7 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr){
 			}
 			if(b0 == suffix){
 				*chPtr = n;
+				chPtr[1] = 0;
 				return i;
 			}
 		}else{
@@ -324,6 +325,7 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr){
 			}
 			if(b0 == suffix){
 				*chPtr = n;
+				chPtr[1] = 0;
 				return i;
 			}
 		}
