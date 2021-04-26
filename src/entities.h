@@ -6,6 +6,9 @@
 */
 #ifndef GD_ENTITIES_H
 
+#include <stdlib.h>
+#include <stdint.h>
+
 //html entity strings are entity prefix + string + suffix limited
 //hex and dec should be limited to current unicode spec + entity prefix + suffix
 #define GD_ENTITIES_H 1
@@ -16,8 +19,8 @@
 
 struct entities_s{
                   	char *name;
-                        int unicode_a;
-                        int unicode_b;
+                        uint32_t unicode_a;
+                        uint32_t unicode_b;
                 };
 extern const struct entities_s entities[NR_OF_ENTITIES];
 
