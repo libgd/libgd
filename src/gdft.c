@@ -347,7 +347,8 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr){
 			return 0;
 		for(n = 0; n < NR_OF_ENTITIES; n++){
 			if(strcmp((const char *)entities[n].name, (const char *)entity_name_buf) == 0){
-				*chPtr = (uint32_t)entities[n].value;
+				chPtr[0] = (uint32_t)entities[n].unicode_a;
+				chPtr[1] = (uint32_t)entities[n].unicode_b;
 				return i;
 			}
 		}
@@ -1106,7 +1107,8 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	char *next;
 	char *tmpstr = 0;
 	uint32_t *text;
-	size_t text_size = 0;
+	size_t text_size = sizeof(uint32_t)*8;
+	const char text_step = sizeof(uint32_t)*8;
 	glyphInfo *info = NULL;
 	ssize_t count;
 	int render = (im && (im->trueColor || (fg <= 255 && fg >= -255)));
@@ -1300,8 +1302,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 
 	oldpenf.x = oldpenf.y = 0; /* for postscript xshow operator */
 	penf.x = penf.y = 0;	/* running position of non-rotated glyphs */
-	text_size = strlen((const char *)next);
-	text = (uint32_t *)gdCalloc(sizeof(uint32_t), text_size);
+	text = (uint32_t *)gdMalloc(text_size);
 	i = 0;
 	while (*next) {
 		int len;
@@ -1310,8 +1311,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 		case gdFTEX_Unicode: {
 			//html entity
 			len = gd_Entity_To_Unicode((const char *)next, ch_entity);
-			//gdRealloc((void *)text, size_t size   sizeof(uint32_t))
-
 			if(len == 0){
 #ifdef JISX0208
 				len = gd_JISx0208_To_Unicode((const char *)next, &ch);
@@ -1330,25 +1329,18 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 				}
 				/* EAM DEBUG */
 			}else{
-				//dual codepage entity
-				if(ch_entity[1] != 0){
-					//avoid out of bounds
-					if(text_size < i+2){
-						text_size += sizeof(uint32_t)*2;
-						text = (uint32_t *)gdRealloc((void *)text, text_size);
-					}
+				if(ch_entity[1] == 0){ //single codepage entity
+					ch = ch_entity[0];
+					if(charmap->encoding == FT_ENCODING_MS_SYMBOL)
+						ch |= 0xf000;
+				}else{ //dual codepage entity
 					if(charmap->encoding == FT_ENCODING_MS_SYMBOL){
 						ch_entity[0] |= 0xf000;
 						ch_entity[1] |= 0xf000;
 					}
-					text[i] = ch_entity[0];
-					i++;
+					text[i++] = ch_entity[0];
 					//handled as usual below
 					ch = ch_entity[1];
-				}else{
-					if(charmap->encoding == FT_ENCODING_MS_SYMBOL)
-						ch_entity[0] |= 0xf000;
-					ch = ch_entity[0];
 				}
 			}
 			next += len;
@@ -1407,7 +1399,11 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			next++;
 			break;
 		}
-
+		//avoid out of bounds
+		if(i > text_size-2){
+			text_size += text_step;
+			text = (uint32_t *)gdRealloc((void *)text, text_size);
+		}
 		text[i] = ch;
 		i++;
 	}

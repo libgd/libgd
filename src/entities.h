@@ -9,7 +9,7 @@
 //html entity strings are entity prefix + string + suffix limited
 //hex and dec should be limited to current unicode spec + entity prefix + suffix
 #define GD_ENTITIES_H 1
-#define NR_OF_ENTITIES 2231
+#define NR_OF_ENTITIES 2125
 #define ENTITY_NAME_LENGTH_MAX 33
 #define ENTITY_HEX_LENGTH_MAX 10
 #define ENTITY_DEC_LENGTH_MAX 10
