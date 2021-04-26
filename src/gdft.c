@@ -1100,11 +1100,13 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	double sin_a = sin (angle);
 	double cos_a = cos (angle);
 	uint32_t  i, ch;
+	uint32_t ch_entitie[2];
 	font_t *font;
 	fontkey_t fontkey;
 	char *next;
 	char *tmpstr = 0;
 	uint32_t *text;
+	size_t text_size = 0;
 	glyphInfo *info = NULL;
 	ssize_t count;
 	int render = (im && (im->trueColor || (fg <= 255 && fg >= -255)));
@@ -1298,7 +1300,8 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 
 	oldpenf.x = oldpenf.y = 0; /* for postscript xshow operator */
 	penf.x = penf.y = 0;	/* running position of non-rotated glyphs */
-	text = (uint32_t *)gdCalloc(sizeof(uint32_t), strlen((const char *)next));
+	text_size = strlen((const char *)next);
+	text = (uint32_t *)gdCalloc(sizeof(uint32_t), text_size);
 	i = 0;
 	while (*next) {
 		int len;
@@ -1306,26 +1309,48 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 		switch (encoding) {
 		case gdFTEX_Unicode: {
 			//html entity
-			len = gd_Entity_To_Unicode((const char *)next, &ch);
+			len = gd_Entity_To_Unicode((const char *)next, ch_entity);
+			//gdRealloc((void *)text, size_t size   sizeof(uint32_t))
+
+			if(len == 0){
 #ifdef JISX0208
-			if(len == 0)
 				len = gd_JISx0208_To_Unicode((const char *)next, &ch);
 #else
-			//UTF-8
-			if(len == 0)
+				//UTF-8
 				len = gd_UTF8_To_Unicode((const char *)next, &ch);
 #endif
-
-			/* EAM DEBUG */
-			/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
-			/* 2.0.24: David R. Morrison: use the more complete ifdef here. */
-			if (charmap->encoding == FT_ENCODING_MS_SYMBOL) {
-				/* I do not know the significance of the constant 0xf000. */
-				/* It was determined by inspection of the character codes */
-				/* stored in Microsoft font symbol.ttf                    */
-				ch |= 0xf000;
+				/* EAM DEBUG */
+				/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
+				/* 2.0.24: David R. Morrison: use the more complete ifdef here. */
+				if (charmap->encoding == FT_ENCODING_MS_SYMBOL) {
+					/* I do not know the significance of the constant 0xf000. */
+					/* It was determined by inspection of the character codes */
+					/* stored in Microsoft font symbol.ttf                    */
+					ch |= 0xf000;
+				}
+				/* EAM DEBUG */
+			}else{
+				//dual codepage entity
+				if(ch_entity[1] != 0){
+					//avoid out of bounds
+					if(text_size < i+2){
+						text_size += sizeof(uint32_t)*2;
+						text = (uint32_t *)gdRealloc((void *)text, text_size);
+					}
+					if(charmap->encoding == FT_ENCODING_MS_SYMBOL){
+						ch_entity[0] |= 0xf000;
+						ch_entity[1] |= 0xf000;
+					}
+					text[i] = ch_entity[0];
+					i++;
+					//handled as usual below
+					ch = ch_entity[1];
+				}else{
+					if(charmap->encoding == FT_ENCODING_MS_SYMBOL)
+						ch_entity[0] |= 0xf000;
+					ch = ch_entity[0];
+				}
 			}
-			/* EAM DEBUG */
 			next += len;
 		}
 		break;
@@ -1382,6 +1407,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			next++;
 			break;
 		}
+
 		text[i] = ch;
 		i++;
 	}
