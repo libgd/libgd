@@ -75,7 +75,7 @@ else (USE_EXT_GD)
 
 	MACRO(GV VER VAR)
 		execute_process(
-			COMMAND perl ${CMAKE_CURRENT_SOURCE_DIR}/config/getver.pl ${VER}
+			COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/config/getver.sh ${VER}
 			OUTPUT_VARIABLE ${VAR}
 		)
 	ENDMACRO(GV)

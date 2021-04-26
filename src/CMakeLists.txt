@@ -191,7 +191,6 @@ install(TARGETS ${GD_INSTALL_TARGETS}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(PROGRAMS bdftogd DESTINATION bin)
 install(FILES
-	entities.h
 	gd.h
 	gd_color_map.h
 	gd_errors.h

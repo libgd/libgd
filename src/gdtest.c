@@ -66,11 +66,7 @@ main (int argc, char **argv)
 	/* */
 	/* Send to PNG File then Ptr */
 	/* */
-#ifdef VMS
-	sprintf (of, "%s-png", argv[1]);
-#else
 	sprintf (of, "%s.png", argv[1]);
-#endif
 	out = fopen (of, "wb");
 	if (!out) {
 		fprintf(stderr, "PNG Output file does not exist!\n");
@@ -112,11 +108,7 @@ main (int argc, char **argv)
 	/* */
 	/* Send to GD2 File then Ptr */
 	/* */
-#ifdef VMS
-	sprintf (of, "%s-gd2", argv[1]);
-#else
 	sprintf (of, "%s.gd2", argv[1]);
-#endif
 	out = fopen (of, "wb");
 	if (!out) {
 		fprintf(stderr, "GD2 Output file does not exist!\n");
@@ -157,11 +149,7 @@ main (int argc, char **argv)
 	/* */
 	/* Send to GD File then Ptr */
 	/* */
-#ifdef VMS
-	sprintf (of, "%s-gd", argv[1]);
-#else
 	sprintf (of, "%s.gd", argv[1]);
-#endif
 	out = fopen (of, "wb");
 	if (!out) {
 		fprintf(stderr, "GD Output file does not exist!\n");
@@ -223,11 +211,7 @@ main (int argc, char **argv)
 	/*
 	 * Test gdImagePngToSink'
 	 */
-#ifdef VMS
-	sprintf (of, "%s-snk", argv[1]);
-#else
 	sprintf (of, "%s.snk", argv[1]);
-#endif
 	out = fopen (of, "wb");
 	if (!out) {
 		fprintf (stderr,

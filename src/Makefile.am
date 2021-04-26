@@ -60,6 +60,7 @@ libgd_la_SOURCES = \
 	entities.h \
 	entities.c \
 	bmp.h \
+	entities.h \
 	gd.c \
 	gd.h \
 	gd_avif.c \

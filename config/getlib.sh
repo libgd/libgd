@@ -1,6 +1,6 @@
 #!/bin/sh
 
-GETVER="${0%/*}/getver.pl"
+GETVER="${0%/*}/getver.sh"
 GDLIB_MAJOR=$("${GETVER}" MAJOR)
 GDLIB_MINOR=$("${GETVER}" MINOR)
 GDLIB_REVISION=$("${GETVER}" RELEASE)
