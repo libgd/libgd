@@ -1101,7 +1101,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	double sin_a = sin (angle);
 	double cos_a = cos (angle);
 	uint32_t  i, ch;
-	uint32_t ch_entitie[2];
+	uint32_t ch_entity[2] = {0, 0};
 	font_t *font;
 	fontkey_t fontkey;
 	char *next;
