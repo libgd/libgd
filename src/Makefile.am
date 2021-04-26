@@ -42,8 +42,8 @@ endif
 EXTRA_DIST = \
 	bdftogd \
 	demoin.png \
-	entities.html \
-	entities_gen.c \
+	entities.json \
+	entities.py \
 	CMakeLists.txt \
 	config.h.cmake \
 	gd_io_stream.cxx \
