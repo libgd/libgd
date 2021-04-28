@@ -1109,8 +1109,8 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	char *next;
 	char *tmpstr = 0;
 	uint32_t *text;
-	size_t text_size = sizeof(uint32_t)*8;
-	const char text_step = sizeof(uint32_t)*8;
+	size_t text_size = 32;
+	const uint8_t text_step = 32;
 	glyphInfo *info = NULL;
 	ssize_t count;
 	int render = (im && (im->trueColor || (fg <= 255 && fg >= -255)));
@@ -1320,31 +1320,27 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 				//UTF-8
 				len = gd_UTF8_To_Unicode((const char *)next, &ch);
 #endif
-				/* EAM DEBUG */
-				/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
-				/* 2.0.24: David R. Morrison: use the more complete ifdef here. */
-				if (charmap->encoding == FT_ENCODING_MS_SYMBOL) {
-					/* I do not know the significance of the constant 0xf000. */
-					/* It was determined by inspection of the character codes */
-					/* stored in Microsoft font symbol.ttf                    */
-					ch |= 0xf000;
-				}
-				/* EAM DEBUG */
 			}else{
 				if(ch_entity[1] == 0){ //single codepage entity
 					ch = ch_entity[0];
-					if(charmap->encoding == FT_ENCODING_MS_SYMBOL)
-						ch |= 0xf000;
 				}else{ //dual codepage entity
-					if(charmap->encoding == FT_ENCODING_MS_SYMBOL){
-						ch_entity[0] |= 0xf000;
-						ch_entity[1] |= 0xf000;
-					}
-					text[i++] = ch_entity[0];
-					//handled as usual below
+					if(charmap->encoding == FT_ENCODING_MS_SYMBOL)
+						text[i++] = ch_entity[0] | 0xf000;
+					else
+						text[i++] = ch_entity[0];
 					ch = ch_entity[1];
 				}
 			}
+			/* EAM DEBUG */
+			/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
+			/* 2.0.24: David R. Morrison: use the more complete ifdef here. */
+			if (charmap->encoding == FT_ENCODING_MS_SYMBOL) {
+				/* I do not know the significance of the constant 0xf000. */
+				/* It was determined by inspection of the character codes */
+				/* stored in Microsoft font symbol.ttf                    */
+				ch |= 0xf000;
+			}
+			/* EAM DEBUG */
 			next += len;
 		}
 		break;
@@ -1402,12 +1398,11 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			break;
 		}
 		//avoid out of bounds
-		if(i*sizeof(uint32_t) > text_size-2){
+		if(i<<2 > text_size-2){
 			text_size += text_step;
 			text = (uint32_t *)gdRealloc((void *)text, text_size);
 		}
-		text[i] = ch;
-		i++;
+		text[i++] = ch;
 	}
 
 	FT_Activate_Size (platform_independent);
