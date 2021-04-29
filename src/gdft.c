@@ -1106,7 +1106,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	uint32_t ch_entity[2] = {0, 0};
 	font_t *font;
 	fontkey_t fontkey;
-	char *next;
+	const char *next;
 	char *tmpstr = 0;
 	uint32_t *text;
 	size_t text_size = 32;
@@ -1293,11 +1293,11 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			any2eucjp (tmpstr, string, BUFSIZ);
 			next = tmpstr;
 		} else {
-			next = (char *)string;
+			next = string;
 		}
 #ifndef JISX0208
 	} else {
-		next = (char *)string;
+		next = string;
 	}
 #endif
 
@@ -1311,13 +1311,13 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 		switch (encoding) {
 		case gdFTEX_Unicode: {
 			//html entity
-			len = gd_Entity_To_Unicode((const char *)next, ch_entity);
+			len = gd_Entity_To_Unicode(next, ch_entity);
 			if(len == 0){
 #ifdef JISX0208
-				len = gd_JISx0208_To_Unicode((const char *)next, &ch);
+				len = gd_JISx0208_To_Unicode(next, &ch);
 #else
 				//UTF-8
-				len = gd_UTF8_To_Unicode((const char *)next, &ch);
+				len = gd_UTF8_To_Unicode(next, &ch);
 #endif
 			}else{
 				if(ch_entity[1] == 0){ //single codepage entity
