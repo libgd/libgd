@@ -260,7 +260,7 @@ gdMutexDeclare (gdFontCacheMutex);
 static gdCache_head_t *fontCache;
 static FT_Library library;
 
-static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr){
+static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr) {
 	// str is the UTF8 next character pointer, or a pointer to a string of 4 different kinds of html entity notation
 	// chPtr is the int for the result
 	// return value is the offset from str to the char for the next search to start
@@ -286,88 +286,88 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr){
 	static const uint8_t suffix = ';';
 	static const uint8_t ten = 10;
 
-	if(b0 != prefix0)
+	if (b0 != prefix0)
 		return 0;
 
-	b0=(uint8_t)str[i++];
-	if(b0 == prefix1){
-		//hex or decimal
-		b0=(uint8_t)str[i++];
-		if(b0 == prefix2 || b0 == prefix3){
-			//is hex
-			b0=(uint8_t)str[i++];
-			while(i<ENTITY_HEX_LENGTH_MAX){
-				if(b0 > bound_low_digit && b0 < bound_hi_digit)
+	b0 = (uint8_t)str[i++];
+	if (b0 == prefix1) {
+		// hex or decimal
+		b0 = (uint8_t)str[i++];
+		if (b0 == prefix2 || b0 == prefix3) {
+			// is hex
+			b0 = (uint8_t)str[i++];
+			while (i<ENTITY_HEX_LENGTH_MAX) {
+				if (b0 > bound_low_digit && b0 < bound_hi_digit)
 					b0 = b0 - first_digit;
-				else if(b0 > bound_low_ucase && b0 < bound_hi_ucase)
+				else if (b0 > bound_low_ucase && b0 < bound_hi_ucase)
 					b0 = b0 - first_ucase + ten;
-				else if(b0 > bound_low_lcase && b0 < bound_hi_lcase)
+				else if (b0 > bound_low_lcase && b0 < bound_hi_lcase)
 					b0 = b0 - first_lcase + ten;
 				else
 					break;
 				n = n * 16 + b0;
-				b0=(uint8_t)str[i++];
+				b0 = (uint8_t)str[i++];
 			}
-			if(b0 == suffix){
+			if (b0 == suffix) {
 				*chPtr = n;
 				chPtr[1] = 0;
 				return i;
 			}
-		}else{
-			//is dec
-			while(i<ENTITY_DEC_LENGTH_MAX){
-				if(b0 > bound_low_digit && b0 < bound_hi_digit)
+		} else {
+			// is dec
+			while (i<ENTITY_DEC_LENGTH_MAX) {
+				if (b0 > bound_low_digit && b0 < bound_hi_digit)
 					n = n * ten + b0 - first_digit;
 				else
 					break;
 
-				b0=(uint8_t)str[i++];
+				b0 = (uint8_t)str[i++];
 			}
-			if(b0 == suffix){
+			if (b0 == suffix) {
 				*chPtr = n;
 				chPtr[1] = 0;
 				return i;
 			}
 		}
-	}else{
-		//string format alphanumeric
-		//copy str into buffer untill '\0' or ;
-		while(i<ENTITY_NAME_LENGTH_MAX){
-			//not an entity
-			if(b0 == '\0')
+	} else {
+		// string format alphanumeric
+		// copy str into buffer untill '\0' or ;
+		while (i<ENTITY_NAME_LENGTH_MAX) {
+			// not an entity
+			if (b0 == '\0')
 				return 0;
-			//have complete copy
-			if(b0 == suffix){
+			// have complete copy
+			if (b0 == suffix) {
 				entity_name_buf[n] = '\0';
 				break;
 			}
 			entity_name_buf[n++] = b0;
-			b0=(uint8_t)str[i++];
+			b0 = (uint8_t)str[i++];
 		}
-		//not an entity, too long
-		if(b0 != suffix)
+		// not an entity, too long
+		if (b0 != suffix)
 			return 0;
-		for(n = 0; n < NR_OF_ENTITIES; n++){
-			if(strcmp((const char *)entities[n].name, (const char *)entity_name_buf) == 0){
+		for (n = 0; n < NR_OF_ENTITIES; n++) {
+			if (strcmp((const char *)entities[n].name, (const char *)entity_name_buf) == 0) {
 				chPtr[0] = (uint32_t)entities[n].unicode_a;
 				chPtr[1] = (uint32_t)entities[n].unicode_b;
 				return i;
 			}
 		}
 	}
-	//no match
+	// no match
 	return 0;
 }
 
 #ifdef JISX0208
 
-static int gd_JISx0208_To_Unicode(const char *str, uint32_t *chPtr){
+static int gd_JISx0208_To_Unicode(const char *str, uint32_t *chPtr) {
 	int byte = *(uint8_t *)str;
 	int ku, ten;
-	if(0xA1 <= byte && byte <= 0xFE){
+	if (0xA1 <= byte && byte <= 0xFE) {
 		ku = (byte & 0x7F) - 0x20;
 		ten = (str[1] & 0x7F) - 0x20;
-		if((ku < 1 || ku > 92) || (ten < 1 || ten > 94)){
+		if ((ku < 1 || ku > 92) || (ten < 1 || ten > 94)) {
 			*chPtr = (uint32_t)byte;
 			return 1;
 		}
@@ -378,40 +378,40 @@ static int gd_JISx0208_To_Unicode(const char *str, uint32_t *chPtr){
 
 #else
 
-static int gd_UTF8_To_Unicode(const char *str, uint32_t *chPtr){
-	//reads the contents pointed to by str and outputs a unicode codepage into object pointed to by chPtr
-	//return is the bytes to offset for the first char of a subsequent read
+static int gd_UTF8_To_Unicode(const char *str, uint32_t *chPtr) {
+	// reads the contents pointed to by str and outputs a unicode codepage into object pointed to by chPtr
+	// return is the bytes to offset for the first char of a subsequent read
 	uint32_t b0 = *(uint8_t *)str;
 	uint32_t b1, b2, b3;
 
-	if(b0 < 0xC0){
+	if (b0 < 0xC0) {
 		*chPtr = b0;
 		return 1;
 	}
-	if(b0 < 0xE0){
+	if (b0 < 0xE0) {
 		b1 = (uint8_t)str[1];
-		if((b1 & 0xC0) == 0x80){
+		if ((b1 & 0xC0) == 0x80) {
 			*chPtr = ((b0 & 0x1F) << 6) | (b1 & 0x3F);
 			return 2;
 		}
 		*chPtr = b0;
 		return 1;
 	}
-	if(b0 < 0xF0){
+	if (b0 < 0xF0) {
 		b1 = (uint8_t)str[1];
 		b2 = (uint8_t)str[2];
-		if(((b1 & 0xC0) == 0x80) && ((b2 & 0xC0) == 0x80)){
+		if (((b1 & 0xC0) == 0x80) && ((b2 & 0xC0) == 0x80)) {
 			*chPtr = ((b0 & 0x0F) << 12) | ((b1 & 0x3F) << 6) | (b2 & 0x3F);
 			return 3;
 		}
 		*chPtr = b0;
 		return 1;
 	}
-	if(b0 < 0xF8){
+	if (b0 < 0xF8) {
 		b1 = (uint8_t)str[1];
 		b2 = (uint8_t)str[2];
 		b3 = (uint8_t)str[3];
-		if(((b1 & 0xC0) == 0x80) && ((b2 & 0xC0) == 0x80) && ((b3 & 0xC0) == 0x80)){
+		if (((b1 & 0xC0) == 0x80) && ((b2 & 0xC0) == 0x80) && ((b3 & 0xC0) == 0x80)) {
 			*chPtr = ((b0 & 0x7) << 18) | ((b1 & 0x3F) << 12) | ((b2 & 0x3F) << 6) | (b3 & 0x3F);
 			return 4;
 		}
@@ -1279,7 +1279,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	}
 	if (encodingfound) {
 		FT_Select_Charmap(face, charmap->encoding);
-		//FT_Set_Charmap(face, charmap);
 	} else {
 		/* No character set found! */
 		gdCacheDelete (tc_cache);
