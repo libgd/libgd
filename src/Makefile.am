@@ -42,10 +42,9 @@ endif
 EXTRA_DIST = \
 	bdftogd \
 	demoin.png \
-	entities.json \
-	entities.py \
 	CMakeLists.txt \
 	config.h.cmake \
+	entities.py \
 	gd_io_stream.cxx \
 	gdpp.cxx \
 	getopt.c \
@@ -57,9 +56,8 @@ include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h g
 lib_LTLIBRARIES = libgd.la
 
 libgd_la_SOURCES = \
-	entities.h \
-	entities.c \
 	bmp.h \
+	entities.c \
 	entities.h \
 	gd.c \
 	gd.h \
