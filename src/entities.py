@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Generates entities.h and entities.c using entities.json from https://html.spec.whatwg.org/entities.json
-delete entities.json if you want to fetch the newest version"""
+Delete entities.json if you want to fetch the newest version.
+The current version has 1 or 2 codepoint entities.
+If the spec is updated to include 3 or more codepoints, then this script along with
+gdImageStringFTEx and gd_Entity_To_Unicode (from gdft.c) will need to be modified.
+A warning is issued for any such entities found and only the first 2 codepoints are used."""
 
 import re
 import urllib.request
@@ -105,6 +109,8 @@ for key in entities:
             string = string + str(codepoints[1]) + "}"
         else:
             string = string + "0}"
+        if len(codepoints) > 2:
+            print(f"Warning: entity with >2 codepoints detected")
         if curline == total_entities:
             string = string + "\n"
         else:
