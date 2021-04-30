@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Generates entities.h and entities.c using entities.json from https://html.spec.whatwg.org/entities.json"""
+"""Generates entities.h and entities.c using entities.json from https://html.spec.whatwg.org/entities.json
+delete entities.json if you want to fetch the newest version"""
 
 import re
 import urllib.request
@@ -11,7 +12,7 @@ import json
 __author__ = "Sterling Pickens"
 __copyright__ = "Copyright 2021, The libgd Project"
 __credits__ = ["Sterling Pickens", "Mike Frysinger"]
-__license__ = "GPL"
+__license__ = "GPLv3 or later"
 __version__ = "1.0.0"
 __maintainer__ = "Sterling Pickens"
 __email__ = "sterling_pickens@yahoo.com"
