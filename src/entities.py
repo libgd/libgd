@@ -77,7 +77,7 @@ if not os.path.exists("entities.json"):
     with open("entities.json", "wb") as file_json:
         file_json.write(urllib.request.urlopen("https://html.spec.whatwg.org/entities.json").read())
         file_json.close()
-        print("    successful")
+        print("\tsuccessful")
 with open("entities.json", "rb") as file_json:
     entities = json.load(file_json)
 file_ent_h = open("entities.h", mode="w")
