@@ -1397,7 +1397,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			break;
 		}
 		//avoid out of bounds
-		if(i<<2 > text_size-2){
+		if ((i << 2) > (text_size-2)) {
 			text_size += text_step;
 			text = (uint32_t *)gdRealloc((void *)text, text_size);
 		}
