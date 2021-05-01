@@ -21,7 +21,6 @@
 #include "gd.h"
 #include "gdhelpers.h"
 #include "gd_intern.h"
-#include "entities.h"
 
 /* 2.0.10: WIN32, not MSWIN32 */
 #if !defined(_WIN32) && !defined(_WIN32_WCE)
@@ -50,6 +49,7 @@ static char *font_pattern(char **fontpath, char *fontpattern);
 #endif
 
 #ifdef HAVE_LIBFREETYPE
+#include "entities.h"
 static char *font_path(char **fontpath, char *name_list);
 #endif
 
