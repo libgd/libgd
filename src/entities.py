@@ -126,7 +126,7 @@ with open("entities.c", mode="w") as file_ent_c:
             curline+=1
 
     # Write file end and close
-    file_ent_c.write("\t};")
+    file_ent_c.write(f"\t};")
     file_ent_c.close()
 
 # Print Summary
