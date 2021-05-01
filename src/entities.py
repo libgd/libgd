@@ -76,13 +76,11 @@ if not os.path.exists("entities.json"):
     print("entities.json not found, attempting to download...")
     with open("entities.json", "wb") as file_json:
         file_json.write(urllib.request.urlopen("https://html.spec.whatwg.org/entities.json").read())
-        file_json.close()
         print("\tsuccessful")
 
 # Load json obj
 with open("entities.json", "rb") as file_json:
     entities = json.load(file_json)
-    file_json.close()
 
 # Initialize some objects
 curline = 1
@@ -100,7 +98,6 @@ with open("entities.h", mode="w") as file_ent_h:
     file_ent_h.write(f"#define NR_OF_ENTITIES {total_entities}\n");
     file_ent_h.write(f"#define ENTITY_NAME_LENGTH_MAX {len_name_max}");
     file_ent_h.write(H_FILE_TAIL)
-    file_ent_h.close()
 
 # Write entities.c file
 with open("entities.c", mode="w") as file_ent_c:
@@ -124,10 +121,8 @@ with open("entities.c", mode="w") as file_ent_c:
                 string = string + ",\n"
             file_ent_c.write(string)
             curline+=1
-
-    # Write file end and close
-    file_ent_c.write(f"\t};")
-    file_ent_c.close()
+    # Write file end
+    file_ent_c.write(f"\t}};")
 
 # Print Summary
 print(f"entities.h & entities.c updated from entities.json")
