@@ -419,8 +419,8 @@ static int gd_UTF8_To_Unicode(const char *str, uint32_t *chPtr) {
 		return 1;
 	}
 	printf("WARNING: utf-8 above 21-bit unicode range\n");
-	//should be an error ie: 0 bytes, and exit program
-	//1 to avoid endless loop from caller
+	// should be an error ie: 0 bytes, and exit program
+	// 1 to avoid endless loop from caller
 	return 1;
 }
 
@@ -1310,19 +1310,19 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 		ch = *next;
 		switch (encoding) {
 		case gdFTEX_Unicode: {
-			//html entity
+			// html entity
 			len = gd_Entity_To_Unicode(next, ch_entity);
 			if(len == 0){
 #ifdef JISX0208
 				len = gd_JISx0208_To_Unicode(next, &ch);
 #else
-				//UTF-8
+				// UTF-8
 				len = gd_UTF8_To_Unicode(next, &ch);
 #endif
 			}else{
-				if(ch_entity[1] == 0){ //single codepage entity
+				if(ch_entity[1] == 0){ // single codepage entity
 					ch = ch_entity[0];
-				}else{ //dual codepage entity
+				}else{ // dual codepage entity
 					if(charmap->encoding == FT_ENCODING_MS_SYMBOL)
 						text[i++] = ch_entity[0] | 0xf000;
 					else
@@ -1396,7 +1396,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			next++;
 			break;
 		}
-		//avoid out of bounds
+		// avoid out of bounds
 		if ((i << 2) > (text_size-2)) {
 			text_size += text_step;
 			text = (uint32_t *)gdRealloc((void *)text, text_size);
