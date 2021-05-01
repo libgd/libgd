@@ -270,21 +270,21 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr) {
 	uint32_t n = 0;
 	uint32_t i = 1;
 	uint32_t b0 = *(uint8_t *)str;
-	static const uint8_t first_digit = '0';
-	static const uint8_t bound_low_digit = '/';
-	static const uint8_t bound_hi_digit = ':';
-	static const uint8_t first_ucase = 'A';
-	static const uint8_t bound_low_ucase = '@';
-	static const uint8_t bound_hi_ucase = 'G';
-	static const uint8_t first_lcase = 'a';
-	static const uint8_t bound_low_lcase = '`';
-	static const uint8_t bound_hi_lcase = 'g';
-	static const uint8_t prefix0 = '&';
-	static const uint8_t prefix1 = '#';
-	static const uint8_t prefix2 = 'x';
-	static const uint8_t prefix3 = 'X';
-	static const uint8_t suffix = ';';
-	static const uint8_t ten = 10;
+	const uint8_t first_digit = '0';
+	const uint8_t bound_low_digit = '/';
+	const uint8_t bound_hi_digit = ':';
+	const uint8_t first_ucase = 'A';
+	const uint8_t bound_low_ucase = '@';
+	const uint8_t bound_hi_ucase = 'G';
+	const uint8_t first_lcase = 'a';
+	const uint8_t bound_low_lcase = '`';
+	const uint8_t bound_hi_lcase = 'g';
+	const uint8_t prefix0 = '&';
+	const uint8_t prefix1 = '#';
+	const uint8_t prefix2 = 'x';
+	const uint8_t prefix3 = 'X';
+	const uint8_t suffix = ';';
+	const uint8_t ten = 10;
 
 	if (b0 != prefix0)
 		return 0;
