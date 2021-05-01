@@ -8,12 +8,12 @@ gdImageStringFTEx and gd_Entity_To_Unicode (from gdft.c) will need to be modifie
 A warning is issued for any such entities found and only the first 2 codepoints are used.
 """
 
-import re
-import urllib.request
+import json
 import os
 import os.path
+import re
+import urllib.request
 from pathlib import Path
-import json
 
 __author__ = "Sterling Pickens"
 __copyright__ = "Copyright 2021, The libgd Project"
