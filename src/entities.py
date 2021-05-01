@@ -71,17 +71,18 @@ extern const struct entities_s entities[NR_OF_ENTITIES];
 #endif
 """
 
-# Open files
+# Check for entities.json and fetch if needed
 if not os.path.exists("entities.json"):
     print("entities.json not found, attempting to download...")
     with open("entities.json", "wb") as file_json:
         file_json.write(urllib.request.urlopen("https://html.spec.whatwg.org/entities.json").read())
         file_json.close()
         print("\tsuccessful")
+
+# Load json obj
 with open("entities.json", "rb") as file_json:
     entities = json.load(file_json)
-file_ent_h = open("entities.h", mode="w")
-file_ent_c = open("entities.c", mode="w")
+    file_json.close()
 
 # Initialize some objects
 curline = 1
@@ -93,40 +94,40 @@ total_entities = sum(1 if name_matcher.match(key) else 0 for key in entities)
 # Find longest entity
 len_name_max = max(len(key) if name_matcher.match(key) else 0 for key in entities)
 
-# Print .c/.h files
-file_ent_c.write(C_FILE_HEAD)
-file_ent_h.write(H_FILE_HEAD)
-file_ent_h.write(f"#define NR_OF_ENTITIES {total_entities}\n");
-file_ent_h.write(f"#define ENTITY_NAME_LENGTH_MAX {len_name_max}");
-file_ent_h.write(H_FILE_TAIL)
+# Write entities.h file
+with open("entities.h", mode="w") as file_ent_h:
+    file_ent_h.write(H_FILE_HEAD)
+    file_ent_h.write(f"#define NR_OF_ENTITIES {total_entities}\n");
+    file_ent_h.write(f"#define ENTITY_NAME_LENGTH_MAX {len_name_max}");
+    file_ent_h.write(H_FILE_TAIL)
+    file_ent_h.close()
 
-# Print json entities to struct
-for key in entities:
-    if name_matcher.match(key):
-        string = "\t" + "{\"" + key.replace("&", "") + "\", "
-        string = string.replace(";", "")
-        codepoints = entities[key]["codepoints"]
-        string = string + str(codepoints[0]) + ", "
-        if len(codepoints) > 1:
-            string = string + str(codepoints[1]) + "}"
-        else:
-            string = string + "0}"
-        if len(codepoints) > 2:
-            print(f"Warning: entity with >2 codepoints detected")
-        if curline == total_entities:
-            string = string + "\n"
-        else:
-            string = string + ",\n"
-        file_ent_c.write(string)
-        curline+=1
+# Write entities.c file
+with open("entities.c", mode="w") as file_ent_c:
+    file_ent_c.write(C_FILE_HEAD)
+    # Write json entities to struct
+    for key in entities:
+        if name_matcher.match(key):
+            string = "\t" + "{\"" + key.replace("&", "") + "\", "
+            string = string.replace(";", "")
+            codepoints = entities[key]["codepoints"]
+            string = string + str(codepoints[0]) + ", "
+            if len(codepoints) > 1:
+                string = string + str(codepoints[1]) + "}"
+            else:
+                string = string + "0}"
+            if len(codepoints) > 2:
+                print(f"Warning: entity with >2 codepoints detected")
+            if curline == total_entities:
+                string = string + "\n"
+            else:
+                string = string + ",\n"
+            file_ent_c.write(string)
+            curline+=1
 
-# Print .c file end
-file_ent_c.write("\t};")
-
-# Close files
-file_json.close()
-file_ent_h.close()
-file_ent_c.close()
+    # Write file end and close
+    file_ent_c.write("\t};")
+    file_ent_c.close()
 
 # Print Summary
 print(f"entities.h & entities.c updated from entities.json")
