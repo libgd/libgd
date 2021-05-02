@@ -18,7 +18,7 @@ from pathlib import Path
 __author__ = "Sterling Pickens"
 __copyright__ = "Copyright 2021, The libgd Project"
 __credits__ = ["Sterling Pickens", "Mike Frysinger"]
-__license__ = "GPLv3 or later"
+__license__ = "MIT; see the COPYING file"
 __version__ = "1.0.0"
 __maintainer__ = "Sterling Pickens"
 __email__ = "sterling_pickens@yahoo.com"
@@ -29,7 +29,7 @@ SRCDIR = Path(__file__).resolve().parent
 os.chdir(SRCDIR)
 
 # Declare File content strings
-C_FILE_HEAD = """ /*
+C_FILE_HEAD = """/*
  * Generated file - do not edit directly.
  * This file was generated from:
  *     https://html.spec.whatwg.org/entities.json
@@ -38,9 +38,9 @@ C_FILE_HEAD = """ /*
 
 #include "entities.h"
 
-const struct entities_s entities[NR_OF_ENTITIES] = {
+const struct entities_s gd_entities[NR_OF_ENTITIES] = {
 """
-H_FILE_HEAD = """ /*
+H_FILE_HEAD = """/*
  * Generated file - do not edit directly.
  * This file was generated from:
  *     https://html.spec.whatwg.org/entities.json
@@ -53,20 +53,14 @@ H_FILE_HEAD = """ /*
 #include <stdlib.h>
 #include <stdint.h>
 
-"""
-H_FILE_TAIL = """
-#define ENTITY_HEX_LENGTH_MAX 10
-#define ENTITY_DEC_LENGTH_MAX 10
-
 // html entity strings are entity prefix + string + suffix limited
 // hex and dec should be limited to current unicode spec + entity prefix + suffix
 
-struct entities_s {
-                  	char *name;
-                        uint32_t unicode_a;
-                        uint32_t unicode_b;
-                };
-extern const struct entities_s entities[NR_OF_ENTITIES];
+#define ENTITY_HEX_LENGTH_MAX 10
+#define ENTITY_DEC_LENGTH_MAX 10
+"""
+H_FILE_TAIL = """
+extern const struct entities_s gd_entities[NR_OF_ENTITIES];
 
 #endif
 """
@@ -81,22 +75,20 @@ if not os.path.exists("entities.json"):
 # Load json obj
 with open("entities.json", "rb") as file_json:
     entities = json.load(file_json)
-
-# Initialize some objects
-curline = 1
 name_matcher = re.compile(r"&\S+;")
 
 # Sum of total matching entities
-total_entities = sum(1 if name_matcher.match(key) else 0 for key in entities)
+total_entities = sum(bool(name_matcher.match(key)) for key in entities)
 
 # Find longest entity
-len_name_max = max(len(key) if name_matcher.match(key) else 0 for key in entities)
+len_name_max = max(len(key) for key in entities if name_matcher.match(key))
 
 # Write entities.h file
 with open("entities.h", mode="w") as file_ent_h:
     file_ent_h.write(H_FILE_HEAD)
     file_ent_h.write(f"#define NR_OF_ENTITIES {total_entities}\n");
-    file_ent_h.write(f"#define ENTITY_NAME_LENGTH_MAX {len_name_max}");
+    file_ent_h.write(f"#define ENTITY_NAME_LENGTH_MAX {len_name_max}\n\n");
+    file_ent_h.write(f"struct entities_s {{\n\tconst char *name;\n\tuint32_t codepoint1;\n\tuint32_t codepoint2;\n}};\n");
     file_ent_h.write(H_FILE_TAIL)
 
 # Write entities.c file
@@ -105,8 +97,7 @@ with open("entities.c", mode="w") as file_ent_c:
     # Write json entities to struct
     for key in entities:
         if name_matcher.match(key):
-            string = "\t" + "{\"" + key.replace("&", "") + "\", "
-            string = string.replace(";", "")
+            string = "\t" + "{\"" + key.replace("&", "").replace(";", "") + "\", "
             codepoints = entities[key]["codepoints"]
             string = string + str(codepoints[0]) + ", "
             if len(codepoints) > 1:
@@ -115,15 +106,10 @@ with open("entities.c", mode="w") as file_ent_c:
                 string = string + "0}"
             if len(codepoints) > 2:
                 print(f"Warning: entity with >2 codepoints detected")
-            if curline == total_entities:
-                string = string + "\n"
-            else:
-                string = string + ",\n"
-            file_ent_c.write(string)
-            curline+=1
+            file_ent_c.write(string + ",\n")
     # Write file end
-    file_ent_c.write(f"\t}};")
+    file_ent_c.write("};")
 
 # Print Summary
-print(f"entities.h & entities.c updated from entities.json")
+print("entities.h & entities.c updated from entities.json")
 print(f"\tTotal entities: {total_entities}\n\tLongest entity: {len_name_max}")

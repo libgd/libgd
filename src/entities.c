@@ -1,4 +1,4 @@
- /*
+/*
  * Generated file - do not edit directly.
  * This file was generated from:
  *     https://html.spec.whatwg.org/entities.json
@@ -7,7 +7,7 @@
 
 #include "entities.h"
 
-const struct entities_s entities[NR_OF_ENTITIES] = {
+const struct entities_s gd_entities[NR_OF_ENTITIES] = {
 	{"AElig", 198, 0},
 	{"AMP", 38, 0},
 	{"Aacute", 193, 0},
@@ -2132,5 +2132,5 @@ const struct entities_s entities[NR_OF_ENTITIES] = {
 	{"zopf", 120171, 0},
 	{"zscr", 120015, 0},
 	{"zwj", 8205, 0},
-	{"zwnj", 8204, 0}
-	};
+	{"zwnj", 8204, 0},
+};

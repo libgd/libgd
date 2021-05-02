@@ -260,12 +260,19 @@ gdMutexDeclare (gdFontCacheMutex);
 static gdCache_head_t *fontCache;
 static FT_Library library;
 
-static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr) {
-	// str is the UTF8 next character pointer, or a pointer to a string of 4 different kinds of html entity notation
-	// chPtr is the int for the result
-	// return value is the offset from str to the char for the next search to start
-	// function falls through and returns 0 if no valid entity detected, leaving chPtr alone.
-	// HTML4.0/5.0 entities in hexadecimal form (e.g. &#x00021; and &#X00021;), in decimal form (e.g. &#33;),  or in string form (e.g. &excl;)
+/*
+ * static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr)
+ * str is the UTF8 next character pointer, or a pointer to a string containing one of
+ * the 4 different kinds of html entity notation.
+ * chPtr is the int for the result.
+ * Returns the number of bytes read from |str|.
+ * function falls through and returns 0 if no valid entity detected, leaving chPtr alone.
+ * HTML4.0/5.0 entities in hexadecimal form (e.g. &#x00021; and &#X00021;),
+ * in decimal form (e.g. &#33;),  or in string form (e.g. &excl;).
+ */
+
+static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr)
+{
 	char entity_name_buf[ENTITY_NAME_LENGTH_MAX];
 	uint32_t n = 0;
 	uint32_t i = 1;
@@ -296,7 +303,7 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr) {
 		if (b0 == prefix2 || b0 == prefix3) {
 			// is hex
 			b0 = (uint8_t)str[i++];
-			while (i<ENTITY_HEX_LENGTH_MAX) {
+			while (i < ENTITY_HEX_LENGTH_MAX) {
 				if (b0 > bound_low_digit && b0 < bound_hi_digit)
 					b0 = b0 - first_digit;
 				else if (b0 > bound_low_ucase && b0 < bound_hi_ucase)
@@ -315,7 +322,7 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr) {
 			}
 		} else {
 			// is dec
-			while (i<ENTITY_DEC_LENGTH_MAX) {
+			while (i < ENTITY_DEC_LENGTH_MAX) {
 				if (b0 > bound_low_digit && b0 < bound_hi_digit)
 					n = n * ten + b0 - first_digit;
 				else
@@ -332,7 +339,7 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr) {
 	} else {
 		// string format alphanumeric
 		// copy str into buffer untill '\0' or ;
-		while (i<ENTITY_NAME_LENGTH_MAX) {
+		while (i < ENTITY_NAME_LENGTH_MAX) {
 			// not an entity
 			if (b0 == '\0')
 				return 0;
@@ -348,9 +355,9 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr) {
 		if (b0 != suffix)
 			return 0;
 		for (n = 0; n < NR_OF_ENTITIES; n++) {
-			if (strcmp((const char *)entities[n].name, (const char *)entity_name_buf) == 0) {
-				chPtr[0] = (uint32_t)entities[n].unicode_a;
-				chPtr[1] = (uint32_t)entities[n].unicode_b;
+			if (strcmp(gd_entities[n].name, entity_name_buf) == 0) {
+				chPtr[0] = gd_entities[n].codepoint1;
+				chPtr[1] = gd_entities[n].codepoint2;
 				return i;
 			}
 		}
@@ -361,7 +368,8 @@ static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr) {
 
 #ifdef JISX0208
 
-static int gd_JISx0208_To_Unicode(const char *str, uint32_t *chPtr) {
+static int gd_JISx0208_To_Unicode(const char *str, uint32_t *chPtr)
+{
 	int byte = *(uint8_t *)str;
 	int ku, ten;
 	if (0xA1 <= byte && byte <= 0xFE) {
@@ -378,9 +386,13 @@ static int gd_JISx0208_To_Unicode(const char *str, uint32_t *chPtr) {
 
 #else
 
-static int gd_UTF8_To_Unicode(const char *str, uint32_t *chPtr) {
-	// reads the contents pointed to by str and outputs a unicode codepage into object pointed to by chPtr
-	// return is the bytes to offset for the first char of a subsequent read
+/*
+ * gd_UTF8_To_Unicode(const char *str, uint32_t *chPtr)
+ * reads the contents pointed to by str and outputs a unicode codepage into object pointed to by chPtr.
+ * Returns the number of bytes read from |str|.
+ */
+static int gd_UTF8_To_Unicode(const char *str, uint32_t *chPtr)
+{
 	uint32_t b0 = *(uint8_t *)str;
 	uint32_t b1, b2, b3;
 
@@ -1102,8 +1114,8 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	FT_UInt glyph_index;
 	double sin_a = sin (angle);
 	double cos_a = cos (angle);
-	uint32_t  i, ch;
-	uint32_t ch_entity[2] = {0, 0};
+	uint32_t  i,ch;
+	uint32_t ch_entity[2] = {0,0};
 	font_t *font;
 	fontkey_t fontkey;
 	const char *next;
@@ -1312,18 +1324,18 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 		case gdFTEX_Unicode: {
 			// html entity
 			len = gd_Entity_To_Unicode(next, ch_entity);
-			if(len == 0){
+			if (len == 0) {
 #ifdef JISX0208
 				len = gd_JISx0208_To_Unicode(next, &ch);
 #else
 				// UTF-8
 				len = gd_UTF8_To_Unicode(next, &ch);
 #endif
-			}else{
-				if(ch_entity[1] == 0){ // single codepage entity
+			} else {
+				if (ch_entity[1] == 0) { // single codepage entity
 					ch = ch_entity[0];
-				}else{ // dual codepage entity
-					if(charmap->encoding == FT_ENCODING_MS_SYMBOL)
+				} else { // dual codepage entity
+					if (charmap->encoding == FT_ENCODING_MS_SYMBOL)
 						text[i++] = ch_entity[0] | 0xf000;
 					else
 						text[i++] = ch_entity[0];
@@ -1397,9 +1409,9 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			break;
 		}
 		// avoid out of bounds
-		if ((i << 2) > (text_size-2)) {
+		if ((i << 2) > (text_size - 2)) {
 			text_size += text_step;
-			text = (uint32_t *)gdRealloc((void *)text, text_size);
+			text = gdRealloc(text, text_size);
 		}
 		text[i++] = ch;
 	}
