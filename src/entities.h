@@ -19,11 +19,12 @@
 #define NR_OF_ENTITIES 2125
 #define ENTITY_NAME_LENGTH_MAX 33
 
-struct entities_s {
+struct gd_entities_s {
 	const char *name;
 	uint32_t codepoint1;
 	uint32_t codepoint2;
 };
-extern const struct entities_s gd_entities[NR_OF_ENTITIES];
+
+extern const struct gd_entities_s gd_entities[NR_OF_ENTITIES];
 
 #endif

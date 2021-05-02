@@ -38,7 +38,7 @@ C_FILE_HEAD = """/*
 
 #include "entities.h"
 
-const struct entities_s gd_entities[NR_OF_ENTITIES] = {
+const struct gd_entities_s gd_entities[NR_OF_ENTITIES] = {
 """
 H_FILE_HEAD = """/*
  * Generated file - do not edit directly.
@@ -60,7 +60,7 @@ H_FILE_HEAD = """/*
 #define ENTITY_DEC_LENGTH_MAX 10
 """
 H_FILE_TAIL = """
-extern const struct entities_s gd_entities[NR_OF_ENTITIES];
+extern const struct gd_entities_s gd_entities[NR_OF_ENTITIES];
 
 #endif
 """
@@ -88,7 +88,7 @@ with open("entities.h", mode="w") as file_ent_h:
     file_ent_h.write(H_FILE_HEAD)
     file_ent_h.write(f"#define NR_OF_ENTITIES {total_entities}\n");
     file_ent_h.write(f"#define ENTITY_NAME_LENGTH_MAX {len_name_max}\n\n");
-    file_ent_h.write("struct entities_s {\n\tconst char *name;\n\tuint32_t codepoint1;\n\tuint32_t codepoint2;\n};");
+    file_ent_h.write("struct gd_entities_s {\n\tconst char *name;\n\tuint32_t codepoint1;\n\tuint32_t codepoint2;\n};\n");
     file_ent_h.write(H_FILE_TAIL)
 
 # Write entities.c file

@@ -7,7 +7,7 @@
 
 #include "entities.h"
 
-const struct entities_s gd_entities[NR_OF_ENTITIES] = {
+const struct gd_entities_s gd_entities[NR_OF_ENTITIES] = {
 	{"AElig", 198, 0},
 	{"AMP", 38, 0},
 	{"Aacute", 193, 0},
