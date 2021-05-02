@@ -108,7 +108,7 @@ with open("entities.c", mode="w") as file_ent_c:
                 print("Warning: entity with >2 codepoints detected")
             file_ent_c.write(string + ",\n")
     # Write file end
-    file_ent_c.write("};")
+    file_ent_c.write("};\n")
 
 # Print Summary
 print("entities.h & entities.c updated from entities.json")
