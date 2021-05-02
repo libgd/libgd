@@ -88,7 +88,7 @@ with open("entities.h", mode="w") as file_ent_h:
     file_ent_h.write(H_FILE_HEAD)
     file_ent_h.write(f"#define NR_OF_ENTITIES {total_entities}\n");
     file_ent_h.write(f"#define ENTITY_NAME_LENGTH_MAX {len_name_max}\n\n");
-    file_ent_h.write(f"struct entities_s {{\n\tconst char *name;\n\tuint32_t codepoint1;\n\tuint32_t codepoint2;\n}};\n");
+    file_ent_h.write("struct entities_s {\n\tconst char *name;\n\tuint32_t codepoint1;\n\tuint32_t codepoint2;\n};");
     file_ent_h.write(H_FILE_TAIL)
 
 # Write entities.c file
@@ -105,7 +105,7 @@ with open("entities.c", mode="w") as file_ent_c:
             else:
                 string = string + "0}"
             if len(codepoints) > 2:
-                print(f"Warning: entity with >2 codepoints detected")
+                print("Warning: entity with >2 codepoints detected")
             file_ent_c.write(string + ",\n")
     # Write file end
     file_ent_c.write("};")

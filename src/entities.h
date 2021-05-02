@@ -24,7 +24,6 @@ struct entities_s {
 	uint32_t codepoint1;
 	uint32_t codepoint2;
 };
-
 extern const struct entities_s gd_entities[NR_OF_ENTITIES];
 
 #endif
