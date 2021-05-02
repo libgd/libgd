@@ -21,6 +21,7 @@
 #include "gd.h"
 #include "gdhelpers.h"
 #include "gd_intern.h"
+#include "gd_errors.h"
 
 /* 2.0.10: WIN32, not MSWIN32 */
 #if !defined(_WIN32) && !defined(_WIN32_WCE)
@@ -430,9 +431,9 @@ static int gd_UTF8_To_Unicode(const char *str, uint32_t *chPtr)
 		*chPtr = b0;
 		return 1;
 	}
-	printf("WARNING: utf-8 above 21-bit unicode range\n");
 	// should be an error ie: 0 bytes, and exit program
 	// 1 to avoid endless loop from caller
+	gd_error_ex(GD_WARNING, "gd-ft: utf-8 above 21-bit unicode range\n");
 	return 1;
 }
 
