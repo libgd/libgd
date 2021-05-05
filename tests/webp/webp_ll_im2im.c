@@ -5,10 +5,8 @@
  * with the original image.
  */
 
-
 #include "gd.h"
 #include "gdtest.h"
-
 
 int main()
 {
