@@ -48,23 +48,23 @@ int main()
     fp = gdTestFileOpen2("gdimagecopyresampled", "bug00201_src.png");
     logo_source = gdImageCreateFromPng(fp);
     fclose(fp);
-    
+
     logo = blank_image(SRC_WIDTH,SRC_HEIGHT);
     gdImageAlphaBlending(logo, 0);
     gdImageCopy(logo, logo_source, 0,0, 0,0, SRC_WIDTH,SRC_HEIGHT);
     gdImageDestroy(logo_source);
-    
+
     scaled_logo = blank_image(DEST_WIDTH,DEST_HEIGHT);
     gdImageAlphaBlending(scaled_logo, 0);
     gdImageCopyResampled(scaled_logo, logo, 0,0, 0,0, 200,105, SRC_WIDTH,SRC_HEIGHT);
     gdImageDestroy(logo);
-    
+
     layers[0] = background;
     layers[1] = scaled_logo;
     img = flatten(layers, 2, DEST_WIDTH, DEST_HEIGHT);
     gdImageDestroy(background);
     gdImageDestroy(scaled_logo);
-    
+
     gdAssertImageEqualsToFile("gdimagecopyresampled/bug00201_exp.png", img);
     gdImageDestroy(img);
     return gdNumFailures();

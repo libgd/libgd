@@ -114,5 +114,3 @@ BGD_DECLARE(void) gdFree (void *ptr)
 {
 	free (ptr);
 }
-
-

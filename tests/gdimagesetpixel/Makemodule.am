@@ -1,8 +1,12 @@
 libgd_test_programs += \
-	gdimagesetpixel/alpha_blending \
 	gdimagesetpixel/bug00186 \
 	gdimagesetpixel/gdeffectmultiply \
 	gdimagesetpixel/gdeffectoverlay
+
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagesetpixel/alpha_blending
+endif
 
 EXTRA_DIST += \
 	gdimagesetpixel/CMakeLists.txt \

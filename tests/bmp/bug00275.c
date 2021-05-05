@@ -6,7 +6,7 @@
 
 
 #ifdef __GNUC__
-#define UNUSED __attribute__((unused))
+#define UNUSED __attribute__((__unused__))
 #else
 #define UNUSED
 #endif
@@ -48,6 +48,8 @@ int main()
 
 	/* "save" the image as BMP */
 	gdImageBmpCtx(im, &ctx, 2);
+
+	gdImageDestroy(im);
 
 	return gdNumFailures();
 }

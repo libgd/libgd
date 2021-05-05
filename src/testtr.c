@@ -11,8 +11,6 @@
 int
 main(void)
 {
-#ifdef HAVE_LIBFREETYPE
-	FILE *out;
 	int transparent, green, black;
 	gdImagePtr im;
 
@@ -37,17 +35,15 @@ main(void)
 
 	gdImageSaveAlpha (im, TRUE);
 #ifdef HAVE_LIBPNG
-	out = fopen ("testtr.png", "wb");
-	gdImagePng (im, out);
-	fclose (out);
+	{
+		FILE *out = fopen("testtr.png", "wb");
+		gdImagePng(im, out);
+		fclose(out);
+	}
 #else
 	fprintf(stderr, "Compiled without libpng support\n");
 #endif /* HAVE_LIBPNG */
 	gdImageDestroy (im);
 
 	return 0;
-#else
-	fprintf(stderr, "Compiled without freetype support\n");
-	return 0;
-#endif /* HAVE_LIBFREETYPE */
 }

@@ -11,11 +11,7 @@
 #include "gd.h"
 #include "gdhelpers.h"
 #include "gd_errors.h"
-
-#ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif
-
 #include <stdarg.h>
 #if defined(HAVE_ICONV_H)
 #include <iconv.h>
@@ -98,7 +94,7 @@ iconv_close (iconv_t cd)
 /* DetectKanjiCode() derived from DetectCodeType() by Ken Lunde. */
 
 static int
-DetectKanjiCode (unsigned char *str)
+DetectKanjiCode (const unsigned char *str)
 {
 	static int whatcode = ASCII;
 	int oldcode = ASCII;
@@ -146,7 +142,7 @@ DetectKanjiCode (unsigned char *str)
 					whatcode = EUCORSJIS;
 				else if (c >= 224 && c <= 239) {
 					whatcode = EUCORSJIS;
-					while (c >= 64 && c != '\0' && whatcode == EUCORSJIS) {
+					while (c >= 64 && whatcode == EUCORSJIS) {
 						if (c >= 129) {
 							if (c <= 141 || (c >= 143 && c <= 159))
 								whatcode = SJIS;
@@ -334,20 +330,20 @@ han2zen (int *p1, int *p2)
 #define ustrncpy(A,B, maxsize) (strncpy((char*)(A),(const char*)(B), maxsize))
 
 static void
-do_convert (unsigned char **to_p, unsigned char **from_p, const char *code)
+do_convert (unsigned char **to_p, const unsigned char **from_p, const char *code)
 {
 	unsigned char *to = *to_p;
-	unsigned char *from = *from_p;
+	const unsigned char *from = *from_p;
 #ifdef HAVE_ICONV
 	iconv_t cd;
 	size_t from_len, to_len;
 
 	if ((cd = iconv_open (EUCSTR, code)) == (iconv_t) - 1) {
 		gd_error ("iconv_open() error");
-#ifdef HAVE_ERRNO_H
+
 		if (errno == EINVAL)
 			gd_error ("invalid code specification: \"%s\" or \"%s\"", EUCSTR, code);
-#endif
+
 		ustrcpy (to, from);
 		return;
 	}
@@ -357,7 +353,7 @@ do_convert (unsigned char **to_p, unsigned char **from_p, const char *code)
 
 	if ((int) (iconv (cd, (char **)from_p, &from_len, (char **)to_p, &to_len))
 	        == -1) {
-#ifdef HAVE_ERRNO_H
+
 		if (errno == EINVAL)
 			gd_error ("invalid end of input string");
 		else if (errno == EILSEQ)
@@ -365,7 +361,7 @@ do_convert (unsigned char **to_p, unsigned char **from_p, const char *code)
 		else if (errno == E2BIG)
 			gd_error ("output buffer overflow at do_convert()");
 		else
-#endif
+
 			gd_error ("something happen");
 		ustrcpy (to, from);
 		return;
@@ -436,7 +432,7 @@ do_convert (unsigned char **to_p, unsigned char **from_p, const char *code)
 }
 
 static int
-do_check_and_conv (unsigned char *to, unsigned char *from)
+do_check_and_conv (unsigned char *to, const unsigned char *from)
 {
 	static unsigned char tmp[BUFSIZ];
 	unsigned char *tmp_p = &tmp[0];
@@ -527,7 +523,7 @@ do_check_and_conv (unsigned char *to, unsigned char *from)
 }
 
 int
-any2eucjp (unsigned char *dest, unsigned char *src, unsigned int dest_max)
+any2eucjp (unsigned char *dest, const unsigned char *src, unsigned int dest_max)
 {
 	static unsigned char tmp_dest[BUFSIZ];
 	int ret;

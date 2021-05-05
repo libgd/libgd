@@ -1,0 +1,12 @@
+if HAVE_LIBHEIF
+libgd_test_programs += \
+	heif/avif_ptr_double_free \
+	heif/heif_im2im \
+	heif/heif_null \
+	heif/heif_ptr_double_free \
+	heif/heif_read
+endif
+
+EXTRA_DIST += \
+	heif/CMakeLists.txt \
+	heif/label.heic

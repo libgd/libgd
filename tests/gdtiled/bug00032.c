@@ -29,4 +29,3 @@ int main()
 	gdImageDestroy(tile);
 	return 0;
 }
-

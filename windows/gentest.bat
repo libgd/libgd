@@ -15,19 +15,19 @@ copy NUL !TESTMK! > nul
 copy NUL !TESTLIST! > nul
 
 for /D %%d in (!testsdir!/*) do (
-	if NOT "%%d"=="gdtest" for %%f in (!testsdir!/%%d/*.c) do (
+	if NOT "%%d"=="fontconfig" if NOT "%%d"=="gdtest" for %%f in (!testsdir!/%%d/*.c) do (
 		echo TEST_EXES=!builddir!\tests\%%d_%%~nf.exe ^$^(TEST_EXES^) >> !TESTMK!
 	)
 )
 
 for /D %%d in (!testsdir!/*) do (
-    if NOT "%%d"=="gdtest" for %%f in (!testsdir!/%%d/*.c) do (
-		echo !builddir!\%%d_%%~nf.obj: !testsdir!\%%d\%%f; ^$^(CC^) ^$^(TEST_CFLAGS^) /c ^$** /Fo:$@  >> !TESTMK!
+    if NOT "%%d"=="fontconfig" if NOT "%%d"=="gdtest" for %%f in (!testsdir!/%%d/*.c) do (
+		echo !builddir!\%%d_%%~nf.obj: !testsdir!\%%d\%%f; ^$^(CC^) ^$^(TEST_CFLAGS^) /c ^$** /Fd$*.pdb /Fo:$@  >> !TESTMK!
 	)
 )
 
 for /D %%d in (!testsdir!/*) do (
-    if NOT "%%d"=="gdtest" for %%f in (!testsdir!/%%d/*.c) do (
+    if NOT "%%d"=="fontconfig" if NOT "%%d"=="gdtest" for %%f in (!testsdir!/%%d/*.c) do (
 		echo !builddir!\tests\%%d_%%~nf.exe: !builddir!\%%d_%%~nf.obj; !LD! !LDFLAGS! $** /out:$@ >> !TESTMK!
 		echo %%d_%%~nf.exe >> !TESTLIST!
 	)

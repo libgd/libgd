@@ -27,22 +27,22 @@ Format: 1.52
 
 
 # --------------------------------------------------------------------------
-# 
+#
 # Cut and paste the lines below to change the order in which your files
 # appear on the menu.  Don't worry about adding or removing files, Natural
 # Docs will take care of that.
-# 
+#
 # You can further organize the menu by grouping the entries.  Add a
 # "Group: [name] {" line to start a group, and add a "}" to end it.
-# 
+#
 # You can add text and web links to the menu by adding "Text: [text]" and
 # "Link: [name] ([URL])" lines, respectively.
-# 
+#
 # The formatting and comments are auto-generated, so don't worry about
 # neatness when editing the file.  Natural Docs will clean it up the next
 # time it is run.  When working with groups, just deal with the braces and
 # forget about the indentation and comments.
-# 
+#
 # --------------------------------------------------------------------------
 
 
@@ -50,11 +50,13 @@ File: About LibGD 2.3.0-dev  (no auto-title, preamble.txt)
 
 Group: Image Formats  {
 
+   File: AVIF IO  (no auto-title, gd_avif.c)
    File: BMP IO  (no auto-title, gd_bmp.c)
    File: GD IO  (no auto-title, gd_gd.c)
    File: GD2 IO  (no auto-title, gd_gd2.c)
    File: GIF Input  (no auto-title, gd_gif_in.c)
    File: GIF Output  (no auto-title, gd_gif_out.c)
+   File: HEIF IO  (no auto-title, gd_heif.c)
    File: JPEG IO  (no auto-title, gd_jpeg.c)
    File: PNG IO  (no auto-title, gd_png.c)
    File: TGA Input  (no auto-title, gd_tga.c)
@@ -65,28 +67,28 @@ Group: Image Formats  {
    File: XPM Input  (no auto-title, gdxpm.c)
    }  # Group: Image Formats
 
+File: Color Quantization  (gd_topal.c)
+File: Cropping  (gd_crop.c)
+File: FreeType font rendering  (gdft.c)
 File: gd.c  (gd.c)
 File: gd.h  (gd.h)
-File: gd_crop.c  (gd_crop.c)
 File: gd_filename.c  (gd_filename.c)
-File: gd_filter.c  (gd_filter.c)
 File: gd_interpolation.c  (gd_interpolation.c)
 File: gd_io.h  (gd_io.h)
 File: gd_io_dp.c  (gd_io_dp.c)
 File: gd_ss.c  (gd_ss.c)
-File: gd_topal.c  (gd_topal.c)
-File: gd_transform.c  (gd_transform.c)
 File: gd_version.c  (gd_version.c)
 File: gdColorMapLookup  (gd_color_map.c)
 File: gdFree  (gdhelpers.c)
-File: gdft.c  (gdft.c)
 File: gdfx.c  (gdfx.c)
 File: gdImageColorMatch  (gd_color_match.c)
 File: gdImageNeuQuant  (gd_nnquant.c)
 File: gdNewFileCtx  (gd_io_file.c)
 File: gdNewSSCtx  (gd_io_ss.c)
+File: Image Filters  (gd_filter.c)
 File: License  (license.txt)
 File: Matrix  (gd_matrix.c)
+File: Transformations  (gd_transform.c)
 
 Group: Built-in Fonts  {
 
@@ -103,6 +105,6 @@ Group: Index  {
    Index: Everything
    File Index: Files
    Function Index: Functions
+   Macro Index: Macros
    Type Index: Types
    }  # Group: Index
-

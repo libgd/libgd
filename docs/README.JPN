@@ -1,39 +1,38 @@
-	gd $B%i%$%V%i%j$GF|K\8lJ8;zNs$r;H$&>e$G$NCm0U;v9`(B
+	gd ライブラリで日本語文字列を使う上での注意事項
 
-					$B;32l@5?M(B (ma@yama-ga.com)
-
-
-gd-1.7.0 $B$+$i$O$=$N$^$^$G(B gdImageStringTTF() $B$KBP$7$F(B
-SJIS encoding $B$N%U%)%s%H$,;HMQ$G$-$^$9!#(B
-
-	$B"((B Unicode encoding $B$N%U%)%s%H$KBP$7$F$OF|K\8lJ8;zNs$r(B UTF-8 $B$G(B
-	   $B;XDj$9$l$PF|K\8l$,I=<($G$-$^$9!#(B
-
-$B$D$^$j(B gdImageStringTTF() $B$G(B SJIS encoding $B$N%U%)%s%H$r;XDj$9$k$H(B
-$BJ8;zNs$OL5>r7o$KF|K\8l$G$"$k$H2r<a$5$l!"4A;z%3!<%I(B (EUC, SJIS, 7bit JIS)
-$B$,<+F0H=JL$5$l$FE,@Z$K=hM}$5$l$^$9!#(B
-
-$B99$K(B UNICODE encoding $B$N%U%)%s%H$KBP$7$F$b(B JIS $B7O$NF|K\8l(B (EUC, SJIS, 7bit JIS)
-$B$r;HMQ$9$k>l9g$O!"%3%s%Q%$%k;~$K(B -DJISX0208 $B$rIU$1$F%3%s%Q%$%k$7$F$/$@$5$$!#(B
-$B$3$&$9$k$H(B gdImageStringTTF() $B$G;XDj$5$l$?J8;zNs$K(B ASCII $B0J30$NJ8;z$,$"$k$H(B
-$BL5>r7o$KF|K\8lJ8;zNs$G$"$k$H2r<a$5$l!"4A;z%3!<%I$r<+F0H=JL8e$K(B
-$BE,@Z$K=hM}$5$l$^$9!#(B
-
-$B$?$@$7$3$N>l9g$O(B UTF-8 $B$NF|K\8lJ8;zNs$r07$($J$/$J$j$^$9$N$G!"(B
-$B$4MxMQ$N4D6-Ey$K1~$8$F(B -DJISX0208 $B$rIU$1$k$+H]$+$r7h$a$F$/$@$5$$!#(B
-
-$B4A;z%3!<%I$NJQ49$K(B OS $BIUB0$N(B iconv() $B$r;H$&>l9g$O(B
-CFLAGS $B$K(B -DHAVE_ICONV $B$rIU$1$F%3%s%Q%$%k$7$F$/$@$5$$!#(B
-$B$3$N>l9g$K(B -DHAVE_STDARG_H $B$H(B -DHAVE_ERRNO_H $B$bIU$1$F$*$/$H(B
-$B4A;z%3!<%IJQ49$N:]$K%(%i!<$,H/@8$7$?>l9g$KE,@Z$J%a%C%;!<%8$r(B
-$BI=<($9$k$h$&$K$J$j$^$9!#(B
+					山賀正人 (ma@yama-ga.com)
 
 
-$B!y(B EUC $B$+(B SJIS $B$+H=JL$G$-$J$+$C$?>l9g$N4A;z%3!<%I$NH=JLJ}K!(B
+gd-1.7.0 からはそのままで gdImageStringTTF() に対して
+SJIS encoding のフォントが使用できます。
 
-	(1) $B4D6-JQ?t(B LC_ALL, LC_CTYPE, LANG $B$r$3$N=gHV$G%A%'%C%/$9$k(B
-	(2) $B4D6-JQ?t$+$i$bH=JL$G$-$J$+$C$?>l9g$O(B UNIX $B$J$i$P(B EUC$B!"(B
-	    Win32 $B$J$i$P(B SJIS $B$H8+$J$9(B
+	※ Unicode encoding のフォントに対しては日本語文字列を UTF-8 で
+	   指定すれば日本語が表示できます。
 
-$B%3%s%Q%$%k;~$K(B -DSJISPRE $B$rIU$1$F%3%s%Q%$%k$9$l$P!"(BUNIX $B$G$"$C$F$b(B
-SJIS $B$rM%@h$9$k$h$&$K$J$j$^$9!#(B
+つまり gdImageStringTTF() で SJIS encoding のフォントを指定すると
+文字列は無条件に日本語であると解釈され、漢字コード (EUC, SJIS, 7bit JIS)
+が自動判別されて適切に処理されます。
+
+更に UNICODE encoding のフォントに対しても JIS 系の日本語 (EUC, SJIS, 7bit JIS)
+を使用する場合は、コンパイル時に -DJISX0208 を付けてコンパイルしてください。
+こうすると gdImageStringTTF() で指定された文字列に ASCII 以外の文字があると
+無条件に日本語文字列であると解釈され、漢字コードを自動判別後に
+適切に処理されます。
+
+ただしこの場合は UTF-8 の日本語文字列を扱えなくなりますので、
+ご利用の環境等に応じて -DJISX0208 を付けるか否かを決めてください。
+
+漢字コードの変換に OS 付属の iconv() を使う場合は
+CFLAGS に -DHAVE_ICONV を付けてコンパイルしてください。
+漢字コード変換の際にエラーが発生した場合に適切なメッセージを
+表示するようになります。
+
+
+☆ EUC か SJIS か判別できなかった場合の漢字コードの判別方法
+
+	(1) 環境変数 LC_ALL, LC_CTYPE, LANG をこの順番でチェックする
+	(2) 環境変数からも判別できなかった場合は UNIX ならば EUC、
+	    Win32 ならば SJIS と見なす
+
+コンパイル時に -DSJISPRE を付けてコンパイルすれば、UNIX であっても
+SJIS を優先するようになります。

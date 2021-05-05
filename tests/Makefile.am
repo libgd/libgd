@@ -13,6 +13,7 @@ CLEANFILES =
 EXTRA_DIST =
 TESTS =
 
+include avif/Makemodule.am
 include bmp/Makemodule.am
 include fontconfig/Makemodule.am
 include freetype/Makemodule.am
@@ -23,16 +24,23 @@ include gdimagebrightness/Makemodule.am
 include gdimageclone/Makemodule.am
 include gdimagecolor/Makemodule.am
 include gdimagecolorclosest/Makemodule.am
+include gdimagecolorclosesthwb/Makemodule.am
 include gdimagecolordeallocate/Makemodule.am
 include gdimagecolorexact/Makemodule.am
+include gdimagecolormatch/Makemodule.am
 include gdimagecolorreplace/Makemodule.am
 include gdimagecolorresolve/Makemodule.am
 include gdimagecolortransparent/Makemodule.am
+include gdimagecompare/Makemodule.am
 include gdimagecontrast/Makemodule.am
 include gdimageconvolution/Makemodule.am
 include gdimagecopy/Makemodule.am
+include gdimagecopymerge/Makemodule.am
+include gdimagecopymergegray/Makemodule.am
 include gdimagecopyresampled/Makemodule.am
+include gdimagecopyresized/Makemodule.am
 include gdimagecopyrotated/Makemodule.am
+include gdimagecreate/Makemodule.am
 include gdimagecrop/Makemodule.am
 include gdimagefile/Makemodule.am
 include gdimagefill/Makemodule.am
@@ -43,6 +51,7 @@ include gdimagefilledrectangle/Makemodule.am
 include gdimagefilltoborder/Makemodule.am
 include gdimagefilter/Makemodule.am
 include gdimageflip/Makemodule.am
+include gdimageellipse/Makemodule.am
 include gdimagegrayscale/Makemodule.am
 include gdimageline/Makemodule.am
 include gdimagenegate/Makemodule.am
@@ -53,16 +62,24 @@ include gdimagerectangle/Makemodule.am
 include gdimagerotate/Makemodule.am
 include gdimagescale/Makemodule.am
 include gdimagescatterex/Makemodule.am
+include gdimagesetinterpolationmethod/Makemodule.am
 include gdimagesetpixel/Makemodule.am
+include gdimagesquaretocircle/Makemodule.am
+include gdimagestring/Makemodule.am
+include gdimagestring16/Makemodule.am
 include gdimagestringft/Makemodule.am
 include gdimagestringftex/Makemodule.am
+include gdimagestringup/Makemodule.am
+include gdimagestringup16/Makemodule.am
 include gdimagetruecolortopalette/Makemodule.am
 include gdinterpolatedscale/Makemodule.am
 include gdnewfilectx/Makemodule.am
 include gdtest/Makemodule.am
 include gdtiled/Makemodule.am
 include gdtransformaffineboundingbox/Makemodule.am
+include gdtransformaffinecopy/Makemodule.am
 include gif/Makemodule.am
+include heif/Makemodule.am
 include jpeg/Makemodule.am
 include png/Makemodule.am
 include tga/Makemodule.am
@@ -83,10 +100,12 @@ EXTRA_DIST += \
 
 # We don't keep any media files in the top dir ... just generated outputs.
 CLEANFILES += \
+	*.avif \
 	*.bmp \
 	*.gd \
 	*.gd2 \
 	*.gif \
+	*.heif \
 	*.jpeg \
 	*.jpg \
 	*.png \

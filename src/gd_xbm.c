@@ -18,10 +18,6 @@
 #include "gd_errors.h"
 #include "gdhelpers.h"
 
-#ifdef _MSC_VER
-# define strcasecmp _stricmp
-#endif
-
 #define MAX_XBM_LINE_SIZE 255
 
 
@@ -39,6 +35,9 @@
     You can inspect the sx and sy members of the image to determine
     its size. The image must eventually be destroyed using
     <gdImageDestroy>.
+
+    X11 X bitmaps (which define a char[]) as well as X10 X bitmaps (which define
+    a short[]) are supported.
 
   Parameters:
 
@@ -108,7 +107,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm(FILE * fd)
 				max_bit = 32768;
 			}
 			if (max_bit) {
-				bytes = (width * height / 8) + 1;
+                bytes = (width + 7) / 8 * height;
 				if (!bytes) {
 					return 0;
 				}
@@ -166,7 +165,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm(FILE * fd)
 			}
 			h[3] = ch;
 		}
-		sscanf(h, "%x", &b);
+		if (sscanf(h, "%x", &b) != 1) {
+			gd_error("invalid XBM");
+			gdImageDestroy(im);
+			return 0;
+		}
 		for (bit = 1; bit <= max_bit; bit = bit << 1) {
 			gdImageSetPixel(im, x++, y, (b & bit) ? 1 : 0);
 			if (x == im->sx) {
@@ -203,10 +206,22 @@ static void gdCtxPrintf(gdIOCtx * out, const char *format, ...)
 /* The compiler will optimize strlen(constant) to a constant number. */
 #define gdCtxPuts(out, s) out->putBuf(out, s, strlen(s))
 
-/* {{{ gdImageXbmCtx */
-/*
-    Function: gdImageXbmCtx
-*/
+
+/**
+ * Function: gdImageXbmCtx
+ *
+ *  Writes an image to an IO context in X11 bitmap format.
+ *
+ * Parameters:
+ *
+ *  image     - The <gdImagePtr> to write.
+ *  file_name - The prefix of the XBM's identifiers. Illegal characters are
+ *              automatically stripped.
+ *  gd        - Which color to use as forground color. All pixels with another
+ *              color are unset.
+ *  out       - The <gdIOCtx> to write the image file to.
+ *
+ */
 BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOCtx * out)
 {
 	int x, y, c, b, sx, sy, p;
@@ -282,4 +297,3 @@ BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOC
 	}
 	gdCtxPuts(out, "};\n");
 }
-/* }}} */

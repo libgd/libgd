@@ -24,7 +24,7 @@ int main()
 		gdImageDestroy(im);
 		return 1;
 	}
-		
+
 	gdImageDestroy(im);
 	return 0;
 }

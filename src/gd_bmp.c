@@ -19,12 +19,12 @@
  * Read and write BMP images.
  */
 
-/* $Id$ */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
 #include <stdio.h>
+#include <limits.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -46,6 +46,8 @@ static int bmp_read_1bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 static int bmp_read_4bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header);
 static int bmp_read_8bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header);
 static int bmp_read_rle(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info);
+
+static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
 
 #define BMP_DEBUG(s)
 
@@ -87,8 +89,10 @@ BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
-	gdImageBmpCtx(im, out, compression);
-	rv = gdDPExtractData(out, size);
+	if (!_gdImageBmpCtx(im, out, compression))
+		rv = gdDPExtractData(out, size);
+	else
+		rv = NULL;
 	out->gd_free(out);
 	return rv;
 }
@@ -142,12 +146,18 @@ BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression)
 */
 BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 {
+	_gdImageBmpCtx(im, out, compression);
+}
+
+static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
+{
 	int bitmap_size = 0, info_size, total_size, padding;
 	int i, row, xpos, pixel;
 	int error = 0;
 	unsigned char *uncompressed_row = NULL, *uncompressed_row_start = NULL;
 	FILE *tmpfile_for_compression = NULL;
 	gdIOCtxPtr out_original = NULL;
+	int ret = 1;
 
 	/* No compression if its true colour or we don't support seek */
 	if (im->trueColor) {
@@ -213,10 +223,10 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 	/* 8-bit colours */
 	if (!im->trueColor) {
 		for(i = 0; i< im->colorsTotal; ++i) {
-			Putchar(gdImageBlue(im, i), out);
-			Putchar(gdImageGreen(im, i), out);
-			Putchar(gdImageRed(im, i), out);
-			Putchar(0, out);
+			gdPutC(gdImageBlue(im, i), out);
+			gdPutC(gdImageGreen(im, i), out);
+			gdPutC(gdImageRed(im, i), out);
+			gdPutC(0, out);
 		}
 
 		if (compression) {
@@ -237,14 +247,14 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 				if (compression) {
 					*uncompressed_row++ = (unsigned char)gdImageGetPixel(im, xpos, row);
 				} else {
-					Putchar(gdImageGetPixel(im, xpos, row), out);
+					gdPutC(gdImageGetPixel(im, xpos, row), out);
 				}
 			}
 
 			if (!compression) {
 				/* Add padding to make sure we have n mod 4 == 0 bytes per row */
 				for (xpos = padding; xpos > 0; --xpos) {
-					Putchar('\0', out);
+					gdPutC('\0', out);
 				}
 			} else {
 				int compressed_size = 0;
@@ -257,8 +267,8 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 
 
 				gdPutBuf(uncompressed_row, compressed_size, out);
-				Putchar(BMP_RLE_COMMAND, out);
-				Putchar(BMP_RLE_ENDOFLINE, out);
+				gdPutC(BMP_RLE_COMMAND, out);
+				gdPutC(BMP_RLE_ENDOFLINE, out);
 				bitmap_size += 2;
 			}
 		}
@@ -269,8 +279,8 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 				goto cleanup;
 			}
 			/* Update filesize based on new values and set compression flag */
-			Putchar(BMP_RLE_COMMAND, out);
-			Putchar(BMP_RLE_ENDOFBITMAP, out);
+			gdPutC(BMP_RLE_COMMAND, out);
+			gdPutC(BMP_RLE_ENDOFBITMAP, out);
 			bitmap_size += 2;
 
 			/* Write new total bitmap size */
@@ -287,14 +297,14 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 			for (xpos = 0; xpos < im->sx; xpos++) {
 				pixel = gdImageGetPixel(im, xpos, row);
 
-				Putchar(gdTrueColorGetBlue(pixel), out);
-				Putchar(gdTrueColorGetGreen(pixel), out);
-				Putchar(gdTrueColorGetRed(pixel), out);
+				gdPutC(gdTrueColorGetBlue(pixel), out);
+				gdPutC(gdTrueColorGetGreen(pixel), out);
+				gdPutC(gdTrueColorGetRed(pixel), out);
 			}
 
 			/* Add padding to make sure we have n mod 4 == 0 bytes per row */
 			for (xpos = padding; xpos > 0; --xpos) {
-				Putchar('\0', out);
+				gdPutC('\0', out);
 			}
 		}
 	}
@@ -325,6 +335,7 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 		out_original = NULL;
 	}
 
+	ret = 0;
 cleanup:
 	if (tmpfile_for_compression) {
 #ifdef _WIN32
@@ -338,7 +349,7 @@ cleanup:
 	if (out_original) {
 		out_original->gd_free(out_original);
 	}
-	return;
+	return ret;
 }
 
 static int compress_row(unsigned char *row, int length)
@@ -636,6 +647,9 @@ static int bmp_read_windows_v3_info(gdIOCtxPtr infile, bmp_info_t *info)
 		return 1;
 	}
 
+	/* Unlikely, but possible -- largest signed value won't fit in unsigned. */
+	if (info->height == 0 || info->height == INT_MIN)
+		return 1;
 	if (info->height < 0) {
 		info->topdown = 1;
 		info->height = -info->height;
@@ -645,8 +659,9 @@ static int bmp_read_windows_v3_info(gdIOCtxPtr infile, bmp_info_t *info)
 
 	info->type = BMP_PALETTE_4;
 
-	if (info->width <= 0 || info->height <= 0 || info->numplanes <= 0 ||
-	        info->depth <= 0  || info->numcolors < 0 || info->mincolors < 0) {
+	/* Height was checked above. */
+	if (info->width <= 0 || info->numplanes <= 0 || info->depth <= 0 ||
+	        info->numcolors < 0 || info->mincolors < 0) {
 		return 1;
 	}
 
@@ -667,11 +682,16 @@ static int bmp_read_os2_v1_info(gdIOCtxPtr infile, bmp_info_t *info)
 	/* OS2 v1 doesn't support topdown */
 	info->topdown = 0;
 
+	/* The spec says the depth can only be a few value values. */
+	if (info->depth != 1 && info->depth != 4 && info->depth != 8 &&
+	        info->depth != 16 && info->depth != 24) {
+		return 1;
+	}
+
 	info->numcolors = 1 << info->depth;
 	info->type = BMP_PALETTE_3;
 
-	if (info->width <= 0 || info->height <= 0 || info->numplanes <= 0 ||
-	        info->depth <= 0 || info->numcolors < 0) {
+	if (info->width <= 0 || info->height <= 0 || info->numplanes <= 0) {
 		return 1;
 	}
 
@@ -701,6 +721,9 @@ static int bmp_read_os2_v2_info(gdIOCtxPtr infile, bmp_info_t *info)
 		return 1;
 	}
 
+	/* Unlikely, but possible -- largest signed value won't fit in unsigned. */
+	if (info->height == 0 || info->height == INT_MIN)
+		return 1;
 	if (info->height < 0) {
 		info->topdown = 1;
 		info->height = -info->height;
@@ -710,11 +733,11 @@ static int bmp_read_os2_v2_info(gdIOCtxPtr infile, bmp_info_t *info)
 
 	info->type = BMP_PALETTE_4;
 
-	if (info->width <= 0 || info->height <= 0 || info->numplanes <= 0 ||
-	        info->depth <= 0  || info->numcolors < 0 || info->mincolors < 0) {
+	/* Height was checked above. */
+	if (info->width <= 0 || info->numplanes <= 0 || info->depth <= 0 ||
+	        info->numcolors < 0 || info->mincolors < 0) {
 		return 1;
 	}
-
 
 	return 0;
 }
@@ -758,10 +781,12 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 		return 1;
 	}
 
-	/* There is a chance the data isn't until later, would be wierd but it is possible */
+	/* There is a chance the data isn't until later, would be weird but it is possible */
 	if (gdTell(infile) != header->off) {
 		/* Should make sure we don't seek past the file size */
-		gdSeek(infile, header->off);
+		if (!gdSeek(infile, header->off)) {
+			return 1;
+		}
 	}
 
 	/* The line must be divisible by 4, else its padded with NULLs */
@@ -853,14 +878,16 @@ static int bmp_read_1bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 
 	im->colorsTotal = info->numcolors;
 
-	/* There is a chance the data isn't until later, would be wierd but it is possible */
+	/* There is a chance the data isn't until later, would be weird but it is possible */
 	if (gdTell(infile) != header->off) {
 		/* Should make sure we don't seek past the file size */
-		gdSeek(infile, header->off);
+		if (!gdSeek(infile, header->off)) {
+			return 1;
+		}
 	}
 
-	/* The line must be divisible by 4, else its padded with NULLs */
-	padding = ((int)ceil(0.1 * info->width)) % 4;
+	/* The line must be aligned on a 32 bits word, else it is padded with zeros */
+	padding = (info->width + 7) / 8 % 4;
 	if (padding) {
 		padding = 4 - padding;
 	}
@@ -921,10 +948,12 @@ static int bmp_read_4bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 
 	im->colorsTotal = info->numcolors;
 
-	/* There is a chance the data isn't until later, would be wierd but it is possible */
+	/* There is a chance the data isn't until later, would be weird but it is possible */
 	if (gdTell(infile) != header->off) {
 		/* Should make sure we don't seek past the file size */
-		gdSeek(infile, header->off);
+		if (!gdSeek(infile, header->off)) {
+			return 1;
+		}
 	}
 
 	/* The line must be divisible by 4, else its padded with NULLs */
@@ -1006,10 +1035,12 @@ static int bmp_read_8bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 
 	im->colorsTotal = info->numcolors;
 
-	/* There is a chance the data isn't until later, would be wierd but it is possible */
+	/* There is a chance the data isn't until later, would be weird but it is possible */
 	if (gdTell(infile) != header->off) {
 		/* Should make sure we don't seek past the file size */
-		gdSeek(infile, header->off);
+		if (!gdSeek(infile, header->off)) {
+			return 1;
+		}
 	}
 
 	/* The line must be divisible by 4, else its padded with NULLs */

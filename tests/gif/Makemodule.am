@@ -2,15 +2,20 @@ libgd_test_programs += \
 	gif/bug00005_2 \
 	gif/bug00181 \
 	gif/bug00227 \
-	gif/gif_null
+	gif/bug00499 \
+	gif/gif_null \
+	gif/gif_nocolormaps \
+	gif/ossfuzz5700 \
+	gif/php_bug_75571 \
+	gif/uninitialized_memory_read \
+	gif/bug00006 \
+	gif/bug00060 \
+	gif/gif_im2im
 
 if HAVE_LIBPNG
 libgd_test_programs += \
 	gif/bug00005 \
-	gif/bug00006 \
-	gif/bug00060 \
-	gif/bug00066 \
-	gif/gif_im2im
+	gif/bug00066
 endif
 
 EXTRA_DIST += \
@@ -22,4 +27,8 @@ EXTRA_DIST += \
 	gif/bug00005_3.gif \
 	gif/bug00060.gif \
 	gif/bug00066.gif \
-	gif/bug00066_exp.png
+	gif/bug00066_exp.png \
+	gif/gif_nocolormaps.gif \
+	gif/ossfuzz5700.gif \
+	gif/php_bug_75571.gif \
+	gif/unitialized_memory_read.gif

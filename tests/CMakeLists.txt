@@ -1,4 +1,3 @@
-
 if (BUILD_TEST)
 	SET(DART_TESTING_TIMEOUT 5)
 
@@ -18,6 +17,7 @@ if (BUILD_TEST)
 	include_directories (BEFORE ${GD_INCLUDE_DIR} "${GDTEST_SOURCE_DIR}" "${CMAKE_BINARY_DIR}" "${CMAKE_BINARY_DIR}/tests/gdtest")
 
 	SET(TESTS_DIRS
+		avif
 		bmp
 		fontconfig
 		freetype
@@ -28,16 +28,23 @@ if (BUILD_TEST)
 		gdimageclone
 		gdimagecolor
 		gdimagecolorclosest
+		gdimagecolorclosesthwb
 		gdimagecolordeallocate
 		gdimagecolorexact
+		gdimagecolormatch
 		gdimagecolorreplace
 		gdimagecolorresolve
 		gdimagecolortransparent
+		gdimagecompare
 		gdimagecontrast
 		gdimageconvolution
 		gdimagecopy
+		gdimagecopymerge
+		gdimagecopymergegray
 		gdimagecopyresampled
+		gdimagecopyresized
 		gdimagecopyrotated
+		gdimagecreate
 		gdimagecrop
 		gdimagefile
 		gdimagefill
@@ -48,6 +55,7 @@ if (BUILD_TEST)
 		gdimagefilltoborder
 		gdimagefilter
 		gdimageflip
+		gdimageellipse
 		gdimagegrayscale
 		gdimageline
 		gdimagenegate
@@ -58,16 +66,24 @@ if (BUILD_TEST)
 		gdimagerotate
 		gdimagescale
 		gdimagescatterex
+		gdimagesetinterpolationmethod
 		gdimagesetpixel
+		gdimagesquaretocircle
+		gdimagestring
+		gdimagestring16
 		gdimagestringft
 		gdimagestringftex
+		gdimagestringup
+		gdimagestringup16
 		gdimagetruecolortopalette
 		gdinterpolatedscale
 		gdnewfilectx
 		gdtest
 		gdtiled
 		gdtransformaffineboundingbox
+		gdtransformaffinecopy
 		gif
+		heif
 		jpeg
 		png
 		tga

@@ -2,9 +2,9 @@
 #
 
 # This module defines
-#  XPM_INCLUDE_DIR, where to find png.h, etc.
+#  XPM_INCLUDE_DIR, where to find xpm.h, etc.
 #  XPM_LIBRARIES, the libraries to link against to use XPM.
-#  XPM_DEFINITIONS - You should ADD_DEFINITONS(${XPM_DEFINITIONS}) before compiling code that includes png library files.
+#  XPM_DEFINITIONS - You should ADD_DEFINITONS(${XPM_DEFINITIONS}) before compiling code that includes xpm library files.
 #  XPM_FOUND, If false, do not try to use XPM.
 # also defined, but not for general use are
 #  XPM_LIBRARY, where to find the XPM library.
@@ -17,16 +17,16 @@
 #
 #  * Redistributions of source code must retain the above copyright notice,
 #    this list of conditions and the following disclaimer.
-# 
+#
 #  * Redistributions in binary form must reproduce the above copyright notice,
 #    this list of conditions and the following disclaimer in the documentation
 #    and/or other materials provided with the distribution.
-# 
+#
 #  * The names of Kitware, Inc., the Insight Consortium, or the names of
 #    any consortium members, or of any contributors, may not be used to
 #    endorse or promote products derived from this software without
 #    specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS ``AS IS''
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE

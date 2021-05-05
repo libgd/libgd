@@ -1,17 +1,14 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
 #include "gd.h"
+#include "gd_intern.h"
 #include <string.h>
 #include <stdlib.h>
 
 #define PI 3.141592
 #define DEG2RAD(x) ((x)*PI/180.)
-
-#define MAX(x,y) ((x) > (y) ? (x) : (y))
-#define MIN(x,y) ((x) < (y) ? (x) : (y))
 
 #define MAX4(x,y,z,w) \
 	((MAX((x),(y))) > (MAX((z),(w))) ? (MAX((x),(y))) : (MAX((z),(w))))
@@ -26,13 +23,6 @@
 int
 main (int argc, char *argv[])
 {
-#ifndef HAVE_LIBFREETYPE
-	fprintf(stderr, "gd was not compiled with HAVE_LIBFREETYPE defined.\n");
-	fprintf(stderr, "Install the FreeType library, including the\n");
-	fprintf(stderr, "header files. Then edit the gd Makefile, type\n");
-	fprintf(stderr, "make clean, and type make again.\n");
-	return 1;
-#else
 	gdImagePtr im;
 	int blue;
 	int blueAlpha;
@@ -40,7 +30,6 @@ main (int argc, char *argv[])
 	int brect[8];
 	int x, y, sx, sy;
 	char *err;
-	FILE *out;
 #ifdef JISX0208
 	char *s = "Hello. ‚±‚ñ‚É‚¿‚Í Qyjpqg,";	/* String to draw. */
 #else
@@ -155,7 +144,7 @@ main (int argc, char *argv[])
 	/* TBB: Write img to test/fttest.jpg or test/fttest.png */
 	if (im->trueColor) {
 #ifdef HAVE_LIBJPEG
-		out = fopen ("test/fttest.jpg", "wb");
+		FILE *out = fopen ("test/fttest.jpg", "wb");
 		if (!out) {
 			fprintf(stderr, "Can't create test/fttest.jpg\n");
 			exit (1);
@@ -169,7 +158,7 @@ main (int argc, char *argv[])
 #endif
 	} else {
 #ifdef HAVE_LIBPNG
-		out = fopen ("test/fttest.png", "wb");
+		FILE *out = fopen ("test/fttest.png", "wb");
 		if (!out) {
 			fprintf(stderr, "Can't create test/fttest.png\n");
 			exit (1);
@@ -186,5 +175,4 @@ main (int argc, char *argv[])
 	gdImageDestroy (im);
 
 	return 0;
-#endif /* HAVE_LIBFREETYPE */
 }

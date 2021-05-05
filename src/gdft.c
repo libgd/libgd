@@ -1,4 +1,3 @@
-
 /********************************************/
 /* gd interface to freetype library         */
 /*                                          */
@@ -72,9 +71,7 @@ static char *font_path(char **fontpath, char *name_list);
  */
 
 #ifndef DEFAULT_FONTPATH
-#  ifdef NETWARE
-#    define DEFAULT_FONTPATH "sys:/java/nwgfx/lib/x11/fonts/ttf;."
-#  elif defined(_WIN32)
+#  if defined(_WIN32)
 #    define DEFAULT_FONTPATH "C:\\WINDOWS\\FONTS;C:\\WINNT\\FONTS"
 #  elif defined(__APPLE__) || (defined(__MWERKS__) && defined(macintosh))
 #    define DEFAULT_FONTPATH "/usr/share/fonts/truetype:/System/Library/Fonts:/Library/Fonts"
@@ -85,7 +82,7 @@ static char *font_path(char **fontpath, char *name_list);
 #endif
 
 #ifndef PATHSEPARATOR
-#  if defined(NETWARE) || defined(_WIN32)
+#  if defined(_WIN32)
 #    define PATHSEPARATOR ";"
 #  else
 #    define PATHSEPARATOR ":"
@@ -103,8 +100,8 @@ static char *font_path(char **fontpath, char *name_list);
  *
  * Alias of <gdImageStringFT>.
  */
-BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, char *fontlist,
-                                      double ptsize, double angle, int x, int y, char *string)
+BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, const char *fontlist,
+                                      double ptsize, double angle, int x, int y, const char *string)
 {
 	/* 2.0.6: valid return */
 	return gdImageStringFT (im, brect, fg, fontlist, ptsize,
@@ -112,8 +109,8 @@ BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, char *fo
 }
 
 #ifndef HAVE_LIBFREETYPE
-BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
-                                       double ptsize, double angle, int x, int y, char *string,
+BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const char *fontlist,
+                                       double ptsize, double angle, int x, int y, const char *string,
                                        gdFTStringExtraPtr strex)
 {
 	(void)im;
@@ -130,8 +127,8 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	return "libgd was not built with FreeType font support\n";
 }
 
-BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
-                                     double ptsize, double angle, int x, int y, char *string)
+BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, const char *fontlist,
+                                     double ptsize, double angle, int x, int y, const char *string)
 {
 	(void)im;
 	(void)brect;
@@ -184,7 +181,7 @@ typedef struct {
 font_t;
 
 typedef struct {
-	char *fontlist;		/* key */
+	const char *fontlist;		/* key */
 	int flags;			/* key */
 	FT_Library *library;
 }
@@ -260,7 +257,7 @@ static int comp_entities(const void *e1, const void *e2)
 	return strcmp(en1->name, en2->name);
 }
 
-extern int any2eucjp (char *, char *, unsigned int);
+extern int any2eucjp (char *, const char *, unsigned int);
 
 /* Persistent font cache until explicitly cleared */
 /* Fonts can be used across multiple images */
@@ -273,7 +270,7 @@ static FT_Library library;
 #define Tcl_UniChar int
 #define TCL_UTF_MAX 3
 static int
-gdTcl_UtfToUniChar (char *str, Tcl_UniChar * chPtr)
+gdTcl_UtfToUniChar (const char *str, Tcl_UniChar * chPtr)
 /* str is the UTF8 next character pointer */
 /* chPtr is the int for the result */
 {
@@ -444,13 +441,17 @@ typedef struct {
 	uint32_t cluster;
 } glyphInfo;
 
-static size_t
+static ssize_t
 textLayout(uint32_t *text, int len,
 		FT_Face face, gdFTStringExtraPtr strex,
 		glyphInfo **glyph_info)
 {
 	size_t count;
 	glyphInfo *info;
+
+	if (!len) {
+		return 0;
+	}
 
 #ifdef HAVE_LIBRAQM
 	size_t i;
@@ -462,19 +463,19 @@ textLayout(uint32_t *text, int len,
 		!raqm_set_par_direction (rq, RAQM_DIRECTION_DEFAULT) ||
 		!raqm_layout (rq)) {
 		raqm_destroy (rq);
-		return 0;
+		return -1;
 	}
 
 	glyphs = raqm_get_glyphs (rq, &count);
 	if (!glyphs) {
 		raqm_destroy (rq);
-		return 0;
+		return -1;
 	}
 
 	info = (glyphInfo*) gdMalloc (sizeof (glyphInfo) * count);
 	if (!info) {
 		raqm_destroy (rq);
-		return 0;
+		return -1;
 	}
 
 	for (i = 0; i < count; i++) {
@@ -492,7 +493,7 @@ textLayout(uint32_t *text, int len,
 	FT_Error err;
 	info = (glyphInfo*) gdMalloc (sizeof (glyphInfo) * len);
 	if (!info) {
-		return 0;
+		return -1;
 	}
 	for (count = 0; count < len; count++) {
 		/* Convert character code to glyph index */
@@ -511,7 +512,7 @@ textLayout(uint32_t *text, int len,
 		err = FT_Load_Glyph (face, glyph_index, FT_LOAD_DEFAULT);
 		if (err) {
 			gdFree (info);
-			return 0;
+			return -1;
 		}
 		info[count].index = glyph_index;
 		info[count].x_offset = 0;
@@ -530,7 +531,7 @@ textLayout(uint32_t *text, int len,
 #endif
 
 	*glyph_info = info;
-	return count;
+	return count <= SSIZE_MAX ? count : -1;
 }
 
 /********************************************************************/
@@ -576,7 +577,7 @@ fontFetch (char **error, void *key)
 		gdFree(a);
 		return "could not alloc full list of fonts";
 	}
-	strncpy(a->fontlist, b->fontlist, b_font_list_len);
+	memcpy(a->fontlist, b->fontlist, b_font_list_len);
 	a->fontlist[b_font_list_len] = 0;
 
 	a->flags = b->flags;
@@ -925,8 +926,8 @@ BGD_DECLARE(void) gdFontCacheShutdown ()
  * See also:
  *  - <gdImageString>
  */
-BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, char *fontlist,
-                                     double ptsize, double angle, int x, int y, char *string)
+BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, const char *fontlist,
+                                     double ptsize, double angle, int x, int y, const char *string)
 {
 	return gdImageStringFTEx (im, brect, fg, fontlist,
 	                          ptsize, angle, x, y, string, 0);
@@ -973,13 +974,13 @@ BGD_DECLARE(int) gdFontCacheSetup (void)
   typedef struct {
       // logical OR of gdFTEX_ values
       int flags;
-   
+
       // fine tune line spacing for '\n'
       double linespacing;
-   
+
       // Preferred character mapping
       int charmap;
-   
+
       // Rendering resolution
       int hdpi;
       int vdpi;
@@ -1083,15 +1084,15 @@ BGD_DECLARE(int) gdFontCacheSetup (void)
 
     > flags | gdFTEX_FONTPATHNAME;
 
-  For more information, see <gdImageStringFT>. 
+  For more information, see <gdImageStringFT>.
 */
 
 /* the platform-independent resolution used for size and position calculations */
 /*    the size of the error introduced by rounding is affected by this number */
 #define METRIC_RES 300
 
-BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *fontlist,
-                                       double ptsize, double angle, int x, int y, char *string,
+BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const char *fontlist,
+                                       double ptsize, double angle, int x, int y, const char *string,
                                        gdFTStringExtraPtr strex)
 {
 	FT_Matrix matrix;
@@ -1107,11 +1108,11 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	int  i, ch;
 	font_t *font;
 	fontkey_t fontkey;
-	char *next;
+	const char *next;
 	char *tmpstr = 0;
 	uint32_t *text;
 	glyphInfo *info = NULL;
-	size_t count;
+	ssize_t count;
 	int render = (im && (im->trueColor || (fg <= 255 && fg >= -255)));
 	FT_BitmapGlyph bm;
 	/* 2.0.13: Bob Ostermann: don't force autohint, that's just for testing
@@ -1204,7 +1205,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 				gdMutexUnlock(gdFontCacheMutex);
 				return "could not alloc full list of fonts";
 			}
-			strncpy(strex->fontpath, font->fontpath, fontpath_len);
+			memcpy(strex->fontpath, font->fontpath, fontpath_len);
 			strex->fontpath[fontpath_len] = 0;
 		}
 	}
@@ -1243,7 +1244,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	for (i = 0; i < face->num_charmaps; i++) {
 		charmap = face->charmaps[i];
 
-#if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
 		if (encoding == gdFTEX_Unicode) {
 			if (charmap->encoding == FT_ENCODING_MS_SYMBOL
 			        || charmap->encoding == FT_ENCODING_UNICODE
@@ -1276,27 +1276,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 				break;
 			}
 		}
-#else
-		if (encoding == gdFTEX_Unicode) {
-			if ((charmap->platform_id = 3 && charmap->encoding_id == 1)     /* Windows Unicode */
-			        || (charmap->platform_id == 3 && charmap->encoding_id == 0) /* Windows Symbol */
-			        || (charmap->platform_id == 2 && charmap->encoding_id == 1) /* ISO Unicode */
-			        || (charmap->platform_id == 0)) {                        /* Apple Unicode */
-				encodingfound++;
-				break;
-			}
-		} else if (encoding == gdFTEX_Big5) {
-			if (charmap->platform_id == 3 && charmap->encoding_id == 4) {   /* Windows Big5 */
-				encodingfound++;
-				break;
-			}
-		} else if (encoding == gdFTEX_Shift_JIS) {
-			if (charmap->platform_id == 3 && charmap->encoding_id == 2) {   /* Windows Sjis */
-				encodingfound++;
-				break;
-			}
-		}
-#endif
 	}
 	if (encodingfound) {
 		FT_Set_Charmap(face, charmap);
@@ -1336,12 +1315,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 			/* EAM DEBUG */
 			/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
 			/* 2.0.24: David R. Morrison: use the more complete ifdef here. */
-#if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
-			if (charmap->encoding == FT_ENCODING_MS_SYMBOL)
-#else
-			if (charmap->platform_id == 3 && charmap->encoding_id == 0)
-#endif /* Freetype 2.1 or better */
-			{
+			if (charmap->encoding == FT_ENCODING_MS_SYMBOL) {
 				/* I do not know the significance of the constant 0xf000. */
 				/* It was determined by inspection of the character codes */
 				/* stored in Microsoft font symbol.ttf                    */
@@ -1412,7 +1386,8 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 
 	count = textLayout (text , i, face, strex, &info);
 
-	if (!count) {
+	if (count < 0) {
+		gdFree (text);
 		gdFree (tmpstr);
 		gdCacheDelete (tc_cache);
 		gdMutexUnlock (gdFontCacheMutex);
@@ -1568,7 +1543,9 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 	}
 
 	gdFree(text);
-	gdFree(info);
+	if (info) {
+		gdFree(info);
+	}
 
 	/* Save the (unkerned) advance from the last character in the xshow vector */
 	if (strex && (strex->flags & gdFTEX_XSHOW) && strex->xshow) {
@@ -1580,12 +1557,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, char *f
 		/* only if need brect */
 		double scalex = (double)hdpi / (64 * METRIC_RES);
 		double scaley = (double)vdpi / (64 * METRIC_RES);
-
-		/* increase by 1 pixel to allow for rounding */
-		total_min.x -= METRIC_RES;
-		total_min.y -= METRIC_RES;
-		total_max.x += METRIC_RES;
-		total_max.y += METRIC_RES;
 
 		/* rotate bounding rectangle, scale and round to int pixels, and translate */
 		brect[0] = x + (total_min.x * cos_a + total_max.y * sin_a)*scalex;
@@ -1768,7 +1739,7 @@ static char * font_pattern(char **fontpath, char *fontpattern)
 		if (*fontpath == NULL) {
 			return "could not alloc font path";
 		}
-		strncpy(*fontpath, (const char *)file, file_len);
+		memcpy(*fontpath, (const char *)file, file_len);
 		(*fontpath)[file_len] = 0;
 	}
 	FcPatternDestroy(font);
@@ -1808,7 +1779,7 @@ static char * font_path(char **fontpath, char *name_list)
 		gdFree(path);
 		return "could not alloc full list of fonts";
 	}
-	strncpy(fontlist, name_list, name_list_len);
+	memcpy(fontlist, name_list, name_list_len);
 	fontlist[name_list_len] = 0;
 
 	/*
@@ -1833,14 +1804,9 @@ static char * font_path(char **fontpath, char *name_list)
 			return "could not alloc full path of font";
 		}
 		/* if name is an absolute or relative pathname then test directly */
-#ifdef NETWARE
-		/* netware uses the format "volume:/path" or the standard "/path" */
-		if (name[0] != 0 && (strstr(name, ":/") || name[0] == '/'))
-#else
 		if (strchr (name, '/')
 		        || (name[0] != 0 && name[1] == ':'
 		            && (name[2] == '/' || name[2] == '\\')))
-#endif
 		{
 			sprintf (fullname, "%s", name);
 			if (access (fullname, R_OK) == 0) {
@@ -1922,4 +1888,3 @@ BGD_DECLARE(int) gdFTUseFontConfig(int flag)
 	return 0;
 #endif /* HAVE_LIBFONTCONFIG */
 }
-

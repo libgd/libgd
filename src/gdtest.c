@@ -24,7 +24,6 @@ static int fwriteWrapper (void *context, const char *buffer, int len);
 int
 main (int argc, char **argv)
 {
-#ifdef HAVE_LIBPNG
 	gdImagePtr im, ref, im2, im3;
 	FILE *in, *out;
 	void *iptr;
@@ -67,11 +66,7 @@ main (int argc, char **argv)
 	/* */
 	/* Send to PNG File then Ptr */
 	/* */
-#ifdef VMS
-	sprintf (of, "%s-png", argv[1]);
-#else
 	sprintf (of, "%s.png", argv[1]);
-#endif
 	out = fopen (of, "wb");
 	if (!out) {
 		fprintf(stderr, "PNG Output file does not exist!\n");
@@ -87,12 +82,12 @@ main (int argc, char **argv)
 	}
 	im2 = gdImageCreateFromPng (in);
 	fclose (in);
-	
+
 	if (!im2) {
 		fprintf(stderr, "gdImageCreateFromPng failed.\n");
 		exit (1);
 	}
-	
+
 	CompareImages ("GD->PNG File->GD", ref, im2);
 
 	unlink (of);
@@ -113,11 +108,7 @@ main (int argc, char **argv)
 	/* */
 	/* Send to GD2 File then Ptr */
 	/* */
-#ifdef VMS
-	sprintf (of, "%s-gd2", argv[1]);
-#else
 	sprintf (of, "%s.gd2", argv[1]);
-#endif
 	out = fopen (of, "wb");
 	if (!out) {
 		fprintf(stderr, "GD2 Output file does not exist!\n");
@@ -158,11 +149,7 @@ main (int argc, char **argv)
 	/* */
 	/* Send to GD File then Ptr */
 	/* */
-#ifdef VMS
-	sprintf (of, "%s-gd", argv[1]);
-#else
 	sprintf (of, "%s.gd", argv[1]);
-#endif
 	out = fopen (of, "wb");
 	if (!out) {
 		fprintf(stderr, "GD Output file does not exist!\n");
@@ -196,7 +183,7 @@ main (int argc, char **argv)
 		fprintf(stderr, "gdImageCreateFromGdPtr failed.\n");
 		exit (1);
 	}
-	
+
 	CompareImages ("GD->GD ptr->GD", ref, im2);
 
 	gdImageDestroy (im2);
@@ -224,11 +211,7 @@ main (int argc, char **argv)
 	/*
 	 * Test gdImagePngToSink'
 	 */
-#ifdef VMS
-	sprintf (of, "%s-snk", argv[1]);
-#else
 	sprintf (of, "%s.snk", argv[1]);
-#endif
 	out = fopen (of, "wb");
 	if (!out) {
 		fprintf (stderr,
@@ -409,9 +392,6 @@ main (int argc, char **argv)
 	}
 	gdImageDestroy (im);
 	gdImageDestroy (ref);
-#else
-	fprintf(stderr, "No PNG library support.\n");
-#endif /* HAVE_LIBPNG */
 
 	return 0;
 }

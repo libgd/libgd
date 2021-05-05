@@ -53,7 +53,7 @@ static int set_verbose(void)
 
 #define BitSet(byte, bit)	(((byte) & (bit)) == (bit))
 
-#define ReadOK(file, buffer, len) (gdGetBuf(buffer, len, file) > 0)
+#define ReadOK(file, buffer, len) (gdGetBuf(buffer, len, file) == len)
 
 #define LM_to_uint(a, b)	(((b)<<8)|(a))
 
@@ -149,7 +149,7 @@ static void ReadImage (gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned
     > in = fopen("mygif.gif", "rb");
     > im = gdImageCreateFromGif(in);
     > fclose(in);
-    > // ... Use the image ... 
+    > // ... Use the image ...
     > gdImageDestroy(im);
 
 */
@@ -215,6 +215,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 	int haveGlobalColormap;
 
 	gdImagePtr im = 0;
+
+	memset(ColorMap, 0, 3 * MAXCOLORMAPSIZE);
+	memset(localColorMap, 0, 3 * MAXCOLORMAPSIZE);
 
 	if(!ReadOK(fd, buf, 6)) {
 		return 0;
@@ -312,8 +315,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 			ReadImage(im, fd, width, height, localColorMap, BitSet(buf[8], INTERLACE), &ZeroDataBlock);
 		} else {
 			if(!haveGlobalColormap) {
-				gdImageDestroy(im);
-				return 0;
+				// Still a valid gif, apply simple default palette as per spec
+				ColorMap[CM_RED][1] = 0xff;
+				ColorMap[CM_GREEN][1] = 0xff;
+				ColorMap[CM_BLUE][1] = 0xff;
 			}
 
 			ReadImage(im, fd, width, height, ColorMap, BitSet(buf[8], INTERLACE), &ZeroDataBlock);
@@ -332,11 +337,6 @@ terminated:
 		return 0;
 	}
 
-	if(!im->colorsTotal) {
-		gdImageDestroy(im);
-		return 0;
-	}
-
 	/* Check for open colors at the end, so
 	 * we can reduce colorsTotal and ultimately
 	 * BitsPerPixel */
@@ -346,6 +346,11 @@ terminated:
 		} else {
 			break;
 		}
+	}
+
+	if(!im->colorsTotal) {
+		gdImageDestroy(im);
+		return 0;
 	}
 
 	return im;
@@ -444,12 +449,12 @@ static int
 GetCode_(gdIOCtx *fd, CODE_STATIC_DATA *scd, int code_size, int flag, int *ZeroDataBlockP)
 {
 	int i, j, ret;
-	unsigned char count;
+	int count;
 
 	if(flag) {
 		scd->curbit = 0;
 		scd->lastbit = 0;
-		scd->last_byte = 0;
+		scd->last_byte = 2;
 		scd->done = FALSE;
 		return 0;
 	}
@@ -598,6 +603,10 @@ LWZReadByte_(gdIOCtx *fd, LZW_STATIC_DATA *sd, char flag, int input_code_size, i
 				/* Bad compressed data stream */
 				return -1;
 			}
+			if(code >= (1 << MAX_LWZ_BITS)) {
+				/* Corrupted code */
+				return -1;
+			}
 
 			*sd->sp++ = sd->table[1][code];
 
@@ -606,6 +615,10 @@ LWZReadByte_(gdIOCtx *fd, LZW_STATIC_DATA *sd, char flag, int input_code_size, i
 			}
 
 			code = sd->table[0][code];
+		}
+		if(code >= (1 << MAX_LWZ_BITS)) {
+			/* Corrupted code */
+			return -1;
 		}
 
 		*sd->sp++ = sd->firstcode = sd->table[1][code];

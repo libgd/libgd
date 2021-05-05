@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -37,13 +36,8 @@ dowheel (gdImagePtr im, int color, char *fontfile, int fontsize,
 		y0 = y - sin (curangrads) * offset;
 
 		/* The case of newlines is taken care of in the gdImageStringTTF call */
-#if defined(OLDER_GD)
-		cp = gdImageStringTTF (im, brect, color, fontfile, fontsize,
-		                       curangrads, x0, y0, string);
-#else
 		cp = gdImageStringFT (im, brect, color, fontfile, fontsize,
 		                      curangrads, x0, y0, string);
-#endif
 		if (cp)
 			doerr (err, cp);
 

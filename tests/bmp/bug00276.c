@@ -28,5 +28,7 @@ int main()
 	gdImageDestroy(im_orig);
 	gdImageDestroy(im_saved);
 
+	gdFree(data);
+
 	return gdNumFailures();
 }

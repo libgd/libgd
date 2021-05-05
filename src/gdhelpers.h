@@ -1,9 +1,9 @@
+#ifndef GDHELPERS_H
+#define GDHELPERS_H 1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifndef GDHELPERS_H
-#define GDHELPERS_H 1
 
 	/* sys/types.h is needed for size_t on Sparc-SunOS-4.1 */
 #ifndef _WIN32_WCE
@@ -69,8 +69,8 @@ extern "C" {
 #define DPI2DPCM(dpi)  (unsigned int)((dpi)/2.54 + 0.5)
 #define DPI2DPM(dpi)   (unsigned int)((dpi)/0.0254 + 0.5)
 
-#endif /* GDHELPERS_H */
-
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* GDHELPERS_H */

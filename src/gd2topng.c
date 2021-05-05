@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -52,11 +51,7 @@ main (int argc, char **argv)
 		gdImageDestroy (im);
 		exit (1);
 	}
-#ifdef HAVE_LIBPNG
 	gdImagePng (im, out);
-#else
-	fprintf(stderr, "No PNG library support available.\n");
-#endif
 	fclose (out);
 	gdImageDestroy (im);
 

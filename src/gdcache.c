@@ -25,7 +25,9 @@
  * John Ellson  (ellson@graphviz.org)  Oct 31, 1997
  *
  * Test this with:
- *               gcc -o gdcache -g -Wall -DTEST gdcache.c
+ *               gcc -o gdcache -g -Wall -DTEST -DNEED_CACHE gdcache.c -lgd
+ *               or
+ *               gcc -o gdcache -g -Wall -DTEST -DNEED_CACHE gdcache.c libgd.a
  *
  * The cache is implemented by a singly-linked list of elements
  * each containing a pointer to a user struct that is being managed by
@@ -137,8 +139,13 @@ void * gdCacheGet(gdCache_head_t *head, void *keydata)
 		}
 	} else {
 		/* cache full - replace least-recently-used */
-		/* preveprev becomes new end of list */
-		prevprev->next = NULL;
+		if(!prevprev) {
+			/* cache size is 1 */
+			head->mru = NULL;
+		} else {
+			/* prevprev becomes new end of list */
+			prevprev->next = NULL;
+		}
 		elem = prev;
 		(*(head->gdCacheRelease))(elem->userdata);
 	}
@@ -192,7 +199,7 @@ static void cacheRelease(void *map)
 	gdFree((char *)map);
 }
 
-int main(char *argv[], int argc)
+int main(int argc, char **argv)
 {
 	gdCache_head_t *cacheTable;
 	int elem, key;

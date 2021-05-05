@@ -1,0 +1,8 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdimagecopymerge/gdimagecopymerge
+endif
+
+EXTRA_DIST += \
+	gdimagecopymerge/CMakeLists.txt \
+	gdimagecopymerge/gdimagecopymerge_exp.png

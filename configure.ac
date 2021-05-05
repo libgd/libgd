@@ -4,7 +4,7 @@
 AC_PREREQ(2.64)
 
 # We extract version numbers from src/versions.h
-define([gv],[perl config/getver.pl ]$1)
+define([gv],[config/getver.sh ]$1)
 
 m4_define([gd_MAJOR],esyscmd(gv(MAJOR)))dnl
 m4_define([gd_MINOR],esyscmd(gv(MINOR)))dnl
@@ -18,39 +18,23 @@ AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 
-# This is not used anywhere.  However, Makefile.netware searches
-# through configure for these definitions to find the version numbers.
-# (Assuming anyone still uses Netware, that should be changed to use
-# gd.h via getver.pl instead.)
-GDLIB_MAJOR=gd_MAJOR
-GDLIB_MINOR=gd_MINOR
-GDLIB_REVISION=gd_REVISION
-GDLIB_EXTRA=gd_EXTRA
-GDLIB_VERSION=gd_PKG_VERSION
+dnl Keep the libtool version details in an external script so cmake can
+dnl access the values too.
+define([lt_gv], [config/getlib.sh ]$1)
+m4_define([gd_LT_CURRENT], esyscmd(lt_gv(CURRENT)))
+m4_define([gd_LT_REVISION], esyscmd(lt_gv(REVISION)))
+m4_define([gd_LT_AGE], esyscmd(lt_gv(AGE)))
 
-AC_SUBST(GDLIB_MAJOR)
-AC_SUBST(GDLIB_MINOR)
-AC_SUBST(GDLIB_REVISION)
-AC_SUBST(GDLIB_EXTRA)
-AC_SUBST(GDLIB_VERSION)
+GDLIB_LT_CURRENT=gd_LT_CURRENT
+GDLIB_LT_REVISION=gd_LT_REVISION
+GDLIB_LT_AGE=gd_LT_AGE
 
-# Dynamic library version information
-# See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
-
-GDLIB_LT_CURRENT=3
-dnl This is the version where the soname (current above) changes.  We use it
-dnl to reset the revision base back to zero.  It's a bit of a pain, but some
-dnl systems restrict the revision range below to [0..255] (like OS X).
-GDLIB_PREV_MAJOR=2
-GDLIB_PREV_MINOR=2
-dnl This isn't 100% correct, but it tends to be a close enough approximation
-dnl for how we manage the codebase.  It's rare to do a release that doesn't
-dnl modify the library since this project is centered around the library.
-GDLIB_LT_REVISION=$(( ((GDLIB_MAJOR - GDLIB_PREV_MAJOR) << 6) | ((GDLIB_MINOR - GDLIB_PREV_MINOR) << 3) | GDLIB_REVISION ))
-GDLIB_LT_AGE=0
 AC_SUBST(GDLIB_LT_CURRENT)
 AC_SUBST(GDLIB_LT_REVISION)
 AC_SUBST(GDLIB_LT_AGE)
+
+AC_SUBST(LIBS_PRIVATES)
+AC_SUBST(PKG_REQUIRES_PRIVATES)
 
 AM_INIT_AUTOMAKE([1.11 foreign dist-xz -Wall -Werror subdir-objects])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
@@ -79,13 +63,8 @@ dnl Keep in sync with cmake/modules/AC_HEADER_STDC.cmake.
 AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE(m4_flatten([
 	dirent.h
-	errno.h
 	inttypes.h
-	limits.h
-	stddef.h
 	stdint.h
-	stdlib.h
-	string.h
 	strings.h
 	unistd.h
 	sys/stat.h
@@ -108,14 +87,12 @@ AC_CHECK_HEADERS(iconv.h,
       AC_MSG_RESULT(no))])
 
 # Checks for typedefs, structures, and compiler characteristics.
-#AC_C_CONST
 #AC_TYPE_SIZE_T
 
 # Checks for library functions.
 #AC_FUNC_ERROR_AT_LINE
 #AC_FUNC_MALLOC
 #AC_FUNC_REALLOC
-#AC_FUNC_VPRINTF
 #AC_CHECK_FUNCS([floor memset sqrt strchr strdup strtol])
 
 dnl do we need to specify -lm explicitly?
@@ -123,6 +100,21 @@ AC_CHECK_FUNC(sin,,[AC_CHECK_LIB(m,sin)])
 
 AX_PTHREAD()
 AX_OPENMP()
+
+dnl We should default this to off in future releases.
+AC_MSG_CHECKING([whether to support gd image formats])
+AC_ARG_ENABLE([gd-formats],
+  [AS_HELP_STRING([--disable-gd-formats], [Disable support for the legacy/testing gd image formats])],
+  [gd_enable_gd_formats=$enableval],
+  [gd_enable_gd_formats=no])
+AC_MSG_RESULT([$gd_enable_gd_formats])
+if test "$gd_enable_gd_formats" = yes; then
+  gd_ac_value=1
+else
+  gd_ac_value=0
+fi
+AC_DEFINE_UNQUOTED([ENABLE_GD_FORMATS], [$gd_ac_value], [Whether to support gd image formats])
+AM_CONDITIONAL([ENABLE_GD_FORMATS], test "$gd_enable_gd_formats" = yes)
 
 dnl Helper macro for working with external libraries.
 dnl GD_LIB_CHECK([SYM], [FEATURE], [name], [...test...])
@@ -141,6 +133,7 @@ m4_define([GD_LIB_CHECK], [dnl
   AC_MSG_RESULT([$gd_with_lib])
 
   gd_found_lib=no
+  gd_require_pkg_name=""
   if test "$gd_with_lib" != "no"; then
     save_CPPFLAGS=$CPPFLAGS
     save_LDFLAGS=$LDFLAGS
@@ -172,6 +165,11 @@ m4_define([GD_LIB_CHECK], [dnl
       $1][_CFLAGS="$gd_lib_cflags $][$1][_CFLAGS"
       AS_VAR_APPEND([LIBS], [" $][$1][_LIBS"])
       AS_VAR_APPEND([CPPFLAGS], [" $][$1][_CFLAGS"])
+      if test -z "$gd_require_pkg_name"; then
+        AS_VAR_APPEND([LIBS_PRIVATES], [" $][$1][_LIBS"])
+      else
+        AS_VAR_APPEND([PKG_REQUIRES_PRIVATES], ["  $gd_require_pkg_name"])
+      fi
     elif test "$gd_with_lib" = "yes"; then
       AC_MSG_ERROR([$3 requested but not found])
     else
@@ -191,7 +189,7 @@ dnl $4 - pkg-config module to look for
 dnl $5 - fallback test for the feature
 m4_define([GD_LIB_PKG_CHECK], [dnl
   GD_LIB_CHECK([$1], [$2], [$3], [dnl
-    PKG_CHECK_MODULES([$1], [$4], [gd_found_lib=yes], [$5])
+    PKG_CHECK_MODULES([$1], [$4], [gd_found_lib=yes gd_require_pkg_name="$4"], [$5])
   ])
 ])
 
@@ -214,6 +212,7 @@ GD_LIB_PKG_CHECK([LIBPNG], [PNG], [png], [libpng], [
 ])
 
 dnl Check for FreeType support.
+dnl NB: "9.8.3" corresponds to freetype-2.1.10.
 GD_LIB_PKG_CHECK([LIBFREETYPE], [FREETYPE], [freetype], [freetype2 >= 9.8.3], [
   FREETYPE_CONFIG=$gd_with_lib/bin/freetype-config
   if test -e "$FREETYPE_CONFIG"; then
@@ -243,7 +242,7 @@ GD_LIB_PKG_CHECK([LIBFONTCONFIG], [FONTCONFIG], [fontconfig], [fontconfig], [
 ])
 
 dnl Check for jpeg support.
-GD_LIB_CHECK([LIBJPEG], [JPEG], [jpeg], [
+GD_LIB_PKG_CHECK([LIBJPEG], [JPEG], [jpeg], [libjpeg], [
   AC_CHECK_LIB([jpeg], [jpeg_set_defaults], [dnl
     AS_VAR_APPEND([LIBJPEG_LIBS], [" -ljpeg"])
     gd_found_lib=yes
@@ -280,9 +279,24 @@ GD_LIB_PKG_CHECK([LIBTIFF], [TIFF], [tiff], [libtiff-4], [
 ])
 
 dnl Check for webp support.
-GD_LIB_CHECK([LIBWEBP], [WEBP], [webp], [
+GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [webp], [libwebp], [
   AC_CHECK_LIB([webp], [WebPGetInfo], [dnl
     AS_VAR_APPEND([LIBWEBP_LIBS], [" -lwebp"])
+    gd_found_lib=yes
+  ])
+])
+
+dnl Check for heif support.
+GD_LIB_PKG_CHECK([LIBHEIF], [HEIF], [heif], [libheif >= 1.7.0], [
+  AC_CHECK_LIB([heif], [heif_get_version], [dnl
+    AS_VAR_APPEND([LIBHEIF_LIBS], [" -lheif"])
+  ])
+])
+
+dnl Check for avif support.
+GD_LIB_PKG_CHECK([LIBAVIF], [AVIF], [avif], [libavif >= 0.8.2], [
+  AC_CHECK_LIB([avif], [avifVersion], [dnl
+    AS_VAR_APPEND([LIBAVIF_LIBS], [" -lavif"])
     gd_found_lib=yes
   ])
 ])
@@ -301,7 +315,8 @@ AX_CFLAGS_WARN_ALL
 
 dnl Enable -Werror if possible.  Do it after all other tests.
 AC_ARG_ENABLE([werror], [AS_HELP_STRING([--enable-werror], [treat compile warnings as errors])])
-if test "$enable_werror" = "yes" || test "$GCC" = "yes" -a "$enable_werror" != "no"; then
+if test "$enable_werror" = "yes" || \
+   test "$GCC" = "yes" -a "$enable_werror" != "no" -a -d "$srcdir/.git"; then
   CFLAGS="-Werror $CFLAGS"
   CXXFLAGS="-Werror $CXXFLAGS"
 fi
@@ -310,16 +325,19 @@ dnl report configuration
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE $VERSION:
 
+   Support for gd/gd2 images:        $gd_enable_gd_formats
    Support for Zlib:                 $gd_with_LIBZ
    Support for PNG library:          $gd_with_LIBPNG
    Support for JPEG library:         $gd_with_LIBJPEG
    Support for WebP library:         $gd_with_LIBWEBP
+   Support for HEIF library:         $gd_with_LIBHEIF
+   Support for AVIF library:         $gd_with_LIBAVIF
    Support for TIFF library:         $gd_with_LIBTIFF
    Support for Freetype 2.x library: $gd_with_LIBFREETYPE
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG
    Support for Xpm library:          $gd_with_LIBXPM
    Support for liq library:          $gd_with_LIBIMAGEQUANT
-   Support for complext text:        $gd_with_LIBRAQM
+   Support for complex text:         $gd_with_LIBRAQM
    Support for pthreads:             $ax_pthread_ok
 ])
 

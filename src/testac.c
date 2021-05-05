@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -17,7 +16,6 @@ void testDrawing (gdImagePtr im_in,
 int
 main (int argc, char *argv[])
 {
-#ifdef HAVE_LIBPNG
 	/* Input and output files */
 	FILE *in;
 
@@ -55,9 +53,6 @@ main (int argc, char *argv[])
 	testDrawing (im_in, 2.0, 0, 1, "noblending-doublesize-palette.png");
 	testDrawing (im_in, 2.0, 1, 1, "blending-doublesize-palette.png");
 	gdImageDestroy (im_in);
-#else
-	fprintf (stderr, "No PNG library support.\n");
-#endif
 
 	return 0;
 }
@@ -116,11 +111,7 @@ testDrawing (gdImagePtr im_in,
 		gdImageTrueColorToPalette (im_out, 1, 256);
 	}
 
-#ifdef HAVE_LIBPNG
 	gdImagePng (im_out, out);
-#else
-	fprintf (stderr, "No PNG library support.\n");
-#endif
 	fclose (out);
 
 	gdImageDestroy (im_out);

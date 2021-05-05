@@ -1383,7 +1383,7 @@ zeroHistogram (hist3d histogram)
  *   method - The quantization method, see <gdPaletteQuantizationMethod>.
  *   speed  - The quantization speed between 1 (highest quality) and
  *            10 (fastest). 0 selects a method-specific default (recommended).
- *   
+ *
  * Returns:
  *   Zero if the given method is invalid or not available; non-zero otherwise.
  *
@@ -1451,7 +1451,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
  *
  * Returns:
  *   A newly create palette image; NULL on failure.
- *   
+ *
  * See also:
  *   - <gdImageCreatePaletteFromTrueColor>
  *   - <gdImageTrueColorToPaletteSetMethod>
@@ -1523,6 +1523,15 @@ static void free_truecolor_image_data(gdImagePtr oim)
 	oim->tpixels = 0;
 }
 
+#ifdef HAVE_LIBIMAGEQUANT
+/* liq requires 16 byte aligned heap memory */
+static void *malloc16(size_t size)
+{
+	void *p;
+	return posix_memalign(&p, 16, size) == 0 ? p : NULL;
+}
+#endif
+
 /*
  * Module initialization routine for 2-pass color quantization.
  */
@@ -1586,7 +1595,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 		nim = gdImageNeuQuant(oim, colorsWanted, oim->paletteQuantizationSpeed ? oim->paletteQuantizationSpeed : 2);
 		if (cimP) {
 			*cimP = nim;
-		} 
+		}
 		if (!nim) {
 			return FALSE;
 		} else {
@@ -1601,7 +1610,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 #ifdef HAVE_LIBIMAGEQUANT
 	if (oim->paletteQuantizationMethod == GD_QUANT_DEFAULT ||
 	        oim->paletteQuantizationMethod == GD_QUANT_LIQ) {
-		liq_attr *attr = liq_attr_create_with_allocator(gdMalloc, gdFree);
+		liq_attr *attr = liq_attr_create_with_allocator(malloc16, free);
 		liq_image *image;
 		liq_result *remap;
 		int remapped_ok = 0;

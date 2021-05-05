@@ -1,4 +1,3 @@
-/* $Id$ */
 #include "gd.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,9 +59,9 @@ int main(int argc, char **arg)
 	/* to radian */
 	a2 = angle * .0174532925;
 
-	new_width = ceil(cos(a2) * gdImageSX(im)) +
+	new_width = fabs(ceil(cos(a2) * gdImageSX(im))) +
 	            fabs(sin(a2) * gdImageSY(im));
-	new_height = ceil(cos(a2) * gdImageSY(im)) +
+	new_height = fabs(ceil(cos(a2) * gdImageSY(im))) +
 	             fabs(sin(a2) * gdImageSX(im));
 
 

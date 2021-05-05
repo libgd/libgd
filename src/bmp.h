@@ -1,4 +1,6 @@
-/* $Id$ */
+#ifndef BMP_H
+#define BMP_H	1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -18,9 +20,6 @@ extern "C" {
 
 		----------------------------------------------------------------------------
 	 */
-
-#ifndef BMP_H
-#define BMP_H	1
 
 #define BMP_PALETTE_3 1
 #define BMP_PALETTE_4 2
@@ -105,8 +104,8 @@ extern "C" {
 
 	} bmp_info_t;
 
-#endif
-
 #ifdef __cplusplus
 }
+#endif
+
 #endif

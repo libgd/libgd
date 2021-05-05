@@ -1,9 +1,9 @@
+#ifndef GDFX_H
+#define GDFX_H 1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifndef GDFX_H
-#define GDFX_H 1
 
 BGD_DECLARE(gdImagePtr) gdImageSquareToCircle(gdImagePtr im, int radius);
 
@@ -22,9 +22,8 @@ BGD_DECLARE(char *) gdImageStringFTCircle(
 
 BGD_DECLARE(void) gdImageSharpen (gdImagePtr im, int pct);
 
-#endif /* GDFX_H */
-
-
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* GDFX_H */

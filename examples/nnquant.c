@@ -1,5 +1,3 @@
-/* $Id$ */
-
 #include "gd.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,17 +10,12 @@ void save_png(gdImagePtr im, const char *filename)
 		fprintf(stderr, "Can't save png image %s\n", filename);
 		return;
 	}
-#ifdef HAVE_LIBPNG
 	gdImagePng(im, fp);
-#else
-	printf("No PNG support. Cannot save image.\n");
-#endif
 	fclose(fp);
 }
 
 int main()
 {
-#ifdef HAVE_JPEG
 	gdImagePtr im, im2;
 	FILE *fp;
 	char path[2048];
@@ -56,9 +49,5 @@ int main()
 	save_png(im, "a_jquant_dither.png");
 
 	gdImageDestroy(im);
-#else
-	printf("JPEG support is required for this example. Please recompile GD with JPEG or change this example to use another format as input.");
-	return 1;
-#endif
 	return 0;
 }

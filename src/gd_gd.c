@@ -12,21 +12,34 @@
  *  - color header (either truecolor or palette)
  *  - image data
  *
- * All numbers are stored in big-endian format.
+ * All numbers are stored in big-endian format. Note that all GD output is done
+ * in the GD 2.x format (not to be confused with the GD2 format), but input may
+ * also be in the GD 1.x format.
  *
- * File header structure:
+ * GD 1.x file header structure:
+ *  width  - 1 word
+ *  height - 1 word
+ *
+ * GD 1.x color header (palette only):
+ *  count       - 1 byte (the number of used palette colors)
+ *  transparent - 1 word (257 signals no transparency)
+ *  palette     - 256×3 bytes (RGB triplets)
+ *
+ * GD 2.x file header structure:
  *  signature     - 1 word ("\xFF\xFE" for truecolor, "\xFF\xFF" for palette)
  *  width         - 1 word
  *  height        - 1 word
  *
- * Truecolor image color header:
+ * GD 2.x truecolor image color header:
  *  truecolor   - 1 byte (always "\001")
- *  transparent - 1 dword (ARGB color)
+ *  transparent - 1 dword (ARGB color); "\377\377\377\377" means that no
+ *				  transparent color is set
  *
- * Palette image color header:
+ * GD 2.x palette image color header:
  *  truecolor   - 1 byte (always "\0")
  *  count       - 1 word (the number of used palette colors)
- *  transparent - 1 dword (ARGB color)
+ *  transparent - 1 dword (palette index); "\377\377\377\377" means that no
+ *				  transparent color is set
  *  palette     - 256 dwords (RGBA colors)
  *
  * Image data:
@@ -44,6 +57,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gd_errors.h"
+
+/* 2.3: gd is no longer mandatory */
+#if ENABLE_GD_FORMATS
 
 #define TRUE 1
 #define FALSE 0
@@ -91,9 +108,10 @@ _gdGetColors (gdIOCtx * in, gdImagePtr im, int gd2xFlag)
 		if (!gdGetWord (&im->transparent, in)) {
 			goto fail1;
 		}
-		if (im->transparent == 257) {
-			im->transparent = (-1);
-		}
+	}
+	/* Make sure transparent index is within bounds of the palette. */
+	if (!(im->trueColor) && (im->transparent >= im->colorsTotal || im->transparent < 0)) {
+		im->transparent = (-1);
 	}
 	GD2_DBG (printf
 	         ("Palette had %d colours (T=%d)\n", im->colorsTotal,
@@ -216,7 +234,7 @@ fail1:
     > in = fopen("mygd.gd", "rb");
     > im = gdImageCreateFromGd(in);
     > fclose(in);
-    > // ... Use the image ... 
+    > // ... Use the image ...
     > gdImageDestroy(im);
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd (FILE * inFile)
@@ -387,3 +405,41 @@ BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size)
 	out->gd_free (out);
 	return rv;
 }
+
+#else /* no HAVE_LIBZ or !ENABLE_GD_FORMATS */
+
+static void _noGdError (void)
+{
+	gd_error("GD image support has been disabled\n");
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGd (FILE * inFile)
+{
+	_noGdError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGdPtr (int size, void *data)
+{
+	_noGdError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGdCtx (gdIOCtxPtr in)
+{
+	_noGdError();
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * outFile)
+{
+	_noGdError();
+}
+
+BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size)
+{
+	_noGdError();
+	return NULL;
+}
+
+#endif /* ENABLE_GD_FORMATS */

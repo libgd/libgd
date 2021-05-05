@@ -1,12 +1,11 @@
 /* *****************************************************************************
-** $Id$
 ** Initial file written and documented by:
 ** Kevin Shepherd <kshepherd@php.net> December 2007
 ** of Scarlet Line http://www.scarletline.com/
 *******************************************************************************/
 /** \file gdpp.cxx
 	\brief Implements the non-trivial methods of GD::Image.
-	
+
 	Implementation of the more complex methods defined
 	in gdpp.h.
 	Notably includes the methods which determine the image file
@@ -19,13 +18,13 @@ namespace GD
 	{
 	/**
 		Load an image from a file, after attempting to
-		determine it's image file format. 
+		determine it's image file format.
 		Invoke CreateFrom with an already opened
-		pointer to a file containing the desired image. 
+		pointer to a file containing the desired image.
 		CreateFrom does not close the file.
 		\param[in] in An opened FILE * pointer.
-		\return true for success, or false if unable to load the image (most often because the 
-		file is corrupt or does not contain a recognized image format). 
+		\return true for success, or false if unable to load the image (most often because the
+		file is corrupt or does not contain a recognized image format).
 		You can call Width() and Height() member functions of the image to determine its size.
 	*/
 	bool Image::CreateFrom(FILE * in)
@@ -40,50 +39,47 @@ namespace GD
 		   0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
 		   == .PNG\r\n.\n
 		*/
-#ifdef HAVE_LIBPNG
 		case 0x89: // PNG
 			rtn = CreateFromPng(in);
 			break;
-#endif
+
 		/* GIF
 			0x47 0x49 0x46
 		*/
 		case 0x47: // GIF
 			rtn = CreateFromGif(in);
 			break;
-#ifdef HAVE_LIBJPEG
 		/* JPEG
 		A JFIF-standard file will start with the four bytes (hex) FF D8 FF E0,
-		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.		
+		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.
 		*/
 		case 0xFF: // JPEG
 			rtn = CreateFromJpeg(in);
 			break;
-#endif
 		/* WBMP
-		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type		
+		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type
 		*/
 		case 0x00: // WBMP
 			rtn = CreateFromWBMP(in);
 			break;
 		/* GD2
-			0x67 0x64 0x32 0x00 
+			0x67 0x64 0x32 0x00
 			== GD2\0
-		Starts with gd2 
+		Starts with gd2
 		*/
 		case 0x67: // GD2
 			rtn = CreateFromGd2(in);
 			break;
 		/* GD
 			0xFF 0xFE
-			or 
-			0xFF 0xFF 
+			or
+			0xFF 0xFF
 			Conflicts with Jpeg
 		*/
 		/* XBM
 			#define test_width 16
 			#define test_height 7
-		*/	
+		*/
 		case 0x23: // XBM
 			rtn = CreateFromXbm(in);
 			break;
@@ -91,18 +87,18 @@ namespace GD
 			rtn = false;
 			break;
 			}
-		return rtn; 
+		return rtn;
 		}
 
 	/**
 		Load an image from a standard input stream, after attempting to
-		determine it's image file format. 
+		determine it's image file format.
 		Invoke CreateFrom with an already opened stream
-		containing the desired image. 
+		containing the desired image.
 		CreateFrom does not close the stream.
 		\param[in] in An opened standard library input stream.
-		\return true for success, or false if unable to load the image (most often because the 
-		file is corrupt or does not contain a recognized image format). 
+		\return true for success, or false if unable to load the image (most often because the
+		file is corrupt or does not contain a recognized image format).
 		You can call Width() and Height() member functions of the image to determine its size.
 		Example usage, convert anything to gif:
 		#include <fstream>
@@ -122,7 +118,6 @@ namespace GD
 		bool rtn;
 		switch (in.peek())
 			{
-#ifdef HAVE_LIBPNG
 		/* PNG
 		The first eight bytes of a PNG file always contain the following (decimal) values:
 		   0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
@@ -131,7 +126,6 @@ namespace GD
 		case 0x89: // PNG
 			rtn = CreateFromPng(in);
 			break;
-#endif
 
 		/* GIF
 			0x47 0x49 0x46
@@ -140,51 +134,49 @@ namespace GD
 			rtn = CreateFromGif(in);
 			break;
 
-#ifdef HAVE_LIBJPEG
 		/* JPEG
 		A JFIF-standard file will start with the four bytes (hex) FF D8 FF E0,
-		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.		
+		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.
 		*/
 		case 0xFF: // JPEG
 			rtn = CreateFromJpeg(in);
 			break;
-#endif
 
 		/* WBMP
-		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type		
+		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type
 		*/
 		case 0x00: // WBMP
 			rtn = CreateFromWBMP(in);
 			break;
 		/* GD2
-			0x67 0x64 0x32 0x00 
+			0x67 0x64 0x32 0x00
 			== GD2\0
-		Starts with gd2 
+		Starts with gd2
 		*/
 		case 0x67: // GD2
 			rtn = CreateFromGd2(in);
 			break;
 		/* GD
 			0xFF 0xFE
-			or 
-			0xFF 0xFF 
+			or
+			0xFF 0xFF
 			Conflicts with Jpeg
 		*/
 		default:
 			rtn = false;
 			break;
 			}
-		return rtn; 
+		return rtn;
 		}
 
 	/**
 		Load an image from an in-RAM memory block, after attempting to
-		determine it's image format. 
+		determine it's image format.
 		CreateFrom does not de-allocate the memory.
 		\param[in] size The byte count of the memory block.
 		\param[in] data A pointer to the memory block.
-		\return true for success, or false if unable to load the image (most often because the 
-		formatting is corrupt or does not contain a recognized image format). 
+		\return true for success, or false if unable to load the image (most often because the
+		formatting is corrupt or does not contain a recognized image format).
 		You can call Width() and Height() member functions of the image to determine its size.
 	*/
 	bool Image::CreateFrom(int size, void * data)
@@ -193,7 +185,6 @@ namespace GD
 		switch (((unsigned char * )data)[0])
 			{
 
-#ifdef HAVE_LIBPNG
 		/* PNG
 		The first eight bytes of a PNG file always contain the following (decimal) values:
 		   0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
@@ -202,7 +193,7 @@ namespace GD
 		case 0x89: // PNG
 			rtn = CreateFromPng(size, data);
 			break;
-#endif
+
 		/* GIF
 			0x47 0x49 0x46
 		*/
@@ -210,45 +201,43 @@ namespace GD
 			rtn = CreateFromGif(size, data);
 			break;
 
-#ifdef HAVE_LIBJPEG
 		/* JPEG
 		A JFIF-standard file will start with the four bytes (hex) FF D8 FF E0,
-		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.		
+		    followed by two variable bytes (often hex 00 10), followed by 'JFIF'.
 		*/
 		case 0xFF: // JPEG
 			rtn = CreateFromJpeg(size, data);
 			break;
-#endif
 
 		/* WBMP
-		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type		
+		WBMP Type 0: B/W, Uncompressed bitmap is the only gd supported type
 		*/
 		case 0x00: // WBMP
 			rtn = CreateFromWBMP(size, data);
 			break;
 		/* GD2
-			0x67 0x64 0x32 0x00 
+			0x67 0x64 0x32 0x00
 			== GD2\0
-		Starts with gd2 
+		Starts with gd2
 		*/
 		case 0x67: // GD2
 			rtn = CreateFromGd2(size, data);
 			break;
 		/* GD
 			0xFF 0xFE
-			or 
-			0xFF 0xFF 
+			or
+			0xFF 0xFF
 			Conflicts with Jpeg
 		*/
 		default:
 			rtn = false;
 			break;
 			}
-		return rtn; 
+		return rtn;
 		}
 	} // namespace GD
 /**
-	Load an image from a standard input stream, regardless of it's image file format. 
+	Load an image from a standard input stream, regardless of it's image file format.
 	You can call Width() and Height() member functions of the image to determine its size.
 	Example usage, convert anything to gif:
 	#include <fstream>

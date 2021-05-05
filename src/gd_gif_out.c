@@ -99,6 +99,11 @@ static void char_init(GifCtx *ctx);
 static void char_out(int c, GifCtx *ctx);
 static void flush_char(GifCtx *ctx);
 
+static int _gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out);
+static int _gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
+                                       int LocalCM, int LeftOfs, int TopOfs,
+                                       int Delay, int Disposal,
+                                       gdImagePtr previm);
 
 
 
@@ -131,8 +136,11 @@ BGD_DECLARE(void *) gdImageGifPtr(gdImagePtr im, int *size)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
-	gdImageGifCtx(im, out);
-	rv = gdDPExtractData(out, size);
+	if (!_gdImageGifCtx(im, out)) {
+		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free(out);
 	return rv;
 }
@@ -221,6 +229,12 @@ BGD_DECLARE(void) gdImageGif(gdImagePtr im, FILE *outFile)
 */
 BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out)
 {
+	_gdImageGifCtx(im, out);
+}
+
+/* returns 0 on success, 1 on failure */
+static int _gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out)
+{
 	gdImagePtr pim = 0, tim = im;
 	int interlace, BitsPerPixel;
 	interlace = im->interlace;
@@ -231,7 +245,7 @@ BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out)
 		based temporary image. */
 		pim = gdImageCreatePaletteFromTrueColor(im, 1, 256);
 		if(!pim) {
-			return;
+			return 1;
 		}
 		tim = pim;
 	}
@@ -247,6 +261,8 @@ BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out)
 		/* Destroy palette based temporary image. */
 		gdImageDestroy(	pim);
 	}
+
+	return 0;
 }
 
 
@@ -475,8 +491,11 @@ BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM,
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
-	gdImageGifAnimAddCtx(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm);
-	rv = gdDPExtractData(out, size);
+	if (!_gdImageGifAnimAddCtx(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm)) {
+		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free(out);
 	return rv;
 }
@@ -546,18 +565,18 @@ BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM,
     gdImagePtr im, im2, im3;
     int black, white, trans;
     FILE *out;
-    
+
     im = gdImageCreate(100, 100);     // Create the image
     white = gdImageColorAllocate(im, 255, 255, 255); // Allocate background
     black = gdImageColorAllocate(im, 0, 0, 0); // Allocate drawing color
     trans = gdImageColorAllocate(im, 1, 1, 1); // trans clr for compression
     gdImageRectangle(im, 0, 0, 10, 10, black); // Draw rectangle
-    
+
     out = fopen("anim.gif", "wb");// Open output file in binary mode
     gdImageGifAnimBegin(im, out, 1, 3);// Write GIF hdr, global clr map,loops
     // Write the first frame.  No local color map.  Delay = 1s
     gdImageGifAnimAdd(im, out, 0, 0, 0, 100, 1, NULL);
-    
+
     // construct the second frame
     im2 = gdImageCreate(100, 100);
     (void)gdImageColorAllocate(im2, 255, 255, 255); // White background
@@ -566,7 +585,7 @@ BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM,
     // Allow animation compression with transparent pixels
     gdImageColorTransparent (im2, trans);
     gdImageGifAnimAdd(im2, out, 0, 0, 0, 100, 1, im);  // Add second frame
-    
+
     // construct the third frame
     im3 = gdImageCreate(100, 100);
     (void)gdImageColorAllocate(im3, 255, 255, 255); // white background
@@ -578,7 +597,7 @@ BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM,
     gdImageGifAnimAdd(im3, out, 0, 0, 0, 100, 1, im2);
     gdImageGifAnimEnd(out);  // End marker, same as putc(';', out);
     fclose(out); // Close file
-    
+
     // Destroy images
     gdImageDestroy(im);
     gdImageDestroy(im2);
@@ -637,6 +656,15 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
                                        int Delay, int Disposal,
                                        gdImagePtr previm)
 {
+	_gdImageGifAnimAddCtx(im, out, LocalCM, LeftOfs, TopOfs, Delay, Disposal, previm);
+}
+
+/* returns 0 on success, 1 on failure */
+static int _gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
+                                       int LocalCM, int LeftOfs, int TopOfs,
+                                       int Delay, int Disposal,
+                                       gdImagePtr previm)
+{
 	gdImagePtr pim = NULL, tim = im;
 	int interlace, transparent, BitsPerPixel;
 	interlace = im->interlace;
@@ -653,7 +681,7 @@ BGD_DECLARE(void) gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
 			based temporary image. */
 		pim = gdImageCreatePaletteFromTrueColor(im, 1, 256);
 		if (!pim) {
-			return;
+			return 1;
 		}
 		tim = pim;
 	}
@@ -826,12 +854,14 @@ break_right:
 	    out, tim->sx, tim->sy, LeftOfs, TopOfs, interlace, transparent,
 	    Delay, Disposal, BitsPerPixel,
 	    LocalCM ? tim->red : 0, tim->green, tim->blue, tim);
+	return 0;
 
 fail_end:
 	if(pim) {
 		/* Destroy palette based temporary image. */
 		gdImageDestroy(pim);
 	}
+	return 1;
 }
 
 
@@ -1374,7 +1404,7 @@ static void compress(int init_bits, gdIOCtxPtr outfile, gdImagePtr im, GifCtx *c
 	output((code_int)ctx->ClearCode, ctx);
 
 #ifdef SIGNED_COMPARE_SLOW
-	while((c = GIFNextPixel(im)) != (unsigned) EOF) {
+	while((c = GIFNextPixel(im, ctx)) != (unsigned) EOF) {
 #else /* SIGNED_COMPARE_SLOW */
 	while((c = GIFNextPixel(im, ctx)) != EOF) {
 #endif /* SIGNED_COMPARE_SLOW */

@@ -1,5 +1,4 @@
 /* This is a template RC file.
- * $Id$
  * Do not edit with MSVC */
 #ifdef APSTUDIO_INVOKED
 # error dont edit with MSVC
@@ -38,7 +37,7 @@ BEGIN
             VALUE "FileDescription", "LIBGD" "\0"
             VALUE "FileVersion", GD_VERSION_STRING "\0"
             VALUE "InternalName", "bgd.dll" "\0"
-            VALUE "LegalCopyright", "Copyright © 1997-2008 Thomas Boutell, Pierre A. Joye and contributors, see COPYING\0" 
+            VALUE "LegalCopyright", "Copyright © 1997-2008 Thomas Boutell, Pierre A. Joye and contributors, see COPYING\0"
             VALUE "LegalTrademarks", "Thomas Boutell, Pierre A. Joye and contributors\0"
             VALUE "OriginalFilename", "bgd.dll" "\0"
             VALUE "PrivateBuild", "\0"
@@ -56,4 +55,3 @@ END
 #ifdef MC_INCLUDE
 #include MC_INCLUDE
 #endif
-

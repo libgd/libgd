@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2006  Alan W. Irwin
  *
  * This file is part of PLplot.

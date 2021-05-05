@@ -6,7 +6,7 @@
  * Based on GD.pm code by Lincoln Stein for interfacing to libgd.
  * Added support for reading as well as support for 'tell' and 'seek'.
  *
- * As will all I/O modules, most functions are for local use only (called
+ * As with all I/O modules, most functions are for local use only (called
  * via function pointers in the I/O context).
  *
  * gdDPExtractData is the exception to this: it will return the pointer to
@@ -180,6 +180,9 @@ static int dynamicSeek(struct gdIOCtx *ctx, const int pos)
 	dynamicPtr *dp;
 	dpIOCtx *dctx;
 
+	if (pos < 0) {
+		return FALSE;
+	}
 	dctx = (dpIOCtx *)ctx;
 	dp = dctx->dp;
 
@@ -263,6 +266,7 @@ static void dynamicPutchar(struct gdIOCtx *ctx, int a)
 	appendDynamic(dctx->dp, &b, 1);
 }
 
+/* returns the number of bytes actually read; 0 on EOF and error */
 static int dynamicGetbuf(gdIOCtxPtr ctx, void *buf, int len)
 {
 	int rlen, remain;
@@ -272,19 +276,27 @@ static int dynamicGetbuf(gdIOCtxPtr ctx, void *buf, int len)
 	dctx = (dpIOCtxPtr) ctx;
 	dp = dctx->dp;
 
+	if (dp->pos < 0 || dp->pos >= dp->realSize) {
+		return 0;
+	}
+
 	remain = dp->logicalSize - dp->pos;
 	if(remain >= len) {
 		rlen = len;
 	} else {
-		if(remain == 0) {
-			/* 2.0.34: EOF is incorrect. We use 0 for
-			 * errors and EOF, just like fileGetbuf,
-			 * which is a simple fread() wrapper.
-			 * TBB. Original bug report: Daniel Cowgill. */
-			return 0; /* NOT EOF */
+		if(remain <= 0) {
+			return 0;
 		}
 
 		rlen = remain;
+	}
+
+	if (dp->pos + rlen > dp->realSize) {
+		rlen = dp->realSize - dp->pos;
+	}
+
+	if (rlen < 0) {
+		return 0;
 	}
 
 	memcpy(buf, (void *) ((char *)dp->data + dp->pos), rlen);

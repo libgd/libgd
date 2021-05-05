@@ -57,13 +57,13 @@ BGD_DECLARE(int) gdAffineApplyToPointF (gdPointFPtr dst, const gdPointFPtr src,
  *  <gdAffineIdentity>
  *
  * Returns:
- *  GD_TRUE if the affine is rectilinear or GD_FALSE
+ *  GD_TRUE on success or GD_FALSE on failure
  */
 BGD_DECLARE(int) gdAffineInvert (double dst[6], const double src[6])
 {
 	double r_det = (src[0] * src[3] - src[1] * src[2]);
 
-	if (r_det <= 0.0) {
+	if (fabs(r_det) <= 0.0) {
 		return GD_FALSE;
 	}
 
@@ -333,4 +333,3 @@ BGD_DECLARE(int) gdAffineEqual (const double m1[6], const double m2[6])
 	  fabs (m1[4] - m2[4]) < GD_EPSILON &&
 	  fabs (m1[5] - m2[5]) < GD_EPSILON);
 }
-

@@ -36,4 +36,3 @@ int main()
 	gdImageDestroy(im);
 	return 0;
 }
-

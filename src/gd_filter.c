@@ -30,8 +30,6 @@
 typedef int (BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
 
 #define GET_PIXEL_FUNCTION(src)(src->trueColor?gdImageGetTrueColorPixel:gdImageGetPixel)
-#define MIN(a,b) ((a)<(b)?(a):(b))
-#define MAX(a,b) ((a)<(b)?(b):(a))
 
 #ifdef _WIN32
 # define GD_SCATTER_SEED() (unsigned int)(time(0) * GetCurrentProcessId())
@@ -236,6 +234,12 @@ BGD_DECLARE(int) gdImageNegate(gdImagePtr src)
  *
  * Convert an image to grayscale
  *
+ * The red, green and blue components of each pixel are replaced by their
+ * weighted sum using the same coefficients as the REC.601 luma (Y')
+ * calculation. The alpha components are retained.
+ *
+ * For palette images the result may differ due to palette limitations.
+ *
  * Parameters:
  *   src - The image.
  *
@@ -248,10 +252,14 @@ BGD_DECLARE(int) gdImageGrayScale(gdImagePtr src)
 	int r,g,b,a;
 	int new_pxl, pxl;
 	FuncPtr f;
+	int alpha_blending;
 
 	if (src==NULL) {
 		return 0;
 	}
+
+	alpha_blending = src->alphaBlendingFlag;
+	gdImageAlphaBlending(src, gdEffectReplace);
 
 	f = GET_PIXEL_FUNCTION(src);
 
@@ -271,6 +279,8 @@ BGD_DECLARE(int) gdImageGrayScale(gdImagePtr src)
 			gdImageSetPixel (src, x, y, new_pxl);
 		}
 	}
+	gdImageAlphaBlending(src, alpha_blending);
+
 	return 1;
 }
 
@@ -525,6 +535,7 @@ BGD_DECLARE(int) gdImageConvolution(gdImagePtr src, float filter[3][3], float fi
 	for ( y=0; y<src->sy; y++) {
 		for(x=0; x<src->sx; x++) {
 			new_r = new_g = new_b = 0;
+			pxl = f(srcback, x, y);
 			new_a = gdImageAlpha(srcback, pxl);
 
 			for (j=0; j<3; j++) {
@@ -886,7 +897,7 @@ applyCoeffsLine(gdImagePtr src, gdImagePtr dst, int line, int linelen,
             const int srcpx = (axis == HORIZONTAL) ?
                 src->tpixels[line][rndx] :
                 src->tpixels[rndx][line];
-                
+
             r += coeff * (double)gdTrueColorGetRed(srcpx);
             g += coeff * (double)gdTrueColorGetGreen(srcpx);
             b += coeff * (double)gdTrueColorGetBlue(srcpx);
@@ -900,7 +911,7 @@ applyCoeffsLine(gdImagePtr src, gdImagePtr dst, int line, int linelen,
 
 
 static void
-applyCoeffs(gdImagePtr src, gdImagePtr dst, double *coeffs, int radius, 
+applyCoeffs(gdImagePtr src, gdImagePtr dst, double *coeffs, int radius,
             gdAxis axis)
 {
     int line, numlines, linelen;
@@ -927,7 +938,7 @@ applyCoeffs(gdImagePtr src, gdImagePtr dst, double *coeffs, int radius,
     _radius_ is a radius, not a diameter so a radius of 2 (for
     example) will blur across a region 5 pixels across (2 to the
     center, 1 for the center itself and another 2 to the other edge).
-    
+
     _sigma_ represents the "fatness" of the curve (lower == fatter).
     If _sigma_ is less than or equal to 0,
     <gdImageCopyGaussianBlurred> ignores it and instead computes an
@@ -975,10 +986,10 @@ applyCoeffs(gdImagePtr src, gdImagePtr dst, double *coeffs, int radius,
 
     FILE *in;
     gdImagePtr result, src;
-     
+
     in = fopen("foo.png", "rb");
     src = gdImageCreateFromPng(in);
-    
+
     result = gdImageCopyGaussianBlurred(im, src->sx / 10, -1.0);
 
     (end code)
@@ -1022,7 +1033,7 @@ gdImageCopyGaussianBlurred(gdImagePtr src, int radius, double sigma)
 			gdFree(coeffs);
             return NULL;
         }/* if */
-		
+
         freeSrc = 1;
 	}/* if */
 
@@ -1047,4 +1058,3 @@ gdImageCopyGaussianBlurred(gdImagePtr src, int radius, double sigma)
 
     return result;
 }/* gdImageCopyGaussianBlurred*/
-

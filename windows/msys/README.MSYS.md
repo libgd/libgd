@@ -1,4 +1,3 @@
-
 # MSYS Fallback Makefile
 
 This is a simple, straightforward Makefile for building LibGD with
@@ -49,6 +48,14 @@ use one of the other build systems (or add them yourself.)
     DLLs; it sweeps up all of the DLLs in the directories pointed to
     by *_DLLDIR Makefile variables.
 
+    Before type "make dist", please make sure you have installed
+    zip command in msys. Or you can try:
+    * If you use msys, you can install msys-zip(lib, docs, lic)
+    in MinGW Installation Manager/all package.
+    * If you use msys2, you can install msys/zip by pacman and running:
+
+       pacman -S msys/zip
+
     Alternately, you can copy the lib (in src/) to wherever it needs
     to go.
 
@@ -59,7 +66,3 @@ use one of the other build systems (or add them yourself.)
   worth.
 * LibFontconfig: I couldn't find Windows binaries for it anywhere
   reputable.
-
- 
-
-

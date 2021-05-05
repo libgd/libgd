@@ -9,7 +9,6 @@ int main (int argc, char *argv[])
 	gdImagePtr im;
 	int green, blue;
 	gdFTStringExtra se;
-	FILE *out;
 	im = gdImageCreateTrueColor(300, 100);
 	green = gdImageColorAllocate(im, 128, 255, 128);
 	gdImageFilledRectangle(im, 0, 0, 300, 100, green);
@@ -33,7 +32,7 @@ int main (int argc, char *argv[])
 	gdImageStringFTEx(im, 0, blue, "arial",
 	                  12, 0, 20, 80, "plain pathname", &se);
 #ifdef HAVE_LIBPNG
-	out = fopen("fontconfigtest.png", "wb");
+	FILE *out = fopen("fontconfigtest.png", "wb");
 	gdImagePng(im, out);
 	fclose(out);
 #else
@@ -41,4 +40,3 @@ int main (int argc, char *argv[])
 #endif /* HAVE_LIBPNG */
 	return 0;
 }
-

@@ -1,4 +1,3 @@
-/* $Id$ */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -68,7 +67,7 @@ gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 	 * regardless of whether _BSD_SOURCE or anything else has (or has not)
 	 * been defined. */
 
-	gd_error_ex(GD_ERROR, "gd-png: fatal libpng error: %s\n", msg);
+	gd_error_ex(GD_WARNING, "gd-png: fatal libpng error: %s\n", msg);
 
 	jmpbuf_ptr = png_get_error_ptr (png_ptr);
 	if (jmpbuf_ptr == NULL) {				/* we are completely hosed now */
@@ -592,7 +591,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
     gdImagePtr im;
     int black, white;
     FILE *out;
-     
+
     im = gdImageCreate(100, 100);              // Create the image
     white = gdImageColorAllocate(im, 255, 255, 255); // Alloc background
     black = gdImageColorAllocate(im, 0, 0, 0); // Allocate drawing color
@@ -634,6 +633,7 @@ BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * outFile)
 	out->gd_free (out);
 }
 
+static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level);
 
 /*
   Function: gdImagePngPtr
@@ -657,8 +657,11 @@ BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
 	if (out == NULL) return NULL;
-	gdImagePngCtxEx (im, out, -1);
-	rv = gdDPExtractData (out, size);
+	if (!_gdImagePngCtxEx (im, out, -1)) {
+		rv = gdDPExtractData (out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free (out);
 	return rv;
 }
@@ -692,8 +695,11 @@ BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
 	if (out == NULL) return NULL;
-	gdImagePngCtxEx (im, out, level);
-	rv = gdDPExtractData (out, size);
+	if (!_gdImagePngCtxEx (im, out, level)) {
+		rv = gdDPExtractData (out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free (out);
 	return rv;
 }
@@ -742,12 +748,17 @@ BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
     Nothing.
 
 */
+BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
+{
+	_gdImagePngCtxEx(im, outfile, level);
+}
 
 /* This routine is based in part on code from Dale Lutz (Safe Software Inc.)
  *  and in part on demo code from Chapter 15 of "PNG: The Definitive Guide"
  *  (http://www.libpng.org/pub/png/book/).
  */
-BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
+/* returns 0 on success, 1 on failure */
+static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 {
 	int i, j, bit_depth = 0, interlace_type;
 	int width = im->sx;
@@ -760,15 +771,17 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	png_color palette[gdMaxColors];
 	png_structp png_ptr;
 	png_infop info_ptr;
+	png_bytep *row_pointers = NULL;
 	volatile int transparent = im->transparent;
 	volatile int remap = FALSE;
 #ifdef PNG_SETJMP_SUPPORTED
 	jmpbuf_wrapper jbw;
 #endif
+	int ret = 0;
 
 	/* width or height of value 0 is invalid in IHDR;
 	   see http://www.w3.org/TR/PNG-Chunks.html */
-	if (width == 0 || height ==0) return;
+	if (width == 0 || height ==0) return 1;
 
 #ifdef PNG_SETJMP_SUPPORTED
 	png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING,
@@ -779,21 +792,28 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 #endif
 	if (png_ptr == NULL) {
 		gd_error("gd-png error: cannot allocate libpng main struct\n");
-		return;
+		return 1;
 	}
 
 	info_ptr = png_create_info_struct (png_ptr);
 	if (info_ptr == NULL) {
 		gd_error("gd-png error: cannot allocate libpng info struct\n");
 		png_destroy_write_struct (&png_ptr, (png_infopp) NULL);
-		return;
+		return 1;
 	}
 
 #ifdef PNG_SETJMP_SUPPORTED
 	if (setjmp(jbw.jmpbuf)) {
 		gd_error("gd-png error: setjmp returns error condition\n");
 		png_destroy_write_struct (&png_ptr, &info_ptr);
-		return;
+
+		if (row_pointers) {
+			for (i = 0; i < height; ++i)
+				gdFree(row_pointers[i]);
+			gdFree(row_pointers);
+		}
+
+		return 1;
 	}
 #endif
 
@@ -845,6 +865,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		}
 		if (colors == 0) {
 			gd_error("gd-png error: no colors in palette\n");
+			ret = 1;
 			goto bail;
 		}
 		if (colors < im->colorsTotal) {
@@ -967,7 +988,6 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		/* performance optimizations by Phong Tran */
 		int channels = im->saveAlphaFlag ? 4 : 3;
 		/* Our little 7-bit alpha channel trick costs us a bit here. */
-		png_bytep *row_pointers;
 		unsigned char *pOutputRow;
 		int **ptpixels = im->tpixels;
 		int *pThisRow;
@@ -976,11 +996,14 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		png_bytep *prow_pointers;
 		int saveAlphaFlag = im->saveAlphaFlag;
 		if (overflow2(sizeof (png_bytep), height)) {
+			ret = 1;
 			goto bail;
 		}
-		row_pointers = gdMalloc (sizeof (png_bytep) * height);
+		/* Need to use calloc so we can clean it up sanely in the error handler. */
+		row_pointers = gdCalloc(height, sizeof (png_bytep));
 		if (row_pointers == NULL) {
 			gd_error("gd-png error: unable to allocate row_pointers\n");
+			ret = 1;
 			goto bail;
 		}
 		prow_pointers = row_pointers;
@@ -992,6 +1015,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 					gdFree (row_pointers[i]);
 				/* 2.0.29: memory leak TBB */
 				gdFree(row_pointers);
+				ret = 1;
 				goto bail;
 			}
 			pOutputRow = *prow_pointers++;
@@ -1025,11 +1049,13 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 		if (remap) {
 			png_bytep *row_pointers;
 			if (overflow2(sizeof (png_bytep), height)) {
+				ret = 1;
 				goto bail;
 			}
 			row_pointers = gdMalloc (sizeof (png_bytep) * height);
 			if (row_pointers == NULL) {
 				gd_error("gd-png error: unable to allocate row_pointers\n");
+				ret = 1;
 				goto bail;
 			}
 			for (j = 0; j < height; ++j) {
@@ -1039,6 +1065,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 						gdFree (row_pointers[i]);
 					/* TBB: memory leak */
 					gdFree (row_pointers);
+					ret = 1;
 					goto bail;
 				}
 				for (i = 0; i < width; ++i)
@@ -1059,7 +1086,60 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	/* 1.6.3: maybe we should give that memory BACK! TBB */
 bail:
 	png_destroy_write_struct (&png_ptr, &info_ptr);
+	return ret;
 }
 
+#else /* !HAVE_LIBPNG */
+
+static void _noPngError(void)
+{
+	gd_error("PNG image support has been disabled\n");
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * inFile)
+{
+	_noPngError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data)
+{
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
+{
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
+{
+	_noPngError();
+}
+
+BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * outFile)
+{
+	_noPngError();
+}
+
+BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size)
+{
+	return NULL;
+}
+
+BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level)
+{
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
+{
+	_noPngError();
+}
+
+BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
+{
+	_noPngError();
+}
 
 #endif /* HAVE_LIBPNG */

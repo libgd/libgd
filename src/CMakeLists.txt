@@ -1,8 +1,8 @@
-
 SET (LIBGD_SRC_FILES
 	bmp.h
 	gd.c
 	gd.h
+	gd_avif.c
 	gd_bmp.c
 	gd_color.c
 	gd_color.h
@@ -16,6 +16,7 @@ SET (LIBGD_SRC_FILES
 	gd_gd2.c
 	gd_gif_in.c
 	gd_gif_out.c
+	gd_heif.c
 	gd_intern.h
 	gd_interpolation.c
 	gd_io.c
@@ -69,17 +70,22 @@ SET (LIBGD_SRC_FILES
 	wbmp.h
 )
 
-if(MSVC AND MSVC_VERSION LESS 1900)
-	set(LIBGD_SRC_FILES ${LIBGD_SRC_FILES}
-		snprintf.c
+# Static library just for utility programs.
+SET (GD_PROGRAMS_LIB_SRC_FILES)
+
+if(MSVC)
+	set(GD_PROGRAMS_LIB_SRC_FILES ${GD_PROGRAMS_LIB_SRC_FILES}
+		getopt.c
 	)
-endif(MSVC AND MSVC_VERSION LESS 1900)
+endif(MSVC)
 
 include(GNUInstallDirs)
 
 if (BUILD_SHARED_LIBS)
 	add_library(${GD_LIB} ${LIBGD_SRC_FILES})
 	set_target_properties(${GD_LIB} PROPERTIES
+		SOVERSION ${GDLIB_LIB_SOVERSION}
+		VERSION ${GDLIB_LIB_VERSION}
 		C_VISIBILITY_PRESET hidden
 		CXX_VISIBILITY_PRESET hidden
 	)
@@ -92,14 +98,24 @@ if (BUILD_STATIC_LIBS)
 	endif()
 endif()
 
+if (NOT "${GD_PROGRAMS_LIB_SRC_FILES}" STREQUAL "")
+	add_library(gd_programs_lib STATIC ${GD_PROGRAMS_LIB_SRC_FILES})
+endif()
+
 if (WIN32 AND NOT MINGW AND NOT MSYS)
   #	SET_TARGET_PROPERTIES(${GD_LIB} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:msvcrt.lib")
-  SET_PROPERTY(TARGET ${GD_LIB_STATIC} APPEND PROPERTY COMPILE_DEFINITIONS NONDLL=1)
+
+  if (BUILD_STATIC_LIBS)
+    SET_PROPERTY(TARGET ${GD_LIB_STATIC} APPEND PROPERTY COMPILE_DEFINITIONS NONDLL=1)
+  endif()
+
 ENDIF(WIN32 AND NOT MINGW AND NOT MSYS)
 
 if (MINGW OR MSYS)
 	ADD_DEFINITIONS("-mms-bitfields")
-	set_target_properties(${GD_LIB_STATIC} PROPERTIES OUTPUT_NAME ${GD_LIB})
+	if (BUILD_STATIC_LIBS)
+		set_target_properties(${GD_LIB_STATIC} PROPERTIES OUTPUT_NAME ${GD_LIB})
+	endif()
 endif (MINGW OR MSYS)
 
 INCLUDE_DIRECTORIES(BEFORE "${PROJECT_BINARY_DIR}" "${CMAKE_BINARY_DIR}" "${GD_SOURCE_DIR}/src")
@@ -115,6 +131,9 @@ SET(LIBGD_DEP_LIBS
 	${XPM_LIBRARIES}
 	${FONTCONFIG_LIBRARY}
 	${WEBP_LIBRARIES}
+	${AVIF_LIBRARIES}
+	${RAQM_LIBRARIES}
+	${HEIF_LIBRARIES}
 )
 if (BUILD_SHARED_LIBS)
 	target_link_libraries(${GD_LIB} ${LIBGD_DEP_LIBS})
@@ -122,6 +141,12 @@ endif()
 if (BUILD_STATIC_LIBS)
 	target_link_libraries(${GD_LIB_STATIC} ${LIBGD_DEP_LIBS})
 endif()
+
+SET(LIBS_PRIVATES
+	${ICONV_LIBRARIES}
+	${LIQ_LIBRARIES}
+	${WEBP_LIBRARIES}
+)
 
 set(GD_PROGRAMS gdcmpgif)
 
@@ -132,7 +157,7 @@ if (PNG_FOUND)
 	endif()
 endif()
 
-if (FREETYPE_FOUND)
+if (FREETYPE_FOUND AND JPEG_FOUND)
 	set(GD_PROGRAMS ${GD_PROGRAMS} annotate)
 endif()
 
@@ -147,6 +172,9 @@ foreach(program ${GD_PROGRAMS})
     else()
         target_link_libraries(${program} ${GD_LIB_STATIC})
     endif()
+	if (NOT "${GD_PROGRAMS_LIB_SRC_FILES}" STREQUAL "")
+		target_link_libraries(${program} gd_programs_lib)
+	endif()
 endforeach(program)
 
 set(GD_INSTALL_TARGETS ${GD_PROGRAMS})
@@ -163,7 +191,6 @@ install(TARGETS ${GD_INSTALL_TARGETS}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(PROGRAMS bdftogd DESTINATION bin)
 install(FILES
-	entities.h
 	gd.h
 	gd_color_map.h
 	gd_errors.h
@@ -177,3 +204,6 @@ install(FILES
 	gdfx.h
 	gdpp.h
 	DESTINATION include)
+
+CONFIGURE_FILE(../config/gdlib.pc.cmake gdlib.pc @ONLY)
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/gdlib.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")

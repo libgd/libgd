@@ -16,38 +16,28 @@ enum { left, center, right };
 
 int main(int argc, char *argv[])
 {
-#ifndef HAVE_LIBFREETYPE
-	(void)argc;
-	(void)argv;
-
-	/* 2.0.12 */
-	fprintf(stderr, "annotate is not useful without freetype.\n"
-	         "Install freetype, then './configure; make clean; make install'\n"
-	         "the gd library again.\n"
-	        );
-	return 1;
-#else
 	gdImagePtr im;
 	char *iin, *iout;
 	FILE *in, *out;
-	char s[1024];
+	char *s;
+	size_t len;
 	int bounds[8];
 	int lines = 1;
 	int color = gdTrueColor(0, 0, 0);
-	char font[1024];
+	char *font;
 	int size = 12;
 	int align = left;
 	int x = 0, y = 0;
 	char *fontError;
 
-	strcpy(font, "times");
+	font = strdup("times");
 
 	if(argc != 3) {
 		fprintf(stderr, "Usage: annotate imagein.jpg imageout.jpg\n\n");
 		fprintf(stderr, "Standard input should consist of\n");
 		fprintf(stderr, "lines in the following formats:\n");
 		fprintf(stderr, "color r g b (0-255 each) [a (0-127, 0 is opaque)]\n");
-		fprintf(stderr, "font fontname (max name length 1024)\n");
+		fprintf(stderr, "font fontname\n");
 		fprintf(stderr, "size pointsize\n");
 		fprintf(stderr, "align (left|right|center)\n");
 		fprintf(stderr, "move x y\n");
@@ -70,12 +60,7 @@ int main(int argc, char *argv[])
 		exit(2);
 	}
 
-#ifdef HAVE_LIBJPEG
 	im = gdImageCreateFromJpeg(in);
-#else
-	fprintf(stderr, "No JPEG library support available.\n");
-	exit(1);
-#endif
 
 	fclose(in);
 
@@ -84,7 +69,9 @@ int main(int argc, char *argv[])
 		exit(3);
 	}
 
-	while(fgets(s, sizeof(s), stdin)) {
+	s = NULL;
+	len = 0;
+	while (getline(&s, &len, stdin) != -1) {
 		char *st;
 		char *text;
 
@@ -99,12 +86,12 @@ int main(int argc, char *argv[])
 			if(!st) {
 				goto badLine;
 			} else {
-				const unsigned int font_len = strlen(st);
-				if (font_len >= 1024) {
-					fprintf(stderr, "Font maximum length is 1024, %d given\n", font_len);
+				free(font);
+				font = strdup(st);
+				if (font == NULL) {
+					perror("Font failed");
 					goto badLine;
 				}
-				strncpy(font, st, font_len);
 			}
 		} else if(!strcmp(st, "align")) {
 			char *st = strtok(0, " \t\r\n");
@@ -178,7 +165,7 @@ int main(int argc, char *argv[])
 
 			fontError = gdImageStringFT(im, 0, color, font, size, 0, rx, y, text);
 			if(fontError) {
-				fprintf(stderr, "font error at line %d: %s\n", lines, fontError);
+				fprintf(stderr, "Font error at line %d: %s\n", lines, fontError);
 				exit(7);
 			}
 
@@ -194,19 +181,16 @@ badLine:
 		fprintf(stderr, "Bad syntax, line %d\n", lines);
 		exit(4);
 	}
+	free(font);
+	free(s);
 
 	out = fopen(iout, "wb");
 	if(!out) {
 		fprintf(stderr, "Cannot create %s\n", iout);
 		exit(5);
 	}
-#ifdef HAVE_LIBJPEG
 	gdImageJpeg(im, out, 95);
-#else
-	fprintf(stderr, "No JPEG library support available.\n");
-#endif
 	gdImageDestroy(im);
 	fclose(out);
 	return 0;
-#endif /* HAVE_LIBFREETYPE */
 }

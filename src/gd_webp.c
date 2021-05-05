@@ -9,7 +9,6 @@
 #endif /* HAVE_CONFIG_H */
 
 
-#ifdef HAVE_LIBWEBP
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -17,6 +16,8 @@
 #include "gd.h"
 #include "gd_errors.h"
 #include "gdhelpers.h"
+
+#ifdef HAVE_LIBWEBP
 #include "webp/decode.h"
 #include "webp/encode.h"
 
@@ -41,10 +42,10 @@
 
   Variants:
 
-    <gdImageCreateFromJpegPtr> creates an image from WebP data
+    <gdImageCreateFromWebpPtr> creates an image from WebP data
     already in memory.
 
-    <gdImageCreateFromJpegCtx> reads its data via the function
+    <gdImageCreateFromWebpCtx> reads its data via the function
     pointers in a <gdIOCtx> structure.
 
   Parameters:
@@ -162,6 +163,80 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 	return im;
 }
 
+
+/* returns 0 on success, 1 on failure */
+static int _gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
+{
+	uint8_t *argb;
+	int x, y;
+	uint8_t *p;
+	uint8_t *out;
+	size_t out_size;
+    int ret = 0;
+
+	if (im == NULL) {
+		return 1;
+	}
+
+	if (!gdImageTrueColor(im)) {
+		gd_error("Palette image not supported by webp");
+		return 1;
+	}
+
+	if (quality == -1) {
+		quality = 80;
+	}
+
+	if (overflow2(gdImageSX(im), 4)) {
+		return 1;
+	}
+
+	if (overflow2(gdImageSX(im) * 4, gdImageSY(im))) {
+		return 1;
+	}
+
+	argb = (uint8_t *)gdMalloc(gdImageSX(im) * 4 * gdImageSY(im));
+	if (!argb) {
+		return 1;
+	}
+	p = argb;
+	for (y = 0; y < gdImageSY(im); y++) {
+		for (x = 0; x < gdImageSX(im); x++) {
+			register int c;
+			register char a;
+			c = im->tpixels[y][x];
+			a = gdTrueColorGetAlpha(c);
+			if (a == 127) {
+				a = 0;
+			} else {
+				a = 255 - ((a << 1) + (a >> 6));
+			}
+			*(p++) = gdTrueColorGetRed(c);
+			*(p++) = gdTrueColorGetGreen(c);
+			*(p++) = gdTrueColorGetBlue(c);
+			*(p++) = a;
+		}
+	}
+	if (quality >= gdWebpLossless) {
+		out_size = WebPEncodeLosslessRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, &out);
+	} else {
+		out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
+	}
+	if (out_size == 0) {
+		gd_error("gd-webp encoding failed");
+        ret = 1;
+		goto freeargb;
+	}
+	gdPutBuf(out, out_size, outfile);
+	free(out);
+
+freeargb:
+	gdFree(argb);
+
+    return ret;
+}
+
+
 /*
   Function: gdImageWebpCtx
 
@@ -180,69 +255,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 */
 BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 {
-	uint8_t *argb;
-	int x, y;
-	uint8_t *p;
-	uint8_t *out;
-	size_t out_size;
-
-	if (im == NULL) {
-		return;
-	}
-
-	if (!gdImageTrueColor(im)) {
-		gd_error("Paletter image not supported by webp");
-		return;
-	}
-
-	if (quality == -1) {
-		quality = 80;
-	}
-
-	if (overflow2(gdImageSX(im), 4)) {
-		return;
-	}
-
-	if (overflow2(gdImageSX(im) * 4, gdImageSY(im))) {
-		return;
-	}
-
-	argb = (uint8_t *)gdMalloc(gdImageSX(im) * 4 * gdImageSY(im));
-	if (!argb) {
-		return;
-	}
-	p = argb;
-	for (y = 0; y < gdImageSY(im); y++) {
-		for (x = 0; x < gdImageSX(im); x++) {
-			register int c;
-			register char a;
-			c = im->tpixels[y][x];
-			a = gdTrueColorGetAlpha(c);
-			if (a == 127) {
-				a = 0;
-			} else {
-				a = 255 - ((a << 1) + (a >> 6));
-			}
-			*(p++) = gdTrueColorGetRed(c);
-			*(p++) = gdTrueColorGetGreen(c);
-			*(p++) = gdTrueColorGetBlue(c); 
-			*(p++) = a;
-		}
-	}
-	if (quality >= gdWebpLossless) {
-		out_size = WebPEncodeLosslessRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, &out);
-	} else {
-		out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
-	}
-	if (out_size == 0) {
-		gd_error("gd-webp encoding failed");
-		goto freeargb;
-	}
-	gdPutBuf(out, out_size, outfile);
-	free(out);
-
-freeargb:
-	gdFree(argb);
+	_gdImageWebpCtx(im, outfile, quality);
 }
 
 /*
@@ -285,7 +298,7 @@ BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quality)
 	if (out == NULL) {
 		return;
 	}
-	gdImageWebpCtx(im, out, quality);
+	_gdImageWebpCtx(im, out, quality);
 	out->gd_free(out);
 }
 
@@ -309,7 +322,7 @@ BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 	if (out == NULL) {
 		return;
 	}
-	gdImageWebpCtx(im, out, -1);
+	_gdImageWebpCtx(im, out, -1);
 	out->gd_free(out);
 }
 
@@ -325,8 +338,11 @@ BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 	if (out == NULL) {
 		return NULL;
 	}
-	gdImageWebpCtx(im, out, -1);
-	rv = gdDPExtractData(out, size);
+	if (_gdImageWebpCtx(im, out, -1)) {
+		rv = NULL;
+	} else {
+		rv = gdDPExtractData(out, size);
+	}
 	out->gd_free(out);
 
 	return rv;
@@ -344,9 +360,65 @@ BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 	if (out == NULL) {
 		return NULL;
 	}
-	gdImageWebpCtx(im, out, quality);
-	rv = gdDPExtractData(out, size);
+	if (_gdImageWebpCtx(im, out, quality)) {
+        rv = NULL;
+    } else {
+        rv = gdDPExtractData(out, size);
+    }
 	out->gd_free(out);
 	return rv;
 }
+
+#else /* !HAVE_LIBWEBP */
+
+static void _noWebpError(void)
+{
+	gd_error("WEBP image support has been disabled\n");
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile)
+{
+	_noWebpError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
+{
+	_noWebpError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
+{
+	_noWebpError();
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
+{
+	_noWebpError();
+}
+
+BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quality)
+{
+	_noWebpError();
+}
+
+BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
+{
+	_noWebpError();
+}
+
+BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
+{
+	_noWebpError();
+	return NULL;
+}
+
+BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
+{
+	_noWebpError();
+	return NULL;
+}
+
 #endif /* HAVE_LIBWEBP */

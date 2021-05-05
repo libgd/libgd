@@ -3,14 +3,14 @@
 /* Define is you are building for Win32 API */
 #cmakedefine BGDWIN32
 
+/* Whether to support gd image formats */
+#cmakedefine01 ENABLE_GD_FORMATS
+
 /* Define to 1 if you have the <dirent.h> header file. */
 #cmakedefine HAVE_DIRENT_H
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine HAVE_DLFCN_H
-
-/* Define to 1 if you have the <errno.h> header file. */
-#cmakedefine HAVE_ERRNO_H
 
 /* Define if you have the ft2build.h header. */
 #cmakedefine HAVE_FT2BUILD_H
@@ -27,11 +27,17 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine HAVE_INTTYPES_H
 
+/* Define if you have avif */
+#cmakedefine HAVE_LIBAVIF
+
 /* Define if you have fontconfig */
 #cmakedefine HAVE_LIBFONTCONFIG
 
 /* Define if you have freetype */
 #cmakedefine HAVE_LIBFREETYPE
+
+/* Define if you have heif */
+#cmakedefine HAVE_LIBHEIF
 
 /* Define if you have liq */
 #cmakedefine HAVE_LIBIMAGEQUANT
@@ -45,6 +51,9 @@
 /* Define if you have png */
 #cmakedefine HAVE_LIBPNG
 
+/* Define if you have raqm */
+#cmakedefine HAVE_LIBRAQM
+
 /* Define if you have tiff */
 #cmakedefine HAVE_LIBTIFF
 
@@ -57,9 +66,6 @@
 /* Define if you have zlib */
 #cmakedefine HAVE_LIBZ
 
-/* Define to 1 if you have the <limits.h> header file. */
-#cmakedefine HAVE_LIMITS_H
-
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H
 
@@ -71,9 +77,6 @@
 
 /* Have PTHREAD_PRIO_INHERIT. */
 #cmakedefine HAVE_PTHREAD_PRIO_INHERIT
-
-/* Define to 1 if you have the <stddef.h> header file. */
-#cmakedefine HAVE_STDDEF_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine HAVE_STDINT_H
@@ -103,8 +106,7 @@
 /* Define as const if the declaration of iconv() needs const. */
 #cmakedefine ICONV_CONST
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #cmakedefine LT_OBJDIR
 
 /* Name of package */

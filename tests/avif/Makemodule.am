@@ -1,0 +1,24 @@
+if HAVE_LIBAVIF
+libgd_test_programs += \
+	avif/avif_ptr_double_free
+	avif/avif_im2im
+	avif/avif_null
+	avif/bad_input
+
+if HAVE_LIBPNG
+libgd_test_programs += \
+	avif/compare_avif_to_png
+endif
+
+endif
+
+EXTRA_DIST += \
+	avif/CMakeLists.txt \
+	avif/baboon.avif \
+	avif/baboon.png \
+	avif/dice_with_alpha.avif \
+	avif/dice_with_alpha.png \
+	avif/plum_blossom_12bit.avif \
+	avif/plum_blossom_12bit.png \
+	avif/sunset.avif \
+	avif/sunset.png

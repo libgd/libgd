@@ -1,5 +1,4 @@
 /* *****************************************************************************
-** $Id$
 ** Initial file written and documented by:
 ** Kevin Shepherd <kshepherd@php.net> December 2007
 ** of Scarlet Line http://www.scarletline.com/
@@ -27,9 +26,9 @@
 		}
 	gdImageDestroy(im_in);
 */
-#ifdef __cplusplus
 #ifndef _gd_io_stream_h
 #define _gd_io_stream_h
+#ifdef __cplusplus
 
 #include "gd.h"
 #include <iostream>
@@ -122,5 +121,5 @@ inline gdIOCtx * gdNewOstreamCtx (std::ostream * __stream)
 	return new ostreamIOCtx(* __stream);
 }
 
-#endif /* _gd_io_stream_h */
 #endif /* __cplusplus */
+#endif /* _gd_io_stream_h */

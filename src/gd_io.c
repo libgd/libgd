@@ -28,22 +28,6 @@
 		return 0; \
 	}
 
-/*
- * Write out a word to the I/O context pointer
- */
-void Putword(int w, gdIOCtx *ctx)
-{
-	unsigned char buf[2];
-	buf[0] = w & 0xff;
-	buf[1] = (w / 256) & 0xff;
-	(ctx->putBuf)(ctx, (char *)buf, 2);
-}
-
-void Putchar(int c, gdIOCtx *ctx)
-{
-	(ctx->putC)(ctx, c & 0xff);
-}
-
 void gdPutC(const unsigned char c, gdIOCtx *ctx)
 {
 	(ctx->putC)(ctx, c);
@@ -129,7 +113,7 @@ int gdGetWordLSB(signed short int *result, gdIOCtx *ctx)
 
 int gdGetInt(int *result, gdIOCtx *ctx)
 {
-	int r;
+	unsigned int r;
 
 	r = (ctx->getC)(ctx);
 	if(r == EOF) {
@@ -164,7 +148,7 @@ int gdGetInt(int *result, gdIOCtx *ctx)
 
 int gdGetIntLSB(signed int *result, gdIOCtx *ctx)
 {
-	int c = 0;
+	unsigned int c;
 	unsigned int r = 0;
 
 	c = (ctx->getC) (ctx);

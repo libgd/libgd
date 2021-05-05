@@ -5,5 +5,10 @@
 /bug00066
 /bug00181
 /bug00227
+/bug00499
 /gif_im2im
 /gif_null
+/gif_nocolormaps
+/ossfuzz5700
+/php_bug_75571
+/uninitialized_memory_read

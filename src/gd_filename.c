@@ -28,7 +28,7 @@ static void BGD_STDCALL writejpeg(gdImagePtr im, FILE *out) {
 
 static void BGD_STDCALL writewbmp(gdImagePtr im, FILE *out) {
     int fg = gdImageColorClosest(im, 0, 0, 0);
-    
+
     gdImageWBMP(im, fg, out);
 }/* writejpeg*/
 
@@ -37,8 +37,7 @@ static void BGD_STDCALL writebmp(gdImagePtr im, FILE *out) {
 }/* writejpeg*/
 
 
-enum FType {UNKNOWN, PNG, JPG, GIF, TIFF, GD, GD2, WEBP};
-static struct FileType {
+static const struct FileType {
     const char *ext;
     ReadFn reader;
     WriteFn writer;
@@ -52,6 +51,10 @@ static struct FileType {
     {".xbm",    gdImageCreateFromXbm,   NULL,           NULL},
     {".tga",    gdImageCreateFromTga,   NULL,           NULL},
 
+#ifdef HAVE_LIBAVIF
+    {".avif",   gdImageCreateFromAvif,  gdImageAvif,    NULL},
+#endif
+
 #ifdef HAVE_LIBPNG
     {".png",    gdImageCreateFromPng,   gdImagePng,     NULL},
 #endif
@@ -61,7 +64,12 @@ static struct FileType {
     {".jpeg",   gdImageCreateFromJpeg,  writejpeg,      NULL},
 #endif
 
-#ifdef HAVE_LIBTIFF    
+#ifdef HAVE_LIBHEIF
+    {".heic",   gdImageCreateFromHeif,  gdImageHeif,    NULL},
+    {".heix",   gdImageCreateFromHeif,  NULL,           NULL},
+#endif
+
+#ifdef HAVE_LIBTIFF
     {".tiff",   gdImageCreateFromTiff,  gdImageTiff,    NULL},
     {".tif" ,   gdImageCreateFromTiff,  gdImageTiff,    NULL},
 #endif
@@ -82,7 +90,7 @@ static struct FileType {
 };
 
 
-struct FileType *
+static const struct FileType *
 ftype(const char *filename) {
     int n;
     char *ext;
@@ -90,7 +98,7 @@ ftype(const char *filename) {
     /* Find the file extension (i.e. the last period in the string. */
     ext = strrchr(filename, '.');
     if (!ext) return NULL;
-    
+
     for (n = 0; Types[n].ext; n++) {
         if (strcasecmp(ext, Types[n].ext) == 0) {
             return &Types[n];
@@ -103,7 +111,7 @@ ftype(const char *filename) {
 
 /*
   Function: gdSupportsFileType
-  
+
     Tests if a given file type is supported by GD.
 
     Given the name of an image file (which does not have to exist),
@@ -129,6 +137,8 @@ ftype(const char *filename) {
         - .tga
         - .png
         - .jpg, .jpeg
+        - .heif, .heix
+        - .avif
         - .tiff, .tif
         - .webp
         - .xpm
@@ -145,9 +155,9 @@ ftype(const char *filename) {
     GD_TRUE (1) if the file type is supported, GD_FALSE (0) if not.
 
 */
-BGD_DECLARE(int) 
+BGD_DECLARE(int)
 gdSupportsFileType(const char *filename, int writing) {
-    struct FileType *entry = ftype(filename);
+    const struct FileType *entry = ftype(filename);
     return !!entry && (!writing || !!entry->writer);
 }/* gdSupportsFileType*/
 
@@ -159,7 +169,7 @@ gdSupportsFileType(const char *filename, int writing) {
 
     Given the path to a file, <gdImageCreateFromFile> will open the
     file, read its contents with the appropriate _gdImageCreateFrom*_
-    function and return it.  
+    function and return it.
 
     File type is determined by the filename extension, so having an
     incorrect extension will probably not work.  For example, renaming
@@ -179,12 +189,12 @@ gdSupportsFileType(const char *filename, int writing) {
 
 */
 
-BGD_DECLARE(gdImagePtr) 
+BGD_DECLARE(gdImagePtr)
 gdImageCreateFromFile(const char *filename) {
-    struct FileType *entry = ftype(filename);
+    const struct FileType *entry = ftype(filename);
     FILE *fh;
     gdImagePtr result;
- 
+
     if (!entry) return NULL;
     if (entry->loader) return entry->loader((char *)filename);
     if (!entry->reader) return NULL;
@@ -193,7 +203,7 @@ gdImageCreateFromFile(const char *filename) {
     if (!fh) return NULL;
 
     result = entry->reader(fh);
-    
+
     fclose(fh);
 
     return result;
@@ -235,9 +245,9 @@ gdImageCreateFromFile(const char *filename) {
 
 */
 
-BGD_DECLARE(int) 
+BGD_DECLARE(int)
 gdImageFile(gdImagePtr im, const char *filename) {
-    struct FileType *entry = ftype(filename);
+    const struct FileType *entry = ftype(filename);
     FILE *fh;
 
     if (!entry || !entry->writer) return GD_FALSE;
@@ -251,4 +261,3 @@ gdImageFile(gdImagePtr im, const char *filename) {
 
     return GD_TRUE;
 }/* gdImageFile*/
-

@@ -32,4 +32,3 @@ int main(void)
 	gdImageDestroy(im);
 	return 0;
 }
-

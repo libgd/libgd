@@ -25,7 +25,7 @@ export CMAKE_LIBRARY_PATH=/path/to/the/gd/lib
 
 then call cmake using:
 
-$ cmake -DUSE_EXT_GD=1 -DBUILD_TEST=1 
+$ cmake -DUSE_EXT_GD=1 -DBUILD_TEST=1
 $ make
 and finally:
 
@@ -33,18 +33,18 @@ $ ctest .
 
 I will certainly add a nice CMake option to give prefix later.
 
-What to do if tests fail on your platform and you use the last GD release? 
+What to do if tests fail on your platform and you use the last GD release?
 either from your favorite distributions or from http://www.libgd.org or git?
 
-If you use a packaged version of the GD Library (installed from RPM, deb or 
+If you use a packaged version of the GD Library (installed from RPM, deb or
 ports, gentoo packages or any other packages format or distribution), please try
 to run the tests using the source releases available at:
 
-http://www.libgd.org/Downloads
+https://github.com/libgd/libgd/releases
 
 If the tests fail using our source release, please report a bug here:
 
-http://bugs.libgd.org
+https://github.com/libgd/libgd/issues
 
 You can attach the two files available in:
 

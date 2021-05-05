@@ -47,12 +47,6 @@
 # define HAVE_BOOLEAN
 #endif
 
-/* JCE undef two symbols that we don't need anymore but which are
-   may be defined in config.h from ./configure but which are
-   redefined incompatibly in jpeglib.h */
-#undef HAVE_STDDEF_H
-#undef HAVE_STDLIB_H
-
 /* 1.8.1: remove dependency on jinclude.h */
 #include "jpeglib.h"
 #include "jerror.h"
@@ -108,7 +102,7 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 	char buffer[JMSG_LENGTH_MAX];
 
 	(*cinfo->err->format_message)(cinfo, buffer);
-	gd_error_ex(GD_ERROR, "gd-jpeg: JPEG library reports unrecoverable error: %s", buffer);
+	gd_error_ex(GD_WARNING, "gd-jpeg: JPEG library reports unrecoverable error: %s", buffer);
 
 	jmpbufw = (jmpbuf_wrapper *)cinfo->client_data;
 	jpeg_destroy(cinfo);
@@ -122,6 +116,8 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 
 	exit(99);
 }
+
+static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality);
 
 /*
  * Write IM to OUTFILE as a JFIF-formatted JPEG image, using quality
@@ -237,8 +233,11 @@ BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
-	gdImageJpegCtx(im, out, quality);
-	rv = gdDPExtractData(out, size);
+	if (!_gdImageJpegCtx(im, out, quality)) {
+		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
+	}
 	out->gd_free(out);
 	return rv;
 }
@@ -255,10 +254,16 @@ void jpeg_gdIOCtx_dest(j_compress_ptr cinfo, gdIOCtx *outfile);
 
     im      - The image to write.
     outfile - The output sink.
-    quality - Image quality. 
+    quality - Image quality.
 
 */
 BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
+{
+	_gdImageJpegCtx(im, outfile, quality);
+}
+
+/* returns 0 on success, 1 on failure */
+static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 {
 	struct jpeg_compress_struct cinfo;
 	struct jpeg_error_mgr jerr;
@@ -293,7 +298,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 		if(row) {
 			gdFree(row);
 		}
-		return;
+		return 1;
 	}
 
 	cinfo.err->emit_message = jpeg_emit_message;
@@ -334,7 +339,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	if(row == 0) {
 		gd_error("gd-jpeg: error: unable to allocate JPEG row structure: gdCalloc returns NULL\n");
 		jpeg_destroy_compress(&cinfo);
-		return;
+		return 1;
 	}
 
 	rowptr[0] = row;
@@ -411,6 +416,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	jpeg_finish_compress(&cinfo);
 	jpeg_destroy_compress(&cinfo);
 	gdFree(row);
+	return 0;
 }
 
 
@@ -496,7 +502,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx(FILE *inFile, int ignore_warning
   Function: gdImageCreateFromJpegPtr
 
   Parameters:
-  
+
     size    - size of JPEG data in bytes.
     data    - pointer to JPEG data.
 
@@ -511,7 +517,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data)
   Function: gdImageCreateFromJpegPtrEx
 
   Parameters:
-  
+
     size            - size of JPEG data in bytes.
     data            - pointer to JPEG data.
     ignore_warning  - if true, ignore recoverable warnings
@@ -1196,6 +1202,65 @@ void jpeg_gdIOCtx_dest(j_compress_ptr cinfo, gdIOCtx *outfile)
 	dest->pub.empty_output_buffer = empty_output_buffer;
 	dest->pub.term_destination = term_destination;
 	dest->outfile = outfile;
+}
+
+#else /* !HAVE_LIBJPEG */
+
+static void _noJpegError(void)
+{
+	gd_error("JPEG image support has been disabled\n");
+}
+
+BGD_DECLARE(void) gdImageJpeg(gdImagePtr im, FILE *outFile, int quality)
+{
+	_noJpegError();
+}
+
+BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
+{
+	_noJpegError();
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *inFile)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx(FILE *inFile, int ignore_warning)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx(int size, void *data, int ignore_warning)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
+{
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning)
+{
+	_noJpegError();
+	return NULL;
 }
 
 #endif /* HAVE_LIBJPEG */

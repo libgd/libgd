@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -19,29 +18,17 @@ dosizes (gdImagePtr im, int color, char *fontfile,
 		sprintf (buf, "%d: %s", cursize, string);
 
 		/* The case of newlines is taken care of in the gdImageStringTTF call */
-#if defined(OLDER_GD)
-		cp =
-		    gdImageStringTTF (im, brect, color, fontfile, cursize, curang, x, y,
-		                      buf);
-#else
 		cp =
 		    gdImageStringFT (im, brect, color, fontfile, cursize, curang, x, y,
 		                     buf);
-#endif
 		if (cp)
 			fprintf(stderr, "%s\n", cp);
 		y += cursize + 4;
 
 		/* render the same fontsize with antialiasing turned off */
-#if defined(OLDER_GD)
-		cp =
-		    gdImageStringTTF (im, brect, 0 - color, fontfile, cursize, curang, x,
-		                      y, buf);
-#else
 		cp =
 		    gdImageStringFT (im, brect, 0 - color, fontfile, cursize, curang, x,
 		                     y, buf);
-#endif
 		if (cp)
 			fprintf(stderr, "%s\n", cp);
 		y += cursize + 4;

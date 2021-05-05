@@ -5,7 +5,7 @@
  * GD_QUANT_NEUQUANT has its trueColor flag unset.
  */
 
- 
+
 #include "gd.h"
 #include "gdtest.h"
 

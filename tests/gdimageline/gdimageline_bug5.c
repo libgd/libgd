@@ -10,7 +10,13 @@ int main() {
 	/* FILE *pngout; */
 	int black, white;
 
+	/* If the data seg size is less than 195000,
+	 * gdImageCrateTrueColor will return NULL.
+	 * See https://github.com/libgd/libgd/issues/621 */
 	im = gdImageCreateTrueColor(63318, 771);
+	if (gdTestAssertMsg(im != NULL, "gdImageCreateTrueColor() returns NULL\n") == 0) {
+		return gdNumFailures();
+	}
 
 	/* Allocate the color white (red, green and blue all maximum). */
 	white = gdImageColorAllocate(im, 255, 255, 255);

@@ -120,5 +120,3 @@ BGD_DECLARE(void) gdImageFlipBoth(gdImagePtr im)
 	gdImageFlipVertical(im);
 	gdImageFlipHorizontal(im);
 }
-
-

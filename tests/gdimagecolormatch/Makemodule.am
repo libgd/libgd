@@ -1,0 +1,6 @@
+libgd_test_programs += \
+	gdimagecolormatch/cve_2019_6977 \
+	gdimagecolormatch/gdimagecolormatch
+
+EXTRA_DIST += \
+	gdimagecolormatch/CMakeLists.txt

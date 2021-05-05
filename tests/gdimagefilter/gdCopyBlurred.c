@@ -143,7 +143,7 @@ void do_crosstest()
 {
     gdImagePtr im = mkcross();
     gdImagePtr blurred;
-    const int RADIUS = 16; 
+    const int RADIUS = 16;
 
     gdTestAssert(!!im);
 

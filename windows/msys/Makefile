@@ -1,4 +1,3 @@
-
 # Simple makefile for building and testing libgd under MSYS/MinGW on
 # Windows
 
@@ -7,9 +6,10 @@
 LIBVER=3.0.1
 
 # Misc. config flags.
-CDEFS=-DHAVE_ERRNO_H -DHAVE_ICONV -DHAVE_ICONV_H		\
--DHAVE_ICONV_T_DEF -DHAVE_INTTYPES_H -DHAVE_LIMITS_H -DHAVE_STDDEF_H	\
--DHAVE_STDINT_H -DHAVE_STDLIB_H -DHAVE_VISIBILITY -DICONV_CONST
+CDEFS=-DHAVE_ICONV -DHAVE_ICONV_H		\
+-DHAVE_ICONV_T_DEF -DHAVE_INTTYPES_H	\
+-DHAVE_STDINT_H -DHAVE_VISIBILITY -DICONV_CONST \
+-DENABLE_GD_FORMATS=1
 
 # GnuWin32 libs should all be installed in one place.
 GNUDIR=/c/tools/GnuWin32
@@ -97,8 +97,9 @@ gd_gif_out.c gd_io_file.c gd_io_ss.c gd_jpeg.c gd_png.c gd_ss.c		\
 gd_topal.c gd_wbmp.c gdcache.c gdfontg.c gdfontl.c gdfontmb.c		\
 gdfonts.c gdfontt.c gdft.c gdhelpers.c gdkanji.c gdtables.c gdxpm.c	\
 wbmp.c gd_filter.c gd_nnquant.c gd_rotate.c gd_matrix.c				\
-gd_interpolation.c gd_crop.c gd_webp.c gd_tiff.c gd_tga.c			\
-gd_bmp.c gd_xbm.c gd_color_match.c gd_version.c gd_filename.c
+gd_interpolation.c gd_crop.c gd_webp.c gd_heif.c gd_tiff.c gd_tga.c	\
+gd_bmp.c gd_xbm.c gd_color_match.c gd_version.c gd_filename.c \
+gd_avif.c
 
 OBJ=$(SRC:.c=.o)
 
@@ -131,13 +132,3 @@ $(TARGET): $(OBJ)
 		$(OBJ) $(LIBS)
 
 include deps.mk
-
-
-
-
-
-
-
-
-
-

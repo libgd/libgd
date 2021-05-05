@@ -1,4 +1,3 @@
-
 /* maximum number of colours that can be used.
   actual number is now passed to initcolors */
 #define MAXNETSIZE	256
@@ -15,5 +14,3 @@
 #define prime4		503
 
 #define minpicturebytes	(4*prime4)		/* minimum size for input image */
-
-

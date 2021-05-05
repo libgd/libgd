@@ -1,0 +1,5 @@
+libgd_test_programs += \
+	gdimagecreate/bug00340
+
+EXTRA_DIST += \
+	gdimagecreate/CMakeLists.txt

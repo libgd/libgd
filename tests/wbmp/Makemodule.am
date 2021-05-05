@@ -1,10 +1,6 @@
 libgd_test_programs += \
-	wbmp/wbmp_null
-
-if HAVE_LIBPNG
-libgd_test_programs += \
+	wbmp/wbmp_null \
 	wbmp/wbmp_im2im
-endif
 
 EXTRA_DIST += \
 	wbmp/CMakeLists.txt
