@@ -191,7 +191,7 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 	if (!ctx->seek(ctx, (int) offset))
 		return AVIF_RESULT_IO_ERROR;
 
-	dataBuf = gdMalloc(size);
+	dataBuf = avifMalloc(size);
 	if (!dataBuf) {
 		gd_error("avif error - couldn't allocate memory");
 		return AVIF_RESULT_UNKNOWN_ERROR;
@@ -201,7 +201,7 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 	// If getBuf() returns a negative value, that means there was an error.
 	int charsRead = ctx->getBuf(ctx, dataBuf, (int) size);
 	if (charsRead < 0) {
-		gdFree(dataBuf);
+		avifFree(dataBuf);
 		return AVIF_RESULT_IO_ERROR;
 	}
 
@@ -374,7 +374,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 		goto cleanup;
 
 	if (!isAvifSrgbImage(decoder->image))
-		gd_error_ex(LOG_WARNING, "Image's color profile is not sRGB");
+		gd_error_ex(LOG_NOTICE, "Image's color profile is not sRGB");
 
 	// Set up the avifRGBImage, and convert it from YUV to an 8-bit RGB image.
 	// (While AVIF image pixel depth can be 8, 10, or 12 bits, GD truecolor images are 8-bit.)
