@@ -374,7 +374,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 		goto cleanup;
 
 	if (!isAvifSrgbImage(decoder->image))
-		gd_error_ex(LOG_WARNING, "Image's color profile is not sRGB");
+		gd_error_ex(LOG_NOTICE, "Image's color profile is not sRGB");
 
 	// Set up the avifRGBImage, and convert it from YUV to an 8-bit RGB image.
 	// (While AVIF image pixel depth can be 8, 10, or 12 bits, GD truecolor images are 8-bit.)
