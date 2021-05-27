@@ -191,7 +191,7 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 	if (!ctx->seek(ctx, (int) offset))
 		return AVIF_RESULT_IO_ERROR;
 
-	dataBuf = avifMalloc(size);
+	dataBuf = avifAlloc(size);
 	if (!dataBuf) {
 		gd_error("avif error - couldn't allocate memory");
 		return AVIF_RESULT_UNKNOWN_ERROR;
