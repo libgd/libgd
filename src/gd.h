@@ -65,6 +65,7 @@ extern "C" {
 # endif
 # define BGD_STDCALL __stdcall
 # define BGD_EXPORT_DATA_IMPL
+# define BGD_MALLOC
 #else
 # if defined(__GNUC__) || defined(__clang__)
 #  define BGD_EXPORT_DATA_PROT __attribute__ ((__visibility__ ("default")))
@@ -74,6 +75,7 @@ extern "C" {
 #  define BGD_EXPORT_DATA_IMPL
 # endif
 # define BGD_STDCALL
+# define BGD_MALLOC __attribute__ ((__malloc__))
 #endif
 
 #define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt BGD_STDCALL
