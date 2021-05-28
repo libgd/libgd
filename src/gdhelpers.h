@@ -14,7 +14,7 @@ extern "C" {
 
 	/* TBB: strtok_r is not universal; provide an implementation of it. */
 
-	char * gd_strtok_r (char *s, char *sep, char **state);
+	char *gd_strtok_r(char *s, const char *sep, char **state);
 
 	/* These functions wrap memory management. gdFree is
 		in gd.h, where callers can utilize it to correctly
