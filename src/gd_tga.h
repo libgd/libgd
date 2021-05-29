@@ -45,8 +45,8 @@ typedef struct oTga_ {
 
 #define TGA_RLE_FLAG	128
 
-int read_header_tga(gdIOCtx *ctx, oTga *tga);
-int read_image_tga(gdIOCtx *ctx, oTga *tga);
+int read_header_tga(gdIOCtxPtr ctx, oTga *tga);
+int read_image_tga(gdIOCtxPtr ctx, oTga *tga);
 void free_tga(oTga *tga);
 
 #endif //__TGA_H

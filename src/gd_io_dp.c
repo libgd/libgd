@@ -52,17 +52,17 @@ static int allocDynamic(dynamicPtr *dp, int initialSize, void *data);
 static int appendDynamic(dynamicPtr *dp, const void *src, int size);
 static int gdReallocDynamic(dynamicPtr *dp, int required);
 static int trimDynamic(dynamicPtr *dp);
-static void gdFreeDynamicCtx(struct gdIOCtx *ctx);
+static void gdFreeDynamicCtx(gdIOCtxPtr ctx);
 static dynamicPtr *newDynamic(int initialSize, void *data, int freeOKFlag);
 
-static int dynamicPutbuf(struct gdIOCtx *, const void *, int);
-static void dynamicPutchar(struct gdIOCtx *, int a);
+static int dynamicPutbuf(gdIOCtxPtr, const void *, int);
+static void dynamicPutchar(gdIOCtxPtr, int a);
 
 static int dynamicGetbuf(gdIOCtxPtr ctx, void *buf, int len);
 static int dynamicGetchar(gdIOCtxPtr ctx);
 
-static int dynamicSeek(struct gdIOCtx *, const int);
-static long dynamicTell(struct gdIOCtx *);
+static int dynamicSeek(gdIOCtxPtr, const int);
+static long dynamicTell(gdIOCtxPtr);
 
 /*
 	Function: gdNewDynamicCtx
@@ -113,7 +113,7 @@ BGD_DECLARE(gdIOCtx *) gdNewDynamicCtxEx(int initialSize, void *data, int freeOK
 /*
 	Function: gdDPExtractData
 */
-BGD_DECLARE(void *) gdDPExtractData (struct gdIOCtx *ctx, int *size)
+BGD_DECLARE(void *) gdDPExtractData(gdIOCtxPtr ctx, int *size)
 {
 	dynamicPtr *dp;
 	dpIOCtx *dctx;
@@ -143,7 +143,7 @@ BGD_DECLARE(void *) gdDPExtractData (struct gdIOCtx *ctx, int *size)
 	return data;
 }
 
-static void gdFreeDynamicCtx(struct gdIOCtx *ctx)
+static void gdFreeDynamicCtx(gdIOCtxPtr ctx)
 {
 	dynamicPtr *dp;
 	dpIOCtx *dctx;
@@ -166,7 +166,7 @@ static void gdFreeDynamicCtx(struct gdIOCtx *ctx)
 	gdFree(dp);
 }
 
-static long dynamicTell(struct gdIOCtx *ctx)
+static long dynamicTell(gdIOCtxPtr ctx)
 {
 	dpIOCtx *dctx;
 
@@ -174,7 +174,7 @@ static long dynamicTell(struct gdIOCtx *ctx)
 	return (dctx->dp->pos);
 }
 
-static int dynamicSeek(struct gdIOCtx *ctx, const int pos)
+static int dynamicSeek(gdIOCtxPtr ctx, const int pos)
 {
 	int bytesNeeded;
 	dynamicPtr *dp;
@@ -241,7 +241,7 @@ static dynamicPtr *newDynamic(int initialSize, void *data, int freeOKFlag)
 	return dp;
 }
 
-static int dynamicPutbuf(struct gdIOCtx *ctx, const void *buf, int size)
+static int dynamicPutbuf(gdIOCtxPtr ctx, const void *buf, int size)
 {
 	dpIOCtx *dctx;
 	dctx = (dpIOCtx *)ctx;
@@ -255,7 +255,7 @@ static int dynamicPutbuf(struct gdIOCtx *ctx, const void *buf, int size)
 	};
 }
 
-static void dynamicPutchar(struct gdIOCtx *ctx, int a)
+static void dynamicPutchar(gdIOCtxPtr ctx, int a)
 {
 	unsigned char b;
 	dpIOCtxPtr dctx;
