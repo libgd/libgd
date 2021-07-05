@@ -24,6 +24,8 @@ If you like to contribute, report bugs, see [how to contribute document](CONTRIB
 
 For security related issues, please contact us at security@libgd.org
 
+Support available in [![Chat](https://badges.gitter.im/libgd/libgd.svg)](https://gitter.im/libgd/libgd) or using issues.
+
 ## Downloads/etc...
 
 Please visit our [homepage](http://www.libgd.org/) for more details.
