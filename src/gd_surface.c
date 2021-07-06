@@ -35,6 +35,9 @@ BGD_DECLARE(gdSurfacePtr) gdSurfaceCreate(int width, int height, unsigned int ty
 {
     gdSurfacePtr surface;
 
+    if (type >= GD_SURFACE_COUNT) {
+        return NULL;
+    }
     if (checkOverflowAndType(width, height, type)) {
         return NULL;
     }
@@ -42,14 +45,16 @@ BGD_DECLARE(gdSurfacePtr) gdSurfaceCreate(int width, int height, unsigned int ty
 	if (!surface) {
 		return NULL;
 	}
-    surface->ref = 1;
-    surface->gdOwned = 1;
+
     surface->data = gdMalloc((size_t)(width * height * 4));
 	if (!surface->data) {
         gdFree(surface);
 		return NULL;
 	}
     memset(surface->data, 0, (size_t)(width * height * 4));
+    surface->type = type;
+    surface->ref = 1;
+    surface->gdOwned = 1;
     surface->width = width;
     surface->height = height;
     surface->stride = width * 4;
@@ -77,6 +82,7 @@ BGD_DECLARE(gdSurfacePtr) gdSurfaceCreateForData(unsigned char* data, int width,
     surface->width = width;
     surface->height = height;
     surface->stride = stride;
+    surface->type = type;
     return surface;
 }
 
@@ -89,6 +95,21 @@ BGD_DECLARE(gdSurfacePtr) gdSurfaceAddRef(gdSurfacePtr surface)
     return surface;
 }
 
+BGD_DECLARE(unsigned char *) gdSurfaceGetData(gdSurfacePtr surface)
+{
+    if(surface==NULL) {
+        return NULL;
+    }
+    return surface->data;
+}
+
+BGD_DECLARE(gdSurfaceType) gdSurfaceGetType(gdSurfacePtr surface)
+{
+    if(surface==NULL) {
+        return GD_SURFACE_NONE;
+    }
+    return surface->type;
+}
 
 BGD_DECLARE(void) gdSurfaceDestroy (gdSurfacePtr surface)
 {
