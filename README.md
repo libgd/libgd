@@ -28,7 +28,7 @@ Support available in [![Chat](https://badges.gitter.im/libgd/libgd.svg)](https:/
 
 ## Downloads/etc...
 
-Please visit our [homepage](http://www.libgd.org/) for more details.
+Please visit our [homepage](https://www.libgd.org/) for more details.
 
 ## Supported Image Formats
 
