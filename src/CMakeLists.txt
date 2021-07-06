@@ -68,7 +68,10 @@ SET (LIBGD_SRC_FILES
 	jisx0208.h
 	wbmp.c
 	wbmp.h
+	gd_surface.c
+	gd_surface.h
 )
+
 
 # Static library just for utility programs.
 SET (GD_PROGRAMS_LIB_SRC_FILES)

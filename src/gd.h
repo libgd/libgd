@@ -1688,6 +1688,38 @@ BGD_DECLARE(int) gdReleaseVersion(void);
 BGD_DECLARE(const char *) gdExtraVersion(void);
 BGD_DECLARE(const char *) gdVersionString(void);
 
+
+/* Surface */
+
+typedef struct gdSurfaceStruct {
+    int ref;
+    unsigned char *data;
+    unsigned int type;
+    int gdOwned;
+    int width;
+    int height;
+    int stride;
+} gdSurface;
+typedef gdSurface *gdSurfacePtr;
+
+//#define GD_DEFINE_ENUM(NAME) enum NAME
+typedef enum  {
+    GD_SURFACE_NONE = 0,
+    GD_SURFACE_ARGB32 = 1,
+    GD_SURFACE_XRGB32 = 2,
+    GD_SURFACE_A8 = 3,  
+    GD_SURFACE_COUNT = 4
+} gdSurfaceType;
+
+BGD_DECLARE(gdSurfacePtr) gdSurfaceCreate(int width, int height, unsigned int type);
+BGD_DECLARE(gdSurfacePtr) gdSurfaceCreateForData(unsigned char* data, int width, int height, int stride, unsigned int type);
+BGD_DECLARE(void) gdSurfaceDestroy (gdSurfacePtr surface);
+BGD_DECLARE(gdSurfacePtr) gdSurfaceAddRef(gdSurfacePtr surface);
+
+BGD_DECLARE(void) gdSurfacePng(gdSurfacePtr surface, FILE *outFile);
+BGD_DECLARE(void) gdSurfacePngEx(gdSurfacePtr surface, FILE *outFile, int level);
+
+
 /* newfangled special effects */
 #include "gdfx.h"
 
