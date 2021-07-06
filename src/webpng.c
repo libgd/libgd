@@ -10,6 +10,10 @@
 #include <string.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#else
+extern char* optarg;
+extern int optind, opterr, optopt;
+extern int getopt(int argc, char* const argv[], const char* optstring);
 #endif
 
 #ifdef __clang__
