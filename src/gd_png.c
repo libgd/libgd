@@ -1205,6 +1205,9 @@ bail:
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 	return ret;
 }
+
+
+/* GD Surface PNG Export */
 static int _gdSurfacePngCtxEx(gdSurfacePtr surface, gdIOCtx *outfile, int level);
 BGD_DECLARE(void) gdSurfacePng(gdSurfacePtr surface, FILE *outFile)
 {
@@ -1339,19 +1342,18 @@ static int _gdSurfacePngCtxEx(gdSurfacePtr surface, gdIOCtx *outfile, int level)
 		pOutputRow = *prow_pointers++;
 		for (int x = 0; x < width; ++x)
 		{
-            unsigned int a = src[x] >> 24;
-            if(a != 0) {
-				const unsigned int a = src[x] >> 24;
-				*pOutputRow++ = (((src[x] >> 16) & 0xff) * 255) / a;
-				*pOutputRow++ = (((src[x] >> 8) & 0xff) * 255) / a;
-				*pOutputRow++ = (((src[x] >> 0) & 0xff) * 255) / a;
-				*pOutputRow++ = a;
-            } else {
+            const unsigned int a = src[x] >> 24;
+			if (a == 0) {
 				*pOutputRow++ = 0;
 				*pOutputRow++ = 0;
 				*pOutputRow++ = 0;
 				*pOutputRow++ = 0;
-            }
+				continue;
+			}
+			*pOutputRow++ = (((src[x] >> 16) & 0xff) * 255) / a;
+			*pOutputRow++ = (((src[x] >> 8) & 0xff) * 255) / a;
+			*pOutputRow++ = (((src[x] >> 0) & 0xff) * 255) / a;
+			*pOutputRow++ = a;
 		}
 	}
 	png_write_image(png_ptr, row_pointers);
