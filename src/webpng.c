@@ -2,6 +2,10 @@
 #include "config.h"
 #endif
 
+#ifdef WIN32
+#include "getopt.h"
+#endif
+
 /* Bring in standard I/O and string manipulation functions */
 #include <stdarg.h>
 #include <errno.h>
