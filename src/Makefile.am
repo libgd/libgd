@@ -125,6 +125,14 @@ libgd_la_SOURCES = \
 	wbmp.c \
 	wbmp.h
 
+if ENABLE_CXX
+libgd_la_SOURCES += \
+	gd_io_stream.cxx \
+	gd_io_stream.h \
+	gdpp.cxx \
+	gdpp.h
+endif
+
 libgd_la_LDFLAGS = -version-info $(GDLIB_LT_CURRENT):$(GDLIB_LT_REVISION):$(GDLIB_LT_AGE) -no-undefined
 
 libgd_la_LIBADD = $(LTLIBICONV)
