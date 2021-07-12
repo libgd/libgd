@@ -1,3 +1,4 @@
+#include "gd_surface.h"
 #include "gd.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,13 +21,17 @@ int main()
     gdSurface *surface;
     unsigned char *data;
     surface = gdSurfaceCreate(500, 500, GD_SURFACE_ARGB32);
-
+    if (!surface)
+    {
+        fprintf(stderr, "Can't create surface\n");
+        return 1;
+    }
     // If this data is somehow passed around and used in other places
     // caller is responsible to call gdSurfaceAddRef to keep it from
     // being destroyed. gdSurfaceDestroy decreases the refcount, when reach
     // 0 it is actually freed
     data = gdSurfaceGetData(surface);
-    int x = 100;
+
     for (int y = 100; y < 150; y++)
     {
         unsigned int *img = (unsigned int *)(data + surface->stride * y);
@@ -43,22 +48,16 @@ int main()
             img[x] = 0xFF00FF00;
         }
     }
-    for (int y = 400; y < 450; y++)
+    for (int y = 0; y < 499; y++)
     {
         unsigned int *img = (unsigned int *)(data + surface->stride * y);
-        for (int x = 400; x < 450; x++)
+        for (int x = 0; x < 499; x++)
         {
-            img[x] = 0x300000FF;
+            img[x] = 0xFFFFFFFF;
         }
-    }
-    if (!surface)
-    {
-        fprintf(stderr, "Can't create 400x400 surface\n");
-        return 1;
     }
 
     save_png(surface, "surface.png");
-
     gdSurfaceDestroy(surface);
     return 0;
 }

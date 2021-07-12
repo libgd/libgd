@@ -13,6 +13,7 @@
 #include "gd_errors.h"
 
 #include "gd_surface.h"
+#include "gd_array.h"
 
 static int checkOverflowAndType(int width, int height, unsigned type) {
     if (type > GD_SURFACE_COUNT) {
@@ -95,7 +96,7 @@ BGD_DECLARE(gdSurfacePtr) gdSurfaceAddRef(gdSurfacePtr surface)
     return surface;
 }
 
-BGD_DECLARE(unsigned char *) gdSurfaceGetData(gdSurfacePtr surface)
+BGD_DECLARE(unsigned char *) gdSurfaceGetData(const gdSurfacePtr surface)
 {
     if(surface==NULL) {
         return NULL;
@@ -103,12 +104,27 @@ BGD_DECLARE(unsigned char *) gdSurfaceGetData(gdSurfacePtr surface)
     return surface->data;
 }
 
-BGD_DECLARE(gdSurfaceType) gdSurfaceGetType(gdSurfacePtr surface)
+BGD_DECLARE(gdSurfaceType) gdSurfaceGetType(const gdSurfacePtr surface)
 {
     if(surface==NULL) {
         return GD_SURFACE_NONE;
     }
     return surface->type;
+}
+
+BGD_DECLARE(int) gdSurfaceGetWidth(const gdSurfacePtr surface)
+{
+    return surface->width;
+}
+
+BGD_DECLARE(int) gdSurfaceGetHeight(const gdSurfacePtr surface)
+{
+    return surface->height;
+}
+
+BGD_DECLARE(int) gdSurfaceGetStride(const gdSurfacePtr surface)
+{
+    return surface->stride;
 }
 
 BGD_DECLARE(void) gdSurfaceDestroy (gdSurfacePtr surface)

@@ -70,8 +70,17 @@ SET (LIBGD_SRC_FILES
 	wbmp.h
 	gd_surface.c
 	gd_surface.h
+	ftraster/gd_ft_math.c
+	ftraster/gd_ft_raster.c
+	ftraster/gd_ft_stroker.c
+	gd_array.c
+	gd_path_matrix.c
+	gd_span_rle.c
+	gd_path_arc.c
+	gd_path.c
+	gd_draw_blend.c
+	gd_draw.c
 )
-
 
 # Static library just for utility programs.
 SET (GD_PROGRAMS_LIB_SRC_FILES)

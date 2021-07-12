@@ -3,6 +3,17 @@ include_directories (BEFORE "${GD_SOURCE_DIR}/src" "${CMAKE_BINARY_DIR}")
 SET(TESTS_FILES
 	gif
 	surface
+	curveto
+	linecap
+	linejoin
+	fillandstroke
+	curvedrectangle
+	patharc
+	pathnegativearc
+	smiley
+	tiger
+	pathclip
+	tigerclipped
 )
 
 if (PNG_FOUND)
