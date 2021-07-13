@@ -78,6 +78,8 @@
 
    Of course, this error value applies only for the particular spline
    approximation that is used in _gd_arc_segment.
+
+   Detailed explanation https://itc.ktu.lt/index.php/ITC/article/view/11812
 */
 static double
 _arc_error_normalized(double angle)
