@@ -87,25 +87,34 @@ static void operator_argb_color_destination_out(uint32_t* dest, int length, uint
         dest[i] = BYTE_MUL(dest[i], a);
 }
 
-typedef void(*operator_argb_color_function_t)(uint32_t* dest, int length, uint32_t color, uint32_t const_alpha);
-
-static const operator_argb_color_function_t operator_argb_color_func_map[] = {
-    operator_argb_color_source,
-    operator_argb_color_source_over,
-    operator_argb_color_destination_in,
-    operator_argb_color_destination_out
-};
+#define spanBlendLoop(func) \
+    while(count--) \
+    { \
+        uint32_t* target = (uint32_t*)(surface->data + currentSpan->y * surface->stride) + currentSpan->x; \
+        func(target, currentSpan->len, color, currentSpan->coverage); \
+        ++currentSpan; \
+    };
 
 static void argb32_blend_color(gdSurfacePtr surface, gdImageOp op, const gdSpanRlePtr rle, uint32_t color)
 {
-    operator_argb_color_function_t func = operator_argb_color_func_map[op];
-    int count = rle->spans.size;;
+    int count = rle->spans.size;
     gdSpanPtr currentSpan = rle->spans.data;
-    while(count--)
-    {
-        uint32_t* target = (uint32_t*)(surface->data + currentSpan->y * surface->stride) + currentSpan->x;
-        func(target, currentSpan->len, color, currentSpan->coverage);
-        ++currentSpan;
+    switch (op) {
+      case gdImageOpsSrc:
+            spanBlendLoop(operator_argb_color_source);
+            break;
+      case gdImageOpsSrcOver:
+            spanBlendLoop(operator_argb_color_source_over);
+            break;
+      case gdImageOpsSrcIn:
+            spanBlendLoop(operator_argb_color_destination_in);
+            break;
+      case gdImageOpsSrcOut:
+            spanBlendLoop(operator_argb_color_destination_out);
+            break;
+        default:
+            gd_error("gdDraw does not implement yet GD_SURFACE_XRGB32.\n");
+            break;
     }
 }
 
@@ -125,9 +134,25 @@ void gdBlendColor(gdContextPtr context, const gdSpanRlePtr rle, const gdColorPtr
         return;
 
     gdStatePtr state = context->state;
-    uint32_t pm_color = premultiply_color(color, state->opacity);
+    
     // replace once we have more than 
-    argb32_blend_color(context->surface, state->op, rle, pm_color);
+    switch (context->surface->type) {
+        case GD_SURFACE_ARGB32: {
+                uint32_t pm_color = premultiply_color(color, state->opacity);
+                argb32_blend_color(context->surface, state->op, rle, pm_color);
+                break;
+            }
+      case GD_SURFACE_XRGB32:
+            gd_error("gdDraw does not implement yet GD_SURFACE_XRGB32.\n");
+        break;
+      case GD_SURFACE_A8:
+            gd_error("gdDraw does not implement yet GD_SURFACE_A8.\n");
+            break;
+      default:
+            gd_error("gdDraw: provided surface has an unknown type.\n");
+        return;
+    }
+    //argb32_blend_color(context->surface, state->op, rle, pm_color);
 }
 
 void gdPathBlend(gdContextPtr context, const gdSpanRlePtr rle)
