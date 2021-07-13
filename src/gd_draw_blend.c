@@ -120,14 +120,15 @@ static void argb32_blend_color(gdSurfacePtr surface, gdImageOp op, const gdSpanR
 
 static inline uint32_t premultiply_color(const gdColorPtr color, double opacity)
 {
-    uint32_t alpha = (uint8_t)(color->a * opacity * 255);
-    uint32_t pr = (uint8_t)(color->r * alpha);
-    uint32_t pg = (uint8_t)(color->g * alpha);
-    uint32_t pb = (uint8_t)(color->b * alpha);
+    const uint32_t alpha = (uint8_t)(color->a * opacity * 255);
+    const uint32_t pr = (uint8_t)(color->r * alpha);
+    const uint32_t pg = (uint8_t)(color->g * alpha);
+    const uint32_t pb = (uint8_t)(color->b * alpha);
 
     return (alpha << 24) | (pr << 16) | (pg << 8) | (pb);
 }
 
+#define _getVarName(var)  #var
 void gdBlendColor(gdContextPtr context, const gdSpanRlePtr rle, const gdColorPtr color)
 {
     if(color==NULL || color->a==0.0)
@@ -143,10 +144,8 @@ void gdBlendColor(gdContextPtr context, const gdSpanRlePtr rle, const gdColorPtr
                 break;
             }
       case GD_SURFACE_XRGB32:
-            gd_error("gdDraw does not implement yet GD_SURFACE_XRGB32.\n");
-        break;
       case GD_SURFACE_A8:
-            gd_error("gdDraw does not implement yet GD_SURFACE_A8.\n");
+            gd_error("gdDraw does not implement %s yet.\n", _getVarName(GD_SURFACE_XRGB32));
             break;
       default:
             gd_error("gdDraw: provided surface has an unknown type.\n");
