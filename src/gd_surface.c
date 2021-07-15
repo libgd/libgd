@@ -136,5 +136,7 @@ BGD_DECLARE(void) gdSurfaceDestroy (gdSurfacePtr surface)
         if (surface->gdOwned) {
             gdFree(surface->data);
         }
+        gdFree(surface);
     }
+
 }
