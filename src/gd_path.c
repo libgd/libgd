@@ -222,6 +222,7 @@ static inline void split(const cubic_points* b, cubic_points* first, cubic_point
     first->y4 = second->y1 = (first->y3 + second->y2) * 0.5;
 }
 
+/* See http://agg.sourceforge.net/antigrain.com/research/adaptive_bezier/index.html */
 static void _cubic_flatten(gdPathPtr path,
                     const gdPointFPtr p0,
                     const gdPointFPtr p1,
