@@ -77,6 +77,7 @@ SET (LIBGD_SRC_FILES
 	gd_path_matrix.c
 	gd_span_rle.c
 	gd_path_arc.c
+	gd_path_dash.c
 	gd_path.c
 	gd_draw_blend.c
 	gd_draw.c

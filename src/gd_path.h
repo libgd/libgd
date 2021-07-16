@@ -36,8 +36,11 @@ gdStatePtr gdStateCreate();
 void gdStateDestroy(gdStatePtr state);
 
 gdPathPtr gdPathCreate();
-void gdPathDestroy(gdPathPtr path);
+gdPathPtr gdPathDuplicate(const gdPathPtr path);
+gdPathPtr gdPathDuplicateFlattened(const gdPathPtr path);
 void gdPathClear(gdPathPtr path);
+void gdPathDestroy(gdPathPtr path);
+
 
 void gdPathCurveTo(gdPathPtr path, double x1, double y1, double x2, double y2, double x3, double y3);
 void gdPathLineTo(gdPathPtr path, double x, double y);
@@ -47,5 +50,5 @@ void gdPathArcTo(gdPathPtr path, double x1, double y1, double x2, double y2, dou
 void gdPathClose(gdPathPtr path);
 
 void gdPathAddArc(gdPathPtr path, double cx, double cy, double radius, double angle1, double angle2, int ccw);
-
+void gdPathDumpPathTransform(const gdPathPtr path, const gdPathMatrixPtr matrix);
 #endif // GD_PATH_H

@@ -205,33 +205,6 @@ _gd_arc_in_direction(gdPathPtr path,
 	if (!path)
 		return;
 
-
-	if (0 && fmod(angle_min,M_PI2)  == fmod(angle_max, M_PI2)) {
-		angle_min = 0;
-		angle_max = M_PI2;
-	} else {
-		if (angle_min > M_PI2) {
-			angle_min = fmod(angle_min,M_PI2);
-		}
-
-		if (angle_max > M_PI2) {
-			angle_max = fmod(angle_max, M_PI2);
-		}
-
-		while (angle_min < 0) {
-			angle_min += M_PI2;
-		}
-
-		while (angle_max < angle_min) {
-			angle_max += M_PI2;
-		}
-
-		if (0 && angle_min == angle_max) {
-			angle_min = 0;
-			angle_max = M_PI2;
-		}
-	}
-
 	if (angle_max - angle_min > 2 * M_PI * MAX_FULL_CIRCLES)
 	{
 		angle_max = fmod(angle_max - angle_min, 2 * M_PI);
@@ -268,7 +241,6 @@ _gd_arc_in_direction(gdPathPtr path,
 	{
 		int i, segments;
 		double step;
-
 		segments = _arc_segments_needed(angle_max - angle_min,
 										radius,	DEFAULT_TOLERANCE);
 		step = (angle_max - angle_min) / segments;
@@ -284,7 +256,6 @@ _gd_arc_in_direction(gdPathPtr path,
 
 			step = -step;
 		}
-;
 		gdPathMoveTo(path, xc + radius * cos(angle_min), yc + radius * sin(angle_min));
 
 		for (i = 0; i < segments; i++, angle_min += step)
@@ -304,12 +275,26 @@ void _gd_arc_path(gdPathPtr path,
 				  double xc,
 				  double yc,
 				  double radius,
-				  double angle1,
-				  double angle2)
+				  double angle_min,
+				  double angle_max)
 {
+	if (angle_min > M_PI2) {
+		angle_min = fmod(angle_min,M_PI2);
+	}
+
+	if (angle_max > M_PI2) {
+		printf(" fmod max -");
+		angle_max = fmod(angle_max, M_PI2);
+	}
+
+    if (angle_max - angle_min > 2 * M_PI * MAX_FULL_CIRCLES) {
+		angle_max = fmod (angle_max - angle_min, 2 * M_PI);
+		angle_min = fmod (angle_min, 2 * M_PI);
+		angle_max += angle_min + 2 * M_PI * MAX_FULL_CIRCLES;
+    }
 	_gd_arc_in_direction(path, xc, yc,
 						 radius,
-						 angle1, angle2,
+						 angle_min, angle_max,
 						 ARC_CW);
 }
 

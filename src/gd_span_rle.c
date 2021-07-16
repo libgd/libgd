@@ -16,6 +16,8 @@
 #include "gd_array.h"
 #include "gd_span_rle.h"
 #include "gd_path_matrix.h"
+#include "gd_path.h"
+#include "gd_path_dash.h"
 #include "ftraster/gd_ft_raster.h"
 #include "ftraster/gd_ft_stroker.h"
 #include "ftraster/gd_ft_types.h"
@@ -270,7 +272,7 @@ static void sw_ft_outline_cubic_to(GD_FT_Outline *ft, double x1, double y1, doub
 
 static GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMatrixPtr matrix)
 {
-    GD_FT_Outline *outline = gd_ft_outline_create(path->points.size, path->contours);
+    GD_FT_Outline *outline = gd_ft_outline_create(gdArrayNumElements(&path->points), path->contours);
     gdPointF p[3];
     unsigned int numElements = gdArrayNumElements(&path->elements);
     unsigned int pointsIndex = 0;
@@ -312,6 +314,14 @@ static GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMa
     }
 
     gd_ft_outline_end(outline);
+    return outline;
+}
+
+static GD_FT_Outline* gd_ft_outline_convert_dash(const gdPathPtr path, const gdPathMatrixPtr matrix, const gdPathDashPtr dash)
+{
+    gdPathPtr dashed = gdPathApplyDash(dash, path);
+    GD_FT_Outline* outline = gd_ft_outline_convert(dashed, matrix);
+    gdPathDestroy(dashed);
     return outline;
 }
 
@@ -409,11 +419,7 @@ void gdSpanRleRasterize(gdSpanRlePtr rle, const gdPathPtr path, const gdPathMatr
             break;
         }
 
-#ifdef HAVEDASH
-        GD_FT_Outline *outline = stroke->dash ? gd_ft_outline_convert_dash(path, matrix, stroke->dash) : gd_FToutline_convert(path, matrix);
-#else
-        GD_FT_Outline *outline = gd_ft_outline_convert(path, matrix);
-#endif
+        GD_FT_Outline *outline = stroke->dash ? gd_ft_outline_convert_dash(path, matrix, stroke->dash) : gd_ft_outline_convert(path, matrix);
         if (!outline)
             return;
         GD_FT_Stroker stroker;

@@ -2034,13 +2034,20 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    } gdPaint;
    typedef gdPaint *gdPaintPtr;
 
+   typedef struct gdPathDashStruct {
+      double *data;
+      int size;
+      double offset;
+   } gdPathDash;
+   typedef gdPathDash *gdPathDashPtr;
+
    typedef struct gdStrokeStruct
    {
       double width;
       double miterlimit;
       gdLineCap cap;
       gdLineJoin join;
-      // TODO: dash
+      gdPathDashPtr dash;
    } gdStroke;
    typedef gdStroke *gdStrokePtr;
 
@@ -2138,12 +2145,17 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    gdContextLineTo(gdContextPtr context, double x, double y);
    BGD_DECLARE(void)
    gdContextRelLineTo(gdContextPtr context, double x, double y);
+
    BGD_DECLARE(void) 
    gdContextSetLineWidth(gdContextPtr context, double width);
    BGD_DECLARE(void)
    gdContextSetLineCap(gdContextPtr context, gdLineCap cap);
    BGD_DECLARE(void)
    gdContextSetLineJoin(gdContextPtr context, gdLineJoin join);
+
+   BGD_DECLARE(void)
+   gdContextSetDash(gdContextPtr context, double offset, const double* data, int size);
+
    BGD_DECLARE(void)
    gdContextCurveTo(gdContextPtr context, double x1, double y1, double x2, double y2, double x3, double y3);
    BGD_DECLARE(void)
@@ -2151,6 +2163,7 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    BGD_DECLARE(void)
    gdContextNegativeArc(gdContextPtr context, double cx, double cy, double r, double a0, double a1);
    BGD_DECLARE(void)
+
    gdContextClosePath(gdContextPtr context);
    BGD_DECLARE(void)
    gdContextScale(gdContextPtr context, double x, double y);

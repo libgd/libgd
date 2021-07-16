@@ -1358,7 +1358,9 @@ static int _gdSurfacePngCtxEx(gdSurfacePtr surface, gdIOCtx *outfile, int level)
 	}
 	png_write_image(png_ptr, row_pointers);
 	png_write_end(png_ptr, info_ptr);
-
+	for (j = 0; j < height; ++j)
+			gdFree(row_pointers[j]);
+	gdFree(row_pointers);
 	/* 1.6.3: maybe we should give that memory BACK! TBB */
 bail:
 	png_destroy_write_struct(&png_ptr, &info_ptr);

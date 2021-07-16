@@ -16,6 +16,7 @@
 #include "gd_span_rle.h"
 #include "gd_draw_blend.h"
 #include "gd_path_matrix.h"
+#include "gd_path_dash.h"
 
 BGD_DECLARE(void)
 gdContextSetSourceRgba(gdContextPtr context, double r, double g, double b, double a)
@@ -141,6 +142,7 @@ gdContextDestroy(gdContextPtr context)
         gdPathDestroy(context->path);
         gdStateDestroy(context->state);
         gdSpanRleDestroy(context->clippath);
+        gdSpanRleDestroy(context->rle);
         gdFree(context);
     }
 }
@@ -167,6 +169,12 @@ BGD_DECLARE(void)
 gdContextSetLineWidth(gdContextPtr context, double width)
 {
     context->state->stroke.width = width;
+}
+
+BGD_DECLARE(void) gdContextSetDash(gdContextPtr context, double offset, const double* data, int size)
+{
+    gdPathDashDestroy(context->state->stroke.dash);
+    context->state->stroke.dash = gdPathDashCreate(data, size, offset);
 }
 
 BGD_DECLARE(void)
