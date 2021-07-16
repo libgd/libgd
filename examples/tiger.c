@@ -36,7 +36,6 @@ int main()
     gdContextTranslate(cr, width/3, height/3);
 
     gdContextScale(cr, 1.5, 1.5);
-    //gdContextMoveTo(cr, width/2, height/2);
     for (i = 0; i < sizeof(tiger_commands) / sizeof(tiger_commands[0]); i++)
     {
         const struct command *cmd = &tiger_commands[i];
