@@ -27,6 +27,14 @@ gdContextSetSourceRgba(gdContextPtr context, double r, double g, double b, doubl
 }
 
 BGD_DECLARE(void)
+gdContextSetSourceRgb(gdContextPtr context, double r, double g, double b)
+{
+    gdPaintPtr source = gdPaintCreateRgba(r, g, b, 1.0);
+    gdContextSetSource(context, source);
+    gdPaintDestroy(source);
+}
+
+BGD_DECLARE(void)
 gdContextNewPath(gdContextPtr context)
 {
     gdPathClear(context->path);

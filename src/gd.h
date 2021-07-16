@@ -2137,7 +2137,10 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    BGD_DECLARE(void)
    gdContextNewPath(gdContextPtr context);
 
-   BGD_DECLARE(void) gdContextSetSourceRgba(gdContextPtr context, double r, double g, double b, double a);
+   BGD_DECLARE(void)
+   gdContextSetSourceRgba(gdContextPtr context, double r, double g, double b, double a);
+   BGD_DECLARE(void)
+   gdContextSetSourceRgb(gdContextPtr context, double r, double g, double b);
 
    BGD_DECLARE(void)
    gdContextMoveTo(gdContextPtr context, double x, double y);
