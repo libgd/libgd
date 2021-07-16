@@ -1,7 +1,5 @@
-#include "gd_surface.h"
 #include "gd.h"
 #include <stdio.h>
-#include <stdlib.h>
 
 void save_png(gdSurfacePtr surface, const char *filename)
 {
@@ -43,7 +41,9 @@ int main()
     double x1 = 102.4, y1 = 230.4,
            x2 = 153.6, y2 = 25.6,
            x3 = 230.4, y3 = 128.0;
+    double dash[7] = {10, 5, 20, 5, 30, 5, 40};
 
+    gdContextSetDash(cr, 0, dash, 4);
     gdContextSetSourceRgba(cr, 0, 0.0, 0.0, 1.0);
     gdContextMoveTo(cr, x, y);
     gdContextCurveTo(cr, x1, y1, x2, y2, x3, y3);

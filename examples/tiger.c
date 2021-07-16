@@ -1,7 +1,6 @@
-#include "gd_surface.h"
 #include "gd.h"
 #include <stdio.h>
-#include <stdlib.h>
+
 
 void save_png(gdSurfacePtr surface, const char *filename)
 {

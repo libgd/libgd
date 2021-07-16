@@ -1,7 +1,6 @@
-#include "gd_surface.h"
 #include "gd.h"
 #include <stdio.h>
-#include <stdlib.h>
+
 
 void save_png(gdSurfacePtr surface, const char *filename)
 {
@@ -38,21 +37,19 @@ int main()
     gdContextSetLineWidth(cr, 10.0);
     gdContextArc(cr, xc, yc, radius, angle1, angle2);
     gdContextStroke(cr);
-
+ 
     /* draw helping lines */
     gdContextSetSourceRgba(cr, 1, 0.2, 0.2, 0.6);
-    gdContextSetLineWidth(cr, 6.0);
-
     gdContextArc(cr, xc, yc, 10.0, 0, 2 * M_PI);
     gdContextFill(cr);
 
+    gdContextSetLineWidth(cr, 6.0);
     gdContextArc(cr, xc, yc, radius, angle1, angle1);
     gdContextLineTo(cr, xc, yc);
-
     gdContextArc(cr, xc, yc, radius, angle2, angle2);
     gdContextLineTo(cr, xc, yc);
-
     gdContextStroke(cr);
+
     save_png(surface, "patharc.png");
     gdContextDestroy(cr);
     gdSurfaceDestroy(surface);

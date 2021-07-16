@@ -14,6 +14,7 @@ SET(TESTS_FILES
 	tiger
 	pathclip
 	tigerclipped
+	smileylarge
 )
 
 if (PNG_FOUND)

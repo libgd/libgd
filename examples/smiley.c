@@ -1,7 +1,5 @@
-#include "gd_surface.h"
 #include "gd.h"
 #include <stdio.h>
-#include <stdlib.h>
 
 void save_png(gdSurfacePtr surface, const char *filename)
 {
@@ -55,8 +53,10 @@ int main()
     double eye_y = center_y - eye_offset_y;
 
     const double pi = 3.14159265358979323846;
+    double dash[7] = {10 , 5, 20, 5, 30, 5, 40};
 
-    gdContextArc(cr, center_x, center_y, radius, 0, 2 * pi);
+    gdContextSetDash(cr, 0, dash, 7);
+    gdContextArc(cr, center_x, center_y, radius, 0,2* pi);
     gdContextSetSourceRgba(cr, 1, 1, 0, 1);
     gdContextFillPreserve(cr);
     gdContextSetLineWidth(cr, 5);
