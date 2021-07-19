@@ -2131,8 +2131,8 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    gdSurfacePng(gdSurfacePtr surface, FILE *outFile);
    BGD_DECLARE(void)
    gdSurfacePngEx(gdSurfacePtr surface, FILE *outFile, int level);
-   BGD_DECLARE(gdSurfacePtr)
-   gdSurfaceCreateFromPngCtx(gdIOCtx *infile);
+   BGD_DECLARE(void)
+   gdSurfacePngCtx(gdSurfacePtr surface, gdIOCtx *outfile, int level);
 
    BGD_DECLARE(gdContextPtr)
    gdContextCreate(gdSurfacePtr surface);

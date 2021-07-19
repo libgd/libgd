@@ -1227,6 +1227,13 @@ gdSurfacePngEx(gdSurfacePtr surface, FILE *outFile, int level)
 	out->gd_free(out);
 }
 
+BGD_DECLARE(void)
+gdSurfacePngCtx(gdSurfacePtr surface, gdIOCtx *outfile, int level)
+{
+    /* 2.0.13: 'return' here was an error, thanks to Kevin Smith */
+    _gdSurfacePngCtxEx(surface, outfile, level);
+}
+
 static inline int
 multiply_alpha (int alpha, int color)
 {
