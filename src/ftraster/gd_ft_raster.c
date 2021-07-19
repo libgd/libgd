@@ -1,19 +1,19 @@
-/***************************************************************************/
-/*                                                                         */
-/*  ftgrays.c                                                              */
-/*                                                                         */
-/*    A new `perfect' anti-aliasing renderer (body).                       */
-/*                                                                         */
-/*  Copyright 2000-2003, 2005-2014 by                                      */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
-/*                                                                         */
-/***************************************************************************/
+/****************************************************************************
+ *
+ * ftgrays.c
+ *
+ *   A new `perfect' anti-aliasing renderer (body).
+ *
+ * Copyright (C) 2000-2020 by
+ * David Turner, Robert Wilhelm, and Werner Lemberg.
+ *
+ * This file is part of the FreeType project, and may only be used,
+ * modified, and distributed under the terms of the FreeType project
+ * license, LICENSE.TXT.  By continuing to use, modify, or distribute
+ * this file you indicate that you have read the license and
+ * understand and accept it fully.
+ *
+ */
 
 /*************************************************************************/
 /*                                                                       */
@@ -1343,6 +1343,12 @@ static int gray_raster_render(gray_PRaster               raster,
     TCell buffer[GD_FT_RENDER_POOL_SIZE / sizeof(TCell)];
     long  buffer_size = sizeof(buffer);
     int   band_size = (int)(buffer_size / (long)(sizeof(TCell) * 8));
+    if (!raster)
+        return GD_FT_THROW(Invalid_Argument);
+
+    /* this version does not support monochrome rendering */
+    if (!(params->flags & GD_FT_RASTER_FLAG_AA))
+        return GD_FT_THROW(Invalid_Mode);
 
     if (!outline) return GD_FT_THROW(Invalid_Outline);
 
@@ -1355,9 +1361,7 @@ static int gray_raster_render(gray_PRaster               raster,
     if (outline->n_points != outline->contours[outline->n_contours - 1] + 1)
         return GD_FT_THROW(Invalid_Outline);
 
-    /* this version does not support monochrome rendering */
-    if (!(params->flags & GD_FT_RASTER_FLAG_AA))
-        return GD_FT_THROW(Invalid_Mode);
+
 
     if (params->flags & GD_FT_RASTER_FLAG_CLIP)
         ras.clip_box = params->clip_box;

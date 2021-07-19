@@ -37,7 +37,7 @@
 
 #define GD_FT_IS_SMALL(x) ((x) > -GD_FT_EPSILON && (x) < GD_FT_EPSILON)
 
-static GD_FT_Pos ft_pos_abs(GD_FT_Pos x)
+static inline GD_FT_Pos ft_pos_abs(GD_FT_Pos x)
 {
     return x >= 0 ? x : -x;
 }
@@ -705,10 +705,10 @@ GD_FT_Error GD_FT_Stroker_New(GD_FT_Stroker* astroker)
     GD_FT_Stroker stroker = NULL;
 
     stroker = (GD_FT_StrokerRec*)calloc(1, sizeof(GD_FT_StrokerRec));
-    if (stroker) {
-        ft_stroke_border_init(&stroker->borders[0]);
-        ft_stroke_border_init(&stroker->borders[1]);
-    }
+    if (!stroker) return -1; // FT_THROW( Invalid_Argument );
+
+    ft_stroke_border_init(&stroker->borders[0]);
+    ft_stroke_border_init(&stroker->borders[1]);
 
     *astroker = stroker;
 
@@ -730,6 +730,9 @@ void GD_FT_Stroker_Set(GD_FT_Stroker stroker, GD_FT_Fixed radius,
                        GD_FT_Stroker_LineJoin line_join,
                        GD_FT_Fixed            miter_limit)
 {
+    if ( !stroker )
+      return;
+
     stroker->radius = radius;
     stroker->line_cap = line_cap;
     stroker->line_join = line_join;

@@ -236,6 +236,18 @@ gdContextTranslate(gdContextPtr context, double x, double y)
 }
 
 BGD_DECLARE(void)
+gdContextRotate(gdContextPtr context, double radians)
+{
+    gdPathMatrixRotate(&context->state->matrix, radians);
+}
+
+BGD_DECLARE(void)
+gdContextTransform(gdContextPtr context, const gdPathMatrixPtr matrix)
+{
+    gdPathMatrixMultiply(&context->state->matrix, matrix, &context->state->matrix);
+}
+
+BGD_DECLARE(void)
 gdContextSetFillRule(gdContextPtr context, gdFillRule winding)
 {
     context->state->winding = winding;

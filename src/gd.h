@@ -2121,10 +2121,18 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    BGD_DECLARE(int)
    gdSurfaceGetStride(const gdSurfacePtr surface);
 
+   BGD_DECLARE(gdSurfacePtr)
+   gdSurfaceCreateFromPng(FILE *inFile);
+   BGD_DECLARE(gdSurfacePtr)
+   gdSurfaceCreateFromPngPtr(int size, void *data);
+   BGD_DECLARE(gdSurfacePtr)
+   gdSurfaceCreateFromPngCtx(gdIOCtx *infile);
    BGD_DECLARE(void)
    gdSurfacePng(gdSurfacePtr surface, FILE *outFile);
    BGD_DECLARE(void)
    gdSurfacePngEx(gdSurfacePtr surface, FILE *outFile, int level);
+   BGD_DECLARE(gdSurfacePtr)
+   gdSurfaceCreateFromPngCtx(gdIOCtx *infile);
 
    BGD_DECLARE(gdContextPtr)
    gdContextCreate(gdSurfacePtr surface);
@@ -2149,7 +2157,7 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    BGD_DECLARE(void)
    gdContextRelLineTo(gdContextPtr context, double x, double y);
 
-   BGD_DECLARE(void) 
+   BGD_DECLARE(void)
    gdContextSetLineWidth(gdContextPtr context, double width);
    BGD_DECLARE(void)
    gdContextSetLineCap(gdContextPtr context, gdLineCap cap);
@@ -2172,6 +2180,8 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    gdContextScale(gdContextPtr context, double x, double y);
    BGD_DECLARE(void)
    gdContextTranslate(gdContextPtr context, double x, double y);
+   BGD_DECLARE(void)
+   gdContextRotate(gdContextPtr context, double radians);
 
    BGD_DECLARE(void)
    gdContextSetFillRule(gdContextPtr context, gdFillRule winding);

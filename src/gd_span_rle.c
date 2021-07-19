@@ -252,7 +252,7 @@ static void gd_ft_outline_line_to(GD_FT_Outline *ft, double x, double y)
     ft->n_points++;
 }
 
-static void sw_ft_outline_cubic_to(GD_FT_Outline *ft, double x1, double y1, double x2, double y2, double x3, double y3)
+static void gd_ft_outline_cubic_to(GD_FT_Outline *ft, double x1, double y1, double x2, double y2, double x3, double y3)
 {
     ft->points[ft->n_points].x = FT_COORD(x1);
     ft->points[ft->n_points].y = FT_COORD(y1);
@@ -303,7 +303,7 @@ static GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMa
             gdPathMatrixMapPoint(matrix, point, &p[1]);
             point = gdArrayIndex(&path->points, pointsIndex + 2);
             gdPathMatrixMapPoint(matrix, point, &p[2]);
-            sw_ft_outline_cubic_to(outline, p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y);
+            gd_ft_outline_cubic_to(outline, p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y);
             pointsIndex += 3;
             break;
         case gdPathOpsClose:
