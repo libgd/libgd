@@ -80,11 +80,13 @@ gdPngErrorHandler(png_structp png_ptr, png_const_charp msg)
 	longjmp(jmpbuf_ptr->jmpbuf, 1);
 }
 #endif
+#define PNG_BYTES_TO_CHECK 8
 
 static void
 gdPngReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
 	int check;
+
 	check = gdGetBuf(data, length, (gdIOCtx *)png_get_io_ptr(png_ptr));
 	if (check != (int)length)
 	{
@@ -1206,7 +1208,6 @@ bail:
 	return ret;
 }
 
-
 /* GD Surface PNG Export */
 static int _gdSurfacePngCtxEx(gdSurfacePtr surface, gdIOCtx *outfile, int level);
 BGD_DECLARE(void) gdSurfacePng(gdSurfacePtr surface, FILE *outFile)
@@ -1226,10 +1227,290 @@ gdSurfacePngEx(gdSurfacePtr surface, FILE *outFile, int level)
 	out->gd_free(out);
 }
 
+static inline int
+multiply_alpha (int alpha, int color)
+{
+    int temp = (alpha * color) + 0x80;
+    return ((temp + (temp >> 8)) >> 8);
+}
+
+
+static inline int
+_to_premultiplied_channel (int alpha, int color)
+{
+    const int c = (alpha * color) + 128;
+    return ((c + (c >> 8)) >> 8);
+}
+
+/* Convert png rgba to premultiplied ARGB */
+static void _png_rgba_to_premultuply (png_structp png, png_row_infop row_info, png_bytep     data)
+{
+    unsigned int i;
+
+    for (i = 0; i < row_info->rowbytes; i += 4) {
+        unsigned char *base  = &data[i];
+        unsigned char  a = base[3];
+        unsigned int p;
+
+        if (a == 0) {
+            p = 0;
+        } else {
+            unsigned char  r   = base[0];
+            unsigned char  g = base[1];
+            unsigned char  b  = base[2];
+
+            /* opacity already converted, only need to premultiply rgb */
+            if (a != 0xff) {
+                r   = _to_premultiplied_channel (a, r);
+                g = _to_premultiplied_channel (a, g);
+                b  = _to_premultiplied_channel (a, b);
+            }
+            p = ((unsigned int)a << 24) | (r << 16) | (g << 8) | (b << 0);
+        }
+        memcpy (base, &p, sizeof (unsigned int));
+    }
+}
+
+
+BGD_DECLARE(gdSurfacePtr)
+gdSurfaceCreateFromPng(FILE *inFile)
+{
+    gdSurfacePtr surface;
+    gdIOCtx *in = gdNewFileCtx(inFile);
+    if (in == NULL)
+        return NULL;
+    surface = gdSurfaceCreateFromPngCtx(in);
+    in->gd_free(in);
+    return surface;
+}
+
+/*
+  Function: gdImageCreateFromPngPtr
+
+  See <gdImageCreateFromPng>.
+*/
+BGD_DECLARE(gdSurfacePtr)
+gdSurfaceCreateFromPngPtr(int size, void *data)
+{
+    gdSurfacePtr surface;
+    gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
+    if (!in)
+        return 0;
+    surface = gdSurfaceCreateFromPngCtx(in);
+    in->gd_free(in);
+    return surface;
+}
+
+
+/*
+ * For ARGB32, we don't need to double allocate the buffer. The same buffer can be used in gdSurface. Also the libpng
+ * transform and filter will take care of the conversion from transparency to opacity as well as the bit depth
+ * when needed.
+ * */
+BGD_DECLARE(gdSurfacePtr)
+gdSurfaceCreateFromPngCtx(gdIOCtx *infile)
+{
+    png_byte sig[PNG_BYTES_TO_CHECK];
+#ifdef PNG_SETJMP_SUPPORTED
+    jmpbuf_wrapper jbw;
+#endif
+    png_structp png_ptr = NULL;
+    png_infop info_ptr;
+    png_uint_32 png_width, png_height;
+    int bit_depth, color_type, interlace, stride;
+    unsigned int i;
+    volatile png_bytep  data = NULL;
+    volatile png_bytepp   row_pointers = NULL;
+    gdSurfaceType format;
+
+    volatile gdSurfacePtr surface = NULL;
+
+    memset(sig, 0, sizeof(sig));
+    if (gdGetBuf(sig, PNG_BYTES_TO_CHECK, infile) < 8)
+    {
+        return NULL;
+    }
+    if (png_sig_cmp(sig, (png_size_t)0, PNG_BYTES_TO_CHECK) != 0)
+    {
+        return NULL; /* bad signature */
+    }
+
+#ifdef PNG_SETJMP_SUPPORTED
+    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, &jbw, gdPngErrorHandler, NULL);
+#else
+    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+#endif
+    if (png_ptr == NULL)
+    {
+        gd_error("gd-png error: cannot allocate libpng main struct\n");
+        return NULL;
+    }
+
+    info_ptr = png_create_info_struct(png_ptr);
+    if (info_ptr == NULL)
+    {
+        gd_error("gd-png error: cannot allocate libpng info struct\n");
+        png_destroy_read_struct(&png_ptr, NULL, NULL);
+        return NULL;
+    }
+
+    /* setjmp() must be called in every non-callback function that calls a
+     * PNG-reading libpng function.  We must reset it everytime we get a
+     * new allocation that we save in a stack variable.
+     */
+#ifdef PNG_SETJMP_SUPPORTED
+    if (setjmp(jbw.jmpbuf))
+	{
+		gd_error("gd-png error: setjmp returns error condition 1\n");
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+
+		return NULL;
+	}
+#endif
+    png_set_sig_bytes(png_ptr, PNG_BYTES_TO_CHECK);
+    png_set_read_fn(png_ptr, (void *)infile, gdPngReadData);
+
+    /* todo add DPI and other meta */
+    png_read_info(png_ptr, info_ptr);
+    png_get_IHDR(png_ptr, info_ptr, &png_width, &png_height, &bit_depth, &color_type,
+                 &interlace, NULL, NULL);
+
+    if (color_type == PNG_COLOR_TYPE_PALETTE)
+        png_set_palette_to_rgb (png_ptr);
+
+    /* We only support 8bit, let libpng expands the bit depth */
+    if (color_type == PNG_COLOR_TYPE_GRAY) {
+#if PNG_LIBPNG_VER >= 10209
+        png_set_expand_gray_1_2_4_to_8 (png_ptr);
+#else
+        png_set_gray_1_2_4_to_8 (png_ptr);
+#endif
+    }
+
+    /* Unlike gdImage, transparency is purely handled as part of the data */
+    if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS))
+        png_set_tRNS_to_alpha (png_ptr);
+
+    if (bit_depth < 8)
+        png_set_packing (png_ptr);
+
+    /* Gray scale are palette in gdImage, we use ARGB here */
+    if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+        png_set_gray_to_rgb (png_ptr);
+
+
+    if (interlace != PNG_INTERLACE_NONE)
+        png_set_interlace_handling (png_ptr);
+
+    /* invert alpha, gdSurface uses level of opacity, not transparency */
+    png_set_filler (png_ptr, 0xff, PNG_FILLER_AFTER);
+
+    /* It may have changed as we changed the format to get */
+    png_read_update_info (png_ptr, info_ptr);
+    png_get_IHDR(png_ptr, info_ptr, &png_width, &png_height, &bit_depth, &color_type,
+                 &interlace, NULL, NULL);
+    if ((bit_depth != 8) ||
+        ! (color_type == PNG_COLOR_TYPE_RGB ||
+           color_type == PNG_COLOR_TYPE_RGB_ALPHA))
+    {
+        gd_error("gd-png Cannot handle the format provided by libpng");
+        goto error;
+    }
+    switch (color_type) {
+        case PNG_COLOR_TYPE_RGB:
+            /* todo: add XRGB once implemented */
+        case PNG_COLOR_TYPE_RGB_ALPHA:
+            format = GD_SURFACE_ARGB32;
+            png_set_read_user_transform_fn (png_ptr, _png_rgba_to_premultuply);
+            /* for other formats we may need to calculate it*/
+            //stride = png_width;
+            break;
+        /* if the above settings went well, that should never be reached */
+        default:
+            gd_error("gd-png color_type is unknown: %d\n", color_type);
+            goto error;
+    }
+
+    /* setjmp() must be called in every non-callback function that calls a
+     * PNG-reading libpng function.  We must reset it everytime we get a
+     * new allocation that we save in a stack variable.
+     */
+#ifdef PNG_SETJMP_SUPPORTED
+    if (setjmp(jbw.jmpbuf))
+	{
+		gd_error("gd-png error: setjmp returns error condition 2\n");
+		goto error;
+	}
+#endif
+
+    stride = png_get_rowbytes(png_ptr, info_ptr);
+    //stride = 256*4;
+    if (overflow2(png_height, stride))
+        goto error;
+    data = gdMalloc (png_height * stride);
+    if (data == NULL) {
+        gd_error("gd-png error: cannot allocate data for the surface struct\n");
+        goto error;
+    }
+
+    if (overflow2(png_height, sizeof(png_bytep)))
+        goto error;
+
+    row_pointers = gdMalloc (png_height * sizeof (char *));
+    if (row_pointers == NULL) {
+        gd_error("gd-png error: cannot allocate the rows data for the surface struct\n");
+        goto error;
+    }
+
+    for (i = 0; i < png_height; i++)
+        row_pointers[i] = &data[i * (size_t)stride];
+
+    png_read_image (png_ptr, row_pointers);
+    png_read_end (png_ptr, info_ptr);
+
+    surface = gdSurfaceCreateForData(data, (int)png_width, (int)png_height, stride, format);
+    if (surface == NULL)
+    {
+        gd_error("gd-png error: cannot allocate gdSurface struct\n");
+        goto error;
+    }
+    surface->gdOwned = 1;
+
+    /* setjmp() must be called in every non-callback function that calls a
+     * PNG-reading libpng function.  We must reset it everytime we get a
+     * new allocation that we save in a stack variable.
+     */
+#ifdef PNG_SETJMP_SUPPORTED
+    if (setjmp(jbw.jmpbuf))
+	{
+		gd_error("gd-png error: setjmp returns error condition 3\n");
+		goto error;
+	}
+#endif
+
+    /* can't nuke structs until done with palette */
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+
+
+done:
+    if (row_pointers)
+        gdFree(row_pointers);
+    return surface;
+
+error:
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+    if (surface)
+    {
+        gdSurfaceDestroy(surface);
+        surface = NULL;
+    }
+    goto done;
+}
+
 /* returns 0 on success, 1 on failure */
 static int _gdSurfacePngCtxEx(gdSurfacePtr surface, gdIOCtx *outfile, int level)
 {
-	int i, j, bit_depth = 0;
+	int i, j;
 	const int interlace_type = PNG_INTERLACE_NONE;
 	const int width = surface->width;
 	const int height = surface->height;
