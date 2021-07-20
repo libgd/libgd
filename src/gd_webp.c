@@ -217,7 +217,11 @@ static int _gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 			*(p++) = a;
 		}
 	}
-	out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
+	if (quality >= gdWebpLossless) {
+		out_size = WebPEncodeLosslessRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, &out);
+	} else {
+		out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
+	}
 	if (out_size == 0) {
 		gd_error("gd-webp encoding failed");
         ret = 1;
@@ -268,6 +272,9 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 	good general quality / size tradeoff for most situations) is used. Otherwise
 	_quality_ should be a value in the range 0-100, higher quality values
 	usually implying both higher quality and larger image sizes.
+
+	If _quality_ is greater than or equal to <gdWebpLossless> then the image
+	will be written in the lossless WebP format.
 
   Variants:
 
