@@ -36,7 +36,12 @@
 #include <limits.h>
 #include <string.h>
 
+#ifdef HAVE_LIBEXIF
+# include <libexif/exif-data.h>
+#endif
+
 #include "gd.h"
+#include "gd_intern.h"
 #include "gd_errors.h"
 /* TBB: move this up so include files are not brought in */
 /* JCE: arrange HAVE_LIBJPEG so that it can be set in gd.h */
@@ -58,6 +63,34 @@ typedef struct _jmpbuf_wrapper {
         int ignore_warning;
 }
 jmpbuf_wrapper;
+
+#ifdef HAVE_LIBEXIF
+static int get_orientation(unsigned char *exif, int exif_size)
+{
+	ExifData *d;
+	ExifEntry *entry;
+	ExifByteOrder byte_order;
+
+	int orientation;
+
+	d = exif_data_new_from_data((const unsigned char*)exif, exif_size);
+	if (d == NULL)
+		return 0;
+
+	entry = exif_data_get_entry(d, EXIF_TAG_ORIENTATION);
+	if (entry) {
+		byte_order = exif_data_get_byte_order(d);
+		orientation = exif_get_short(entry->data, byte_order);
+	}
+	else {
+		orientation = 0;
+	}
+
+	exif_data_free(d);
+
+	return orientation;
+}
+#endif
 
 static void jpeg_emit_message(j_common_ptr jpeg_info, int level)
 {
@@ -559,6 +592,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 {
 	struct jpeg_decompress_struct cinfo;
 	struct jpeg_error_mgr jerr;
+	jpeg_saved_marker_ptr marker;
 	jmpbuf_wrapper jmpbufw;
 	/* volatile so we can gdFree them after longjmp */
 	volatile JSAMPROW row = 0;
@@ -602,6 +636,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 	jpeg_create_decompress(&cinfo);
 
 	jpeg_gdIOCtx_src(&cinfo, infile);
+
+#ifdef HAVE_LIBEXIF
+	/* save APP1 marker to get EXIF orientation */
+	jpeg_save_markers(&cinfo, JPEG_APP0 + 1, 0xFFFF);
+#endif
 
 	/* 2.0.22: save the APP14 marker to check for Adobe Photoshop CMYK
 	 * files with inverted components.
@@ -726,7 +765,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 		}
 		channels = 3;
 	} else if(cinfo.out_color_space == JCS_CMYK) {
-		jpeg_saved_marker_ptr marker;
 		if(cinfo.output_components != 4) {
 			gd_error("gd-jpeg: error: JPEG color quantization"
 			         " request resulted in output_components == %d"
@@ -796,6 +834,48 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 			}
 		}
 	}
+
+#ifdef HAVE_LIBEXIF
+	/* apply orientation */
+	marker = cinfo.marker_list;
+	while (marker) {
+		if (marker->marker == (JPEG_APP0 + 1)) {
+			gdImagePtr im2 = NULL;
+
+			switch (get_orientation(marker->data, marker->data_length)) {
+				case 2:
+					im2 = gdImageFlipH(im, 0);
+					break;
+				case 3:
+					im2 = gdImageRotate180(im, 0);
+					break;
+				case 4:
+					im2 = gdImageFlipV(im, 0);
+					break;
+				case 5:
+					im2 = gdImageFlipHRotate90(im, 0);
+					break;
+				case 6:
+					im2 = gdImageRotate270(im, 0);
+					break;
+				case 7:
+					im2 = gdImageFlipHRotate270(im, 0);
+					break;
+				case 8:
+					im2 = gdImageRotate90(im, 0);
+					break;
+			}
+
+			if (im2 != NULL) {
+				gdImageDestroy(im);
+				im = im2;
+			}
+
+			break;
+		}
+		marker = marker->next;
+	}
+#endif
 
 	if(jpeg_finish_decompress (&cinfo) != TRUE) {
 		gd_error("gd-jpeg: warning: jpeg_finish_decompress"
