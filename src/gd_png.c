@@ -207,7 +207,7 @@ gdImageCreateFromPngPtr(int size, void *data)
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromPngCtx(gdIOCtx *infile)
 {
-	png_byte sig[8];
+	png_byte sig[PNG_BYTES_TO_CHECK];
 #ifdef PNG_SETJMP_SUPPORTED
 	jmpbuf_wrapper jbw;
 #endif
@@ -233,12 +233,12 @@ gdImageCreateFromPngCtx(gdIOCtx *infile)
 
 	/* first do a quick check that the file really is a PNG image; could
 	 * have used slightly more general png_sig_cmp() function instead */
-	if (gdGetBuf(sig, 8, infile) < 8)
+	if (gdGetBuf(sig, PNG_BYTES_TO_CHECK, infile) < PNG_BYTES_TO_CHECK)
 	{
 		return NULL;
 	}
 
-	if (png_sig_cmp(sig, 0, 8) != 0)
+	if (png_sig_cmp(sig, 0, PNG_BYTES_TO_CHECK) != 0)
 	{				 /* bad signature */
 		return NULL; /* bad signature */
 	}
@@ -282,7 +282,7 @@ gdImageCreateFromPngCtx(gdIOCtx *infile)
 	}
 #endif
 
-	png_set_sig_bytes(png_ptr, 8); /* we already read the 8 signature bytes */
+	png_set_sig_bytes(png_ptr, PNG_BYTES_TO_CHECK); /* we already read the PNG_BYTES_TO_CHECK signature bytes */
 
 	png_set_read_fn(png_ptr, (void *)infile, gdPngReadData);
 	png_read_info(png_ptr, info_ptr); /* read all PNG info up to image data */
