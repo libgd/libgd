@@ -1,4 +1,4 @@
-/*
+ /*
    * gd_gd2.c
    *
    * Implements the I/O and support for the GD2 format.
@@ -910,9 +910,11 @@ _gd2PutHeader (gdImagePtr im, gdIOCtx * out, int cs, int fmt, int cx, int cy)
 
 }
 
-static void
+/* returns 0 on success, 1 on failure */
+static int
 _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 {
+	int ret = 0;
 	int ncx, ncy, cx, cy;
 	int x, y, ylo, yhi, xlo, xhi;
 	int chunkLen;
@@ -974,10 +976,12 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 		/* */
 		chunkData = gdCalloc (cs * bytesPerPixel * cs, 1);
 		if (!chunkData) {
+			ret = 1;
 			goto fail;
 		}
 		compData = gdCalloc (compMax, 1);
 		if (!compData) {
+			ret = 1;
 			goto fail;
 		}
 
@@ -992,6 +996,7 @@ _gdImageGd2 (gdImagePtr im, gdIOCtx * out, int cs, int fmt)
 
 		chunkIdx = gdCalloc (idxSize * sizeof (t_chunk_info), 1);
 		if (!chunkIdx) {
+			ret = 1;
 			goto fail;
 		}
 	};
@@ -1107,6 +1112,8 @@ fail:
 	}
 	GD2_DBG (printf ("Done\n"));
 
+	return ret;
+
 }
 
 /*
@@ -1128,8 +1135,11 @@ BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
 	if (out == NULL) return NULL;
-	_gdImageGd2 (im, out, cs, fmt);
-	rv = gdDPExtractData (out, size);
+	if (_gdImageGd2(im, out, cs, fmt)) {
+		rv = NULL;
+	} else {
+		rv = gdDPExtractData(out, size);
+	}
 	out->gd_free (out);
 	return rv;
 }
