@@ -698,17 +698,15 @@ typedef struct GD_FT_StrokerRec_ {
 } GD_FT_StrokerRec;
 
 /* documentation is in ftstroke.h */
-
-GD_FT_Error GD_FT_Stroker_New(GD_FT_Stroker* astroker)
-{
-    GD_FT_Error   error = 0; /* assigned in GD_FT_NEW */
+GD_FT_Error GD_FT_Stroker_New(GD_FT_Stroker* astroker) {
+    GD_FT_Error error = 0; /* assigned in SW_FT_NEW */
     GD_FT_Stroker stroker = NULL;
 
-    stroker = (GD_FT_StrokerRec*)calloc(1, sizeof(GD_FT_StrokerRec));
-    if (!stroker) return -1; // FT_THROW( Invalid_Argument );
-
-    ft_stroke_border_init(&stroker->borders[0]);
-    ft_stroke_border_init(&stroker->borders[1]);
+    stroker = (GD_FT_StrokerRec *) calloc(1, sizeof(GD_FT_StrokerRec));
+    if (stroker) {
+        ft_stroke_border_init(&stroker->borders[0]);
+        ft_stroke_border_init(&stroker->borders[1]);
+    }
 
     *astroker = stroker;
 
@@ -730,9 +728,6 @@ void GD_FT_Stroker_Set(GD_FT_Stroker stroker, GD_FT_Fixed radius,
                        GD_FT_Stroker_LineJoin line_join,
                        GD_FT_Fixed            miter_limit)
 {
-    if ( !stroker )
-      return;
-
     stroker->radius = radius;
     stroker->line_cap = line_cap;
     stroker->line_join = line_join;

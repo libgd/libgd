@@ -1343,12 +1343,6 @@ static int gray_raster_render(gray_PRaster               raster,
     TCell buffer[GD_FT_RENDER_POOL_SIZE / sizeof(TCell)];
     long  buffer_size = sizeof(buffer);
     int   band_size = (int)(buffer_size / (long)(sizeof(TCell) * 8));
-    if (!raster)
-        return GD_FT_THROW(Invalid_Argument);
-
-    /* this version does not support monochrome rendering */
-    if (!(params->flags & GD_FT_RASTER_FLAG_AA))
-        return GD_FT_THROW(Invalid_Mode);
 
     if (!outline) return GD_FT_THROW(Invalid_Outline);
 
