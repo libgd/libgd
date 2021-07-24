@@ -15,6 +15,9 @@ SET(TESTS_FILES
 	pathclip
 	tigerclipped
 	smileylarge
+	path_arcfillimage
+	path_imagesource
+	path_pattern
 )
 
 if (PNG_FOUND)
@@ -49,6 +52,7 @@ ENDFOREACH(test_name)
 if (PNG_FOUND AND JPEG_FOUND)
 	if (UNIX)
 		target_link_libraries(copyrotated m)
+		target_link_libraries (path_pattern m)
 	endif (UNIX)
 endif(PNG_FOUND AND JPEG_FOUND)
 
@@ -62,3 +66,4 @@ else (WIN32 AND NOT MINGW AND NOT MSYS)
 		target_link_libraries(windows ${GD_LINK_LIB} stdc++ gdi32)
 	endif (MINGW OR MSYS)
 endif (WIN32 AND NOT MINGW AND NOT MSYS)
+
