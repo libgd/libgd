@@ -1923,6 +1923,14 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
       GD_SURFACE_COUNT = 4
    } gdSurfaceType;
 
+    typedef enum
+    {
+        GD_EXTEND_NONE, /* pixels outside of the source pattern are fully transparent*/
+        GD_EXTEND_REPEAT,  /* the pattern is tiled by repeating */
+        GD_EXTEND_REFLECT, /* the pattern is tiled by reflecting at the edges */
+        GD_EXTEND_PAD, /* pixels outside of the pattern copy the closest pixel from the source */
+    } gdExtendMode;
+
    typedef struct gdSurfaceStruct
    {
       int ref;
@@ -2002,15 +2010,16 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    {
       gdPaintTypeColor,
       gdPaintTypeGradient,
-      gdPaintTypeSurface
+      gdPaintTypeSurface,
+      gdPaintTypePattern
    } gdPaintType;
 
    typedef enum
    {
       gdImageOpsSrc,
       gdImageOpsSrcOver,
-      gdImageOpsSrcIn,
-      gdImageOpsSrcOut
+      gdImageOpsDstIn,
+      gdImageOpsDstOut
    } gdImageOp;
 
    typedef struct gdColorStruct
@@ -2022,6 +2031,15 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    } gdColor;
    typedef gdColor *gdColorPtr;
 
+   typedef struct gdPathPatternStruct {
+        int ref;
+        gdExtendMode extend;
+        gdSurfacePtr surface;
+        gdPathMatrix matrix;
+        double opacity;
+   } gdPathPattern;
+   typedef gdPathPattern * gdPathPatternPtr;
+
    typedef struct gdPaintStruct
    {
       int ref;
@@ -2029,7 +2047,9 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
       union
       {
          gdColorPtr color;
-         //TODO gradient and surface
+         gdSurfacePtr surface;
+         gdPathPatternPtr pattern;
+         //TODO gradient
       };
    } gdPaint;
    typedef gdPaint *gdPaintPtr;
@@ -2149,6 +2169,8 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    gdContextSetSourceRgba(gdContextPtr context, double r, double g, double b, double a);
    BGD_DECLARE(void)
    gdContextSetSourceRgb(gdContextPtr context, double r, double g, double b);
+   BGD_DECLARE(void)
+   gdContextSetSourceSurface(gdContextPtr context, gdSurfacePtr surface, double x, double y);
 
    BGD_DECLARE(void)
    gdContextMoveTo(gdContextPtr context, double x, double y);
@@ -2173,8 +2195,11 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    gdContextArc(gdContextPtr context, double cx, double cy, double r, double a0, double a1);
    BGD_DECLARE(void)
    gdContextNegativeArc(gdContextPtr context, double cx, double cy, double r, double a0, double a1);
-   BGD_DECLARE(void)
 
+   BGD_DECLARE(void)
+   gdContextRectangle(gdContextPtr context, double x, double y, double w, double h);
+
+   BGD_DECLARE(void)
    gdContextClosePath(gdContextPtr context);
    BGD_DECLARE(void)
    gdContextScale(gdContextPtr context, double x, double y);
@@ -2193,6 +2218,32 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    gdContextFillPreserve(gdContextPtr context);
    BGD_DECLARE(void)
    gdContextFill(gdContextPtr context);
+   BGD_DECLARE(void)
+   gdContextPaint(gdContextPtr context);
+
+   BGD_DECLARE(gdPaintPtr)
+   gdPaintCreateFromPattern(gdPathPatternPtr pattern);
+   BGD_DECLARE(void)
+   gdPaintDestroy(gdPaintPtr paint);
+   BGD_DECLARE(gdPathPatternPtr)
+   gdPathPatternCreate(gdSurfacePtr surface);
+   BGD_DECLARE(void)
+   gdPathPatternDestroy(gdPathPatternPtr pattern);
+   BGD_DECLARE(void)
+   gdPathPatternSetExtend(gdPathPatternPtr pattern, gdExtendMode extend);
+   BGD_DECLARE(void)
+   gdPathPatternSetMatrix(gdPathPatternPtr pattern, gdPathMatrixPtr matrix);
+   BGD_DECLARE(void)
+   gdContextSetSource(gdContextPtr context, gdPaintPtr source);
+
+   BGD_DECLARE(void)
+   gdPathMatrixInitIdentity(gdPathMatrixPtr matrix);
+   BGD_DECLARE(void)
+   gdPathMatrixInitScale(gdPathMatrixPtr matrix, double x, double y);
+   BGD_DECLARE(void)
+   gdPathMatrixRotate(gdPathMatrixPtr matrix, double radians);
+   BGD_DECLARE(void)
+   gdPathMatrixScale(gdPathMatrixPtr matrix, double x, double y);
 
 /* newfangled special effects */
 #include "gdfx.h"

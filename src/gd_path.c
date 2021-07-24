@@ -25,7 +25,7 @@ gdPaintPtr gdPaintAddRef(gdPaintPtr paint)
     return paint;
 }
 
-void gdPaintDestroy(gdPaintPtr paint)
+BGD_DECLARE(void) gdPaintDestroy(gdPaintPtr paint)
 {
     if (paint == NULL)
         return;
@@ -39,10 +39,11 @@ void gdPaintDestroy(gdPaintPtr paint)
             gdFree(paint->color);
             break;
         case gdPaintTypeGradient:
-            // Not implemented
-            break;
         case gdPaintTypeSurface:
             // Not implemented
+            break;
+        case gdPaintTypePattern:
+            gdPathPatternDestroy(paint->pattern);
             break;
         default:
         {
@@ -58,6 +59,82 @@ void gdColorInitRgba(gdColorPtr color, double r, double g, double b, double a)
     color->g = CLAMP(g, 0.0, 1.0);
     color->b = CLAMP(b, 0.0, 1.0);
     color->a = CLAMP(a, 0.0, 1.0);
+}
+
+gdPathPatternPtr gdPaintGetPattern(const gdPaintPtr paint)
+{
+    return paint->type == gdPaintTypePattern ? paint->pattern : NULL;
+}
+
+BGD_DECLARE(gdPathPatternPtr) gdPathPatternCreate(gdSurfacePtr surface)
+{
+    gdPathPatternPtr pattern = gdMalloc(sizeof(gdPathPattern));
+    pattern->ref = 1;
+    pattern->extend = GD_EXTEND_NONE;
+    pattern->surface = surface;
+    gdSurfaceAddRef(surface);
+    pattern->opacity = 1.0;
+    gdPathMatrixInitIdentity(&pattern->matrix);
+    return pattern;
+}
+
+BGD_DECLARE(void) gdPathPatternDestroy(gdPathPatternPtr pattern)
+{
+    if(pattern == NULL)
+        return;
+
+    if(--pattern->ref==0)
+    {
+        gdSurfaceDestroy(pattern->surface);
+        gdFree(pattern);
+    }
+}
+
+void gdPathPatternAddRef(gdPathPatternPtr pattern)
+{
+    if(pattern==NULL)  return;
+    pattern->ref++;
+}
+
+BGD_DECLARE(gdPaintPtr) gdPaintCreateFromPattern(gdPathPatternPtr pattern)
+{
+    gdPaintPtr paint = gdMalloc(sizeof(gdPaint));
+    if (!paint) return NULL;
+    paint->ref = 1;
+    paint->type = gdPaintTypePattern;
+    paint->pattern = pattern;
+    gdPathPatternAddRef(pattern);
+    return paint;
+}
+
+gdPaintPtr gdPaintCreateForSurface(gdSurfacePtr surface) {
+    gdPathPatternPtr pattern = gdPathPatternCreate(surface);
+    gdPaintPtr paint = gdPaintCreateFromPattern(pattern);
+    gdPathPatternDestroy(pattern);
+    return paint;
+}
+
+BGD_DECLARE(void) gdPathPatternSetExtend(gdPathPatternPtr pattern, gdExtendMode extend)
+{
+    pattern->extend = extend;
+}
+
+BGD_DECLARE(void) gdPathPatternSetMatrix(gdPathPatternPtr pattern, gdPathMatrixPtr matrix)
+{
+    memcpy(&pattern->matrix, matrix, sizeof(gdPathMatrix));
+}
+
+void gdPaintSetSourceSurface(gdContextPtr context, gdSurfacePtr surface, double x, double y)
+{
+    gdPathMatrix matrix;
+    gdPaintPtr paint;
+    gdPathPatternPtr pattern = gdPathPatternCreate(surface);
+    gdPathPatternSetExtend(pattern, GD_EXTEND_NONE);
+    gdPathMatrixMultiply(&matrix, &matrix, &context->state->matrix);
+    gdPathMatrixInitTranslate(&matrix, x, y);
+    gdPathPatternSetMatrix (pattern, &matrix);
+    paint = gdPaintCreateFromPattern(pattern);
+    gdContextSetSource(context, paint);
 }
 
 gdPaintPtr gdPaintCreateRgba(double r, double g, double b, double a)
@@ -85,7 +162,7 @@ gdPaintPtr gdPaintCreateRgb(double r, double g, double b)
     return gdPaintCreateRgba(r, g, b, 1.0);
 }
 
-void gdContextSetSource(gdContextPtr context, gdPaintPtr source)
+BGD_DECLARE(void) gdContextSetSource(gdContextPtr context, gdPaintPtr source)
 {
     source = gdPaintAddRef(source);
     gdPaintDestroy(context->state->source);
@@ -504,6 +581,16 @@ void gdPathArcTo(gdPathPtr path, double x1, double y1, double x2, double y2, dou
 
     gdPathLineTo(path, x3, y3);
     gdPathAddArc(path, cx, cy, radius, a0, a1, ccw);
+}
+
+void gdPathAddRectangle(gdPathPtr path, double x, double y, double w, double h)
+{
+    gdPathMoveTo(path, x, y);
+    gdPathLineTo(path, x + w, y);
+    gdPathLineTo(path, x + w, y + h);
+    gdPathLineTo(path, x, y + h);
+    gdPathLineTo(path, x, y);
+    gdPathClose(path);
 }
 
 void gdPathClose(gdPathPtr path)

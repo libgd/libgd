@@ -9,7 +9,7 @@ void gdPathMatrixInitShear(gdPathMatrixPtr matrix, double x, double y);
 void gdPathMatrixInitRotate(gdPathMatrixPtr matrix, double radians);
 void gdPathMatrixInitRotate_translate(gdPathMatrixPtr matrix, double radians, double x, double y);
 void gdPathMatrixTranslate(gdPathMatrixPtr matrix, double x, double y);
-void gdPathMatrixScale(gdPathMatrixPtr matrix, double x, double y);
+BGD_DECLARE(void) gdPathMatrixScale(gdPathMatrixPtr matrix, double x, double y);
 void gdPathMatrixShear(gdPathMatrixPtr matrix, double x, double y);
 void gdPathMatrixRotate(gdPathMatrixPtr matrix, double radians);
 void gdPathMatrixRotateTranslate(gdPathMatrixPtr matrix, double radians, double x, double y);
@@ -17,7 +17,8 @@ void gdPathMatrixMultiply(gdPathMatrixPtr matrix, const gdPathMatrixPtr a, const
 int gdPathMatrixInvert(gdPathMatrixPtr matrix);
 void gdPathMatrixMap(const gdPathMatrixPtr matrix, double x, double y, double* _x, double* _y);
 void gdPathMatrixMapPoint(const gdPathMatrixPtr matrix, const gdPointFPtr src, gdPointFPtr dst);
-void gdPathMatrixmapRect(const gdPathMatrixPtr matrix, const gdRectFPtr src, gdRectFPtr dst);
+void gdPathMatrixMapRect(const gdPathMatrixPtr matrix, const gdRectFPtr src, gdRectFPtr dst);
+
 double _gd_matrix_transformed_circle_major_axis (const gdPathMatrixPtr matrix, double radius);
 int _matrix_has_unity_scale (const gdPathMatrixPtr matrix);
 

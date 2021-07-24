@@ -35,11 +35,16 @@ gdContextSetSourceRgb(gdContextPtr context, double r, double g, double b)
 }
 
 BGD_DECLARE(void)
+gdContextSetSourceSurface(gdContextPtr context, gdSurfacePtr surface, double x, double y)
+{
+    gdPaintSetSourceSurface(context, surface, x, y);
+}
+
+BGD_DECLARE(void)
 gdContextNewPath(gdContextPtr context)
 {
     gdPathClear(context->path);
 }
-
 
 BGD_DECLARE(gdContextPtr)
 gdContextCreate(gdSurfacePtr surface)
@@ -130,6 +135,23 @@ gdContextClipPreserve(gdContextPtr context)
     }
 }
 
+BGD_DECLARE(void)
+gdContextPaint(gdContextPtr context)
+{
+    gdSpanRlePtr rle;
+    gdStatePtr state = context->state;
+    if(state->clippath==NULL && context->clippath == NULL) {
+        gdPathMatrix matrix;
+        gdPathPtr path = gdPathCreate();
+        gdPathAddRectangle(path, context->clip.x, context->clip.y, context->clip.w, context->clip.h);
+        //gdPathMatrixInitIdentity(&matrix);
+        context->clippath = gdSpanRleCreate();
+        gdSpanRleRasterize(context->clippath, path, &state->matrix, &context->clip, NULL, gdFillRuleNonZero);
+        gdPathDestroy(path);
+    }
+    rle = state->clippath ? state->clippath : context->clippath;
+    gdPathBlend(context, rle);
+}
 
 BGD_DECLARE(void)
 gdContextClip(gdContextPtr context)
@@ -213,6 +235,12 @@ BGD_DECLARE(void)
 gdContextNegativeArc(gdContextPtr context, double cx, double cy, double r, double a0, double a1)
 {
     gdPathAddArc(context->path, cx, cy, r, a0, a1, 1);
+}
+
+BGD_DECLARE(void)
+    gdContextRectangle(gdContextPtr context, double x, double y, double w, double h)
+{
+    gdPathAddRectangle(context->path, x, y, w, h);
 }
 
 BGD_DECLARE(void)
