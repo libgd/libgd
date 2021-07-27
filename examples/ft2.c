@@ -670,7 +670,11 @@ int main(int argc,
     gdContextStroke(cr);
 
     save_png(surface, "ft2.png");
+    gdPathPatternDestroy(pattern);
+    gdPaintDestroy(paint);
     gdContextDestroy(cr);
+    gdSurfaceDestroy(surface_fill);
     gdSurfaceDestroy(surface);;
+
     return status;
 }
