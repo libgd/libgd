@@ -286,7 +286,7 @@ textLayout(uint32_t *text, unsigned int len,
         return 0;
     }
 
-    FT_UInt glyph_index = 0, previous = 0;
+    FT_UInt glyph_index = 0;
     FT_Vector delta;
     FT_Error err;
     info = (glyphInfo*) malloc(sizeof (glyphInfo) * len);
@@ -311,12 +311,6 @@ textLayout(uint32_t *text, unsigned int len,
             info[count - 1].x_advance += delta.x;
         info[count].x_advance = face->glyph->metrics.horiAdvance;
         info[count].cluster = count;
-
-        /* carriage returns or newlines */
-        if (text[count] == '\r' || text[count] == '\n')
-            previous = 0;	/* clear kerning flag */
-        else
-            previous = glyph_index;
     }
 
 
@@ -413,7 +407,6 @@ char * gdContextString(gdContextPtr cr, const char *fontlist,
     font_t *font;
     fontkey_t fontkey;
     const char *next;
-    char *tmpstr = 0;
     uint32_t *text;
     glyphInfo *info = NULL;
     ssize_t count;
@@ -429,12 +422,10 @@ char * gdContextString(gdContextPtr cr, const char *fontlist,
     fontkey.fontlist = fontlist;
     fontkey.flags = 0;
     fontkey.library = &library;
-    font = (font_t *) &fontkey;
     char *error;
     font = fontFetch(&error, &fontkey, "/home/pierre/projects/libgd/libgd/build/EBGaramond08-Regular.ttf");
     face = font->face;		/* shortcut */
     FT_Vector delta;
-//    FT_Matrix matrix;
     matrix.xx = 1L * multiplier;;
     matrix.xy = 0L * multiplier;
     matrix.yx = 0L * multiplier;
@@ -492,28 +483,23 @@ char * gdContextString(gdContextPtr cr, const char *fontlist,
     while (*next) {
         int len;
         ch = *next;
-        switch (encoding) {
-            case gdFTEX_Unicode: {
-                /* use UTF-8 mapping from ASCII */
-                len = gdTcl_UtfToUniChar (next, &ch);
-                /* EAM DEBUG */
-                /* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
-                /* 2.0.24: David R. Morrison: use the more complete ifdef here. */
-                if (charmap->encoding == FT_ENCODING_MS_SYMBOL) {
-                    /* I do not know the significance of the constant 0xf000. */
-                    /* It was determined by inspection of the character codes */
-                    /* stored in Microsoft font symbol.ttf                    */
-                    ch |= 0xf000;
-                }
-                /* EAM DEBUG */
-                next += len;
-            }
-                break;
-            default:
-                ch &= 0xFF;
-                next++;
-                break;
+
+
+        /* use UTF-8 mapping from ASCII */
+        len = gdTcl_UtfToUniChar (next, &ch);
+        /* EAM DEBUG */
+        /* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
+        /* 2.0.24: David R. Morrison: use the more complete ifdef here. */
+        if (charmap->encoding == FT_ENCODING_MS_SYMBOL) {
+            /* I do not know the significance of the constant 0xf000. */
+            /* It was determined by inspection of the character codes */
+            /* stored in Microsoft font symbol.ttf                    */
+            ch |= 0xf000;
         }
+        /* EAM DEBUG */
+        next += len;
+
+
         text[i] = ch;
         i++;
     }
@@ -524,7 +510,6 @@ char * gdContextString(gdContextPtr cr, const char *fontlist,
 
     if (count < 0) {
         free (text);
-        free (tmpstr);
         return "Problem doing text layout";
     }
 
@@ -563,8 +548,6 @@ char * gdContextString(gdContextPtr cr, const char *fontlist,
         /* load glyph into the slot (erase previous one) */
         err = FT_Load_Glyph (face, glyph_index, render_mode);
         if (err) {
-            if (tmpstr)
-                free (tmpstr);
             free(text);
             return "Problem loading glyph";
         }
@@ -576,8 +559,6 @@ char * gdContextString(gdContextPtr cr, const char *fontlist,
         /* load glyph again into the slot (erase previous one)  - this time with scaling */
         err = FT_Load_Glyph (face, glyph_index, render_mode);
         if (err) {
-            if (tmpstr)
-                free (tmpstr);
             free(text);
             return "Problem loading glyph";
         }
@@ -596,9 +577,6 @@ char * gdContextString(gdContextPtr cr, const char *fontlist,
         err = FT_Outline_Decompose(&outline, &callbacks, glyph_path);
 
         if (err) {
-            //FT_Done_Glyph(image);
-            if (tmpstr)
-                free (tmpstr);
             free(text);
             return "Problem rendering glyph";
         }
@@ -627,8 +605,6 @@ char * gdContextString(gdContextPtr cr, const char *fontlist,
     FT_Done_Size (platform_independent);
     FT_Done_Size (platform_specific);
     fontRelease(font);
-    if (tmpstr)
-        free (tmpstr);
     return (char *) NULL;
 }
 
