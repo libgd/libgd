@@ -2091,6 +2091,7 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
       gdPathOpsMoveTo,
       gdPathOpsLineTo,
       gdPathOpsCubicTo,
+      gdPathOpsQuadTo,
       gdPathOpsClose
    } gdPathOps;
    typedef gdPathOps *gdPathOpsPtr;
@@ -2164,6 +2165,7 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    gdContextClipPreserve(gdContextPtr context);
    BGD_DECLARE(void)
    gdContextNewPath(gdContextPtr context);
+   BGD_DECLARE(void) gdContextAppendPath(gdContextPtr cr, gdPathPtr source);
 
    BGD_DECLARE(void)
    gdContextSetSourceRgba(gdContextPtr context, double r, double g, double b, double a);
@@ -2191,6 +2193,8 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
 
    BGD_DECLARE(void)
    gdContextCurveTo(gdContextPtr context, double x1, double y1, double x2, double y2, double x3, double y3);
+   BGD_DECLARE(void)
+   gdContextQuadTo(gdContextPtr context, double x1, double y1, double x2, double y2);
    BGD_DECLARE(void)
    gdContextArc(gdContextPtr context, double cx, double cy, double r, double a0, double a1);
    BGD_DECLARE(void)
@@ -2241,10 +2245,21 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    BGD_DECLARE(void)
    gdPathMatrixInitScale(gdPathMatrixPtr matrix, double x, double y);
    BGD_DECLARE(void)
+   gdPathMatrixInitTranslate(gdPathMatrixPtr matrix, double x, double y);
+   BGD_DECLARE(void)
    gdPathMatrixRotate(gdPathMatrixPtr matrix, double radians);
    BGD_DECLARE(void)
    gdPathMatrixScale(gdPathMatrixPtr matrix, double x, double y);
 
+    BGD_DECLARE(gdPathPtr) gdPathCreate();
+    BGD_DECLARE(void) gdPathDestroy(gdPathPtr path);
+    BGD_DECLARE(void) gdPathAppendPath(gdPathPtr path, const gdPathPtr source);
+    BGD_DECLARE(void) gdPathTransform(gdPathPtr path, const gdPathMatrixPtr matrix);
+    BGD_DECLARE(void) gdPathMoveTo(gdPathPtr path, double x, double y);
+    BGD_DECLARE(void) gdPathLineTo(gdPathPtr path, double x, double y);
+    BGD_DECLARE(void) gdPathQuadTo(gdPathPtr path, double x1, double y1, double x2, double y2);
+    BGD_DECLARE(void) gdPathCurveTo(gdPathPtr path, double x1, double y1, double x2, double y2, double x3, double y3);
+    BGD_DECLARE(void) gdPathClose(gdPathPtr path);
 /* newfangled special effects */
 #include "gdfx.h"
 

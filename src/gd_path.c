@@ -212,7 +212,7 @@ void gdStateDestroy(gdStatePtr state)
     gdFree(state);
 }
 
-gdPathPtr gdPathCreate()
+BGD_DECLARE(gdPathPtr) gdPathCreate()
 {
     gdPathPtr path = gdMalloc(sizeof(gdPath));
     if (!path)
@@ -244,6 +244,34 @@ gdPathPtr gdPathDuplicate(const gdPathPtr path)
     result->start = path->start;
 
     return result;
+}
+
+
+BGD_DECLARE(void) gdPathAppendPath(gdPathPtr path, const gdPathPtr source)
+{
+    gdArrayAppendMultiple(&path->elements,
+                          gdArrayGetData(&source->elements),
+                          gdArrayNumElements(&source->elements));
+    gdArrayAppendMultiple(&path->points,
+                          gdArrayGetData(&source->points),
+                          gdArrayNumElements(&source->points));
+
+    path->contours += source->contours;
+    path->start = source->start;
+}
+
+BGD_DECLARE(void) gdPathTransform(gdPathPtr path, const gdPathMatrixPtr matrix)
+{
+    gdPointFPtr p;
+    unsigned int numElements = gdArrayNumElements(&path->points);
+    unsigned int i;
+
+    //memset(p, 0, sizeof(gdPointF) * 3);
+    for (i = 0; i < numElements; i++)
+    {
+        p = (gdPointFPtr)gdArrayIndex(&path->points, i);
+        gdPathMatrixMapPoint(matrix, p, p);
+    }
 }
 
 static inline void _path_get_current_point(const gdPathPtr path, double *x, double *y)
@@ -364,23 +392,26 @@ gdPathPtr gdPathDuplicateFlattened(const gdPathPtr path)
         const gdPathOpsPtr cur_elem = gdArrayIndex(&path->elements, i);
         switch (*cur_elem)
         {
-        case gdPathOpsMoveTo:
-            gdPathMoveTo(result, points[0].x, points[0].y);
-            points += 1;
-            break;
-        case gdPathOpsLineTo:
-        case gdPathOpsClose:
-            gdPathLineTo(result, points[0].x, points[0].y);
-            points += 1;
-            break;
-        case gdPathOpsCubicTo:
-        {
-            gdPointF p0;
-            _path_get_current_point(result, &p0.x, &p0.y);
-            _cubic_flatten(result, &p0, points, points + 1, points + 2);
-            points += 3;
-            break;
-        }
+            case gdPathOpsMoveTo:
+                gdPathMoveTo(result, points[0].x, points[0].y);
+                points += 1;
+                break;
+            case gdPathOpsLineTo:
+            case gdPathOpsClose:
+                gdPathLineTo(result, points[0].x, points[0].y);
+                points += 1;
+                break;
+            case gdPathOpsCubicTo:
+            {
+                gdPointF p0;
+                _path_get_current_point(result, &p0.x, &p0.y);
+                _cubic_flatten(result, &p0, points, points + 1, points + 2);
+                points += 3;
+                break;
+            }
+            default:
+                // Only to silent compiler
+                break;
         }
     }
     return result;
@@ -394,7 +425,7 @@ gdPathPtr gdPathAddRef(gdPathPtr path)
     return path;
 }
 
-void gdPathDestroy(gdPathPtr path)
+BGD_DECLARE(void) gdPathDestroy(gdPathPtr path)
 {
     if (path == NULL)
         return;
@@ -465,6 +496,8 @@ void gdPathDumpPathTransform(const gdPathPtr path, const gdPathMatrixPtr matrix)
             printf("Outline close");
             pointsIndex += 1;
             break;
+        default:
+                break;
         }
         printf("\n-------\n");
     }
@@ -478,7 +511,7 @@ static inline void _relativeTo(const gdPathPtr path, double *x, double *y)
     *y += _y;
 }
 
-void gdPathMoveTo(gdPathPtr path, double x, double y)
+BGD_DECLARE(void) gdPathMoveTo(gdPathPtr path, double x, double y)
 {
     const gdPathOps op = gdPathOpsMoveTo;
     gdPointF point;
@@ -493,7 +526,7 @@ void gdPathMoveTo(gdPathPtr path, double x, double y)
     path->start.y = y;
 }
 
-void gdPathLineTo(gdPathPtr path, double x, double y)
+BGD_DECLARE(void) gdPathLineTo(gdPathPtr path, double x, double y)
 {
     const gdPathOps op = gdPathOpsLineTo;
     gdPointF point;
@@ -504,13 +537,13 @@ void gdPathLineTo(gdPathPtr path, double x, double y)
     point.y = y;
     gdArrayAppend(&path->points, &point);
 }
-void gdPathRelLineTo(gdPathPtr path, double dx, double dy)
+BGD_DECLARE(void) gdPathRelLineTo(gdPathPtr path, double dx, double dy)
 {
     _relativeTo(path, &dx, &dy);
     gdPathLineTo(path, dx, dy);
 }
 
-void gdPathCurveTo(gdPathPtr path, double x1, double y1, double x2, double y2, double x3, double y3)
+BGD_DECLARE(void) gdPathCurveTo(gdPathPtr path, double x1, double y1, double x2, double y2, double x3, double y3)
 {
     const gdPathOps op = gdPathOpsCubicTo;
     gdPointF points[3];
@@ -525,6 +558,18 @@ void gdPathCurveTo(gdPathPtr path, double x1, double y1, double x2, double y2, d
     gdArrayAppend(&path->points, &points[0]);
     gdArrayAppend(&path->points, &points[1]);
     gdArrayAppend(&path->points, &points[2]);
+}
+
+BGD_DECLARE(void) gdPathQuadTo(gdPathPtr path, double x1, double y1, double x2, double y2)
+{
+    double x, y;
+    _path_get_current_point(path, &x, &y);
+
+    double cx = 2.0 / 3.0 * x1 + 1.0 / 3.0 * x;
+    double cy = 2.0 / 3.0 * y1 + 1.0 / 3.0 * y;
+    double cx1 = 2.0 / 3.0 * x1 + 1.0 / 3.0 * x2;
+    double cy1 = 2.0 / 3.0 * y1 + 1.0 / 3.0 * y2;
+    gdPathCurveTo(path, cx, cy, cx1, cy1, x2, y2);
 }
 
 /*
@@ -593,7 +638,7 @@ void gdPathAddRectangle(gdPathPtr path, double x, double y, double w, double h)
     gdPathClose(path);
 }
 
-void gdPathClose(gdPathPtr path)
+BGD_DECLARE(void) gdPathClose(gdPathPtr path)
 {
     const int numElements = gdArrayNumElements(&path->elements);
     const int numPoints = gdArrayNumElements(&path->points);

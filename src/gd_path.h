@@ -48,6 +48,7 @@ void gdPaintSetSourceSurface(gdContextPtr context, gdSurfacePtr surface, double 
 void gdPathPatternDestroy(gdPathPatternPtr pattern);
 
 void gdPathCurveTo(gdPathPtr path, double x1, double y1, double x2, double y2, double x3, double y3);
+void gdPathQuadTo(gdPathPtr path, double x1, double y1, double x2, double y2);
 void gdPathLineTo(gdPathPtr path, double x, double y);
 void gdPathRelLineTo(gdPathPtr path, double dx, double dy);
 void gdPathMoveTo(gdPathPtr path, double x, double y);

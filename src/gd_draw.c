@@ -46,6 +46,11 @@ gdContextNewPath(gdContextPtr context)
     gdPathClear(context->path);
 }
 
+BGD_DECLARE(void) gdContextAppendPath(gdContextPtr cr, gdPathPtr source)
+{
+    gdPathAppendPath(cr->path, source);
+}
+
 BGD_DECLARE(gdContextPtr)
 gdContextCreate(gdSurfacePtr surface)
 {
@@ -101,6 +106,7 @@ gdContextFillPreserve(gdContextPtr context)
 {
     gdStatePtr state = context->state;
     gdSpanRleClear(context->rle);
+    //gdPathDumpPathTransform(context->path, NULL);
     gdSpanRleRasterize(context->rle, context->path, &state->matrix, &context->clip, NULL, state->winding);
     gdSpanRlePathClip(context->rle, state->clippath);
     gdPathBlend(context, context->rle);
@@ -141,10 +147,8 @@ gdContextPaint(gdContextPtr context)
     gdSpanRlePtr rle;
     gdStatePtr state = context->state;
     if(state->clippath==NULL && context->clippath == NULL) {
-        gdPathMatrix matrix;
         gdPathPtr path = gdPathCreate();
         gdPathAddRectangle(path, context->clip.x, context->clip.y, context->clip.w, context->clip.h);
-        //gdPathMatrixInitIdentity(&matrix);
         context->clippath = gdSpanRleCreate();
         gdSpanRleRasterize(context->clippath, path, &state->matrix, &context->clip, NULL, gdFillRuleNonZero);
         gdPathDestroy(path);
@@ -223,6 +227,11 @@ BGD_DECLARE(void)
 gdContextCurveTo(gdContextPtr context, double x1, double y1, double x2, double y2, double x3, double y3)
 {
     gdPathCurveTo(context->path, x1, y1, x2, y2, x3, y3);
+}
+
+BGD_DECLARE(void)
+gdContextQuadTo(gdContextPtr context, double x1, double y1, double x2, double y2) {
+    gdPathQuadTo(context->path, x1, y1, x2, y2);
 }
 
 BGD_DECLARE(void)

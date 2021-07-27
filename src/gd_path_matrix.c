@@ -7,7 +7,10 @@
 #include "gd.h"
 #include "gd_path_matrix.h"
 
-void gdPathMatrixInit(gdPathMatrixPtr matrix, double m00, double m10, double m01, double m11, double m02, double m12)
+void gdPathMatrixInit(gdPathMatrixPtr matrix,
+                      double m00, double m10,
+                      double m01, double m11,
+                      double m02, double m12)
 {
     matrix->m00 = m00; matrix->m10 = m10;
     matrix->m01 = m01; matrix->m11 = m11;

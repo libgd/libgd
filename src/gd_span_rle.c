@@ -310,6 +310,8 @@ static GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMa
             gd_ft_outline_close(outline);
             pointsIndex += 1;
             break;
+         case gdPathOpsQuadTo:
+                break;
         }
     }
 
