@@ -63,10 +63,9 @@ endif(PNG_FOUND AND JPEG_FOUND)
 
 if (PNG_FOUND AND FREETYPE_FOUND)
 	if (UNIX)
-		target_link_libraries(ft m)
 		target_link_libraries(ft2 m)
 	endif (UNIX)
-endif(PNG_FOUND AND JPEG_FOUND)
+endif(PNG_FOUND AND FREETYPE_FOUND)
 
 if (WIN32 AND NOT MINGW AND NOT MSYS)
 	add_executable(windows WIN32 "windows.c")
