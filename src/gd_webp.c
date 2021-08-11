@@ -61,15 +61,15 @@
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile)
 {
-	gdImagePtr im;
-	gdIOCtx *in = gdNewFileCtx(inFile);
-	if (!in) {
-		return 0;
-	}
-	im = gdImageCreateFromWebpCtx(in);
-	in->gd_free(in);
+    gdImagePtr im;
+    gdIOCtx *in = gdNewFileCtx(inFile);
+    if (!in) {
+        return 0;
+    }
+    im = gdImageCreateFromWebpCtx(in);
+    in->gd_free(in);
 
-	return im;
+    return im;
 }
 
 
@@ -85,15 +85,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile)
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
 {
-	gdImagePtr im;
-	gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
-	if (!in)
-		return 0;
-	im = gdImageCreateFromWebpCtx(in);
-	in->gd_free(in);
-	return im;
+    gdImagePtr im;
+    gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
+    if (!in)
+        return 0;
+    im = gdImageCreateFromWebpCtx(in);
+    in->gd_free(in);
+    return im;
 }
 
+// RIFFZ...WEBP
+// 012345678901
 /*
   Function: gdImageCreateFromWebpCtx
 
@@ -101,137 +103,134 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 {
-	int    width, height;
-	uint8_t   *filedata = NULL;
-	uint8_t    *argb = NULL;
-	unsigned char   *read, *temp;
-	size_t size = 0, n;
-	gdImagePtr im;
-	int x, y;
-	uint8_t *p;
+    int    width, height;
+    uint8_t   *filedata = NULL;
+    uint8_t    *argb = NULL;
+    unsigned char   *read, *temp;
+    size_t size = 0, n;
+    gdImagePtr im;
+    int x, y;
+    uint8_t *p;
 
-	do {
-		temp = gdRealloc(filedata, size+GD_WEBP_ALLOC_STEP);
-		if (temp) {
-			filedata = temp;
-			read = temp + size;
-		} else {
-			if (filedata) {
-				gdFree(filedata);
-			}
-			gd_error("WebP decode: realloc failed");
-			return NULL;
-		}
+    do {
+        temp = gdRealloc(filedata, size+GD_WEBP_ALLOC_STEP);
+        if (temp) {
+            filedata = temp;
+            read = temp + size;
+        } else {
+            if (filedata) {
+                gdFree(filedata);
+            }
+            gd_error("WebP decode: realloc failed");
+            return NULL;
+        }
 
-		n = gdGetBuf(read, GD_WEBP_ALLOC_STEP, infile);
-		if (n>0 && n!=EOF) {
-			size += n;
-		}
-	} while (n>0 && n!=EOF);
+        n = gdGetBuf(read, GD_WEBP_ALLOC_STEP, infile);
+        if (n>0 && n!=EOF) {
+            size += n;
+        }
+    } while (n>0 && n!=EOF);
 
-	if (WebPGetInfo(filedata,size, &width, &height) == 0) {
-		gd_error("gd-webp cannot get webp info");
-		gdFree(temp);
-		return NULL;
-	}
+    if (WebPGetInfo(filedata,size, &width, &height) == 0) {
+        gd_error("gd-webp cannot get webp info");
+        gdFree(temp);
+        return NULL;
+    }
 
-	im = gdImageCreateTrueColor(width, height);
-	if (!im) {
-		gdFree(temp);
-		return NULL;
-	}
-	argb = WebPDecodeARGB(filedata, size, &width, &height);
-	if (!argb) {
-		gd_error("gd-webp cannot allocate temporary buffer");
-		gdFree(temp);
-		gdImageDestroy(im);
-		return NULL;
-	}
-	for (y = 0, p = argb;  y < height; y++) {
-		for (x = 0; x < width; x++) {
-			register uint8_t a = gdAlphaMax - (*(p++) >> 1);
-			register uint8_t r = *(p++);
-			register uint8_t g = *(p++);
-			register uint8_t b = *(p++);
-			im->tpixels[y][x] = gdTrueColorAlpha(r, g, b, a);
-		}
-	}
-	/* do not use gdFree here, in case gdFree/alloc is mapped to something else than libc */
-	free(argb);
-	gdFree(temp);
-	im->saveAlphaFlag = 1;
-	return im;
+    im = gdImageCreateTrueColor(width, height);
+    if (!im) {
+        gdFree(temp);
+        return NULL;
+    }
+    argb = WebPDecodeARGB(filedata, size, &width, &height);
+    if (!argb) {
+        gd_error("gd-webp cannot allocate temporary buffer");
+        gdFree(temp);
+        gdImageDestroy(im);
+        return NULL;
+    }
+    for (y = 0, p = argb;  y < height; y++) {
+        for (x = 0; x < width; x++) {
+            register uint8_t a = gdAlphaMax - (*(p++) >> 1);
+            register uint8_t r = *(p++);
+            register uint8_t g = *(p++);
+            register uint8_t b = *(p++);
+            im->tpixels[y][x] = gdTrueColorAlpha(r, g, b, a);
+        }
+    }
+    /* do not use gdFree here, in case gdFree/alloc is mapped to something else than libc */
+    free(argb);
+    gdFree(temp);
+    im->saveAlphaFlag = 1;
+    return im;
 }
-
 
 /* returns 0 on success, 1 on failure */
 static int _gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 {
-	uint8_t *argb;
-	int x, y;
-	uint8_t *p;
-	uint8_t *out;
-	size_t out_size;
+    uint8_t *argb;
+    int x, y;
+    uint8_t *p;
+    uint8_t *out;
+    size_t out_size;
     int ret = 0;
 
-	if (im == NULL) {
-		return 1;
-	}
+    if (im == NULL) {
+        return 1;
+    }
 
-	if (!gdImageTrueColor(im)) {
-		gd_error("Palette image not supported by webp");
-		return 1;
-	}
+    if (!gdImageTrueColor(im)) {
+        gd_error("Palette image not supported by webp");
+        return 1;
+    }
 
-	if (quality == -1) {
-		quality = 80;
-	}
+    if (quality == -1) {
+        quality = 80;
+    }
 
-	if (overflow2(gdImageSX(im), 4)) {
-		return 1;
-	}
+    if (overflow2(gdImageSX(im), 4)) {
+        return 1;
+    }
 
-	if (overflow2(gdImageSX(im) * 4, gdImageSY(im))) {
-		return 1;
-	}
+    if (overflow2(gdImageSX(im) * 4, gdImageSY(im))) {
+        return 1;
+    }
 
-	argb = (uint8_t *)gdMalloc(gdImageSX(im) * 4 * gdImageSY(im));
-	if (!argb) {
-		return 1;
-	}
-	p = argb;
-	for (y = 0; y < gdImageSY(im); y++) {
-		for (x = 0; x < gdImageSX(im); x++) {
-			register int c;
-			register char a;
-			c = im->tpixels[y][x];
-			a = gdTrueColorGetAlpha(c);
-			if (a == 127) {
-				a = 0;
-			} else {
-				a = 255 - ((a << 1) + (a >> 6));
-			}
-			*(p++) = gdTrueColorGetRed(c);
-			*(p++) = gdTrueColorGetGreen(c);
-			*(p++) = gdTrueColorGetBlue(c);
-			*(p++) = a;
-		}
-	}
-	out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
-	if (out_size == 0) {
-		gd_error("gd-webp encoding failed");
+    argb = (uint8_t *)gdMalloc(gdImageSX(im) * 4 * gdImageSY(im));
+    if (!argb) {
+        return 1;
+    }
+    p = argb;
+    for (y = 0; y < gdImageSY(im); y++) {
+        for (x = 0; x < gdImageSX(im); x++) {
+            register int c;
+            register char a;
+            c = im->tpixels[y][x];
+            a = gdTrueColorGetAlpha(c);
+            if (a == 127) {
+                a = 0;
+            } else {
+                a = 255 - ((a << 1) + (a >> 6));
+            }
+            *(p++) = gdTrueColorGetRed(c);
+            *(p++) = gdTrueColorGetGreen(c);
+            *(p++) = gdTrueColorGetBlue(c);
+            *(p++) = a;
+        }
+    }
+    out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
+    if (out_size == 0) {
+        gd_error("gd-webp encoding failed");
         ret = 1;
-		goto freeargb;
-	}
-	gdPutBuf(out, out_size, outfile);
-	free(out);
-
+        goto freeargb;
+    }
+    gdPutBuf(out, out_size, outfile);
+    free(out);
 freeargb:
-	gdFree(argb);
+    gdFree(argb);
 
     return ret;
 }
-
 
 /*
   Function: gdImageWebpCtx
@@ -251,7 +250,7 @@ freeargb:
 */
 BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 {
-	_gdImageWebpCtx(im, outfile, quality);
+    _gdImageWebpCtx(im, outfile, quality);
 }
 
 /*
@@ -264,10 +263,10 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
     is no penalty for doing so. <gdImageWebpEx> does not close the file;
     your code must do so.
 
-	If _quality_ is -1, a reasonable quality value (which should yield a
-	good general quality / size tradeoff for most situations) is used. Otherwise
-	_quality_ should be a value in the range 0-100, higher quality values
-	usually implying both higher quality and larger image sizes.
+    If _quality_ is -1, a reasonable quality value (which should yield a
+    good general quality / size tradeoff for most situations) is used. Otherwise
+    _quality_ should be a value in the range 0-100, higher quality values
+    usually implying both higher quality and larger image sizes.
 
   Variants:
 
@@ -287,12 +286,12 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 */
 BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quality)
 {
-	gdIOCtx *out = gdNewFileCtx(outFile);
-	if (out == NULL) {
-		return;
-	}
-	_gdImageWebpCtx(im, out, quality);
-	out->gd_free(out);
+    gdIOCtx *out = gdNewFileCtx(outFile);
+    if (out == NULL) {
+        return;
+    }
+    _gdImageWebpCtx(im, out, quality);
+    out->gd_free(out);
 }
 
 /*
@@ -311,12 +310,12 @@ BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quality)
 */
 BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 {
-	gdIOCtx *out = gdNewFileCtx(outFile);
-	if (out == NULL) {
-		return;
-	}
-	_gdImageWebpCtx(im, out, -1);
-	out->gd_free(out);
+    gdIOCtx *out = gdNewFileCtx(outFile);
+    if (out == NULL) {
+        return;
+    }
+    _gdImageWebpCtx(im, out, -1);
+    out->gd_free(out);
 }
 
 /*
@@ -326,19 +325,19 @@ BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 */
 BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 {
-	void *rv;
-	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
-	if (out == NULL) {
-		return NULL;
-	}
-	if (_gdImageWebpCtx(im, out, -1)) {
-		rv = NULL;
-	} else {
-		rv = gdDPExtractData(out, size);
-	}
-	out->gd_free(out);
+    void *rv;
+    gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+    if (out == NULL) {
+        return NULL;
+    }
+    if (_gdImageWebpCtx(im, out, -1)) {
+        rv = NULL;
+    } else {
+        rv = gdDPExtractData(out, size);
+    }
+    out->gd_free(out);
 
-	return rv;
+    return rv;
 }
 
 /*
@@ -348,70 +347,455 @@ BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 */
 BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 {
-	void *rv;
-	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
-	if (out == NULL) {
-		return NULL;
-	}
-	if (_gdImageWebpCtx(im, out, quality)) {
+    void *rv;
+    gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+    if (out == NULL) {
+        return NULL;
+    }
+    if (_gdImageWebpCtx(im, out, quality)) {
         rv = NULL;
     } else {
         rv = gdDPExtractData(out, size);
     }
-	out->gd_free(out);
-	return rv;
+    out->gd_free(out);
+    return rv;
 }
+
+
+
+static inline int
+multiply_alpha (int alpha, int color)
+{
+    int temp = (alpha * color) + 0x80;
+    return ((temp + (temp >> 8)) >> 8);
+}
+
+/* returns 0 on success, 1 on failure */
+static int _gdSurfaceWebpCtx(gdSurfacePtr surface, gdIOCtx* outfile, int quality)
+{
+    uint8_t *argb;
+    int x, y;
+    uint8_t *p;
+    uint8_t *out;
+    size_t out_size;
+    int ret = 0;
+
+    if (surface == NULL) {
+        return 1;
+    }
+
+    if (quality == -1) {
+        quality = 80;
+    }
+
+    if (overflow2(gdSurfaceGetWidth(surface), 4)) {
+        return 1;
+    }
+
+    if (overflow2(gdSurfaceGetWidth(surface) * 4, gdSurfaceGetHeight(surface))) {
+        return 1;
+    }
+
+    argb = (uint8_t *)gdMalloc(gdSurfaceGetHeight(surface) * 4 * gdSurfaceGetWidth(surface));
+    if (!argb) {
+        return 1;
+    }
+    p = argb;
+    uint8_t *surface_data = gdSurfaceGetData(surface);
+    uint32_t stride = gdSurfaceGetStride(surface);
+    for (y = 0; y < gdSurfaceGetHeight(surface); y++) {
+        const unsigned int* src = (unsigned int*)(surface_data + stride * y);
+        for (x = 0; x < gdSurfaceGetWidth(surface); x++) {
+            const unsigned int a = *(src+x) >> 24;
+            if (a == 0) {
+                *p++ = 0;
+                *p++ = 0;
+                *p++ = 0;
+                *p++ = 0;
+                continue;
+            }
+            const uint32_t a_div_255 = 255/a;
+            *p++ = (( *(src+x) >> 16) & 0xff) * a_div_255;
+            *p++ = (( *(src+x) >> 8) & 0xff) * a_div_255;
+            *p++ = (( *(src+x) >> 0) & 0xff) * a_div_255;
+            *p++ = a;
+        }
+    }
+    out_size = WebPEncodeRGBA(argb, gdSurfaceGetWidth(surface), gdSurfaceGetHeight(surface), gdSurfaceGetWidth(surface)*4, quality, &out);
+    if (out_size == 0) {
+        gd_error("gd-webp encoding failed");
+        ret = 1;
+        goto freeargb;
+    }
+    gdPutBuf(out, out_size, outfile);
+    free(out);
+freeargb:
+    gdFree(argb);
+
+    return ret;
+}
+
+/*
+  Function: gdImageWebpEx
+
+    <gdImageWebpEx> outputs the specified image to the specified file in
+    WebP format. The file must be open for writing. Under MSDOS and
+    all versions of Windows, it is important to use "wb" as opposed to
+    simply "w" as the mode when opening the file, and under Unix there
+    is no penalty for doing so. <gdImageWebpEx> does not close the file;
+    your code must do so.
+
+    If _quality_ is -1, a reasonable quality value (which should yield a
+    good general quality / size tradeoff for most situations) is used. Otherwise
+    _quality_ should be a value in the range 0-100, higher quality values
+    usually implying both higher quality and larger image sizes.
+
+  Variants:
+
+    <gdImageWebpCtx> stores the image using a <gdIOCtx> struct.
+
+    <gdImageWebpPtrEx> stores the image to RAM.
+
+  Parameters:
+
+    im      - The image to save.
+    outFile - The FILE pointer to write to.
+    quality - Compression quality (0-100).
+
+  Returns:
+
+    Nothing.
+*/
+BGD_DECLARE(void) gdSurfaceWebpEx (gdSurfacePtr surface, FILE * outFile, int quality)
+{
+    gdIOCtx *out = gdNewFileCtx(outFile);
+    if (out == NULL) {
+        return;
+    }
+    _gdSurfaceWebpCtx(surface, out, quality);
+    out->gd_free(out);
+}
+
+
+/*
+  Function: gdImageWebpPtr
+
+    See <gdImageWebpEx>.
+*/
+BGD_DECLARE(void *) gdSurfaceWebpPtr (gdSurfacePtr surface, int *size)
+{
+    void *rv;
+    gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+    if (out == NULL) {
+        return NULL;
+    }
+    if (_gdSurfaceWebpCtx(surface, out, -1)) {
+        rv = NULL;
+    } else {
+        rv = gdDPExtractData(out, size);
+    }
+    out->gd_free(out);
+
+    return rv;
+}
+
+/*
+  Function: gdSurfaceWebp
+
+    Variant of <gdImageWebpEx> which uses the default quality (-1).
+
+  Parameters:
+
+    im      - The image to save
+    outFile - The FILE pointer to write to.
+
+  Returns:
+
+    Nothing.
+*/
+BGD_DECLARE(void) gdSurfaceWebp (gdSurfacePtr surface, FILE * outFile)
+{
+    gdIOCtx *out = gdNewFileCtx(outFile);
+    if (out == NULL) {
+        return;
+    }
+    _gdSurfaceWebpCtx(surface, out, -1);
+    out->gd_free(out);
+}
+
+/*
+  Function: gdImageWebpPtrEx
+
+    See <gdImageWebpEx>.
+*/
+BGD_DECLARE(void *) gdSurfaceWebpPtrEx (gdSurfacePtr surface, int *size, int quality)
+{
+    void *rv;
+    gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+    if (out == NULL) {
+        return NULL;
+    }
+    if (_gdSurfaceWebpCtx(surface, out, quality)) {
+        rv = NULL;
+    } else {
+        rv = gdDPExtractData(out, size);
+    }
+    out->gd_free(out);
+    return rv;
+}
+
+/*
+  Function: gdImageWebpCtx
+
+    Write the image as WebP data via a <gdIOCtx>. See <gdImageWebpEx>
+    for more details.
+
+  Parameters:
+
+    im      - The image to write.
+    outfile - The output sink.
+    quality - Image quality.
+
+  Returns:
+
+    Nothing.
+*/
+BGD_DECLARE(void) gdSurfaceWebpCtx (gdSurfacePtr surface, gdIOCtx * outfile, int quality)
+{
+    _gdSurfaceWebpCtx(surface, outfile, quality);
+}
+
+
+
+/*
+  Function: gdImageCreateFromWebp
+
+    <gdImageCreateFromWebp> is called to load truecolor images from
+    WebP format files. Invoke <gdImageCreateFromWebp> with an
+    already opened pointer to a file containing the desired
+    image. <gdImageCreateFromWebp> returns a <gdImagePtr> to the new
+    truecolor image, or NULL if unable to load the image (most often
+    because the file is corrupt or does not contain a WebP
+    image). <gdImageCreateFromWebp> does not close the file.
+
+    You can inspect the sx and sy members of the image to determine
+    its size. The image must eventually be destroyed using
+    <gdImageDestroy>.
+
+    *The returned image is always a truecolor image.*
+
+  Variants:
+
+    <gdImageCreateFromWebpPtr> creates an image from WebP data
+    already in memory.
+
+    <gdImageCreateFromWebpCtx> reads its data via the function
+    pointers in a <gdIOCtx> structure.
+
+  Parameters:
+
+    infile - The input FILE pointer.
+
+  Returns:
+
+    A pointer to the new *truecolor* image.  This will need to be
+    destroyed with <gdImageDestroy> once it is no longer needed.
+
+    On error, returns NULL.
+*/
+BGD_DECLARE(gdSurfacePtr) gdSurfaceCreateFromWebp (FILE * inFile)
+{
+    gdSurfacePtr surface;
+    gdIOCtx *in = gdNewFileCtx(inFile);
+    if (!in) {
+        return 0;
+    }
+    surface = gdSurfaceCreateFromWebpCtx(in);
+    in->gd_free(in);
+
+    return surface;
+}
+
+/*
+  Function: gdImageCreateFromWebpPtr
+
+    See <gdImageCreateFromWebp>.
+
+  Parameters:
+
+    size            - size of WebP data in bytes.
+    data            - pointer to WebP data.
+*/
+BGD_DECLARE(gdSurfacePtr) gdSurfaceCreateFromWebpPtr (int size, void *data)
+{
+    gdSurfacePtr surface;
+    gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
+    if (!in)
+        return 0;
+    surface = gdSurfaceCreateFromWebpCtx(in);
+    in->gd_free(in);
+    return surface;
+}
+
+/*
+  Function: gdSurfaceCreateFromWebpCtx
+
+    See <gdImageCreateFromWebp>.
+*/
+BGD_DECLARE(gdSurfacePtr) gdSurfaceCreateFromWebpCtx (gdIOCtx * infile)
+{
+    int    width = 0, height = 0;
+    uint8_t   *filedata = NULL;
+    uint8_t    *argb = NULL;
+    unsigned char   *read, *temp;
+    size_t size = 0, n;
+    gdSurfacePtr surface;
+    // RIFFZ...WEBP
+    const uint32_t signature_length = 10;
+
+    temp = gdRealloc(filedata, size+GD_WEBP_ALLOC_STEP);
+    if (!temp) {
+        gd_error("WebP decode: realloc failed");
+        return NULL;
+    }
+    read = temp;
+    n = gdGetBuf(read, GD_WEBP_ALLOC_STEP, infile);
+    if (n < signature_length &&  n != EOF) {
+        gd_error("WebP decode: Invalid format");
+        return NULL;
+    }
+    size += n;
+    filedata = temp;
+
+    if (WebPGetInfo(filedata, size, &width, &height) < 1) {
+        gd_error("gd-webp cannot get webp info");
+        gdFree(filedata);
+        return NULL;
+    }
+
+    // LibWebP seems to consider width or height == 0 as ok
+    if (width < 1 || height < 1) {
+        gdFree(filedata);
+        gd_error("WebP decode: Zero size WebP image");
+        return NULL;
+    }
+
+    do {
+        temp = gdRealloc(filedata, size+GD_WEBP_ALLOC_STEP);
+        if (temp) {
+            filedata = temp;
+            read = temp + size;
+        } else {
+            if (filedata) {
+                gdFree(filedata);
+            }
+            gd_error("WebP decode: realloc failed");
+            return NULL;
+        }
+
+        n = gdGetBuf(read, GD_WEBP_ALLOC_STEP, infile);
+        if (n>0 && n!=EOF) {
+            size += n;
+        }
+    } while (n>0 && n!=EOF);
+
+    WebPDecoderConfig config;
+    if(!WebPInitDecoderConfig(&config)) {
+        gdFree(filedata);
+        gd_error("WebP decode: WebP decoder config initialization failed");
+        return NULL;
+    }
+    surface = gdSurfaceCreate(width, height, GD_SURFACE_ARGB32);
+    if (!surface) {
+        gdFree(filedata);
+        gd_error("WebP decode: gdSurfaceCreate failed");
+        return NULL;
+    }
+    argb = gdSurfaceGetData(surface);
+    // One can adjust some additional decoding options:
+    config.options.no_fancy_upsampling = 1;
+
+#if IS_BIG_ENDIAN
+    config.output.colorspace = MODE_Argb;
+#else
+    config.output.colorspace = MODE_bgrA;
+#endif
+
+    config.output.u.RGBA.rgba = argb;
+    config.output.u.RGBA.stride = gdSurfaceGetStride(surface);
+    config.output.u.RGBA.size = gdSurfaceGetStride(surface) * height;
+    config.output.is_external_memory = 1;
+    if (WebPGetFeatures(filedata, size, &config.input) != VP8_STATUS_OK) {
+        gd_error("WebP decode: Features options failed");
+        gdSurfaceDestroy(surface);
+        gdFree(filedata);
+        return NULL;
+    }
+
+    int res = WebPDecode(filedata, size, &config);
+    if (res != VP8_STATUS_OK) {
+        gd_error("WebP decode: Decoder failed %i", res);
+        gdSurfaceDestroy(surface);
+        WebPFreeDecBuffer(&config.output);
+        gdFree(filedata);
+        return NULL;
+    }
+    WebPFreeDecBuffer(&config.output);
+    gdFree(filedata);
+    return surface;
+}
+
 
 #else /* !HAVE_LIBWEBP */
 
 static void _noWebpError(void)
 {
-	gd_error("WEBP image support has been disabled\n");
+    gd_error("WEBP image support has been disabled\n");
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile)
 {
-	_noWebpError();
-	return NULL;
+    _noWebpError();
+    return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
 {
-	_noWebpError();
-	return NULL;
+    _noWebpError();
+    return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 {
-	_noWebpError();
-	return NULL;
+    _noWebpError();
+    return NULL;
 }
 
 BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 {
-	_noWebpError();
+    _noWebpError();
 }
 
 BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quality)
 {
-	_noWebpError();
+    _noWebpError();
 }
 
 BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 {
-	_noWebpError();
+    _noWebpError();
 }
 
 BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 {
-	_noWebpError();
-	return NULL;
+    _noWebpError();
+    return NULL;
 }
 
 BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 {
-	_noWebpError();
-	return NULL;
+    _noWebpError();
+    return NULL;
 }
 
 #endif /* HAVE_LIBWEBP */
