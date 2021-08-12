@@ -26,6 +26,11 @@
  *
  * Read and write JPEG images.
  */
+#if defined (_MSC_VER) && _MSC_VER < 1600
+#include "msinttypes/stdint.h"
+#else
+#include <stdint.h>
+#endif
 
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
@@ -1203,6 +1208,498 @@ void jpeg_gdIOCtx_dest(j_compress_ptr cinfo, gdIOCtx *outfile)
 	dest->pub.term_destination = term_destination;
 	dest->outfile = outfile;
 }
+
+
+
+/* returns 0 on success, 1 on failure */
+static int _gdSurfaceJpegCtx(gdSurfacePtr surface, gdIOCtx *outfile, int quality)
+{
+#if BITS_IN_JSAMPLE == 12
+    gd_error(
+            "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
+            "precision. This is mostly useless, because JPEGs on the web are\n"
+            "8-bit and such versions of the jpeg library won't read or write\n"
+            "them. GD doesn't support these unusual images. Edit your\n"
+            "jmorecfg.h file to specify the correct precision and completely\n"
+            "'make clean' and 'make install' libjpeg again. Sorry.\n"
+            );
+    return 1;
+#endif /* BITS_IN_JSAMPLE == 12 */
+
+    struct jpeg_compress_struct cinfo;
+    struct jpeg_error_mgr jerr;
+    /* volatile so we can gdFree it on return from longjmp */
+    volatile JSAMPROW row = 0;
+    JSAMPROW rowptr[1];
+    jmpbuf_wrapper jmpbufw;
+    JDIMENSION nlines;
+    char comment[255];
+
+    memset(&cinfo, 0, sizeof(cinfo));
+    memset(&jerr, 0, sizeof(jerr));
+
+    cinfo.err = jpeg_std_error(&jerr);
+    cinfo.client_data = &jmpbufw;
+
+    if(setjmp(jmpbufw.jmpbuf) != 0) {
+        /* we're here courtesy of longjmp */
+        if(row) {
+            gdFree(row);
+        }
+        return 1;
+    }
+
+    cinfo.err->emit_message = jpeg_emit_message;
+    cinfo.err->error_exit = fatal_jpeg_error;
+
+    jpeg_create_compress(&cinfo);
+
+    cinfo.image_width = gdSurfaceGetWidth(surface);
+    cinfo.image_height = gdSurfaceGetHeight(surface);
+    cinfo.input_components = 3; /* # of color components per pixel */
+    cinfo.in_color_space = JCS_RGB; /* colorspace of input image */
+
+    jpeg_set_defaults(&cinfo);
+
+    cinfo.density_unit = 1;
+    cinfo.X_density = GD_RESOLUTION;
+    cinfo.Y_density = GD_RESOLUTION;
+
+    if(quality >= 0) {
+        jpeg_set_quality(&cinfo, quality, TRUE);
+        if (quality >= 90) {
+            cinfo.comp_info[0].h_samp_factor = 1;
+            cinfo.comp_info[0].v_samp_factor = 1;
+        }
+    }
+
+    jpeg_gdIOCtx_dest(&cinfo, outfile);
+
+    row = (JSAMPROW)gdCalloc(1, cinfo.image_width * cinfo.input_components * sizeof(JSAMPLE));
+    if(row == 0) {
+        gd_error("gd-jpeg: error: unable to allocate JPEG row structure: gdCalloc returns NULL\n");
+        jpeg_destroy_compress(&cinfo);
+        return 1;
+    }
+
+    rowptr[0] = row;
+
+    jpeg_start_compress(&cinfo, TRUE);
+
+    sprintf(comment, "CREATOR: gd-jpeg v%s (using IJG JPEG v%d),", GD_JPEG_VERSION, JPEG_LIB_VERSION);
+
+    if(quality >= 0) {
+        sprintf (comment + strlen(comment), " quality = %d\n", quality);
+    } else {
+        strcat(comment + strlen(comment), " default quality\n");
+    }
+
+    jpeg_write_marker(&cinfo, JPEG_COM, (unsigned char *) comment, (unsigned int)strlen(comment));
+    uint8_t *surface_data = gdSurfaceGetData(surface);
+    uint32_t stride = gdSurfaceGetStride(surface);
+    for(int32_t y = 0; y <  gdSurfaceGetHeight(surface); y++) {
+            const uint32_t *src = (uint32_t *)(surface_data + stride * y);
+            register uint32_t jidx = 0;
+            for(int32_t x = 0; x < gdSurfaceGetWidth(surface); x++) {
+                // Already premultiplied, unlike TC images
+                row[jidx++] = (*(src+x) >> 16) & 0xff;
+                row[jidx++] = (*(src +x) >> 8) & 0xff;
+                row[jidx++] = (*(src +x) >> 0) & 0xff;
+            }
+
+            nlines = jpeg_write_scanlines(&cinfo, rowptr, 1);
+
+            if(nlines != 1) {
+                gd_error("gd_jpeg: warning: jpeg_write_scanlines returns %u -- expected 1\n", nlines);
+            }
+        }
+
+    jpeg_finish_compress(&cinfo);
+    jpeg_destroy_compress(&cinfo);
+    gdFree(row);
+    return 0;
+}
+
+/*
+  Function: gdSurfaceJpegCtx
+
+    Write the image as JPEG data via a <gdIOCtx>. See <gdImageJpeg>
+    for more details.
+
+  Parameters:
+
+    im      - The image to write.
+    outfile - The output sink.
+    quality - Image quality.
+
+*/
+BGD_DECLARE(void) gdSurfaceJpegCtx(gdSurfacePtr surface, gdIOCtx *outfile, int quality)
+{
+    _gdSurfaceJpegCtx(surface, outfile, quality);
+}
+
+/*
+  Function: gdSurfaceJpeg
+
+    <gdSurfaceJpeg> outputs the specified image to the specified file in
+    JPEG format. The file must be open for writing. Under MSDOS and
+    all versions of Windows, it is important to use "wb" as opposed to
+    simply "w" as the mode when opening the file, and under Unix there
+    is no penalty for doing so. <gdImageJpeg> does not close the file;
+    your code must do so.
+
+    If _quality_ is negative, the default IJG JPEG quality value (which
+    should yield a good general quality / size tradeoff for most
+    situations) is used. Otherwise, for practical purposes, _quality_
+    should be a value in the range 0-95, higher quality values usually
+    implying both higher quality and larger image sizes.
+
+    If you have set image interlacing using <gdImageInterlace>, this
+    function will interpret that to mean you wish to output a
+    progressive JPEG. Some programs (e.g., Web browsers) can display
+    progressive JPEGs incrementally; this can be useful when browsing
+    over a relatively slow communications link, for
+    example. Progressive JPEGs can also be slightly smaller than
+    sequential (non-progressive) JPEGs.
+
+  Variants:
+
+    <gdSurfaceJpegCtx> stores the image using a <gdIOCtx> struct.
+
+    <gdSurfaceJpegPtr> stores the image to RAM.
+
+  Parameters:
+
+    im      - The image to save
+    outFile - The FILE pointer to write to.
+    quality - Compression quality (0-95, 0 means use the default).
+
+  Returns:
+
+    Nothing.
+
+  Example:
+    (start code)
+
+    gdImagePtr im;
+    int black, white;
+    FILE *out;
+    // Create the image
+    im = gdSurfaceCreate(100, 100, GD_SURFACE_ARGB32);
+    //... do some operations
+    out = fopen("rect.jpg", "wb");
+    // Write JPEG using default quality
+    gdSurfaceJpeg(im, out, -1);
+    // Close file
+    fclose(out);
+    // Destroy image
+    gdSurfaceDestroy(im);
+
+    (end code)
+*/
+BGD_DECLARE(void) gdSurfaceJpeg(gdSurfacePtr surface, FILE *outFile, int quality)
+{
+    gdIOCtx *out = gdNewFileCtx(outFile);
+    if (out == NULL) return;
+    _gdSurfaceJpegCtx(surface, out, quality);
+    out->gd_free(out);
+}
+
+
+/*
+  Function: gdSurfaceJpegPtr
+
+    Identical to <gdImageJpeg> except that it returns a pointer to a
+    memory area with the JPEG data. This memory must be freed by the
+    caller when it is no longer needed.
+
+    The caller *must* invoke <gdFree>, not free().  This is because it
+    is not guaranteed that libgd will use the same implementation of
+    malloc, free, etc. as your proggram.
+
+    The 'size' parameter receives the total size of the block of
+    memory.
+
+  Parameters:
+
+    im      - The image to write
+    size    - Output: the size of the resulting image.
+    quality - Compression quality.
+
+  Returns:
+
+    A pointer to the JPEG data or NULL if an error occurred.
+
+*/
+BGD_DECLARE(void *) gdSurfaceJpegPtr(gdSurfacePtr surface, int *size, int quality)
+{
+    void *rv;
+    gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+    if (out == NULL) return NULL;
+    if (!_gdSurfaceJpegCtx(surface, out, quality)) {
+        rv = gdDPExtractData(out, size);
+    } else {
+        rv = NULL;
+    }
+    out->gd_free(out);
+    return rv;
+}
+
+
+/*
+  Function: gdImageCreateFromJpegCtxEx
+
+  See <gdImageCreateFromJpeg>.
+*/
+BGD_DECLARE(gdSurfacePtr) gdSurfaceCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning)
+{
+
+#if BITS_IN_JSAMPLE == 12
+    gd_error_ex(GD_ERROR,
+                "gd-jpeg: error: jpeg library was compiled for 12-bit\n"
+                "precision. This is mostly useless, because JPEGs on the web are\n"
+                "8-bit and such versions of the jpeg library won't read or write\n"
+                "them. GD doesn't support these unusual images. Edit your\n"
+                "jmorecfg.h file to specify the correct precision and completely\n"
+                "'make clean' and 'make install' libjpeg again. Sorry.\n");
+    return NULL;
+#endif /* BITS_IN_JSAMPLE == 12 */
+    struct jpeg_decompress_struct cinfo;
+    struct jpeg_error_mgr jerr;
+    jmpbuf_wrapper jmpbufw;
+    /* volatile so we can gdFree them after longjmp */
+    volatile JSAMPROW row = 0;
+    volatile gdSurfacePtr surface = 0;
+    JSAMPROW rowptr[1];
+    int retval;
+#ifdef JPEG_DEBUG
+    gd_error_ex(GD_DEBUG, "gd-jpeg: gd JPEG version %s\n", GD_JPEG_VERSION);
+    gd_error_ex(GD_DEBUG, "gd-jpeg: JPEG library version %d, %d-bit sample values\n", JPEG_LIB_VERSION, BITS_IN_JSAMPLE);
+    gd_error_ex(GD_DEBUG, "sizeof: %d\n", sizeof(struct jpeg_decompress_struct));
+#endif
+
+    memset(&cinfo, 0, sizeof(cinfo));
+    memset(&jerr, 0, sizeof(jerr));
+
+    jmpbufw.ignore_warning = ignore_warning;
+
+    cinfo.err = jpeg_std_error(&jerr);
+    cinfo.client_data = &jmpbufw;
+
+    cinfo.err->emit_message = jpeg_emit_message;
+
+    if(setjmp(jmpbufw.jmpbuf) != 0) {
+        /* we're here courtesy of longjmp */
+        if(row) {
+            gdFree(row);
+        }
+        if(surface) {
+            gdSurfaceDestroy(surface);
+        }
+        return 0;
+    }
+
+    cinfo.err->error_exit = fatal_jpeg_error;
+
+    jpeg_create_decompress(&cinfo);
+
+    jpeg_gdIOCtx_src(&cinfo, infile);
+    jpeg_save_markers(&cinfo, JPEG_APP0 + 14, 256);
+
+    retval = jpeg_read_header(&cinfo, TRUE);
+    if(retval != JPEG_HEADER_OK) {
+        gd_error("gd-jpeg: warning: jpeg_read_header returns"
+                 " %d, expected %d\n", retval, JPEG_HEADER_OK);
+    }
+
+    if(cinfo.image_height > INT_MAX) {
+        gd_error("gd-jpeg: warning: JPEG image height (%u) is"
+                 " greater than INT_MAX (%d) (and thus greater than"
+                 " gd can handle)", cinfo.image_height, INT_MAX);
+    }
+
+    if(cinfo.image_width > INT_MAX) {
+        gd_error("gd-jpeg: warning: JPEG image width (%u) is"
+                 " greater than INT_MAX (%d) (and thus greater than"
+                 " gd can handle)\n", cinfo.image_width, INT_MAX);
+    }
+
+    surface = gdSurfaceCreate((int)cinfo.image_width, (int)cinfo.image_height, GD_SURFACE_ARGB32);
+    if(!surface) {
+        gd_error("gd-jpeg error: cannot allocate gdImage struct\n");
+        goto error;
+    }
+
+// libjpeg-turbo specific extensions. Always Big Endian and allows to put the data directly to the surface data
+#if JCS_EXTENSIONS
+# if IS_BIG_ENDIAN
+#  define COLORSPACE JCS_EXT_XRGB
+# else
+#  define COLORSPACE JCS_EXT_BGRX
+# endif
+# define CHANNELS_COUNT 4
+# define USE_SURFACE_ROW 1
+#else
+# define COLORSPACE JCS_RGB
+# define CHANNELS_COUNT 3
+# define USE_SURFACE_ROW 0
+#endif
+
+    /* TBD check if the resolution is specified */
+
+    cinfo.quantize_colors      = 0;
+    cinfo.out_color_space      = COLORSPACE;
+    cinfo.out_color_components = 3;
+    cinfo.output_components    = 3;
+
+    if(jpeg_start_decompress(&cinfo) != TRUE) {
+        gd_error("gd-jpeg: warning: jpeg_start_decompress"
+                 " reports suspended data source\n");
+    }
+
+    if(cinfo.out_color_space == COLORSPACE) {
+        if(cinfo.output_components != CHANNELS_COUNT) {
+            gd_error("gd-jpeg: error: JPEG color quantization"
+                     " request resulted in output_components == %d"
+                     " (expected %i for (x)RGB)\n", CHANNELS_COUNT, cinfo.output_components);
+            goto error;
+        }
+    } else {
+        gd_error("gd-jpeg: error: unexpected colorspace\n");
+        goto error;
+    }
+    uint32_t *surface_data = ( uint32_t *)gdSurfaceGetData(surface);
+    const uint32_t stride = gdSurfaceGetStride(surface);
+#if USE_SURFACE_ROW
+    // loop over all scan lines and fill Cairo image surface
+    while (cinfo.output_scanline < cinfo.output_height)
+    {
+        rowptr[0]  = (uint8_t *)surface_data + (cinfo.output_scanline * stride);
+        (void)jpeg_read_scanlines(&cinfo, rowptr, 1);
+    }
+#else
+    row = gdCalloc(cinfo.output_width * CHANNELS_COUNT, sizeof(JSAMPLE));
+    if(row == 0) {
+        gd_error("gd-jpeg: error: unable to allocate row for"
+                 " JPEG scanline: gdCalloc returns NULL\n");
+        goto error;
+    }
+    rowptr[0] = row;
+    const uint32_t stride_32 = stride/4;
+    for(uint32_t i = 0; i < cinfo.output_height; i++) {
+        register JSAMPROW currow = row;
+        uint32_t nrows = jpeg_read_scanlines(&cinfo, rowptr, 1);
+        if(nrows != 1) {
+            gd_error("gd-jpeg: error: jpeg_read_scanlines"
+                     " returns %u, expected 1\n", nrows);
+            goto error;
+        }
+        uint32_t * row = ((uint32_t *)surface_data) + i * stride_32;
+        for(uint32_t j = 0; j < cinfo.output_width; j++, currow += 3, row++) {
+            *row = ((0xFF) << 24) + ((currow[0]) << 16) + ((currow[1]) << 8) + (currow[2]);
+        }
+    }
+    gdFree(row);
+#endif
+
+    if(jpeg_finish_decompress (&cinfo) != TRUE) {
+        gd_error("gd-jpeg: warning: jpeg_finish_decompress"
+                 " reports suspended data source\n");
+    }
+
+    jpeg_destroy_decompress(&cinfo);
+    gdFree(row);
+    return surface;
+
+error:
+    jpeg_destroy_decompress(&cinfo);
+
+    if(row) {
+        gdFree(row);
+    }
+    if(surface) {
+        gdSurfaceDestroy(surface);
+    }
+
+    return 0;
+}
+
+
+/*
+  Function: gdImageCreateFromJpegEx
+
+    <gdImageCreateFromJpegEx> is called to load truecolor images from
+    JPEG format files. Invoke <gdImageCreateFromJpegEx> with an
+    already opened pointer to a file containing the desired
+    image. <gdImageCreateFromJpegEx> returns a <gdImagePtr> to the new
+    truecolor image, or NULL if unable to load the image (most often
+    because the file is corrupt or does not contain a JPEG
+    image). <gdImageCreateFromJpegEx> does not close the file.
+
+    You can inspect the sx and sy members of the image to determine
+    its size. The image must eventually be destroyed using
+    <gdImageDestroy>.
+
+    *The returned image is always a truecolor image.*
+
+  Variants:
+
+    <gdImageCreateFromJpegPtrEx> creates an image from JPEG data
+    already in memory.
+
+    <gdImageCreateFromJpegCtxEx> reads its data via the function
+    pointers in a <gdIOCtx> structure.
+
+    <gdImageCreateFromJpeg>, <gdImageCreateFromJpegPtr> and
+    <gdImageCreateFromJpegCtx> are equivalent to calling their
+    _Ex_-named counterparts with an ignore_warning set to 1
+    (i.e. TRUE).
+
+  Parameters:
+
+    infile          - The input FILE pointer.
+    ignore_warning  - Flag.  If true, ignores recoverable warnings.
+
+  Returns:
+
+    A pointer to the new *truecolor* image.  This will need to be
+    destroyed with <gdImageDestroy> once it is no longer needed.
+
+    On error, returns NULL.
+
+  Example:
+    (start code)
+
+    gdImagePtr im;
+    FILE *in;
+    in = fopen("myjpeg.jpg", "rb");
+    im = gdImageCreateFromJpegEx(in, GD_TRUE);
+    fclose(in);
+    // ... Use the image ...
+    gdImageDestroy(im);
+
+    (end code)
+*/
+BGD_DECLARE(gdSurfacePtr) gdSurfaceCreateFromJpegEx(FILE *inFile, int ignore_warning)
+{
+    gdSurfacePtr surface;
+    gdIOCtx *in = gdNewFileCtx(inFile);
+    if (in == NULL) return NULL;
+    surface = gdSurfaceCreateFromJpegCtxEx(in, ignore_warning);
+    in->gd_free(in);
+    return surface;
+}
+
+/*
+  Function: gdSurfaceCreateFromJpeg
+
+  See <gdSurfaceCreateFromJpegEx>.
+*/
+BGD_DECLARE(gdSurfacePtr) gdSurfaceCreateFromJpeg(FILE *inFile)
+{
+    return gdSurfaceCreateFromJpegEx(inFile, 1);
+}
+
 
 #else /* !HAVE_LIBJPEG */
 

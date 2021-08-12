@@ -2172,6 +2172,19 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    BGD_DECLARE(gdSurfacePtr)
    gdSurfaceCreateFromWebpPtr (int size, void *data);
 
+   BGD_DECLARE(void)
+   gdSurfaceJpegCtx(gdSurfacePtr surface, gdIOCtx *outfile, int quality);
+   BGD_DECLARE(void)
+   gdSurfaceJpeg(gdSurfacePtr surface, FILE *outFile, int quality);
+   BGD_DECLARE(void *)
+   gdSurfaceJpegPtr(gdSurfacePtr surface, int *size, int quality);
+   BGD_DECLARE(gdSurfacePtr)
+   gdSurfaceCreateFromJpeg(FILE *inFile);
+   BGD_DECLARE(gdSurfacePtr)
+   gdSurfaceCreateFromJpegEx(FILE *inFile, int ignore_warning);
+   BGD_DECLARE(gdSurfacePtr)
+   gdSurfaceCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning);
+
    BGD_DECLARE(gdContextPtr)
    gdContextCreate(gdSurfacePtr surface);
    BGD_DECLARE(void)
