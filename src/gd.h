@@ -2185,6 +2185,23 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    BGD_DECLARE(gdSurfacePtr)
    gdSurfaceCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning);
 
+   BGD_DECLARE(void)
+   gdSurfaceHeif(gdSurfacePtr surface, FILE *outFile);
+   BGD_DECLARE(void *)
+   gdSurfaceHeifPtr(gdSurfacePtr surface, int *size);
+   BGD_DECLARE(void)
+   gdSurfaceHeifEx(gdSurfacePtr surface, FILE *outFile, int quality, gdHeifCodec codec, gdHeifChroma chroma);
+   BGD_DECLARE(void *)
+   gdSurfaceHeifPtrEx(gdSurfacePtr surface, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma);
+   BGD_DECLARE(void)
+   gdSurfaceHeifCtx(gdSurfacePtr surface, gdIOCtx *outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma);
+   BGD_DECLARE(gdSurfacePtr)
+   gdSurfaceCreateFromHeif(FILE *inFile);
+   BGD_DECLARE(gdSurfacePtr)
+   gdSurfaceCreateFromHeifCtx(gdIOCtx *infile);
+
+
+
    BGD_DECLARE(gdContextPtr)
    gdContextCreate(gdSurfacePtr surface);
    BGD_DECLARE(void)
