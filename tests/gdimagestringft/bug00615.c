@@ -20,6 +20,7 @@ int main()
     char *res = gdImageStringFT(im, rect, fg, path, 12, 0, 10, 10, "");
 
     gdTestAssert(res == NULL);
-
+    free(path);
+    gdImageDestroy(im);
     return gdNumFailures();
 }

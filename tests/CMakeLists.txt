@@ -1,5 +1,5 @@
 if (BUILD_TEST)
-	SET(DART_TESTING_TIMEOUT 5)
+	SET(DART_TESTING_TIMEOUT 15)
 
 	INCLUDE(Dart)
 
@@ -97,5 +97,4 @@ if (BUILD_TEST)
 	FOREACH(test_dir ${TESTS_DIRS})
 		add_subdirectory (${test_dir})
 	ENDFOREACH(test_dir)
-
 endif (BUILD_TEST)

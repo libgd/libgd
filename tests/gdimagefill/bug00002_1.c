@@ -21,6 +21,7 @@ int main()
 
 	file = gdTestTempFile("bug00002_1.png");
 	fp = fopen(file, "wb");
+	free(file);
 	if (fp == NULL) {
 		gdTestErrorMsg("Cannot create image from <%s>\n", file);
 		gdImageDestroy(im);
