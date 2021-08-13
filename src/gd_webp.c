@@ -356,6 +356,16 @@ BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 {
 	void *rv;
+
+	/* 
+		WebP Header is 3x32bits
+		RIFF
+		filesize
+		WEBP
+	*/
+	if (size < 96) {
+		return NULL;
+	}
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) {
 		return NULL;
