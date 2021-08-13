@@ -854,6 +854,10 @@ break_right:
 	    out, tim->sx, tim->sy, LeftOfs, TopOfs, interlace, transparent,
 	    Delay, Disposal, BitsPerPixel,
 	    LocalCM ? tim->red : 0, tim->green, tim->blue, tim);
+	if(pim) {
+		/* Destroy palette based temporary image. */
+		gdImageDestroy(pim);
+	}
 	return 0;
 
 fail_end:
