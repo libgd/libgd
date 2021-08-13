@@ -20,6 +20,10 @@ if (TIFF_FOUND)
 	LIST(APPEND TESTS_FILES	tiffread)
 endif (TIFF_FOUND)
 
+if (HEIF_FOUND)
+	LIST(APPEND TESTS_FILES	png2heif)
+endif (HEIF_FOUND)
+
 if (BUILD_SHARED_LIBS)
 	set(GD_LINK_LIB ${GD_LIB})
 else()
