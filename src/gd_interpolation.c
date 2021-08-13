@@ -1635,7 +1635,7 @@ BGD_DECLARE(gdImagePtr) gdImageScale(const gdImagePtr src, const unsigned int ne
 	if (new_width == 0 || new_height == 0) {
 		return NULL;
 	}
-	if (new_width == gdImageSX(src) && new_height == gdImageSY(src)) {
+	if ((int)new_width == gdImageSX(src) && (int)new_height == gdImageSY(src)) {
 		return gdImageClone(src);
 	}
 	switch (src->interpolation_id) {
@@ -1701,7 +1701,7 @@ gdImageRotateNearestNeighbour(gdImagePtr src, const float degrees,
 	unsigned int i;
 	gdImagePtr dst;
 	gdRect bbox;
-	int new_height, new_width;
+	unsigned int new_height, new_width;
 
     gdRotatedImageSize(src, degrees, &bbox);
     new_width = bbox.width;
@@ -1753,7 +1753,7 @@ gdImageRotateGeneric(gdImagePtr src, const float degrees, const int bgColor)
 	unsigned int dst_offset_y = 0;
 	unsigned int i;
 	gdImagePtr dst;
-	int new_width, new_height;
+	unsigned int new_width, new_height;
 	gdRect bbox;
 
 	if (bgColor < 0) {
@@ -1992,11 +1992,6 @@ static int getPixelRgbInterpolated(gdImagePtr im, const int tcolor)
 	g = (unsigned char)tcolor >> 8;
 	r = (unsigned char)tcolor >> 16;
 	a = (unsigned char)tcolor >> 24;
-
-	b = CLAMP(b, 0, 255);
-	g = CLAMP(g, 0, 255);
-	r = CLAMP(r, 0, 255);
-	a = CLAMP(a, 0, 127);
 
 	for (i = 0; i < im->colorsTotal; i++) {
 		if (im->red[i] == r && im->green[i] == g && im->blue[i] == b && im->alpha[i] == a) {
