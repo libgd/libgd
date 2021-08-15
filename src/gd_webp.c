@@ -105,7 +105,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 	uint8_t   *filedata = NULL;
 	uint8_t    *argb = NULL;
 	unsigned char   *read, *temp;
-	size_t size = 0, n;
+	ssize_t size = 0, n;
 	gdImagePtr im;
 	int x, y;
 	uint8_t *p;
@@ -357,15 +357,6 @@ BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 {
 	void *rv;
 
-	/* 
-		WebP Header is 3x32bits
-		RIFF
-		filesize
-		WEBP
-	*/
-	if (size < 96) {
-		return NULL;
-	}
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) {
 		return NULL;
