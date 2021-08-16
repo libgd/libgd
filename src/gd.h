@@ -93,6 +93,9 @@ extern "C" {
 #  endif
 #endif
 
+#undef ARG_NOT_USED
+#define ARG_NOT_USED(arg) (void) arg
+
 /* gd.h: declarations file for the graphic-draw module.
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted, provided
@@ -329,7 +332,11 @@ typedef enum {
 	GD_TRIANGLE,
 	GD_WEIGHTED4,
 	GD_LINEAR,
-	GD_METHOD_COUNT = 23
+   GD_LANCZOS3,
+   GD_LANCZOS8,
+   GD_BLACKMAN_BESSEL,
+   GD_BLACKMAN_SINC,
+	GD_METHOD_COUNT = 26
 } gdInterpolationMethod;
 
 /**
@@ -375,7 +382,7 @@ typedef const char *gdHeifChroma;
 /* define struct with name and func ptr and add it to gdImageStruct gdInterpolationMethod interpolation; */
 
 /* Interpolation function ptr */
-typedef double (* interpolation_method )(double);
+typedef double (* interpolation_method )(double, double);
 
 
 /*
