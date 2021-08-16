@@ -1075,34 +1075,44 @@ static void _noTiffError(void)
 
 BGD_DECLARE(void) gdImageTiffCtx(gdImagePtr image, gdIOCtx *out)
 {
+	ARG_NOT_USED(image);
+	ARG_NOT_USED(out);
 	_noTiffError();
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 {
+	ARG_NOT_USED(infile);
 	_noTiffError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile)
 {
+	ARG_NOT_USED(inFile);
 	_noTiffError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffPtr(int size, void *data)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
 	_noTiffError();
 	return NULL;
 }
 
 BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
 	_noTiffError();
 }
 
 BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
 	_noTiffError();
 	return NULL;
 }

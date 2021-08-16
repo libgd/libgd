@@ -86,7 +86,7 @@ static const struct FileType {
     {".xpm",    NULL,                   NULL,           gdImageCreateFromXpm},
 #endif
 
-    {NULL, NULL, NULL}
+    {NULL, NULL, NULL, NULL}
 };
 
 

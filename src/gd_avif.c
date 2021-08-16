@@ -656,41 +656,62 @@ static void *_noAvifError(void)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *ctx)
 {
+	ARG_NOT_USED(ctx);
 	return _noAvifError();
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
 	return _noAvifError();
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *ctx)
 {
+	ARG_NOT_USED(ctx);
 	return _noAvifError();
 }
 
 BGD_DECLARE(void) gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, int speed)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(speed);
 	_noAvifError();
 }
 
-BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int speed)
+BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outfile, int quality, int speed)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(speed);
 	_noAvifError();
 }
 
-BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile)
+BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outfile)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
 	_noAvifError();
 }
 
 BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+
 	return _noAvifError();
 }
 
 BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(speed);
 	return _noAvifError();
 }
 

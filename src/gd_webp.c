@@ -379,45 +379,62 @@ static void _noWebpError(void)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile)
 {
+	ARG_NOT_USED(inFile);
 	_noWebpError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
 	_noWebpError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 {
+	ARG_NOT_USED(infile);
 	_noWebpError();
 	return NULL;
 }
 
 BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(quality);
 	_noWebpError();
 }
 
 BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quality)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
+	ARG_NOT_USED(quality);
 	_noWebpError();
 }
 
 BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
 	_noWebpError();
 }
 
 BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
 	_noWebpError();
 	return NULL;
 }
 
 BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(quality);
 	_noWebpError();
 	return NULL;
 }

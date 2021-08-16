@@ -415,29 +415,37 @@ static void _noGdError (void)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd (FILE * inFile)
 {
+	ARG_NOT_USED(inFile);
 	_noGdError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGdPtr (int size, void *data)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
 	_noGdError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGdCtx (gdIOCtxPtr in)
 {
+	ARG_NOT_USED(in);
 	_noGdError();
 	return NULL;
 }
 
 BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * outFile)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
 	_noGdError();
 }
 
 BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
 	_noGdError();
 	return NULL;
 }

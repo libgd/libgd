@@ -1213,52 +1213,72 @@ static void _noJpegError(void)
 
 BGD_DECLARE(void) gdImageJpeg(gdImagePtr im, FILE *outFile, int quality)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
+	ARG_NOT_USED(quality);
 	_noJpegError();
 }
 
 BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(quality);
 	_noJpegError();
 	return NULL;
 }
 
 BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(quality);
 	_noJpegError();
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *inFile)
 {
+	ARG_NOT_USED(inFile);
 	_noJpegError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx(FILE *inFile, int ignore_warning)
 {
+	ARG_NOT_USED(inFile);
+	ARG_NOT_USED(ignore_warning);
 	_noJpegError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
 	_noJpegError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx(int size, void *data, int ignore_warning)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
+	ARG_NOT_USED(ignore_warning);
 	_noJpegError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 {
+	ARG_NOT_USED(size);
 	_noJpegError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning)
 {
+	ARG_NOT_USED(infile);
+	ARG_NOT_USED(ignore_warning);
 	_noJpegError();
 	return NULL;
 }

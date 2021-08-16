@@ -1146,48 +1146,75 @@ static void _noGd2Error (void)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2 (FILE * inFile)
 {
+	ARG_NOT_USED(inFile);
 	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx (gdIOCtxPtr in)
 {
+	ARG_NOT_USED(in);
 	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Part (FILE * inFile, int srcx, int srcy, int w, int h)
 {
+	ARG_NOT_USED(inFile);
+	ARG_NOT_USED(srcx);
+	ARG_NOT_USED(srcy);
+	ARG_NOT_USED(w);
+	ARG_NOT_USED(h);
 	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ptr (int size, void *data)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
 	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartCtx (gdIOCtx * in, int srcx, int srcy, int w, int h)
 {
+	ARG_NOT_USED(in);
+	ARG_NOT_USED(srcx);
+	ARG_NOT_USED(srcy);
+	ARG_NOT_USED(w);
+	ARG_NOT_USED(h);
 	_noGd2Error();
 	return NULL;
 }
 
-BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartPtr (int size, void *data, int srcx, int srcy, int w,
-        int h)
+BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartPtr (int size, void *data, int srcx, int srcy, int w, int h)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
+	ARG_NOT_USED(srcx);
+	ARG_NOT_USED(srcy);
+	ARG_NOT_USED(w);
+	ARG_NOT_USED(h);
 	_noGd2Error();
 	return NULL;
 }
 
 BGD_DECLARE(void) gdImageGd2 (gdImagePtr im, FILE * outFile, int cs, int fmt)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
+	ARG_NOT_USED(cs);
+	ARG_NOT_USED(fmt);
 	_noGd2Error();
 }
 
 BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(cs);
+	ARG_NOT_USED(fmt);
+	ARG_NOT_USED(size);
 	_noGd2Error();
 	return NULL;
 }
