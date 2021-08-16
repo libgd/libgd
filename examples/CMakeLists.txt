@@ -8,7 +8,7 @@ if (PNG_FOUND)
 	LIST(APPEND TEST_FILES arc crop tgaread)
 
 	if (JPEG_FOUND)
-		LIST(APPEND TESTS_FILES copyrotated flip nnquant)
+		LIST(APPEND TESTS_FILES copyrotated flip nnquant imagescale)
 	endif (JPEG_FOUND)
 endif (PNG_FOUND)
 
