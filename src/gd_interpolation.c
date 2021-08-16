@@ -422,18 +422,15 @@ static double filter_lanczos8(const double x1, const double support)
 	return 0.0;
 }
 
-/* Lanczos3 filter, default radius 3 */
 static double filter_lanczos3(const double x1, const double support)
 {
-	const double x = x1 < 0.0 ? -x1 : x1;
-
-	if ( x == 0.0) return 1;
-
-	if ( x < support)
-	{
-		return support * sin(x*M_PI) * sin(x * M_PI / support) / (x * M_PI * x * M_PI);
-	}
-	return 0.0;
+  if (x1 < -3.0)
+    return(0.0);
+  if (x1 < 0.0)
+    return(filter_sinc(-x1,support)*filter_sinc(-x1/3.0,support));
+  if (x1 < 3.0)
+    return(filter_sinc(x1,support)*filter_sinc(x1/3.0,support));
+  return(0.0);
 }
 
 /* Hermite filter, default radius 1 */
