@@ -26,7 +26,7 @@ For security related issues, please contact us at security@libgd.org
 
 Support available in [![Chat](https://badges.gitter.im/libgd/libgd.svg)](https://gitter.im/libgd/libgd) or using issues.
 
-We also have a mailing list.To subscribe to any mailing list, send an email to gd-devel-subscribe@lists.php.net. Then emails can be sent to gd-devel@lists.php.net.
+We also have a mailing list. To subscribe to any mailing list, send an email to gd-devel-subscribe@lists.php.net. Then emails can be sent to gd-devel@lists.php.net.
 
 ## Downloads/etc...
 
