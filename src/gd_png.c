@@ -385,7 +385,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 
 	case PNG_COLOR_TYPE_GRAY_ALPHA:
 		png_set_gray_to_rgb(png_ptr);
-
+		// fall through
+		// Keep above comment, gcc recognizes it and silent its warning about fall through case here
 	case PNG_COLOR_TYPE_RGB:
 	case PNG_COLOR_TYPE_RGB_ALPHA:
 		/* gd 2.0: we now support truecolor. See the comment above
