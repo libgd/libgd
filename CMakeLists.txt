@@ -283,6 +283,7 @@ endif (USE_EXT_GD)
 
 add_subdirectory(tests)
 add_subdirectory(examples)
+add_subdirectory(docs)
 
 add_custom_target(distclean ${GD_SOURCE_DIR}/cmake/distclean.sh)
 
