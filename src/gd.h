@@ -275,7 +275,6 @@ enum gdPaletteQuantizationMethod {
 	GD_QUANT_LIQ = 3
 };
 
-
 /**
  * Group: Transform
  *
@@ -300,7 +299,7 @@ enum gdPaletteQuantizationMethod {
  *  GD_POWER			 - Power
  *  GD_QUADRATIC		 - Quadratic
  *  GD_SINC				 - Sinc
- *  GD_TRIANGLE			 - Triangle
+ *  GD_TRIANGLE       - Triangle
  *  GD_WEIGHTED4		 - 4 pixels weighted bilinear interpolation
  *  GD_LINEAR            - bilinear interpolation
  *
@@ -336,7 +335,11 @@ typedef enum {
    GD_LANCZOS8,
    GD_BLACKMAN_BESSEL,
    GD_BLACKMAN_SINC,
-	GD_METHOD_COUNT = 26
+   GD_QUADRATIC_BSPLINE,
+   GD_CUBIC_SPLINE,
+   GD_COSINE,
+   GD_WELSH,
+	GD_METHOD_COUNT = 30
 } gdInterpolationMethod;
 
 /**
