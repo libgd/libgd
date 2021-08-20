@@ -476,6 +476,7 @@ cleanup:
 */
 
 /*
+	 Private subobject
 	 Function: _gdImageAvifCtx
 
 	 We need this underscored function because gdImageAvifCtx() can't return anything.
