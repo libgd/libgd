@@ -33,7 +33,6 @@
 		  rounded to the nearest pixel color value instead of
 		  being casted to ILubyte (usually an int or char). Otherwise,
 		  artifacting occurs.
-
 */
 
 /*
@@ -119,6 +118,13 @@ typedef long gdFixed;
 
 /* Divide a fixed by a fixed */
 #define gd_divfx(x,y) (((x) << 8) / (y))
+
+typedef struct _FilterInfo
+{
+  double
+    (*function)(const double,const double),
+    support;
+} FilterInfo;
 
 typedef struct
 {
@@ -310,27 +316,6 @@ static double filter_blackman_sinc(const double x, const double support)
 }
 
 /**
- * Bicubic interpolation kernel (a=-1):
-  \verbatim
-          /
-         | 1-2|t|**2+|t|**3          , if |t| < 1
-  h(t) = | 4-8|t|+5|t|**2-|t|**3     , if 1<=|t|<2
-         | 0                         , otherwise
-          \
-  \endverbatim
- * ***bd*** 2.2004
- */
-static double filter_bicubic(const double t, const double support)
-{
-	const double abs_t = (double)fabs(t);
-	const double abs_t_sq = abs_t * abs_t;
-	ARG_NOT_USED(support);
-	if (abs_t<1) return 1-2*abs_t_sq+abs_t_sq*abs_t;
-	if (abs_t<2) return 4 - 8*abs_t +5*abs_t_sq - abs_t_sq*abs_t;
-	return 0;
-}
-
-/**
  * Generalized cubic kernel (for a=-1 it is the same as BicubicKernel):
   \verbatim
           /
@@ -351,7 +336,6 @@ static double filter_generalized_cubic(const double t, const double support)
 	return 0;
 }
 
-#ifdef FUNCTION_NOT_USED_YET
 /* CubicSpline filter, default radius 2 */
 static double filter_cubic_spline(const double x1, const double support)
 {
@@ -368,7 +352,7 @@ static double filter_cubic_spline(const double x1, const double support)
 	}
 	return 0;
 }
-#endif
+
 
 #ifdef FUNCTION_NOT_USED_YET
 /* CubicConvolution filter, default radius 3 */
@@ -493,9 +477,6 @@ static double filter_mitchell(const double x, const double support)
 	return(0.0f);
 }
 
-
-
-#ifdef FUNCTION_NOT_USED_YET
 /* Cosine filter, default radius 1 */
 static double filter_cosine(const double x, const double support)
 {
@@ -504,7 +485,7 @@ static double filter_cosine(const double x, const double support)
 
 	return 0;
 }
-#endif
+
 
 /* Quadratic filter, default radius 1.5 */
 static double filter_quadratic(const double x1, const double support)
@@ -584,7 +565,6 @@ static double filter_power(const double x, const double support)
 	return (1.0f - (double)fabs(pow(x,a)));
 }
 
-#ifdef FUNCTION_NOT_USED_YET
 static double filter_welsh(const double x, const double support)
 {
 	ARG_NOT_USED(support);
@@ -593,7 +573,6 @@ static double filter_welsh(const double x, const double support)
 		return(1 - x*x);
 	return(0.0);
 }
-#endif
 
 #if defined(_MSC_VER) && !defined(inline)
 # define inline __inline
@@ -964,7 +943,7 @@ _gdScalePass(const gdImagePtr pSrc, const unsigned int src_len,
              const gdImagePtr pDst, const unsigned int dst_len,
              const unsigned int num_lines,
              const gdAxis axis,
-			 const double support)
+			 const FilterInfo *filter)
 {
 	unsigned int line_ndx;
 	LineContribType * contrib;
@@ -974,8 +953,8 @@ _gdScalePass(const gdImagePtr pSrc, const unsigned int src_len,
 
 	contrib = _gdContributionsCalc(dst_len, src_len,
                                    (double)dst_len / (double)src_len,
-								   support,
-                                   pSrc->interpolation);
+								   filter->support,
+                                   filter->function);
 	if (contrib == NULL) {
 		return 0;
 	}
@@ -988,38 +967,48 @@ _gdScalePass(const gdImagePtr pSrc, const unsigned int src_len,
     return 1;
 }/* _gdScalePass*/
 
-
-/* Each core filter has its own radius */
-#define DEFAULT_FILTER_LINEAR               1.0f
-#define DEFAULT_FILTER_BICUBIC				3.0f
-#define DEFAULT_FILTER_BOX					0.5f
-#define DEFAULT_FILTER_GENERALIZED_CUBIC	0.5f
-#define DEFAULT_FILTER_RADIUS				1.0f
-#define DEFAULT_LANCZOS8_RADIUS				8.0f
-#define DEFAULT_LANCZOS3_RADIUS				3.0f
-#define DEFAULT_HERMITE_RADIUS				1.0f
-#define DEFAULT_BOX_RADIUS					0.5f
-#define DEFAULT_TRIANGLE_RADIUS				1.0f
-#define DEFAULT_BELL_RADIUS					1.5f
-#define DEFAULT_CUBICSPLINE_RADIUS			2.0f
-#define DEFAULT_MITCHELL_RADIUS				2.0f
-#define DEFAULT_COSINE_RADIUS				1.0f
-#define DEFAULT_CATMULLROM_RADIUS			2.0f
-#define DEFAULT_QUADRATIC_RADIUS			1.5f
-#define DEFAULT_QUADRATICBSPLINE_RADIUS		1.5f
-#define DEFAULT_CUBICCONVOLUTION_RADIUS		3.0f
-#define DEFAULT_GAUSSIAN_RADIUS				1.0f
-#define DEFAULT_HANNING_RADIUS				1.0f
-#define DEFAULT_HAMMING_RADIUS				1.0f
-#define DEFAULT_SINC_RADIUS					1.0f
-#define DEFAULT_WELSH_RADIUS				1.0f
-
-typedef struct _FilterInfo
+static const FilterInfo filters[GD_METHOD_COUNT+1] =
 {
-  double
-    (*function)(const double,const double),
-    support;
-} FilterInfo;
+	{ filter_box, 0.0 },
+	{ filter_bell, 1.5 },
+	{ filter_bessel, 0.0 },
+	{ NULL, 0.0 }, /* NA bilenear/bilinear fixed */
+	{ NULL, 0.0 }, /* NA bicubic */
+	{ NULL, 0.0 }, /* NA bicubic fixed */
+	{ filter_blackman, 1.0 },
+	{ filter_box, 0.5 },
+	{ filter_bspline, 1.5 },
+	{ filter_catmullrom, 2.0 },
+	{ filter_gaussian, 1.25 },
+	{ filter_generalized_cubic, 0.5 },
+	{ filter_hermite, 1.0 },
+	{ filter_hamming, 1.0 },
+	{ filter_hanning, 1.0 },
+	{ filter_mitchell, 2.0 },
+	{ NULL, 0.0}, /* NA Nearest */
+	{ filter_power, 0.0 },
+	{ filter_quadratic, 1.5 },
+	{ filter_sinc, 1.0 },
+	{ filter_triangle, 1.0 },
+	{ NULL, 1.0 }, /* NA weighted4 */
+	{ filter_linear, 1.0 },
+	{ filter_lanczos3, 3.0 },
+	{ filter_lanczos8, 8.0 },
+	{ filter_blackman_bessel, 3.2383 },
+	{ filter_blackman_sinc, 4.0 },
+	{ filter_quadratic_bspline, 1.5},
+	{ filter_cubic_spline, 0.0 },
+	{ filter_cosine, 0.0},
+	{ filter_welsh, 0.0},
+};
+
+static const FilterInfo* _get_filterinfo_for_id(gdInterpolationMethod id) {
+	
+	if (id >=GD_METHOD_COUNT) {
+		id = GD_DEFAULT;
+	}
+	return &filters[id];
+}
 
 static gdImagePtr
 gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
@@ -1030,38 +1019,7 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
 	gdImagePtr tmp_im = NULL;
 	gdImagePtr dst = NULL;
 	int scale_pass_res;
-	static const FilterInfo
-	filters[GD_METHOD_COUNT+1] =
-	{
-		{ filter_box, 0.0 },
-		{ filter_bell, 1.5 },
-		{ filter_bessel, 0.0 },
-		{ NULL, 0.0 }, /* NA bilenear/bilinear fixed */
-		{ NULL, 0.0 }, /* NA bicubic */
-		{ NULL, 0.0 }, /* NA bicubic fixed */
-		{ filter_blackman, 1.0 },
-		{ filter_box, 0.5 },
-		{ filter_bspline, 1.5 },
-		{ filter_catmullrom, 2.0 },
-		{ filter_gaussian, 1.25 },
-		{ filter_generalized_cubic, 0.5 },
-		{ filter_hermite, 1.0 },
-		{ filter_hamming, 1.0 },
-		{ filter_hanning, 1.0 },
-		{ filter_mitchell, 2.0 },
-		{ NULL, 0.0}, /* NA Nearest */
-		{ filter_power, 0.0 },
-		{ filter_quadratic, 1.5 },
-		{ filter_sinc, 1.0 },
-		{ filter_triangle, 1.0 },
-		{ NULL, 1.0 }, /* NA weighted4 */
-		{ filter_linear, 1.0 },
-		{ filter_lanczos3, 3.0 },
-		{ filter_lanczos8, 8.0 },
-		{ filter_blackman_bessel, 3.2383 },
-		{ filter_blackman_sinc, 4.0 }
-	};
-	const double support = filters[src->interpolation_id].support;
+	const FilterInfo *filter = _get_filterinfo_for_id(src->interpolation_id);
 
     /* First, handle the trivial case. */
     if (src_width == new_width && src_height == new_height) {
@@ -1084,7 +1042,7 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
         }
         gdImageSetInterpolationMethod(tmp_im, src->interpolation_id);
 
-		scale_pass_res = _gdScalePass(src, src_width, tmp_im, new_width, src_height, HORIZONTAL, support);
+		scale_pass_res = _gdScalePass(src, src_width, tmp_im, new_width, src_height, HORIZONTAL, filter);
 		if (scale_pass_res != 1) {
 			gdImageDestroy(tmp_im);
 			return NULL;
@@ -1101,7 +1059,7 @@ gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
 	dst = gdImageCreateTrueColor(new_width, new_height);
 	if (dst != NULL) {
         gdImageSetInterpolationMethod(dst, src->interpolation_id);
-        scale_pass_res = _gdScalePass(tmp_im, src_height, dst, new_height, new_width, VERTICAL, support);
+        scale_pass_res = _gdScalePass(tmp_im, src_height, dst, new_height, new_width, VERTICAL, filter);
 		if (scale_pass_res != 1) {
 			gdImageDestroy(dst);
 			if (src != tmp_im) {
@@ -2351,6 +2309,18 @@ BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMet
 			break;
 		case GD_BLACKMAN_SINC:
 			im->interpolation = filter_blackman_sinc;
+			break;
+		case GD_QUADRATIC_BSPLINE:
+			im->interpolation = filter_quadratic_bspline;
+			break;
+		case GD_CUBIC_SPLINE:
+			im->interpolation = filter_cubic_spline;
+			break;
+		case GD_COSINE:
+			im->interpolation = filter_cosine;
+			break;
+		case GD_WELSH:
+			im->interpolation = filter_welsh;
 			break;
 		case GD_DEFAULT:
 			id = GD_LINEAR;
