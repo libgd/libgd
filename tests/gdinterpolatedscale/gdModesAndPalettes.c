@@ -13,33 +13,38 @@
 #define NY 20
 
 int main() {
-    int method, i;
+    unsigned int method, i;
 
-    for(method = GD_BELL; method <= GD_TRIANGLE; method++) {   /* GD_WEIGHTED4 is unsupported. */
+    for(method = GD_DEFAULT; method < GD_METHOD_COUNT; method++) {   /* GD_WEIGHTED4 is unsupported. */
         gdImagePtr im[2];
+        if (method == GD_WEIGHTED4) {
+            continue;
+        }
 
-        // printf("Method = %d\n", method);
         im[0] = gdImageCreateTrueColor(X, Y);
         im[1] = gdImageCreatePalette(X, Y);
 
         for (i = 0; i < 2; i++) {
             gdImagePtr result;
 
-            // printf("    %s\n", i == 0 ? "truecolor" : "palette");
-
             gdImageFilledRectangle(im[i], 0, 0, X-1, Y-1,
                                    gdImageColorExactAlpha(im[i], 255, 255, 255, 0));
 
             gdImageSetInterpolationMethod(im[i], method);
-            gdTestAssert(im[i]->interpolation_id == method); /* No getter yet. */
+
+            gdTestAssert(im[i]->interpolation_id == gdImageGetInterpolationMethod(im[i])); /* No getter yet. */
 
             result = gdImageScale(im[i], NX, NY);
             gdTestAssert(result != NULL);
             gdTestAssert(result != im[i]);
             if (result == NULL) {
+
 				gdTestErrorMsg("gdImageScale failed (method: %i, im:%i).\n", method, i);
 				break;
 			}
+            if (!(result->sx == NX && result->sy == NY)) {
+                gdTestErrorMsg("gdImageScale failed Dimensions (%i, %i) (%i, %i)(method: %i, im:%i).\n", result->sx, result->sy, NX, NY, method, i);
+            }
             gdTestAssert(result->sx == NX && result->sy == NY);
 
             gdImageDestroy(result);
@@ -47,6 +52,6 @@ int main() {
         }/* for */
     }/* for*/
 
-
+    printf("%i\n", gdNumFailures());
     return gdNumFailures();
 }/* main*/
