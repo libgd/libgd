@@ -59,12 +59,12 @@ Group: Image Formats  {
    File: HEIF IO  (no auto-title, gd_heif.c)
    File: JPEG IO  (no auto-title, gd_jpeg.c)
    File: PNG IO  (no auto-title, gd_png.c)
-   File: TGA Input  (no auto-title, gd_tga.c)
+   File: TGA IO  (no auto-title, gd_tga.c)
    File: TIFF IO  (no auto-title, gd_tiff.c)
    File: WBMP IO  (no auto-title, gd_wbmp.c)
    File: WebP IO  (no auto-title, gd_webp.c)
    File: XBM IO  (no auto-title, gd_xbm.c)
-   File: XPM Input  (no auto-title, gdxpm.c)
+   File: XPM IO  (no auto-title, gdxpm.c)
    }  # Group: Image Formats
 
 File: Color Quantization  (gd_topal.c)
