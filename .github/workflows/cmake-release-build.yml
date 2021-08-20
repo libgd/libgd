@@ -21,11 +21,11 @@ jobs:
     steps:
     - name: Checkout code
         uses: actions/checkout@v2
-      - name: Update apt
-        if: contains(matrix.os, 'ubuntu')
-        env:
-          DEBIAN_FRONTEND: noninteractive
-        run: sudo -E apt-get update -qq -o Acquire::Retries=3
+    - name: Update apt
+      if: contains(matrix.os, 'ubuntu')
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: sudo -E apt-get update -qq -o Acquire::Retries=3
     - name: install dependencies
       run:  sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3
             libjpeg-turbo8-dev libimagequant-dev
