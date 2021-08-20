@@ -19,7 +19,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+        uses: actions/checkout@v2
       - name: Update apt
         if: contains(matrix.os, 'ubuntu')
         env:
@@ -31,7 +32,6 @@ jobs:
             libpng-dev libwebp-dev libtiff5-dev
             libheif-dev libfreetype-dev
             libavifile-0.7-dev libxpm-dev
-      if: "contains( matrix.os, 'ubuntu')"
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
