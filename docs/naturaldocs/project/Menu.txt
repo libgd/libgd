@@ -46,7 +46,7 @@ Format: 1.52
 # --------------------------------------------------------------------------
 
 
-File: About LibGD 2.3.0-dev  (no auto-title, preamble.txt)
+File: About LibGD (no auto-title, preamble.txt)
 
 Group: Image Formats  {
 
