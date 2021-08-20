@@ -43,8 +43,7 @@ SET(HEIF_FOUND "NO")
 # in the FIND_PATH() and FIND_LIBRARY() calls
 if( NOT WIN32 )
   find_package(PkgConfig)
-
-  pkg_check_modules(HEIF_PKG QUIET fontconfig)
+  pkg_check_modules(HEIF_PKG libheif QUIET)
 endif( NOT WIN32 )
 
 FIND_PATH(HEIF_INCLUDE_DIR NAMES libheif/heif.h
