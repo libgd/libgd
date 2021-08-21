@@ -64,6 +64,14 @@ jobs:
               libheif-dev libfreetype-dev libheif-dev 
               libavifile-0.7-dev libxpm-dev
 
+      - name: Install macOS dependencies
+        if: contains(matrix.os, 'macos')
+        run: |
+          brew update
+          brew upgrade
+          brew install autoconf automake libtool fftw fontconfig gtk-doc gobject-introspection glib libexif libgsf little-cms2 orc pango
+          brew install libxpm libheif libjpeg-turbo webp freetype libpng libtiff libimagequant libde265 libx265
+
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
