@@ -70,7 +70,7 @@ jobs:
           brew update
           brew upgrade
           brew install autoconf automake libtool fftw fontconfig gtk-doc gobject-introspection glib libexif libgsf little-cms2 orc pango
-          brew install libxpm libheif libjpeg-turbo webp freetype libpng libtiff libimagequant libde265 libx265
+          brew install libxpm libheif libjpeg-turbo webp freetype libpng libtiff libimagequant libde265 x265
 
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
