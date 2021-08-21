@@ -30,7 +30,7 @@ jobs:
       - name: install dependencies
         run:  sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3
               libjpeg-turbo8-dev libimagequant-dev
-              libpng-dev libwebp-dev libtiff5-dev
+              libpng-dev libwebp-dev libtiff5-dev libx265-dev
               libheif-dev libfreetype-dev
               libavifile-0.7-dev libxpm-dev
 
