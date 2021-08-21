@@ -31,7 +31,9 @@ endif(BUILD_TEST)
 # - specify -DCMAKE_C_FLAGS=... on invocation of cmake, or
 # - specify CFLAGS=... on invocation of make
 IF(CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 -fsanitize=address") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
+  # Re-enable sanitize once we find a way to filter out errors in external libraries (like HEIF)
+  #SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 -fsanitize=address") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
+  SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 ") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
 SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
   ${PROJECT_BINARY_DIR}/Bin
