@@ -18,13 +18,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [ "Linux x64 (Ubuntu 20.04) - GCC 10" ]
+        name: [ "Linux x64 (Ubuntu 20.04)" ]
         os: [ ubuntu-20.04 ]
         sanitize: [ false ]
         build:
-          - { cc: gcc, cxx: g++, linker: ld, shell: bash }
+          - { shell: bash }
         include:
-          - name: "Linux x64 (Ubuntu 20.04) - Clang 10 with ASan and UBSan"
+          - name: "Linux x64 (Ubuntu 20.04)"
             os: ubuntu-20.04
             build: { shell: bash }
           - name: "macOS (10.15) - Xcode 12.3"
