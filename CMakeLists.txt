@@ -22,6 +22,7 @@ OPTION(ENABLE_WEBP "Enable WebP support" 0)
 OPTION(ENABLE_HEIF "Enable HEIF support" 0)
 OPTION(ENABLE_AVIF "Enable AVIF support" 0)
 OPTION(ENABLE_RAQM "Enable RAQM support" 0)
+OPTION(ENABLE_ASAN "Enable (gcc) ASAN support" 0)
 
 if (BUILD_TEST)
 	ENABLE_TESTING()
@@ -32,8 +33,11 @@ endif(BUILD_TEST)
 # - specify CFLAGS=... on invocation of make
 IF(CMAKE_COMPILER_IS_GNUCC)
   # Re-enable sanitize once we find a way to filter out errors in external libraries (like HEIF)
-  #SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 -fsanitize=address") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
-  SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 ") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
+  if (ENABLE_ASAN)
+  	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 -fsanitize=address") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
+  else
+  	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 ") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
+  endif (ENABLE_ASAN)
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
 SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
   ${PROJECT_BINARY_DIR}/Bin
