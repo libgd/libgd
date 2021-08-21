@@ -34,9 +34,9 @@ endif(BUILD_TEST)
 IF(CMAKE_COMPILER_IS_GNUCC)
   # Re-enable sanitize once we find a way to filter out errors in external libraries (like HEIF)
   if (ENABLE_ASAN)
-  	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 -fsanitize=address") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
-  else
-  	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 ") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
+  	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 -fsanitize=address") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is Debug
+  else (ENABLE_ASAN)
+  	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 ") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is Debug
   endif (ENABLE_ASAN)
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
 SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
