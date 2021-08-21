@@ -34,6 +34,16 @@ jobs:
               libheif-dev libfreetype-dev
               libavifile-0.7-dev libxpm-dev
 
+      - name: Install LibHEIF
+        # Rely on 1.12.0
+        run: wget https://github.com/strukturag/libheif/archive/refs/tags/v1.12.0.tar.gz
+             tar xzf v1.12.0.tar.gz
+             cd libheif-1.12.0
+             ./configure --prefix=/usr
+             make
+             sudo make install
+             cd ..
+
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
