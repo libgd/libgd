@@ -23,6 +23,7 @@ OPTION(ENABLE_HEIF "Enable HEIF support" 0)
 OPTION(ENABLE_AVIF "Enable AVIF support" 0)
 OPTION(ENABLE_RAQM "Enable RAQM support" 0)
 OPTION(ENABLE_ASAN "Enable (gcc) ASAN support" 0)
+OPTION(ENABLE_CPP "Enable CPP GD API" 1)
 
 if (BUILD_TEST)
 	ENABLE_TESTING()
@@ -109,6 +110,10 @@ else (USE_EXT_GD)
 
 	include(AC_HEADER_STDC)
 	include(CheckPrototypeExists)
+
+	if (ENABLE_CPP)
+		SET(ENABLE_CPP_API 1)
+	endif (ENABLE_CPP)
 
 	if (ENABLE_GD_FORMATS)
 		FIND_PACKAGE(ZLIB REQUIRED)
