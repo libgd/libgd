@@ -93,8 +93,8 @@ jobs:
               -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Prepare environment Windows x64
+        if: contains(matrix.os, 'Windows')
         run: |
-          if: contains(matrix.os, 'Windows')
           git clone https://github.com/Microsoft/vcpkg.git
           ${{github.workspace}}\vcpkg\bootstrap-vcpkg.bat
           echo "VCPKG_DEFAULT_TRIPLET=x64-windows"  >> $GITHUB_ENV
