@@ -33,6 +33,9 @@ jobs:
 #          - name: "macOS (10.15) - Xcode 12.3 - M1"
 #            os: macos-m1
 #            build: { shell: "/usr/bin/arch -arch arm64e /bin/bash -l {0}" }
+          - name: "Windows 2019"
+            os: windows-2019
+            build: { shell: powershell }
 
     defaults:
       run:
@@ -89,6 +92,28 @@ jobs:
               -DENABLE_TIFF=1  -DENABLE_GD_FORMATS=1 -DENABLE_CPP=0 -DENABLE_HEIC=1 -D CMAKE_PREFIX_PATH=/usr/local
               -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
+      - name: Prepare environment Windows x64
+        run: |
+          if: contains(matrix.os, 'Windows')
+          git clone https://github.com/Microsoft/vcpkg.git
+          ${{github.workspace}}\vcpkg\bootstrap-vcpkg.bat
+          echo "VCPKG_DEFAULT_TRIPLET=x64-windows"  >> $GITHUB_ENV
+
+      - name: Install Dependencies Windows
+        if: contains(matrix.os, 'Windows')
+        run: |
+          $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
+          ${{github.workspace}}\vcpkg\vcpkg.exe install libpng libjpeg-turbo
+
+      - name: Configure CMake Windows x64
+        if: contains(matrix.os, 'Windows')
+        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+        run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+              -DENABLE_TIFF=1  -DENABLE_GD_FORMATS=1 -DENABLE_CPP=0 -DENABLE_HEIC=1 -D CMAKE_PREFIX_PATH=/usr/local
+              -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+              -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/scripts/buildsystems/vcpkg.cmake
+
       - name: Configure CMake Ubuntu
         if: contains(matrix.os, 'ubuntu')
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -134,5 +159,5 @@ jobs:
       - name: Output Log
         run: |
           if test -f "/home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log"; then
-            cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
+              cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
           fi
