@@ -30,9 +30,9 @@ jobs:
           - name: "macOS (10.15) - Xcode 12.3"
             os: macos-10.15
             build: { shell: bash }
-          - name: "macOS (10.15) - Xcode 12.3 - M1"
-            os: macos-m1
-            build: { shell: "/usr/bin/arch -arch arm64e /bin/bash -l {0}" }
+#          - name: "macOS (10.15) - Xcode 12.3 - M1"
+#            os: macos-m1
+#            build: { shell: "/usr/bin/arch -arch arm64e /bin/bash -l {0}" }
 
     defaults:
       run:
