@@ -46,7 +46,7 @@ static const char letters[] =
 
 #ifdef _MSC_VER
 extern int optind, opterr, optopt;
-extern char *optarg
+extern char *optarg;
 /* This is only used here */
 int
 mkstemp (char *tmpl)
