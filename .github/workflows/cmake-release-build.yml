@@ -69,7 +69,7 @@ jobs:
         run: |
           brew update
           brew upgrade
-          brew install libheif libjpeg-turbo freetype libtiff libimagequant libde265 x265 webp libpng
+          brew install libheif libjpeg-turbo freetype libtiff libimagequant libde265 x265 webp
           brew link webp
 
       - name: Prepare macOS environment
