@@ -29,7 +29,7 @@
 # endif
 #endif
 #ifdef _MSC_VER
-typedef SSIZE_T ssize_t
+#define SSIZE_T ssize_t
 #endif
 
 #include "gd.h"
