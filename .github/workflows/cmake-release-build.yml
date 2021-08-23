@@ -70,7 +70,7 @@ jobs:
           brew update
           brew upgrade
           brew install libxpm libheif libjpeg-turbo freetype libpng libtiff libimagequant libde265 x265
-          brew install webp --universal
+          brew install webp
           brew link webp
 
       - name: Prepare macOS environment
