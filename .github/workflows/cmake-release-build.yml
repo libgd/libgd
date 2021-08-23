@@ -64,6 +64,16 @@ jobs:
               libheif-dev libfreetype-dev libheif-dev 
               libavifile-0.7-dev libxpm-dev libraqm-dev
 
+      - name: Install macport (MacOS)
+        if: contains(matrix.os, 'macos')
+        run: |
+          curl -O https://distfiles.macports.org/MacPorts/MacPorts-2.6.2.tar.bz2
+          tar xf MacPorts-2.6.2.tar.bz2
+          cd MacPorts-2.6.2/
+          ./configure
+          make
+          sudo make install
+
       - name: Install macOS dependencies
         if: contains(matrix.os, 'macos')
         run: |
