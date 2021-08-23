@@ -65,6 +65,7 @@ jobs:
               libavifile-0.7-dev libxpm-dev libraqm-dev
 
       - name: MacPorts (MacOS)
+        if: contains(matrix.os, 'macos')
         uses: keepitsimpletech/actions/setup-macports@setup-macports/releases/v1
 
       - name: Install macOS dependencies
