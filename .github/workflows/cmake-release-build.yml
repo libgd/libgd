@@ -132,6 +132,8 @@ jobs:
 
 
       - name: Output Log
-        run: cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
+        run: |
+          touch /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
+          cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
 
       
