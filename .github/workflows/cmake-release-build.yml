@@ -79,6 +79,8 @@ jobs:
           echo "JOBS=$(sysctl -n hw.logicalcpu)" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=/usr/local/opt/jpeg-turbo/lib/pkgconfig" >> $GITHUB_ENV
           echo "CFLAGS=-I/opt/X11/include"  >> $GITHUB_ENV
+          echo "LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib"  >> $GITHUB_ENV
+          echo "CPATH=$CPATH:/usr/local/include"  >> $GITHUB_ENV
           sudo xcode-select --switch /Library/Developer/CommandLineTools
 
       - name: Configure CMake MacOS
@@ -109,7 +111,7 @@ jobs:
           echo "LSAN_OPTIONS=suppressions=${{ github.workspace }}/suppressions/lsan.supp" >> $GITHUB_ENV
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
-      - name: Configure CMake ASAN
+      - name: Configure CMake ASAN Ubuntu
         if: contains(matrix.os, 'ubuntu')
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
@@ -117,12 +119,12 @@ jobs:
               -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIC=1
               -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-      - name: Build ASAN
+      - name: Build ASAN Ubuntu
         if: contains(matrix.os, 'ubuntu')
         # Build your program with the given configuration
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-      - name: Test ASAN
+      - name: Test ASAN Ubuntu
         if: contains(matrix.os, 'ubuntu')
         working-directory: ${{github.workspace}}/build
         # Execute tests defined by the CMake configuration.  
