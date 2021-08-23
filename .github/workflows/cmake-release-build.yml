@@ -67,6 +67,7 @@ jobs:
       - name: Install macOS dependencies
         if: contains(matrix.os, 'macos')
         run: |
+          xcode-select --install 
           brew update
           brew upgrade
           brew install libheif libjpeg-turbo freetype libtiff libimagequant libde265 x265 webp libpng
@@ -81,7 +82,7 @@ jobs:
           echo "C_INCLUDE_PATH=/usr/local/lib:/usr/local/include/libpng16:/usr/local/opt/openssl/include" >> $GITHUB_ENV
           echo "LIBRARY_PATH=/usr/local/lib:/usr/local/include/libpng:/usr/local/opt/openssl/include" >> $GITHUB_ENV
           echo "LD_PATH"
-          #sudo xcode-select --switch /Library/Developer/CommandLineTools
+          sudo xcode-select install
 
       - name: Configure CMake MacOS
         if: contains(matrix.os, 'macos')
