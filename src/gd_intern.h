@@ -31,6 +31,7 @@
 
 #ifdef _MSC_VER
 #define  ssize_t SSIZE_T
+#define SSIZE_MAX MAXSSIZE_T
 #endif
 
 #include "gd.h"
