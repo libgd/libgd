@@ -133,7 +133,6 @@ jobs:
 
       - name: Output Log
         run: |
-          touch /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
-          cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
-
-      
+          if test -f "/home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log"; then
+            cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
+          fi
