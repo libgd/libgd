@@ -1270,6 +1270,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx(int size, void *data, int ign
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 {
+	ARG_NOT_USED(infile);
 	_noJpegError();
 	return NULL;
 }
