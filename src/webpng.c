@@ -73,7 +73,7 @@ main(int argc, char **argv)
 	int trans_col = KEEP_TRANS;
 	int report_details = 0;
 	int print_alpha = 0;
-	extern int optind, opterr, optopt;
+	extern int optind, opterr, optopt, optarg;
 	/* Declare our image pointer */
 	gdImagePtr im = 0;
 	/* We'll set 'write' once we know the user's request
