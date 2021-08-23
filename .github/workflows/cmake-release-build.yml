@@ -64,14 +64,10 @@ jobs:
               libheif-dev libfreetype-dev libheif-dev 
               libavifile-0.7-dev libxpm-dev libraqm-dev
 
-      - name: MacPorts (MacOS)
-        if: contains(matrix.os, 'macos')
-        uses: keepitsimpletech/actions/setup-macports@setup-macports/releases/v1
-
       - name: Install macOS dependencies
         if: contains(matrix.os, 'macos')
         run: |
-          sudo port install libpng install libheif libjpeg-turbo freetype libtiff libimagequant libde265 x265 webp
+          sudo brew install libheif libjpeg-turbo freetype libtiff libimagequant libde265 x265 webp
 
       - name: Prepare macOS environment
         if: contains(matrix.os, 'macos')
