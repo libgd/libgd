@@ -45,6 +45,8 @@ static const char letters[] =
 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 #ifdef _MSC_VER
+extern int optind, opterr, optopt;
+extern char *optarg
 /* This is only used here */
 int
 mkstemp (char *tmpl)
@@ -160,7 +162,7 @@ main(int argc, char **argv)
 	int trans_col = KEEP_TRANS;
 	int report_details = 0;
 	int print_alpha = 0;
-	extern int optind, opterr, optopt, optarg;
+
 	/* Declare our image pointer */
 	gdImagePtr im = 0;
 	/* We'll set 'write' once we know the user's request
