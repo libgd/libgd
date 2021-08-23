@@ -151,7 +151,7 @@ SET(LIBS_PRIVATES
 set(GD_PROGRAMS gdcmpgif)
 
 if (PNG_FOUND)
-	set(GD_PROGRAMS ${GD_PROGRAMS} gdtopng pngtogd webpng)
+	set(GD_PROGRAMS ${GD_PROGRAMS} gdtopng pngtogd)
 	if (NOT WIN32)
 		set(GD_PROGRAMS ${GD_PROGRAMS} webpng)
 	endif (NOT WIN32)
@@ -170,6 +170,11 @@ endif()
 
 foreach(program ${GD_PROGRAMS})
     add_executable(${program} ${program}.c)
+	if (WIN32)
+		list(REMOVE_ITEM program webpng.c)
+		list(REMOVE_ITEM GD_PROGRAMS webpng)
+	endif (WIN32)
+
     if (BUILD_SHARED_LIBS)
         target_link_libraries(${program} ${GD_LIB})
     else()
