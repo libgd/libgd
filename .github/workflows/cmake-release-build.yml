@@ -92,18 +92,11 @@ jobs:
               -DENABLE_TIFF=1  -DENABLE_GD_FORMATS=1 -DENABLE_CPP=0 -DENABLE_HEIC=1 -D CMAKE_PREFIX_PATH=/usr/local
               -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-      - name: Prepare environment Windows x64
-        if: contains(matrix.os, 'Windows')
-        run: |
-          git clone https://github.com/Microsoft/vcpkg.git
-          ${{github.workspace}}\vcpkg\bootstrap-vcpkg.bat
-          echo "VCPKG_DEFAULT_TRIPLET=x64-windows"  >> $GITHUB_ENV
-
       - name: Install Dependencies Windows
         if: contains(matrix.os, 'Windows')
         run: |
           $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
-          ${{github.workspace}}\vcpkg\vcpkg.exe install libpng libjpeg-turbo
+          ${{VCPKG_INSTALLATION_ROOT}}\vcpkg\vcpkg.exe install libpng libjpeg-turbo
 
       - name: Configure CMake Windows x64
         if: contains(matrix.os, 'Windows')
@@ -111,7 +104,7 @@ jobs:
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
         run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1  -DENABLE_GD_FORMATS=1 
               -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-              -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/scripts/buildsystems/vcpkg.cmake
+              -DCMAKE_TOOLCHAIN_FILE=${{VCPKG_INSTALLATION_ROOT}}\scripts\buildsystems\vcpkg.cmake
 
       - name: Configure CMake Ubuntu
         if: contains(matrix.os, 'ubuntu')
