@@ -67,7 +67,7 @@ jobs:
       - name: Install macOS dependencies
         if: contains(matrix.os, 'macos')
         run: |
-          sudo brew install libheif libjpeg-turbo freetype libtiff libimagequant libde265 x265 webp
+          brew install libheif libjpeg-turbo freetype libtiff libimagequant libde265 x265 webp
 
       - name: Prepare macOS environment
         if: contains(matrix.os, 'macos')
