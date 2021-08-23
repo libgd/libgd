@@ -28,8 +28,9 @@
 #  include "msinttypes/inttypes.h"
 # endif
 #endif
+
 #ifdef _MSC_VER
-#define SSIZE_T ssize_t
+#define  ssize_t SSIZE_T
 #endif
 
 #include "gd.h"
