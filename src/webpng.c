@@ -44,6 +44,7 @@ static void usage(const char *msg)
 static const char letters[] =
 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+#ifdef _MSC_VER
 /* This is only used here */
 int
 mkstemp (char *tmpl)
@@ -126,6 +127,7 @@ mkstemp (char *tmpl)
   errno = EEXIST;
   return -1;
 }
+#endif
 
 static void err(const char *fmt, ...)
 {
