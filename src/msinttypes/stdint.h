@@ -110,6 +110,8 @@ typedef uint16_t  uint_fast16_t;
 typedef uint32_t  uint_fast32_t;
 typedef uint64_t  uint_fast64_t;
 
+typedef SSIZE_T ssize_t;
+
 // 7.18.1.4 Integer types capable of holding object pointers
 #ifdef _WIN64 // [
    typedef signed __int64    intptr_t;
