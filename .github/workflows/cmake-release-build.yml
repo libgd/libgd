@@ -96,7 +96,7 @@ jobs:
         if: contains(matrix.os, 'Windows')
         run: |
           $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
-          C:\vcpkg\vcpkg.exe install libpng libjpeg-turbo
+          C:\vcpkg\vcpkg.exe install libpng libjpeg-turbo freetype
 
       - name: Configure CMake Windows x64
         if: contains(matrix.os, 'Windows')
