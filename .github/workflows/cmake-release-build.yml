@@ -95,9 +95,8 @@ jobs:
       - name: Install Dependencies Windows
         if: contains(matrix.os, 'Windows')
         run: |
-          dir c:\vcpkg\
           $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
-          C:\vcpkg\vcpkg\vcpkg.exe install libpng libjpeg-turbo
+          C:\vcpkg\vcpkg.exe install libpng libjpeg-turbo
 
       - name: Configure CMake Windows x64
         if: contains(matrix.os, 'Windows')
