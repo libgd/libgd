@@ -28,7 +28,7 @@ jobs:
             os: ubuntu-20.04
             build: { shell: bash }
           - name: "macOS (10.15) - Xcode 12.3"
-            os: macos-10.14
+            os:  macOS-latest
             build: { shell: bash }
 #          - name: "macOS (10.15) - Xcode 12.3 - M1"
 #            os: macos-m1
