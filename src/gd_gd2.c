@@ -1,4 +1,4 @@
- /*
+/*
    * gd_gd2.c
    *
    * Implements the I/O and support for the GD2 format.
