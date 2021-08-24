@@ -1135,11 +1135,13 @@ BGD_DECLARE(void *) gdImageGd2Ptr (gdImagePtr im, int cs, int fmt, int *size)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx (2048, NULL);
 	if (out == NULL) return NULL;
+	
 	if (_gdImageGd2(im, out, cs, fmt)) {
 		rv = NULL;
 	} else {
 		rv = gdDPExtractData(out, size);
 	}
+	
 	out->gd_free (out);
 	return rv;
 }
