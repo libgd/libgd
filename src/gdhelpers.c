@@ -10,14 +10,21 @@
 #include <sys/types.h>
 #include <ctype.h>
 
+static struct gdAllocHelpers_s {
+  gdCallocMethod gdMemoryCallocMethod;
+  gdMallocMethod gdMemoryMallocMethod;
+  gdReallocMethod gdMemoryReallocMethod;
+  gdFreeMethod gdMemoryFreeMethod;
+} gdAllocHelpers = {
+  calloc,
+  malloc,
+  realloc,
+  free,
+};
+
 /* TBB: gd_strtok_r is not portable; provide an implementation */
 
 #define SEP_TEST (separators[*((unsigned char *) s)])
-
-static gdCallocMethod gdMemoryCallocMethod = calloc;
-static gdMallocMethod gdMemoryMallocMethod = malloc;
-static gdReallocMethod gdMemoryReallocMethod = realloc;
-static gdFreeMethod gdMemoryFreeMethod = free;
 
 char *
 gd_strtok_r(char *s, const char *sep, char **state)
@@ -71,19 +78,19 @@ gd_strtok_r(char *s, const char *sep, char **state)
 
 void * gdCalloc (size_t nmemb, size_t size)
 {
-	return gdMemoryCallocMethod (nmemb, size);
+	return gdAllocHelpers.gdMemoryCallocMethod (nmemb, size);
 }
 
 void *
 gdMalloc (size_t size)
 {
-	return gdMemoryMallocMethod (size);
+	return gdAllocHelpers.gdMemoryMallocMethod (size);
 }
 
 void *
 gdRealloc (void *ptr, size_t size)
 {
-	return gdMemoryReallocMethod (ptr, size);
+	return gdAllocHelpers.gdMemoryReallocMethod (ptr, size);
 }
 
 void *
@@ -117,7 +124,7 @@ gdReallocEx (void *ptr, size_t size)
 */
 BGD_DECLARE(void) gdFree (void *ptr)
 {
-	gdMemoryFreeMethod (ptr);
+	gdAllocHelpers.gdMemoryFreeMethod (ptr);
 }
 
 /*
@@ -144,7 +151,7 @@ BGD_DECLARE(void) gdFree (void *ptr)
 BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod calloc_method)
 {
 	if (calloc_method != NULL)
-		gdMemoryCallocMethod = calloc_method;
+		gdAllocHelpers.gdMemoryCallocMethod = calloc_method;
 }
 
 /*
@@ -185,7 +192,7 @@ BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod calloc_method)
 BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod malloc_method)
 {
 	if (malloc_method != NULL)
-		gdMemoryMallocMethod = malloc_method;
+		gdAllocHelpers.gdMemoryMallocMethod = malloc_method;
 }
 
 /*
@@ -211,7 +218,7 @@ BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod malloc_method)
 BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod realloc_method)
 {
 	if (realloc_method != NULL)
-		gdMemoryReallocMethod = realloc_method;
+		gdAllocHelpers.gdMemoryReallocMethod = realloc_method;
 }
 
 /*
@@ -234,7 +241,7 @@ BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod realloc_method)
 BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod free_method)
 {
 	if (free_method != NULL)
-		gdMemoryFreeMethod = free_method;
+		gdAllocHelpers.gdMemoryFreeMethod = free_method;
 }
 
 /*
@@ -255,7 +262,7 @@ BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod free_method)
 */
 BGD_DECLARE(void) gdClearMemoryCallocMethod()
 {
-	gdMemoryCallocMethod = calloc;
+	gdAllocHelpers.gdMemoryCallocMethod = calloc;
 }
 
 /*
@@ -287,7 +294,7 @@ BGD_DECLARE(void) gdClearMemoryCallocMethod()
 */
 BGD_DECLARE(void) gdClearMemoryMallocMethod()
 {
-	gdMemoryMallocMethod = malloc;
+	gdAllocHelpers.gdMemoryMallocMethod = malloc;
 }
 
 /*
@@ -308,7 +315,7 @@ BGD_DECLARE(void) gdClearMemoryMallocMethod()
 */
 BGD_DECLARE(void) gdClearMemoryReallocMethod()
 {
-	gdMemoryReallocMethod = realloc;
+	gdAllocHelpers.gdMemoryReallocMethod = realloc;
 }
 
 /*
@@ -328,5 +335,5 @@ BGD_DECLARE(void) gdClearMemoryReallocMethod()
 */
 BGD_DECLARE(void) gdClearMemoryFreeMethod()
 {
-	gdMemoryFreeMethod = free;
+	gdAllocHelpers.gdMemoryFreeMethod = free;
 }
