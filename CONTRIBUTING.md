@@ -66,7 +66,6 @@ Explain the problem and include additional details to help maintainers reproduce
 
 This text has been largely inspired by the Atom contributing notes, which are amazingly complete.
 
-
 ## Styleguides
 
 These sections tend to bore people. But if you don't follow them, it slows
@@ -121,6 +120,12 @@ Some general guidelines:
   and must take <5 seconds.
 * Tests must be documented: Just add a comment block to the top of the file
   with a short description and any existing bugs/URLs.
+
+#### CI
+
+If we are lucky enough to get pull request (PR) from you, we will do our best to support your efforts to get it in. As part of this, we setup a CI using github actions, which will be executed on new PR. Please check out the results of your PR to see if anything went wrong (it has Linux, MacOS and Windows OSes support). The CI must be green for a PR to be considered.
+
+See [the github PR documentation]{https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request} for more details about how to create a pull request.
 
 ### Documentation Styleguide
 
