@@ -27,7 +27,7 @@ int main()
 
 	pos = -1;
 	gdImageColorTransparent(im, pos);
-	if(im->transparent == pos) {
+	if(im->transparent != pos) {
 		error = -3;
 	}
 
