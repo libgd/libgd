@@ -745,6 +745,8 @@ break_top:
 			/* Then the bottom row */
 			for (y = tim->sy - 1; y > min_y; --y) {
 				for (x = 0; x < tim->sx; ++x) {
+					if (!gdImageBoundsSafe(prev_tim, x,y))
+						continue;
 					if (!comparewithmap
 					        (prev_tim, tim,
 					         prev_tim->pixels[y][x],
