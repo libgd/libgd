@@ -898,10 +898,13 @@ BGD_DECLARE(void) gdImageColorTransparent (gdImagePtr im, int color)
 	// Reset ::transparent
 	if (color == -1) {
 		im->transparent = -1;
+		return;
 	}
+
 	if (color < -1) {
 		return;
 	}
+
 	if (im->trueColor) {
 		im->transparent = color;
 		return;
