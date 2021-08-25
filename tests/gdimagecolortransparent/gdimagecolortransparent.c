@@ -15,7 +15,6 @@ int main()
 
 	if(im->transparent == pos) {
 		error = -1;
-		goto exit;
 	}
 
 	pos = -2;
@@ -24,7 +23,6 @@ int main()
 
 	if(im->transparent == pos) {
 		error = -2;
-		goto exit;
 	}
 
 	pos = -1;
