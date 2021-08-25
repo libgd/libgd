@@ -895,19 +895,24 @@ BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color)
  */
 BGD_DECLARE(void) gdImageColorTransparent (gdImagePtr im, int color)
 {
-	if (color < 0) {
+	// Reset ::transparent
+	if (color == -1) {
+		im->transparent = -1;
+	}
+	if (color < -1) {
+		return;
+	}
+	if (im->trueColor) {
+		im->transparent = color;
 		return;
 	}
 
-	if (!im->trueColor) {
-		if (color >= gdMaxColors) {
-			return;
-		}
-		if (im->transparent != -1) {
-			im->alpha[im->transparent] = gdAlphaOpaque;
-		}
-		im->alpha[color] = gdAlphaTransparent;
+	// Palette Image
+	if (color >= gdMaxColors) {
+		return;
 	}
+	im->alpha[im->transparent] = gdAlphaOpaque;
+	im->alpha[color] = gdAlphaTransparent;
 	im->transparent = color;
 }
 

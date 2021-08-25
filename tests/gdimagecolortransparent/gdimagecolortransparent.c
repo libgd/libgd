@@ -15,6 +15,7 @@ int main()
 
 	if(im->transparent == pos) {
 		error = -1;
+		goto exit;
 	}
 
 	pos = -2;
@@ -22,7 +23,14 @@ int main()
 	gdImageColorTransparent(im, pos);
 
 	if(im->transparent == pos) {
-		error = -1;
+		error = -2;
+		goto exit;
+	}
+
+	pos = -1;
+	gdImageColorTransparent(im, pos);
+	if(im->transparent == pos) {
+		error = -3;
 	}
 
 	gdImageDestroy(im);
