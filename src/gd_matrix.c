@@ -84,7 +84,10 @@ BGD_DECLARE(int) gdAffineInvert (double dst[6], const double src[6])
 {
 	double r_det = (src[0] * src[3] - src[1] * src[2]);
 
-	if (fabs(r_det) <= 0.0) {
+	if (!isfinite(r_det)) {
+		return GD_FALSE;
+	}
+	if (r_det == 0) {
 		return GD_FALSE;
 	}
 
