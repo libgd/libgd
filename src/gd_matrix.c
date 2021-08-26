@@ -12,7 +12,28 @@
 /**
  * Title: Matrix
  * Group: Affine Matrix
- */
+ *
+ * Matrix functions to initialize, transform and various other operations
+ * on these matrices.
+ * They can be used with gdTransformAffineCopy and are also used in various
+ * transformations functions in GD.
+ *
+ * matrix are create using a 6 elements double array:
+ * (start code)
+ * matrix[0] == xx
+ * matrix[1] == yx
+ * matrix[2] == xy
+ * matrix[3] == xy
+ * matrix[4] == x0
+ * matrix[5] == y0
+ * (end code)
+ * where the transformation of a given point (x,y) is given by:
+ *
+ * (start code)
+ * x_new = xx * x + xy * y + x0;
+ * y_new = yx * x + yy * y + y0;
+ * (end code)
+*/
 
 /**
  * Function: gdAffineApplyToPointF
