@@ -89,6 +89,7 @@ jobs:
           pkg-config --libs libpng16
           ls /usr/local/Cellar/libpng/1.6.37/
           ls /usr/local/Cellar/libpng/1.6.37/lib/
+          ${{github.workspace}}/.github/scripts/removemono.sh
 
       - name: Configure CMake MacOS
         if: contains(matrix.os, 'macos')
