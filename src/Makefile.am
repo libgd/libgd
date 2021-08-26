@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-
 
 bin_PROGRAMS = gdcmpgif
-check_PROGRAMS = gifanimtest gd_color_map_test
+check_PROGRAMS = gifanimtest
 
 if HAVE_LIBPNG
 bin_PROGRAMS += gdtopng pngtogd webpng

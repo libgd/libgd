@@ -19,6 +19,7 @@ include fontconfig/Makemodule.am
 include freetype/Makemodule.am
 include gd/Makemodule.am
 include gd2/Makemodule.am
+include gdcolormaplookup/Makemodule.am
 include gdimagearc/Makemodule.am
 include gdimagebrightness/Makemodule.am
 include gdimageclone/Makemodule.am
