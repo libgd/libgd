@@ -70,7 +70,7 @@ jobs:
       - name: Install macOS dependencies
         if: contains(matrix.os, 'macos')
         run: |
-          brew install libheif libjpeg-turbo freetype libtiff libimagequant libde265 x265 webp
+          brew install libheif libjpeg-turbo libimagequant libde265 x265
 
       - name: Prepare macOS environment
         if: contains(matrix.os, 'macos')
@@ -93,7 +93,7 @@ jobs:
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
         run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
               -DENABLE_TIFF=1  -DENABLE_GD_FORMATS=1 -DENABLE_CPP=0 -DENABLE_HEIF=1 -D CMAKE_PREFIX_PATH=/usr/local
-              -DBUILD_TEST=1 -DENABLE_PNG-1 -DVERBOSE_MAKEFILE=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+              -DBUILD_TEST=1 -DVERBOSE_MAKEFILE=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Install Dependencies Windows
         if: contains(matrix.os, 'Windows')
