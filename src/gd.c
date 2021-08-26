@@ -895,19 +895,27 @@ BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color)
  */
 BGD_DECLARE(void) gdImageColorTransparent (gdImagePtr im, int color)
 {
-	if (color < 0) {
+	// Reset ::transparent
+	if (color == -1) {
+		im->transparent = -1;
 		return;
 	}
 
-	if (!im->trueColor) {
-		if (color >= gdMaxColors) {
-			return;
-		}
-		if (im->transparent != -1) {
-			im->alpha[im->transparent] = gdAlphaOpaque;
-		}
-		im->alpha[color] = gdAlphaTransparent;
+	if (color < -1) {
+		return;
 	}
+
+	if (im->trueColor) {
+		im->transparent = color;
+		return;
+	}
+
+	// Palette Image
+	if (color >= gdMaxColors) {
+		return;
+	}
+	im->alpha[im->transparent] = gdAlphaOpaque;
+	im->alpha[color] = gdAlphaTransparent;
 	im->transparent = color;
 }
 
@@ -3543,7 +3551,7 @@ BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
 			red = red >= 255.5 ? 255 : red+0.5;
 			blue = blue >= 255.5 ? 255 : blue+0.5;
 			green = green >= 255.5 ? 255 : green+0.5;
-			alpha = alpha >= gdAlphaMax+0.5 ? 255 : alpha+0.5;
+			alpha = alpha >= gdAlphaMax+0.5 ? gdAlphaMax : alpha+0.5;
 			gdImageSetPixel(dst, x, y, gdTrueColorAlpha ((int)red, (int)green, (int)blue, (int)alpha));
 		}
 	}
