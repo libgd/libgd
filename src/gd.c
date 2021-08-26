@@ -3543,7 +3543,7 @@ BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
 			red = red >= 255.5 ? 255 : red+0.5;
 			blue = blue >= 255.5 ? 255 : blue+0.5;
 			green = green >= 255.5 ? 255 : green+0.5;
-			alpha = alpha >= gdAlphaMax+0.5 ? 255 : alpha+0.5;
+			alpha = alpha >= gdAlphaMax+0.5 ? gdAlphaMax : alpha+0.5;
 			gdImageSetPixel(dst, x, y, gdTrueColorAlpha ((int)red, (int)green, (int)blue, (int)alpha));
 		}
 	}
