@@ -83,12 +83,6 @@ jobs:
           echo "CPATH=/usr/local/include:/usr/local/Cellar/libpng/1.6.37/include/libpng16"  >> $GITHUB_ENV
           echo "C_INCLUDE_PATH=/usr/local/lib:/usr/local/Cellar/libpng/1.6.37/include/libpng16:/usr/local/opt/openssl/include" >> $GITHUB_ENV
           echo "LIBRARY_PATH=/usr/local/Cellar/libpng/1.6.37/lib:/usr/local/lib" >> $GITHUB_ENV
-          pkg-config --libs --cflags libpng
-          pkg-config --libs libpng
-          pkg-config --libs --cflags libpng16
-          pkg-config --libs libpng16
-          ls /usr/local/Cellar/libpng/1.6.37/
-          ls /usr/local/Cellar/libpng/1.6.37/lib/
           ${{github.workspace}}/.github/scripts/removemono.sh
 
       - name: Configure CMake MacOS
@@ -126,7 +120,7 @@ jobs:
         # Build your program with the given configuration
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
 
-      - name: Test Ubuntu
+      - name: Test Ubuntu/MacOs
         if: contains(matrix.os, 'ubuntu') || contains(matrix.os, 'macos')
         working-directory: ${{github.workspace}}/build
         # Execute tests defined by the CMake configuration.  
