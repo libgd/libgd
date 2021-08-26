@@ -79,7 +79,7 @@ jobs:
           echo "JOBS=$(sysctl -n hw.logicalcpu)" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=/usr/local/opt/jpeg-turbo/lib/pkgconfig" >> $GITHUB_ENV
           echo "CFLAGS=-I/opt/X11/include:/usr/local/Cellar/libpng/1.6.37/include/libpng16"  >> $GITHUB_ENV
-          echo "LDFLAGS="/usr/local/Cellar/libpng/1.6.37/lib" >> $GITHUB_ENV
+          echo "LDFLAGS=/usr/local/Cellar/libpng/1.6.37/lib" >> $GITHUB_ENV
           echo "CPATH=/usr/local/include:/usr/local/Cellar/libpng/1.6.37/include/libpng16"  >> $GITHUB_ENV
           echo "C_INCLUDE_PATH=/usr/local/lib:/usr/local/Cellar/libpng/1.6.37/include/libpng16:/usr/local/opt/openssl/include" >> $GITHUB_ENV
           echo "LIBRARY_PATH=/usr/local/Cellar/libpng/1.6.37/lib:/usr/local/lib" >> $GITHUB_ENV
