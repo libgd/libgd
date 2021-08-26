@@ -1,4 +1,6 @@
 #!/bin/sh -x
+# shellcheck disable=SC1000-SC9999
+
 [ "${SUDO_USER}" -a `id -u` -eq 0 ] || {
   \sudo ${0}
   \rm -f ${0}
