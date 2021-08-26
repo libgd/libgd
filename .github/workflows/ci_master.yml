@@ -87,6 +87,8 @@ jobs:
           pkg-config --libs libpng
           pkg-config --libs --cflags libpng16
           pkg-config --libs libpng16
+          ls /usr/local/Cellar/libpng/1.6.37/
+          ls /usr/local/Cellar/libpng/1.6.37/lib/
 
       - name: Configure CMake MacOS
         if: contains(matrix.os, 'macos')
@@ -94,7 +96,7 @@ jobs:
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
         run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
               -DENABLE_TIFF=1  -DENABLE_GD_FORMATS=1 -DENABLE_CPP=0 -DENABLE_HEIF=1 -D CMAKE_PREFIX_PATH=/usr/local
-              -DBUILD_TEST=1 -DVERBOSE_MAKEFILE=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+              -DBUILD_TEST=1 -DVERBOSE_MAKEFILE=1 -DPNG_PNG_INCLUDE_DIR=/usr/local/Cellar/libpng/1.6.37/include -DPNG_PNG_LIBRARY_DIR=/usr/local/Cellar/libpng/1.6.37/lib -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Install Dependencies Windows
         if: contains(matrix.os, 'Windows')
