@@ -36,7 +36,9 @@ jobs:
           - name: "Windows 2019 x64"
             os: windows-2019
             build: { shell: powershell }
-
+          - name: "Windows 2019 mingw-x64"
+            os: windows-2019
+            build: { shell: msys2 {0} }
     defaults:
       run:
         shell: ${{ matrix.build.shell }} 
@@ -45,13 +47,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Update apt
+      - name: Update apt (Ubuntu)
         if: contains(matrix.os, 'ubuntu')
         env:
           DEBIAN_FRONTEND: noninteractive
         run: sudo -E apt-get update -qq -o Acquire::Retries=3
 
-      - name: Add libheif PPA
+      - name: Add libheif PPA (Ubuntu)
         if: contains(matrix.os, 'ubuntu')
         run: |
           sudo add-apt-repository ppa:strukturag/libde265
@@ -66,6 +68,14 @@ jobs:
               libpng-dev libwebp-dev libtiff5-dev libx265-dev 
               libheif-dev libfreetype-dev libheif-dev 
               libavifile-0.7-dev libxpm-dev libraqm-dev
+
+      - name: Configure CMake Ubuntu
+        if: contains(matrix.os, 'ubuntu')
+        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+        run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+              -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
+              -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Install macOS dependencies
         if: contains(matrix.os, 'macos')
@@ -105,6 +115,27 @@ jobs:
           $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
           C:\vcpkg\vcpkg.exe install libpng libjpeg-turbo freetype tiff libheif libwebp
 
+
+      - name: Setup mingw-64 Windows
+        if: contains(matrix.name, '2019 mingw-x64')
+        - uses: msys2/setup-msys2@v2
+        run:  |
+              pacman --noconfirm -S make gcc mingw-w64-x86_64-libpng
+              mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-freetype
+              mingw-w64-x86_64-libtiff mingw-w64-x86_64-libwebp mingw-w64-x86_64-libheif 
+              mingw-w64-x86_64-libraqm mingw-w64-x86_64-libimagequant mingw-w64-x86_64-libavif
+              mingw-w64-x86_64-cmake
+
+      - name: Cmake mingw-64 Windows
+        if: contains(matrix.name, '2019 mingw-x64')
+        - uses: msys2/setup-msys2@v2
+        run:  |
+              MSYSTEM=MINGW64 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DENABLE_PNG=1 
+              -DENABLE_FREETYPE=1 -DENABLE_XPM=0 -DENABLE_JPEG=1 -DENABLE_WEBP=0 -DENABLE_TIFF=1 
+              -DENABLE_XPM=0 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1 -DBUILD_TEST=1 
+              -DCMAKE_INCLUDE_PATH=C:/msys64/mingw64/include 
+              -DCMAKE_LIBRARY_PATH=C:/msys64/mingw64/lib -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -B${{github.workspace}}/build
+
       - name: Configure CMake Windows x64
         if: contains(matrix.os, 'Windows')
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -113,14 +144,6 @@ jobs:
               -DENABLE_HEIF=1
               -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
               -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
-
-      - name: Configure CMake Ubuntu
-        if: contains(matrix.os, 'ubuntu')
-        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-        run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
-              -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
-              -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
         # Build your program with the given configuration
