@@ -38,7 +38,8 @@ jobs:
             build: { shell: powershell }
           - name: "Windows 2019 mingw-x64"
             os: windows-2019
-            build: { shell: msys2 {0} }
+            - { sys: mingw64, env: x86_64 }
+
     defaults:
       run:
         shell: ${{ matrix.build.shell }} 
@@ -115,10 +116,12 @@ jobs:
           $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
           C:\vcpkg\vcpkg.exe install libpng libjpeg-turbo freetype tiff libheif libwebp
 
-
       - name: Setup mingw-64 Windows
         if: contains(matrix.name, '2019 mingw-x64')
         - uses: msys2/setup-msys2@v2
+          with:
+            msystem: ${{matrix.sys}}
+            install: mingw-w64-${{matrix.env}}-toolchain
         run:  |
               pacman --noconfirm -S make gcc mingw-w64-x86_64-libpng
               mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-freetype
