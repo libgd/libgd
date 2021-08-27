@@ -19,13 +19,13 @@ jobs:
           - { icon: '🟦', sys: mingw64, env: x86_64 }
 #          - { icon: '🟨', sys: ucrt64,  env: ucrt-x86_64 }  # Experimental!
 #          - { icon: '🟧', sys: clang64, env: clang-x86_64 } # Experimental!
-    name: 🚧${{ matrix.icon }} ${{ matrix.sys }}
+    name: ${{ matrix.icon }} ${{ matrix.sys }}
     defaults:
       run:
         shell: msys2 {0}
     steps:
 
-    - name: '🧰 Checkout'
+    - name: Checkout
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
@@ -51,7 +51,7 @@ jobs:
           mingw-w64-${{matrix.env}}-libavif
           mingw-w64-${{matrix.env}}-cmake
 
-    - name: '🚧 CMake Configure'
+    - name: CMake Configure
       run: |
         cmake -G "Unix Makefiles"  -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DENABLE_PNG=1 -DENABLE_FREETYPE=1
          -DENABLE_XPM=0 -DENABLE_JPEG=1 -DENABLE_WEBP=0 -DENABLE_TIFF=1 -DENABLE_XPM=0 
