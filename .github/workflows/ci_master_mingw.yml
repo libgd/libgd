@@ -1,0 +1,57 @@
+  name: CI Windows MingW
+on:
+  push:
+    branches: [ features/mingw-ci ]
+BUILD_TYPE: Debug
+jobs:
+
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        fail-fast: false
+        include:
+          - { icon: '⬛', sys: mingw32, env: i686 }
+          - { icon: '🟦', sys: mingw64, env: x86_64 }
+#          - { icon: '🟨', sys: ucrt64,  env: ucrt-x86_64 }  # Experimental!
+#          - { icon: '🟧', sys: clang64, env: clang-x86_64 } # Experimental!
+    name: 🚧${{ matrix.icon }} ${{ matrix.sys }}
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+
+    - name: '🧰 Checkout'
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: '${{ matrix.icon }} Setup MSYS2'
+      with:
+        msystem: ${{matrix.sys}}
+        update: true
+        install: >-
+          git
+          make
+          mingw-w64-${{matrix.env}}-toolchain
+          mingw-w64-${{matrix.env}}-cmake
+          mingw-w64-${{matrix.env}}-ninja
+          mingw-w64-${{matrix.env}}-libpng
+          mingw-w64-${{matrix.env}}-libjpeg-turbo
+          mingw-w64-${{matrix.env}}-freetype
+          mingw-w64-${{matrix.env}}-libtiff
+          mingw-w64-${{matrix.env}}-libwebp
+          mingw-w64-${{matrix.env}}-libheif
+          mingw-w64-${{matrix.env}}-libraqm
+          mingw-w64-${{matrix.env}}-libimagequant
+          mingw-w64-${{matrix.env}}-libavif
+          mingw-w64-${{matrix.env}}-cmake
+    - name: '🚧 CMake Configure'
+      run: |
+        cmake -G "Unix Makefiles"  -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DENABLE_PNG=1 -DENABLE_FREETYPE=1
+         -DENABLE_XPM=0 -DENABLE_JPEG=1 -DENABLE_WEBP=0 -DENABLE_TIFF=1 -DENABLE_XPM=0 
+         -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1 -DBUILD_TEST=1 
+         -DCMAKE_INCLUDE_PATH=C:/msys64/mingw64/include -DCMAKE_LIBRARY_PATH=C:/msys64/mingw64/lib -B ${{github.workspace}}/build
+    - name: '🚧 CMake Build'
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
