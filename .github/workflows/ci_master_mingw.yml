@@ -1,4 +1,5 @@
-  name: CI Windows MingW
+name: CI Master
+
 on:
   push:
     branches: [ master ]
