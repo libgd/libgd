@@ -863,6 +863,11 @@ BGD_DECLARE(int) gdImageColorResolveAlpha (gdImagePtr im, int r, int g, int b, i
  * Removes a palette entry
  *
  * This is a no-op for truecolor images.
+ * The function does not alter the image data nor the transparent color or any
+ * other places where this color index could have been referenced.
+ * The index is marked as open and will be used too for any subsequent <gdImageColorAllocate> 
+ * or <gdImageColorAllocateAlpha> calls. Other lower index may be open as well, the fist open index 
+ * found will be used.
  *
  * Parameters:
  *   im    - The image.
