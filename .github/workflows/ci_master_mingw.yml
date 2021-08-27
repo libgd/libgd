@@ -30,7 +30,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: '${{ matrix.icon }} Setup MSYS2'
+    - name: ${{ matrix.icon }} Setup MSYS2
       with:
         msystem: ${{matrix.sys}}
         update: true
