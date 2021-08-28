@@ -36,8 +36,7 @@ jobs:
           mkdir ${{github.workspace}}\tmp
           $Env:TMP="${{github.workspace}}\tmp"
           $Env:TEMP="${{github.workspace}}\tmp"
-          echo FOO >> "$Env:TMP\t.txt"
-          dir $Env:TMP\t.txt
+          [System.IO.Path]::GetTempPath()
 
       - name: Checkout code
         uses: actions/checkout@v2
