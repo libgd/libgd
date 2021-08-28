@@ -57,7 +57,7 @@ jobs:
         working-directory: ${{github.workspace}}/build
 
         run: |
-          $Env:TMP=$Env:TMPUSERPROFILE%\AppData\Local\Temp
-          $Env:TEMP=$Env:TMPUSERPROFILE%\AppData\Local\Temp
+          $Env:TMP="$Env:TMPUSERPROFILE%\AppData\Local\Temp"
+          $Env:TEMP="$Env:TMPUSERPROFILE%\AppData\Local\Temp"
           $Env:CTEST_OUTPUT_ON_FAILURE=1
           nmake test
