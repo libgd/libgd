@@ -27,7 +27,7 @@
 #include "readdir.h"
 #include <errno.h>
 #endif
-#if  defined(__MINGW32__) &&  defined(__MINGW64__)
+#if defined(__MINGW32__) ||  defined(__MINGW64__)
 # define lstat stat
 #endif
 #include "gd_intern.h"
