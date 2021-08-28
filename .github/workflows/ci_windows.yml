@@ -20,7 +20,7 @@ jobs:
             arch:
               - x64
               - x86
-              #- amd64_arm64
+              - amd64_arm64
     name: ${{ matrix.arch }}
     defaults:
       run:
@@ -53,7 +53,8 @@ jobs:
 
       - name: Tests
         working-directory: ${{github.workspace}}/build
-
+        # skip test for cross builds
+        if: matrix.arch != 'amd64_arm64'
         run: |
           echo ${{runner.temp}}
           echo %TMP%
