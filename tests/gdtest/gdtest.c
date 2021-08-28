@@ -84,15 +84,14 @@ int gdTestIsDir(char *path) {
 #if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
 	WIN32_FILE_ATTRIBUTE_DATA data;
 
-	if (!GetFileAttributesEx(de->d_name, GetFileExInfoStandard, &data)) {
+	if (!GetFileAttributesEx(path, GetFileExInfoStandard, &data)) {
 		continue;
 	}
 	if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-		_clean_dir(de->d_name);
+		return 0;
 	} else {
-		unlink(de->d_name);
+		return 1;
 	}
-
 #else
 	struct stat st;
 	if (lstat(path, &st) != 0)
