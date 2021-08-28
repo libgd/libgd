@@ -73,5 +73,7 @@ jobs:
     - name: Run tests
       working-directory: ${{github.workspace}}
       run: |
+        mkdir tmp
+        export TMP=${{github.workspace}}\\tmp
         export CTEST_OUTPUT_ON_FAILURE=1
         ctest -C ${{env.BUILD_TYPE}}
