@@ -33,10 +33,9 @@ jobs:
         working-directory: ${{github.workspace}}/build
 
         run: |
-          $Env:TMP="${{github.workspace}}\tmp"
-          $Env:TEMP="${{github.workspace}}\tmp"
           [System.IO.Path]::GetTempPath()
-
+          $Env:TMP=[System.IO.Path]::GetTempPath()
+          $Env:TEMP=[System.IO.Path]::GetTempPath()
       - name: Checkout code
         uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
