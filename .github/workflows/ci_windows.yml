@@ -19,21 +19,14 @@ jobs:
           matrix:
             arch:
               - x64
-  #              - x86
-  #              - amd64_arm64
+              - x86
+              #- amd64_arm64
     name: ${{ matrix.arch }}
     defaults:
       run:
         shell: cmd
 
     steps:
-      - name: Check Tmp
-        working-directory: ${{github.workspace}}
-
-        run: |
-          echo %TMP%
-          echo %TEMP%
-
       - name: Checkout code
         uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
