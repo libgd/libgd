@@ -29,6 +29,16 @@ jobs:
       MINGW_ARCH: ${{ matrix.sys }}
 
     steps:
+      - name: Check Tmp
+        working-directory: ${{github.workspace}}/build
+
+        run: |
+          mkdir ${{github.workspace}}\tmp
+          $Env:TMP="${{github.workspace}}\tmp"
+          $Env:TEMP="${{github.workspace}}\tmp"
+          echo FOO >> "$Env:TMP\t.txt"
+          dir $Env:TMP\t.txt
+
       - name: Checkout code
         uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
