@@ -34,6 +34,10 @@ int main()
 
 	im = gdImageCreateTrueColor(10, 10);
 	fp = gdTestTempFp();
+	gdTestAssert(f[]);
+	if (!fp) {
+		exit(2);
+	}
 	gdImagePngEx(im, fp, 100);
 	gdImageDestroy(im);
 	fclose(fp);
