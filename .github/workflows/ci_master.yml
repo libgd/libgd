@@ -133,12 +133,8 @@ jobs:
         # Execute tests defined by the CMake configuration.  
         # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
         run: |
-          ls -al /
-          ls -al /tmp
-          export
-          mkdir -p =${{github.workspace}}/tmp
-          export TMP=${{github.workspace}}/tmp
-          echo "TMP=${{github.workspace}}/tmp" >> $GITHUB_ENV
+          export TMP=${{runner.temp}}
+          echo "TMP=${{github.temp}}" >> $GITHUB_ENV
           echo "LSAN_OPTIONS=suppressions=${{ github.workspace }}/suppressions/lsan.supp" >> $GITHUB_ENV
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
@@ -148,6 +144,7 @@ jobs:
         # Execute tests defined by the CMake configuration.  
         # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
         run: |
+          $Env:TMP=${{github.temp}}
           $Env:CTEST_OUTPUT_ON_FAILURE=1
           ctest -C ${{env.BUILD_TYPE}}
 
@@ -171,9 +168,8 @@ jobs:
         # Execute tests defined by the CMake configuration.  
         # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
         run: |
-          mkdir -p =${{github.workspace}}/tmptmp
-          export TMP=${{github.workspace}}/tmp
-          echo "TMP=${{github.workspace}}/tmp" >> $GITHUB_ENV
+          export TMP=${{runner.temp}}
+          echo "TMP=${{github.temp}}" >> $GITHUB_ENV
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
       - name: Output Log
