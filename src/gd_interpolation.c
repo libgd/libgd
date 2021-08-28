@@ -72,9 +72,9 @@ TODO:
 #include "gdhelpers.h"
 #include "gd_intern.h"
 
-#ifdef _MSC_VER
+#ifdef define(_MSC_VER)
 # pragma optimize("t", on)
-# include <emmintrin.h>
+# include <intrin.h>
 #endif
 
 static gdImagePtr gdImageScaleBilinear(gdImagePtr im,
