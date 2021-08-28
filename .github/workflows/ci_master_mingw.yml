@@ -63,7 +63,7 @@ jobs:
     - name: '🚧 Install dependencies'
       run: |
         echo "Install dependencies"
-        ls -al
+        tree C:/msys2
 
     - name: '🚧 Build'
       run: |
