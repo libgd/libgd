@@ -47,7 +47,7 @@ jobs:
               -DCMAKE_INCLUDE_PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\include
 
       - name: Configure CMake
-        if: matrix.arch == 'amd64_arm64'
+        if: matrix.arch != 'amd64_arm64'
         run:  cmake -D CMAKE_GENERATOR="NMake Makefiles" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1  -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1
               -DENABLE_HEIF=1
               -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
