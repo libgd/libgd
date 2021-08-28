@@ -108,6 +108,14 @@ jobs:
               -DENABLE_TIFF=1  -DENABLE_GD_FORMATS=1 -DENABLE_CPP=0 -DENABLE_HEIF=1 -D CMAKE_PREFIX_PATH=/usr/local
               -DBUILD_TEST=1 -DVERBOSE_MAKEFILE=1 -DPNG_PNG_INCLUDE_DIR=/usr/local/Cellar/libpng/1.6.37/include -DPNG_PNG_LIBRARY_DIR=/usr/local/Cellar/libpng/1.6.37/lib -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
+      - uses: actions/cache@v2
+        with:
+          path: C:\vcpkg\downloads
+          key: ${{ runner.os }}-vcpkg-download-${{ matrix.os }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-download-${{ matrix.os }}-
+            ${{ runner.os }}-vcpkg-download-
+
       - name: Install Dependencies Windows
         if: contains(matrix.os, 'Windows')
         run: |
