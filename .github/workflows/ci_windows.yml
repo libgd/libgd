@@ -12,10 +12,6 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: RELWITHDEBINFO
 
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: RELWITHDEBINFO
-
 jobs:
   CI:
     runs-on: windows-latest
