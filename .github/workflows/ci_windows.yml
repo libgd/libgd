@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: Check Tmp
-        working-directory: ${{github.workspace}}/build
+        working-directory: ${{github.workspace}}
 
         run: |
           echo %TMP%
