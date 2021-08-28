@@ -226,12 +226,6 @@ char* strrstr (char* haystack, char* needle)
 static char *
 mkdtemp (char *tmpl)
 {
-	static const char letters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	static const int NLETTERS = sizeof (letters) - 1;
-	static int counter = 0;
-	char *XXXXXX;
-	struct timeval tv;
-	__int64 value;
 	int count;
 	size_t l;
 	char attempts = 5;
@@ -283,7 +277,12 @@ const char *gdTestTempDir(void)
 			// Mingw defines it
 			tmpdir_root = getenv("TMP");
 			if (tmpdir_root == NULL) {
-				tmpdir_root = "/tmp";
+				// On MingW it seems we fail too often. Let default to this and create it ourselves
+				tmpdir_root = "./tmp";
+				if (mkdir(tmpdir_root) == 0) {
+					printf("tmpdir failed to be used or initialized.");
+					exit(2);
+				}
 			}
 		}
 #endif
