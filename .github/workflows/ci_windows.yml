@@ -24,7 +24,7 @@ jobs:
     name: ${{ matrix.arch }}
     defaults:
       run:
-        shell: powershell
+        shell: cmd
     env:
       MINGW_ARCH: ${{ matrix.sys }}
 
@@ -33,9 +33,14 @@ jobs:
         working-directory: ${{github.workspace}}/build
 
         run: |
-          [System.IO.Path]::GetTempPath()
-          $Env:TMP=[System.IO.Path]::GetTempPath()
-          $Env:TEMP=[System.IO.Path]::GetTempPath()
+          echo %TMP%
+          echo %TEMP%
+          echo ${{runner.temp}}
+          set TMP=%TMPUSERPROFILE%\AppData\Local\Temp
+          set TEMP=%TMPUSERPROFILE%\AppData\Local\Temp
+          echo %TMP%
+          echo %TEMP%
+
       - name: Checkout code
         uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
@@ -64,7 +69,10 @@ jobs:
         working-directory: ${{github.workspace}}/build
 
         run: |
-          $Env:TMP="$Env:TMPUSERPROFILE%\AppData\Local\Temp"
-          $Env:TEMP="$Env:TMPUSERPROFILE%\AppData\Local\Temp"
-          $Env:CTEST_OUTPUT_ON_FAILURE=1
+          echo ${{runner.temp}}
+          set TMP=%TMPUSERPROFILE%\AppData\Local\Temp
+          set TEMP=%TMPUSERPROFILE%\AppData\Local\Temp
+          echo %TMP%
+          echo %TEMP%
+          set CTEST_OUTPUT_ON_FAILURE=1
           nmake test
