@@ -323,9 +323,7 @@ const char *gdTestTempDir(void)
 #else
 		sprintf(tmpdir, "%s/gdtest.XXXXXX", tmpdir_root);
 #endif
-		if (gdTestIsDir(tmpdir)) {
-			return tmpdir;
-		}
+
 		tmpdir_base = mkdtemp(tmpdir);
 		if (tmpdir_base == NULL) {
 			printf("failed to generate the tmp dir path (%s).", tmpdir);
