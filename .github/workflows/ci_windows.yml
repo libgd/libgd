@@ -50,7 +50,7 @@ jobs:
       - name: Install Dependencies
 
         run: |
-          curl -o ${{ matrix.arch }}-windows.7z https://github.com/libgd/libgd-windows-vcpkg-prebuild/raw/main/${{ matrix.arch }}-windows.7z
+          curl -o ${{ matrix.arch }}-windows.7z  https://raw.githubusercontent.com/libgd/libgd-windows-vcpkg-prebuild/main/${{matrix.arch}}-windows.7z
           7z.exe x ${{ matrix.arch }}-windows.7z -o${{github.workspace}}\vcpkgusr 
 
       - name: Configure CMake
