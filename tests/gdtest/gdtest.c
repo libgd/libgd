@@ -80,7 +80,28 @@ gdImagePtr gdTestImageFromPng(const char *filename)
 }
 
 static char *tmpdir_base;
+int gdTestIsDir(char *path) {
+#if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
+	WIN32_FILE_ATTRIBUTE_DATA data;
 
+	if (!GetFileAttributesEx(de->d_name, GetFileExInfoStandard, &data)) {
+		continue;
+	}
+	if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+		_clean_dir(de->d_name);
+	} else {
+		unlink(de->d_name);
+	}
+
+#else
+	struct stat st;
+	if (lstat(path, &st) != 0)
+
+	if (S_ISDIR(st.st_mode))
+		return 1;
+	return 0;
+#endif
+}
 /* This is kind of hacky, but it's meant to be simple. */
 static void _clean_dir(const char *dir)
 {
@@ -193,8 +214,10 @@ static int getfilesystemtime(struct timeval *tv)
 #if defined(_WIN32)
 
 static void randtemplate(char *template, size_t l) {
-	for (int i = l - 6; i < l; i++) {
-		int r = rand ();
+	// just to avoid calls within the same second 
+	srand(time (NULL) + (unsigned int)template);
+	for (size_t i = l - 6; i < l; i++) {
+		int r = rand();
 		if ((r / (RAND_MAX + 1)) > ((RAND_MAX + 1) / 2))
 			template[i] = 'A' + (double) rand () / (RAND_MAX + 1) * ('Z' - 'A');
 		else
@@ -226,9 +249,8 @@ char* strrstr (char* haystack, char* needle)
 static char *
 mkdtemp (char *tmpl)
 {
-	int count;
 	size_t l;
-	char attempts = 5;
+	char attempts = 8;
 	int res = 0;
 
 	if (tmpl == NULL) {
@@ -241,7 +263,6 @@ mkdtemp (char *tmpl)
 		errno = EINVAL;
 		return NULL;
 	}
-	srand(time (NULL));
 	do {
 		randtemplate (tmpl, l);
 		res = mkdir(tmpl);
@@ -252,6 +273,7 @@ mkdtemp (char *tmpl)
 		return tmpl;
 	}
 	if (errno != EEXIST) {
+		printf("Failed to create tmp dir, last attempt %s.", tmpl);
 		return NULL;
 	}
 
@@ -268,8 +290,11 @@ const char *gdTestTempDir(void)
 #if defined(_WIN32)  && !defined(__MINGW32__) &&  !defined(__MINGW64__)
 		char tmpdir_root[MAXPATHLEN];
 		size_t tmpdir_root_len = GetTempPath(MAX_PATH, tmpdir_root);
-		gdTestAssert(!(tmpdir_root_len > MAX_PATH || (tmpdir_root_len == 0)));
-		gdTestAssert((tmpdir_root_len + 30 < MAX_PATH));
+		if (!(tmpdir_root_len > MAX_PATH || (tmpdir_root_len == 0))
+		|| !(tmpdir_root_len + 30 < MAX_PATH)) {
+			printf("Tmp dir path too long");
+			return NULL;
+		}
 #else
 		char *tmpdir_root;
 		tmpdir_root = getenv("TMPDIR");
@@ -280,7 +305,7 @@ const char *gdTestTempDir(void)
 				// On MingW it seems we fail too often. Let default to this and create it ourselves
 				tmpdir_root = "./tmp";
 				if (mkdir(tmpdir_root) == 0) {
-					printf("tmpdir failed to be used or initialized.");
+					printf("tmpdir failed to be used or initialized (%s).", tmpdir_root);
 					exit(2);
 				}
 			}
@@ -289,14 +314,24 @@ const char *gdTestTempDir(void)
 
 		/* The constant here is a lazy over-estimate. */
 		tmpdir = malloc(strlen(tmpdir_root) + 30);
-		gdTestAssert(tmpdir != NULL);
+		if (tmpdir == NULL) {
+			printf("cannot alloc tmpdir path.");
+			return NULL;
+		}
+
 #if defined(_WIN32)
 		sprintf(tmpdir, "%sgdtest.XXXXXX", tmpdir_root);
 #else
 		sprintf(tmpdir, "%s/gdtest.XXXXXX", tmpdir_root);
 #endif
+		if (gdTestIsDir(tmpdir)) {
+			return tmpdir;
+		}
 		tmpdir_base = mkdtemp(tmpdir);
-		gdTestAssert(tmpdir_base != NULL);
+		if (tmpdir_base == NULL) {
+			printf("failed to generate the tmp dir path (%s).", tmpdir);
+			return NULL;
+		}
 
 		atexit(tmpdir_cleanup);
 	}
@@ -308,20 +343,29 @@ char *gdTestTempFile(const char *template)
 {
 	const char *tempdir = gdTestTempDir();
 	char *ret;
-
+	if (tempdir == NULL) {
+		return NULL;
+	}
 #if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
 	{
 		char *tmpfilename;
 		UINT error;
 
 		ret = malloc(MAX_PATH);
-		gdTestAssert(ret != NULL);
+		if (ret == NULL) {
+			printf("Failed to alloc tmp path");
+			return NULL;
+		}
 		if (template == NULL) {
 			error = GetTempFileName(tempdir,
 										  "gdtest",
 										  0,
 										  ret);
-				gdTestAssert(error != 0);
+			if (error = 0)	{
+				printf("GetTempFileName failed.");
+				gdFree(ret);
+				return NULL;
+			}
 		} else {
 			sprintf(ret, "%s\\%s", tempdir, template);
 		}
@@ -331,12 +375,19 @@ char *gdTestTempFile(const char *template)
 		template = "gdtemp.XXXXXX";
 	}
 	ret = malloc(strlen(tempdir) + 10 + strlen(template));
-	gdTestAssert(ret != NULL);
+	if (ret == NULL) {
+		printf("Failed to alloc tmp path");
+		return NULL;
+	}
 	sprintf(ret, "%s/%s", tempdir, template);
 
 	if (strstr(template, "XXXXXX") != NULL) {
 		int fd = mkstemp(ret);
-		gdTestAssert(fd != -1);
+		if (fd == -1) {
+			printf("mkstemp failed");
+			gdFree(ret);
+			return NULL;
+		}
 		close(fd);
 	}
 #endif
@@ -347,7 +398,10 @@ FILE *gdTestTempFp(void)
 {
 	char *file = gdTestTempFile(NULL);
 	FILE *fp = fopen(file, "wb");
-	gdTestAssert(fp != NULL);
+	if (fp == NULL) {
+		printf("fail to open tmp file");
+		return NULL;
+	}
 	free(file);
 	return fp;
 }
@@ -370,7 +424,10 @@ char *gdTestFilePathV(const char *path, va_list args)
 
 	/* Now build the path. */
 	file = malloc(len);
-	gdTestAssert(file != NULL);
+	if (file == NULL) {
+		printf("failed to alloc path.");
+		return NULL;
+	}
 	strcpy(file, GDTEST_TOP_DIR);
 	p = path;
 	do {
@@ -403,7 +460,10 @@ FILE *gdTestFileOpenX(const char *path, ...)
 	va_start(args, path);
 	file = gdTestFilePathV(path, args);
 	fp = fopen(file, "rb");
-	gdTestAssert(fp != NULL);
+	if (fp == NULL) {
+		printf("failed to open path (rb).");
+		return NULL;
+	}
 	free(file);
 	return fp;
 }
