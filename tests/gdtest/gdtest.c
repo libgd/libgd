@@ -289,9 +289,8 @@ const char *gdTestTempDir(void)
 #if defined(_WIN32)  && !defined(__MINGW32__) &&  !defined(__MINGW64__)
 		char tmpdir_root[MAXPATHLEN];
 		size_t tmpdir_root_len = GetTempPath(MAX_PATH, tmpdir_root);
-		if (!(tmpdir_root_len > MAX_PATH || (tmpdir_root_len == 0))
-		|| !(tmpdir_root_len + 30 < MAX_PATH)) {
-			printf("Tmp dir path too long");
+		if ((tmpdir_root_len + 30 > MAX_PATH) || (tmpdir_root_len == 0)) {
+			printf("Tmp dir path too long or 0 length <%s>\n", tmpdir_root);
 			return NULL;
 		}
 #else
