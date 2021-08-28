@@ -33,7 +33,6 @@ jobs:
         working-directory: ${{github.workspace}}/build
 
         run: |
-          mkdir ${{github.workspace}}\tmp
           $Env:TMP="${{github.workspace}}\tmp"
           $Env:TEMP="${{github.workspace}}\tmp"
           [System.IO.Path]::GetTempPath()
