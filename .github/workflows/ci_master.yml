@@ -33,12 +33,9 @@ jobs:
 #          - name: "macOS (10.15) - Xcode 12.3 - M1"
 #            os: macos-m1
 #            build: { shell: "/usr/bin/arch -arch arm64e /bin/bash -l {0}" }
-#          - name: "Windows 2019 x64"
-#            os: windows-2019
-#            build: { shell: powershell }
-          - name: "Windows 2019 mingw-x64"
+          - name: "Windows 2019 x64"
             os: windows-2019
-            - { sys: mingw64, env: x86_64 }
+            build: { shell: powershell }
 
     defaults:
       run:
@@ -115,29 +112,6 @@ jobs:
         run: |
           $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
           C:\vcpkg\vcpkg.exe install libpng libjpeg-turbo freetype tiff libheif libwebp
-
-      - name: Setup mingw-64 Windows
-        if: contains(matrix.name, '2019 mingw-x64')
-        - uses: msys2/setup-msys2@v2
-          with:
-            msystem: ${{matrix.sys}}
-            install: mingw-w64-${{matrix.env}}-toolchain
-        run:  |
-              pacman --noconfirm -S make gcc mingw-w64-x86_64-libpng
-              mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-freetype
-              mingw-w64-x86_64-libtiff mingw-w64-x86_64-libwebp mingw-w64-x86_64-libheif 
-              mingw-w64-x86_64-libraqm mingw-w64-x86_64-libimagequant mingw-w64-x86_64-libavif
-              mingw-w64-x86_64-cmake
-
-      - name: Cmake mingw-64 Windows
-        if: contains(matrix.name, '2019 mingw-x64')
-        - uses: msys2/setup-msys2@v2
-        run:  |
-              MSYSTEM=MINGW64 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DENABLE_PNG=1 
-              -DENABLE_FREETYPE=1 -DENABLE_XPM=0 -DENABLE_JPEG=1 -DENABLE_WEBP=0 -DENABLE_TIFF=1 
-              -DENABLE_XPM=0 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1 -DBUILD_TEST=1 
-              -DCMAKE_INCLUDE_PATH=C:/msys64/mingw64/include 
-              -DCMAKE_LIBRARY_PATH=C:/msys64/mingw64/lib -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -B${{github.workspace}}/build
 
       - name: Configure CMake Windows x64
         if: contains(matrix.os, 'Windows')

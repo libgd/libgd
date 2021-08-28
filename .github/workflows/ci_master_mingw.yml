@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+      branches:
+        - 'features/mingw-ci'
   pull_request:
   schedule:
     - cron: '0 0 * * 3'
@@ -10,7 +12,7 @@ on:
 jobs:
 
 
-  win-makepkg:
+  win-build:
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -20,7 +22,7 @@ jobs:
           - { icon: '🟦', sys: mingw64, env: x86_64 }
           - { icon: '🟨', sys: ucrt64,  env: ucrt-x86_64 }  # Experimental!
           - { icon: '🟧', sys: clang64, env: clang-x86_64 } # Experimental!
-    name: 🚧${{ matrix.icon }} ${{ matrix.sys }} | makepkg
+    name: 🚧${{ matrix.icon }} ${{ matrix.sys }} | build
     defaults:
       run:
         shell: msys2 {0}
@@ -47,6 +49,16 @@ jobs:
           base-devel
           tree
           mingw-w64-${{ matrix.env }}-toolchain
+          mingw-w64-${{ matrix.env }}-libpng
+          mingw-w64-${{ matrix.env }}-libjpeg-turbo
+          mingw-w64-${{ matrix.env }}-freetype
+          mingw-w64-${{ matrix.env }}-libtiff
+          mingw-w64-${{ matrix.env }}-libwebp
+          mingw-w64-${{ matrix.env }}-libheif
+          mingw-w64-${{ matrix.env }}-libraqm
+          mingw-w64-${{ matrix.env }}-libimagequant
+          mingw-w64-${{ matrix.env }}-libavif
+          mingw-w64-${{ matrix.env }}-cmake
 
     - name: '🚧 Install dependencies'
       run: |
