@@ -40,7 +40,7 @@ jobs:
         run: |
           $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
           wget https://github.com/libgd/libgd-windows-vcpkg-prebuild/raw/main/x64-windows.7z
-          7z x64-windows.7z ${{github.workspace}}\vcpkgusr
+          7z.exe x x64-windows.7z -o${{github.workspace}}\vcpkgusr 
 
       - name: Configure CMake
         run:  cmake -D CMAKE_GENERATOR="NMake Makefiles" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1  -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1
