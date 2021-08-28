@@ -58,7 +58,7 @@ jobs:
         # Execute tests defined by the CMake configuration.  
         # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
         run: |
-          cd ${{github.workspace}}/build
+          $Env:PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\bin;$ENV:PATH
           $Env:TMP=${{github.temp}}
           $Env:CTEST_OUTPUT_ON_FAILURE=1
           nmake test
