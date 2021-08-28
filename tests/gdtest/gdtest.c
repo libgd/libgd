@@ -301,12 +301,12 @@ const char *gdTestTempDir(void)
 			// Mingw defines it
 			tmpdir_root = getenv("TMP");
 			if (tmpdir_root == NULL) {
+#if defined(__MINGW32__) ||  defined(__MINGW64__)
 				// On MingW it seems we fail too often. Let default to this and create it ourselves
 				tmpdir_root = "./tmp";
-#if defined(__MINGW32__) ||  defined(__MINGW64__)
-				if (mkdir(tmpdir_root) == 0) {
+				if (!gdTestIsDir(tmpdir_root) && mkdir(tmpdir_root) == 0) {
 #else
-				if (mkdir(tmpdir_root, 0700) == 0) {
+				if (!gdTestIsDir(tmpdir_root) && mkdir(tmpdir_root, 0700) == 0) {
 #endif
 					printf("tmpdir failed to be used or initialized (%s).", tmpdir_root);
 					exit(2);
