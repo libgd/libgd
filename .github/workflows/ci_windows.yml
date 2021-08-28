@@ -63,8 +63,6 @@ jobs:
 
         run: |
           echo ${{runner.temp}}
-#          set TMP=${{runner.temp}}
-#          set TEMP=${{runner.temp}}
           echo %TMP%
           echo %TEMP%
           set PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\bin;%PATH%
