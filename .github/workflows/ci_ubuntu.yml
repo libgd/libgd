@@ -62,9 +62,9 @@ jobs:
         env:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
-          run: |
-            echo $CC
-            echo $CXX
+        run: |
+          echo $CC
+          echo $CXX
 
       - name: Configure CMake
         env:
