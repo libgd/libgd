@@ -15,7 +15,7 @@ env:
 
 jobs:
   CI:
-    runs-on: [graviton, ubuntu-latest]
+    runs-on: graviton
     strategy:
       fail-fast: false
       matrix:
