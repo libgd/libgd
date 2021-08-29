@@ -1,4 +1,4 @@
-name: CI Master
+name: CI Ubuntu
 
 on:
   push:
@@ -15,8 +15,6 @@ env:
 
 jobs:
   CI:
-    name: ${ { matrix.config.name } }
-    runs-on: ${ { matrix.config.os } }
     strategy:
       fail-fast: false
       matrix:
@@ -31,6 +29,8 @@ jobs:
             os: ubuntu-latest,
             cc: "clang", cxx: "clang++"
           }
+    name: ${ { matrix.config.name } }
+    runs-on: ${ { matrix.config.os } }
     defaults:
       run:
         shell: bash 
