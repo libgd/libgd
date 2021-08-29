@@ -24,12 +24,11 @@ jobs:
         build:
           - { shell: bash }
         include:
-          - name: "Ubuntu 20.04"
+          - name: "Clang"
             cc: "clang",
             cxx: "clang++",
             build: { shell: bash }
-        include:
-          - name: "Ubuntu 20.04"
+          - name: "GCC"
             cc: "gcc",
             cxx: "g++",
             build: { shell: bash }
