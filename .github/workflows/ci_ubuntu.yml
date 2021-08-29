@@ -24,7 +24,7 @@ jobs:
               name: "Ubuntu x86 GCC",
               cc: "gcc",
               cxx: "g++"
-            },
+            }
           - {
               name: "Ubuntu x86 Clang",
               cc: "clang-12",
