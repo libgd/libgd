@@ -12,30 +12,25 @@ env:
 
 jobs:
   CI:
-    runs-on: ubuntu-latest
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ contains(matrix.os, 'macos') }}
+    name: ${ { matrix.config.name } }
+    runs-on: ${ { matrix.config.os } }
     strategy:
       fail-fast: false
       matrix:
-        name: [ "Linux x64" ]
-        sanitize: [ false ]
-        build:
-          - { shell: bash }
-        include:
-          - name: "Clang"
-            cc: "clang",
-            cxx: "clang++",
-            build: { shell: bash }
-          - name: "GCC"
-            cc: "gcc",
-            cxx: "g++",
-            build: { shell: bash }
-
+        config:
+        - {
+            name: "Ubuntu Latest GCC",
+            os: ubuntu-latest,
+            cc: "gcc", cxx: "g++"
+          }
+        - {
+            name: "Ubuntu Latest Clang",
+            os: ubuntu-latest,
+            cc: "clang", cxx: "clang++"
+          }
     defaults:
       run:
-        shell: ${{ matrix.build.shell }} 
+        shell: bash 
 
     steps:
       - name: Checkout code
@@ -62,8 +57,8 @@ jobs:
 
       - name: Configure CMake
         env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }})
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }})
         run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
           -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
@@ -86,8 +81,8 @@ jobs:
 
       - name: Configure CMake ASAN Ubuntu
         env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }})
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }})
         run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
               -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1
@@ -95,8 +90,8 @@ jobs:
 
       - name: Build ASAN Ubuntu
         env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }})
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }})
         run: cmake --build ${{github.workspace}}/buildasan --config ${{env.BUILD_TYPE}}
 
       - name: Test ASAN Ubuntu
