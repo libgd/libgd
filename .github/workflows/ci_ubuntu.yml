@@ -2,8 +2,11 @@ name: CI Master
 
 on:
   push:
-    - 'features/mingw-ci'
+      branches:
+        - 'features/mingw-ci'
   pull_request:
+
+  workflow_dispatch:
 
 
 env:
