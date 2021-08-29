@@ -12,26 +12,24 @@ env:
 
 jobs:
   CI:
+    runs-on: ubuntu-latest
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ contains(matrix.os, 'macos') }}
     strategy:
       fail-fast: false
       matrix:
-        name: [ "Linux x64 (Ubuntu 20.04)" ]
-        os: [ ubuntu-20.04 ]
+        name: [ "Linux x64" ]
         sanitize: [ false ]
         build:
           - { shell: bash }
         include:
           - name: "Ubuntu 20.04"
-            os: ubuntu-20.04
             cc: "clang",
             cxx: "clang++",
             build: { shell: bash }
         include:
           - name: "Ubuntu 20.04"
-            os: ubuntu-20.04
             cc: "gcc",
             cxx: "g++",
             build: { shell: bash }
