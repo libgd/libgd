@@ -21,10 +21,11 @@ jobs:
       matrix:
         config:
           - {
-              name: "Ubuntu x86 GCC",
+              name: "Ubuntu Intel GCC",
               os: ubuntu-latest,
               cc: "gcc",
-              cxx: "g++"
+              cxx: "g++",
+              cflags: "-msse2"
             }
         #  - {
         #      name: "Ubuntu x86 Clang",
@@ -36,7 +37,8 @@ jobs:
               name: "Ubuntu Graviton GCC",
               os: [self-hosted, Linux, ARM64, graviton],
               cc: "gcc",
-              cxx: "g++"
+              cxx: "g++",
+              cflags: "-march=armv8.2-a+fp16+rcpc+dotprod+crypto -mtune=neoverse-n1"
             }
         #  - {
         #      name: "Ubuntu Graviton Clang",
@@ -76,14 +78,17 @@ jobs:
         env:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
+          CFLAGS: ${{ matrix.config.cflags }}
         run: |
           echo $CC
           echo $CXX
+          echo $CFLAGS
 
       - name: Configure CMake
         env:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
+          CFLAGS: ${{ matrix.config.cflags }}
         run:
            cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
           -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
@@ -93,10 +98,10 @@ jobs:
         env:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
-        # Build your program with the given configuration
+          CFLAGS: ${{ matrix.config.cflags }}
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
 
-      - name: Test Ubuntu
+      - name: Test
         working-directory: ${{github.workspace}}/build
         run: |
           export TMP=${{runner.temp}}
@@ -104,25 +109,25 @@ jobs:
           echo "LSAN_OPTIONS=suppressions=${{ github.workspace }}/suppressions/lsan.supp" >> $GITHUB_ENV
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
-      - name: Configure CMake ASAN Ubuntu
+      - name: Configure CMake ASAN
         env:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
+          CFLAGS: ${{ matrix.config.cflags }}
         run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
               -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1
               -DBUILD_TEST=1 -B ${{github.workspace}}/buildasan -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-      - name: Build ASAN Ubuntu
+      - name: Build ASAN
         env:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
+          CFLAGS: "-march=armv8.2-a+fp16+rcpc+dotprod+crypto -mtune=neoverse-n1"
         run: cmake --build ${{github.workspace}}/buildasan --config ${{env.BUILD_TYPE}}
 
-      - name: Test ASAN Ubuntu
+      - name: Test ASAN
         working-directory: ${{github.workspace}}/buildasan
-        # Execute tests defined by the CMake configuration.  
-        # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
         run: |
           export TMP=${{runner.temp}}
           echo "TMP=${{github.temp}}" >> $GITHUB_ENV
