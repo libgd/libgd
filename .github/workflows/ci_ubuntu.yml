@@ -16,7 +16,6 @@ env:
 jobs:
   CI:
     runs-on: ${{ matrix.config.os }}
-    runs-on: [self-hosted, linux, ARM64, aws]
     strategy:
       fail-fast: false
       matrix:
