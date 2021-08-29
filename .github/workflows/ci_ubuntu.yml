@@ -15,18 +15,16 @@ env:
 
 jobs:
   CI:
-    runs-on: ${{ matrix.config.os }}
+    runs-on: [ubuntu-latest, graviton]
     strategy:
       fail-fast: false
       matrix:
           - {
-              os: ubuntu-latest,
               name: "Ubuntu x86 GCC",
               cc: "gcc",
               cxx: "g++"
             },
           - {
-              os: ubuntu-latest,
               name: "Ubuntu x86 Clang",
               cc: "clang-12",
               cxx: "clang-cpp-12"
