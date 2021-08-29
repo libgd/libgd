@@ -53,7 +53,7 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run:  sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3
-              cmake clang-12 gcc gcc-c++ build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev
+              cmake clang-12 gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev
               libpng-dev libwebp-dev libtiff5-dev libx265-dev 
               libheif-dev libfreetype-dev libheif-dev 
               libavifile-0.7-dev libxpm-dev libraqm-dev
