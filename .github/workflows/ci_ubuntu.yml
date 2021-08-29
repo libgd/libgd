@@ -19,13 +19,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cc:
-          - gcc
-          - clang
-        cxx:
-          - g++
-          - clang++   
-    name: ${{ matrix.cc }}
+        config:
+          - {
+              name: "GCC",
+              cc: "gcc",
+              cxx: "g++"
+            }
+          - {
+              name: "Clang",
+              cc: "clang",
+              cxx: "clang++"
+            }
+    name: ${{ matrix.config.name }}
     defaults:
       run:
         shell: bash
@@ -55,8 +60,8 @@ jobs:
 
       - name: Configure CMake
         env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }}
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
         run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
           -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
@@ -64,8 +69,8 @@ jobs:
 
       - name: Build
         env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }}
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
         # Build your program with the given configuration
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
 
@@ -79,8 +84,8 @@ jobs:
 
       - name: Configure CMake ASAN Ubuntu
         env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }}
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
         run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
               -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1
@@ -88,8 +93,8 @@ jobs:
 
       - name: Build ASAN Ubuntu
         env:
-          CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }}
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
         run: cmake --build ${{github.workspace}}/buildasan --config ${{env.BUILD_TYPE}}
 
       - name: Test ASAN Ubuntu
