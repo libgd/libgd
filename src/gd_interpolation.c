@@ -72,7 +72,7 @@ TODO:
 #include "gdhelpers.h"
 #include "gd_intern.h"
 
-#ifdef define(_MSC_VER)
+#ifdef _MSC_VER
 # pragma optimize("t", on)
 # include <intrin.h>
 #endif
