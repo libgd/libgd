@@ -23,7 +23,7 @@ jobs:
           - gcc
           - clang
         cxx:
-          - g++"
+          - g++
           - clang++   
     name: ${{ matrix.cc }}
     defaults:
