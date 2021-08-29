@@ -25,7 +25,7 @@ jobs:
         cxx:
           - g++"
           - clang++   
-    name: ${{ matrix.arch }}
+    name: ${{ matrix.cc }}
     defaults:
       run:
         shell: bash
