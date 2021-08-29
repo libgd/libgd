@@ -19,18 +19,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - {
-              os: "self-hosted, linux, ARM64, aws",
-              name: "Ubuntu Graviton GCC",
-              cc: "gcc",
-              cxx: "g++"
-            },
-      #    - {
-      #        name: "Clang",
-      #        cc: "clang-12",
-      #        cxx: "clang-cpp-12"
-      #      }
           - {
               os: ubuntu-latest,
               name: "Ubuntu x86 GCC",
