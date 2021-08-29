@@ -15,7 +15,7 @@ env:
 
 jobs:
   CI:
-    runs-on: graviton
+    runs-on: self-hosted
     strategy:
       fail-fast: false
       matrix:
