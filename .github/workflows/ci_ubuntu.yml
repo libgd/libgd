@@ -38,7 +38,7 @@ jobs:
               os: [self-hosted, Linux, ARM64, graviton],
               cc: "gcc",
               cxx: "g++",
-              cflags: "-march=armv8.2-a+fp16+rcpc+dotprod+crypto -mtune=neoverse-n1"
+              cflags: "-march=armv8.2-a+fp16+rcpc+dotprod+crypto+sve -mtune=neoverse-n1"
             }
         #  - {
         #      name: "Ubuntu Graviton Clang",
