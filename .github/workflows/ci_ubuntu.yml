@@ -22,7 +22,7 @@ jobs:
       matrix:
         config:
           - {
-              os: [self-hosted, linux, ARM64, aws],
+              os: "self-hosted, linux, ARM64, aws",
               name: "Ubuntu Graviton GCC",
               cc: "gcc",
               cxx: "g++"
