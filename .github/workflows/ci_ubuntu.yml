@@ -136,6 +136,7 @@ jobs:
       - name: Configure and Make
         working-directory: ${{github.workspace}}/
         run: |
+          ./bootstrap.sh
           ./configure --with-png --with-jpeg --with-ramq --with-heif --with-xpm --with-tiff --with-webp --with-liq --enable-gd --enable-gd-formats --with-zlib
           make
           make package
