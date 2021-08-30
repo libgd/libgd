@@ -133,9 +133,10 @@ jobs:
           echo "TMP=${{github.temp}}" >> $GITHUB_ENV
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
-      -name: Configure and Make
+      - name: Configure and Make
+        working-directory: ${{github.workspace}}/
         run: |
-          /configure --with-png --with-jpeg --with-ramq --with-heif=/home/pierre/usr/ --with-xpm --with-tiff --with-webp --with-liq --enable-gd --enable-gd-formats --with-zlib
+          ./configure --with-png --with-jpeg --with-ramq --with-heif --with-xpm --with-tiff --with-webp --with-liq --enable-gd --enable-gd-formats --with-zlib
           make
           make package
 
