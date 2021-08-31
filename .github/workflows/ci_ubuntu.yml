@@ -28,6 +28,12 @@ jobs:
               cflags: "-msse2"
             }
           - {
+              name: "Ubuntu Intel Clang",
+              os: ubuntu-latest,
+              cc: "clang-12",
+              cxx: "clang-cpp-12"
+            }
+          - {
               name: "Ubuntu Graviton Clang",
               os: [self-hosted, Linux, ARM64, graviton],
               cc: "clang-12",
@@ -95,7 +101,6 @@ jobs:
           -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DCMAKE_TOOLCHAIN_FILE=/home/pierre/projects/libgd/libgd_ghactions/cmake/modules/linux-clang.cmake
-          -DCMAKE_SYSTEM_PROCESSOR=armv7
 
       - name: Configure CMake gcc
         if: contains(matrix.config.cc, 'gcc')
