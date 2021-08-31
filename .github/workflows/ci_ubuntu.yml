@@ -81,7 +81,7 @@ jobs:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
           CFLAGS: ${{ matrix.config.cflags }}
-        run: |
+        run:
           cmake -G "Unix Makefiles" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
           -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
@@ -93,7 +93,7 @@ jobs:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
           CFLAGS: ${{ matrix.config.cflags }}
-        run: |
+        run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
           -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
@@ -120,7 +120,7 @@ jobs:
           CXX: ${{ matrix.config.cxx }}
           CFLAGS: ${{ matrix.config.cflags }}
         if: contains(matrix.config.cc, 'gcc')
-        run: |
+        run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
           -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/buildasan -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
