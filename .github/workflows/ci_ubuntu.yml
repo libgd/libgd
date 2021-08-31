@@ -27,12 +27,12 @@ jobs:
               cxx: "g++",
               cflags: "-msse2"
             }
-        #  - {
-        #      name: "Ubuntu x86 Clang",
-        #      os: [self-hosted, linux, ARM64, aws],
-        #      cc: "clang-12",
-        #      cxx: "clang-cpp-12"
-        #    }
+          - {
+              name: "Ubuntu x86 Clang",
+              os: [self-hosted, linux, ARM64, aws],
+              cc: "clang-12",
+              cxx: "clang-cpp-12"
+            }
           - {
               name: "Ubuntu Graviton GCC",
               os: [self-hosted, Linux, ARM64, graviton],
@@ -102,6 +102,7 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
 
       - name: Test
+        if: contains(matrix.config.cc, 'gcc')
         working-directory: ${{github.workspace}}/build
         run: |
           export TMP=${{runner.temp}}
@@ -114,12 +115,14 @@ jobs:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
           CFLAGS: ${{ matrix.config.cflags }}
+        if: contains(matrix.config.cc, 'gcc')
         run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
               -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1
               -DBUILD_TEST=1 -B ${{github.workspace}}/buildasan -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build ASAN
+        if: contains(matrix.config.cc, 'gcc')
         env:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
@@ -127,6 +130,7 @@ jobs:
         run: cmake --build ${{github.workspace}}/buildasan --config ${{env.BUILD_TYPE}}
 
       - name: Test ASAN
+        if: matrix.config.cc == "gcc"
         working-directory: ${{github.workspace}}/buildasan
         run: |
           export TMP=${{runner.temp}}
