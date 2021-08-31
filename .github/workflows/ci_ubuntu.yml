@@ -29,7 +29,7 @@ jobs:
             }
           - {
               name: "Ubuntu x86 Clang",
-              os: [self-hosted, linux, ARM64, aws],
+              os: [self-hosted Linux ARM64 graviton],
               cc: "clang-12",
               cxx: "clang-cpp-12"
             }
