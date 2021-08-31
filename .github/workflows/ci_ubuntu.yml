@@ -130,7 +130,7 @@ jobs:
         run: cmake --build ${{github.workspace}}/buildasan --config ${{env.BUILD_TYPE}}
 
       - name: Test ASAN
-        if: matrix.config.cc == "gcc"
+        if: contains(matrix.config.cc, 'gcc')
         working-directory: ${{github.workspace}}/buildasan
         run: |
           export TMP=${{runner.temp}}
@@ -146,7 +146,6 @@ jobs:
           make dist
 
       - name: Output Log
-        if: contains(matrix.os, 'ubuntu')
         run: |
           if test -f "/home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log"; then
               cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
