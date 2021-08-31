@@ -75,9 +75,9 @@ jobs:
           CXX: ${{ matrix.config.cxx }}
           CFLAGS: ${{ matrix.config.cflags }}
         run: |
-          echo $CC
-          echo $CXX
-          echo $CFLAGS
+          echo ${{ matrix.config.cc }}
+          echo ${{ matrix.config.cxx }}
+          echo ${{ matrix.config.cflags }}
 
         - name: Configure CMake Clang
           if: contains(matrix.config.cc, 'clang')
