@@ -745,6 +745,8 @@ break_top:
 			/* Then the bottom row */
 			for (y = tim->sy - 1; y > min_y; --y) {
 				for (x = 0; x < tim->sx; ++x) {
+					if (!gdImageBoundsSafe(prev_tim, x,y))
+						continue;
 					if (!comparewithmap
 					        (prev_tim, tim,
 					         prev_tim->pixels[y][x],
@@ -766,6 +768,8 @@ break_bot:
 			/* left side */
 			for (x = 0; x < min_x; ++x) {
 				for (y = min_y; y <= max_y; ++y) {
+					if (!gdImageBoundsSafe(prev_tim, x,y))
+						continue;
 					if (!comparewithmap
 					        (prev_tim, tim,
 					         prev_tim->pixels[y][x],
@@ -781,6 +785,8 @@ break_left:
 			/* right side */
 			for (x = tim->sx - 1; x > max_x; --x) {
 				for (y = min_y; y <= max_y; ++y) {
+					if (!gdImageBoundsSafe(prev_tim, x,y))
+						continue;
 					if (!comparewithmap
 					        (prev_tim, tim,
 					         prev_tim->pixels[y][x],
