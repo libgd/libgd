@@ -30,24 +30,6 @@ We also have a mailing list. To subscribe to any mailing list, send an email to 
 
 Please visit our [homepage](https://www.libgd.org/) for more details.
 
-## Platforms supported
-
-CI means whether we have an automatic CI for this platform. If someone has CI for these platforms or any other platforms not listed here and would like to add them to our automatic CI, please get in touch with us, it will much appreciated!
-
-| Platform  | Support | CI |
-| ------------- | ------------- |----|
-| Linux x64  | 🗸  | 🗸 |
-| Linux x86  | 🗸  | 🗸 |
-| Linux ARM64  | 🗸  | 🗸 |
-| Windows x86  | 🗸  | 🗸 |
-| Windows x64  | 🗸  | 🗸 |
-| Windows arm64  | 🗸  | x |
-| MacOS x64  | 🗸  | 🗸 |
-| MacOS M1  | 🗸  | x |
-| S390  | 🗸  | x |
-
-It is also known to work on almost all variations of *BSD, Solaris, etc. We don't have CI nor environment to test them. However many progamming languages binding do test libgd on these platforms.
-
 ## Supported Image Formats
 
 GD has support for:
@@ -74,3 +56,33 @@ and disabled by default:
 * [libraqm](https://github.com/HOST-Oman/libraqm) for complex text layout
 * [libimagequant](https://pngquant.org/lib) for conversion of RGBA images to 8-bit indexed-color images
   * **NOTE** libimagequant is dual-licensed: GPLv3 and commercial license
+
+
+## Platforms supported
+
+CI means whether we have an automatic CI for this platform. If someone has CI for these platforms or any other platforms not listed here and would like to add them to our automatic CI, please get in touch with us, it will much appreciated!
+
+| Platform  | Support | CI |
+| ------------- | ------------- |----|
+| Linux x64  | 🗸  | 🗸 |
+| Linux x86  | 🗸  | 🗸 |
+| Linux ARM64  | 🗸  | 🗸 |
+| Windows x86  | 🗸  | 🗸 |
+| Windows x64  | 🗸  | 🗸 |
+| Windows arm64  | 🗸  | x |
+| MacOS x64  | 🗸  | 🗸 |
+| MacOS M1  | 🗸  | x |
+| S390  | 🗸  | x |
+
+It is also known to work on almost all variations of *BSD, Solaris, etc. We don't have CI nor environment to test them. However many progamming languages binding do test libgd on these platforms.
+
+## Compilers
+
+It should compile with all C99 and C++ compliant compilers, either using CMake or the configure script.
+
+We do have CI using:
+- GCC
+- CLang
+- Visual Studio
+- Xcode
+- MingW
