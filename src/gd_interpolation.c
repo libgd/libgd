@@ -74,7 +74,7 @@ TODO:
 
 #ifdef _MSC_VER
 # pragma optimize("t", on)
-# include <emmintrin.h>
+# include <intrin.h>
 #endif
 
 static gdImagePtr gdImageScaleBilinear(gdImagePtr im,
