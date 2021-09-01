@@ -30,6 +30,24 @@ We also have a mailing list. To subscribe to any mailing list, send an email to 
 
 Please visit our [homepage](https://www.libgd.org/) for more details.
 
+## Platforms supported
+
+CI means whether we have an automatic CI for this platform. If someone has CI for these platforms or any other platforms not listed here and would like to add them to our automatic CI, please get in touch with us, it will much appreciated!
+
+| Platform  | Support | CI |
+| ------------- | ------------- |----|
+| Linux x64  | 🗸  | 🗸 |
+| Linux x86  | 🗸  | 🗸 |
+| Linux ARM64  | 🗸  | 🗸 |
+| Windows x86  | 🗸  | 🗸 |
+| Windows x64  | 🗸  | 🗸 |
+| Windows arm64  | 🗸  | x |
+| MacOS x64  | 🗸  | 🗸 |
+| MacOS M1  | 🗸  | x |
+| S390  | 🗸  | x |
+
+It is also known to work on almost all variations of *BSD, Solaris, etc. We don't have CI nor environment to test them. However many progamming languages binding do test libgd on these platforms.
+
 ## Supported Image Formats
 
 GD has support for:
@@ -46,15 +64,6 @@ GD has support for:
 * [GIF](https://en.wikipedia.org/wiki/GIF) (builtin)
 * [TGA](https://en.wikipedia.org/wiki/Truevision_TGA) (builtin)
 * [WBMP](https://en.wikipedia.org/wiki/Wireless_Application_Protocol_Bitmap_Format) (builtin)
-
-
-
-
-
-
-
-
-
 * [XPM](https://en.wikipedia.org/wiki/X_PixMap) via [libXpm](http://xorg.freedesktop.org/)
 
 Besides that, GD depends on some external libraries, which are all optional
