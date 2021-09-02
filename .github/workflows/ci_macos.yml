@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [ "Linux x64 (Ubuntu 20.04)" ]
+        name: [ "macOS (10.15) - Xcode 12.3" ]
         os: [ macos-latest ]
         sanitize: [ false ]
         build:
