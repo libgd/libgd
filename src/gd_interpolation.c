@@ -1829,19 +1829,19 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 	   case later. Keep the two decimal precisions so smaller rotation steps can be done, useful for
 	   slow animations, f.e. */
 	const int angle_rounded = fmod((int) floorf(angle * 100), 360 * 100);
-
+	gdImagePtr src_tc = src;
+	int src_cloned = 0;
 	if (src == NULL || bgcolor < 0) {
 		return NULL;
 	}
 
-	/* impact perf a bit, but not that much. Implementation for palette
-	   images can be done at a later point.
-	*/
-	if (src->trueColor == 0) {
+	if (!gdImageTrueColor(src)) {
 		if (bgcolor < gdMaxColors) {
 			bgcolor =  gdTrueColorAlpha(src->red[bgcolor], src->green[bgcolor], src->blue[bgcolor], src->alpha[bgcolor]);
 		}
-		gdImagePaletteToTrueColor(src);
+		src_tc = gdImageClone(src);
+		gdImagePaletteToTrueColor(src_tc);
+		src_cloned = 1;
 	}
 
 	/* 0 && 90 degrees multiple rotation, 0 rotation simply clones the return image and convert it
@@ -1853,38 +1853,46 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 			if (dst == NULL) {
 				return NULL;
 			}
-			if (dst->trueColor == 0) {
-				gdImagePaletteToTrueColor(dst);
-			}
+			if (src_cloned) gdImageDestroy(src_tc);
 			return dst;
 		}
 
 		case -27000:
 		case   9000:
+			if (src_cloned) gdImageDestroy(src_tc);
 			return gdImageRotate90(src, 0);
 
 		case -18000:
 		case  18000:
+			if (src_cloned) gdImageDestroy(src);
 			return gdImageRotate180(src, 0);
 
 		case  -9000:
 		case  27000:
+			if (src_cloned) gdImageDestroy(src_tc);
 			return gdImageRotate270(src, 0);
 	}
 
 	if (src->interpolation_id < 1 || src->interpolation_id > GD_METHOD_COUNT) {
+		if (src_cloned) gdImageDestroy(src_tc);
 		return NULL;
 	}
 
 	switch (src->interpolation_id) {
-		case GD_NEAREST_NEIGHBOUR:
-			return gdImageRotateNearestNeighbour(src, angle, bgcolor);
+		case GD_NEAREST_NEIGHBOUR: {
+			gdImagePtr res = gdImageRotateNearestNeighbour(src, angle, bgcolor);
+			if (src_cloned) gdImageDestroy(src_tc);
+			return res;
 			break;
+		}
 
 		case GD_BILINEAR_FIXED:
 		case GD_BICUBIC_FIXED:
-		default:
-			return gdImageRotateGeneric(src, angle, bgcolor);
+		default: {
+			gdImagePtr res = gdImageRotateGeneric(src, angle, bgcolor);
+			if (src_cloned) gdImageDestroy(src_tc);
+			return res;
+		}
 	}
 	return NULL;
 }
