@@ -2,9 +2,9 @@ name: CI Windows Mingw
 
 on:
   push:
-      branches:
-        - 'features/mingw-ci'
+    branches: [ master ]
   pull_request:
+    branches: [ master ]
 
   workflow_dispatch:
 

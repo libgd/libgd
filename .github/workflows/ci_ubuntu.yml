@@ -2,12 +2,9 @@ name: CI Ubuntu
 
 on:
   push:
-      branches:
-        - 'features/mingw-ci'
+    branches: [ master ]
   pull_request:
-
-  workflow_dispatch:
-
+    branches: [ master ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
