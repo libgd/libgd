@@ -26,6 +26,8 @@ are installed as well:
 
 4. JPEG library, available from http://www.ijg.org/
    Portable JPEG compression/decompression library
+   jpeg-turbo is our recommended choise. version 2.x is required. It may build with earlier version however we do not support it (in case quality or other bugs could be seen).
+   LibJpeg 6.2 required. It may compile with earlier version but we do not support it.
 
 5. XPM, available from http://koala.ilog.fr/lehors/xpm.html
    X Pixmap library
