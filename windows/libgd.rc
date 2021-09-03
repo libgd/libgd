@@ -43,7 +43,7 @@ BEGIN
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "LIBGD dynamic link library" "\0"
             VALUE "SpecialBuild", "win32" "\0"
-			VALUE "URL", "http://www.libgd.org/"
+			VALUE "URL", "https://www.libgd.org/"
         END
     END
     BLOCK "VarFileInfo"

@@ -12,7 +12,7 @@ m4_define([gd_REVISION],esyscmd(gv(RELEASE)))dnl
 m4_define([gd_EXTRA],esyscmd(gv(EXTRA)))dnl
 m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION]gd_EXTRA)]dnl
 
-AC_INIT([GD], gd_PKG_VERSION, [https://github.com/libgd/libgd/issues], [libgd], [http://lib.gd])
+AC_INIT([GD], gd_PKG_VERSION, [https://github.com/libgd/libgd/issues], [libgd], [https://lib.gd])
 AC_CONFIG_SRCDIR([src/gd.c])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
@@ -279,7 +279,7 @@ GD_LIB_PKG_CHECK([LIBTIFF], [TIFF], [tiff], [libtiff-4], [
 ])
 
 dnl Check for webp support.
-GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [webp], [libwebp], [
+GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [webp], [libwebp >= 0.2.0], [
   AC_CHECK_LIB([webp], [WebPGetInfo], [dnl
     AS_VAR_APPEND([LIBWEBP_LIBS], [" -lwebp"])
     gd_found_lib=yes

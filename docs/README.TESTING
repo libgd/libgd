@@ -34,7 +34,7 @@ $ ctest .
 I will certainly add a nice CMake option to give prefix later.
 
 What to do if tests fail on your platform and you use the last GD release?
-either from your favorite distributions or from http://www.libgd.org or git?
+either from your favorite distributions or from https://www.libgd.org or git?
 
 If you use a packaged version of the GD Library (installed from RPM, deb or
 ports, gentoo packages or any other packages format or distribution), please try
@@ -52,7 +52,7 @@ You can attach the two files available in:
 
 Later versions will have an automatic post mode.
 
-If the tests run successfully, please report a bug to the maintainer of the
+If the tests do not run successfully, please report a bug to the maintainer of the
 packages (Debian, BSD, Ubuntu or whoever is responsible for the packages).
 
 Reasons of failures:

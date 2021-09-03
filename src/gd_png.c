@@ -385,7 +385,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 
 	case PNG_COLOR_TYPE_GRAY_ALPHA:
 		png_set_gray_to_rgb(png_ptr);
-
+		// fall through
+		// Keep above comment, gcc recognizes it and silent its warning about fall through case here
 	case PNG_COLOR_TYPE_RGB:
 	case PNG_COLOR_TYPE_RGB_ALPHA:
 		/* gd 2.0: we now support truecolor. See the comment above
@@ -1098,47 +1099,66 @@ static void _noPngError(void)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * inFile)
 {
+	ARG_NOT_USED(inFile);
 	_noPngError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 {
+	ARG_NOT_USED(infile);
 	return NULL;
 }
 
 BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
+	ARG_NOT_USED(level);
 	_noPngError();
 }
 
 BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * outFile)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
 	_noPngError();
 }
 
 BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
 	return NULL;
 }
 
 BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(level);
 	return NULL;
 }
 
 BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
 	_noPngError();
 }
 
 BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(level);
 	_noPngError();
 }
 

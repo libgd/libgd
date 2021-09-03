@@ -49,13 +49,13 @@ public:
 		init( & __stream);
 	}
 
-	static int	Getbuf (struct gdIOCtx * ctx, void * buf, int size);
-	static int	Putbuf (struct gdIOCtx * , const void * , int );
-	static void	Putchar (struct gdIOCtx * , int );
-	static int	Getchar (struct gdIOCtx * ctx);
-	static int	Seek (struct gdIOCtx * ctx, const int pos);
-	static long	Tell (struct gdIOCtx * ctx);
-	static void	FreeCtx (struct gdIOCtx * ctx);
+	static int	Getbuf(gdIOCtxPtr ctx, void *buf, int size);
+	static int	Putbuf(gdIOCtxPtr, const void *, int);
+	static void	Putchar(gdIOCtxPtr, int);
+	static int	Getchar(gdIOCtxPtr ctx);
+	static int	Seek(gdIOCtxPtr ctx, const int pos);
+	static long	Tell(gdIOCtxPtr ctx);
+	static void	FreeCtx(gdIOCtxPtr ctx);
 
 	void init(stream_type * __stream) {
 		getC = Getchar;
@@ -72,7 +72,7 @@ private:
 };
 /** Allocate a new instance of the class
 */
-inline gdIOCtx * gdNewIstreamCtx (std::istream * __stream)
+inline gdIOCtxPtr gdNewIstreamCtx(std::istream *__stream)
 {
 	return new istreamIOCtx(* __stream);
 }
@@ -93,13 +93,13 @@ public:
 		init( & __stream);
 	}
 
-	static int	Getbuf (struct gdIOCtx * , void * , int );
-	static int	Putbuf (struct gdIOCtx * ctx, const void * buf, int size);
-	static int	Getchar (struct gdIOCtx * );
-	static void	Putchar (struct gdIOCtx * ctx, int a);
-	static int	Seek (struct gdIOCtx * ctx, const int pos);
-	static long	Tell (struct gdIOCtx * ctx);
-	static void	FreeCtx (struct gdIOCtx * ctx);
+	static int	Getbuf(gdIOCtxPtr, void *, int);
+	static int	Putbuf(gdIOCtxPtr ctx, const void *buf, int size);
+	static int	Getchar(gdIOCtxPtr);
+	static void	Putchar(gdIOCtxPtr ctx, int a);
+	static int	Seek(gdIOCtxPtr ctx, const int pos);
+	static long	Tell(gdIOCtxPtr ctx);
+	static void	FreeCtx(gdIOCtxPtr ctx);
 
 	void init(stream_type * __stream) {
 		getC = Getchar;
@@ -116,7 +116,7 @@ private:
 };
 /** Allocate a new instance of the class
 */
-inline gdIOCtx * gdNewOstreamCtx (std::ostream * __stream)
+inline gdIOCtxPtr gdNewOstreamCtx(std::ostream *__stream)
 {
 	return new ostreamIOCtx(* __stream);
 }

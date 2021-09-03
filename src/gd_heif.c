@@ -247,6 +247,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtx *infile)
 
 static struct heif_error _gdImageWriteHeif(struct heif_context *heif_ctx, const void *data, size_t size, void *userdata)
 {
+	ARG_NOT_USED(heif_ctx);
 	gdIOCtx *outfile;
 	struct heif_error err;
 

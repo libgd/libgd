@@ -14,14 +14,14 @@ extern "C" {
 
 	/* TBB: strtok_r is not universal; provide an implementation of it. */
 
-	char * gd_strtok_r (char *s, char *sep, char **state);
+	char *gd_strtok_r(char *s, const char *sep, char **state);
 
 	/* These functions wrap memory management. gdFree is
 		in gd.h, where callers can utilize it to correctly
 		free memory allocated by these functions with the
 		right version of free(). */
-	void *gdCalloc (size_t nmemb, size_t size);
-	void *gdMalloc (size_t size);
+	void *gdCalloc(size_t nmemb, size_t size) BGD_MALLOC;
+	void *gdMalloc(size_t size) BGD_MALLOC;
 	void *gdRealloc (void *ptr, size_t size);
 	/* The extended version of gdReallocEx will free *ptr if the
 	 * realloc fails */

@@ -1,3 +1,9 @@
+#ifdef HAVE_CONFIG_H
+#	include "config.h"
+#endif
+
+#ifdef ENABLE_CPP_API
+
 /* *****************************************************************************
 ** Initial file written and documented by:
 ** Kevin Shepherd <kshepherd@php.net> December 2007
@@ -259,3 +265,4 @@ std::istream & operator>> (std::istream & in, GD::Image & img)
 	}
 
 #endif /* __cplusplus */
+#endif //ENABLE_CPP_API

@@ -20,6 +20,7 @@ int main()
 	im = gdImageCreateFromGif(fp);
 	gdTestAssert(im != NULL);
 	fclose(fp);
+    gdImageDestroy(im);
 
 	return gdNumFailures();
 }

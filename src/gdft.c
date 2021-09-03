@@ -101,7 +101,7 @@ static char *font_path(char **fontpath, char *name_list);
  *
  * Alias of <gdImageStringFT>.
  */
-BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, const char *fontlist,
+BGD_DECLARE(char *) gdImageStringTTF (gdImagePtr im, int *brect, int fg, const char *fontlist,
                                       double ptsize, double angle, int x, int y, const char *string)
 {
 	/* 2.0.6: valid return */
@@ -110,7 +110,7 @@ BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, const ch
 }
 
 #ifndef HAVE_LIBFREETYPE
-BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const char *fontlist,
+BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const char *fontlist,
                                        double ptsize, double angle, int x, int y, const char *string,
                                        gdFTStringExtraPtr strex)
 {
@@ -128,7 +128,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	return "libgd was not built with FreeType font support\n";
 }
 
-BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, const char *fontlist,
+BGD_DECLARE(char *) gdImageStringFT (gdImagePtr im, int *brect, int fg, const char *fontlist,
                                      double ptsize, double angle, int x, int y, const char *string)
 {
 	(void)im;
@@ -734,7 +734,7 @@ tweenColorRelease (void *element)
 
 /* draw_bitmap - transfers glyph bitmap to GD image */
 static char *
-gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
+gdft_draw_bitmap (gdCache_head_t *tc_cache, gdImagePtr im, int fg,
                   FT_Bitmap bitmap, int pen_x, int pen_y)
 {
 	unsigned char *pixel = NULL;
@@ -936,7 +936,7 @@ BGD_DECLARE(void) gdFontCacheShutdown ()
  * See also:
  *  - <gdImageString>
  */
-BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, const char *fontlist,
+BGD_DECLARE(char *) gdImageStringFT (gdImagePtr im, int *brect, int fg, const char *fontlist,
                                      double ptsize, double angle, int x, int y, const char *string)
 {
 	return gdImageStringFTEx (im, brect, fg, fontlist,
@@ -1101,7 +1101,7 @@ BGD_DECLARE(int) gdFontCacheSetup (void)
 /*    the size of the error introduced by rounding is affected by this number */
 #define METRIC_RES 300
 
-BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const char *fontlist,
+BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const char *fontlist,
                                        double ptsize, double angle, int x, int y, const char *string,
                                        gdFTStringExtraPtr strex)
 {

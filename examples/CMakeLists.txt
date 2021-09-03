@@ -8,7 +8,7 @@ if (PNG_FOUND)
 	LIST(APPEND TEST_FILES arc crop tgaread)
 
 	if (JPEG_FOUND)
-		LIST(APPEND TESTS_FILES copyrotated flip nnquant)
+		LIST(APPEND TESTS_FILES copyrotated flip nnquant imagescale)
 	endif (JPEG_FOUND)
 endif (PNG_FOUND)
 
@@ -19,6 +19,10 @@ endif (JPEG_FOUND)
 if (TIFF_FOUND)
 	LIST(APPEND TESTS_FILES	tiffread)
 endif (TIFF_FOUND)
+
+if (HEIF_FOUND)
+	LIST(APPEND TESTS_FILES	png2heif)
+endif (HEIF_FOUND)
 
 if (BUILD_SHARED_LIBS)
 	set(GD_LINK_LIB ${GD_LIB})

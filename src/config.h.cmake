@@ -3,6 +3,9 @@
 /* Define is you are building for Win32 API */
 #cmakedefine BGDWIN32
 
+/* Define is you are building for Win32 API */
+#cmakedefine ENABLE_CPP_API
+
 /* Whether to support gd image formats */
 #cmakedefine01 ENABLE_GD_FORMATS
 

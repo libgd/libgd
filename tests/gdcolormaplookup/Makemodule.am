@@ -1,0 +1,5 @@
+libgd_test_programs += \
+	gdcolormaplookup/gdcolormaplookup
+
+EXTRA_DIST += \
+	gdcolormaplookup/CMakeLists.txt
