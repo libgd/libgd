@@ -5,15 +5,14 @@ Delete entities.json if you want to fetch the latest version.
 The current version has 1 and 2 codepoint entities.
 If the spec is updated to include 3 or more codepoints per entity, then this script along with
 gdImageStringFTEx and gd_Entity_To_Unicode (from gdft.c) will need to be modified.
-A warning is issued for any such entities found and only the first 2 codepoints are used.
+An assert is issued for any such entities found.
 """
 
 import json
 import os
-import os.path
+from pathlib import Path
 import re
 import urllib.request
-from pathlib import Path
 
 __author__ = "Sterling Pickens"
 __copyright__ = "Copyright 2021, The libgd Project"
@@ -26,13 +25,14 @@ __status__ = "Production"
 
 # Ensure we are only in src dir
 SRCDIR = Path(__file__).resolve().parent
-os.chdir(SRCDIR)
+entitites_json = SRCDIR / 'entities.json'
+entitites_json_url = "https://html.spec.whatwg.org/entities.json"
 
 # Declare File content strings
 C_FILE_HEAD = """/*
  * Generated file - do not edit directly.
  * This file was generated from:
- *     https://html.spec.whatwg.org/entities.json
+ *     {entitites_json_url}
  * by means of entities.py in the libgd src dir
  */
 
@@ -43,7 +43,7 @@ const struct gd_entities_s gd_entities[NR_OF_ENTITIES] = {
 H_FILE_HEAD = """/*
  * Generated file - do not edit directly.
  * This file was generated from:
- *     https://html.spec.whatwg.org/entities.json
+ *     {entitites_json_url}
  * by means of entities.py in the libgd src dir
  */
 
@@ -60,20 +60,26 @@ H_FILE_HEAD = """/*
 #define ENTITY_DEC_LENGTH_MAX 10
 """
 H_FILE_TAIL = """
+struct gd_entities_s {
+        const char *name;
+        uint32_t codepoint1;
+        uint32_t codepoint2;
+};
+
 extern const struct gd_entities_s gd_entities[NR_OF_ENTITIES];
 
 #endif
 """
 
 # Check for entities.json and fetch if needed
-if not os.path.exists("entities.json"):
-    print("entities.json not found, attempting to download...")
-    with open("entities.json", "wb") as file_json:
-        file_json.write(urllib.request.urlopen("https://html.spec.whatwg.org/entities.json").read())
+if not os.path.exists(entitites_json):
+    print(f"{entitites_json} not found, attempting to download...")
+    with open(entitites_json, "wb") as file_json:
+        file_json.write(urllib.request.urlopen(entitites_json_url).read())
         print("\tsuccessful")
 
 # Load json obj
-with open("entities.json", "rb") as file_json:
+with open(entitites_json, "rb") as file_json:
     entities = json.load(file_json)
 name_matcher = re.compile(r"&\S+;")
 
@@ -87,8 +93,7 @@ len_name_max = max(len(key) for key in entities if name_matcher.match(key))
 with open("entities.h", mode="w") as file_ent_h:
     file_ent_h.write(H_FILE_HEAD)
     file_ent_h.write(f"#define NR_OF_ENTITIES {total_entities}\n");
-    file_ent_h.write(f"#define ENTITY_NAME_LENGTH_MAX {len_name_max}\n\n");
-    file_ent_h.write("struct gd_entities_s {\n\tconst char *name;\n\tuint32_t codepoint1;\n\tuint32_t codepoint2;\n};\n");
+    file_ent_h.write(f"#define ENTITY_NAME_LENGTH_MAX {len_name_max}\n");
     file_ent_h.write(H_FILE_TAIL)
 
 # Write entities.c file
@@ -97,15 +102,14 @@ with open("entities.c", mode="w") as file_ent_c:
     # Write json entities to struct
     for key in entities:
         if name_matcher.match(key):
-            string = "\t" + "{\"" + key.replace("&", "").replace(";", "") + "\", "
             codepoints = entities[key]["codepoints"]
-            string = string + str(codepoints[0]) + ", "
+            assert len(codepoints) < 3, "Error: entity with >2 codepoints detected"
+            key = key.replace("&", "").replace(";", "")
+            string = "\t" + "{\"" + key + "\", "
             if len(codepoints) > 1:
                 string = string + str(codepoints[1]) + "}"
             else:
                 string = string + "0}"
-            if len(codepoints) > 2:
-                print("Warning: entity with >2 codepoints detected")
             file_ent_c.write(string + ",\n")
     # Write file end
     file_ent_c.write("};\n")
