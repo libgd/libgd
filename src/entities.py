@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates entities.h and entities.c using entities.json from https://html.spec.whatwg.org/entities.json
+"""Generates entities.h and entities.c using entities.json from {entitites_json_url}
 
 Delete entities.json if you want to fetch the latest version.
 The current version has 1 and 2 codepoint entities.
@@ -29,7 +29,7 @@ entitites_json = SRCDIR / 'entities.json'
 entitites_json_url = "https://html.spec.whatwg.org/entities.json"
 
 # Declare File content strings
-C_FILE_HEAD = """/*
+C_FILE_HEAD = f"""/*
  * Generated file - do not edit directly.
  * This file was generated from:
  *     {entitites_json_url}
@@ -38,9 +38,9 @@ C_FILE_HEAD = """/*
 
 #include "entities.h"
 
-const struct gd_entities_s gd_entities[NR_OF_ENTITIES] = {
+const struct gd_entities_s gd_entities[NR_OF_ENTITIES] = {{
 """
-H_FILE_HEAD = """/*
+H_FILE_HEAD = f"""/*
  * Generated file - do not edit directly.
  * This file was generated from:
  *     {entitites_json_url}
@@ -90,26 +90,27 @@ total_entities = sum(bool(name_matcher.match(key)) for key in entities)
 len_name_max = max(len(key) for key in entities if name_matcher.match(key))
 
 # Write entities.h file
-with open("entities.h", mode="w") as file_ent_h:
+with open(SRCDIR / 'entities.h', mode="w") as file_ent_h:
     file_ent_h.write(H_FILE_HEAD)
     file_ent_h.write(f"#define NR_OF_ENTITIES {total_entities}\n");
     file_ent_h.write(f"#define ENTITY_NAME_LENGTH_MAX {len_name_max}\n");
     file_ent_h.write(H_FILE_TAIL)
 
 # Write entities.c file
-with open("entities.c", mode="w") as file_ent_c:
+with open(SRCDIR / 'entities.c', mode="w") as file_ent_c:
     file_ent_c.write(C_FILE_HEAD)
     # Write json entities to struct
     for key in entities:
         if name_matcher.match(key):
             codepoints = entities[key]["codepoints"]
-            assert len(codepoints) < 3, "Error: entity with >2 codepoints detected"
             key = key.replace("&", "").replace(";", "")
             string = "\t" + "{\"" + key + "\", "
+            string = string + str(codepoints[0]) + ", "
             if len(codepoints) > 1:
                 string = string + str(codepoints[1]) + "}"
             else:
                 string = string + "0}"
+            assert len(codepoints) < 3, "Error: entity with >2 codepoints detected"
             file_ent_c.write(string + ",\n")
     # Write file end
     file_ent_c.write("};\n")
