@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include "gd.h"
 #include "gdhelpers.h"
+#include "gd_errors.h"
 #include "bmp.h"
 
 static int compress_row(unsigned char *uncompressed_row, int length);
@@ -326,7 +327,6 @@ static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 		}
 
 		while ((buffer_size = gdGetBuf(copy_buffer, 1024, out)) != EOF) {
-			int res;
 			if (buffer_size == 0) {
 				break;
 			}
