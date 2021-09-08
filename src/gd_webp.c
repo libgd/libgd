@@ -227,8 +227,13 @@ static int _gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
         ret = 1;
 		goto freeargb;
 	}
-	gdPutBuf(out, out_size, outfile);
+
+	int res = gdPutBuf(out, out_size, outfile);
 	free(out);
+	if (res != out_size) {
+		gd_error("gd-webp write error\n");
+		ret = 1;
+	}
 
 freeargb:
 	gdFree(argb);
