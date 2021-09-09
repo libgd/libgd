@@ -264,7 +264,8 @@ else (USE_EXT_GD)
 	CHECK_INCLUDE_FILE("stdint.h"	HAVE_STDINT_H)
 	CHECK_INCLUDE_FILE("inttypes.h"	HAVE_INTTYPES_H)
 
-	CONFIGURE_FILE(${GD_SOURCE_DIR}/src/config.h.cmake ${GD_SOURCE_DIR}/src/config.h ESCAPE_QUOTES)
+	CONFIGURE_FILE(${GD_SOURCE_DIR}/src/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/src/config.h ESCAPE_QUOTES)
+	include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
 	option(BUILD_SHARED_LIBS "Build shared libs" ON)
 	option(BUILD_STATIC_LIBS "Build static libs" OFF)
