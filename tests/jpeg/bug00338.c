@@ -19,6 +19,7 @@ static int error_handler_called = 0;
 
 static void error_handler(int priority, const char *format, va_list args)
 {
+	ARG_NOT_USED(args);
 	if (!strcmp(format, MSG)) {
 		gdTestAssertMsg(priority == GD_WARNING, "expected priority %d, but got %d", GD_WARNING, priority);
 		error_handler_called = 1;
