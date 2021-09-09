@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include "gd.h"
 #include "gdhelpers.h"
+#include "gd_errors.h"
 #include "bmp.h"
 
 static int compress_row(unsigned char *uncompressed_row, int length);
@@ -266,7 +267,11 @@ static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 				bitmap_size += compressed_size;
 
 
-				gdPutBuf(uncompressed_row, compressed_size, out);
+				if (gdPutBuf(uncompressed_row, compressed_size, out) != compressed_size){
+					gd_error("gd-bmp write error\n");
+					error = 1;
+					break;
+				}
 				gdPutC(BMP_RLE_COMMAND, out);
 				gdPutC(BMP_RLE_ENDOFLINE, out);
 				bitmap_size += 2;
@@ -325,7 +330,10 @@ static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 			if (buffer_size == 0) {
 				break;
 			}
-			gdPutBuf(copy_buffer , buffer_size, out_original);
+			if (gdPutBuf(copy_buffer , buffer_size, out_original) != buffer_size) {
+				gd_error("gd-bmp write error\n");
+				error = 1;
+			}
 		}
 		gdFree(copy_buffer);
 
@@ -335,7 +343,7 @@ static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 		out_original = NULL;
 	}
 
-	ret = 0;
+	ret = error;
 cleanup:
 	if (tmpfile_for_compression) {
 #ifdef _WIN32

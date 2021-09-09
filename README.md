@@ -64,15 +64,15 @@ CI means whether we have an automatic CI for this platform. If someone has CI fo
 
 | Platform  | Support | CI |
 | ------------- | ------------- |----|
-| Linux x64  | 🗸  | 🗸 |
-| Linux x86  | 🗸  | 🗸 |
-| Linux ARM64  | 🗸  | 🗸 |
-| Windows x86  | 🗸  | 🗸 |
-| Windows x64  | 🗸  | 🗸 |
-| Windows arm64  | 🗸  | x |
-| MacOS x64  | 🗸  | 🗸 |
-| MacOS M1  | 🗸  | x |
-| S390  | 🗸  | x |
+| Linux x64  | &#10003;  | &#10003; |
+| Linux x86  | &#10003;  | &#10003; |
+| Linux ARM64  | &#10003; | &#10003; |
+| Windows x86  | &#10003;  | &#10003; |
+| Windows x64  | &#10003;  | &#10003; |
+| Windows arm64  | &#10003;  | x |
+| MacOS x64  | &#10003;  | &#10003; |
+| MacOS M1  | &#10003;  | x |
+| S390  | &#10003;  | x |
 
 It is also known to work on almost all variations of *BSD, Solaris, etc. We don't have CI nor environment to test them. However many progamming languages binding do test libgd on these platforms.
 

@@ -35,7 +35,7 @@ int main()
 
 	im = gdImageCreateTrueColor(10, 10);
 	fp = gdTestTempFp();
-	gdTestAssert(fp!=NULL);
+	gdTestAssert(fp != NULL);
 	if (!fp) {
 		exit(2);
 	}

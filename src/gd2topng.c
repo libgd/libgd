@@ -21,7 +21,7 @@ main (int argc, char **argv)
 		fprintf (stderr,
 		         "Usage: gd2topng filename.gd2 filename.png [srcx srcy width height]\n");
 		fprintf (stderr,
-		         "If the coordinates are absent,t he entire image is converted.\n");
+		         "If the coordinates are absent, the entire image is converted.\n");
 		exit (1);
 	}
 	if (argc == 7) {
