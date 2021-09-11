@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.3.3] - 2021-09-12
+
+### Fixed
+
+- [#759](https://github.com/libgd/libgd/issues/759) update cmake to generate config.h in the build dir
+- [#756](https://github.com/libgd/libgd/issues/756) 2.3.3 release
+- [#750](https://github.com/libgd/libgd/issues/750) gdPutBuf return value check
+- [#729](https://github.com/libgd/libgd/issues/729) HEIF builds fail with latest distros
+- [#678](https://github.com/libgd/libgd/issues/678) segfault in heif tests due to missing label.heic
+- [#677](https://github.com/libgd/libgd/issues/677) Test failure avif/compare_avif_to_png with libavif-0.8.2
+- [#661](https://github.com/libgd/libgd/issues/661) imagecopyresampled() produce artifacts on transparent PNG
+- [#611](https://github.com/libgd/libgd/issues/611) Fixes to build v2.3.0 on Windows with MinGW-w64
+- [#415](https://github.com/libgd/libgd/issues/415) optimize option in gif animation causes segfault
+- [#331](https://github.com/libgd/libgd/issues/331) _gdContributionsCalc() always uses DEFAULT_BOX_RADIUS
+- [#320](https://github.com/libgd/libgd/issues/320) gdImageRotateInterpolated() converts the source image to truecolor
+- [#249](https://github.com/libgd/libgd/issues/249) CMake and Makefiles build broken on Windows
+- [#93 ](https://github.com/libgd/libgd/issues/93) gdImageScaleTwoPass() looses top row and left column
+
 ## [2.3.2] - 2021-03-06
 
 ### Fixed
