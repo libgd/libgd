@@ -88,13 +88,13 @@ int gdTestIsDir(char *path) {
 		return 0;
 	}
 	if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-		return 0;
-	} else {
 		return 1;
+	} else {
+		return 0;
 	}
 #else
 	struct stat st;
-	if (lstat(path, &st) != 0)
+	if (lstat(path, &st) == 0)
 
 	if (S_ISDIR(st.st_mode))
 		return 1;

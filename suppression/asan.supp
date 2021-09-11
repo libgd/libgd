@@ -1,3 +1,4 @@
 leak:libheif.so.1
 leak:libde265.so.0
 leak:libx265.so.179
+leak:libfontconfig.so.1
