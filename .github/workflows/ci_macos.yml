@@ -2,9 +2,9 @@ name: CI MacOS
 
 on:
   push:
-    branches: [ master ]
+    branches: [master, GD-*]
   pull_request:
-    branches: [ master ]
+    branches: [master, GD-*]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)

@@ -2,9 +2,9 @@ name: CI Windows Mingw
 
 on:
   push:
-    branches: [ master ]
+    branches: [master, GD-*]
   pull_request:
-    branches: [ master ]
+    branches: [master, GD-*]
 
   workflow_dispatch:
 
