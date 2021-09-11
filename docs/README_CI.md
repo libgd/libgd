@@ -39,7 +39,7 @@ Please do not merge pull requests can be merged if any of the CI failed.
 
 This file contains all Linux/Ubuntu configurations. The dependencies are installed using apt. Some libraries may use non official Ubuntu repositories to get the latest versions.
 
-## ci_windows.yml 
+## ci_windows.yml
 
 It contains all jobs and matrices for VS builds (cross compilations included).
 
@@ -49,7 +49,7 @@ https://github.com/libgd/libgd-windows-vcpkg-prebuild
 
 For x64, x86 and arm64.
 
-## ci_windows.yml 
+## ci_windows.yml
 
 ## ci_macos.yml
 
