@@ -1,4 +1,4 @@
-Format: 1.52
+Format: 1.51
 
 
 # You can add a title and sub-title to your menu like this:
@@ -27,26 +27,26 @@ Format: 1.52
 
 
 # --------------------------------------------------------------------------
-#
+# 
 # Cut and paste the lines below to change the order in which your files
 # appear on the menu.  Don't worry about adding or removing files, Natural
 # Docs will take care of that.
-#
+# 
 # You can further organize the menu by grouping the entries.  Add a
 # "Group: [name] {" line to start a group, and add a "}" to end it.
-#
+# 
 # You can add text and web links to the menu by adding "Text: [text]" and
 # "Link: [name] ([URL])" lines, respectively.
-#
+# 
 # The formatting and comments are auto-generated, so don't worry about
 # neatness when editing the file.  Natural Docs will clean it up the next
 # time it is run.  When working with groups, just deal with the braces and
 # forget about the indentation and comments.
-#
+# 
 # --------------------------------------------------------------------------
 
 
-File: About LibGD (no auto-title, preamble.txt)
+File: About LibGD  (no auto-title, preamble.txt)
 
 Group: Image Formats  {
 
@@ -86,9 +86,6 @@ File: gdImageNeuQuant  (gd_nnquant.c)
 File: gdNewFileCtx  (gd_io_file.c)
 File: gdNewSSCtx  (gd_io_ss.c)
 File: Image Filters  (gd_filter.c)
-File: License  (license.txt)
-File: Matrix  (gd_matrix.c)
-File: Transformations  (gd_transform.c)
 
 Group: Built-in Fonts  {
 
@@ -99,6 +96,10 @@ Group: Built-in Fonts  {
    File: Tiny Font  (no auto-title, gdfontt.c)
    }  # Group: Built-in Fonts
 
+File: License  (License.txt)
+File: Matrix  (gd_matrix.c)
+File: Transformations  (gd_transform.c)
+
 Group: Index  {
 
    Constant Index: Constants
@@ -108,3 +109,4 @@ Group: Index  {
    Macro Index: Macros
    Type Index: Types
    }  # Group: Index
+
