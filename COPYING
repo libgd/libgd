@@ -1,3 +1,4 @@
+Title: License
 Credits and license terms:
 
 In order to resolve any possible confusion regarding the authorship of
@@ -25,8 +26,8 @@ pleased to correct them.
 * Portions relating to gdft.c copyright 2001, 2002, 2003, 2004 John
   Ellson (ellson@graphviz.org).
 
-* Portions copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007
-  Pierre-Alain Joye (pierre@libgd.org).
+* Portions copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007,
+  2008 Pierre-Alain Joye (pierre@libgd.org).
 
 * Portions relating to JPEG and to color quantization copyright
   2000, 2001, 2002, 2003, 2004, Doug Becker and copyright (C) 1994,

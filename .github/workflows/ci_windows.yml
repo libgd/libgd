@@ -1,0 +1,71 @@
+name: CI Windows
+
+on:
+  push:
+    branches: [master, GD-*]
+  pull_request:
+    branches: [master, GD-*]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: RELWITHDEBINFO
+
+jobs:
+  CI:
+    runs-on: windows-latest
+    strategy:
+          matrix:
+            arch:
+              - x64
+              - x86
+              - amd64_arm64
+    name: ${{ matrix.arch }}
+    defaults:
+      run:
+        shell: cmd
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+
+      - name: Install Dependencies
+        run: |
+          curl -o ${{ matrix.arch }}-windows.7z  https://raw.githubusercontent.com/libgd/libgd-windows-vcpkg-prebuild/main/${{matrix.arch}}-windows.7z
+          7z.exe x ${{ matrix.arch }}-windows.7z -o${{github.workspace}}\vcpkgusr
+
+      - name: Configure CMake
+        # vcpkg libde265 fails on arm64 and match prefix
+        if: matrix.arch == 'amd64_arm64'
+        run:  cmake -D CMAKE_GENERATOR="NMake Makefiles" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1
+              -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1 -DBUILD_TEST=1
+              -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+              -DCMAKE_LIBRARY_PATH=${{github.workspace}}\vcpkgusr\arm64-windows\lib
+              -DCMAKE_INCLUDE_PATH=${{github.workspace}}\vcpkgusr\arm64-windows\include
+
+      - name: Configure CMake
+        if: matrix.arch != 'amd64_arm64'
+        run:  cmake -D CMAKE_GENERATOR="NMake Makefiles" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1
+               -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1 -DENABLE_HEIF=1
+              -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+              -DCMAKE_LIBRARY_PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\lib
+              -DCMAKE_INCLUDE_PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\include
+
+      - name: Build
+        run: |
+         cd ${{github.workspace}}/build
+         nmake
+
+      - name: Tests
+        working-directory: ${{github.workspace}}/build
+        # skip test for cross builds
+        if: matrix.arch != 'amd64_arm64'
+        run: |
+          echo ${{runner.temp}}
+          echo %TMP%
+          echo %TEMP%
+          set PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\bin;%PATH%
+          set CTEST_OUTPUT_ON_FAILURE=1
+          nmake test

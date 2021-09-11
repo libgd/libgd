@@ -1,13 +1,9 @@
 SET (LIBGD_SRC_FILES
-	bmp.h
 	gd.c
-	gd.h
 	gd_avif.c
 	gd_bmp.c
 	gd_color.c
-	gd_color.h
 	gd_color_map.c
-	gd_color_map.h
 	gd_color_match.c
 	gd_crop.c
 	gd_filename.c
@@ -17,25 +13,20 @@ SET (LIBGD_SRC_FILES
 	gd_gif_in.c
 	gd_gif_out.c
 	gd_heif.c
-	gd_intern.h
 	gd_interpolation.c
 	gd_io.c
-	gd_io.h
 	gd_io_dp.c
 	gd_io_file.c
 	gd_io_ss.c
 	gd_io_stream.cxx
-	gd_io_stream.h
 	gd_jpeg.c
 	gd_matrix.c
 	gd_nnquant.c
-	gd_nnquant.h
 	gd_png.c
 	gd_rotate.c
 	gd_security.c
 	gd_ss.c
 	gd_tga.c
-	gd_tga.h
 	gd_tiff.c
 	gd_topal.c
 	gd_transform.c
@@ -44,30 +35,19 @@ SET (LIBGD_SRC_FILES
 	gd_webp.c
 	gd_xbm.c
 	gdcache.c
-	gdcache.h
 	gdfontg.c
-	gdfontg.h
 	gdfontl.c
-	gdfontl.h
 	gdfontmb.c
-	gdfontmb.h
 	gdfonts.c
-	gdfonts.h
 	gdfontt.c
-	gdfontt.h
 	gdft.c
 	gdfx.c
-	gdfx.h
 	gdhelpers.c
-	gdhelpers.h
 	gdkanji.c
 	gdpp.cxx
-	gdpp.h
 	gdtables.c
 	gdxpm.c
-	jisx0208.h
 	wbmp.c
-	wbmp.h
 )
 
 # Static library just for utility programs.
@@ -151,14 +131,19 @@ SET(LIBS_PRIVATES
 set(GD_PROGRAMS gdcmpgif)
 
 if (PNG_FOUND)
-	set(GD_PROGRAMS ${GD_PROGRAMS} gdtopng pngtogd webpng)
+	set(GD_PROGRAMS ${GD_PROGRAMS} gdtopng pngtogd)
+	if (NOT WIN32)
+		set(GD_PROGRAMS ${GD_PROGRAMS} webpng)
+	endif (NOT WIN32)
 	if (ZLIB_FOUND)
 		set(GD_PROGRAMS ${GD_PROGRAMS} gdparttopng gd2topng pngtogd2)
 	endif()
 endif()
 
 if (FREETYPE_FOUND AND JPEG_FOUND)
-	set(GD_PROGRAMS ${GD_PROGRAMS} annotate)
+	if (NOT WIN32)
+		set(GD_PROGRAMS ${GD_PROGRAMS} annotate)
+	endif (NOT WIN32)
 endif()
 
 if (ZLIB_FOUND)
@@ -167,6 +152,12 @@ endif()
 
 foreach(program ${GD_PROGRAMS})
     add_executable(${program} ${program}.c)
+	if (WIN32)
+		list(REMOVE_ITEM program webpng.c annotate.c)
+		list(REMOVE_ITEM GD_PROGRAMS webpng)
+		list(REMOVE_ITEM GD_PROGRAMS annotate)
+	endif (WIN32)
+
     if (BUILD_SHARED_LIBS)
         target_link_libraries(${program} ${GD_LIB})
     else()
@@ -191,7 +182,6 @@ install(TARGETS ${GD_INSTALL_TARGETS}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(PROGRAMS bdftogd DESTINATION bin)
 install(FILES
-	entities.h
 	gd.h
 	gd_color_map.h
 	gd_errors.h

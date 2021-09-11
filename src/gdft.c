@@ -100,7 +100,7 @@ static char *font_path(char **fontpath, char *name_list);
  *
  * Alias of <gdImageStringFT>.
  */
-BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, const char *fontlist,
+BGD_DECLARE(char *) gdImageStringTTF (gdImagePtr im, int *brect, int fg, const char *fontlist,
                                       double ptsize, double angle, int x, int y, const char *string)
 {
 	/* 2.0.6: valid return */
@@ -109,7 +109,7 @@ BGD_DECLARE(char *) gdImageStringTTF (gdImage * im, int *brect, int fg, const ch
 }
 
 #ifndef HAVE_LIBFREETYPE
-BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const char *fontlist,
+BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const char *fontlist,
                                        double ptsize, double angle, int x, int y, const char *string,
                                        gdFTStringExtraPtr strex)
 {
@@ -127,7 +127,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	return "libgd was not built with FreeType font support\n";
 }
 
-BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, const char *fontlist,
+BGD_DECLARE(char *) gdImageStringFT (gdImagePtr im, int *brect, int fg, const char *fontlist,
                                      double ptsize, double angle, int x, int y, const char *string)
 {
 	(void)im;
@@ -724,7 +724,7 @@ tweenColorRelease (void *element)
 
 /* draw_bitmap - transfers glyph bitmap to GD image */
 static char *
-gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
+gdft_draw_bitmap (gdCache_head_t *tc_cache, gdImagePtr im, int fg,
                   FT_Bitmap bitmap, int pen_x, int pen_y)
 {
 	unsigned char *pixel = NULL;
@@ -926,7 +926,7 @@ BGD_DECLARE(void) gdFontCacheShutdown ()
  * See also:
  *  - <gdImageString>
  */
-BGD_DECLARE(char *) gdImageStringFT (gdImage * im, int *brect, int fg, const char *fontlist,
+BGD_DECLARE(char *) gdImageStringFT (gdImagePtr im, int *brect, int fg, const char *fontlist,
                                      double ptsize, double angle, int x, int y, const char *string)
 {
 	return gdImageStringFTEx (im, brect, fg, fontlist,
@@ -1091,7 +1091,7 @@ BGD_DECLARE(int) gdFontCacheSetup (void)
 /*    the size of the error introduced by rounding is affected by this number */
 #define METRIC_RES 300
 
-BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const char *fontlist,
+BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const char *fontlist,
                                        double ptsize, double angle, int x, int y, const char *string,
                                        gdFTStringExtraPtr strex)
 {
@@ -1244,7 +1244,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	for (i = 0; i < face->num_charmaps; i++) {
 		charmap = face->charmaps[i];
 
-#if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
 		if (encoding == gdFTEX_Unicode) {
 			if (charmap->encoding == FT_ENCODING_MS_SYMBOL
 			        || charmap->encoding == FT_ENCODING_UNICODE
@@ -1277,27 +1276,6 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 				break;
 			}
 		}
-#else
-		if (encoding == gdFTEX_Unicode) {
-			if ((charmap->platform_id = 3 && charmap->encoding_id == 1)     /* Windows Unicode */
-			        || (charmap->platform_id == 3 && charmap->encoding_id == 0) /* Windows Symbol */
-			        || (charmap->platform_id == 2 && charmap->encoding_id == 1) /* ISO Unicode */
-			        || (charmap->platform_id == 0)) {                        /* Apple Unicode */
-				encodingfound++;
-				break;
-			}
-		} else if (encoding == gdFTEX_Big5) {
-			if (charmap->platform_id == 3 && charmap->encoding_id == 4) {   /* Windows Big5 */
-				encodingfound++;
-				break;
-			}
-		} else if (encoding == gdFTEX_Shift_JIS) {
-			if (charmap->platform_id == 3 && charmap->encoding_id == 2) {   /* Windows Sjis */
-				encodingfound++;
-				break;
-			}
-		}
-#endif
 	}
 	if (encodingfound) {
 		FT_Set_Charmap(face, charmap);
@@ -1337,12 +1315,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 			/* EAM DEBUG */
 			/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
 			/* 2.0.24: David R. Morrison: use the more complete ifdef here. */
-#if ((defined(FREETYPE_MAJOR)) && (((FREETYPE_MAJOR == 2) && (((FREETYPE_MINOR == 1) && (FREETYPE_PATCH >= 3)) || (FREETYPE_MINOR > 1))) || (FREETYPE_MAJOR > 2)))
-			if (charmap->encoding == FT_ENCODING_MS_SYMBOL)
-#else
-			if (charmap->platform_id == 3 && charmap->encoding_id == 0)
-#endif /* Freetype 2.1 or better */
-			{
+			if (charmap->encoding == FT_ENCODING_MS_SYMBOL) {
 				/* I do not know the significance of the constant 0xf000. */
 				/* It was determined by inspection of the character codes */
 				/* stored in Microsoft font symbol.ttf                    */

@@ -9,9 +9,8 @@
   * [Repositories](#Repositories)
 
 [How Can I Contribute?](#how-can-i-contribute)
-  * [Reporting Bugs](#reporting-bugs)
-  * [Suggesting Enhancements](#suggesting-enhancements)
-  * [Your First Code Contribution](#your-first-code-contribution)
+  * [Documentations and examples](#documentation-and-examples)
+  * [Reporting Bugs or suggest enhancements](#reporting-bugs-or-request-a-feature)
   * [Pull Requests](#pull-requests)
 
 [Styleguides](#styleguides)
@@ -36,18 +35,31 @@ Please report unacceptable behavior to [security@libg.org](mailto:security@libgd
 
 ## How Can I Contribute?
 
-### Reporting Bugs
+### Documentation and examples
 
-This section guides you through submitting a bug report for Atom. Following these guidelines helps maintainers and the community understand your report :pencil:, reproduce the behavior :computer: :computer:, and find related reports :mag_right:.
+We have a relatively complete API documentation. However good documentation requires more than API docs. If you feel like writing tutorials, examples (C or other language binding) or add content to the documentation, you will be more than welcome.
+
+We use NaturalDocs 1.5x for the API and general documentations. It supports rest, markdown or text (see the docs folder in our repository for examples).
+
+### Reporting Bugs or request a feature
+
+This section guides you through submitting a bug or feature report for LibGD. Following these guidelines helps maintainers and the community understand your report :pencil:, reproduce the behavior :computer: :computer:, and find related reports :mag_right:.
 
 Before creating bug reports, please check [this list](#before-submitting-a-bug-report) as you might find out that you don't need to create one. When you are creating a bug report, please [include as many details as possible](#how-do-i-submit-a-good-bug-report). If you'd like, you can use [this template](#template-for-submitting-bug-reports) to structure the information.
 
-#### Before Submitting A Bug Report
 
-* **Determine [which repository the problem should be reported in](#atom-and-packages)**.
+### Before Submitting A Bug Report
+
 * **Perform a [cursory search](https://github.com/issues?q=+is%3Aissue+user%3Alibgd)** to see if the problem has already been reported. If it has, add a comment to the existing issue instead of opening a new one.
 
-#### How Do I Submit A (Good) Bug Report?
+
+### Before Submitting A feature Request
+
+Please take the time to clearly describe what this feature should achieve. A good specification will help us to implement it, if it fits the roadmap.
+
+We also have some open features, please check if the feature you would like to have is not already there. Maybe the specification can boost its implementation?
+
+### How Do I Submit A (Good) Bug Report?
 
 For security related bugs, github does not support private issues, that's why we have to handle security issues outside the issues tracker for now. Please drop a mail to [security@libg.org](mailto:security@libgd.org).
 
@@ -65,7 +77,6 @@ Explain the problem and include additional details to help maintainers reproduce
 
 
 This text has been largely inspired by the Atom contributing notes, which are amazingly complete.
-
 
 ## Styleguides
 
@@ -121,6 +132,12 @@ Some general guidelines:
   and must take <5 seconds.
 * Tests must be documented: Just add a comment block to the top of the file
   with a short description and any existing bugs/URLs.
+
+#### CI
+
+If we are lucky enough to get pull request (PR) from you, we will do our best to support your efforts to get it in. As part of this, we setup a CI using github actions, which will be executed on new PR. Please check out the results of your PR to see if anything went wrong (it has Linux, MacOS and Windows OSes support). The CI must be green for a PR to be considered.
+
+See [the github PR documentation]{https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request} for more details about how to create a pull request.
 
 ### Documentation Styleguide
 

@@ -22,6 +22,13 @@ OPTION(ENABLE_WEBP "Enable WebP support" 0)
 OPTION(ENABLE_HEIF "Enable HEIF support" 0)
 OPTION(ENABLE_AVIF "Enable AVIF support" 0)
 OPTION(ENABLE_RAQM "Enable RAQM support" 0)
+OPTION(ENABLE_ASAN "Enable (gcc) ASAN support" 0)
+OPTION(ENABLE_CPP "Enable CPP GD API" 1)
+OPTION(VERBOSE_MAKEFILE "Enable CMAKE_VERBOSE_MAKEFILE" 0)
+
+if (VERBOSE_MAKEFILE)
+	set(CMAKE_VERBOSE_MAKEFILE ON)
+endif (VERBOSE_MAKEFILE)
 
 if (BUILD_TEST)
 	ENABLE_TESTING()
@@ -31,7 +38,12 @@ endif(BUILD_TEST)
 # - specify -DCMAKE_C_FLAGS=... on invocation of cmake, or
 # - specify CFLAGS=... on invocation of make
 IF(CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
+  # Re-enable sanitize once we find a way to filter out errors in external libraries (like HEIF)
+  if (ENABLE_ASAN)
+  	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 -fsanitize=address") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is Debug
+  else (ENABLE_ASAN)
+  	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 ") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is Debug
+  endif (ENABLE_ASAN)
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
 SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
   ${PROJECT_BINARY_DIR}/Bin
@@ -103,6 +115,10 @@ else (USE_EXT_GD)
 
 	include(AC_HEADER_STDC)
 	include(CheckPrototypeExists)
+
+	if (ENABLE_CPP)
+		SET(ENABLE_CPP_API 1)
+	endif (ENABLE_CPP)
 
 	if (ENABLE_GD_FORMATS)
 		FIND_PACKAGE(ZLIB REQUIRED)
@@ -248,7 +264,8 @@ else (USE_EXT_GD)
 	CHECK_INCLUDE_FILE("stdint.h"	HAVE_STDINT_H)
 	CHECK_INCLUDE_FILE("inttypes.h"	HAVE_INTTYPES_H)
 
-	CONFIGURE_FILE(${GD_SOURCE_DIR}/src/config.h.cmake ${GD_SOURCE_DIR}/src/config.h ESCAPE_QUOTES)
+	CONFIGURE_FILE(${GD_SOURCE_DIR}/src/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/src/config.h ESCAPE_QUOTES)
+	include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
 	option(BUILD_SHARED_LIBS "Build shared libs" ON)
 	option(BUILD_STATIC_LIBS "Build static libs" OFF)
@@ -261,6 +278,7 @@ else (USE_EXT_GD)
 			ADD_DEFINITIONS("/D_CRT_SECURE_NO_DEPRECATE")
 		endif(NOT MINGW AND MSVC_VERSION GREATER 1399)
 		if (MINGW OR MSYS)
+			SET(GD_LIB gd)
 			ADD_DEFINITIONS("-mms-bitfields") # -m32
 		endif (MINGW OR MSYS)
 	else (WIN32)
@@ -282,6 +300,7 @@ endif (USE_EXT_GD)
 
 add_subdirectory(tests)
 add_subdirectory(examples)
+add_subdirectory(docs)
 
 add_custom_target(distclean ${GD_SOURCE_DIR}/cmake/distclean.sh)
 

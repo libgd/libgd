@@ -1,0 +1,166 @@
+name: GD3 CI
+
+on:
+  push:
+    branches: [ surface/surface ]
+  pull_request:
+    branches: [ surface/surface ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+
+jobs:
+  CI:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ contains(matrix.os, 'macos') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ "Linux x64 (Ubuntu 20.04)" ]
+        os: [ ubuntu-20.04 ]
+        sanitize: [ false ]
+        build:
+          - { shell: bash }
+        include:
+          - name: "Linux x64 (Ubuntu 20.04)"
+            os: ubuntu-20.04
+            build: { shell: bash }
+          - name: "macOS (10.15) - Xcode 12.3"
+            os:  macOS-latest
+            build: { shell: bash }
+#          - name: "macOS (10.15) - Xcode 12.3 - M1"
+#            os: macos-m1
+#            build: { shell: "/usr/bin/arch -arch arm64e /bin/bash -l {0}" }
+          - name: "Windows 2019 x64"
+            os: windows-2019
+            build: { shell: powershell }
+
+    defaults:
+      run:
+        shell: ${{ matrix.build.shell }} 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Update apt
+        if: contains(matrix.os, 'ubuntu')
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: sudo -E apt-get update -qq -o Acquire::Retries=3
+
+      - name: Add libheif PPA
+        if: contains(matrix.os, 'ubuntu')
+        run: |
+          sudo add-apt-repository ppa:strukturag/libde265
+          sudo add-apt-repository ppa:strukturag/libheif
+
+      - name: install Ubuntu dependencies
+        if: contains(matrix.os, 'ubuntu')
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run:  sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3
+              libjpeg-turbo8-dev libimagequant-dev libde265-dev
+              libpng-dev libwebp-dev libtiff5-dev libx265-dev 
+              libheif-dev libfreetype-dev libheif-dev 
+              libavifile-0.7-dev libxpm-dev libraqm-dev
+
+      - name: Install macOS dependencies
+        if: contains(matrix.os, 'macos')
+        run: |
+          brew install libheif libjpeg-turbo freetype libtiff libimagequant libde265 x265 webp
+
+      - name: Prepare macOS environment
+        if: contains(matrix.os, 'macos')
+        run: |
+          sudo xcode-select --switch /Library/Developer/CommandLineTools/
+          echo "JOBS=$(sysctl -n hw.logicalcpu)" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/usr/local/opt/jpeg-turbo/lib/pkgconfig" >> $GITHUB_ENV
+          echo "CFLAGS=-I/opt/X11/include"  >> $GITHUB_ENV
+          echo "CPATH=/usr/local/include:/usr/local/lib:/usr/local/include/libpng16:/usr/local/opt/openssl/include"  >> $GITHUB_ENV
+          echo "C_INCLUDE_PATH=/usr/local/lib:/usr/local/include/libpng16:/usr/local/opt/openssl/include" >> $GITHUB_ENV
+          echo "LIBRARY_PATH=/usr/local/lib:/usr/local/include/libpng:/usr/local/opt/openssl/include" >> $GITHUB_ENV
+          echo "LD_PATH"
+
+      - name: Configure CMake MacOS
+        if: contains(matrix.os, 'macos')
+        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+        run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+              -DENABLE_TIFF=1  -DENABLE_GD_FORMATS=1 -DENABLE_CPP=0 -DENABLE_HEIF=1 -D CMAKE_PREFIX_PATH=/usr/local
+              -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Install Dependencies Windows
+        if: contains(matrix.os, 'Windows')
+        run: |
+          $Env:VCPKG_DEFAULT_TRIPLET="x64-windows"
+          C:\vcpkg\vcpkg.exe install libpng libjpeg-turbo freetype tiff libheif libwebp
+
+      - name: Configure CMake Windows x64
+        if: contains(matrix.os, 'Windows')
+        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+        run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1  -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1
+              -DENABLE_HEIF=1 
+              -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+              -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+
+      - name: Configure CMake Ubuntu
+        if: contains(matrix.os, 'ubuntu')
+        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+        run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+              -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
+              -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build
+        # Build your program with the given configuration
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
+
+      - name: Test Ubuntu
+        if: contains(matrix.os, 'ubuntu')
+        working-directory: ${{github.workspace}}/build
+        # Execute tests defined by the CMake configuration.  
+        # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+        run: |
+          echo "LSAN_OPTIONS=suppressions=${{ github.workspace }}/suppressions/lsan.supp" >> $GITHUB_ENV
+          CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
+
+      - name: Test Windows
+        if: contains(matrix.os, 'windows')
+        working-directory: ${{github.workspace}}/build
+        # Execute tests defined by the CMake configuration.  
+        # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+        run: |
+          $Env:CTEST_OUTPUT_ON_FAILURE=1
+          ctest -C ${{env.BUILD_TYPE}}
+
+      - name: Configure CMake ASAN Ubuntu
+        if: contains(matrix.os, 'ubuntu')
+        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+        run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+              -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1
+              -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build ASAN Ubuntu
+        if: contains(matrix.os, 'ubuntu')
+        # Build your program with the given configuration
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      - name: Test ASAN Ubuntu
+        if: contains(matrix.os, 'ubuntu')
+        working-directory: ${{github.workspace}}/build
+        # Execute tests defined by the CMake configuration.  
+        # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+        run: CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
+
+
+      - name: Output Log
+        if: contains(matrix.os, 'ubuntu')
+        run: |
+          if test -f "/home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log"; then
+              cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
+          fi

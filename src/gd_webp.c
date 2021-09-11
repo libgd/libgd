@@ -105,7 +105,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 	uint8_t   *filedata = NULL;
 	uint8_t    *argb = NULL;
 	unsigned char   *read, *temp;
-	size_t size = 0, n;
+	ssize_t size = 0, n;
 	gdImagePtr im;
 	int x, y;
 	uint8_t *p;
@@ -217,14 +217,23 @@ static int _gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 			*(p++) = a;
 		}
 	}
-	out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
+	if (quality >= gdWebpLossless) {
+		out_size = WebPEncodeLosslessRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, &out);
+	} else {
+		out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
+	}
 	if (out_size == 0) {
 		gd_error("gd-webp encoding failed");
         ret = 1;
 		goto freeargb;
 	}
-	gdPutBuf(out, out_size, outfile);
+
+	int res = gdPutBuf(out, out_size, outfile);
 	free(out);
+	if (res != out_size) {
+		gd_error("gd-webp write error\n");
+		ret = 1;
+	}
 
 freeargb:
 	gdFree(argb);
@@ -268,6 +277,9 @@ BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 	good general quality / size tradeoff for most situations) is used. Otherwise
 	_quality_ should be a value in the range 0-100, higher quality values
 	usually implying both higher quality and larger image sizes.
+
+	If _quality_ is greater than or equal to <gdWebpLossless> then the image
+	will be written in the lossless WebP format.
 
   Variants:
 
@@ -349,6 +361,7 @@ BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 {
 	void *rv;
+
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) {
 		return NULL;
@@ -371,45 +384,62 @@ static void _noWebpError(void)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile)
 {
+	ARG_NOT_USED(inFile);
 	_noWebpError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
 	_noWebpError();
 	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 {
+	ARG_NOT_USED(infile);
 	_noWebpError();
 	return NULL;
 }
 
 BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(quality);
 	_noWebpError();
 }
 
 BGD_DECLARE(void) gdImageWebpEx (gdImagePtr im, FILE * outFile, int quality)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
+	ARG_NOT_USED(quality);
 	_noWebpError();
 }
 
 BGD_DECLARE(void) gdImageWebp (gdImagePtr im, FILE * outFile)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
 	_noWebpError();
 }
 
 BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
 	_noWebpError();
 	return NULL;
 }
 
 BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quality)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(quality);
 	_noWebpError();
 	return NULL;
 }

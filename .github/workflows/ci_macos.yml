@@ -1,0 +1,86 @@
+name: CI MacOS
+
+on:
+  push:
+    branches: [master, GD-*]
+  pull_request:
+    branches: [master, GD-*]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: RELWITHDEBINFO
+
+jobs:
+  CI:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ contains(matrix.os, 'macos') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ "macOS (10.15) - Xcode 12.3" ]
+        os: [ macos-latest ]
+        sanitize: [ false ]
+        build:
+          - { shell: bash }
+        include:
+          - name: "macOS (10.15) - Xcode 12.3"
+            os:  macOS-latest
+            build: { shell: bash }
+#          - name: "macOS (10.15) - Xcode 12.3 - M1"
+#            os: macos-m1
+#            build: { shell: "/usr/bin/arch -arch arm64e /bin/bash -l {0}" }
+
+    defaults:
+      run:
+        shell: ${{ matrix.build.shell }} 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          brew install libheif libjpeg-turbo libimagequant libde265 x265
+
+      - name: Prepare environment
+
+        run: |
+          sudo xcode-select --switch /Library/Developer/CommandLineTools/
+          echo "JOBS=$(sysctl -n hw.logicalcpu)" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/usr/local/opt/jpeg-turbo/lib/pkgconfig" >> $GITHUB_ENV
+          echo "CFLAGS=-I/opt/X11/include -I/usr/local/Cellar/libpng/1.6.37/include/libpng16"  >> $GITHUB_ENV
+          echo "LDFLAGS=-L/usr/local/Cellar/libpng/1.6.37/lib" >> $GITHUB_ENV
+          echo "CPATH=/usr/local/include:/usr/local/Cellar/libpng/1.6.37/include/libpng16"  >> $GITHUB_ENV
+          echo "C_INCLUDE_PATH=/usr/local/lib:/usr/local/Cellar/libpng/1.6.37/include/libpng16:/usr/local/opt/openssl/include" >> $GITHUB_ENV
+          echo "LIBRARY_PATH=/usr/local/Cellar/libpng/1.6.37/lib:/usr/local/lib" >> $GITHUB_ENV
+          pkg-config --libs --cflags libpng
+          pkg-config --libs libpng
+          pkg-config --libs --cflags libpng16
+          pkg-config --libs libpng16
+          ls /usr/local/Cellar/libpng/1.6.37/
+          ls /usr/local/Cellar/libpng/1.6.37/lib/
+          ${{github.workspace}}/.github/scripts/removemono.sh
+
+      - name: Configure CMake
+        run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+              -DENABLE_TIFF=1  -DENABLE_GD_FORMATS=1 -DENABLE_CPP=0 -DENABLE_HEIF=1 -D CMAKE_PREFIX_PATH=/usr/local
+              -DBUILD_TEST=1 -DVERBOSE_MAKEFILE=1 -DPNG_PNG_INCLUDE_DIR=/usr/local/Cellar/libpng/1.6.37/include -DPNG_PNG_LIBRARY_DIR=/usr/local/Cellar/libpng/1.6.37/lib -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
+
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: |
+          export TMP=${{runner.temp}}
+          echo "TMP=${{github.temp}}" >> $GITHUB_ENV
+          echo "LSAN_OPTIONS=suppressions=${{ github.workspace }}/suppressions/lsan.supp" >> $GITHUB_ENV
+          CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
+
+      - name: Output Log
+        if: contains(matrix.os, 'ubuntu')
+        run: |
+          if test -f "/home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log"; then
+              cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
+          fi

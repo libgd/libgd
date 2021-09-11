@@ -191,7 +191,7 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 	if (!ctx->seek(ctx, (int) offset))
 		return AVIF_RESULT_IO_ERROR;
 
-	dataBuf = gdMalloc(size);
+	dataBuf = avifAlloc(size);
 	if (!dataBuf) {
 		gd_error("avif error - couldn't allocate memory");
 		return AVIF_RESULT_UNKNOWN_ERROR;
@@ -201,7 +201,7 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 	// If getBuf() returns a negative value, that means there was an error.
 	int charsRead = ctx->getBuf(ctx, dataBuf, (int) size);
 	if (charsRead < 0) {
-		gdFree(dataBuf);
+		avifFree(dataBuf);
 		return AVIF_RESULT_IO_ERROR;
 	}
 
@@ -356,6 +356,15 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 
 	decoder = avifDecoderCreate();
 
+	// Check if libavif version is >= 0.9.1.
+	// If so, allow the PixelInformationProperty ('pixi') to be missing in AV1 image
+	// items. libheif v1.11.0 or older does not add the 'pixi' item property to
+	// AV1 image items. (This issue has been corrected in libheif v1.12.0.)
+
+#if AVIF_VERSION >= 90100
+	decoder->strictFlags &= ~AVIF_STRICT_PIXI_REQUIRED;
+#endif
+
 	io = createAvifIOFromCtx(ctx);
 	if (!io) {
 		gd_error("avif error - Could not allocate memory");
@@ -374,7 +383,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 		goto cleanup;
 
 	if (!isAvifSrgbImage(decoder->image))
-		gd_error_ex(LOG_WARNING, "Image's color profile is not sRGB");
+		gd_error_ex(LOG_NOTICE, "Image's color profile is not sRGB");
 
 	// Set up the avifRGBImage, and convert it from YUV to an 8-bit RGB image.
 	// (While AVIF image pixel depth can be 8, 10, or 12 bits, GD truecolor images are 8-bit.)
@@ -467,6 +476,7 @@ cleanup:
 */
 
 /*
+	 Private subobject
 	 Function: _gdImageAvifCtx
 
 	 We need this underscored function because gdImageAvifCtx() can't return anything.
@@ -647,41 +657,62 @@ static void *_noAvifError(void)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *ctx)
 {
+	ARG_NOT_USED(ctx);
 	return _noAvifError();
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
 	return _noAvifError();
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *ctx)
 {
+	ARG_NOT_USED(ctx);
 	return _noAvifError();
 }
 
 BGD_DECLARE(void) gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, int speed)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(speed);
 	_noAvifError();
 }
 
-BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int speed)
+BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outfile, int quality, int speed)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(speed);
 	_noAvifError();
 }
 
-BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile)
+BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outfile)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
 	_noAvifError();
 }
 
 BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+
 	return _noAvifError();
 }
 
 BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(speed);
 	return _noAvifError();
 }
 

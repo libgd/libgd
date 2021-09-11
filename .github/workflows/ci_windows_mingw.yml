@@ -1,0 +1,79 @@
+name: CI Windows Mingw
+
+on:
+  push:
+    branches: [master, GD-*]
+  pull_request:
+    branches: [master, GD-*]
+
+  workflow_dispatch:
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: RELWITHDEBINFO
+
+jobs:
+
+
+  win-build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { icon: '⬛', sys: mingw32, env: i686 }
+          - { icon: '🟦', sys: mingw64, env: x86_64 }
+          - { icon: '🟨', sys: ucrt64,  env: ucrt-x86_64 }  # Experimental!
+#          - { icon: '🟧', sys: clang64, env: clang-x86_64 } # Experimental!
+    name: 🚧${{ matrix.icon }}-${{ matrix.sys }}
+    defaults:
+      run:
+        shell: msys2 {0}
+    env:
+      MINGW_ARCH: ${{ matrix.sys }}
+    steps:
+
+    - name: '⚙️ git config'
+      run: git config --global core.autocrlf input
+      shell: bash
+
+    - name: '🧰 Checkout'
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: '${{ matrix.icon }} Setup MSYS2'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.sys }}
+        update: true
+        install: >
+          git
+          base-devel
+          tree
+          mingw-w64-${{ matrix.env }}-toolchain
+          mingw-w64-${{ matrix.env }}-libpng
+          mingw-w64-${{ matrix.env }}-libjpeg-turbo
+          mingw-w64-${{ matrix.env }}-freetype
+          mingw-w64-${{ matrix.env }}-libtiff
+          mingw-w64-${{ matrix.env }}-libwebp
+          mingw-w64-${{ matrix.env }}-libheif
+          mingw-w64-${{ matrix.env }}-libraqm
+          mingw-w64-${{ matrix.env }}-libimagequant
+          mingw-w64-${{ matrix.env }}-libavif
+          mingw-w64-${{ matrix.env }}-cmake
+
+    - name: '🚧 Cmake Configure'
+      run:  |
+          MSYSTEM=MINGW64 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DENABLE_PNG=1  -DENABLE_FREETYPE=1 -DENABLE_XPM=0 -DENABLE_JPEG=1 -DENABLE_WEBP=0 -DENABLE_TIFF=1  -DENABLE_XPM=0 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1 -DBUILD_TEST=1 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -B.
+
+    - name: Build
+      run: cmake --build . --config ${{env.BUILD_TYPE}} --parallel 4
+
+    - name: Run tests
+      working-directory: ${{github.workspace}}
+      run: |
+        mkdir tmp
+        export TMP=${{github.workspace}}\\tmp
+        export CTEST_OUTPUT_ON_FAILURE=1
+        ctest -C ${{env.BUILD_TYPE}}

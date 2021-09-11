@@ -1,5 +1,5 @@
 if (BUILD_TEST)
-	SET(DART_TESTING_TIMEOUT 5)
+	SET(DART_TESTING_TIMEOUT 15)
 
 	INCLUDE(Dart)
 
@@ -23,6 +23,7 @@ if (BUILD_TEST)
 		freetype
 		gd
 		gd2
+		gdcolormaplookup
 		gdimagearc
 		gdimagebrightness
 		gdimageclone
@@ -77,6 +78,7 @@ if (BUILD_TEST)
 		gdimagestringup16
 		gdimagetruecolortopalette
 		gdinterpolatedscale
+		gdmatrix
 		gdnewfilectx
 		gdtest
 		gdtiled
@@ -97,5 +99,4 @@ if (BUILD_TEST)
 	FOREACH(test_dir ${TESTS_DIRS})
 		add_subdirectory (${test_dir})
 	ENDFOREACH(test_dir)
-
 endif (BUILD_TEST)

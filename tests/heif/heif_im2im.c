@@ -11,9 +11,9 @@
 
 int main()
 {
-	gdImagePtr src, dst;
+	gdImagePtr src = NULL, dst = NULL;
 	int r, g, b;
-	void *p;
+	void *p = NULL;
 	int size = 0;
 	CuTestImageResult result = {0, 0};
 

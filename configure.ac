@@ -12,7 +12,7 @@ m4_define([gd_REVISION],esyscmd(gv(RELEASE)))dnl
 m4_define([gd_EXTRA],esyscmd(gv(EXTRA)))dnl
 m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION]gd_EXTRA)]dnl
 
-AC_INIT([GD], gd_PKG_VERSION, [https://github.com/libgd/libgd/issues], [libgd], [http://lib.gd])
+AC_INIT([GD], gd_PKG_VERSION, [https://github.com/libgd/libgd/issues], [libgd], [https://lib.gd])
 AC_CONFIG_SRCDIR([src/gd.c])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
@@ -106,7 +106,7 @@ AC_MSG_CHECKING([whether to support gd image formats])
 AC_ARG_ENABLE([gd-formats],
   [AS_HELP_STRING([--disable-gd-formats], [Disable support for the legacy/testing gd image formats])],
   [gd_enable_gd_formats=$enableval],
-  [gd_enable_gd_formats=yes])
+  [gd_enable_gd_formats=no])
 AC_MSG_RESULT([$gd_enable_gd_formats])
 if test "$gd_enable_gd_formats" = yes; then
   gd_ac_value=1
@@ -212,6 +212,7 @@ GD_LIB_PKG_CHECK([LIBPNG], [PNG], [png], [libpng], [
 ])
 
 dnl Check for FreeType support.
+dnl NB: "9.8.3" corresponds to freetype-2.1.10.
 GD_LIB_PKG_CHECK([LIBFREETYPE], [FREETYPE], [freetype], [freetype2 >= 9.8.3], [
   FREETYPE_CONFIG=$gd_with_lib/bin/freetype-config
   if test -e "$FREETYPE_CONFIG"; then
@@ -278,7 +279,7 @@ GD_LIB_PKG_CHECK([LIBTIFF], [TIFF], [tiff], [libtiff-4], [
 ])
 
 dnl Check for webp support.
-GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [webp], [libwebp], [
+GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [webp], [libwebp >= 0.2.0], [
   AC_CHECK_LIB([webp], [WebPGetInfo], [dnl
     AS_VAR_APPEND([LIBWEBP_LIBS], [" -lwebp"])
     gd_found_lib=yes

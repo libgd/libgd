@@ -15,13 +15,13 @@
 #define SEP_TEST (separators[*((unsigned char *) s)])
 
 char *
-gd_strtok_r (char *s, char *sep, char **state)
+gd_strtok_r(char *s, const char *sep, char **state)
 {
 	char separators[256];
 	char *result = 0;
 	memset (separators, 0, sizeof (separators));
 	while (*sep) {
-		separators[*((unsigned char *) sep)] = 1;
+		separators[*((const unsigned char *) sep)] = 1;
 		sep++;
 	}
 	if (!s) {

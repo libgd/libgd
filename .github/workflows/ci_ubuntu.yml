@@ -1,0 +1,153 @@
+name: CI Ubuntu
+
+on:
+  push:
+    branches: [master, GD-*]
+  pull_request:
+    branches: [master, GD-*]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: RELWITHDEBINFO
+
+jobs:
+  CI:
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              name: "Ubuntu Intel GCC",
+              os: ubuntu-latest,
+              cc: "gcc",
+              cxx: "g++",
+              cflags: "-msse2"
+            }
+          - {
+              name: "Ubuntu Intel Clang",
+              os: ubuntu-latest,
+              cc: "clang-12",
+              cxx: "clang-cpp-12"
+            }
+          - {
+              name: "Ubuntu Graviton GCC",
+              os: [self-hosted, Linux, ARM64, graviton],
+              cc: "gcc",
+              cxx: "g++",
+              cflags: "-march=armv8.2-a+fp16+rcpc+dotprod+crypto+sve -mtune=neoverse-n1"
+            }
+
+    name: ${{ matrix.config.name }}
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Update apt (Ubuntu)
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: sudo -E apt-get update -qq -o Acquire::Retries=3
+
+      - name: Add libheif PPA (Ubuntu)
+        run: |
+          sudo add-apt-repository ppa:strukturag/libde265
+          sudo add-apt-repository ppa:strukturag/libheif
+
+      - name: install dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang-12 gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libheif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf
+
+      - name: Debug CC Env
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+          CFLAGS: ${{ matrix.config.cflags }}
+        run: |
+          echo ${{ matrix.config.cc }}
+          echo ${{ matrix.config.cxx }}
+          echo ${{ matrix.config.cflags }}
+
+      - name: Configure CMake Clang
+        if: contains(matrix.config.cc, 'clang')
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+          CFLAGS: ${{ matrix.config.cflags }}
+        run:
+          cmake -G "Unix Makefiles" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
+          -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/cmake/modules/linux-clang.cmake
+
+      - name: Configure CMake gcc
+        if: contains(matrix.config.cc, 'gcc')
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+          CFLAGS: ${{ matrix.config.cflags }}
+        run:
+          cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
+          -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+          CFLAGS: ${{ matrix.config.cflags }}
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
+
+      - name: Test
+        if: contains(matrix.config.cc, 'gcc')
+        working-directory: ${{github.workspace}}/build
+        run: |
+          export TMP=${{runner.temp}}
+          echo "TMP=${{github.temp}}" >> $GITHUB_ENV
+          echo "LSAN_OPTIONS=suppressions=${{ github.workspace }}/suppressions/lsan.supp" >> $GITHUB_ENV
+          CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
+
+      - name: Configure CMake ASAN
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+          CFLAGS: ${{ matrix.config.cflags }}
+        if: contains(matrix.config.cc, 'gcc')
+        run:
+          cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1
+          -DBUILD_TEST=1 -B ${{github.workspace}}/buildasan -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build ASAN
+        if: contains(matrix.config.cc, 'gcc')
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+          CFLAGS: "-march=armv8.2-a+fp16+rcpc+dotprod+crypto -mtune=neoverse-n1"
+        run: cmake --build ${{github.workspace}}/buildasan --config ${{env.BUILD_TYPE}}
+
+      - name: Test ASAN
+        if: contains(matrix.config.cc, 'gcc')
+        working-directory: ${{github.workspace}}/buildasan
+        run: |
+          export TMP=${{runner.temp}}
+          echo "TMP=${{github.temp}}" >> $GITHUB_ENV
+          CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
+
+      - name: Configure and Make
+        working-directory: ${{github.workspace}}/
+        run: |
+          ./bootstrap.sh
+          ./configure --with-png --with-jpeg --with-ramq --with-heif --with-xpm --with-tiff --with-webp --with-liq --enable-gd --enable-gd-formats --with-zlib
+          make
+          make dist
+
+      - name: Output Log
+        run: |
+          if test -f "/home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log"; then
+            cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
+          fi

@@ -8,6 +8,7 @@
 #include <string.h>
 #include <math.h>
 #include <limits.h>
+#include <time.h>
 
 #ifdef HAVE_DIRENT_H
 #include <dirent.h>
@@ -22,10 +23,14 @@
 #include <sys/types.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
 #include "readdir.h"
 #include <errno.h>
 #endif
+#if defined(__MINGW32__) ||  defined(__MINGW64__)
+# define lstat stat
+#endif
+#include "gd_intern.h"
 
 /* GDTEST_TOP_DIR is defined in other compile ways except msys
  * test_config.h is created by windows/msys/run_test.sh*/
@@ -75,7 +80,27 @@ gdImagePtr gdTestImageFromPng(const char *filename)
 }
 
 static char *tmpdir_base;
+int gdTestIsDir(char *path) {
+#if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
+	WIN32_FILE_ATTRIBUTE_DATA data;
 
+	if (!GetFileAttributesEx(path, GetFileExInfoStandard, &data)) {
+		return 0;
+	}
+	if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+		return 0;
+	} else {
+		return 1;
+	}
+#else
+	struct stat st;
+	if (lstat(path, &st) != 0)
+
+	if (S_ISDIR(st.st_mode))
+		return 1;
+	return 0;
+#endif
+}
 /* This is kind of hacky, but it's meant to be simple. */
 static void _clean_dir(const char *dir)
 {
@@ -94,7 +119,7 @@ static void _clean_dir(const char *dir)
 
 		if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
 			continue;
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
 	{
 		WIN32_FILE_ATTRIBUTE_DATA data;
 
@@ -133,26 +158,7 @@ static void tmpdir_cleanup(void)
 	free(tmpdir_base);
 }
 
-#ifdef _WIN32
-char* strrstr (char* haystack, char* needle)
-{
-  int needle_length = strlen(needle);
-  char * haystack_end = haystack + strlen(haystack) - needle_length;
-  char * p;
-  int i;
-
-  for(p = haystack_end; p >= haystack; --p)
-  {
-    for(i = 0; i < needle_length; ++i) {
-      if(p[i] != needle[i])
-        goto next;
-    }
-    return p;
-
-    next:;
-  }
-  return 0;
-}
+#if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
 
 
 typedef VOID (WINAPI *MyGetSystemTimeAsFileTime)(LPFILETIME lpSystemTimeAsFileTime);
@@ -203,56 +209,71 @@ static int getfilesystemtime(struct timeval *tv)
 
 	return 0;
 }
+#endif
+#if defined(_WIN32)
+
+static void randtemplate(char *template, size_t l) {
+	// just to avoid calls within the same second 
+	srand(time (NULL) + (unsigned int)template);
+	for (size_t i = l - 6; i < l; i++) {
+		int r = rand();
+		if ((r / (RAND_MAX + 1)) > ((RAND_MAX + 1) / 2))
+			template[i] = 'A' + (double) rand () / (RAND_MAX + 1) * ('Z' - 'A');
+		else
+			template[i] = 'a' + (double) rand () / (RAND_MAX + 1) * ('z' - 'a');
+	}
+}
+
+char* strrstr (char* haystack, char* needle)
+{
+  int needle_length = strlen(needle);
+  char * haystack_end = haystack + strlen(haystack) - needle_length;
+  char * p;
+  int i;
+
+  for(p = haystack_end; p >= haystack; --p)
+  {
+    for(i = 0; i < needle_length; ++i) {
+      if(p[i] != needle[i])
+        goto next;
+    }
+    return p;
+
+    next:;
+  }
+  return 0;
+}
+
 
 static char *
 mkdtemp (char *tmpl)
 {
-	static const char letters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	static const int NLETTERS = sizeof (letters) - 1;
-	static int counter = 0;
-	char *XXXXXX;
-	struct timeval tv;
-	__int64 value;
-	int count;
+	size_t l;
+	char attempts = 8;
+	int res = 0;
 
-	/* find the last occurrence of "XXXXXX" */
-	XXXXXX = strrstr(tmpl, "XXXXXX");
-
-	if (!XXXXXX || strncmp (XXXXXX, "XXXXXX", 6)) {
+	if (tmpl == NULL) {
 		errno = EINVAL;
 		return NULL;
 	}
 
-	/* Get some more or less random data.  */
-	getfilesystemtime(&tv);
-	value = (tv.tv_usec ^ tv.tv_sec) + counter++;
-
-	for (count = 0; count < 100; value += 7777, ++count) {
-		__int64 v = value;
-
-		/* Fill in the random bits.  */
-		XXXXXX[0] = letters[v % NLETTERS];
-		v /= NLETTERS;
-		XXXXXX[1] = letters[v % NLETTERS];
-		v /= NLETTERS;
-		XXXXXX[2] = letters[v % NLETTERS];
-		v /= NLETTERS;
-		XXXXXX[3] = letters[v % NLETTERS];
-		v /= NLETTERS;
-		XXXXXX[4] = letters[v % NLETTERS];
-		v /= NLETTERS;
-		XXXXXX[5] = letters[v % NLETTERS];
-
-		/* tmpl is in UTF-8 on Windows, thus use g_mkdir() */
-		if (mkdir(tmpl) == 0) {
-			return tmpl;
-		}
-		printf("failed to create directory\n");
-		if (errno != EEXIST)
-			/* Any other error will apply also to other names we might
-			 *  try, and there are 2^32 or so of them, so give up now.
-			 */
-			return NULL;
+	l = strlen (tmpl);
+	if (l < 6 || strcmp (&tmpl[l - 6], "XXXXXX") != 0) {
+		errno = EINVAL;
+		return NULL;
+	}
+	do {
+		randtemplate (tmpl, l);
+		res = mkdir(tmpl);
+		attempts--;
+	} while (attempts > 0 && res != 0 );
+	
+	if (res == 0) {
+		return tmpl;
+	}
+	if (errno != EEXIST) {
+		printf("Failed to create tmp dir, last attempt %s.", tmpl);
+		return NULL;
 	}
 
 	/* We got out of the loop because we ran out of combinations to try.  */
@@ -265,28 +286,48 @@ const char *gdTestTempDir(void)
 {
 	if (tmpdir_base == NULL) {
 		char *tmpdir;
-#ifdef _WIN32
-		char tmpdir_root[MAX_PATH];
+#if defined(_WIN32)  && !defined(__MINGW32__) &&  !defined(__MINGW64__)
+		char tmpdir_root[MAXPATHLEN];
 		size_t tmpdir_root_len = GetTempPath(MAX_PATH, tmpdir_root);
-		gdTestAssert(!(tmpdir_root_len > MAX_PATH || (tmpdir_root_len == 0)));
-		gdTestAssert((tmpdir_root_len + 30 < MAX_PATH));
+		if ((tmpdir_root_len + 30 > MAX_PATH) || (tmpdir_root_len == 0)) {
+			printf("Tmp dir path too long or 0 length <%s>\n", tmpdir_root);
+			return NULL;
+		}
 #else
 		char *tmpdir_root;
 		tmpdir_root = getenv("TMPDIR");
-		if (tmpdir_root == NULL)
-			tmpdir_root = "/tmp";
+		if (tmpdir_root == NULL) {
+			// Mingw defines it
+			tmpdir_root = getenv("TMP");
+			if (tmpdir_root == NULL) {
+				// Fall back here.
+				tmpdir_root = "/tmp";
+				if (!gdTestIsDir(tmpdir_root)) {
+					printf("tmpdir failed to be used or initialized (%s).", tmpdir_root);
+					exit(2);
+				}
+			}
+		}
 #endif
 
 		/* The constant here is a lazy over-estimate. */
 		tmpdir = malloc(strlen(tmpdir_root) + 30);
-		gdTestAssert(tmpdir != NULL);
-#ifdef _WIN32
+		if (tmpdir == NULL) {
+			printf("cannot alloc tmpdir path.");
+			return NULL;
+		}
+
+#if defined(_WIN32)
 		sprintf(tmpdir, "%sgdtest.XXXXXX", tmpdir_root);
 #else
 		sprintf(tmpdir, "%s/gdtest.XXXXXX", tmpdir_root);
 #endif
+
 		tmpdir_base = mkdtemp(tmpdir);
-		gdTestAssert(tmpdir_base != NULL);
+		if (tmpdir_base == NULL) {
+			printf("failed to generate the tmp dir path (%s).", tmpdir);
+			return NULL;
+		}
 
 		atexit(tmpdir_cleanup);
 	}
@@ -298,20 +339,29 @@ char *gdTestTempFile(const char *template)
 {
 	const char *tempdir = gdTestTempDir();
 	char *ret;
-
-#ifdef _WIN32
+	if (tempdir == NULL) {
+		return NULL;
+	}
+#if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
 	{
 		char *tmpfilename;
 		UINT error;
 
 		ret = malloc(MAX_PATH);
-		gdTestAssert(ret != NULL);
+		if (ret == NULL) {
+			printf("Failed to alloc tmp path");
+			return NULL;
+		}
 		if (template == NULL) {
 			error = GetTempFileName(tempdir,
 										  "gdtest",
 										  0,
 										  ret);
-				gdTestAssert(error != 0);
+			if (error = 0)	{
+				printf("GetTempFileName failed.");
+				gdFree(ret);
+				return NULL;
+			}
 		} else {
 			sprintf(ret, "%s\\%s", tempdir, template);
 		}
@@ -321,12 +371,19 @@ char *gdTestTempFile(const char *template)
 		template = "gdtemp.XXXXXX";
 	}
 	ret = malloc(strlen(tempdir) + 10 + strlen(template));
-	gdTestAssert(ret != NULL);
+	if (ret == NULL) {
+		printf("Failed to alloc tmp path");
+		return NULL;
+	}
 	sprintf(ret, "%s/%s", tempdir, template);
 
 	if (strstr(template, "XXXXXX") != NULL) {
 		int fd = mkstemp(ret);
-		gdTestAssert(fd != -1);
+		if (fd == -1) {
+			printf("mkstemp failed");
+			gdFree(ret);
+			return NULL;
+		}
 		close(fd);
 	}
 #endif
@@ -337,7 +394,10 @@ FILE *gdTestTempFp(void)
 {
 	char *file = gdTestTempFile(NULL);
 	FILE *fp = fopen(file, "wb");
-	gdTestAssert(fp != NULL);
+	if (fp == NULL) {
+		printf("fail to open tmp file");
+		return NULL;
+	}
 	free(file);
 	return fp;
 }
@@ -360,11 +420,14 @@ char *gdTestFilePathV(const char *path, va_list args)
 
 	/* Now build the path. */
 	file = malloc(len);
-	gdTestAssert(file != NULL);
+	if (file == NULL) {
+		printf("failed to alloc path.");
+		return NULL;
+	}
 	strcpy(file, GDTEST_TOP_DIR);
 	p = path;
 	do {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
 		strcat(file, "\\");
 #else
 		strcat(file, "/");
@@ -393,7 +456,10 @@ FILE *gdTestFileOpenX(const char *path, ...)
 	va_start(args, path);
 	file = gdTestFilePathV(path, args);
 	fp = fopen(file, "rb");
-	gdTestAssert(fp != NULL);
+	if (fp == NULL) {
+		printf("failed to open path (rb).");
+		return NULL;
+	}
 	free(file);
 	return fp;
 }

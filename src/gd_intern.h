@@ -29,6 +29,14 @@
 # endif
 #endif
 
+#ifdef _MSC_VER
+#define  ssize_t SSIZE_T
+#define MAXSIZE_T ((SIZE_T)~ ((SIZE_T)0))
+#define MAXSSIZE_T ((SSIZE_T) (MAXSIZE_T >> 1))
+#define MINSSIZE_T ((SSIZE_T)~MAXSSIZE_T)
+#define SSIZE_MAX MAXSSIZE_T
+#endif
+
 #include "gd.h"
 
 #define MIN(a,b) ((a)<(b)?(a):(b))
