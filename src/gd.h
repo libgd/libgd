@@ -1604,6 +1604,8 @@ BGD_DECLARE(void) gdImageFlipHorizontal(gdImagePtr im);
 BGD_DECLARE(void) gdImageFlipVertical(gdImagePtr im);
 BGD_DECLARE(void) gdImageFlipBoth(gdImagePtr im);
 
+/* Macros still used in gd extension up to PHP 8.0
+   so please keep these unused macros for now */
 #define GD_FLIP_HORINZONTAL 1 /* typo, kept for BC */
 #define GD_FLIP_HORIZONTAL 1
 #define GD_FLIP_VERTICAL 2
