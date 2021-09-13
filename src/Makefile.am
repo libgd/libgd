@@ -52,7 +52,7 @@ EXTRA_DIST = \
 	msinttypes/inttypes.h \
 	msinttypes/stdint.h
 
-include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h gd_color_map.h gd_errors.h gdpp.h
+include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h gd_color_map.h gd_errors.h gdpp.h gd_io_stream.h
 
 lib_LTLIBRARIES = libgd.la
 
