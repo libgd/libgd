@@ -194,6 +194,7 @@ install(FILES
 	gdfontt.h
 	gdfx.h
 	gdpp.h
+	gd_io_stream.h
 	DESTINATION include)
 
 CONFIGURE_FILE(../config/gdlib.pc.cmake gdlib.pc @ONLY)
