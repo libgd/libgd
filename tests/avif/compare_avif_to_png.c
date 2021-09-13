@@ -20,7 +20,7 @@
 int main() {
 	FILE *fp;
 	gdImagePtr imFromPng = NULL, imFromAvif = NULL;
-	void *avifImDataPtr = NULL, *pngImDataPtr = NULL;
+	void *avifImDataPtr = NULL;
 	int size;
 	char pngFilename[100], avifFilename[100], *pngFilePath;
 	char errMsg[4096];
@@ -56,37 +56,12 @@ int main() {
 		gdTestAssertMsg(gdAssertImageEquals(imFromPng, imFromAvif), errMsg);
 
 		// Then, decode each AVIF into a GD format, and compare that with the orginal PNG.
-avif2png:
-
 		// Skip this reverse test for now, until we can find images that encode to PNGs losslessly.
-if (0) {
-		sprintf(avifFilename, "%s.avif", filenames[i]);
-		fp = gdTestFileOpen2("avif", avifFilename);
-		imFromAvif = gdImageCreateFromAvif(fp);
-		fclose(fp);
-
-		strcat(strcpy(errMsg, filenames[i]), ".avif: gdImageCreateFromAvif failed\n");
-		if (!gdTestAssertMsg(imFromAvif != NULL, errMsg))
-			continue;
-
-		strcat(strcpy(errMsg, filenames[i]), ".avif: Encoded PNG image did not match original AVIF\n");
-		pngFilePath = gdTestFilePath2("avif", pngFilename);
-		gdTestAssertMsg(gdAssertImageEqualsToFile(pngFilePath, imFromAvif), errMsg);
-		free(pngFilePath);
-}
+avif2png:
+		if (imFromPng) gdImageDestroy(imFromPng);
+		if (imFromAvif) gdImageDestroy(imFromAvif);
+		if (avifImDataPtr) gdFree(avifImDataPtr);
 	}
-
-	if (imFromPng)
-		gdImageDestroy(imFromPng);
-
-	if (imFromAvif)
-		gdImageDestroy(imFromAvif);
-
-	if (avifImDataPtr)
-		gdFree(avifImDataPtr);
-
-	if (pngImDataPtr)
-		gdFree(pngImDataPtr);
 
 	return gdNumFailures();
 }
