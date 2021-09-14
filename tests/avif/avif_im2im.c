@@ -13,7 +13,7 @@
 
 int main()
 {
-	gdImagePtr srcGdIm, destGdIm;
+	gdImagePtr srcGdIm = NULL, destGdIm = NULL;
 	void *avifImageDataPtr;
 	FILE *fp;
 	int r, g, b;
@@ -38,7 +38,7 @@ int main()
 
 	// Encode the gd image to an AVIF image in memory.
 	avifImageDataPtr = gdImageAvifPtrEx(srcGdIm, &size, 100, 10);
-	gdTestAssertMsg(avifImageDataPtr != NULL, "gdImageAvifPtr() returned null\n");
+	if (!gdTestAssertMsg(avifImageDataPtr != NULL, "gdImageAvifPtr() returned null\n")) goto exit;
 	gdTestAssertMsg(size > 0, "gdImageAvifPtr() returned a non-positive size\n");
 
 	// Encode the AVIF image back into a gd image.
@@ -54,6 +54,7 @@ int main()
 	 gdTestImageDiff(srcGdIm, destGdIm, NULL, &result);
 	 gdTestAssertMsg(result.pixels_changed == 0, "pixels changed: %d\n", result.pixels_changed);
 
+exit:
 	if (srcGdIm)
 		gdImageDestroy(srcGdIm);
 
