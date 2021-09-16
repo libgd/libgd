@@ -63,7 +63,6 @@ jobs:
         run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang-12 gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libheif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf ninja-build nasm meson
 
       - name: install AOM codec for libavif
-        if: "!contains(matrix.config.name,'Ubuntu Graviton GCC')"
         run: |
           cd ${{github.temp }}
           git clone -b v3.1.2 --depth 1 https://aomedia.googlesource.com/aom
@@ -85,7 +84,6 @@ jobs:
           sudo ninja install
 
       - name: install libyuv
-        if: "!contains(matrix.config.name,'Ubuntu Graviton GCC')"
         run: |
           cd ${{github.temp }}
           git clone https://chromium.googlesource.com/libyuv/libyuv/
