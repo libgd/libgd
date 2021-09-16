@@ -60,7 +60,52 @@ jobs:
       - name: install dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
-        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang-12 gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libheif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf
+        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang-12 gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libheif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf ninja-build nasm meson
+
+      - name: install AOM codec for libavif
+        if: "!contains(matrix.config.name,'Ubuntu Graviton GCC')"
+        run: |
+          cd ${{github.temp }}
+          git clone -b v3.1.2 --depth 1 https://aomedia.googlesource.com/aom
+          cd aom
+          mkdir build.libavif
+          cd build.libavif
+          cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_DOCS=0 -DENABLE_EXAMPLES=0 -DENABLE_TESTDATA=0 -DENABLE_TESTS=0 -DENABLE_TOOLS=0  -DBUILD_SHARED_LIBS=1 -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
+          ninja
+          sudo ninja install
+
+      - name: install dav1d codec for libavif
+        run: |
+          git clone -b 0.9.2 --depth 1 https://code.videolan.org/videolan/dav1d.git
+          cd dav1d
+          mkdir build
+          cd build
+          meson --buildtype release -Dprefix=/usr ..
+          ninja
+          sudo ninja install
+
+      - name: install libyuv
+        run: |
+          cd ${{github.temp }}
+          git clone https://chromium.googlesource.com/libyuv/libyuv/
+          cd libyuv
+          mkdir build
+          cd build
+          cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -B. ..
+          make
+          sudo make install
+
+      - name: install libavif
+        run: |
+          cd ${{github.temp }}
+          git clone https://github.com/AOMediaCodec/libavif.git
+          cd libavif
+          git checkout tags/v0.9.2
+          mkdir build
+          cd build
+          cmake -DBUILD_SHARED_LIBS=1 -DAVIF_CODEC_AOM=1 -DAVIF_CODEC_DAV1D=1 -DAVIF_CODEC_LIBGAV1=0 -DAVIF_CODEC_RAV1E=0 -DAVIF_CODEC_SVT=0 -B. ..
+          make
+          sudo make install
 
       - name: Debug CC Env
         env:
@@ -80,7 +125,7 @@ jobs:
           CFLAGS: ${{ matrix.config.cflags }}
         run:
           cmake -G "Unix Makefiles" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
-          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
+          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1 -DENABLE_AVIF=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/cmake/modules/linux-clang.cmake
 
@@ -92,7 +137,7 @@ jobs:
           CFLAGS: ${{ matrix.config.cflags }}
         run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
-          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1
+          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1 -DENABLE_AVIF=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
@@ -119,7 +164,7 @@ jobs:
         if: contains(matrix.config.cc, 'gcc')
         run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
-          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1
+          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_AVIF=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/buildasan -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build ASAN
