@@ -62,6 +62,16 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang-12 gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libheif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf
 
+      - name: install aom codec for libavifile
+        run: |
+          git clone -b v3.1.2 --depth 1 https://aomedia.googlesource.com/aom
+          cd aom
+          mkdir build.libavif
+          cd build.libavif
+          cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_DOCS=0 -DENABLE_EXAMPLES=0 -DENABLE_TESTDATA=0 -DENABLE_TESTS=0 -DENABLE_TOOLS=0 ..
+          ninja
+          ninja install
+
       - name: Debug CC Env
         env:
           CC: ${{ matrix.config.cc }}
