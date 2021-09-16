@@ -74,6 +74,7 @@ jobs:
           sudo ninja install
 
       - name: Debug CC Env
+        if: "!contains(matrix.config.name,'Ubuntu Graviton GCC')"
         env:
           CC: ${{ matrix.config.cc }}
           CXX: ${{ matrix.config.cxx }}
