@@ -60,9 +60,9 @@ jobs:
       - name: install dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
-        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang-12 gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libheif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf ninja-build nasm
+        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang-12 gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libheif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf ninja-build nasm libdav1d4 libdav1d-dev
 
-      - name: install libavif
+      - name: install AOM codec for libavif
         if: "!contains(matrix.config.name,'Ubuntu Graviton GCC')"
         run: |
           cd ${{github.temp }}
@@ -74,7 +74,7 @@ jobs:
           ninja
           sudo ninja install
 
-      - name: install libavifile
+      - name: install libyuv
         if: "!contains(matrix.config.name,'Ubuntu Graviton GCC')"
         run: |
           cd ${{github.temp }}
@@ -86,7 +86,7 @@ jobs:
           make
           sudo make install
 
-      - name: install libavifile
+      - name: install libavif
         if: "!contains(matrix.config.name,'Ubuntu Graviton GCC')"
         run: |
           cd ${{github.temp }}
