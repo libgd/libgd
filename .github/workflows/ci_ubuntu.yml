@@ -83,7 +83,7 @@ jobs:
           cd build
           meson --buildtype release ..
           ninja
-          ninja install
+          sudo ninja install
 
       - name: install libyuv
         if: "!contains(matrix.config.name,'Ubuntu Graviton GCC')"
