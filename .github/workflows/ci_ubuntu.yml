@@ -80,7 +80,7 @@ jobs:
           cd dav1d
           mkdir build
           cd build
-          meson --buildtype release ..
+          meson --buildtype release -Dprefix=/usr ..
           ninja
           sudo ninja install
 
