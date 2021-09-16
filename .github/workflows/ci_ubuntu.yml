@@ -85,6 +85,7 @@ jobs:
           sudo ninja install
 
       - name: install libyuv
+        if: "!contains(matrix.config.name,'Ubuntu Graviton GCC')"
         run: |
           cd ${{github.temp }}
           git clone https://chromium.googlesource.com/libyuv/libyuv/
