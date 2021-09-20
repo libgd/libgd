@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.3.3] - 2021-09-12
 
+### Changed
+
+- support for the legacy/testing gd image formats is disabled by default
+
 ### Fixed
 
 - [#759](https://github.com/libgd/libgd/issues/759) update cmake to generate config.h in the build dir
