@@ -536,7 +536,7 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 	 * This implementation works with aligned contiguous buffer only
 	 * Upcoming new buffers are contiguous and will be much faster.
 	 * let don't bloat this code to support our good "old" 31bit format.
-	 * It alos lets us convert palette image, if one likes to reduce
+	 * It also lets us convert palette image, if one likes to reduce
 	 * a palette
 	 */
 	if (overflow2(gdImageSX(im), gdImageSY(im))

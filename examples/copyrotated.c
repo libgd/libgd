@@ -51,8 +51,8 @@ int main(int argc, char **arg)
 	}
 
 	/*
-		cos adj hyp (cos = adjacent / hypothenus)
-		sin op hyp (sin adjacent / hypothenus)
+		cos adj hyp (cos = adjacent / hypotenuse)
+		sin op hyp (sin adjacent / hypotenuse)
 		+ 10 pixels margin
 	 */
 

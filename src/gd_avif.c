@@ -464,7 +464,7 @@ cleanup:
 		speed - At slower speeds, encoding may be quite slow. Use judiciously.
 
 		Qualities or speeds that are lower than the minimum value get clamped to the minimum value,
-		and qualities or speeds that are lower than the maximum value get clamped to the maxmum value.
+		and qualities or speeds that are lower than the maximum value get clamped to the maximum value.
 		Note that AVIF_SPEED_DEFAULT is -1. If we ever set SPEED_DEFAULT = AVIF_SPEED_DEFAULT,
 		we'd want to add a conditional to ensure that value doesn't get clamped.
 

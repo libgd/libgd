@@ -406,7 +406,7 @@ typedef double (* interpolation_method )(double, double);
      <Accessor Macros>
 
    (Previous versions of this library encouraged directly manipulating
-   the contents ofthe struct but we are attempting to move away from
+   the contents of the struct but we are attempting to move away from
    this practice so the fields are no longer documented here.  If you
    need to poke at the internals of this struct, feel free to look at
    *gd.h*.)

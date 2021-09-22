@@ -33,7 +33,7 @@
  * Get a multibyte integer from a generic getin function
  * 'getin' can be getc, with in = NULL
  * you can find getin as a function just above the main function
- * This way you gain a lot of flexibilty about how this package
+ * This way you gain a lot of flexibility about how this package
  * reads a wbmp file.
  */
 int getmbi(int (*getin) (void *in), void *in)
