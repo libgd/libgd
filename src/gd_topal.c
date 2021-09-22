@@ -1589,7 +1589,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 
 
 	if (oim->paletteQuantizationMethod == GD_QUANT_NEUQUANT) {
-		if (cimP) { /* NeuQuant alwasy creates a copy, so the new blank image can't be used */
+		if (cimP) { /* NeuQuant always creates a copy, so the new blank image can't be used */
 			gdImageDestroy(nim);
 		}
 		nim = gdImageNeuQuant(oim, colorsWanted, oim->paletteQuantizationSpeed ? oim->paletteQuantizationSpeed : 2);

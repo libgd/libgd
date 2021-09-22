@@ -3629,7 +3629,7 @@ BGD_DECLARE(void) gdImageOpenPolygon (gdImagePtr im, gdPointPtr p, int n, int c)
 /* THANKS to Kirsten Schulz for the polygon fixes! */
 
 /* The intersection finding technique of this code could be improved  */
-/* by remembering the previous intertersection, and by using the slope. */
+/* by remembering the previous intersection, and by using the slope. */
 /* That could help to adjust intersections  to produce a nice */
 /* interior_extrema. */
 

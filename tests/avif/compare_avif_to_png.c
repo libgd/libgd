@@ -2,7 +2,7 @@
  * File: compare_avif_to_png
  *
  * Thorough check for AVIF encoding and decoding.
- * This test reqiures a set of PNG images that have been losslessly encoded to AVIFs.
+ * This test requires a set of PNG images that have been losslessly encoded to AVIFs.
  * For each such image, we encode the PNG into an AVIF, with the GD format as an intermediary,
  * then compare the resulting AVIF with the original PNG.
  *
