@@ -106,7 +106,7 @@ AC_MSG_CHECKING([whether to support gd image formats])
 AC_ARG_ENABLE([gd-formats],
   [AS_HELP_STRING([--disable-gd-formats], [Disable support for the legacy/testing gd image formats])],
   [gd_enable_gd_formats=$enableval],
-  [gd_enable_gd_formats=no])
+  [gd_enable_gd_formats=yes])
 AC_MSG_RESULT([$gd_enable_gd_formats])
 if test "$gd_enable_gd_formats" = yes; then
   gd_ac_value=1
