@@ -104,7 +104,7 @@ AX_OPENMP()
 dnl We should default this to off in future releases.
 AC_MSG_CHECKING([whether to support gd image formats])
 AC_ARG_ENABLE([gd-formats],
-  [AS_HELP_STRING([--disable-gd-formats], [Disable support for the legacy/testing gd image formats])],
+  [AS_HELP_STRING([--enable-gd-formats], [Enable support for the legacy/testing gd image formats])],
   [gd_enable_gd_formats=$enableval],
   [gd_enable_gd_formats=no])
 AC_MSG_RESULT([$gd_enable_gd_formats])
