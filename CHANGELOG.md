@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.3.4] - not yet released
+
+### Changed
+
+- revert support for the legacy/testing gd image formats is disabled by default
+
 ## [2.3.3] - 2021-09-12
+
+### Changed
+
+- support for the legacy/testing gd image formats is disabled by default
 
 ### Fixed
 
