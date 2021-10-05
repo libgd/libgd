@@ -1,0 +1,55 @@
+# GitHub actions workflow.
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+
+# https://scan.coverity.com/projects/libgd
+name: Coverity Scan
+
+# Only want to analyze official releases, not any pull requests.
+# The free service doesn't have enough bandwidth for both.
+on:
+  push:
+    branches: [master, GD-*]
+
+jobs:
+  coverity:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        cc: [gcc]
+    runs-on: ${{ matrix.os }}
+    env:
+      CC: ${{ matrix.cc }}
+    steps:
+    - name: Install dependencies
+      run: sudo apt-get install -y
+               libavifile-0.7-dev
+               libde265-dev
+               libfreetype-dev
+               libheif-dev
+               libimagequant-dev
+               libjpeg-turbo8-dev
+               libpng-dev
+               libraqm-dev
+               libtiff5-dev
+               libwebp-dev
+               libx265-dev
+               libxpm-dev
+    - uses: actions/checkout@v2
+    - name: Configure gd
+      run: cmake
+               -DENABLE_CPP=1
+               -DENABLE_FREETYPE=1
+               -DENABLE_GD_FORMATS=1
+               -DENABLE_HEIF=0
+               -DENABLE_JPEG=1
+               -DENABLE_PNG=1
+               -DENABLE_TIFF=1
+               -DENABLE_WEBP=1
+               -DBUILD_TEST=1
+               -B ${{github.workspace}}/build
+    - uses: vapier/coverity-scan-action@v0
+      with:
+        project: libgd%2Flibgd
+        email: security@libgd.org
+        token: ${{ secrets.COVERITY_SCAN_TOKEN }}
+        command: make -C ${{github.workspace}}/build
