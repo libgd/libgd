@@ -24,7 +24,7 @@
 
 This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md).
 By participating, you are expected to uphold this code.
-Please report unacceptable behavior to [security@libg.org](mailto:security@libgd.org).
+Please report unacceptable behavior to [security@libgd.org](mailto:security@libgd.org).
 
 ### Repositories
 
@@ -61,7 +61,7 @@ We also have some open features, please check if the feature you would like to h
 
 ### How Do I Submit A (Good) Bug Report?
 
-For security related bugs, github does not support private issues, that's why we have to handle security issues outside the issues tracker for now. Please drop a mail to [security@libg.org](mailto:security@libgd.org).
+For security related bugs, github does not support private issues, that's why we have to handle security issues outside the issues tracker for now. Please drop a mail to [security@libgd.org](mailto:security@libgd.org).
 
 Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/). After you've determined [which repository](#repositories) your bug is related to, create an issue on that repository and provide the following information.
 
