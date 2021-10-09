@@ -920,7 +920,7 @@ BGD_DECLARE(void) gdImageColorTransparent (gdImagePtr im, int color)
 		return;
 	}
 	if (im->transparent != -1) {
-	  im->alpha[im->transparent] = gdAlphaOpaque;
+		im->alpha[im->transparent] = gdAlphaOpaque;
 	}
 	im->alpha[color] = gdAlphaTransparent;
 	im->transparent = color;
