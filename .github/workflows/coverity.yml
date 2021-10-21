@@ -20,6 +20,8 @@ jobs:
     env:
       CC: ${{ matrix.cc }}
     steps:
+    - name: Update apt
+      run: sudo apt-get update -qq
     - name: Install dependencies
       run: sudo apt-get install -y
                libavifile-0.7-dev
