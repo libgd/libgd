@@ -18,7 +18,7 @@ int gdColorMatch(gdImagePtr im, int col1, int col2, float threshold)
 	const int da = gdImageAlpha(im, col1) - gdImageAlpha(im, col2);
 	const int dist = dr * dr + dg * dg + db * db + da * da;
 
-	return (100.0 * dist / 195075) < threshold;
+	return 100.0 * dist < threshold * 195075.0;
 }
 
 /*
