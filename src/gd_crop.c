@@ -87,8 +87,8 @@ BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 	const int width = gdImageSX(im);
 	const int height = gdImageSY(im);
 
-	int x,y;
-	int color, match;
+	int x, y;
+	int color;
 	gdRect crop;
 
 	crop.x = 0;
@@ -119,47 +119,54 @@ BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 		break;
 	}
 
-	/* TODO: Add gdImageGetRowPtr and works with ptr at the row level
-	 * for the true color and palette images
-	 * new formats will simply work with ptr
-	 */
-	match = 1;
-	for (y = 0; match && y < height; y++) {
-		for (x = 0; match && x < width; x++) {
-			match = (color == gdImageGetPixel(im, x,y));
+	for (x = 0, y = 0; y < height; y++) {
+		for (x = 0; x < width; x++) {
+			if (color != gdImageGetPixel(im, x, y)) {
+				goto break1;
+			}
 		}
 	}
+	break1:
 
 	/* Whole image would be cropped > bye */
-	if (match) {
+	if (y == height && x == width) {
 		return NULL;
 	}
 
-	crop.y = y - 1;
+	crop.y = y;
 
-	match = 1;
-	for (y = height - 1; match && y >= 0; y--) {
-		for (x = 0; match && x < width; x++) {
-			match = (color == gdImageGetPixel(im, x,y));
+	for (y = height - 1; y >= 0; y--) {
+		for (x = 0; x < width; x++) {
+			if (color != gdImageGetPixel(im, x, y)) {
+				goto break2;
+			}
 		}
 	}
-	crop.height = y - crop.y + 2;
+	break2:
 
-	match = 1;
-	for (x = 0; match && x < width; x++) {
-		for (y = crop.y; match && y < crop.y + crop.height; y++) {
-			match = (color == gdImageGetPixel(im, x,y));
+	crop.height = y - crop.y + 1;
+
+	for (x = 0; x < width; x++) {
+		for (y = crop.y; y < crop.y + crop.height; y++) {
+			if (color != gdImageGetPixel(im, x, y)) {
+				goto break3;
+			}
 		}
 	}
-	crop.x = x - 1;
+	break3:
 
-	match = 1;
-	for (x = width - 1; match && x >= 0; x--) {
-		for (y = crop.y; match &&  y < crop.y + crop.height; y++) {
-			match = (color == gdImageGetPixel(im, x,y));
+	crop.x = x;
+
+	for (x = width - 1; x >= 0; x--) {
+		for (y = crop.y; y < crop.y + crop.height; y++) {
+			if (color != gdImageGetPixel(im, x, y)) {
+				goto break4;
+			}
 		}
 	}
-	crop.width = x - crop.x + 2;
+	break4:
+
+	crop.width = x - crop.x + 1;
 
 	return gdImageCrop(im, &crop);
 }
@@ -190,8 +197,7 @@ BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int c
 	const int width = gdImageSX(im);
 	const int height = gdImageSY(im);
 
-	int x,y;
-	int match;
+	int x, y;
 	gdRect crop;
 
 	crop.x = 0;
@@ -199,7 +205,7 @@ BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int c
 	crop.width = 0;
 	crop.height = 0;
 
-	/* Pierre: crop everything sounds bad */
+	/* To crop everything sounds bad */
 	if (threshold > 100.0) {
 		return NULL;
 	}
@@ -208,47 +214,54 @@ BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int c
 		return NULL;
 	}
 
-	/* TODO: Add gdImageGetRowPtr and works with ptr at the row level
-	 * for the true color and palette images
-	 * new formats will simply work with ptr
-	 */
-	match = 1;
-	for (y = 0; match && y < height; y++) {
-		for (x = 0; match && x < width; x++) {
-			match = (gdColorMatch(im, color, gdImageGetPixel(im, x,y), threshold)) > 0;
+	for (x = 0, y = 0; y < height; y++) {
+		for (x = 0; x < width; x++) {
+			if (!gdColorMatch(im, color, gdImageGetPixel(im, x, y), threshold)) {
+				goto break1;
+			}
 		}
 	}
+	break1:
 
 	/* Whole image would be cropped > bye */
-	if (match) {
+	if (y == height && x == width) {
 		return NULL;
 	}
 
-	crop.y = y - 1;
+	crop.y = y;
 
-	match = 1;
-	for (y = height - 1; match && y >= 0; y--) {
-		for (x = 0; match && x < width; x++) {
-			match = (gdColorMatch(im, color, gdImageGetPixel(im, x, y), threshold)) > 0;
+	for (y = height - 1; y >= 0; y--) {
+		for (x = 0; x < width; x++) {
+			if (!gdColorMatch(im, color, gdImageGetPixel(im, x, y), threshold)) {
+				goto break2;
+			}
 		}
 	}
-	crop.height = y - crop.y + 2;
+	break2:
 
-	match = 1;
-	for (x = 0; match && x < width; x++) {
-		for (y = crop.y; match && y < crop.y + crop.height; y++) {
-			match = (gdColorMatch(im, color, gdImageGetPixel(im, x,y), threshold)) > 0;
+	crop.height = y - crop.y + 1;
+
+	for (x = 0; x < width; x++) {
+		for (y = crop.y; y < crop.y + crop.height; y++) {
+			if (!gdColorMatch(im, color, gdImageGetPixel(im, x, y), threshold)) {
+				goto break3;
+			}
 		}
 	}
-	crop.x = x - 1;
+	break3:
 
-	match = 1;
-	for (x = width - 1; match && x >= 0; x--) {
-		for (y = crop.y; match &&  y < crop.y + crop.height; y++) {
-			match = (gdColorMatch(im, color, gdImageGetPixel(im, x,y), threshold)) > 0;
+	crop.x = x;
+
+	for (x = width - 1; x >= 0; x--) {
+		for (y = crop.y; y < crop.y + crop.height; y++) {
+			if (!gdColorMatch(im, color, gdImageGetPixel(im, x, y), threshold)) {
+				goto break4;
+			}
 		}
 	}
-	crop.width = x - crop.x + 2;
+	break4:
+
+	crop.width = x - crop.x + 1;
 
 	return gdImageCrop(im, &crop);
 }
