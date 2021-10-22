@@ -147,7 +147,7 @@ BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 
 	match = 1;
 	for (x = 0; match && x < width; x++) {
-		for (y = 0; match && y < crop.y + crop.height; y++) {
+		for (y = crop.y; match && y < crop.y + crop.height; y++) {
 			match = (color == gdImageGetPixel(im, x,y));
 		}
 	}
@@ -155,7 +155,7 @@ BGD_DECLARE(gdImagePtr) gdImageCropAuto(gdImagePtr im, const unsigned int mode)
 
 	match = 1;
 	for (x = width - 1; match && x >= 0; x--) {
-		for (y = 0; match &&  y < crop.y + crop.height; y++) {
+		for (y = crop.y; match &&  y < crop.y + crop.height; y++) {
 			match = (color == gdImageGetPixel(im, x,y));
 		}
 	}
@@ -236,7 +236,7 @@ BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int c
 
 	match = 1;
 	for (x = 0; match && x < width; x++) {
-		for (y = 0; match && y < crop.y + crop.height; y++) {
+		for (y = crop.y; match && y < crop.y + crop.height; y++) {
 			match = (gdColorMatch(im, color, gdImageGetPixel(im, x,y), threshold)) > 0;
 		}
 	}
@@ -244,7 +244,7 @@ BGD_DECLARE(gdImagePtr) gdImageCropThreshold(gdImagePtr im, const unsigned int c
 
 	match = 1;
 	for (x = width - 1; match && x >= 0; x--) {
-		for (y = 0; match &&  y < crop.y + crop.height; y++) {
+		for (y = crop.y; match &&  y < crop.y + crop.height; y++) {
 			match = (gdColorMatch(im, color, gdImageGetPixel(im, x,y), threshold)) > 0;
 		}
 	}
