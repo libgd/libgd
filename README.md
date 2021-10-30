@@ -70,8 +70,8 @@ CI means whether we have an automatic CI for this platform. If someone has CI fo
 | Windows x86  | &#10003;  | &#10003; |
 | Windows x64  | &#10003;  | &#10003; |
 | Windows arm64  | &#10003;  | x |
-| MacOS x64  | &#10003;  | &#10003; |
-| MacOS M1  | &#10003;  | x |
+| macOS x64  | &#10003;  | &#10003; |
+| macOS M1  | &#10003;  | x |
 | S390  | &#10003;  | x |
 
 It is also known to work on almost all variations of *BSD, Solaris, etc. We don't have CI nor environment to test them. However many progamming languages binding do test libgd on these platforms.

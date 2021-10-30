@@ -10,7 +10,7 @@ v() { echo "$@"; "$@"; }
 v docs/naturaldocs/run_docs.sh --nonfatal
 
 if uname | grep -qi '^darwin' ; then
-	echo "Having trouble on OS X? Try: brew install autoconf libtool automake gettext pkg-config cmake"
+	echo "Having trouble on macOS? Try: brew install autoconf libtool automake gettext pkg-config cmake"
 fi
 
 if ! v autoreconf -f -i ; then

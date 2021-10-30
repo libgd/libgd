@@ -84,7 +84,7 @@ jobs:
           echo "LIBRARY_PATH=/usr/local/lib:/usr/local/include/libpng:/usr/local/opt/openssl/include" >> $GITHUB_ENV
           echo "LD_PATH"
 
-      - name: Configure CMake MacOS
+      - name: Configure CMake macOS
         if: contains(matrix.os, 'macos')
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type

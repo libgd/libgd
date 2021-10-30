@@ -11,7 +11,7 @@ GDLIB_REVISION=$("${GETVER}" RELEASE)
 GDLIB_LT_CURRENT=3
 # This is the version where the soname (current above) changes.  We use it
 # to reset the revision base back to zero.  It's a bit of a pain, but some
-# systems restrict the revision range below to [0..255] (like OS X).
+# systems restrict the revision range below to [0..255] (like macOS).
 GDLIB_PREV_MAJOR=2
 GDLIB_PREV_MINOR=2
 # This isn't 100% correct, but it tends to be a close enough approximation

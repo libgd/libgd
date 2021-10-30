@@ -15,10 +15,10 @@ The platforms used are:
     - https://github.com/actions/virtual-environments/blob/main/images/win/Windows2019-Readme.md
     - Visual Studio Enterprise 2019 (x64, x86 and arm64 cross compiliations)
     - MingW GCC (x86, x64 and ucrt64)
-- MacOS 11, Intel
+- macOS 11, Intel
     - https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
     - GCC x64
-- MacOS 11, M1 in place but we don't manage to get M1 runners
+- macOS 11, M1 in place but we don't manage to get M1 runners
 
 The CI configurations and script can be found in
 
@@ -53,11 +53,11 @@ For x64, x86 and arm64.
 
 ## ci_macos.yml
 
-All configs for MacOS. Dependencies are installed using homebrew (for those not available already in the image).
+All configs for macOS. Dependencies are installed using homebrew (for those not available already in the image).
 
 Important note:
 
-Github actions MacOS images contain Mono. Mono somehow messes up with the various paths and it is not worth figuring out how to work around it. We use a script to simply remove Mono from the system, the script can be found in .github\scripts\removemono.sh
+Github actions macOS images contain Mono. Mono somehow messes up with the various paths and it is not worth figuring out how to work around it. We use a script to simply remove Mono from the system, the script can be found in .github\scripts\removemono.sh
 
 ## shellcheck.yml
 
