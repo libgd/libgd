@@ -5,6 +5,7 @@ LIST(APPEND TESTS_FILES
 	heif_null
 	heif_ptr_double_free
 	heif_read
+	bug788
 )
 ENDIF(HEIF_FOUND)
 
