@@ -6,6 +6,7 @@ LIST(APPEND TESTS_FILES
 	bug00309
 	bug00354
 	bug00383
+	bug797
 	createimagefromgd2part
 	createimagefromgd2partptr
 	gd2_empty_file

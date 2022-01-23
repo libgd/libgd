@@ -1079,11 +1079,12 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 			}
 
 			png_write_image (png_ptr, row_pointers);
-			png_write_end (png_ptr, info_ptr);
 
 			for (j = 0; j < height; ++j)
 				gdFree (row_pointers[j]);
 			gdFree (row_pointers);
+
+			png_write_end (png_ptr, info_ptr);
 		} else {
 			png_write_image (png_ptr, im->pixels);
 			png_write_end (png_ptr, info_ptr);
