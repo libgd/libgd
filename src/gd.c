@@ -2187,9 +2187,28 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
 	}
 }
 
+
 /*
-	Function: gdImageEllipse
-*/
+ * Function: gdImageEllipse
+ *
+ * Draw an ellipse, stroke only.
+ *
+ * Note:
+ *   This function does not support <gdImageSetThickness>. GD 3.0 supports actual 2D vectors
+ *   operation, you may rely on it if you need better 2D drawing operations.
+ *
+ * Parameters:
+ *   im   - The destination image.
+ *   src  - The source image.
+ *   mx   - x-coordinate of the center.
+ *   my   - y-coordinate of the center.
+ *   w    - The ellipse width.
+ *   h    - The ellipse height.
+ *   c    - The color of the ellipse. A color identifier created with one of the image color allocate functions.
+ *
+ * See also:
+ *   - <gdImageFilledEllipse>
+ */
 BGD_DECLARE(void) gdImageEllipse(gdImagePtr im, int mx, int my, int w, int h, int c)
 {
 	int x=0,mx1=0,mx2=0,my1=0,my2=0;
