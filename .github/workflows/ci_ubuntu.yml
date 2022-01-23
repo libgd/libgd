@@ -137,7 +137,7 @@ jobs:
           CFLAGS: ${{ matrix.config.cflags }}
         run:
           cmake -G "Unix Makefiles" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
-          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1 -DENABLE_AVIF=1
+          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=0 -DENABLE_AVIF=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/cmake/modules/linux-clang.cmake
 
@@ -149,7 +149,7 @@ jobs:
           CFLAGS: ${{ matrix.config.cflags }}
         run:
           cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
-          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=1 -DENABLE_AVIF=1
+          -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_RAQM=0 -DENABLE_AVIF=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
