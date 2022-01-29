@@ -6,16 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.3.4] - not yet released
 
-### Fixed
-
-[#797](https://github.com/libgd/libgd/issues/797) possible leak on png error, setjmp lost the row_pointers ref
-[#788](https://github.com/libgd/libgd/issues/788) fix bug in HEIF usage, stride is require
-[#775](https://github.com/libgd/libgd/issues/775) Create SECURITY.md
-[#785](https://github.com/libgd/libgd/issues/785) Fix out of bounds write im->alpha[im->transparent]
-
 ### Changed
 
-- revert support for the legacy/testing gd image formats is disabled by default
+- revert support for the legacy/testing gd/gd2 image formats is disabled by default
+- GD/GD2 is now documented as deprecated (to be removed in 3.0)
+
+### Fixed
+
+- [#797](https://github.com/libgd/libgd/issues/797) possible leak on png error, setjmp lost the row_pointers ref
+- [#788](https://github.com/libgd/libgd/issues/788) fix bug in HEIF usage, stride is require
+- [#775](https://github.com/libgd/libgd/issues/775) Create SECURITY.md
+- [#785](https://github.com/libgd/libgd/issues/785) Fix out of bounds write im->alpha[im->transparent]
+
 
 ## [2.3.3] - 2021-09-12
 
