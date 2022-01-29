@@ -1857,7 +1857,7 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 
 		case -18000:
 		case  18000:
-			if (src_cloned) gdImageDestroy(src);
+			if (src_cloned) gdImageDestroy(src_tc);
 			return gdImageRotate180(src, 0);
 
 		case  -9000:
