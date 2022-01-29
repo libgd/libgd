@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.3.4] - not yet released
+[#797](https://github.com/libgd/libgd/issues/797) possible leak on png error, setjmp lost the row_pointers ref
+[#788](https://github.com/libgd/libgd/issues/788) fix bug in HEIF usage, stride is require
+[#775](https://github.com/libgd/libgd/issues/775) Create SECURITY.md
 
 ### Changed
 
