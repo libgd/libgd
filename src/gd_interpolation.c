@@ -622,22 +622,22 @@ static inline int _setEdgePixel(const gdImagePtr src, unsigned int x, unsigned i
 }
 #endif
 
-static inline int getPixelOverflowTC(gdImagePtr im, const int x, const int y, const int bgColor)
+static inline int getPixelOverflowTC(gdImagePtr im, const int x, const int y, const int bgColor /* 31bit ARGB TC */)
 {
 	if (gdImageBoundsSafe(im, x, y)) {
 		const int c = im->tpixels[y][x];
 		if (c == im->transparent) {
 			return bgColor == -1 ? gdTrueColorAlpha(0, 0, 0, 127) : bgColor;
 		}
-		return c;
+		return c;  /* 31bit ARGB TC */
 	} else {
-		return bgColor;
+		return bgColor;  /* 31bit ARGB TC */
 	}
 }
 
 #define colorIndex2RGBA(c) gdTrueColorAlpha(im->red[(c)], im->green[(c)], im->blue[(c)], im->alpha[(c)])
 #define colorIndex2RGBcustomA(c, a) gdTrueColorAlpha(im->red[(c)], im->green[(c)], im->blue[(c)], im->alpha[(a)])
-static inline int getPixelOverflowPalette(gdImagePtr im, const int x, const int y, const int bgColor)
+static inline int getPixelOverflowPalette(gdImagePtr im, const int x, const int y, const int bgColor  /* 31bit ARGB TC */)
 {
 	if (gdImageBoundsSafe(im, x, y)) {
 		const int c = im->pixels[y][x];
@@ -646,7 +646,7 @@ static inline int getPixelOverflowPalette(gdImagePtr im, const int x, const int 
 		}
 		return colorIndex2RGBA(c);
 	} else {
-		return bgColor;
+		return bgColor;  /* 31bit ARGB TC */
 	}
 }
 
@@ -675,17 +675,10 @@ static int getPixelInterpolateWeight(gdImagePtr im, const double x, const double
 	if (y < 0) sy--;
 
 	/* component-wise summing-up of color values */
-	if (im->trueColor) {
-		r = (int)(m1*gdTrueColorGetRed(c1)   + m2*gdTrueColorGetRed(c2)   + m3*gdTrueColorGetRed(c3)   + m4*gdTrueColorGetRed(c4));
-		g = (int)(m1*gdTrueColorGetGreen(c1) + m2*gdTrueColorGetGreen(c2) + m3*gdTrueColorGetGreen(c3) + m4*gdTrueColorGetGreen(c4));
-		b = (int)(m1*gdTrueColorGetBlue(c1)  + m2*gdTrueColorGetBlue(c2)  + m3*gdTrueColorGetBlue(c3)  + m4*gdTrueColorGetBlue(c4));
-		a = (int)(m1*gdTrueColorGetAlpha(c1) + m2*gdTrueColorGetAlpha(c2) + m3*gdTrueColorGetAlpha(c3) + m4*gdTrueColorGetAlpha(c4));
-	} else {
-		r = (int)(m1*im->red[(c1)]   + m2*im->red[(c2)]   + m3*im->red[(c3)]   + m4*im->red[(c4)]);
-		g = (int)(m1*im->green[(c1)] + m2*im->green[(c2)] + m3*im->green[(c3)] + m4*im->green[(c4)]);
-		b = (int)(m1*im->blue[(c1)]  + m2*im->blue[(c2)]  + m3*im->blue[(c3)]  + m4*im->blue[(c4)]);
-		a = (int)(m1*im->alpha[(c1)] + m2*im->alpha[(c2)] + m3*im->alpha[(c3)] + m4*im->alpha[(c4)]);
-	}
+	r = (int)(m1*gdTrueColorGetRed(c1)   + m2*gdTrueColorGetRed(c2)   + m3*gdTrueColorGetRed(c3)   + m4*gdTrueColorGetRed(c4));
+	g = (int)(m1*gdTrueColorGetGreen(c1) + m2*gdTrueColorGetGreen(c2) + m3*gdTrueColorGetGreen(c3) + m4*gdTrueColorGetGreen(c4));
+	b = (int)(m1*gdTrueColorGetBlue(c1)  + m2*gdTrueColorGetBlue(c2)  + m3*gdTrueColorGetBlue(c3)  + m4*gdTrueColorGetBlue(c4));
+	a = (int)(m1*gdTrueColorGetAlpha(c1) + m2*gdTrueColorGetAlpha(c2) + m3*gdTrueColorGetAlpha(c3) + m4*gdTrueColorGetAlpha(c4));
 
 	r = CLAMP(r, 0, 255);
 	g = CLAMP(g, 0, 255);
@@ -737,7 +730,7 @@ int getPixelInterpolated(gdImagePtr im, const double x, const double y, const in
 			return getPixelOverflowPalette(im, xi, yi, bgColor);
 		}
 	}
-	// TODO Add support
+
 	if (im->interpolation) {
 		for (i=0; i<4; i++) {
 			kernel_x[i] = (double) im->interpolation((double)(xi+i-1-x), 1.0);
