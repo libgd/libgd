@@ -195,7 +195,7 @@ fail1:
 }
 
 /*
-  Function: gdImageCreateFromGd
+  Function: gdImageCreateFromGd [deprecated]
 
     <gdImageCreateFromGd> is called to load images from gd format
     files. Invoke <gdImageCreateFromGd> with an already opened pointer
@@ -252,7 +252,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd (FILE * inFile)
 }
 
 /*
-  Function: gdImageCreateFromGdPtr
+  Function: gdImageCreateFromGdPtr [deprecated]
 
   Parameters:
 
@@ -273,7 +273,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGdPtr (int size, void *data)
 }
 
 /*
-  Function: gdImageCreateFromGdCtx
+  Function: gdImageCreateFromGdCtx [deprecated]
 
   Reads in a GD image via a <gdIOCtx> struct.  See
   <gdImageCreateFromGd>.
@@ -382,7 +382,7 @@ _gdImageGd (gdImagePtr im, gdIOCtx * out)
 }
 
 /*
-	Function: gdImageGd
+	Function: gdImageGd [deprecated]
  */
 BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * outFile)
 {
@@ -393,7 +393,7 @@ BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * outFile)
 }
 
 /*
-	Function: gdImageGdPtr
+	Function: gdImageGdPtr [deprecated]
  */
 BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size)
 {

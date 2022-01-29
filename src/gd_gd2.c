@@ -325,7 +325,7 @@ _gd2ReadChunk (int offset, char *compBuf, int compSize, char *chunkBuf,
 
 
 /*
-  Function: gdImageCreateFromGd2
+  Function: gdImageCreateFromGd2 [deprecated]
 
     <gdImageCreateFromGd2> is called to load images from gd2 format
     files. Invoke <gdImageCreateFromGd2> with an already opened
@@ -383,7 +383,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2 (FILE * inFile)
 }
 
 /*
-  Function: gdImageCreateFromGd2Ptr
+  Function: gdImageCreateFromGd2Ptr [deprecated]
 
   Parameters:
 
@@ -404,7 +404,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ptr (int size, void *data)
 }
 
 /*
-  Function: gdImageCreateFromGd2Ctx
+  Function: gdImageCreateFromGd2Ctx [deprecated]
 
   Reads in a GD2 image via a <gdIOCtx> struct.  See
   <gdImageCreateFromGd2>.
@@ -575,7 +575,7 @@ fail:
 
 
 /*
-  Function: gdImageCreateFromGd2Part
+  Function: gdImageCreateFromGd2Part [deprecated]
 
     <gdImageCreateFromGd2Part> is called to load parts of images from
     gd2 format files. Invoked in the same way as <gdImageCreateFromGd2>,
@@ -618,7 +618,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Part (FILE * inFile, int srcx, int s
 }
 
 /*
-  Function: gdImageCreateFromGd2PartPtr
+  Function: gdImageCreateFromGd2PartPtr [deprecated]
 
   Parameters:
 
@@ -644,7 +644,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2PartPtr (int size, void *data, int s
 
 
 /*
-  Function: gdImageCreateFromGd2PartCtx
+  Function: gdImageCreateFromGd2PartCtx [deprecated]
 
   Parameters:
 
