@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - [#785](https://github.com/libgd/libgd/issues/785) Fix out of bounds write im->alpha[im->transparent]
 - [#806](https://github.com/libgd/libgd/issues/806) getPixelInterpolate* and related functions take bcolor as 31bit ARGB and return TC, no need of handling the result as color index
 - [#808](https://github.com/libgd/libgd/issues/808) When RAQM is used, and it fails or no text processed, the glyph may be leaked
+- [#810](https://github.com/libgd/libgd/issues/810) Wrong image freed, src_cloned should be freed if set.
+
 
 ## [2.3.3] - 2021-09-12
 
