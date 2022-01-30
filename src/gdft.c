@@ -1463,6 +1463,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 			gdFree(text);
 			gdCacheDelete (tc_cache);
 			gdMutexUnlock (gdFontCacheMutex);
+			gdFree(info);
 			return "Problem loading glyph";
 		}
 
