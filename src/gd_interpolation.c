@@ -1996,10 +1996,10 @@ static int getPixelRgbInterpolated(gdImagePtr im, const int tcolor)
 	int ct;
 	int i;
 
-	b = (unsigned char)tcolor;
-	g = (unsigned char)tcolor >> 8;
-	r = (unsigned char)tcolor >> 16;
-	a = (unsigned char)tcolor >> 24;
+	b = (unsigned char)(tcolor);
+	g = (unsigned char)(tcolor >> 8);
+	r = (unsigned char)(tcolor >> 16);
+	a = (unsigned char)(tcolor >> 24);
 
 	for (i = 0; i < im->colorsTotal; i++) {
 		if (im->red[i] == r && im->green[i] == g && im->blue[i] == b && im->alpha[i] == a) {
