@@ -1509,9 +1509,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 				gdFree(text);
 				gdCacheDelete (tc_cache);
 				gdMutexUnlock (gdFontCacheMutex);
-				if (info) {
-					gdFree(info);
-				}
+				gdFree(info);
 				return "Problem loading glyph";
 			}
 
@@ -1527,9 +1525,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 					gdFree(text);
 					gdCacheDelete (tc_cache);
 					gdMutexUnlock (gdFontCacheMutex);
-					if (info) {
-						gdFree(info);
-					}
+					gdFree(info);
 					return "Problem rendering glyph";
 				}
 			}
