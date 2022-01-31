@@ -1703,7 +1703,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 	select_colors (oim, nim, cquantize, colorsWanted);
 	zeroHistogram (cquantize->histogram);
 	if (dither) {
-		if (cquantize->error_limiter) {
+		if (cquantize->error_limiter == NULL) {
 			goto outOfMemory;
 		}
 		pass2_fs_dither (oim, nim, cquantize);
