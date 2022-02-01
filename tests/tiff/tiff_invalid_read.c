@@ -41,14 +41,16 @@ static size_t read_test_file(char **buffer, char *basename)
 {
     char *filename;
     FILE *fp;
-    size_t exp_size, act_size;
+    size_t exp_size, act_size = -1;
 
     filename = gdTestFilePath2("tiff", basename);
     fp = fopen(filename, "rb");
     if (gdTestAssert(fp != NULL)) goto fail3;
 
 	if (fseek(fp, 0, SEEK_END) != 0) goto fail2;
+
 	exp_size = ftell(fp);
+    if (gdTestAssert(exp_size <= 0)) goto fail2;
 	if (fseek(fp, 0, SEEK_SET) != 0) goto fail2;
 
     *buffer = malloc(exp_size);
