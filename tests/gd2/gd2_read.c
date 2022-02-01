@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "gdtest.h"
 
-int main(int argc, char *argv[])
+int main()
 {
 	int error = 0, i = 0;
 	gdImagePtr im, exp;
@@ -27,6 +27,9 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 		im = gdImageCreateFromGd2(fp);
+		if (gdTestAssert(im == NULL)) {
+			gdTestErrorMsg("failed, cannot decode file: %s\n", path[0]);
+		}
 		fclose(fp);
 
 		if (path_exp[i] != NULL) {

@@ -28,7 +28,9 @@ static void check_file(char *basename)
 
     size = read_test_file(&buffer, basename);
     im = gdImageCreateFromTgaPtr(size, (void *) buffer);
-    gdTestAssert(im == NULL);
+    if (!gdTestAssert(im == NULL)) {
+        gdImageDestroy(im);
+    }
     free(buffer);
 }
 

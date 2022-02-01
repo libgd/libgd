@@ -7,7 +7,7 @@ int main()
 	FILE *fp;
 	gdScatter s;
 	int colors[] = {0xFF0000, 0x00FF00};
-	CuTestImageResult r;
+	CuTestImageResult r = {0,0};
 
 	fp = gdTestFileOpen("gdimagescatterex/bug00208.png");
 	im = gdImageCreateFromPng(fp);

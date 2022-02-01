@@ -396,6 +396,7 @@ FILE *gdTestTempFp(void)
 	FILE *fp = fopen(file, "wb");
 	if (fp == NULL) {
 		printf("fail to open tmp file");
+		free(file);
 		return NULL;
 	}
 	free(file);
@@ -425,6 +426,7 @@ char *gdTestFilePathV(const char *path, va_list args)
 		return NULL;
 	}
 	strcpy(file, GDTEST_TOP_DIR);
+
 	p = path;
 	do {
 #if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
@@ -435,7 +437,6 @@ char *gdTestFilePathV(const char *path, va_list args)
 		strcat(file, p);
 
 	} while ((p = va_arg(args, const char *)) != NULL);
-	va_end(args);
 
 	return file;
 }
@@ -443,8 +444,11 @@ char *gdTestFilePathV(const char *path, va_list args)
 char *gdTestFilePathX(const char *path, ...)
 {
 	va_list args;
+	char *res;
 	va_start(args, path);
-	return gdTestFilePathV(path, args);
+	res = gdTestFilePathV(path, args);
+	va_end(args);
+	return res;
 }
 
 FILE *gdTestFileOpenX(const char *path, ...)
@@ -458,9 +462,12 @@ FILE *gdTestFileOpenX(const char *path, ...)
 	fp = fopen(file, "rb");
 	if (fp == NULL) {
 		printf("failed to open path (rb).");
+		free(file);
+		va_end(args);
 		return NULL;
 	}
 	free(file);
+	va_end(args);
 	return fp;
 }
 
@@ -606,6 +613,7 @@ int gdTestImageCompareToImage(const char* file, unsigned int line, const char* m
 	}
 
 	surface_diff = gdImageCreateTrueColor(width_a, height_a);
+	if (surface_diff == NULL) goto fail;
 
 	gdTestImageDiff(expected, actual, surface_diff, &result);
 	if (result.pixels_changed>0) {
@@ -636,7 +644,7 @@ int gdTestImageCompareToImage(const char* file, unsigned int line, const char* m
 		gdImagePng(surface_diff,fp);
 		fclose(fp);
 		gdImageDestroy(surface_diff);
-
+		surface_diff = NULL;
 		fp = fopen(file_out, "wb");
 		if (!fp) goto fail;
 		gdImagePng(actual, fp);
@@ -645,6 +653,7 @@ int gdTestImageCompareToImage(const char* file, unsigned int line, const char* m
 	} else {
 		if (surface_diff) {
 			gdImageDestroy(surface_diff);
+			surface_diff = NULL;
 		}
 		return 1;
 	}
