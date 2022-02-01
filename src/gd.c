@@ -3831,11 +3831,11 @@ static void gdImageSetAAPixelColor(gdImagePtr im, int x, int y, int color, int t
  */
 BGD_DECLARE(void) gdImageSetStyle (gdImagePtr im, int *style, int noOfPixels)
 {
-	if (im->style) {
-		gdFree (im->style);
-	}
 	if (overflow2(sizeof (int), noOfPixels)) {
 		return;
+	}
+	if (im->style) {
+		gdFree (im->style);
 	}
 	im->style = (int *) gdMalloc (sizeof (int) * noOfPixels);
 	if (!im->style) {
