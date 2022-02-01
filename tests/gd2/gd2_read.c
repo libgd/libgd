@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "gdtest.h"
 
-int main(int argc, char *argv[])
+int main()
 {
 	int error = 0, i = 0;
 	gdImagePtr im, exp;
