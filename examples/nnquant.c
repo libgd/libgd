@@ -18,18 +18,17 @@ int main()
 {
 	gdImagePtr im, im2;
 	FILE *fp;
-	char path[2048];
 
 	fp=fopen("resampledbug.jpeg", "rb");
 	if (!fp) {
-		fprintf(stderr, "Can't load /home/pierre/IM3801.jpg\n");
+		fprintf(stderr, "Can't load resampledbug.jpeg\n");
 		return 1;
 	}
 
 	im = gdImageCreateFromJpeg(fp);
 	fclose(fp);
 	if (!im) {
-		fprintf(stderr, "Can't load TIFF image %s\n", path);
+		fprintf(stderr, "Can't decode JPEG image resampledbug.jpeg\n");
 		return 1;
 	}
 
