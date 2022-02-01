@@ -43,18 +43,22 @@ static size_t read_test_file(char **buffer, char *basename)
 
     filename = gdTestFilePath2("tiff", basename);
     fp = fopen(filename, "rb");
-    gdTestAssert(fp != NULL);
+    if (gdTestAssert(fp != NULL)) goto fail3;
 
-	fseek(fp, 0, SEEK_END);
+	if (fseek(fp, 0, SEEK_END) != 0) goto fail2;
 	exp_size = ftell(fp);
-	fseek(fp, 0, SEEK_SET);
+	if (fseek(fp, 0, SEEK_SET) != 0) goto fail2;
 
     *buffer = malloc(exp_size);
-    gdTestAssert(*buffer != NULL);
+    if (gdTestAssert(*buffer != NULL)) goto fail2;
     act_size = fread(*buffer, sizeof(**buffer), exp_size, fp);
     gdTestAssert(act_size == exp_size);
 
+fail1:
+    free(buffer);
+fail2:
     fclose(fp);
+fail3:
     free(filename);
 
     return act_size;
