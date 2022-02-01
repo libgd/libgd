@@ -41,22 +41,33 @@ static size_t read_test_file(char **buffer, char *basename)
 {
     char *filename;
     FILE *fp;
-    size_t exp_size, act_size = -1;
+    size_t exp_size = 0, act_size = -1;
 
     filename = gdTestFilePath2("tiff", basename);
     fp = fopen(filename, "rb");
-    if (gdTestAssert(fp != NULL)) goto fail3;
+    if (!gdTestAssert(fp != NULL)) goto fail3;
 
-	if (fseek(fp, 0, SEEK_END) != 0) goto fail2;
+    if (fseek(fp, 0, SEEK_END) != 0) {
+        gdTestAssert(1==0); // only increase num failures used as return values in main
+        goto fail2;
+    }
 
-	exp_size = ftell(fp);
-    if (gdTestAssert(exp_size <= 0)) goto fail2;
-	if (fseek(fp, 0, SEEK_SET) != 0) goto fail2;
+    exp_size = ftell(fp);
+    if (!gdTestAssert(exp_size > 0)) {
+        gdTestAssert(1==0); // only increase num failures used as return values in main
+        goto fail2;
+    }
+
+    if (fseek(fp, 0, SEEK_SET) != 0) {
+        gdTestAssert(1==0); // only increase num failures used as return values in main
+        goto fail2;
+    }
 
     *buffer = malloc(exp_size);
-    if (gdTestAssert(*buffer != NULL)) goto fail2;
-    act_size = fread(*buffer, sizeof(**buffer), exp_size, fp);
-    gdTestAssert(act_size == exp_size);
+    if (gdTestAssert(*buffer != NULL)) {
+        act_size = fread(*buffer, sizeof(**buffer), exp_size, fp);
+        gdTestAssert(act_size == exp_size);
+    }
 
 fail2:
     fclose(fp);
