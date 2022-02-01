@@ -36,8 +36,8 @@ int main()
 		if (gdTestAssert(color == 0xFF00FF) != 1) {
 			error = -1;
 		}
-	}
 
+	}
 	if (gdTestAssert(c2 == 1)) {
 		color = gdTrueColorAlpha(gdImageRed(im, c2), gdImageGreen(im, c2),
 								gdImageBlue(im, c2), 0);
@@ -55,6 +55,7 @@ int main()
 	if (!gdTestAssert(c4 == -1)) {
 		error = -1;
 	}
+
 
 	gdImageDestroy(im);
 
