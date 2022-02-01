@@ -396,6 +396,7 @@ FILE *gdTestTempFp(void)
 	FILE *fp = fopen(file, "wb");
 	if (fp == NULL) {
 		printf("fail to open tmp file");
+		free(file);
 		return NULL;
 	}
 	free(file);
