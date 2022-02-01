@@ -425,6 +425,7 @@ char *gdTestFilePathV(const char *path, va_list args)
 		return NULL;
 	}
 	strcpy(file, GDTEST_TOP_DIR);
+
 	p = path;
 	do {
 #if defined(_WIN32) && !defined(__MINGW32__) &&  !defined(__MINGW64__)
@@ -435,7 +436,6 @@ char *gdTestFilePathV(const char *path, va_list args)
 		strcat(file, p);
 
 	} while ((p = va_arg(args, const char *)) != NULL);
-	va_end(args);
 
 	return file;
 }
@@ -443,8 +443,11 @@ char *gdTestFilePathV(const char *path, va_list args)
 char *gdTestFilePathX(const char *path, ...)
 {
 	va_list args;
+	char *res;
 	va_start(args, path);
-	return gdTestFilePathV(path, args);
+	res = gdTestFilePathV(path, args);
+	va_end(args);
+	return res;
 }
 
 FILE *gdTestFileOpenX(const char *path, ...)
@@ -458,9 +461,12 @@ FILE *gdTestFileOpenX(const char *path, ...)
 	fp = fopen(file, "rb");
 	if (fp == NULL) {
 		printf("failed to open path (rb).");
+		free(file);
+		va_end(args);
 		return NULL;
 	}
 	free(file);
+	va_end(args);
 	return fp;
 }
 
