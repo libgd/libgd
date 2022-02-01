@@ -47,11 +47,12 @@ static size_t read_test_file(char **buffer, char *basename)
     fp = fopen(filename, "rb");
     if (gdTestAssert(fp != NULL)) goto fail3;
 
-	if (fseek(fp, 0, SEEK_END) != 0) goto fail2;
+    if (fseek(fp, 0, SEEK_END) != 0) goto fail2;
 
-	exp_size = ftell(fp);
+    exp_size = ftell(fp);
     if (gdTestAssert(exp_size <= 0)) goto fail2;
-	if (fseek(fp, 0, SEEK_SET) != 0) goto fail2;
+
+    if (fseek(fp, 0, SEEK_SET) != 0) goto fail2;
 
     *buffer = malloc(exp_size);
     if (gdTestAssert(*buffer != NULL)) goto fail2;

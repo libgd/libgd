@@ -30,7 +30,6 @@ int main()
 	c3 = gdImageColorExactAlpha(im, 255, 0, 255, 100);
 	c4 = gdImageColorExactAlpha(im, 255, 34, 255, 100);
 
-
 	if (gdTestAssert(c1 == 0)) {
 		color = gdTrueColorAlpha(gdImageRed(im, c1), gdImageGreen(im, c1),
 								gdImageBlue(im, c1), 0);
@@ -38,6 +37,7 @@ int main()
 			error = -1;
 		}
 	}
+
 	if (gdTestAssert(c2 == 1)) {
 		color = gdTrueColorAlpha(gdImageRed(im, c2), gdImageGreen(im, c2),
 								gdImageBlue(im, c2), 0);
