@@ -26,7 +26,13 @@ int main()
 	im = gdImageCreate(5, 5);
 	c = gdImageColorAllocate(im, 255, 0, 255);
 	c = gdImageColorClosest(im, 255, 0, 255);
-	c = gdTrueColorAlpha(gdImageRed(im, c), gdImageGreen(im, c), gdImageBlue(im, c), 0);
+	c = gdTestAssert(c>=0) ?
+		gdTrueColorAlpha(gdImageRed(im, c), gdImageGreen(im, c), gdImageBlue(im, c), 0)
+		:
+		-1;
+
+
+
 	gdImageDestroy(im);
 	if (gdTestAssert(c==0xFF00FF) != 1) {
 		error = -1;
@@ -38,7 +44,10 @@ int main()
 		c = gdImageColorAllocate(im, 255, 0, 0);
 	}
 	c = gdImageColorClosest(im, 255, 0, 0);
-	c = gdTrueColorAlpha(gdImageRed(im, c), gdImageGreen(im, c), gdImageBlue(im, c), 0);
+	c = gdTestAssert(c>=0) ?
+		gdTrueColorAlpha(gdImageRed(im, c), gdImageGreen(im, c), gdImageBlue(im, c), 0)
+		:
+		-1;
 	gdImageDestroy(im);
 	if (gdTestAssert(c==0xFF0000) != 1) {
 		error = -1;
@@ -49,7 +58,10 @@ int main()
 		c = gdImageColorAllocate(im, 255, 0, 0);
 	}
 	c = gdImageColorClosest(im, 255, 0, 0);
-	c = gdTrueColorAlpha(gdImageRed(im, c), gdImageGreen(im, c), gdImageBlue(im, c), 0);
+	c = gdTestAssert(c>=0) ?
+		gdTrueColorAlpha(gdImageRed(im, c), gdImageGreen(im, c), gdImageBlue(im, c), 0)
+		:
+		-1;
 	gdImageDestroy(im);
 	if (gdTestAssert(c==0xFF0000) != 1) {
 		error = -1;
