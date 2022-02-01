@@ -41,6 +41,7 @@ static size_t read_test_file(char **buffer, char *basename)
 {
     char *filename;
     FILE *fp;
+
     size_t exp_size = 0, act_size = -1;
 
     filename = gdTestFilePath2("tiff", basename);
@@ -68,6 +69,7 @@ static size_t read_test_file(char **buffer, char *basename)
         act_size = fread(*buffer, sizeof(**buffer), exp_size, fp);
         gdTestAssert(act_size == exp_size);
     }
+
 
 fail2:
     fclose(fp);
