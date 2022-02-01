@@ -41,7 +41,6 @@ static size_t read_test_file(char **buffer, char *basename)
 {
     char *filename;
     FILE *fp;
-
     size_t exp_size = 0, act_size = -1;
 
     filename = gdTestFilePath2("tiff", basename);
@@ -54,7 +53,7 @@ static size_t read_test_file(char **buffer, char *basename)
     }
 
     exp_size = ftell(fp);
-    if (!gdTestAssert(exp_size > 0)) {
+    if (exp_size <= 0) {
         gdTestAssert(1==0); // only increase num failures used as return values in main
         goto fail2;
     }
@@ -65,11 +64,12 @@ static size_t read_test_file(char **buffer, char *basename)
     }
 
     *buffer = malloc(exp_size);
-    if (gdTestAssert(*buffer != NULL)) {
+    if (*buffer != NULL) {
         act_size = fread(*buffer, sizeof(**buffer), exp_size, fp);
         gdTestAssert(act_size == exp_size);
+    } else {
+        gdTestAssert(0);
     }
-
 
 fail2:
     fclose(fp);
