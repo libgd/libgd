@@ -27,6 +27,9 @@ int main()
 			return 1;
 		}
 		im = gdImageCreateFromGd2(fp);
+		if (gdTestAssert(im == NULL)) {
+			gdTestErrorMsg("failed, cannot decode file: %s\n", path[0]);
+		}
 		fclose(fp);
 
 		if (path_exp[i] != NULL) {
