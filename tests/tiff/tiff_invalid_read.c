@@ -25,13 +25,15 @@ int main()
 static void check_file(char *basename)
 {
     gdImagePtr im;
-    char *buffer;
+    char *buffer = NULL;
     size_t size;
 
     size = read_test_file(&buffer, basename);
     im = gdImageCreateFromTiffPtr(size, (void *) buffer);
     gdTestAssert(im == NULL);
-    free(buffer);
+    if (buffer != NULL) {
+        free(buffer);
+    }
 }
 
 
@@ -54,8 +56,6 @@ static size_t read_test_file(char **buffer, char *basename)
     act_size = fread(*buffer, sizeof(**buffer), exp_size, fp);
     gdTestAssert(act_size == exp_size);
 
-fail1:
-    free(buffer);
 fail2:
     fclose(fp);
 fail3:
