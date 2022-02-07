@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - revert support for the legacy/testing gd/gd2 image formats is disabled by default
 - GD/GD2 is now documented as deprecated (to be removed in 3.0)
+- enable interlace transform when reading png (also silents warning when interlace images are loaded)
 
 ### Fixed
 
