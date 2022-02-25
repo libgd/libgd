@@ -20,7 +20,7 @@ umbrella of PHP.net.
 
 If you like to contribute, report bugs, see [how to contribute document](CONTRIBUTING.md)
 
-For security related issues, please contact us at security@libgd.org
+For security related issues, please contact us at pierre@php.net
 
 Support available in [![Chat](https://badges.gitter.im/libgd/libgd.svg)](https://gitter.im/libgd/libgd) or using issues.
 
