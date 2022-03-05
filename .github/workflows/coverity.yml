@@ -49,9 +49,8 @@ jobs:
                -DENABLE_WEBP=1
                -DBUILD_TEST=1
                -B ${{github.workspace}}/build
-    - uses: vapier/coverity-scan-action@v0
+    - uses: vapier/coverity-scan-action@v1
       with:
-        project: libgd%2Flibgd
-        email: security@libgd.org
+        email: ${{ secrets.COVERITY_SCAN_EMAIL }}
         token: ${{ secrets.COVERITY_SCAN_TOKEN }}
         command: make -C ${{github.workspace}}/build
