@@ -41,10 +41,10 @@ SET(HEIF_FOUND "NO")
 
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
-if( NOT WIN32 )
+if( NOT MSVC )
   find_package(PkgConfig)
   pkg_check_modules(HEIF_PKG libheif>=1.7.0 QUIET)
-endif( NOT WIN32 )
+endif( NOT MSVC )
 
 FIND_PATH(HEIF_INCLUDE_DIR NAMES libheif/heif.h
   PATHS
