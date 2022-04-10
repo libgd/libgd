@@ -9,6 +9,7 @@
 #include <math.h>
 #include <limits.h>
 #include <time.h>
+#include <errno.h>
 
 #ifdef HAVE_DIRENT_H
 #include <dirent.h>
