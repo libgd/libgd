@@ -37,11 +37,11 @@ endif ( FONTCONFIG_INCLUDE_DIR AND FONTCONFIG_LIBRARY )
 
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
-if( NOT WIN32 )
+if( NOT MSVC )
   find_package(PkgConfig)
 
   pkg_check_modules(FONTCONFIG_PKG QUIET fontconfig)
-endif( NOT WIN32 )
+endif( NOT MSVC )
 
 FIND_PATH(FONTCONFIG_INCLUDE_DIR NAMES fontconfig/fontconfig.h
   PATHS

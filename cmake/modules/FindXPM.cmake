@@ -40,9 +40,10 @@
 
 SET(XPM_FOUND "NO")
 
-FIND_PATH(XPM_XPM_INCLUDE_DIR xpm.h
-/usr/local/include/X11
-/usr/include/X11
+FIND_PATH(XPM_XPM_INCLUDE_DIR
+  NAMES xpm.h
+  PATHS /usr/local/include /usr/include
+  PATH_SUFFIXES X11
 )
 
 SET(XPM_NAMES ${XPM_NAMES} Xpm libXpm)

@@ -1527,8 +1527,12 @@ static void free_truecolor_image_data(gdImagePtr oim)
 /* liq requires 16 byte aligned heap memory */
 static void *malloc16(size_t size)
 {
+#ifndef _WIN32
 	void *p;
 	return posix_memalign(&p, 16, size) == 0 ? p : NULL;
+#else
+	return _aligned_malloc(16, size);
+#endif
 }
 #endif
 
