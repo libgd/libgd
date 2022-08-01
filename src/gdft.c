@@ -431,11 +431,14 @@ gdTcl_UtfToUniChar (const char *str, Tcl_UniChar * chPtr)
 
 #ifdef HAVE_LIBRAQM
 #include <raqm.h>
+#else
+#define RAQM_VERSION_ATLEAST(a,b,c) 0
 #endif
 
 typedef struct {
 	unsigned int index;
 	FT_Pos x_advance;
+	FT_Pos y_advance;
 	FT_Pos x_offset;
 	FT_Pos y_offset;
 	uint32_t cluster;
@@ -483,6 +486,7 @@ textLayout(uint32_t *text, int len,
 		info[i].x_offset = glyphs[i].x_offset;
 		info[i].y_offset = glyphs[i].y_offset;
 		info[i].x_advance = glyphs[i].x_advance;
+		info[i].y_advance = glyphs[i].y_advance;
 		info[i].cluster = glyphs[i].cluster;
 	}
 
@@ -520,6 +524,7 @@ textLayout(uint32_t *text, int len,
 		if (delta.x != 0)
 			info[count - 1].x_advance += delta.x;
 		info[count].x_advance = face->glyph->metrics.horiAdvance;
+		info[count].y_advance = 0;
 		info[count].cluster = count;
 
 		/* carriage returns or newlines */
@@ -1131,7 +1136,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 	 */
 	gdCache_head_t *tc_cache;
 	/* Tuneable horizontal and vertical resolution in dots per inch */
-	int hdpi, vdpi, horiAdvance, xshow_alloc = 0, xshow_pos = 0;
+	int hdpi, vdpi, horiAdvance, vertAdvance, xshow_alloc = 0, xshow_pos = 0;
 	FT_Size platform_specific, platform_independent;
 
 	if (strex) {
@@ -1468,6 +1473,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 		}
 
 		horiAdvance = info[i].x_advance;
+		vertAdvance = info[i].y_advance;
 
 		if (brect) {
 			/* only if need brect */
@@ -1539,15 +1545,22 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 			(the estimate was rounded up to next 1/METRIC_RES, so this should fit) */
 			FT_Pos pen_x = penf.x + info[i].x_offset;
 			FT_Pos pen_y = penf.y - info[i].y_offset;
+#if defined(HAVE_LIBRAQM) && RAQM_VERSION_ATLEAST (0, 9, 0)
+			gdft_draw_bitmap (tc_cache, im, fg, bm->bitmap,
+					  (int)(x + pen_x*hdpi/(METRIC_RES*64) + bm->left),
+					  (int)(y - pen_y*vdpi/(METRIC_RES*64) - bm->top));
+#else
 			gdft_draw_bitmap (tc_cache, im, fg, bm->bitmap,
 					  (int)(x + (pen_x * cos_a + pen_y * sin_a)*hdpi/(METRIC_RES*64) + bm->left),
 					  (int)(y - (pen_x * sin_a - pen_y * cos_a)*vdpi/(METRIC_RES*64) - bm->top));
+#endif
 
 			FT_Done_Glyph (image);
 		}
 
 
 		penf.x += horiAdvance;
+		penf.y += vertAdvance;
 	}
 
 	gdFree(text);
