@@ -10,7 +10,7 @@
 /**
  * File: Small Font
  *
- * A small ISO-8859-2 raster font (7x13 pixels).
+ * A small ISO-8859-2 raster font (6x13 pixels).
  *
  * The font is supposed to be used with <gdImageChar> and <gdImageString>
  * and their variants.
