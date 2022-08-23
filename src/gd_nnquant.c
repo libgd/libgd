@@ -112,12 +112,7 @@ typedef struct {
 
 /* Initialise network in range (0,0,0,0) to (255,255,255,255) and set parameters
    ----------------------------------------------------------------------- */
-static void initnet(nnq, thepic, len, sample, colours)
-nn_quant *nnq;
-unsigned char *thepic;
-int len;
-int sample;
-int colours;
+static void initnet(nn_quant *nnq, unsigned char *thepic, int len, int sample, int colours)
 {
 	register int i;
 	register int *p;
@@ -163,9 +158,7 @@ static void unbiasnet(nn_quant *nnq)
 }
 
 /* Output colormap to unsigned char ptr in RGBA format */
-static void getcolormap(nnq, map)
-nn_quant *nnq;
-unsigned char *map;
+static void getcolormap(nn_quant *nnq, unsigned char *map)
 {
 	int i,j;
 	for(j=0; j < nnq->netsize; j++) {
@@ -232,9 +225,7 @@ static void inxbuild(nn_quant *nnq)
 
 /* Search for ABGR values 0..255 (after net is unbiased) and return colour index
 	 ---------------------------------------------------------------------------- */
-static unsigned int inxsearch(nnq, al,b,g,r)
-nn_quant *nnq;
-register int al, b, g, r;
+static unsigned int inxsearch(nn_quant *nnq, int al, int b, int g, int r)
 {
 	register int i, j, dist, a, bestd;
 	register int *p;
@@ -306,9 +297,7 @@ register int al, b, g, r;
 
 /* Search for biased ABGR values
    ---------------------------- */
-static int contest(nnq, al,b,g,r)
-nn_quant *nnq;
-register int al,b,g,r;
+static int contest(nn_quant *nnq, int al, int b, int g, int r)
 {
 	/* finds closest neuron (min dist) and updates freq */
 	/* finds best neuron (min dist-bias) and returns position */
@@ -362,9 +351,7 @@ register int al,b,g,r;
 /* Move neuron i towards biased (a,b,g,r) by factor alpha
 	 ---------------------------------------------------- */
 
-static void altersingle(nnq, alpha,i,al,b,g,r)
-nn_quant *nnq;
-register int alpha,i,al,b,g,r;
+static void altersingle(nn_quant *nnq, int alpha, int i, int al, int b, int g, int r)
 {
 	register int *n;
 
@@ -382,10 +369,7 @@ register int alpha,i,al,b,g,r;
 /* Move adjacent neurons by precomputed alpha*(1-((i-j)^2/[r]^2)) in radpower[|i-j|]
 	 --------------------------------------------------------------------------------- */
 
-static void alterneigh(nnq, rad,i,al,b,g,r)
-nn_quant *nnq;
-int rad,i;
-register int al,b,g,r;
+static void alterneigh(nn_quant *nnq, int rad, int i, int al, int b,int g, int r)
 {
 	register int j,k,lo,hi,a;
 	register int *p, *q;
@@ -429,9 +413,7 @@ register int al,b,g,r;
 /* Main Learning Loop
    ------------------ */
 
-static void learn(nnq, verbose) /* Stu: N.B. added parameter so that main() could control verbosity. */
-nn_quant *nnq;
-int verbose;
+static void learn(nn_quant *nnq, int verbose) /* Stu: N.B. added parameter so that main() could control verbosity. */
 {
 	register int i,j,al,b,g,r;
 	int radius,rad,alpha,step,delta,samplepixels;
