@@ -446,9 +446,7 @@ BGD_DECLARE(void) gdImageTiffCtx(gdImagePtr image, gdIOCtx *out)
 }
 
 /* Check if we are really in 8bit mode */
-static int checkColorMap(n, r, g, b)
-int n;
-uint16_t *r, *g, *b;
+static int checkColorMap(int n, uint16_t *r, uint16_t *g, uint16_t *b)
 {
 	while (n-- > 0)
 		if (*r++ >= 256 || *g++ >= 256 || *b++ >= 256)
