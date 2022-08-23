@@ -157,7 +157,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 		}
 	}
 	/* do not use gdFree here, in case gdFree/alloc is mapped to something else than libc */
-	free(argb);
+	WebPFree(argb);
 	gdFree(temp);
 	im->saveAlphaFlag = 1;
 	return im;
