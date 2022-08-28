@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 # Configure template for gd library
 
-AC_PREREQ(2.64)
+AC_PREREQ([2.69])
 
 # We extract version numbers from src/versions.h
 define([gv],[config/getver.sh ]$1)
