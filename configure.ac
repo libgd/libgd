@@ -204,10 +204,14 @@ GD_LIB_PKG_CHECK([LIBZ], [ZLIB], [zlib], [zlib], [dnl
 dnl Check for libpng support.
 GD_LIB_PKG_CHECK([LIBPNG], [PNG], [png], [libpng], [
   LIBPNG_CONFIG=$gd_with_lib/bin/libpng-config
+  AC_MSG_CHECKING([for $LIBPNG_CONFIG script])
   if test -e "$LIBPNG_CONFIG"; then
     LIBPNG_CFLAGS=`$LIBPNG_CONFIG --cflags`
     LIBPNG_LIBS=`$LIBPNG_CONFIG --ldflags`
+    AC_MSG_RESULT(yes)
     gd_found_lib=yes
+  else
+    AC_MSG_RESULT(no)
   fi
 ])
 
@@ -215,10 +219,14 @@ dnl Check for FreeType support.
 dnl NB: "9.8.3" corresponds to freetype-2.1.10.
 GD_LIB_PKG_CHECK([LIBFREETYPE], [FREETYPE], [freetype], [freetype2 >= 9.8.3], [
   FREETYPE_CONFIG=$gd_with_lib/bin/freetype-config
+  AC_MSG_CHECKING([for $FREETYPE_CONFIG script])
   if test -e "$FREETYPE_CONFIG"; then
     LIBFREETYPE_CFLAGS=`$FREETYPE_CONFIG --cflags`
     LIBFREETYPE_LIBS=`$FREETYPE_CONFIG --libs`
+    AC_MSG_RESULT(yes)
     gd_found_lib=yes
+  else
+    AC_MSG_RESULT(no)
   fi
 ])
 if test "$gd_with_LIBFREETYPE" = "yes"; then
