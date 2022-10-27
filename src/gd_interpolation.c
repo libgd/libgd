@@ -2257,6 +2257,11 @@ BGD_DECLARE(int) gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMet
 		case GD_BESSEL:
 			im->interpolation = filter_bessel;
 			break;
+		case GD_BICUBIC_FIXED:
+		case GD_BICUBIC:
+			/* no interpolation as gdImageScale calls a dedicated function */
+			im->interpolation = NULL;
+			break;
 		case GD_BLACKMAN:
 			im->interpolation = filter_blackman;
 			break;
