@@ -1,5 +1,6 @@
 libgd_test_programs += \
-	gdimagesetinterpolationmethod/github_bug_00584
+	gdimagesetinterpolationmethod/github_bug_00584 \
+	gdimagesetinterpolationmethod/github_bug_00847
 
 EXTRA_DIST += \
 	gdimagesetinterpolationmethod/CMakeLists.txt
