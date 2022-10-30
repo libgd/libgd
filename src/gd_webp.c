@@ -16,6 +16,7 @@
 #include "gd.h"
 #include "gd_errors.h"
 #include "gdhelpers.h"
+#include "gd_intern.h"
 
 #ifdef HAVE_LIBWEBP
 #include "webp/decode.h"
