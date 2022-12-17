@@ -2939,7 +2939,8 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 		dst->tileColorMap[i] = src->tileColorMap[i];
 	}
 
-	if (src->polyAllocated > 0) {
+	if (src->polyAllocated > 0 && overflow2(sizeof(int), src->polyAllocated) == 0) {
+		dst->polyInts = (int *) gdMalloc (sizeof (int) * src->polyAllocated);
 		dst->polyAllocated = src->polyAllocated;
 		for (i = 0; i < src->polyAllocated; i++) {
 			dst->polyInts[i] = src->polyInts[i];
