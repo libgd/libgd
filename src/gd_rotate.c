@@ -241,7 +241,7 @@ gdImagePtr gdImageRotate90 (gdImagePtr src, int ignoretransparent)
 	if (dst != NULL) {
 		int old_blendmode = dst->alphaBlendingFlag;
 		dst->alphaBlendingFlag = 0;
-
+		dst->saveAlphaFlag = 1;
 		dst->transparent = src->transparent;
 
 		gdImagePaletteCopy (dst, src);
@@ -287,7 +287,7 @@ gdImagePtr gdImageRotate180 (gdImagePtr src, int ignoretransparent)
 	if (dst != NULL) {
 		int old_blendmode = dst->alphaBlendingFlag;
 		dst->alphaBlendingFlag = 0;
-
+		dst->saveAlphaFlag = 1;
 		dst->transparent = src->transparent;
 
 		gdImagePaletteCopy (dst, src);
@@ -334,7 +334,7 @@ gdImagePtr gdImageRotate270 (gdImagePtr src, int ignoretransparent)
 	if (dst != NULL) {
 		int old_blendmode = dst->alphaBlendingFlag;
 		dst->alphaBlendingFlag = 0;
-
+		dst->saveAlphaFlag = 1;
 		dst->transparent = src->transparent;
 
 		gdImagePaletteCopy (dst, src);

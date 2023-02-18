@@ -3,6 +3,7 @@ LIST(APPEND TESTS_FILES
 	bug00067
 	php_bug_64898
 	php_bug_65070
+	php_gh10614
 )
 ENDIF(PNG_FOUND)
 
