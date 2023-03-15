@@ -76,18 +76,19 @@ gd_strtok_r(char *s, const char *sep, char **state)
 	return result;
 }
 
-void * gdCalloc (size_t nmemb, size_t size)
+BGD_DECLARE(void *)
+gdCalloc (size_t nmemb, size_t size)
 {
 	return gdAllocHelpers.gdMemoryCallocMethod (nmemb, size);
 }
 
-void *
+BGD_DECLARE(void *)
 gdMalloc (size_t size)
 {
 	return gdAllocHelpers.gdMemoryMallocMethod (size);
 }
 
-void *
+BGD_DECLARE(void *)
 gdRealloc (void *ptr, size_t size)
 {
 	return gdAllocHelpers.gdMemoryReallocMethod (ptr, size);

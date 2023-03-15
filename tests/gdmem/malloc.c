@@ -4,6 +4,7 @@
  */
 
 #include "gd.h"
+#include "gdhelpers.h"
 #include "gdtest.h"
 
 static int testedCalloc = GD_FALSE;
@@ -83,6 +84,13 @@ int main()
 
 	gdTestAssertMsg(testedCalloc, "Custom calloc hasn't been called!");
 	gdTestAssertMsg(testedMalloc, "Custom malloc hasn't been called!");
+	gdTestAssertMsg(testedFree, "Custom free hasn't been called!");
+
+	testedFree = GD_FALSE;
+
+	void *reallocData = gdRealloc(NULL, 16);
+	gdTestAssert(reallocData != NULL);
+	gdFree(reallocData);
 	gdTestAssertMsg(testedRealloc, "Custom realloc hasn't been called!");
 	gdTestAssertMsg(testedFree, "Custom free hasn't been called!");
 
