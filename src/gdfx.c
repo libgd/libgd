@@ -388,7 +388,7 @@ gdImageSquareToCircle (gdImagePtr im, int radius)
 returns new colour for centre pixel
 */
 
-int
+static int
 gdImageSubSharpen (int pc, int c, int nc, float inner_coeff, float
                    outer_coeff)
 {
