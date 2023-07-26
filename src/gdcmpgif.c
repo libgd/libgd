@@ -15,7 +15,7 @@
 	basis image that must be loaded quickly. The .gd format
 	is not intended to be a general-purpose format. */
 
-void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2);
+static void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2);
 
 
 int main(int argc, char **argv)
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2)
+static void CompareImages(char *msg, gdImagePtr im1, gdImagePtr im2)
 {
 	int cmpRes;
 
