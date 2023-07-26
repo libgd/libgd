@@ -294,7 +294,7 @@ static double filter_blackman(const double x, const double support)
 	return (0.42f+0.5f*(double)cos(M_PI*x)+0.08f*(double)cos(2.0f*M_PI*x));
 }
 
-double filter_linear(const double x, const double support) {
+static double filter_linear(const double x, const double support) {
 	ARG_NOT_USED(support);
 	double ax = fabs(x);
 	if (ax < 1.0f) {
@@ -704,7 +704,7 @@ static int getPixelInterpolateWeight(gdImagePtr im, const double x, const double
  * See also:
  *  <gdSetInterpolationMethod>
  */
-int getPixelInterpolated(gdImagePtr im, const double x, const double y, const int bgColor)
+static int getPixelInterpolated(gdImagePtr im, const double x, const double y, const int bgColor)
 {
 	const int xi=(int)(x);
 	const int yi=(int)(y);
@@ -1908,7 +1908,7 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 	r->height = CLAMP(y1, c1y, c2y) - r->y + 1;
 }
 
-void gdDumpRect(const char *msg, gdRectPtr r)
+static void gdDumpRect(const char *msg, gdRectPtr r)
 {
 	printf("%s (%i, %i) (%i, %i)\n", msg, r->x, r->y, r->width, r->height);
 }
