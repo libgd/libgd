@@ -92,7 +92,7 @@ tiff_handle;
          tiff (assuming one already exists)
 */
 
-tiff_handle * new_tiff_handle(gdIOCtx *g)
+static tiff_handle * new_tiff_handle(gdIOCtx *g)
 {
 	tiff_handle * t;
 
@@ -223,7 +223,7 @@ static void tiff_unmapproc(thandle_t h, tdata_t d, toff_t o)
  *  out:      the stream where to write
  *  bitDepth: depth in bits of each pixel
  */
-void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
+static void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 {
 	int x, y;
 	int i;
