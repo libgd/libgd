@@ -73,7 +73,7 @@ extern const int gdSinT[];
  * Group: Error Handling
  */
 
-void gd_stderr_error(int priority, const char *format, va_list args)
+static void gd_stderr_error(int priority, const char *format, va_list args)
 {
 	switch (priority) {
 	case GD_ERROR:
