@@ -17,6 +17,41 @@
 
 typedef int (BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
 
+static int rot90x(gdImagePtr dst, int x, int y);
+static int rot90y(gdImagePtr dst, int x, int y);
+
+static int rot180x(gdImagePtr dst, int x, int y);
+static int rot180y(gdImagePtr dst, int x, int y);
+
+static int rot270x(gdImagePtr dst, int x, int y);
+static int rot270y(gdImagePtr dst, int x, int y);
+
+static int flipHrot90x(gdImagePtr dst, int x, int y);
+static int flipHrot90y(gdImagePtr dst, int x, int y);
+
+static int flipHrot180x(gdImagePtr dst, int x, int y);
+static int flipHrot180y(gdImagePtr dst, int x, int y);
+
+static int flipHrot270x(gdImagePtr dst, int x, int y);
+static int flipHrot270y(gdImagePtr dst, int x, int y);
+
+static int flipVrot90x(gdImagePtr dst, int x, int y);
+static int flipVrot90y(gdImagePtr dst, int x, int y);
+
+static int flipVrot180x(gdImagePtr dst, int x, int y);
+static int flipVrot180y(gdImagePtr dst, int x, int y);
+
+static int flipVrot270x(gdImagePtr dst, int x, int y);
+static int flipVrot270y(gdImagePtr dst, int x, int y);
+
+static int flipHx(gdImagePtr dst, int x, int y);
+static int flipHy(gdImagePtr dst, int x, int y);
+
+static int flipVx(gdImagePtr dst, int x, int y);
+static int flipVy(gdImagePtr dst, int x, int y);
+
+static gdImagePtr gdImageRotateHelper(gdImagePtr src, int ignoretransparent, int dstW, int dstH, FuncPtr transX, FuncPtr transY);
+
 #define ROTATE_DEG2RAD  3.1415926535897932384626433832795/180
 static void gdImageSkewX (gdImagePtr dst, gdImagePtr src, int uRow, int iOffset, double dWeight, int clrBack, int ignoretransparent)
 {
@@ -225,55 +260,77 @@ static void gdImageSkewY (gdImagePtr dst, gdImagePtr src, int uCol, int iOffset,
 }
 
 /* Rotates an image by 90 degrees (counter clockwise) */
-gdImagePtr gdImageRotate90 (gdImagePtr src, int ignoretransparent)
+BGD_DECLARE(gdImagePtr) gdImageRotate90(gdImagePtr src, int ignoretransparent)
 {
-	int uY, uX;
-	int c,r,g,b,a;
-	gdImagePtr dst;
-	FuncPtr f;
-
-	if (src->trueColor) {
-		f = gdImageGetTrueColorPixel;
-	} else {
-		f = gdImageGetPixel;
-	}
-	dst = gdImageCreateTrueColor(src->sy, src->sx);
-	if (dst != NULL) {
-		int old_blendmode = dst->alphaBlendingFlag;
-		dst->alphaBlendingFlag = 0;
-
-		dst->transparent = src->transparent;
-
-		gdImagePaletteCopy (dst, src);
-
-		for (uY = 0; uY<src->sy; uY++) {
-			for (uX = 0; uX<src->sx; uX++) {
-				c = f (src, uX, uY);
-				if (!src->trueColor) {
-					r = gdImageRed(src,c);
-					g = gdImageGreen(src,c);
-					b = gdImageBlue(src,c);
-					a = gdImageAlpha(src,c);
-					c = gdTrueColorAlpha(r, g, b, a);
-				}
-				if (ignoretransparent && c == dst->transparent) {
-					gdImageSetPixel(dst, uY, (dst->sy - uX - 1), dst->transparent);
-				} else {
-					gdImageSetPixel(dst, uY, (dst->sy - uX - 1), c);
-				}
-			}
-		}
-		dst->alphaBlendingFlag = old_blendmode;
-	}
-
-	return dst;
+	return gdImageRotateHelper(src, ignoretransparent, src->sy, src->sx, rot90x, rot90y);
 }
 
 /* Rotates an image by 180 degrees (counter clockwise) */
-gdImagePtr gdImageRotate180 (gdImagePtr src, int ignoretransparent)
+BGD_DECLARE(gdImagePtr) gdImageRotate180(gdImagePtr src, int ignoretransparent)
+{
+	return gdImageRotateHelper(src, ignoretransparent, src->sx, src->sy, rot180x, rot180y);
+}
+
+/* Rotates an image by 270 degrees (counter clockwise) */
+BGD_DECLARE(gdImagePtr) gdImageRotate270(gdImagePtr src, int ignoretransparent)
+{
+	return gdImageRotateHelper(src, ignoretransparent, src->sy, src->sx, rot270x, rot270y);
+}
+
+/* Rotates an horizontal flipped image by 90 degrees (counter clockwise) */
+BGD_DECLARE(gdImagePtr) gdImageFlipHRotate90(gdImagePtr src, int ignoretransparent)
+{
+	return gdImageRotateHelper(src, ignoretransparent, src->sy, src->sx, flipHrot90x, flipHrot90y);
+}
+
+/* Rotates an horizontal flipped image by 180 degrees (counter clockwise) */
+BGD_DECLARE(gdImagePtr) gdImageFlipHRotate180(gdImagePtr src, int ignoretransparent)
+{
+	return gdImageRotateHelper(src, ignoretransparent, src->sx, src->sy, flipHrot180x, flipHrot180y);
+}
+
+/* Rotates an horizontal flipped image by 270 degrees (counter clockwise) */
+BGD_DECLARE(gdImagePtr) gdImageFlipHRotate270(gdImagePtr src, int ignoretransparent)
+{
+	return gdImageRotateHelper(src, ignoretransparent, src->sy, src->sx, flipHrot270x, flipHrot270y);
+}
+
+/* Rotates an vertical flipped image by 90 degrees (counter clockwise) */
+BGD_DECLARE(gdImagePtr) gdImageFlipVRotate90(gdImagePtr src, int ignoretransparent)
+{
+	return gdImageRotateHelper(src, ignoretransparent, src->sy, src->sx, flipVrot90x, flipVrot90y);
+}
+
+/* Rotates an vertical flipped image by 180 degrees (counter clockwise) */
+BGD_DECLARE(gdImagePtr) gdImageFlipVRotate180(gdImagePtr src, int ignoretransparent)
+{
+	return gdImageRotateHelper(src, ignoretransparent, src->sx, src->sy, flipVrot180x, flipVrot180y);
+}
+
+/* Rotates an vertical flipped image by 270 degrees (counter clockwise) */
+BGD_DECLARE(gdImagePtr) gdImageFlipVRotate270(gdImagePtr src, int ignoretransparent)
+{
+	return gdImageRotateHelper(src, ignoretransparent, src->sy, src->sx, flipVrot270x, flipVrot270y);
+}
+
+/* Flip an image horizontally */
+BGD_DECLARE(gdImagePtr) gdImageFlipH(gdImagePtr src, int ignoretransparent)
+{
+	return gdImageRotateHelper(src, ignoretransparent, src->sx, src->sy, flipHx, flipHy);
+}
+
+/* Flip an image vertically */
+BGD_DECLARE(gdImagePtr) gdImageFlipV(gdImagePtr src, int ignoretransparent)
+{
+	return gdImageRotateHelper(src, ignoretransparent, src->sx, src->sy, flipVx, flipVy);
+}
+
+/* Rotates an image */
+static gdImagePtr gdImageRotateHelper(gdImagePtr src, int ignoretransparent, int dstW, int dstH, FuncPtr transX, FuncPtr transY)
 {
 	int uY, uX;
-	int c,r,g,b,a;
+	int dstX, dstY;
+	int c, r, g, b, a;
 	gdImagePtr dst;
 	FuncPtr f;
 
@@ -282,18 +339,17 @@ gdImagePtr gdImageRotate180 (gdImagePtr src, int ignoretransparent)
 	} else {
 		f = gdImageGetPixel;
 	}
-	dst = gdImageCreateTrueColor(src->sx, src->sy);
-
+	dst = gdImageCreateTrueColor(dstW, dstH);
 	if (dst != NULL) {
 		int old_blendmode = dst->alphaBlendingFlag;
 		dst->alphaBlendingFlag = 0;
 
 		dst->transparent = src->transparent;
 
-		gdImagePaletteCopy (dst, src);
+		gdImagePaletteCopy(dst, src);
 
-		for (uY = 0; uY<src->sy; uY++) {
-			for (uX = 0; uX<src->sx; uX++) {
+		for (uY = 0; uY < src->sy; uY++) {
+			for (uX = 0; uX < src->sx; uX++) {
 				c = f (src, uX, uY);
 				if (!src->trueColor) {
 					r = gdImageRed(src,c);
@@ -303,10 +359,13 @@ gdImagePtr gdImageRotate180 (gdImagePtr src, int ignoretransparent)
 					c = gdTrueColorAlpha(r, g, b, a);
 				}
 
+				dstX = transX(dst, uX, uY);
+				dstY = transY(dst, uX, uY);
+
 				if (ignoretransparent && c == dst->transparent) {
-					gdImageSetPixel(dst, (dst->sx - uX - 1), (dst->sy - uY - 1), dst->transparent);
+					gdImageSetPixel(dst, dstX, dstY, dst->transparent);
 				} else {
-					gdImageSetPixel(dst, (dst->sx - uX - 1), (dst->sy - uY - 1), c);
+					gdImageSetPixel(dst, dstX, dstY, c);
 				}
 			}
 		}
@@ -316,49 +375,112 @@ gdImagePtr gdImageRotate180 (gdImagePtr src, int ignoretransparent)
 	return dst;
 }
 
-/* Rotates an image by 270 degrees (counter clockwise) */
-gdImagePtr gdImageRotate270 (gdImagePtr src, int ignoretransparent)
+static int rot90x(gdImagePtr dst, int x, int y)
 {
-	int uY, uX;
-	int c,r,g,b,a;
-	gdImagePtr dst;
-	FuncPtr f;
+	return y;
+}
 
-	if (src->trueColor) {
-		f = gdImageGetTrueColorPixel;
-	} else {
-		f = gdImageGetPixel;
-	}
-	dst = gdImageCreateTrueColor (src->sy, src->sx);
+static int rot90y(gdImagePtr dst, int x, int y)
+{
+	return (dst->sy - x - 1);
+}
 
-	if (dst != NULL) {
-		int old_blendmode = dst->alphaBlendingFlag;
-		dst->alphaBlendingFlag = 0;
+static int rot180x(gdImagePtr dst, int x, int y)
+{
+	return (dst->sx - x - 1);
+}
 
-		dst->transparent = src->transparent;
+static int rot180y(gdImagePtr dst, int x, int y)
+{
+	return (dst->sy - y - 1);
+}
 
-		gdImagePaletteCopy (dst, src);
+static int rot270x(gdImagePtr dst, int x, int y)
+{
+	return (dst->sx - y - 1);
+}
 
-		for (uY = 0; uY<src->sy; uY++) {
-			for (uX = 0; uX<src->sx; uX++) {
-				c = f (src, uX, uY);
-				if (!src->trueColor) {
-					r = gdImageRed(src,c);
-					g = gdImageGreen(src,c);
-					b = gdImageBlue(src,c);
-					a = gdImageAlpha(src,c);
-					c = gdTrueColorAlpha(r, g, b, a);
-				}
+static int rot270y(gdImagePtr dst, int x, int y)
+{
+	return x;
+}
 
-				if (ignoretransparent && c == dst->transparent) {
-					gdImageSetPixel(dst, (dst->sx - uY - 1), uX, dst->transparent);
-				} else {
-					gdImageSetPixel(dst, (dst->sx - uY - 1), uX, c);
-				}
-			}
-		}
-		dst->alphaBlendingFlag = old_blendmode;
-	}
+static int flipHrot90x(gdImagePtr dst, int x, int y)
+{
+	return (dst->sx - y - 1);
+}
 
-	return dst;
+static int flipHrot90y(gdImagePtr dst, int x, int y)
+{
+	return (dst->sy - x - 1);
+}
+
+static int flipHrot180x(gdImagePtr dst, int x, int y)
+{
+	return x;
+}
+
+static int flipHrot180y(gdImagePtr dst, int x, int y)
+{
+	return (dst->sy - y - 1);
+}
+
+static int flipHrot270x(gdImagePtr dst, int x, int y)
+{
+	return y;
+}
+
+static int flipHrot270y(gdImagePtr dst, int x, int y)
+{
+	return x;
+}
+
+static int flipVrot90x(gdImagePtr dst, int x, int y)
+{
+	return y;
+}
+
+static int flipVrot90y(gdImagePtr dst, int x, int y)
+{
+	return x;
+}
+
+static int flipVrot180x(gdImagePtr dst, int x, int y)
+{
+	return (dst->sx - x - 1);
+}
+
+static int flipVrot180y(gdImagePtr dst, int x, int y)
+{
+	return y;
+}
+
+static int flipVrot270x(gdImagePtr dst, int x, int y)
+{
+	return (dst->sx - y - 1);
+}
+
+static int flipVrot270y(gdImagePtr dst, int x, int y)
+{
+	return (dst->sy - x - 1);
+}
+
+static int flipHx(gdImagePtr dst, int x, int y)
+{
+	return (dst->sx - x - 1);
+}
+
+static int flipHy(gdImagePtr dst, int x, int y)
+{
+	return y;
+}
+
+static int flipVx(gdImagePtr dst, int x, int y)
+{
+	return x;
+}
+
+static int flipVy(gdImagePtr dst, int x, int y)
+{
+	return (dst->sy - y - 1);
 }

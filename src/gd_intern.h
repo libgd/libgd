@@ -84,7 +84,16 @@ gdImagePtr gdImageRotate90(gdImagePtr src, int ignoretransparent);
 gdImagePtr gdImageRotate180(gdImagePtr src, int ignoretransparent);
 gdImagePtr gdImageRotate270(gdImagePtr src, int ignoretransparent);
 
+gdImagePtr gdImageFlipHRotate90(gdImagePtr src, int ignoretransparent);
+gdImagePtr gdImageFlipHRotate180(gdImagePtr src, int ignoretransparent);
+gdImagePtr gdImageFlipHRotate270(gdImagePtr src, int ignoretransparent);
 
+gdImagePtr gdImageFlipVRotate90(gdImagePtr src, int ignoretransparent);
+gdImagePtr gdImageFlipVRotate180(gdImagePtr src, int ignoretransparent);
+gdImagePtr gdImageFlipVRotate270(gdImagePtr src, int ignoretransparent);
+
+gdImagePtr gdImageFlipH(gdImagePtr src, int ignoretransparent);
+gdImagePtr gdImageFlipV(gdImagePtr src, int ignoretransparent);
 
 
 

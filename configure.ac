@@ -258,6 +258,16 @@ GD_LIB_PKG_CHECK([LIBJPEG], [JPEG], [libjpeg], [
   ])
 ])
 
+dnl Check for exif support.
+GD_LIB_PKG_CHECK([LIBEXIF], [EXIF], [exif], [libexif], [
+  AC_CHECK_HEADER([exif-data.h], [
+    AC_CHECK_LIB([exif], [exif_data_new_from_data], [dnl
+      AS_VAR_APPEND([LIBEXIF_LIBS], [" -lexif"])
+      gd_found_lib=yes
+    ])
+  ])
+])
+
 dnl Check for libimagequant support.
 GD_LIB_CHECK([LIBIMAGEQUANT], [LIQ], [
   AC_CHECK_HEADER([libimagequant.h], [
@@ -344,6 +354,7 @@ AC_MSG_RESULT([
    Support for TIFF library:         $gd_with_LIBTIFF
    Support for Freetype 2.x library: $gd_with_LIBFREETYPE
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG
+   Support for EXIF library:         $gd_with_LIBEXIF
    Support for Xpm library:          $gd_with_LIBXPM
    Support for liq library:          $gd_with_LIBIMAGEQUANT
    Support for complex text:         $gd_with_LIBRAQM
