@@ -4,6 +4,7 @@
 
 #include "gd.h"
 #include "gd_color.h"
+#include <math.h>
 
 /**
  * The threshold method works relatively well but it can be improved.
@@ -12,13 +13,13 @@
  */
 int gdColorMatch(gdImagePtr im, int col1, int col2, float threshold)
 {
-	const int dr = gdImageRed(im, col1) - gdImageRed(im, col2);
-	const int dg = gdImageGreen(im, col1) - gdImageGreen(im, col2);
-	const int db = gdImageBlue(im, col1) - gdImageBlue(im, col2);
-	const int da = gdImageAlpha(im, col1) - gdImageAlpha(im, col2);
-	const int dist = dr * dr + dg * dg + db * db + da * da;
+    const float dr = (gdImageRed(im, col1) - gdImageRed(im, col2)) / (float) gdRedMax;
+    const float dg = (gdImageGreen(im, col1) - gdImageGreen(im, col2)) / (float) gdGreenMax;
+    const float db = (gdImageBlue(im, col1) - gdImageBlue(im, col2)) / (float) gdBlueMax;
+    const float da = (gdImageAlpha(im, col1) - gdImageAlpha(im, col2)) / (float) gdAlphaMax;
+    const float dist = sqrtf(dr * dr + dg * dg + db * db + da * da);
 
-	return (100.0 * dist / 195075) < threshold;
+    return 100 * dist < 2 * threshold;
 }
 
 /*
