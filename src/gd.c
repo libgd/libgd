@@ -73,7 +73,7 @@ extern const int gdSinT[];
  * Group: Error Handling
  */
 
-void gd_stderr_error(int priority, const char *format, va_list args)
+static void gd_stderr_error(int priority, const char *format, va_list args)
 {
 	switch (priority) {
 	case GD_ERROR:
@@ -2038,19 +2038,6 @@ strlen16 (unsigned short *s)
 	}
 	return len;
 }
-
-#ifndef HAVE_LSQRT
-/* If you don't have a nice square root function for longs, you can use
-   ** this hack
- */
-long
-lsqrt (long n)
-{
-	long result = (long) sqrt ((double) n);
-	return result;
-}
-#endif
-
 /* s and e are integers modulo 360 (degrees), with 0 degrees
    being the rightmost extreme and degrees changing clockwise.
    cx and cy are the center in pixels; w and h are the horizontal

@@ -263,7 +263,7 @@ extern int any2eucjp (char *, const char *, unsigned int);
 /* Fonts can be used across multiple images */
 
 /* 2.0.16: thread safety (the font cache is shared) */
-gdMutexDeclare (gdFontCacheMutex);
+static gdMutexDeclare (gdFontCacheMutex);
 static gdCache_head_t *fontCache;
 static FT_Library library;
 

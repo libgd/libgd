@@ -74,7 +74,7 @@
  * ---------
  * Wrapper around gdPutC for use with writewbmp
  */
-void gd_putout(int i, void *out)
+static void gd_putout(int i, void *out)
 {
 	gdPutC(i, (gdIOCtx *)out);
 }
@@ -83,7 +83,7 @@ void gd_putout(int i, void *out)
  * --------
  * Wrapper around gdGetC for use with readwbmp
  */
-int gd_getin(void *in)
+static int gd_getin(void *in)
 {
 	return (gdGetC((gdIOCtx *)in));
 }
