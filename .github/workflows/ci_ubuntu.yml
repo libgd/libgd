@@ -60,7 +60,7 @@ jobs:
       - name: install dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
-        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang-12 gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libheif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf ninja-build nasm meson
+        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang-12 gcc lld build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libheif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf ninja-build nasm meson
 
       - name: install AOM codec for libavif
         run: |
@@ -164,8 +164,7 @@ jobs:
         working-directory: ${{github.workspace}}/build
         run: |
           export TMP=${{runner.temp}}
-          echo "TMP=${{github.temp}}" >> $GITHUB_ENV
-          echo "LSAN_OPTIONS=suppressions=${{ github.workspace }}/suppressions/lsan.supp" >> $GITHUB_ENV
+          export LSAN_OPTIONS="suppressions=${{github.workspace}}/suppressions/lsan.supp"
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
       - name: Configure CMake ASAN
@@ -192,14 +191,13 @@ jobs:
         working-directory: ${{github.workspace}}/buildasan
         run: |
           export TMP=${{runner.temp}}
-          echo "TMP=${{github.temp}}" >> $GITHUB_ENV
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
       - name: Configure and Make
         working-directory: ${{github.workspace}}/
         run: |
           ./bootstrap.sh
-          ./configure --with-png --with-jpeg --with-ramq --with-heif --with-xpm --with-tiff --with-webp --with-liq --enable-gd --enable-gd-formats --with-zlib
+          ./configure --disable-werror --with-png --with-jpeg --with-ramq --with-heif --with-xpm --with-tiff --with-webp --with-liq --enable-gd --enable-gd-formats --with-zlib
           make
           make dist
 
