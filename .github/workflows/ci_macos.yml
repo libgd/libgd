@@ -49,23 +49,24 @@ jobs:
           sudo xcode-select --switch /Library/Developer/CommandLineTools/
           echo "JOBS=$(sysctl -n hw.logicalcpu)" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=/usr/local/opt/jpeg-turbo/lib/pkgconfig" >> $GITHUB_ENV
-          echo "CFLAGS=-I/opt/X11/include -I/usr/local/Cellar/libpng/1.6.37/include/libpng16"  >> $GITHUB_ENV
-          echo "LDFLAGS=-L/usr/local/Cellar/libpng/1.6.37/lib" >> $GITHUB_ENV
-          echo "CPATH=/usr/local/include:/usr/local/Cellar/libpng/1.6.37/include/libpng16"  >> $GITHUB_ENV
-          echo "C_INCLUDE_PATH=/usr/local/lib:/usr/local/Cellar/libpng/1.6.37/include/libpng16:/usr/local/opt/openssl/include" >> $GITHUB_ENV
-          echo "LIBRARY_PATH=/usr/local/Cellar/libpng/1.6.37/lib:/usr/local/lib" >> $GITHUB_ENV
+          echo "CFLAGS=-I/opt/X11/include"  >> $GITHUB_ENV
+          echo "CPATH=/usr/local/include"  >> $GITHUB_ENV
+          echo "C_INCLUDE_PATH=/usr/local/lib:/usr/local/opt/openssl/include" >> $GITHUB_ENV
+          echo "LIBRARY_PATH=/usr/local/lib" >> $GITHUB_ENV
+          LIBPNG_VERSION=$(pkg-config --modversion libpng)
+          echo "LIBPNG_VERSION=${LIBPNG_VERSION}" >> $GITHUB_ENV
           pkg-config --libs --cflags libpng
           pkg-config --libs libpng
           pkg-config --libs --cflags libpng16
           pkg-config --libs libpng16
-          ls /usr/local/Cellar/libpng/1.6.37/
-          ls /usr/local/Cellar/libpng/1.6.37/lib/
+          ls /usr/local/Cellar/libpng/$LIBPNG_VERSION/
+          ls /usr/local/Cellar/libpng/$LIBPNG_VERSION/lib/
           ${{github.workspace}}/.github/scripts/removemono.sh
 
       - name: Configure CMake
         run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
               -DENABLE_TIFF=1  -DENABLE_GD_FORMATS=1 -DENABLE_CPP=0 -DENABLE_HEIF=1 -D CMAKE_PREFIX_PATH=/usr/local
-              -DBUILD_TEST=1 -DVERBOSE_MAKEFILE=1 -DPNG_PNG_INCLUDE_DIR=/usr/local/Cellar/libpng/1.6.37/include -DPNG_PNG_LIBRARY_DIR=/usr/local/Cellar/libpng/1.6.37/lib -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+              -DBUILD_TEST=1 -DVERBOSE_MAKEFILE=1 -DPNG_PNG_INCLUDE_DIR=/usr/local/Cellar/libpng/${{ env.LIBPNG_VERSION }}/include -DPNG_PNG_LIBRARY_DIR=/usr/local/Cellar/libpng/${{ env.LIBPNG_VERSION }}/lib -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
