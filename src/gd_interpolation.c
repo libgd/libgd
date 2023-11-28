@@ -1908,11 +1908,6 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 	r->height = CLAMP(y1, c1y, c2y) - r->y + 1;
 }
 
-static void gdDumpRect(const char *msg, gdRectPtr r)
-{
-	printf("%s (%i, %i) (%i, %i)\n", msg, r->x, r->y, r->width, r->height);
-}
-
 /**
  * Function: gdTransformAffineGetImage
  *  Applies an affine transformation to a region and return an image
