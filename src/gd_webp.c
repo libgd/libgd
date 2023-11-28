@@ -158,7 +158,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 		}
 	}
 	/* do not use gdFree here, in case gdFree/alloc is mapped to something else than libc */
-	free(argb);
+	WebPFree(argb);
 	gdFree(temp);
 	im->saveAlphaFlag = 1;
 	return im;
@@ -230,7 +230,7 @@ static int _gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 	}
 
 	int res = gdPutBuf(out, out_size, outfile);
-	free(out);
+	WebPFree(out);
 	if (res != out_size) {
 		gd_error("gd-webp write error\n");
 		ret = 1;
