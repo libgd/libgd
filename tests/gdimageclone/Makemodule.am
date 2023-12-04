@@ -1,6 +1,7 @@
 libgd_test_programs += \
 	gdimageclone/bug00300 \
-	gdimageclone/style
+	gdimageclone/style \
+	gdimageclone/polyInts
 
 EXTRA_DIST += \
 	gdimageclone/CMakeLists.txt
