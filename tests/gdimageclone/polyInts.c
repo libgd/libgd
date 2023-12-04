@@ -2,6 +2,7 @@
  * Cloning polyInts without crashing
  */
 
+#include <string.h>
 #include "gd.h"
 #include "gdtest.h"
 
