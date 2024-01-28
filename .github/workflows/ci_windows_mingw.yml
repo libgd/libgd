@@ -74,6 +74,6 @@ jobs:
       working-directory: ${{github.workspace}}
       run: |
         mkdir tmp
-        export TMP=${{github.workspace}}\\tmp
+        export TMP="$PWD/tmp"
         export CTEST_OUTPUT_ON_FAILURE=1
         ctest
