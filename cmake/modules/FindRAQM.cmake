@@ -43,8 +43,19 @@ FIND_PATH(RAQM_INCLUDE_DIR raqm.h
   /usr/local/include
   /usr/include
 )
+FIND_PACKAGE(Freetype REQUIRED)
+STRING(SUBSTRING ${FREETYPE_VERSION_STRING}, 0, 1, FT_MAJ)
+STRING(SUBSTRING ${FREETYPE_VERSION_STRING}, 2, 2, FT_MIN)
+
+# matches 2.11 or later
+if( FREETYPE_VERSION_STRING MATCHES "([2-9]+)\.(11|[1-9]{2})\.([0-9]+)" )
+    message( "Minimal Freetype version for RAQM support found (${FREETYPE_VERSION_STRING})")
+else()
+    message( FATAL_ERROR "RAQM Support requires Freetype 2.11.0 or later" )
+endif()
 
 SET(RAQM_NAMES ${RAQM_NAMES} raqm)
+
 FIND_LIBRARY(RAQM_LIBRARY
   NAMES ${RAQM_NAMES}
   PATH /usr/local/lib /usr/lib
