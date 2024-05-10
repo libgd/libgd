@@ -18,6 +18,7 @@
  */
 
 #include <ctype.h>
+#include <stdlib.h>
 #if ((' ' & 0x0FF) == 0x020)
 # define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
 # define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
