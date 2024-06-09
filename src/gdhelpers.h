@@ -12,27 +12,27 @@ extern "C" {
 #include <stdlib.h>
 #endif /* _WIN32_WCE */
 
-	/* TBB: strtok_r is not universal; provide an implementation of it. */
+/* TBB: strtok_r is not universal; provide an implementation of it. */
 
-	char *gd_strtok_r(char *s, const char *sep, char **state);
+char *gd_strtok_r(char *s, const char *sep, char **state);
 
-	/* These functions wrap memory management. gdFree is
-		in gd.h, where callers can utilize it to correctly
-		free memory allocated by these functions with the
-		right version of free(). */
-	void *gdCalloc(size_t nmemb, size_t size) BGD_MALLOC;
-	void *gdMalloc(size_t size) BGD_MALLOC;
-	void *gdRealloc (void *ptr, size_t size);
-	/* The extended version of gdReallocEx will free *ptr if the
-	 * realloc fails */
-	void *gdReallocEx (void *ptr, size_t size);
+/* These functions wrap memory management. gdFree is
+	in gd.h, where callers can utilize it to correctly
+	free memory allocated by these functions with the
+	right version of free(). */
+void *gdCalloc(size_t nmemb, size_t size) BGD_MALLOC;
+void *gdMalloc(size_t size) BGD_MALLOC;
+void *gdRealloc (void *ptr, size_t size);
+/* The extended version of gdReallocEx will free *ptr if the
+ * realloc fails */
+void *gdReallocEx (void *ptr, size_t size);
 
-	/* Returns nonzero if multiplying the two quantities will
-		result in integer overflow. Also returns nonzero if
-		either quantity is negative. By Phil Knirsch based on
-		netpbm fixes by Alan Cox. */
+/* Returns nonzero if multiplying the two quantities will
+	result in integer overflow. Also returns nonzero if
+	either quantity is negative. By Phil Knirsch based on
+	netpbm fixes by Alan Cox. */
 
-	int overflow2(int a, int b);
+int overflow2(int a, int b);
 
 	/* 2.0.16: portable mutex support for thread safety. */
 #if defined(CPP_SHARP)
