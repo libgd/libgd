@@ -107,7 +107,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm(FILE * fd)
 				max_bit = 32768;
 			}
 			if (max_bit) {
-                bytes = (width + 7) / 8 * height;
+				bytes = (width + 7) / 8 * height;
 				if (!bytes) {
 					return 0;
 				}
