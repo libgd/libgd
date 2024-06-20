@@ -1,0 +1,8 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	gdmem/malloc
+endif
+
+EXTRA_DIST += \
+	gdmem/CMakeLists.txt \
+	gdmem/coin.png
