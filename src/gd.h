@@ -506,6 +506,8 @@ typedef struct gdImageStruct {
 	int paletteQuantizationMaxQuality;
 	gdInterpolationMethod interpolation_id;
 	interpolation_method interpolation;
+
+	int cloned;
 }
 gdImage;
 
