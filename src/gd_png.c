@@ -746,7 +746,7 @@ BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
   Function: gdImagePngCtxEx
 
     Outputs the given image as PNG data, but using a <gdIOCtx> instead
-    of a file.  See <gdIamgePnEx>.
+    of a file.  See <gdImagePngEx>.
 
   Parameters:
 
