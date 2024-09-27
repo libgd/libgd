@@ -299,9 +299,9 @@ enum gdPaletteQuantizationMethod {
  *  GD_POWER			 - Power
  *  GD_QUADRATIC		 - Quadratic
  *  GD_SINC				 - Sinc
- *  GD_TRIANGLE       - Triangle
+ *  GD_TRIANGLE			 - Triangle
  *  GD_WEIGHTED4		 - 4 pixels weighted bilinear interpolation
- *  GD_LINEAR            - bilinear interpolation
+ *  GD_LINEAR			 - bilinear interpolation
  *
  * See also:
  *  - <gdImageSetInterpolationMethod>
@@ -331,14 +331,14 @@ typedef enum {
 	GD_TRIANGLE,
 	GD_WEIGHTED4,
 	GD_LINEAR,
-   GD_LANCZOS3,
-   GD_LANCZOS8,
-   GD_BLACKMAN_BESSEL,
-   GD_BLACKMAN_SINC,
-   GD_QUADRATIC_BSPLINE,
-   GD_CUBIC_SPLINE,
-   GD_COSINE,
-   GD_WELSH,
+	GD_LANCZOS3,
+	GD_LANCZOS8,
+	GD_BLACKMAN_BESSEL,
+	GD_BLACKMAN_SINC,
+	GD_QUADRATIC_BSPLINE,
+	GD_CUBIC_SPLINE,
+	GD_COSINE,
+	GD_WELSH,
 	GD_METHOD_COUNT = 30
 } gdInterpolationMethod;
 
@@ -476,14 +476,14 @@ typedef struct gdImageStruct {
 	   part of the structure can be safely changed in new releases. */
 
 	/* 2.0.12: anti-aliased globals. 2.0.26: just a few vestiges after
-	  switching to the fast, memory-cheap implementation from PHP-gd. */
+	   switching to the fast, memory-cheap implementation from PHP-gd. */
 	int AA;
 	int AA_color;
 	int AA_dont_blend;
 
 	/* 2.0.12: simple clipping rectangle. These values
-	  must be checked for safety when set; please use
-	  gdImageSetClip */
+	   must be checked for safety when set; please use
+	   gdImageSetClip */
 	int cx1;
 	int cy1;
 	int cx2;
@@ -655,7 +655,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy);
    nature of the file being loaded. Truecolor PNG
    stays truecolor; palette PNG stays palette-based;
    JPEG is always truecolor. */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * fd);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE *fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data);
 
@@ -847,32 +847,32 @@ BGD_DECLARE(char *) gdImageStringFT (gdImagePtr im, int *brect, int fg, const ch
 /* 2.0.5: provides an extensible way to pass additional parameters.
    Thanks to Wez Furlong, sorry for the delay. */
 typedef struct {
-	int flags;		/* Logical OR of gdFTEX_ values */
-	double linespacing;	/* fine tune line spacing for '\n' */
-	int charmap;		/* TBB: 2.0.12: may be gdFTEX_Unicode,
-				   gdFTEX_Shift_JIS, gdFTEX_Big5,
-				   or gdFTEX_Adobe_Custom;
-				   when not specified, maps are searched
-				   for in the above order. */
+	int flags;               /* Logical OR of gdFTEX_ values */
+	double linespacing;      /* fine tune line spacing for '\n' */
+	int charmap;             /* TBB: 2.0.12: may be gdFTEX_Unicode,
+	                            gdFTEX_Shift_JIS, gdFTEX_Big5,
+	                            or gdFTEX_Adobe_Custom;
+	                            when not specified, maps are searched
+	                            for in the above order. */
 	int hdpi;                /* if (flags & gdFTEX_RESOLUTION) */
-	int vdpi;		 /* if (flags & gdFTEX_RESOLUTION) */
+	int vdpi;                /* if (flags & gdFTEX_RESOLUTION) */
 	char *xshow;             /* if (flags & gdFTEX_XSHOW)
-				    then, on return, xshow is a malloc'ed
-				    string containing xshow position data for
-				    the last string.
+	                            then, on return, xshow is a malloc'ed
+	                            string containing xshow position data for
+	                            the last string.
 
-				    NB. The caller is responsible for gdFree'ing
-				    the xshow string.
-				 */
-	char *fontpath;	         /* if (flags & gdFTEX_RETURNFONTPATHNAME)
-				    then, on return, fontpath is a malloc'ed
-				    string containing the actual font file path name
-				    used, which can be interesting when fontconfig
-				    is in use.
+	                            NB. The caller is responsible for gdFree'ing
+	                            the xshow string.
+	                            */
+	char *fontpath;          /* if (flags & gdFTEX_RETURNFONTPATHNAME)
+	                            then, on return, fontpath is a malloc'ed
+	                            string containing the actual font file path name
+	                            used, which can be interesting when fontconfig
+	                            is in use.
 
-				    The caller is responsible for gdFree'ing the
-				    fontpath string.
-				 */
+	                            The caller is responsible for gdFree'ing the
+	                            fontpath string.
+	                            */
 
 }
 gdFTStringExtra, *gdFTStringExtraPtr;
@@ -1043,7 +1043,7 @@ BGD_DECLARE(void) gdImageColorDeallocate (gdImagePtr im, int color);
 */
 
 BGD_DECLARE(gdImagePtr) gdImageCreatePaletteFromTrueColor (gdImagePtr im, int ditherFlag,
-							   int colorsWanted);
+                                                           int colorsWanted);
 
 BGD_DECLARE(int) gdImageTrueColorToPalette (gdImagePtr im, int ditherFlag,
 					    int colorsWanted);
@@ -1198,7 +1198,6 @@ BGD_DECLARE(void) gdImageGifAnimEndCtx(gdIOCtxPtr out);
 BGD_DECLARE(void *) gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalCM, int Loops);
 BGD_DECLARE(void *) gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, int LeftOfs, int TopOfs, int Delay, int Disposal, gdImagePtr previm);
 BGD_DECLARE(void *) gdImageGifAnimEndPtr(int *size);
-
 
 
 /*
@@ -1588,7 +1587,7 @@ BGD_DECLARE(gdIOCtxPtr) gdNewSSCtx(gdSourcePtr in, gdSinkPtr out);
 BGD_DECLARE(void *) gdDPExtractData(gdIOCtxPtr ctx, int *size);
 
 #define GD2_CHUNKSIZE           128
-#define GD2_CHUNKSIZE_MIN	64
+#define GD2_CHUNKSIZE_MIN       64
 #define GD2_CHUNKSIZE_MAX       4096
 
 #define GD2_VERS                2
@@ -1673,7 +1672,7 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
  *
  * Constants:
  *   GD_CMP_IMAGE       - Actual image IS different
- *   GD_CMP_NUM_COLORS  - Number of colors in pallette differ
+ *   GD_CMP_NUM_COLORS  - Number of colors in palette differ
  *   GD_CMP_COLOR       - Image colors differ
  *   GD_CMP_SIZE_X      - Image width differs
  *   GD_CMP_SIZE_Y      - Image heights differ
