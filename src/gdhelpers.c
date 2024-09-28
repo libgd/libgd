@@ -10,6 +10,18 @@
 #include <sys/types.h>
 #include <ctype.h>
 
+static struct gdAllocHelpers_s {
+  gdCallocMethod gdMemoryCallocMethod;
+  gdMallocMethod gdMemoryMallocMethod;
+  gdReallocMethod gdMemoryReallocMethod;
+  gdFreeMethod gdMemoryFreeMethod;
+} gdAllocHelpers = {
+  calloc,
+  malloc,
+  realloc,
+  free,
+};
+
 /* TBB: gd_strtok_r is not portable; provide an implementation */
 
 #define SEP_TEST (separators[*((unsigned char *) s)])
@@ -64,21 +76,22 @@ gd_strtok_r(char *s, const char *sep, char **state)
 	return result;
 }
 
-void * gdCalloc (size_t nmemb, size_t size)
+BGD_DECLARE(void *)
+gdCalloc (size_t nmemb, size_t size)
 {
-	return calloc (nmemb, size);
+	return gdAllocHelpers.gdMemoryCallocMethod (nmemb, size);
 }
 
-void *
+BGD_DECLARE(void *)
 gdMalloc (size_t size)
 {
-	return malloc (size);
+	return gdAllocHelpers.gdMemoryMallocMethod (size);
 }
 
-void *
+BGD_DECLARE(void *)
 gdRealloc (void *ptr, size_t size)
 {
-	return realloc (ptr, size);
+	return gdAllocHelpers.gdMemoryReallocMethod (ptr, size);
 }
 
 void *
@@ -112,5 +125,216 @@ gdReallocEx (void *ptr, size_t size)
 */
 BGD_DECLARE(void) gdFree (void *ptr)
 {
-	free (ptr);
+	gdAllocHelpers.gdMemoryFreeMethod (ptr);
+}
+
+/*
+  Function: gdSetMemoryCallocMethod
+
+    <gdSetMemoryCallocMethod> sets the memory allocation (initialized with
+    zeroes) method used by GD.
+
+    This function is not thread-safe. Should be called once and before any
+    operation with the library.
+
+  Parameters:
+
+    calloc_method - Function pointer to the memory allocation method. If it is
+                    NULL, no operation is performed.
+
+  Returns:
+
+    Nothing.
+
+  See also:
+    - <gdClearMemoryCallocMethod>
+*/
+BGD_DECLARE(void) gdSetMemoryCallocMethod(gdCallocMethod calloc_method)
+{
+	if (calloc_method != NULL)
+		gdAllocHelpers.gdMemoryCallocMethod = calloc_method;
+}
+
+/*
+  Function: gdSetMemoryMallocMethod
+
+    <gdSetMemoryMallocMethod> sets the memory allocation method used by GD.
+
+    This function is not thread-safe. Should be called once and before any
+    operation with the library.
+
+  Parameters:
+
+    malloc_method - Function pointer to the memory allocation method. If it is
+                    NULL, no operation is performed.
+
+  Returns:
+
+    Nothing.
+
+  See also:
+    - <gdClearMemoryMallocMethod>
+
+  Example:
+    (start code)
+
+    // ... set a custom malloc first before any operation ...
+    gdSetMemoryMallocMethod(customMalloc);
+
+    gdImagePtr im;
+    FILE *in;
+    in = fopen("mypng.png", "rb");
+    im = gdImageCreateFromPng(in);
+    fclose(in);
+    gdImageDestroy(im);
+
+    (end code)
+*/
+BGD_DECLARE(void) gdSetMemoryMallocMethod(gdMallocMethod malloc_method)
+{
+	if (malloc_method != NULL)
+		gdAllocHelpers.gdMemoryMallocMethod = malloc_method;
+}
+
+/*
+  Function: gdSetMemoryReallocMethod
+
+    <gdSetMemoryReallocMethod> sets the memory allocation method used by GD.
+
+    This function is not thread-safe. Should be called once and before any
+    operation with the library.
+
+  Parameters:
+
+    realloc_method - Function pointer to the memory reallocation method. If it
+                     is NULL, no operation is performed.
+
+  Returns:
+
+    Nothing.
+
+  See also:
+    - <gdClearMemoryReallocMethod>
+*/
+BGD_DECLARE(void) gdSetMemoryReallocMethod(gdReallocMethod realloc_method)
+{
+	if (realloc_method != NULL)
+		gdAllocHelpers.gdMemoryReallocMethod = realloc_method;
+}
+
+/*
+  Function: gdSetMemoryFreeMethod
+
+    <gdSetMemoryFreeMethod> sets the memory release method used by GD.
+
+    This function is not thread-safe. Should be called once and before any
+    operation with the library.
+
+  Parameters:
+
+    free_method - Function pointer to the memory release method. If it is NULL,
+                  no operation is performed.
+
+  Returns:
+
+    Nothing.
+*/
+BGD_DECLARE(void) gdSetMemoryFreeMethod(gdFreeMethod free_method)
+{
+	if (free_method != NULL)
+		gdAllocHelpers.gdMemoryFreeMethod = free_method;
+}
+
+/*
+  Function: gdClearMemoryCallocMethod
+
+    <gdClearMemoryCallocMethod> clears the memory allocation (initialized with
+    zeroes) method used by GD.
+
+    This function is not thread-safe and it should not be called during
+    operations.
+
+  Returns:
+
+    Nothing.
+
+  See also:
+    - <gdSetMemoryCallocMethod>
+*/
+BGD_DECLARE(void) gdClearMemoryCallocMethod()
+{
+	gdAllocHelpers.gdMemoryCallocMethod = calloc;
+}
+
+/*
+  Function: gdClearMemoryMallocMethod
+
+    <gdClearMemoryMallocMethod> clears the memory allocation method used by GD.
+
+    This function is not thread-safe and it should not be called during
+    operations.
+
+  Returns:
+
+    Nothing.
+
+  See also:
+    - <gdSetMemoryMallocMethod>
+
+  Example:
+    (start code)
+
+    gdSetMemoryMallocMethod(customMalloc);
+
+    // ... do the desired operations ...
+
+    // ... clear the custom malloc so it uses the default one ...
+    gdClearMemoryMallocMethod();
+
+    (end code)
+*/
+BGD_DECLARE(void) gdClearMemoryMallocMethod()
+{
+	gdAllocHelpers.gdMemoryMallocMethod = malloc;
+}
+
+/*
+  Function: gdClearMemoryReallocMethod
+
+    <gdClearMemoryReallocMethod> clears the memory allocation method used by
+    GD.
+
+    This function is not thread-safe and it should not be called during
+    operations.
+
+  Returns:
+
+    Nothing.
+
+  See also:
+    - <gdSetMemoryReallocMethod>
+*/
+BGD_DECLARE(void) gdClearMemoryReallocMethod()
+{
+	gdAllocHelpers.gdMemoryReallocMethod = realloc;
+}
+
+/*
+  Function: gdClearMemoryFreeMethod
+
+    <gdSetMemClearFreeMethod> clears the memory release method used by GD.
+
+    This function is not thread-safe and it should not be called during
+    operations.
+
+  Returns:
+
+    Nothing.
+
+  See also:
+    - <gdSetMemoryFreeMethod>
+*/
+BGD_DECLARE(void) gdClearMemoryFreeMethod()
+{
+	gdAllocHelpers.gdMemoryFreeMethod = free;
 }

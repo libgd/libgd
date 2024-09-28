@@ -74,6 +74,7 @@ include gdimagestringup/Makemodule.am
 include gdimagestringup16/Makemodule.am
 include gdimagetruecolortopalette/Makemodule.am
 include gdinterpolatedscale/Makemodule.am
+include gdmem/Makemodule.am
 include gdnewfilectx/Makemodule.am
 include gdtest/Makemodule.am
 include gdtiled/Makemodule.am
