@@ -546,12 +546,11 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 	// Note that MATRIX_COEFFICIENTS_IDENTITY enables lossless conversion from RGB to YUV.
 
 	avifImage *avifIm = avifImageCreate(gdImageSX(im), gdImageSY(im), 8, subsampling);
-#if AVIF_VERSION >= 1000000
 	if (avifIm == NULL) {
 		gd_error("avif error - Creating image failed\n");
 		goto cleanup;
 	}
-#endif
+
 	avifIm->colorPrimaries = AVIF_COLOR_PRIMARIES_BT709;
 	avifIm->transferCharacteristics = AVIF_TRANSFER_CHARACTERISTICS_SRGB;
 	avifIm->matrixCoefficients = lossless ? AVIF_MATRIX_COEFFICIENTS_IDENTITY : AVIF_MATRIX_COEFFICIENTS_BT709;
@@ -591,12 +590,11 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 	// Encode the image in AVIF format.
 
 	encoder = avifEncoderCreate();
-#if AVIF_VERSION >= 1000000
 	if (encoder == NULL) {
 		gd_error("avif error - Creating encoder failed\n");
 		goto cleanup;
 	}
-#endif
+
 	int quantizerQuality = quality == QUALITY_DEFAULT ?
 		QUANTIZER_DEFAULT : quality2Quantizer(quality);
 
