@@ -4651,8 +4651,7 @@ BGD_EXPORT_DATA_PROT gdFontPtr gdFontLarge = &gdFontLargeRep;
  *
  * Returns the built-in large font.
  */
-BGD_DECLARE(gdFontPtr)
-gdFontGetLarge (void)
+BGD_DECLARE(gdFontPtr) gdFontGetLarge(void)
 {
 	return gdFontLarge;
 }

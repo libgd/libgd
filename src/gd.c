@@ -295,7 +295,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 		return NULL;
 	}
 	if (overflow2(sizeof (int *), sy)) {
-		return 0;
+		return NULL;
 	}
 	if (overflow2(sizeof(int), sx)) {
 		return NULL;
@@ -305,7 +305,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 	if (!im) {
 		return 0;
 	}
-	memset (im, 0, sizeof (gdImage));
+	memset(im, 0, sizeof(gdImage));
 
 	im->tpixels = (int **) gdMalloc (sizeof (int *) * sy);
 	if (!im->tpixels) {
@@ -533,7 +533,6 @@ RGB_to_HWB (RGBType RGB, HWBType * HWB)
 	f = (R == w) ? G - B : ((G == w) ? B - R : R - G);
 	i = (R == w) ? 3 : ((G == w) ? 5 : 1);
 	RETURN_HWB (i - f / (v - w), w, b);
-
 }
 
 static float
@@ -631,7 +630,7 @@ BGD_DECLARE(int) gdImageColorClosestHWB (gdImagePtr im, int r, int g, int b)
 	if (im->trueColor) {
 		return gdTrueColor (r, g, b);
 	}
-	for (i = 0; (i < (im->colorsTotal)); i++) {
+	for (i = 0; i < im->colorsTotal; i++) {
 		float dist;
 		if (im->open[i]) {
 			continue;
@@ -700,7 +699,7 @@ BGD_DECLARE(int) gdImageColorExactAlpha (gdImagePtr im, int r, int g, int b, int
 	if (im->trueColor) {
 		return gdTrueColorAlpha (r, g, b, a);
 	}
-	for (i = 0; (i < (im->colorsTotal)); i++) {
+	for (i = 0; i < im->colorsTotal; i++) {
 		if (im->open[i]) {
 			continue;
 		}
@@ -764,7 +763,7 @@ BGD_DECLARE(int) gdImageColorAllocateAlpha (gdImagePtr im, int r, int g, int b, 
 	if (im->trueColor) {
 		return gdTrueColorAlpha (r, g, b, a);
 	}
-	for (i = 0; (i < (im->colorsTotal)); i++) {
+	for (i = 0; i < im->colorsTotal; i++) {
 		if (im->open[i]) {
 			ct = i;
 			break;
@@ -943,10 +942,10 @@ BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
 
 	for (i = 0; i < 256; i++) {
 		xlate[i] = -1;
-	};
+	}
 
-	for (y = 0; y < (to->sy); y++) {
-		for (x = 0; x < (to->sx); x++) {
+	for (y = 0; y < to->sy; y++) {
+		for (x = 0; x < to->sx; x++) {
 			/* Optimization: no gdImageGetPixel */
 			p = to->pixels[y][x];
 			if (xlate[p] == -1) {
@@ -958,11 +957,11 @@ BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
 				/*printf("Mapping %d (%d, %d, %d, %d) to %d (%d, %d, %d, %d)\n", */
 				/*      p,  to->red[p], to->green[p], to->blue[p], to->alpha[p], */
 				/*      xlate[p], from->red[xlate[p]], from->green[xlate[p]], from->blue[xlate[p]], from->alpha[xlate[p]]); */
-			};
+			}
 			/* Optimization: no gdImageSetPixel */
 			to->pixels[y][x] = xlate[p];
-		};
-	};
+		}
+	}
 
 	for (i = 0; (i < (from->colorsTotal)); i++) {
 		/*printf("Copying color %d (%d, %d, %d, %d)\n", i, from->red[i], from->blue[i], from->green[i], from->alpha[i]); */
@@ -971,11 +970,11 @@ BGD_DECLARE(void) gdImagePaletteCopy (gdImagePtr to, gdImagePtr from)
 		to->green[i] = from->green[i];
 		to->alpha[i] = from->alpha[i];
 		to->open[i] = 0;
-	};
+	}
 
-	for (i = from->colorsTotal; (i < to->colorsTotal); i++) {
+	for (i = from->colorsTotal; i < to->colorsTotal; i++) {
 		to->open[i] = 1;
-	};
+	}
 
 	to->colorsTotal = from->colorsTotal;
 
@@ -1254,7 +1253,7 @@ BGD_DECLARE(void) gdImageSetPixel (gdImagePtr im, int x, int y, int color)
 		} else {
 			p = im->style[im->stylePos++];
 		}
-		if (p != (gdTransparent)) {
+		if (p != gdTransparent) {
 			gdImageSetPixel (im, x, y, p);
 		}
 		im->stylePos = im->stylePos % im->styleLength;
@@ -1419,14 +1418,10 @@ gdImageTileApply (gdImagePtr im, int x, int y)
 				   on a palette destination. */
 				gdImageSetPixel (im, x, y,
 				                 gdImageColorResolveAlpha (im,
-				                         gdTrueColorGetRed
-				                         (p),
-				                         gdTrueColorGetGreen
-				                         (p),
-				                         gdTrueColorGetBlue
-				                         (p),
-				                         gdTrueColorGetAlpha
-				                         (p)));
+				                         gdTrueColorGetRed(p),
+				                         gdTrueColorGetGreen(p),
+				                         gdTrueColorGetBlue(p),
+				                         gdTrueColorGetAlpha(p)));
 			} else {
 				gdImageSetPixel (im, x, y, im->tileColorMap[p]);
 			}
@@ -1621,8 +1616,9 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 
 		/* Set up line thickness */
 		wstart = y - wid / 2;
-		for (w = wstart; w < wstart + wid; w++)
+		for (w = wstart; w < wstart + wid; w++) {
 			gdImageSetPixel (im, x, w, color);
+		}
 
 		if (((y2 - y1) * ydirflag) > 0) {
 			while (x < xend) {
@@ -1634,8 +1630,9 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 					d += incr2;
 				}
 				wstart = y - wid / 2;
-				for (w = wstart; w < wstart + wid; w++)
+				for (w = wstart; w < wstart + wid; w++) {
 					gdImageSetPixel (im, x, w, color);
+				}
 			}
 		} else {
 			while (x < xend) {
@@ -1647,8 +1644,9 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 					d += incr2;
 				}
 				wstart = y - wid / 2;
-				for (w = wstart; w < wstart + wid; w++)
+				for (w = wstart; w < wstart + wid; w++) {
 					gdImageSetPixel (im, x, w, color);
+				}
 			}
 		}
 	} else {
@@ -1661,8 +1659,9 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 		} else {
 			wid = 1;
 		}
-		if (wid == 0)
+		if (wid == 0) {
 			wid = 1;
+		}
 
 		d = 2 * dx - dy;
 		incr1 = 2 * dx;
@@ -1681,8 +1680,9 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 
 		/* Set up line thickness */
 		wstart = x - wid / 2;
-		for (w = wstart; w < wstart + wid; w++)
+		for (w = wstart; w < wstart + wid; w++) {
 			gdImageSetPixel (im, w, y, color);
+		}
 
 		if (((x2 - x1) * xdirflag) > 0) {
 			while (y < yend) {
@@ -1694,8 +1694,9 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 					d += incr2;
 				}
 				wstart = x - wid / 2;
-				for (w = wstart; w < wstart + wid; w++)
+				for (w = wstart; w < wstart + wid; w++) {
 					gdImageSetPixel (im, w, y, color);
+				}
 			}
 		} else {
 			while (y < yend) {
@@ -1707,13 +1708,14 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 					d += incr2;
 				}
 				wstart = x - wid / 2;
-				for (w = wstart; w < wstart + wid; w++)
+				for (w = wstart; w < wstart + wid; w++) {
 					gdImageSetPixel (im, w, y, color);
+				}
 			}
 		}
 	}
-
 }
+
 static void dashedSet (gdImagePtr im, int x, int y, int color,
 					   int *onP, int *dashStepP, int wid, int vert);
 
@@ -2201,13 +2203,13 @@ BGD_DECLARE(void) gdImageEllipse(gdImagePtr im, int mx, int my, int w, int h, in
 	int x=0,mx1=0,mx2=0,my1=0,my2=0;
 	int64_t aq,bq,dx,dy,r,rx,ry,a,b;
 
-	a=w>>1;
-	b=h>>1;
-	gdImageSetPixel(im,mx+a, my, c);
-	gdImageSetPixel(im,mx-a, my, c);
-	mx1 = mx-a;
+	a = w >> 1;
+	b = h >> 1;
+	gdImageSetPixel(im, mx + a, my, c);
+	gdImageSetPixel(im, mx - a, my, c);
+	mx1 = mx - a;
 	my1 = my;
-	mx2 = mx+a;
+	mx2 = mx + a;
 	my2 = my;
 
 	aq = a * a;
@@ -2222,15 +2224,15 @@ BGD_DECLARE(void) gdImageEllipse(gdImagePtr im, int mx, int my, int w, int h, in
 		if (r > 0) {
 			my1++;
 			my2--;
-			ry +=dx;
-			r  -=ry;
+			ry += dx;
+			r -= ry;
 		}
 		if (r <= 0) {
 			x--;
 			mx1++;
 			mx2--;
-			rx -=dy;
-			r  +=rx;
+			rx -= dy;
+			r += rx;
 		}
 		gdImageSetPixel(im,mx1, my1, c);
 		gdImageSetPixel(im,mx1, my2, c);
@@ -2250,16 +2252,16 @@ BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int mx, int my, int w, in
 	int i;
 	int old_y2;
 
-	a=w>>1;
-	b=h>>1;
+	a = w >> 1;
+	b = h >> 1;
 
-	for (x = mx-a; x <= mx+a; x++) {
+	for (x = mx - a; x <= mx + a; x++) {
 		gdImageSetPixel(im, x, my, c);
 	}
 
-	mx1 = mx-a;
+	mx1 = mx - a;
 	my1 = my;
-	mx2 = mx+a;
+	mx2 = mx + a;
 	my2 = my;
 
 	aq = a * a;
@@ -2275,21 +2277,20 @@ BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int mx, int my, int w, in
 		if (r > 0) {
 			my1++;
 			my2--;
-			ry +=dx;
-			r  -=ry;
+			ry += dx;
+			r -= ry;
 		}
 		if (r <= 0) {
 			x--;
 			mx1++;
 			mx2--;
-			rx -=dy;
-			r  +=rx;
+			rx -= dy;
+			r += rx;
 		}
-
-		if(old_y2!=my2) {
-			for(i=mx1; i<=mx2; i++) {
-				gdImageSetPixel(im,i,my2,c);
-				gdImageSetPixel(im,i,my1,c);
+		if (old_y2 != my2) {
+			for (i = mx1; i <= mx2; i++) {
+				gdImageSetPixel(im, i, my2, c);
+				gdImageSetPixel(im, i, my1, c);
 			}
 		}
 		old_y2 = my2;
@@ -2482,9 +2483,7 @@ BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc)
 		return;
 	}
 
-	/* Do not use the 4 neighbors implementation with
-	* small images
-	*/
+	/* Do not use the 4 neighbors implementation with small images */
 	if (im->sx < 4) {
 		int ix = x, iy = y, c;
 		do {
