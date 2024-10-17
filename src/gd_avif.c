@@ -402,7 +402,13 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 	// (While AVIF image pixel depth can be 8, 10, or 12 bits, GD truecolor images are 8-bit.)
 	avifRGBImageSetDefaults(&rgb, decoder->image);
 	rgb.depth = 8;
+#if AVIF_VERSION >= 1000000
+	result = avifRGBImageAllocatePixels(&rgb);
+	if (isAvifError(result, "Allocating RGB pixels failed"))
+		goto cleanup;
+#else
 	avifRGBImageAllocatePixels(&rgb);
+#endif
 
 	result = avifImageYUVToRGB(decoder->image, &rgb);
 	if (isAvifError(result, "Conversion from YUV to RGB failed"))
@@ -540,6 +546,10 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 	// Note that MATRIX_COEFFICIENTS_IDENTITY enables lossless conversion from RGB to YUV.
 
 	avifImage *avifIm = avifImageCreate(gdImageSX(im), gdImageSY(im), 8, subsampling);
+	if (avifIm == NULL) {
+		gd_error("avif error - Creating image failed\n");
+		goto cleanup;
+	}
 
 	avifIm->colorPrimaries = AVIF_COLOR_PRIMARIES_BT709;
 	avifIm->transferCharacteristics = AVIF_TRANSFER_CHARACTERISTICS_SRGB;
@@ -547,7 +557,13 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 
 	avifRGBImageSetDefaults(&rgb, avifIm);
 	// this allocates memory, and sets rgb.rowBytes and rgb.pixels.
+#if AVIF_VERSION >= 1000000
+	result = avifRGBImageAllocatePixels(&rgb);
+	if (isAvifError(result, "Allocating RGB pixels failed"))
+		goto cleanup;
+#else
 	avifRGBImageAllocatePixels(&rgb);
+#endif
 
 	// Parse RGB data from the GD image, and copy it into the AVIF RGB image.
 	// Convert 7-bit GD alpha channel values to 8-bit AVIF values.
@@ -574,6 +590,11 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 	// Encode the image in AVIF format.
 
 	encoder = avifEncoderCreate();
+	if (encoder == NULL) {
+		gd_error("avif error - Creating encoder failed\n");
+		goto cleanup;
+	}
+
 	int quantizerQuality = quality == QUALITY_DEFAULT ?
 		QUANTIZER_DEFAULT : quality2Quantizer(quality);
 
