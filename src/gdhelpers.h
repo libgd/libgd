@@ -12,6 +12,24 @@ extern "C" {
 #include <stdlib.h>
 #endif /* _WIN32_WCE */
 
+#if defined(_WIN32) || defined(CYGWIN) || defined(_WIN32_WCE)
+# ifdef __GNUC__
+#  if (__STDC_VERSION__ >= 201112L)
+#   define BGD_THREAD_LOCAL _Thread_local
+#  else
+#   define BGD_THREAD_LOCAL __thread
+#  endif
+# else
+#  define BGD_THREAD_LOCAL __declspec(thread)
+# endif
+#else
+# if (__STDC_VERSION__ >= 201112L)
+#  define BGD_THREAD_LOCAL _Thread_local
+# else
+#  define BGD_THREAD_LOCAL __thread
+# endif
+#endif
+
 	/* TBB: strtok_r is not universal; provide an implementation of it. */
 
 	char *gd_strtok_r(char *s, const char *sep, char **state);
