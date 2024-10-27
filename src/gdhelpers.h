@@ -12,6 +12,24 @@ extern "C" {
 #include <stdlib.h>
 #endif /* _WIN32_WCE */
 
+#if defined(_WIN32) || defined(CYGWIN) || defined(_WIN32_WCE)
+# ifdef __GNUC__
+#  if (__STDC_VERSION__ >= 201112L)
+#   define BGD_THREAD_LOCAL _Thread_local
+#  else
+#   define BGD_THREAD_LOCAL __thread
+#  endif
+# else
+#  define BGD_THREAD_LOCAL __declspec(thread)
+# endif
+#else
+# if (__STDC_VERSION__ >= 201112L)
+#  define BGD_THREAD_LOCAL _Thread_local
+# else
+#  define BGD_THREAD_LOCAL __thread
+# endif
+#endif
+
 	/* TBB: strtok_r is not universal; provide an implementation of it. */
 
 	char *gd_strtok_r(char *s, const char *sep, char **state);
@@ -20,9 +38,9 @@ extern "C" {
 		in gd.h, where callers can utilize it to correctly
 		free memory allocated by these functions with the
 		right version of free(). */
-	void *gdCalloc(size_t nmemb, size_t size) BGD_MALLOC;
-	void *gdMalloc(size_t size) BGD_MALLOC;
-	void *gdRealloc (void *ptr, size_t size);
+	BGD_DECLARE(void *) gdCalloc(size_t nmemb, size_t size) BGD_MALLOC;
+	BGD_DECLARE(void *) gdMalloc(size_t size) BGD_MALLOC;
+	BGD_DECLARE(void *) gdRealloc (void *ptr, size_t size);
 	/* The extended version of gdReallocEx will free *ptr if the
 	 * realloc fails */
 	void *gdReallocEx (void *ptr, size_t size);
