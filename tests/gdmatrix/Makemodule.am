@@ -1,0 +1,5 @@
+libgd_test_programs += \
+	gdmatrix/bug00402
+
+EXTRA_DIST += \
+	gdmatrix/CMakeLists.txt
