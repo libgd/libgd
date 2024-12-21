@@ -39,7 +39,7 @@ jobs:
       - name: Configure CMake
         # vcpkg libde265 fails on arm64 and match prefix
         if: matrix.arch == 'amd64_arm64'
-        run:  cmake -D CMAKE_GENERATOR="Visual Studio 17 2022" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1
+        run:  cmake -D CMAKE_GENERATOR="Visual Studio 17 2022" -A ARM64 -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1
               -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1 -DBUILD_TEST=1
               -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
               -DCMAKE_LIBRARY_PATH=${{github.workspace}}\vcpkgusr\arm64-windows\lib
@@ -47,7 +47,7 @@ jobs:
 
       - name: Configure CMake
         if: matrix.arch != 'amd64_arm64'
-        run:  cmake -D CMAKE_GENERATOR="Visual Studio 17 2022" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1
+        run:  cmake -D CMAKE_GENERATOR="Visual Studio 17 2022" -A ${{ matrix.arch == 'x64' && 'x64' || 'Win32' }} -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1
                -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1 -DENABLE_HEIF=1
               -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
               -DCMAKE_LIBRARY_PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\lib
