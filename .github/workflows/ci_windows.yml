@@ -68,4 +68,4 @@ jobs:
           echo %TEMP%
           set PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\bin;%PATH%
           set CTEST_OUTPUT_ON_FAILURE=1
-          nmake test
+          ctest -C ${{env.BUILD_TYPE}}
