@@ -30,13 +30,6 @@ jobs:
               cc: "clang-12",
               cxx: "clang-cpp-12"
             }
-          - {
-              name: "Ubuntu Graviton GCC",
-              os: [self-hosted, Linux, ARM64, graviton],
-              cc: "gcc",
-              cxx: "g++",
-              cflags: "-march=armv8.2-a+fp16+rcpc+dotprod+crypto+sve -mtune=neoverse-n1"
-            }
 
     name: ${{ matrix.config.name }}
     defaults:
