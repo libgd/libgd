@@ -192,8 +192,14 @@ static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 		}
 	}
 
+	/* The line must be divisible by 4, else its padded with NULLs */
+	padding = ((int)(im->trueColor ? 3 : 1) * im->sx) % 4;
+	if (padding) {
+		padding = 4 - padding;
+	}
+
 	/* bitmap header + info header + data */
-	total_size = 14 + info_size + bitmap_size;
+	total_size = 14 + info_size + bitmap_size + padding * im->sy;
 
 	/* write bmp header info */
 	gdPutBuf("BM", 2, out);
@@ -209,17 +215,11 @@ static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 	gdBMPPutWord(out, 1); /* colour planes */
 	gdBMPPutWord(out, (im->trueColor ? 24 : 8)); /* bit count */
 	gdBMPPutInt(out, (compression ? BMP_BI_RLE8 : BMP_BI_RGB)); /* compression */
-	gdBMPPutInt(out, bitmap_size); /* image size */
+	gdBMPPutInt(out, bitmap_size + padding * im->sy); /* image size */
 	gdBMPPutInt(out, 0); /* H resolution */
 	gdBMPPutInt(out, 0); /* V ressolution */
 	gdBMPPutInt(out, im->colorsTotal); /* colours used */
 	gdBMPPutInt(out, 0); /* important colours */
-
-	/* The line must be divisible by 4, else its padded with NULLs */
-	padding = ((int)(im->trueColor ? 3 : 1) * im->sx) % 4;
-	if (padding) {
-		padding = 4 - padding;
-	}
 
 	/* 8-bit colours */
 	if (!im->trueColor) {
