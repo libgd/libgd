@@ -24,6 +24,10 @@ int main () {
     data = gdImageHeifPtrEx(in, &size, 200, GD_HEIF_CODEC_HEVC, GD_HEIF_CHROMA_444);
 
     dst = gdImageCreateFromHeifPtr(size, data);
+    if (!gdTestAssert(dst != NULL)) {
+        gdImageDestroy(in);
+        return gdNumFailures();
+    }
     diff = gdImageCreateTrueColor(gdImageSX(dst), gdImageSY(dst));
     if (gdTestAssertMsg(dst != NULL, "cannot compare with NULL buffer")) {
         gdTestImageDiff(in, dst, diff, &result);
