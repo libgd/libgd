@@ -1531,7 +1531,7 @@ static void *malloc16(size_t size)
 	void *p;
 	return posix_memalign(&p, 16, size) == 0 ? p : NULL;
 #else
-	return _aligned_malloc(16, size);
+	return _aligned_malloc(size, 16);
 #endif
 }
 #endif
