@@ -59,6 +59,7 @@ jobs:
           libheif:p
           libraqm:p
           libavif:p
+          libimagequant:p
           xpm-nox:p
           cmake:p
           ninja:p
