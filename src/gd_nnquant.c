@@ -32,6 +32,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <stdlib.h>
+#include <limits.h>
 #include <string.h>
 #include "gd.h"
 #include "gdhelpers.h"
