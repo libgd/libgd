@@ -497,8 +497,6 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 	const int newcolors = max_color;
 	const int verbose = 1;
 
-	int bot_idx, top_idx; /* for remapping of indices */
-	int remap[MAXNETSIZE];
 	int i,x;
 
 	unsigned char map[MAXNETSIZE][4];
@@ -557,19 +555,6 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 	unbiasnet(nnq);
 	getcolormap(nnq, (unsigned char*)map);
 	inxbuild(nnq);
-	/* remapping colormap to eliminate opaque tRNS-chunk entries... */
-	for (top_idx = newcolors-1, bot_idx = x = 0;  x < newcolors;  ++x) {
-		if (map[x][3] == 255) { /* maxval */
-			remap[x] = top_idx--;
-		} else {
-			remap[x] = bot_idx++;
-		}
-	}
-	if (bot_idx != top_idx + 1) {
-		gd_error("  internal logic error: remapped bot_idx = %d, top_idx = %d\n",
-			 bot_idx, top_idx);
-		goto done;
-	}
 
 	dst = gdImageCreate(gdImageSX(im), gdImageSY(im));
 	if (!dst) {
@@ -577,11 +562,11 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 	}
 
 	for (x = 0; x < newcolors; ++x) {
-		dst->red[remap[x]] = map[x][0];
-		dst->green[remap[x]] = map[x][1];
-		dst->blue[remap[x]] = map[x][2];
-		dst->alpha[remap[x]] = map[x][3];
-		dst->open[remap[x]] = 0;
+		dst->red[x] = map[x][0];
+		dst->green[x] = map[x][1];
+		dst->blue[x] = map[x][2];
+		dst->alpha[x] = map[x][3];
+		dst->open[x] = 0;
 		dst->colorsTotal++;
 	}
 
@@ -593,12 +578,10 @@ BGD_DECLARE(gdImagePtr) gdImageNeuQuant(gdImagePtr im, const int max_color, int 
 		/* Assign the new colors */
 		offset = row * gdImageSX(im) * 4;
 		for(i=0; i < gdImageSX(im); i++) {
-			p[i] = remap[
-			           inxsearch(nnq, rgba[i * 4 + offset + ALPHA],
-			                     rgba[i * 4 + offset + BLUE],
-			                     rgba[i * 4 + offset + GREEN],
-			                     rgba[i * 4 + offset + RED])
-			       ];
+			p[i] = inxsearch(nnq, rgba[i * 4 + offset + ALPHA],
+			                      rgba[i * 4 + offset + BLUE],
+			                      rgba[i * 4 + offset + GREEN],
+			                      rgba[i * 4 + offset + RED]);
 		}
 	}
 
