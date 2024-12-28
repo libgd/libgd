@@ -56,7 +56,7 @@ jobs:
       - name: Build
         run: |
          cd ${{github.workspace}}/build
-         cmake --build . --config ${{env.BUILD_TYPE}} --parallel 2
+         cmake --build . --config ${{env.BUILD_TYPE}} --parallel %NUMBER_OF_PROCESSORS%
 
       - name: Tests
         working-directory: ${{github.workspace}}/build
