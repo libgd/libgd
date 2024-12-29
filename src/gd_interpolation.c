@@ -1894,7 +1894,7 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
  * Group: Affine Transformation
  **/
 
- static void gdImageClipRectangle(gdImagePtr im, gdRectPtr r)
+static void gdImageClipRectangle(gdImagePtr im, gdRectPtr r)
 {
 	int c1x, c1y, c2x, c2y;
 	int x1,y1;

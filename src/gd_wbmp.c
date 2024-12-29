@@ -76,7 +76,7 @@
  */
 static void gd_putout(int i, void *out)
 {
-	gdPutC(i, (gdIOCtx *)out);
+	gdPutC(i, (gdIOCtx *) out);
 }
 
 /* gd_getin
@@ -85,7 +85,7 @@ static void gd_putout(int i, void *out)
  */
 static int gd_getin(void *in)
 {
-	return (gdGetC((gdIOCtx *)in));
+	return (gdGetC((gdIOCtx *) in));
 }
 
 static int _gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out);
@@ -171,9 +171,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx(gdIOCtx *infile)
 
 	/* fill in image (in a wbmp 1 = white/ 0 = black) */
 	pos = 0;
-	for(row = 0; row < wbmp->height; row++) {
-		for(col = 0; col < wbmp->width; col++) {
-			if(wbmp->bitmap[pos++] == WBMP_WHITE) {
+	for (row = 0; row < wbmp->height; row++) {
+		for (col = 0; col < wbmp->width; col++) {
+			if (wbmp->bitmap[pos++] == WBMP_WHITE) {
 				gdImageSetPixel(im, col, row, white);
 			} else {
 				gdImageSetPixel(im, col, row, black);

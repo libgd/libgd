@@ -56,8 +56,7 @@ static const char *const GD_JPEG_VERSION = "1.0";
 typedef struct _jmpbuf_wrapper {
 	jmp_buf jmpbuf;
         int ignore_warning;
-}
-jmpbuf_wrapper;
+} jmpbuf_wrapper;
 
 static void jpeg_emit_message(j_common_ptr jpeg_info, int level)
 {
@@ -293,9 +292,9 @@ static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	cinfo.err = jpeg_std_error(&jerr);
 	cinfo.client_data = &jmpbufw;
 
-	if(setjmp(jmpbufw.jmpbuf) != 0) {
+	if (setjmp(jmpbufw.jmpbuf) != 0) {
 		/* we're here courtesy of longjmp */
-		if(row) {
+		if (row) {
 			gdFree(row);
 		}
 		return 1;
@@ -317,7 +316,7 @@ static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	cinfo.X_density = im->res_x;
 	cinfo.Y_density = im->res_y;
 
-	if(quality >= 0) {
+	if (quality >= 0) {
 		jpeg_set_quality(&cinfo, quality, TRUE);
 		if (quality >= 90) {
 			cinfo.comp_info[0].h_samp_factor = 1;
@@ -418,8 +417,6 @@ static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	gdFree(row);
 	return 0;
 }
-
-
 
 
 /*
@@ -830,7 +827,7 @@ error:
 
 static int CMYKToRGB(int c, int m, int y, int k, int inverted)
 {
-	if(inverted) {
+	if (inverted) {
 		c = 255 - c;
 		m = 255 - m;
 		y = 255 - y;
@@ -883,6 +880,7 @@ static int CMYKToRGB(int c, int m, int y, int k, int inverted)
  */
 
 /* Expanded data source object for gdIOCtx input */
+
 typedef struct {
 	struct jpeg_source_mgr pub;	/* public fields */
 	gdIOCtx *infile;			/* source stream */
@@ -949,7 +947,7 @@ static void init_source(j_decompress_ptr cinfo)
 
 static boolean fill_input_buffer(j_decompress_ptr cinfo)
 {
-	my_src_ptr src = (my_src_ptr)cinfo->src;
+	my_src_ptr src = (my_src_ptr) cinfo->src;
 	/* 2.0.12: signed size. Thanks to Geert Jansen */
 	/* 2.0.14: some platforms (mingw-msys) don't have ssize_t. Call
 	 * an int an int.

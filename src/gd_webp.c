@@ -8,7 +8,6 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -73,7 +72,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile)
 	return im;
 }
 
-
 /*
   Function: gdImageCreateFromWebpPtr
 
@@ -105,11 +103,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 	int    width, height;
 	uint8_t   *filedata = NULL;
 	uint8_t    *argb = NULL;
-	unsigned char   *read, *temp;
 	ssize_t size = 0, n;
 	gdImagePtr im;
 	int x, y;
 	uint8_t *p;
+
+	unsigned char   *read, *temp;
 
 	do {
 		temp = gdRealloc(filedata, size+GD_WEBP_ALLOC_STEP);
