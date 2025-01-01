@@ -4217,7 +4217,7 @@ BGD_DECLARE(int) gdLayerMultiply (int dst, int src)
 BGD_DECLARE(int) gdLayerDiff (int dst, int src)
 {
 	int r1,b1,g1,a1,r2,b2,g2,a2;
-	int diff_a,diff_r,diff_g,diff_b,diff;
+	int diff_a,diff_r,diff_g,diff_b;
 
 	a1 = gdTrueColorGetAlpha(dst);
 	a2 = gdTrueColorGetAlpha(src);
