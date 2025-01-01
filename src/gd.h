@@ -220,6 +220,8 @@ extern "C" {
  *   gdEffectOverlay    - overlay pixels, see <gdLayerOverlay>
  *   gdEffectMultiply   - overlay pixels with multiply effect, see
  *                        <gdLayerMultiply>
+ *   gdEffectDiff       - replace pixels with their difference, see
+ *                        <gdLayerDiff>
  *
  * See also:
  *   - <gdImageAlphaBlending>
@@ -229,6 +231,7 @@ extern "C" {
 #define gdEffectNormal 2
 #define gdEffectOverlay 3
 #define gdEffectMultiply 4
+#define gdEffectDiff 5
 
 #define GD_TRUE 1
 #define GD_FALSE 0
@@ -246,6 +249,7 @@ extern "C" {
 BGD_DECLARE(int) gdAlphaBlend (int dest, int src);
 BGD_DECLARE(int) gdLayerOverlay (int dest, int src);
 BGD_DECLARE(int) gdLayerMultiply (int dest, int src);
+BGD_DECLARE(int) gdLayerDiff (int dest, int src);
 
 
 /**
