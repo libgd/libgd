@@ -24,7 +24,7 @@
 
 This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md).
 By participating, you are expected to uphold this code.
-Please report unacceptable behavior to [security@libgd.org](mailto:security@libgd.org).
+Please report unacceptable behavior according to the [enforcement section](CODE_OF_CONDUCT.md#enforcement).
 
 ### Repositories
 
