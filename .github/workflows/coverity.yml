@@ -10,7 +10,8 @@ on:
   push:
     branches: [master, GD-*]
 
-permissions: read-all
+permissions: 
+  contents: read
 
 jobs:
   coverity:
