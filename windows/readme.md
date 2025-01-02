@@ -1,8 +1,8 @@
 # Building on Windows with Visual Studio 2015
 
-⚠️
-Due to lack of maintenance, building libgd this way is deprecated.
-Use CMake or autotools instead.
+> [!WARNING]
+> Due to lack of maintenance, building libgd this way is deprecated.
+> Use CMake or autotools instead.
 
 * Get the required dependencies from
   http://windows.php.net/downloads/php-sdk/deps/vc14/ and
