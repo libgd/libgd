@@ -9,7 +9,8 @@ on:
   pull_request:
     types: [opened]
 
-permissions: read-all
+permissions: 
+  contents: read
 
 jobs:
   shellcheck:
