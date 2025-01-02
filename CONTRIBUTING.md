@@ -30,10 +30,8 @@ Please report unacceptable behavior according to the [enforcement section](CODE_
 
 * [The main libGD repository](https://github.com/libgd/libgd)
   for the library and utilities released as part of libgd
-* [The libgd website repository](https://github.com/libgd/website)
+* [The libgd website repository](https://github.com/libgd/libgd.github.io)
   for the libgd.org website
-* [The Pango support for libgd repository](https://github.com/libgd/gd-pango)
-  for the for libGD Pango support
 
 
 ## How Can I Contribute?
