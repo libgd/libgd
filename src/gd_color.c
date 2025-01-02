@@ -7,6 +7,10 @@
 #include <math.h>
 
 /**
+ * Checks whether two given colors match according to a given threshold in
+ * range [0..100]. dist is the euclidian distance of the color channels in
+ * range [0..2].
+ *
  * The threshold method works relatively well but it can be improved.
  * Maybe L*a*b* and Delta-E will give better results (and a better
  * granularity).
