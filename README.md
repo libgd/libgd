@@ -9,14 +9,13 @@ programmers.
 GD is written in C, and "wrappers" are available for Perl, PHP and other
 languages. GD can read and write many different image formats. GD is commonly
 used to generate charts, graphics, thumbnails, and most anything else, on the
-fly.
+fly. It is also useful to convert images to another format.
 
 The most common applications of GD involve website development, although it
 can be used with any standalone application!
 
 The library was originally developed by Thomas Boutell and is now maintained
-by many contributors (see the [CONTRIBUTORS](CONTRIBUTORS) file) under the
-umbrella of PHP.net.
+by many contributors (see the [CONTRIBUTORS](CONTRIBUTORS) file).
 
 If you like to contribute, report bugs, see [how to contribute document](CONTRIBUTING.md)
 
@@ -39,8 +38,8 @@ GD has support for:
   * Does not include [JPEG 2000](https://en.wikipedia.org/wiki/JPEG_2000)
 * [PNG](https://en.wikipedia.org/wiki/Portable_Network_Graphics) via [libpng](http://www.libpng.org/)
 * [AVIF](https://en.wikipedia.org/wiki/AV1#AV1_Image_File_Format_(AVIF)) via [libavif](https://github.com/AOMediaCodec/libavif)
-  * This includes [AVIF](https://en.wikipedia.org/wiki/AV1#AV1_Image_File_Format_%28AVIF%29) read support if your system's `libheif` has AV1 decoding.
 * [HEIF](https://en.wikipedia.org/wiki/High_Efficiency_Image_File_Format) via [libheif](https://github.com/strukturag/libheif/)
+  * This includes [AVIF](https://en.wikipedia.org/wiki/AV1#AV1_Image_File_Format_%28AVIF%29) read support if your system's `libheif` has AV1 decoding.
 * [TIFF](https://en.wikipedia.org/wiki/Tagged_Image_File_Format) via [libtiff](http://www.libtiff.org/)
 * [BMP](https://en.wikipedia.org/wiki/BMP_file_format) (builtin)
 * [GIF](https://en.wikipedia.org/wiki/GIF) (builtin)
@@ -60,19 +59,20 @@ and disabled by default:
 
 ## Platforms supported
 
-CI means whether we have an automatic CI for this platform. If someone has CI for these platforms or any other platforms not listed here and would like to add them to our automatic CI, please get in touch with us, it will much appreciated!
+CI means whether we have an automatic CI for this platform. If someone has CI for these platforms or any other platforms not listed here and would like to add them to our automatic CI, please get in touch with us, it will be much appreciated!
 
-| Platform  | Support | CI |
-| ------------- | ------------- |----|
-| Linux x64  | &#10003;  | &#10003; |
-| Linux x86  | &#10003;  | &#10003; |
-| Linux ARM64  | &#10003; | &#10003; |
-| Windows x86  | &#10003;  | &#10003; |
-| Windows x64  | &#10003;  | &#10003; |
-| Windows arm64  | &#10003;  | x |
-| macOS x64  | &#10003;  | &#10003; |
-| macOS M1  | &#10003;  | x |
-| S390  | &#10003;  | x |
+| Platform      | Support | CI |
+|---------------|---------|----|
+| Linux x64     | ✓       | ✓ |
+| Linux x86     | ✓       | ✗ |
+| Linux ARM64   | ✓       | ✗ |
+| Windows x86   | ✓       | ✓ |
+| Windows x64   | ✓       | ✓ |
+| Windows arm64 | ✓       | ✗ |
+| macOS arm64   | ✓       | ✓ |
+| macOS x64     | ✓       | ✗ |
+| macOS M1      | ✓       | ✗ |
+| S390          | ✓       | ✗ |
 
 It is also known to work on almost all variations of *BSD, Solaris, etc. We don't have CI nor environment to test them. However many progamming languages binding do test libgd on these platforms.
 
