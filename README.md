@@ -62,7 +62,7 @@ and disabled by default:
 CI means whether we have an automatic CI for this platform. If someone has CI for these platforms or any other platforms not listed here and would like to add them to our automatic CI, please get in touch with us, it will be much appreciated!
 
 | Platform      | Support | CI |
-|---------------|---------|----|
+|---------------|:-------:|:--:|
 | Linux x64     | ✓       | ✓ |
 | Linux x86     | ✓       | ✗ |
 | Linux ARM64   | ✓       | ✗ |
