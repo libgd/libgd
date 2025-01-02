@@ -1,5 +1,9 @@
 # MSYS Fallback Makefile
 
+> [!WARNING]
+> Due to lack of maintenance, building libgd this way is deprecated.
+> Use CMake or autotools instead.
+
 This is a simple, straightforward Makefile for building LibGD with
 MinGW on MSYS (or possibly Cygwin).  It is here for anyone who doesn't
 want to deal with autotools or CMake on Windows or who can't get
