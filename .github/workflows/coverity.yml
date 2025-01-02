@@ -10,6 +10,9 @@ on:
   push:
     branches: [master, GD-*]
 
+permissions: 
+  contents: read
+
 jobs:
   coverity:
     strategy:
