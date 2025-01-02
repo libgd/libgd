@@ -8,7 +8,8 @@ on:
 
   workflow_dispatch:
 
-permissions: read-all
+permissions: 
+  contents: read
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
