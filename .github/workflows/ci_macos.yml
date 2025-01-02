@@ -6,7 +6,8 @@ on:
   pull_request:
     branches: [master, GD-*]
 
-permissions: read-all
+permissions: 
+  contents: read
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
