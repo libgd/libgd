@@ -1,3 +1,7 @@
+# The main CI workflow which runs the individual workflows
+# and gathers their results in the workflow overview.
+# See <https://docs.github.com/en/actions/sharing-automations/reusing-workflows>
+
 name: CI build and test
 
 on:
