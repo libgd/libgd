@@ -1,0 +1,21 @@
+# The main CI workflow which runs the individual workflows
+# and gathers their results in the workflow overview.
+# See <https://docs.github.com/en/actions/sharing-automations/reusing-workflows>
+
+name: CI build and test
+
+on:
+  push:
+    branches: [master, GD-*]
+  pull_request:
+    branches: [master, GD-*]
+
+jobs:
+  ubuntu:
+    uses: ./.github/workflows/ci_ubuntu.yml
+  windows:
+    uses: ./.github/workflows/ci_windows.yml
+  macos:
+    uses: ./.github/workflows/ci_macos.yml
+  mingw:
+    uses: ./.github/workflows/ci_windows_mingw.yml
