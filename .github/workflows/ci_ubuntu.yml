@@ -26,8 +26,8 @@ jobs:
           - {
               name: "Ubuntu Intel Clang",
               os: ubuntu-latest,
-              cc: "clang-12",
-              cxx: "clang-cpp-12"
+              cc: "clang",
+              cxx: "clang"
             }
 
     name: ${{ matrix.config.name }}
@@ -52,7 +52,7 @@ jobs:
       - name: install dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
-        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang-12 lld gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libavif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf ninja-build nasm meson
+        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang lld gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libfreetype-dev libavif-dev libavifile-0.7-dev libxpm-dev libraqm-dev dh-autoreconf ninja-build nasm meson
 
       - name: Debug CC Env
         env:
