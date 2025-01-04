@@ -1840,15 +1840,8 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 	/* 0 && 90 degrees multiple rotation, 0 rotation simply clones the return image and convert it
 	   to truecolor, as we must return truecolor image. */
 	switch (angle_rounded) {
-		case    0: {
-			gdImagePtr dst = gdImageClone(src);
-
-			if (dst == NULL) {
-				return NULL;
-			}
-			if (src_cloned) gdImageDestroy(src_tc);
-			return dst;
-		}
+		case    0:
+			return src_cloned ? src_tc : gdImageClone(src);
 
 		case -27000:
 		case   9000:
@@ -1873,16 +1866,15 @@ BGD_DECLARE(gdImagePtr) gdImageRotateInterpolated(const gdImagePtr src, const fl
 
 	switch (src->interpolation_id) {
 		case GD_NEAREST_NEIGHBOUR: {
-			gdImagePtr res = gdImageRotateNearestNeighbour(src, angle, bgcolor);
+			gdImagePtr res = gdImageRotateNearestNeighbour(src_tc, angle, bgcolor);
 			if (src_cloned) gdImageDestroy(src_tc);
 			return res;
-			break;
 		}
 
 		case GD_BILINEAR_FIXED:
 		case GD_BICUBIC_FIXED:
 		default: {
-			gdImagePtr res = gdImageRotateGeneric(src, angle, bgcolor);
+			gdImagePtr res = gdImageRotateGeneric(src_tc, angle, bgcolor);
 			if (src_cloned) gdImageDestroy(src_tc);
 			return res;
 		}
