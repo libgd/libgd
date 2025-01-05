@@ -12,7 +12,7 @@ m4_define([gd_REVISION],esyscmd(gv(RELEASE)))dnl
 m4_define([gd_EXTRA],esyscmd(gv(EXTRA)))dnl
 m4_define([gd_PKG_VERSION],[gd_MAJOR.gd_MINOR.gd_REVISION]gd_EXTRA)]dnl
 
-AC_INIT([GD], gd_PKG_VERSION, [https://github.com/libgd/libgd/issues], [libgd], [https://lib.gd])
+AC_INIT([GD], gd_PKG_VERSION, [https://github.com/libgd/libgd/issues], [libgd], [https://libgd.org/])
 AC_CONFIG_SRCDIR([src/gd.c])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
