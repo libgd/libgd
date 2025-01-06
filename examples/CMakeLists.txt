@@ -38,9 +38,9 @@ ENDFOREACH(test_name)
 # Add libraries *after* we've called add_executable on all the tests.
 
 if (PNG_FOUND AND JPEG_FOUND)
-	if (UNIX)
+	if (NEED_LINKING_AGAINST_LIBM)
 		target_link_libraries(copyrotated m)
-	endif (UNIX)
+	endif(PNG_FOUND AND JPEG_FOUND)
 endif(PNG_FOUND AND JPEG_FOUND)
 
 if (WIN32 AND NOT MINGW AND NOT MSYS)
