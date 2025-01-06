@@ -116,10 +116,6 @@ else (USE_EXT_GD)
 	include(AC_HEADER_STDC)
 	include(CheckPrototypeExists)
 
-	if (ENABLE_CPP)
-		SET(ENABLE_CPP_API 1)
-	endif (ENABLE_CPP)
-
 	if (ENABLE_GD_FORMATS)
 		FIND_PACKAGE(ZLIB REQUIRED)
 	endif (ENABLE_GD_FORMATS)
