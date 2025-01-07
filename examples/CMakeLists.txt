@@ -37,12 +37,6 @@ ENDFOREACH(test_name)
 
 # Add libraries *after* we've called add_executable on all the tests.
 
-if (PNG_FOUND AND JPEG_FOUND)
-	if (UNIX)
-		target_link_libraries(copyrotated m)
-	endif (UNIX)
-endif(PNG_FOUND AND JPEG_FOUND)
-
 if (WIN32 AND NOT MINGW AND NOT MSYS)
 	add_executable(windows WIN32 "windows.c")
 	target_link_libraries (windows ${GD_LINK_LIB})

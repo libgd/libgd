@@ -45,9 +45,6 @@
 /* Define if you have jpeg */
 #cmakedefine HAVE_LIBJPEG
 
-/* Define to 1 if you have the `m' library (-lm). */
-#cmakedefine HAVE_LIBM
-
 /* Define if you have png */
 #cmakedefine HAVE_LIBPNG
 
