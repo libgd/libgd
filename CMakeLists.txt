@@ -67,7 +67,7 @@ SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
 
 include(CheckFunctionExists)
 
-# detect whether we need to link against libm
+# Detect whether we need to link against libm.
 if(NOT SIN_FUNCTION_EXISTS AND NOT NEED_LINKING_AGAINST_LIBM)
 	CHECK_FUNCTION_EXISTS(sin SIN_FUNCTION_EXISTS)
 	if(NOT SIN_FUNCTION_EXISTS)
