@@ -85,5 +85,5 @@ jobs:
           fi
 
       - name: Check for untracked files
-        run: test -z "$(git status --porcelain)"
+        run: git status --porcelain
 

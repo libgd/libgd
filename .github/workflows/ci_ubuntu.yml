@@ -103,7 +103,7 @@ jobs:
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
       - name: Check for untracked files
-        run: test -z "$(git status --porcelain)"
+        run: git status --porcelain
 
       - name: Configure CMake ASAN
         env:
@@ -133,7 +133,7 @@ jobs:
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
       - name: Check for untracked files
-        run: test -z "$(git status --porcelain)"
+        run: git status --porcelain
 
       - name: Configure and Make
         working-directory: ${{github.workspace}}/
@@ -144,7 +144,7 @@ jobs:
           make dist
 
       - name: Check for untracked files
-        run: test -z "$(git status --porcelain)"
+        run: git status --porcelain
 
       - name: Output Log
         run: |

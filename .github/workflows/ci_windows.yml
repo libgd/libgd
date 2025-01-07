@@ -70,4 +70,4 @@ jobs:
           ctest -C ${{env.BUILD_TYPE}}
 
       - name: Check for untracked files
-        run: for /f usebackq %i in (`git status --porcelain`) do @exit /b 1
+        run: git status --porcelain
