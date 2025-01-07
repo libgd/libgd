@@ -22,7 +22,7 @@ int main() {
 	gdImagePtr imFromPng = NULL, imFromAvif = NULL;
 	void *avifImDataPtr = NULL;
 	int size;
-	char pngFilename[100], avifFilename[100], *pngFilePath;
+	char pngFilename[100];
 	char errMsg[4096];
 
 	static const char * const filenames[] = {"baboon", "dice_with_alpha", "plum_blossom_12bit", "sunset"};
