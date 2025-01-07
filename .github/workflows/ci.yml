@@ -10,6 +10,9 @@ on:
   pull_request:
     branches: [master, GD-*]
 
+permissions: 
+  contents: read
+
 jobs:
   ubuntu:
     uses: ./.github/workflows/ci_ubuntu.yml
