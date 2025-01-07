@@ -1,7 +1,6 @@
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
 #endif
-#ifdef ENABLE_CPP_API
 /* *****************************************************************************
 ** Initial file written and documented by:
 ** Kevin Shepherd <kshepherd@php.net> December 2007
@@ -16,11 +15,6 @@
 	Note that half of the below methods are trivial stubs,
 	as an input stream has no need of output methods, and vice-versa.
 */
-#ifdef __cplusplus
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "gd_io_stream.h"
 
@@ -144,6 +138,3 @@ void ostreamIOCtx::FreeCtx(gdIOCtxPtr ctx)
 	{
 	delete (ostreamIOCtx * )ctx;
 	}
-
-#endif /* __cplusplus */
-#endif //ENABLE_CPP_API

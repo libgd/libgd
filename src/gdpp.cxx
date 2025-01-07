@@ -2,8 +2,6 @@
 #	include "config.h"
 #endif
 
-#ifdef ENABLE_CPP_API
-
 /* *****************************************************************************
 ** Initial file written and documented by:
 ** Kevin Shepherd <kshepherd@php.net> December 2007
@@ -17,7 +15,6 @@
 	Notably includes the methods which determine the image file
 	format of a file before reading it into memory.
 */
-#ifdef __cplusplus
 #include "gdpp.h"
 
 namespace GD
@@ -263,6 +260,3 @@ std::istream & operator>> (std::istream & in, GD::Image & img)
 	img.CreateFrom(in);
 	return in;
 	}
-
-#endif /* __cplusplus */
-#endif //ENABLE_CPP_API
