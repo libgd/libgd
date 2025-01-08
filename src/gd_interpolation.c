@@ -723,14 +723,6 @@ static int getPixelInterpolated(gdImagePtr im, const double x, const double y, c
 		return getPixelInterpolateWeight(im, x, y, bgColor);
 	}
 
-	if (im->interpolation_id == GD_NEAREST_NEIGHBOUR) {
-		if (im->trueColor == 1) {
-			return getPixelOverflowTC(im, xi, yi, bgColor);
-		} else {
-			return getPixelOverflowPalette(im, xi, yi, bgColor);
-		}
-	}
-
 	if (im->interpolation) {
 		for (i=0; i<4; i++) {
 			kernel_x[i] = (double) im->interpolation((double)(xi+i-1-x), 1.0);
