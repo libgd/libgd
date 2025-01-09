@@ -1,9 +1,11 @@
+/*
+ * Test that gdImageRotateInterpolated() never converts the src to palette.
+ */
+
 #include "gd.h"
 #include "gdtest.h"
 
-#define width 20
-
-int main()
+void rotate(int method, float angle)
 {
     gdImagePtr src, dst;
     int black;
@@ -12,11 +14,25 @@ int main()
     black = gdImageColorAllocate(src, 0, 0, 0);
 
     gdTestAssert(gdImageTrueColor(src) == 0);
-    dst = gdImageRotateInterpolated(src, 30.0, black);
+    gdImageSetInterpolationMethod(src, method);
+    dst = gdImageRotateInterpolated(src, angle, black);
     gdTestAssert(dst != NULL);
     gdTestAssert(gdImageTrueColor(src) == 0);
+    gdTestAssert(dst != src);
 
 	gdImageDestroy(src);
 	gdImageDestroy(dst);
-	return gdNumFailures();
+}
+
+int main()
+{
+    rotate(GD_DEFAULT, 30.0);
+    rotate(GD_NEAREST_NEIGHBOUR, 30.0);
+    rotate(GD_BILINEAR_FIXED, 30.0);
+    rotate(GD_BICUBIC_FIXED, 30.0);
+    rotate(GD_DEFAULT, 0.0);
+    rotate(GD_DEFAULT, 90.0);
+    rotate(GD_DEFAULT, 180.0);
+    rotate(GD_DEFAULT, 270.0);
+    return gdNumFailures();
 }
