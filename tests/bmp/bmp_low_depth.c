@@ -1,12 +1,22 @@
+/**
+ * Test transparent support for low-depth BMP images.
+ * 
+ * Images with only two colors are saved as 1bbp image without compression,
+ * but as 4bpp image if compression is requested.
+ * 
+ * Images with four to 15 colors are saved as 4bpp image, regardless whether
+ * compression is requested or not.
+ */
+
 #include "gd.h"
 #include "gdtest.h"
 
-int get_bpp(unsigned char *data)
+static int get_bpp(unsigned char *data)
 {
     return data[0x1d] << 8 | data[0x1c];
 }
 
-int get_comp(unsigned char *data)
+static int get_comp(unsigned char *data)
 {
     return data[0x21] << 24 | data[0x20] << 16 | data[0x1f] << 8 | data[0x1e];
 }

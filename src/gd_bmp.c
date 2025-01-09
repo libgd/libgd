@@ -91,7 +91,7 @@ BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression)
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
 	if (!_gdImageBmpCtx(im, out, compression))
-	rv = gdDPExtractData(out, size);
+		rv = gdDPExtractData(out, size);
 	else
 		rv = NULL;
 	out->gd_free(out);
