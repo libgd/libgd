@@ -5,7 +5,7 @@
 #include "gd.h"
 #include "gdtest.h"
 
-void rotate(int method, float angle)
+static void rotate(int method, float angle)
 {
     gdImagePtr src = NULL, dst = NULL;
     int black;
