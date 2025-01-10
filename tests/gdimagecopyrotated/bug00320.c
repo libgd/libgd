@@ -7,21 +7,34 @@
 
 void rotate(int method, float angle)
 {
-    gdImagePtr src, dst;
+    gdImagePtr src = NULL, dst = NULL;
     int black;
 
     src = gdImageCreate(10, 10);
+    if (!gdTestAssert(src != NULL)) {
+        goto out;
+    }
     black = gdImageColorAllocate(src, 0, 0, 0);
 
     gdTestAssert(gdImageTrueColor(src) == 0);
     gdImageSetInterpolationMethod(src, method);
     dst = gdImageRotateInterpolated(src, angle, black);
-    gdTestAssert(dst != NULL);
+    if (!gdTestAssert(dst != NULL)) {
+        goto out;
+    }
     gdTestAssert(gdImageTrueColor(src) == 0);
-    gdTestAssert(dst != src);
+    if (!gdTestAssert(dst != src)) {
+        // original image had been returned
+        dst = NULL;
+    }
 
-	gdImageDestroy(src);
-	gdImageDestroy(dst);
+out:
+    if (dst != NULL) {
+        gdImageDestroy(src);
+    }
+    if (src != NULL) {
+        gdImageDestroy(dst);
+    }
 }
 
 int main()
