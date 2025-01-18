@@ -30,15 +30,15 @@ jobs:
               cxx: "clang"
             }
           - {
-              name: "Ubuntu 20.04 Intel GCC",
-              os: ubuntu-20.04,
+              name: "Ubuntu 22.04 Intel GCC",
+              os: ubuntu-22.04,
               cc: "gcc",
               cxx: "g++",
               cflags: "-msse2"
             }
           - {
-              name: "Ubuntu 20.04 Intel Clang",
-              os: ubuntu-20.04,
+              name: "Ubuntu 22.04 Intel Clang",
+              os: ubuntu-22.04,
               cc: "clang",
               cxx: "clang"
             }
