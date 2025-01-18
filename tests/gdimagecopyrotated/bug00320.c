@@ -29,10 +29,10 @@ static void rotate(int method, float angle)
     }
 
 out:
-    if (dst != NULL) {
+    if (src != NULL) {
         gdImageDestroy(src);
     }
-    if (src != NULL) {
+    if (dst != NULL) {
         gdImageDestroy(dst);
     }
 }
