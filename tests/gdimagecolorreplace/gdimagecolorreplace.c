@@ -119,7 +119,7 @@ static void run_tests(gdImagePtr im, int *error)
 	gdImageSetPixel(im, 3, 2, seashell)
 
 	INITIALIZE_IMAGE();
-	n = gdImageColorReplaceThreshold(im, white, yellow, 2.0);
+	n = gdImageColorReplaceThreshold(im, white, yellow, 10.0);
 	CHECK_VALUE(n, 9);
 	CHECK_PIXEL(0, 0, black);
 	CHECK_PIXEL(1, 1, yellow);
