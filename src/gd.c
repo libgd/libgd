@@ -1299,6 +1299,9 @@ BGD_DECLARE(void) gdImageSetPixel (gdImagePtr im, int x, int y, int color)
 					case gdEffectMultiply :
 						im->tpixels[y][x] = gdLayerMultiply(im->tpixels[y][x], color);
 						break;
+					case gdEffectDiff :
+						im->tpixels[y][x] = gdLayerDiff(im->tpixels[y][x], color);
+						break;
 				}
 			} else {
 				im->pixels[y][x] = color;
@@ -4070,6 +4073,7 @@ BGD_DECLARE(int) gdImageCompare (gdImagePtr im1, gdImagePtr im2)
  *   - <gdImageAlphaBlending>
  *   - <gdLayerOverlay>
  *   - <gdLayerMultiply>
+ *   - <gdLayerDiff>
  */
 BGD_DECLARE(int) gdAlphaBlend (int dst, int src)
 {
@@ -4131,6 +4135,7 @@ static int gdAlphaOverlayColor (int src, int dst, int max );
  *   - <gdImageAlphaBlending>
  *   - <gdAlphaBlend>
  *   - <gdLayerMultiply>
+ *   - <gdLayerDiff>
  */
 BGD_DECLARE(int) gdLayerOverlay (int dst, int src)
 {
@@ -4170,6 +4175,7 @@ static int gdAlphaOverlayColor (int src, int dst, int max )
  *   - <gdImageAlphaBlending>
  *   - <gdAlphaBlend>
  *   - <gdLayerOverlay>
+ *   - <gdLayerDiff>
  */
 BGD_DECLARE(int) gdLayerMultiply (int dst, int src)
 {
@@ -4191,6 +4197,45 @@ BGD_DECLARE(int) gdLayerMultiply (int dst, int src)
 			 ((g1*g2/gdGreenMax) << 8) +
 			 ((b1*b2/gdBlueMax))
 		);
+}
+
+/**
+ * Function: gdLayerDiff
+ *
+ * Difference of two colors; commutative operation.
+ *
+ * Parameters:
+ *   dst - The first color.
+ *   src - The second color.
+ *
+ * See also:
+ *   - <gdImageAlphaBlending>
+ *   - <gdAlphaBlend>
+ *   - <gdLayerMultiply>
+ *   - <gdLayerOverlay>
+ */
+BGD_DECLARE(int) gdLayerDiff (int dst, int src)
+{
+	int r1,b1,g1,a1,r2,b2,g2,a2;
+	int diff_a,diff_r,diff_g,diff_b;
+
+	a1 = gdTrueColorGetAlpha(dst);
+	a2 = gdTrueColorGetAlpha(src);
+	diff_a = abs(a1 - a2);
+
+	r1 = gdTrueColorGetRed(dst);
+	r2 = gdTrueColorGetRed(src);
+	diff_r = abs(r1 - r2);
+
+	g1 = gdTrueColorGetGreen(dst);
+	g2 = gdTrueColorGetGreen(src);
+	diff_g = abs(g1 - g2);
+
+	b1 = gdTrueColorGetBlue(dst);
+	b2 = gdTrueColorGetBlue(src);
+	diff_b = abs(b1 - b2);
+
+	return gdTrueColorAlpha(diff_r, diff_g, diff_b, diff_a);
 }
 
 /**

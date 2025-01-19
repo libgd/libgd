@@ -2,6 +2,7 @@ LIST(APPEND TESTS_FILES
 	bug00186
 	gdeffectoverlay
 	gdeffectmultiply
+	gdeffectdiff
 )
 
 IF(PNG_FOUND)
