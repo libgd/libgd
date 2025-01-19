@@ -36,12 +36,6 @@ jobs:
               cxx: "g++",
               cflags: "-msse2"
             }
-          - {
-              name: "Ubuntu 22.04 Intel Clang",
-              os: ubuntu-22.04,
-              cc: "clang",
-              cxx: "clang"
-            }
 
     name: ${{ matrix.config.name }}
     defaults:
