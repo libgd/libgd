@@ -17,17 +17,24 @@ jobs:
       matrix:
         config:
           - {
-              name: "Ubuntu Intel GCC",
+              name: "Ubuntu 24.04 Intel GCC",
               os: ubuntu-latest,
               cc: "gcc",
               cxx: "g++",
               cflags: "-msse2"
             }
           - {
-              name: "Ubuntu Intel Clang",
+              name: "Ubuntu 24.04 Intel Clang",
               os: ubuntu-latest,
               cc: "clang",
               cxx: "clang"
+            }
+          - {
+              name: "Ubuntu 22.04 Intel GCC",
+              os: ubuntu-22.04,
+              cc: "gcc",
+              cxx: "g++",
+              cflags: "-msse2"
             }
 
     name: ${{ matrix.config.name }}
