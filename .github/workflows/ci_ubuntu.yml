@@ -36,6 +36,13 @@ jobs:
               cxx: "g++",
               cflags: "-msse2"
             }
+          - {
+              name: "Ubuntu 22.04 ARM64 GCC",
+              os: ubuntu-22.04-arm,
+              cc: "gcc",
+              cxx: "g++",
+              cflags: "-msse2"
+            }
 
     name: ${{ matrix.config.name }}
     defaults:
