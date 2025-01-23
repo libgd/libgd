@@ -41,7 +41,6 @@ jobs:
               os: ubuntu-22.04-arm,
               cc: "gcc",
               cxx: "g++",
-              cflags: ""
             }
 
     name: ${{ matrix.config.name }}
