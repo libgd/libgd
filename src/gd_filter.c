@@ -842,6 +842,8 @@ gaussian_coeffs(int radius, double sigmaArg) {
     double sum = 0;
     int x, n, count;
 
+    assert(radius >= 1);
+
     count = 2*radius + 1;
 
     result = gdMalloc(sizeof(double) * count);
