@@ -3,22 +3,22 @@
 LibGD uses github actions for CI.
 
 The platforms used are:
-- Ubuntu 20.04LTS, Intel
-    - https://github.com/actions/virtual-environments/blob/main/images/win/Windows2019-Readme.md
+- Ubuntu 24.04LTS, Intel
+    - https://github.com/actions/runner-images/blob/HEAD/images/ubuntu/Ubuntu2404-Readme.md
     - GCC (x64)
     - CLang (x64)
-- Ubuntu 20.04LTS, ARM (graviton2)
+- Ubuntu 22.04LTS, ARM (graviton2)
     - AWS Ubuntu Image
     - GCC (64bit)
     - CLang (64bit)
 - Windows Server 2019, x64
-    - https://github.com/actions/virtual-environments/blob/main/images/win/Windows2019-Readme.md
+    - https://github.com/actions/virtual-environments/blob/HEAD/images/windows/Windows2019-Readme.md
     - Visual Studio Enterprise 2019 (x64, x86 and arm64 cross compiliations)
     - MingW GCC (x86, x64 and ucrt64)
-- macOS 11, Intel
-    - https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
+- macOS 14, Intel
+    - https://github.com/actions/virtual-environments/blob/HEAD/images/macos/macos-14-Readme.md
     - GCC x64
-- macOS 11, M1 in place but we don't manage to get M1 runners
+- macOS 14, M1 in place but we don't manage to get M1 runners
 
 The CI configurations and script can be found in
 
