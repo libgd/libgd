@@ -3,7 +3,8 @@ libgd_test_programs += \
 	bmp/bug00275 \
 	bmp/bug00450 \
 	bmp/bmp_im2im \
-	bmp/bug00276
+	bmp/bug00276 \
+	bmp/bmp_low_depth
 
 EXTRA_DIST += \
 	bmp/bug00450.bmp \
