@@ -39,7 +39,7 @@ jobs:
                libwebp-dev
                libx265-dev
                libxpm-dev
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Configure gd
       run: cmake
                -DENABLE_CPP=1
