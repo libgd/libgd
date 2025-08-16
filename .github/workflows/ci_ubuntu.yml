@@ -114,6 +114,9 @@ jobs:
           echo "LSAN_OPTIONS=suppressions=${{ github.workspace }}/suppressions/lsan.supp" >> $GITHUB_ENV
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
+      - name: Check for untracked files
+        run: git status --porcelain
+
       - name: Configure CMake ASAN
         env:
           CC: ${{ matrix.config.cc }}
@@ -141,6 +144,9 @@ jobs:
           echo "TMP=${{github.temp}}" >> $GITHUB_ENV
           CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${{env.BUILD_TYPE}}
 
+      - name: Check for untracked files
+        run: git status --porcelain
+
       - name: Configure and Make
         working-directory: ${{github.workspace}}/
         run: |
@@ -148,6 +154,9 @@ jobs:
           ./configure --with-png --with-jpeg --with-ramq --with-heif --with-xpm --with-tiff --with-webp --with-liq --enable-gd --enable-gd-formats --with-zlib
           make
           make dist
+
+      - name: Check for untracked files
+        run: git status --porcelain
 
       - name: Output Log
         run: |

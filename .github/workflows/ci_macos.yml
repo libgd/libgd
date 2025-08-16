@@ -83,3 +83,7 @@ jobs:
           if test -f "/home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log"; then
               cat /home/runner/work/libgd/libgd/build/Testing/Temporary/LastTest.log
           fi
+
+      - name: Check for untracked files
+        run: git status --porcelain
+
