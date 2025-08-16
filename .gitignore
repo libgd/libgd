@@ -24,6 +24,7 @@ CTestTestfile.cmake
 libimagequant
 libimagequant-prefix
 src/deps.mk
+src/entities.json
 deps
 Release_GD
 

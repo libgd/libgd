@@ -21,6 +21,7 @@
 #include "gd.h"
 #include "gdhelpers.h"
 #include "gd_intern.h"
+#include "gd_errors.h"
 
 /* 2.0.10: WIN32, not MSWIN32 */
 #if !defined(_WIN32) && !defined(_WIN32_WCE)
@@ -250,13 +251,6 @@ tweencolorkey_t;
 #include "jisx0208.h"
 #endif
 
-static int comp_entities(const void *e1, const void *e2)
-{
-	struct entities_s *en1 = (struct entities_s *) e1;
-	struct entities_s *en2 = (struct entities_s *) e2;
-	return strcmp(en1->name, en2->name);
-}
-
 extern int any2eucjp (char *, const char *, unsigned int);
 
 /* Persistent font cache until explicitly cleared */
@@ -267,167 +261,183 @@ static gdMutexDeclare (gdFontCacheMutex);
 static gdCache_head_t *fontCache;
 static FT_Library library;
 
-#define Tcl_UniChar int
-#define TCL_UTF_MAX 3
-static int
-gdTcl_UtfToUniChar (const char *str, Tcl_UniChar * chPtr)
-/* str is the UTF8 next character pointer */
-/* chPtr is the int for the result */
+/*
+ * static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr)
+ * str is the UTF8 next character pointer, or a pointer to a string containing one of
+ * the 4 different kinds of html entity notation.
+ * chPtr is the int for the result.
+ * Returns the number of bytes read from |str|.
+ * function falls through and returns 0 if no valid entity detected, leaving chPtr alone.
+ * HTML4.0/5.0 entities in hexadecimal form (e.g. &#x00021; and &#X00021;),
+ * in decimal form (e.g. &#33;),  or in string form (e.g. &excl;).
+ */
+
+static int gd_Entity_To_Unicode(const char *str, uint32_t *chPtr)
 {
-	int byte;
-	char entity_name_buf[ENTITY_NAME_LENGTH_MAX+1];
-	char *p;
-	struct entities_s key, *res;
+	char entity_name_buf[ENTITY_NAME_LENGTH_MAX];
+	uint32_t n = 0;
+	uint32_t i = 1;
+	uint32_t b0 = *(uint8_t *)str;
+	const uint8_t first_digit = '0';
+	const uint8_t bound_low_digit = '/';
+	const uint8_t bound_hi_digit = ':';
+	const uint8_t first_ucase = 'A';
+	const uint8_t bound_low_ucase = '@';
+	const uint8_t bound_hi_ucase = 'G';
+	const uint8_t first_lcase = 'a';
+	const uint8_t bound_low_lcase = '`';
+	const uint8_t bound_hi_lcase = 'g';
+	const uint8_t prefix0 = '&';
+	const uint8_t prefix1 = '#';
+	const uint8_t prefix2 = 'x';
+	const uint8_t prefix3 = 'X';
+	const uint8_t suffix = ';';
+	const uint8_t ten = 10;
 
-	/* HTML4.0 entities in decimal form, e.g. &#197; */
-	/*           or in hexadecimal form, e.g. &#x6C34; */
-	byte = *((unsigned char *) str);
-	if (byte == '&') {
-		int i, n = 0;
+	if (b0 != prefix0)
+		return 0;
 
-		byte = *((unsigned char *) (str + 1));
-		if (byte == '#') {
-			byte = *((unsigned char *) (str + 2));
-			if (byte == 'x' || byte == 'X') {
-				for (i = 3; i < 8; i++) {
-					byte = *((unsigned char *) (str + i));
-					if (byte >= 'A' && byte <= 'F')
-						byte = byte - 'A' + 10;
-					else if (byte >= 'a' && byte <= 'f')
-						byte = byte - 'a' + 10;
-					else if (byte >= '0' && byte <= '9')
-						byte = byte - '0';
-					else
-						break;
-					n = (n * 16) + byte;
-				}
-			} else {
-				for (i = 2; i < 8; i++) {
-					byte = *((unsigned char *) (str + i));
-					if (byte >= '0' && byte <= '9')
-						n = (n * 10) + (byte - '0');
-					else
-						break;
-				}
+	b0 = (uint8_t)str[i++];
+	if (b0 == prefix1) {
+		// hex or decimal
+		b0 = (uint8_t)str[i++];
+		if (b0 == prefix2 || b0 == prefix3) {
+			// is hex
+			b0 = (uint8_t)str[i++];
+			while (i < ENTITY_HEX_LENGTH_MAX) {
+				if (b0 > bound_low_digit && b0 < bound_hi_digit)
+					b0 = b0 - first_digit;
+				else if (b0 > bound_low_ucase && b0 < bound_hi_ucase)
+					b0 = b0 - first_ucase + ten;
+				else if (b0 > bound_low_lcase && b0 < bound_hi_lcase)
+					b0 = b0 - first_lcase + ten;
+				else
+					break;
+				n = n * 16 + b0;
+				b0 = (uint8_t)str[i++];
 			}
-			if (byte == ';') {
-				*chPtr = (Tcl_UniChar) n;
-				return ++i;
+			if (b0 == suffix) {
+				*chPtr = n;
+				chPtr[1] = 0;
+				return i;
 			}
 		} else {
-			key.name = p = entity_name_buf;
-			for (i = 1; i <= 1 + ENTITY_NAME_LENGTH_MAX; i++) {
-				byte = *((unsigned char *) (str + i));
-				if (byte == '\0')
+			// is dec
+			while (i < ENTITY_DEC_LENGTH_MAX) {
+				if (b0 > bound_low_digit && b0 < bound_hi_digit)
+					n = n * ten + b0 - first_digit;
+				else
 					break;
-				if (byte == ';') {
-					*p++ = '\0';
-					res = bsearch(&key, entities, NR_OF_ENTITIES,
-					              sizeof(entities[0]), *comp_entities);
-					if (res) {
-						*chPtr = (Tcl_UniChar) res->value;
-						return ++i;
-					}
-					break;
-				}
-				*p++ = byte;
+
+				b0 = (uint8_t)str[i++];
+			}
+			if (b0 == suffix) {
+				*chPtr = n;
+				chPtr[1] = 0;
+				return i;
+			}
+		}
+	} else {
+		// string format alphanumeric
+		// copy str into buffer untill '\0' or ;
+		while (i < ENTITY_NAME_LENGTH_MAX) {
+			// not an entity
+			if (b0 == '\0')
+				return 0;
+			// have complete copy
+			if (b0 == suffix) {
+				entity_name_buf[n] = '\0';
+				break;
+			}
+			entity_name_buf[n++] = b0;
+			b0 = (uint8_t)str[i++];
+		}
+		// not an entity, too long
+		if (b0 != suffix)
+			return 0;
+		for (n = 0; n < NR_OF_ENTITIES; n++) {
+			if (strcmp(gd_entities[n].name, entity_name_buf) == 0) {
+				chPtr[0] = gd_entities[n].codepoint1;
+				chPtr[1] = gd_entities[n].codepoint2;
+				return i;
 			}
 		}
 	}
+	// no match
+	return 0;
+}
 
-	/*
-	 * Unroll 1 to 3 byte UTF-8 sequences, use loop to handle longer ones.
-	 */
-
-	byte = *((unsigned char *) str);
 #ifdef JISX0208
-	if (0xA1 <= byte && byte <= 0xFE) {
-		int ku, ten;
 
+static int gd_JISx0208_To_Unicode(const char *str, uint32_t *chPtr)
+{
+	int byte = *(uint8_t *)str;
+	int ku, ten;
+	if (0xA1 <= byte && byte <= 0xFE) {
 		ku = (byte & 0x7F) - 0x20;
 		ten = (str[1] & 0x7F) - 0x20;
 		if ((ku < 1 || ku > 92) || (ten < 1 || ten > 94)) {
-			*chPtr = (Tcl_UniChar) byte;
+			*chPtr = (uint32_t)byte;
 			return 1;
 		}
+	}
+	*chPtr = (uint32_t)UnicodeTbl[ku - 1][ten - 1];
+	return 2;
+}
 
-		*chPtr = (Tcl_UniChar) UnicodeTbl[ku - 1][ten - 1];
-		return 2;
-	} else
-#endif /* JISX0208 */
-		if (byte < 0xC0) {
-			/*
-			 * Handles properly formed UTF-8 characters between
-			 * 0x01 and 0x7F.  Also treats \0 and naked trail
-			 * bytes 0x80 to 0xBF as valid characters representing
-			 * themselves.
-			 */
+#else
 
-			*chPtr = (Tcl_UniChar) byte;
-			return 1;
-		} else if (byte < 0xE0) {
-			if ((str[1] & 0xC0) == 0x80) {
-				/*
-				 * Two-byte-character lead-byte followed
-				 * by a trail-byte.
-				 */
+/*
+ * gd_UTF8_To_Unicode(const char *str, uint32_t *chPtr)
+ * reads the contents pointed to by str and outputs a unicode codepage into object pointed to by chPtr.
+ * Returns the number of bytes read from |str|.
+ */
+static int gd_UTF8_To_Unicode(const char *str, uint32_t *chPtr)
+{
+	uint32_t b0 = *(uint8_t *)str;
+	uint32_t b1, b2, b3;
 
-				*chPtr = (Tcl_UniChar) (((byte & 0x1F) << 6) | (str[1] & 0x3F));
-				return 2;
-			}
-			/*
-			 * A two-byte-character lead-byte not followed by trail-byte
-			 * represents itself.
-			 */
-
-			*chPtr = (Tcl_UniChar) byte;
-			return 1;
-		} else if (byte < 0xF0) {
-			if (((str[1] & 0xC0) == 0x80) && ((str[2] & 0xC0) == 0x80)) {
-				/*
-				 * Three-byte-character lead byte followed by
-				 * two trail bytes.
-				 */
-
-				*chPtr = (Tcl_UniChar) (((byte & 0x0F) << 12)
-				                        | ((str[1] & 0x3F) << 6) | (str[2] & 0x3F));
-				return 3;
-			}
-			/*
-			 * A three-byte-character lead-byte not followed by
-			 * two trail-bytes represents itself.
-			 */
-
-			*chPtr = (Tcl_UniChar) byte;
-			return 1;
+	if (b0 < 0xC0) {
+		*chPtr = b0;
+		return 1;
+	}
+	if (b0 < 0xE0) {
+		b1 = (uint8_t)str[1];
+		if ((b1 & 0xC0) == 0x80) {
+			*chPtr = ((b0 & 0x1F) << 6) | (b1 & 0x3F);
+			return 2;
 		}
-#if TCL_UTF_MAX > 3
-		else {
-			int ch, total, trail;
-
-			total = totalBytes[byte];
-			trail = total - 1;
-			if (trail > 0) {
-				ch = byte & (0x3F >> trail);
-				do {
-					str++;
-					if ((*str & 0xC0) != 0x80) {
-						*chPtr = byte;
-						return 1;
-					}
-					ch <<= 6;
-					ch |= (*str & 0x3F);
-					trail--;
-				} while (trail > 0);
-				*chPtr = ch;
-				return total;
-			}
+		*chPtr = b0;
+		return 1;
+	}
+	if (b0 < 0xF0) {
+		b1 = (uint8_t)str[1];
+		b2 = (uint8_t)str[2];
+		if (((b1 & 0xC0) == 0x80) && ((b2 & 0xC0) == 0x80)) {
+			*chPtr = ((b0 & 0x0F) << 12) | ((b1 & 0x3F) << 6) | (b2 & 0x3F);
+			return 3;
 		}
-#endif
-
-	*chPtr = (Tcl_UniChar) byte;
+		*chPtr = b0;
+		return 1;
+	}
+	if (b0 < 0xF8) {
+		b1 = (uint8_t)str[1];
+		b2 = (uint8_t)str[2];
+		b3 = (uint8_t)str[3];
+		if (((b1 & 0xC0) == 0x80) && ((b2 & 0xC0) == 0x80) && ((b3 & 0xC0) == 0x80)) {
+			*chPtr = ((b0 & 0x7) << 18) | ((b1 & 0x3F) << 12) | ((b2 & 0x3F) << 6) | (b3 & 0x3F);
+			return 4;
+		}
+		*chPtr = b0;
+		return 1;
+	}
+	// should be an error ie: 0 bytes, and exit program
+	// 1 to avoid endless loop from caller
+	gd_error_ex(GD_WARNING, "gd-ft: utf-8 above 21-bit unicode range\n");
 	return 1;
 }
+
+#endif
 
 #ifdef HAVE_LIBRAQM
 #include <raqm.h>
@@ -445,7 +455,7 @@ typedef struct {
 } glyphInfo;
 
 static ssize_t
-textLayout(uint32_t *text, int len,
+textLayout(uint32_t *text, uint32_t len,
 		FT_Face face, gdFTStringExtraPtr strex,
 		glyphInfo **glyph_info)
 {
@@ -1110,12 +1120,15 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 	FT_UInt glyph_index;
 	double sin_a = sin (angle);
 	double cos_a = cos (angle);
-	int  i, ch;
+	uint32_t  i,ch;
+	uint32_t ch_entity[2] = {0,0};
 	font_t *font;
 	fontkey_t fontkey;
 	const char *next;
 	char *tmpstr = 0;
 	uint32_t *text;
+	size_t text_size = 32;
+	const uint8_t text_step = 32;
 	glyphInfo *info = NULL;
 	ssize_t count;
 	int render = (im && (im->trueColor || (fg <= 255 && fg >= -255)));
@@ -1283,7 +1296,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 		}
 	}
 	if (encodingfound) {
-		FT_Set_Charmap(face, charmap);
+		FT_Select_Charmap(face, charmap->encoding);
 	} else {
 		/* No character set found! */
 		gdCacheDelete (tc_cache);
@@ -1308,15 +1321,33 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 
 	oldpenf.x = oldpenf.y = 0; /* for postscript xshow operator */
 	penf.x = penf.y = 0;	/* running position of non-rotated glyphs */
-	text = (uint32_t*) gdCalloc (sizeof (uint32_t), strlen(next));
+	text = (uint32_t *)gdMalloc(text_size);
 	i = 0;
 	while (*next) {
 		int len;
 		ch = *next;
 		switch (encoding) {
 		case gdFTEX_Unicode: {
-			/* use UTF-8 mapping from ASCII */
-			len = gdTcl_UtfToUniChar (next, &ch);
+			// html entity
+			len = gd_Entity_To_Unicode(next, ch_entity);
+			if (len == 0) {
+#ifdef JISX0208
+				len = gd_JISx0208_To_Unicode(next, &ch);
+#else
+				// UTF-8
+				len = gd_UTF8_To_Unicode(next, &ch);
+#endif
+			} else {
+				if (ch_entity[1] == 0) { // single codepage entity
+					ch = ch_entity[0];
+				} else { // dual codepage entity
+					if (charmap->encoding == FT_ENCODING_MS_SYMBOL)
+						text[i++] = ch_entity[0] | 0xf000;
+					else
+						text[i++] = ch_entity[0];
+					ch = ch_entity[1];
+				}
+			}
 			/* EAM DEBUG */
 			/* TBB: get this exactly right: 2.1.3 *or better*, all possible cases. */
 			/* 2.0.24: David R. Morrison: use the more complete ifdef here. */
@@ -1383,8 +1414,12 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 			next++;
 			break;
 		}
-		text[i] = ch;
-		i++;
+		// avoid out of bounds
+		if ((i << 2) > (text_size - 2)) {
+			text_size += text_step;
+			text = gdRealloc(text, text_size);
+		}
+		text[i++] = ch;
 	}
 
 	FT_Activate_Size (platform_independent);

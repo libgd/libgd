@@ -42,10 +42,9 @@ endif
 EXTRA_DIST = \
 	bdftogd \
 	demoin.png \
-	entities.html \
-	entities.tcl \
 	CMakeLists.txt \
 	config.h.cmake \
+	entities.py \
 	gd_io_stream.cxx \
 	gdpp.cxx \
 	getopt.c \
@@ -58,6 +57,7 @@ lib_LTLIBRARIES = libgd.la
 
 libgd_la_SOURCES = \
 	bmp.h \
+	entities.c \
 	entities.h \
 	gd.c \
 	gd.h \
