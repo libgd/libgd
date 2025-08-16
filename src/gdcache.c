@@ -5,12 +5,8 @@
 #include "gd.h"
 #include "gdhelpers.h"
 
-#ifdef HAVE_LIBTTF
-#	define NEED_CACHE 1
-#else
 #ifdef HAVE_LIBFREETYPE
 #	define NEED_CACHE 1
-#endif
 #endif
 
 #ifdef NEED_CACHE
