@@ -4,6 +4,7 @@ LIST(APPEND TESTS_FILES
 	bug00450
 	bmp_im2im
 	bug00276
+	bmp_low_depth
 )
 
 ADD_GD_TESTS()
