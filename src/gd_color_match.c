@@ -33,6 +33,7 @@ BGD_DECLARE(int) gdImageColorMatch (gdImagePtr im1, gdImagePtr im2)
 
 	buf = (unsigned long *)gdMalloc(sizeof(unsigned long) * 5 * gdMaxColors);
 	memset (buf, 0, sizeof(unsigned long) * 5 * gdMaxColors );
+
 	for (x=0; x < im1->sx; x++) {
 		for( y=0; y<im1->sy; y++ ) {
 			color = im2->pixels[y][x];

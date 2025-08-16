@@ -3881,8 +3881,7 @@ BGD_EXPORT_DATA_PROT gdFontPtr gdFontMediumBold = &gdFontMediumBoldRep;
  *
  * Returns the built-in medium bold font.
  */
-BGD_DECLARE(gdFontPtr)
-gdFontGetMediumBold (void)
+BGD_DECLARE(gdFontPtr) gdFontGetMediumBold(void)
 {
 	return gdFontMediumBold;
 }

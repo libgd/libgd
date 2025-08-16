@@ -33,7 +33,7 @@
  * x_new = xx * x + xy * y + x0;
  * y_new = yx * x + yy * y + y0;
  * (end code)
-*/
+ */
 
 /**
  * Function: gdAffineApplyToPointF

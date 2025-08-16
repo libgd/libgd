@@ -55,15 +55,15 @@ extern "C" {
 typedef struct gdIOCtx *gdIOCtxPtr;
 
 typedef struct gdIOCtx {
-    int (*getC)(gdIOCtxPtr);
-    int (*getBuf)(gdIOCtxPtr, void *, int);
-    void (*putC)(gdIOCtxPtr, int);
-    int (*putBuf)(gdIOCtxPtr, const void *, int);
-    /* seek must return 1 on SUCCESS, 0 on FAILURE. Unlike fseek! */
-    int (*seek)(gdIOCtxPtr, const int);
-    long (*tell)(gdIOCtxPtr);
-    void (*gd_free)(gdIOCtxPtr);
-    void *data;
+	int (*getC)(gdIOCtxPtr);
+	int (*getBuf)(gdIOCtxPtr, void *, int);
+	void (*putC)(gdIOCtxPtr, int);
+	int (*putBuf)(gdIOCtxPtr, const void *, int);
+	/* seek must return 1 on SUCCESS, 0 on FAILURE. Unlike fseek! */
+	int (*seek)(gdIOCtxPtr, const int);
+	long (*tell)(gdIOCtxPtr);
+	void (*gd_free)(gdIOCtxPtr);
+	void *data;
 } gdIOCtx;
 
 void gdPutC(const unsigned char c, gdIOCtxPtr ctx);
