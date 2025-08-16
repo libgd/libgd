@@ -244,6 +244,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 	im->res_y = GD_RESOLUTION;
 	im->interpolation = NULL;
 	im->interpolation_id = GD_BILINEAR_FIXED;
+	im->cloned = 0;
 	return im;
 }
 
@@ -353,6 +354,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 	im->res_y = GD_RESOLUTION;
 	im->interpolation = NULL;
 	im->interpolation_id = GD_BILINEAR_FIXED;
+	im->cloned = 0;
 	return im;
 }
 
@@ -387,6 +389,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 BGD_DECLARE(void) gdImageDestroy (gdImagePtr im)
 {
 	int i;
+
 	if (im->pixels) {
 		for (i = 0; (i < im->sy); i++) {
 			gdFree (im->pixels[i]);
@@ -404,6 +407,14 @@ BGD_DECLARE(void) gdImageDestroy (gdImagePtr im)
 	}
 	if (im->style) {
 		gdFree (im->style);
+	}
+	if (im->cloned) {
+		if (im->brush) {
+			gdImageDestroy(im->brush);
+		}
+		if (im->tile) {
+			gdImageDestroy(im->tile);
+		}
 	}
 	gdFree (im);
 }
@@ -2907,6 +2918,7 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 
 	dst->interpolation_id = src->interpolation_id;
 	dst->interpolation    = src->interpolation;
+	dst->cloned = 1;
 
 	if (src->brush) {
 		dst->brush = gdImageClone(src->brush);
