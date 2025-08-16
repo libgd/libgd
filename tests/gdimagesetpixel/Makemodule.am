@@ -1,7 +1,8 @@
 libgd_test_programs += \
 	gdimagesetpixel/bug00186 \
 	gdimagesetpixel/gdeffectmultiply \
-	gdimagesetpixel/gdeffectoverlay
+	gdimagesetpixel/gdeffectoverlay \
+	gdimagesetpixel/gdeffectdiff
 
 if HAVE_LIBPNG
 libgd_test_programs += \
