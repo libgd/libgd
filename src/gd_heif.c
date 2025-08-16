@@ -23,12 +23,51 @@
 #define GD_HEIF_ALLOC_STEP (4*1024)
 #define GD_HEIF_HEADER 12
 
+static BGD_THREAD_LOCAL int heifInit = 0;
+
 typedef enum gd_heif_brand {
 	GD_HEIF_BRAND_AVIF = 1,
 	GD_HEIF_BRAND_MIF1 = 2,
 	GD_HEIF_BRAND_HEIC = 4,
 	GD_HEIF_BRAND_HEIX = 8,
 } gd_heif_brand;
+
+/*
+  Function: gdHeifInit
+
+    Initialize libheif, no need to call manually because other HEIF
+    functions do so.
+
+  Returns:
+
+    On success 0 is returned, otherwise 1 on error.
+*/
+BGD_DECLARE(int) gdHeifInit()
+{
+	if (heifInit)
+		return 0;
+	struct heif_error err = heif_init(NULL);
+	if (err.code != heif_error_Ok)
+		return 1;
+	heifInit = 1;
+	return 0;
+}
+
+/*
+  Function: gdHeifInit
+
+    Deinitialize libheif, call this whenever is not longer needed to
+    handle HEIF images.
+*/
+BGD_DECLARE(void) gdHeifDeinit()
+{
+	if (!heifInit) {
+		gd_error("gd-heif invalid library deinitialization");
+		return;
+	}
+	heif_deinit();
+	heifInit = 0;
+}
 
 /*
   Function: gdImageCreateFromHeif
@@ -134,6 +173,11 @@ static gdImagePtr _gdImageCreateFromHeifCtx(gdIOCtx *infile, gd_heif_brand expec
 		return NULL;
 	}
 	gdSeek(infile, 0);
+
+	if (gdHeifInit()) {
+		gd_error("gd-heif failure to initialize library");
+		return GD_FALSE;
+	}
 
 	while (n == GD_HEIF_ALLOC_STEP) {
 		temp = gdRealloc(filedata, size + GD_HEIF_ALLOC_STEP);
@@ -298,6 +342,11 @@ static int _gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifC
 	}
 
 	if (overflow2(gdImageSX(im) * 4, gdImageSY(im))) {
+		return GD_FALSE;
+	}
+
+	if (gdHeifInit()) {
+		gd_error("Failure to initialize heif library");
 		return GD_FALSE;
 	}
 
