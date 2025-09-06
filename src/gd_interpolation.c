@@ -2179,10 +2179,18 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 		if (max.y < extent[i].y)
 			max.y=extent[i].y;
 	}
+	double twidth = ceil((max.x - min.x));
+	double theight = ceil(max.y - min.y);
+
+	if (twidth < (double)INT_MIN || twidth > (double)INT_MAX)
+		twidth = 0.0;
+	if (theight < (double)INT_MIN || theight > (double)INT_MAX)
+		theight = 0.0;
+
 	bbox->x = (int) min.x;
 	bbox->y = (int) min.y;
-	bbox->width  = (int) ceil((max.x - min.x));
-	bbox->height = (int) ceil(max.y - min.y);
+	bbox->width  = (int) twidth;
+	bbox->height = (int) theight;
 
 	return GD_TRUE;
 }
