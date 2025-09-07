@@ -2214,6 +2214,9 @@ BGD_DECLARE(void) gdImageEllipse(gdImagePtr im, int mx, int my, int w, int h, in
 	bq = b * b;
 	dx = aq << 1;
 	dy = bq << 1;
+	if (bq > 0 && a > INT64_MAX / bq) {
+		return;
+	}
 	r  = a * bq;
 	rx = r << 1;
 	ry = 0;
@@ -2266,6 +2269,9 @@ BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int mx, int my, int w, in
 	bq = b * b;
 	dx = aq << 1;
 	dy = bq << 1;
+	if (bq > 0 && a > INT64_MAX / bq) {
+		return;
+	}
 	r  = a * bq;
 	rx = r << 1;
 	ry = 0;

@@ -4,6 +4,7 @@ LIST(APPEND TESTS_FILES
 	bug00169
 	bug00191
 	github_bug_00238
+	gh967
 )
 ENDIF(PNG_FOUND)
 
