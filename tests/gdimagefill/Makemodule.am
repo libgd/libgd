@@ -4,7 +4,8 @@ libgd_test_programs += \
 	gdimagefill/bug00002_2 \
 	gdimagefill/bug00002_3 \
 	gdimagefill/bug00002_4 \
-	gdimagefill/bug00104_1
+	gdimagefill/bug00104_1 \
+        gdimagefill/gh968
 endif
 
 EXTRA_DIST += \
