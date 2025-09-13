@@ -1,0 +1,5 @@
+libgd_test_programs += \
+	gdtransformaffinegetimage/gh966
+
+EXTRA_DIST += \
+	gdtransformaffinegetimage/CMakeLists.txt
