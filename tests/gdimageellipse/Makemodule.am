@@ -1,6 +1,7 @@
 if HAVE_LIBPNG
 libgd_test_programs += \
-	gdimageellipse/bug00169
+	gdimageellipse/bug00169 \
+	gdimageellipse/gh967
 endif
 
 EXTRA_DIST += \

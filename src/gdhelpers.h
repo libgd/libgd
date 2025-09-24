@@ -34,6 +34,9 @@ extern "C" {
 
 	int overflow2(int a, int b);
 
+	/* Same as above but for the int64_t type */
+	int overflow2_64(int64_t a, int64_t b);
+
 	/* 2.0.16: portable mutex support for thread safety. */
 #if defined(CPP_SHARP)
 # define gdMutexDeclare(x)
