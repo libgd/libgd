@@ -364,6 +364,8 @@ do_convert (unsigned char **to_p, const unsigned char **from_p, const char *code
 
 			gd_error ("something happen");
 		ustrcpy (to, from);
+		if (iconv_close (cd) != 0)
+			gd_error ("iconv_close() error");
 		return;
 	}
 
