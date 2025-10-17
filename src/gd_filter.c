@@ -1040,6 +1040,9 @@ gdImageCopyGaussianBlurred(gdImagePtr src, int radius, double sigma)
     /* Apply the filter horizontally. */
     tmp = gdImageCreateTrueColor(src->sx, src->sy);
     if (!tmp) {
+		if (freeSrc) {
+			gdImageDestroy(src);
+		}
 		gdFree(coeffs);
 		return NULL;
 	}
