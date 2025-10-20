@@ -283,6 +283,8 @@ main(int argc, char **argv)
 		/* Rename the new to the old. */
 		if (rename(tmpfile, infile) != 0)
 			err("unable to rename %s to %s", infile, tmpfile);
+
+		free(tmpfile);
 	}
 
 	/* Delete the image from memory. */
