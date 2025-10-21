@@ -1552,6 +1552,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 {
 	my_cquantize_ptr cquantize = NULL;
 	int i, conversionSucceeded=0;
+	boolean oimTransparent = FALSE;
 
 	/* Allocate the JPEG palette-storage */
 	size_t arraysize;
@@ -1581,6 +1582,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 	 * must reserve a palette entry for it at the end of the palette. */
 	if (oim->transparent >= 0) {
 		maxColors--;
+		oimTransparent = TRUE;
 	}
 	if (colorsWanted > maxColors) {
 		colorsWanted = maxColors;
@@ -1669,10 +1671,8 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 		liq_attr_destroy(attr);
 
 		if (remapped_ok) {
-			if (!cimP) {
-				free_truecolor_image_data(oim);
-			}
-			return TRUE;
+			conversionSucceeded = TRUE;
+			goto success;
 		}
 	}
 #endif
@@ -1755,13 +1755,16 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 	}
 #endif
 
+success:
 	/* If we had a 'transparent' color, increment the color count so it's
 	 * officially in the palette and convert the transparent variable to point to
 	 * an index rather than a color (Its data already exists and transparent
 	 * pixels have already been mapped to it by this point, it is done late as to
 	 * avoid color matching / dithering with it). */
-	if (oim->transparent >= 0) {
+	if (oimTransparent == TRUE) {
 		nim->transparent = nim->colorsTotal;
+		/* Make sure the color is transparent */
+		nim->alpha[nim->transparent] = gdAlphaTransparent;
 		nim->colorsTotal++;
 	}
 
