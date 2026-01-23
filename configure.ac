@@ -116,6 +116,20 @@ fi
 AC_DEFINE_UNQUOTED([ENABLE_GD_FORMATS], [$gd_ac_value], [Whether to support gd image formats])
 AM_CONDITIONAL([ENABLE_GD_FORMATS], test "$gd_enable_gd_formats" = yes)
 
+dnl Should this be turned on in future releases?
+AC_MSG_CHECKING([whether to use flat memory model for image lines])
+AC_ARG_ENABLE([flat-memory],
+  [AS_HELP_STRING([--enable-flat-memory], [Enable flat memory implementation for image pixels])],
+  [gd_enable_flat_memory=$enableval],
+  [gd_enable_flat_memory=no])
+if test "$gd_enable_flat_memory" = yes; then
+  gd_ac_value=1
+else
+  gd_ac_value=0
+fi
+AC_DEFINE_UNQUOTED([ENABLE_FLAT_MEMORY], [$gd_ac_value], [Wheater to use one big memory chunk for pixels])
+AM_CONDITIONAL([ENABLE_FLAT_MEMORY], test "gd_enable_flat_memory" = yes)
+
 dnl Helper macro for working with external libraries.
 dnl GD_LIB_CHECK([SYM], [FEATURE], [name], [...test...])
 dnl $1 - upper case symbol
@@ -348,6 +362,7 @@ AC_MSG_RESULT([
    Support for liq library:          $gd_with_LIBIMAGEQUANT
    Support for complex text:         $gd_with_LIBRAQM
    Support for pthreads:             $ax_pthread_ok
+   Use of flat memory allocation:    $gd_enable_flat_memory
 ])
 
 AC_CONFIG_FILES([Makefile

@@ -211,6 +211,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 	im->brush = 0;
 	im->tile = 0;
 	im->style = 0;
+#if ENABLE_FLAT_MEMORY
+   im->pixels[0] = (unsigned char *) gdCalloc (sx*sy, sizeof (unsigned char));
+   if (!im->pixels[0]) {
+		gdFree(im->pixels);
+		gdFree(im);
+		return NULL;
+	}
+	for (i = 1; (i < sy); i++) {
+		im->pixels[i] = im->pixels[0] + (i*sx);
+	}
+#else
 	for (i = 0; (i < sy); i++) {
 		/* Row-major ever since gd 1.3 */
 		im->pixels[i] = (unsigned char *) gdCalloc (sx, sizeof (unsigned char));
@@ -222,8 +233,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreate (int sx, int sy)
 			gdFree(im);
 			return NULL;
 		}
-
 	}
+#endif
 	im->sx = sx;
 	im->sy = sy;
 	im->colorsTotal = 0;
@@ -317,6 +328,17 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 	im->brush = 0;
 	im->tile = 0;
 	im->style = 0;
+#if ENABLE_FLAT_MEMORY
+	im->tpixels[0] = (int *) gdCalloc (sx*sy, sizeof (int));
+   if (!im->tpixels[0]) {
+		gdFree(im->tpixels);
+		gdFree(im);
+		return NULL;
+	}
+	for (i = 1; (i < sy); i++) {
+		im->tpixels[i] = im->tpixels[0] + (i*sx);
+   }
+#else
 	for (i = 0; (i < sy); i++) {
 		im->tpixels[i] = (int *) gdCalloc (sx, sizeof (int));
 		if (!im->tpixels[i]) {
@@ -331,6 +353,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 			return 0;
 		}
 	}
+#endif
 	im->sx = sx;
 	im->sy = sy;
 	im->transparent = (-1);
@@ -386,6 +409,16 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 
 BGD_DECLARE(void) gdImageDestroy (gdImagePtr im)
 {
+#if ENABLE_FLAT_MEMORY
+	if (im->pixels) {
+		gdFree (im->pixels[0]);
+		gdFree (im->pixels);
+	}
+	if (im->tpixels) {
+		gdFree (im->tpixels[0]);
+		gdFree (im->tpixels);
+	}
+#else
 	int i;
 	if (im->pixels) {
 		for (i = 0; (i < im->sy); i++) {
@@ -399,6 +432,7 @@ BGD_DECLARE(void) gdImageDestroy (gdImagePtr im)
 		}
 		gdFree (im->tpixels);
 	}
+#endif
 	if (im->polyInts) {
 		gdFree (im->polyInts);
 	}
@@ -4505,15 +4539,25 @@ BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src)
 			return 0;
 		}
 
+#if ENABLE_FLAT_MEMORY
+		src->tpixels[0] = (int *) gdMalloc(sx * sy * sizeof(int));
+		if (src->tpixels[0] == NULL) {
+			goto clean_on_error;
+		}
+#endif
 		for (y = 0; y < sy; y++) {
 			const unsigned char *src_row = src->pixels[y];
 			int * dst_row;
 
 			/* no need to calloc it, we overwrite all pxl anyway */
+#if ENABLE_FLAT_MEMORY
+			src->tpixels[y] = src->tpixels[0] + (y*sx);
+#else
 			src->tpixels[y] = (int *) gdMalloc(sx * sizeof(int));
 			if (src->tpixels[y] == NULL) {
 				goto clean_on_error;
 			}
+#endif
 
 			dst_row = src->tpixels[y];
 			for (x = 0; x < sx; x++) {
@@ -4528,9 +4572,13 @@ BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src)
 	}
 
 	/* free old palette buffer (y is sy) */
+#if ENABLE_FLAT_MEMORY
+	gdFree(src->pixels[0]);
+#else
 	for (yy = 0; yy < y; yy++) {
 		gdFree(src->pixels[yy]);
 	}
+#endif
 	gdFree(src->pixels);
 	src->trueColor = 1;
 	src->pixels = NULL;

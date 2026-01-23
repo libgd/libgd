@@ -1516,9 +1516,13 @@ static void free_truecolor_image_data(gdImagePtr oim)
 	int i;
 	oim->trueColor = 0;
 	/* Junk the truecolor pixels */
+#if ENABLE_FLAT_MEMORY
+	gdFree (oim->tpixels[0]);
+#else
 	for (i = 0; i < oim->sy; i++) {
 		gdFree (oim->tpixels[i]);
 	}
+#endif
 	gdFree (oim->tpixels);
 	oim->tpixels = 0;
 }
@@ -1591,11 +1595,21 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 			/* No can do */
 			goto outOfMemory;
 		}
+#if ENABLE_FLAT_MEMORY
+		nim->pixels[0] = (unsigned char *) gdCalloc (sizeof (unsigned char), oim->sx * nim->sy);
+		if (!nim->pixels[0]) {
+			goto outOfMemory;
+		}
+#endif
 		for (i = 0; (i < nim->sy); i++) {
+#if ENABLE_FLAT_MEMORY
+			nim->pixels[i] = nim->pixels[0] + (i*oim->sx);
+#else
 			nim->pixels[i] = (unsigned char *) gdCalloc (sizeof (unsigned char), oim->sx);
 			if (!nim->pixels[i]) {
 				goto outOfMemory;
 			}
+#endif
 		}
 	}
 
