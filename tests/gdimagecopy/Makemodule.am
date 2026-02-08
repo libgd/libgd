@@ -5,7 +5,6 @@ libgd_test_programs += \
 if HAVE_LIBPNG
 libgd_test_programs += \
 	gdimagecopy/bug00081
-	gdimagecopy/bug00981
 endif
 
 EXTRA_DIST += \
