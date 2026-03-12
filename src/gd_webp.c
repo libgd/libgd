@@ -22,6 +22,10 @@
 #include "webp/decode.h"
 #include "webp/encode.h"
 
+#ifdef HAVE_LIBWEBPDEMUX
+#include "webp/demux.h"
+#endif
+
 #define GD_WEBP_ALLOC_STEP (4*1024)
 
 /*
@@ -110,6 +114,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 	gdImagePtr im;
 	int x, y;
 	uint8_t *p;
+	WebPBitstreamFeatures info;
 
 	do {
 		temp = gdRealloc(filedata, size+GD_WEBP_ALLOC_STEP);
@@ -130,18 +135,51 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile)
 		}
 	} while (n>0 && n!=EOF);
 
-	if (WebPGetInfo(filedata,size, &width, &height) == 0) {
+	if (WebPGetFeatures(filedata, size, &info) != VP8_STATUS_OK) {
 		gd_error("gd-webp cannot get webp info");
 		gdFree(temp);
 		return NULL;
 	}
+	width = info.width;
+	height = info.height;
 
 	im = gdImageCreateTrueColor(width, height);
 	if (!im) {
 		gdFree(temp);
 		return NULL;
 	}
+
+#ifdef HAVE_LIBWEBPDEMUX
+	if (info.has_animation) {
+		WebPData webpdata;
+		WebPDemuxer *demux;
+		WebPIterator iter;
+		webpdata.bytes = filedata;
+		webpdata.size = size;
+		demux = WebPDemux(&webpdata);
+		if (demux == NULL) {
+			gd_error("gd-webp cannot create demuxer");
+			gdFree(temp);
+			gdImageDestroy(im);
+			return NULL;
+		}
+		if (WebPDemuxGetFrame(demux, 1, &iter) == 0) {
+			gd_error("gd-webp cannot find the first frame");
+			WebPDemuxDelete(demux);
+			gdFree(temp);
+			gdImageDestroy(im);
+			return NULL;
+		}
+		argb = WebPDecodeARGB(iter.fragment.bytes, iter.fragment.size, &width, &height);
+		WebPDemuxReleaseIterator(&iter);
+		WebPDemuxDelete(demux);
+	} else {
+		argb = WebPDecodeARGB(filedata, size, &width, &height);
+	}
+#else
 	argb = WebPDecodeARGB(filedata, size, &width, &height);
+#endif
+
 	if (!argb) {
 		gd_error("gd-webp cannot allocate temporary buffer");
 		gdFree(temp);

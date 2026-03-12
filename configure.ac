@@ -294,6 +294,12 @@ GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [libwebp >= 0.2.0], [
     gd_found_lib=yes
   ])
 ])
+GD_LIB_PKG_CHECK([LIBWEBPDEMUX], [WEBP], [libwebpdemux >= 0.2.0], [
+  AC_CHECK_LIB([webpdemux], [WebPDemux], [dnl
+    AS_VAR_APPEND([LIBWEBP_LIBS], [" -lwebpdemux"])
+    gd_found_lib=yes
+  ])
+])
 
 dnl Check for heif support.
 GD_LIB_PKG_CHECK([LIBHEIF], [HEIF], [libheif >= 1.7.0], [
