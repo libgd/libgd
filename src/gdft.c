@@ -1137,7 +1137,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImagePtr im, int *brect, int fg, const 
 	gdCache_head_t *tc_cache;
 	/* Tuneable horizontal and vertical resolution in dots per inch */
 	int hdpi, vdpi, horiAdvance, vertAdvance, xshow_alloc = 0, xshow_pos = 0;
-	FT_Size platform_specific, platform_independent;
+	FT_Size platform_specific = NULL, platform_independent;
 
 	if (strex) {
 		if ((strex->flags & gdFTEX_LINESPACE) == gdFTEX_LINESPACE) {
