@@ -37,14 +37,14 @@ endif(BUILD_TEST)
 # if you would like to pass C flags to the compiler, then just
 # - specify -DCMAKE_C_FLAGS=... on invocation of cmake, or
 # - specify CFLAGS=... on invocation of make
-IF(CMAKE_COMPILER_IS_GNUCC)
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
   # Re-enable sanitize once we find a way to filter out errors in external libraries (like HEIF)
   if (ENABLE_ASAN)
   	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 -fsanitize=address") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is Debug
   else (ENABLE_ASAN)
   	SET(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -O0 ") # will be added to CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is Debug
   endif (ENABLE_ASAN)
-ENDIF(CMAKE_COMPILER_IS_GNUCC)
+endif()
 SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
   ${PROJECT_BINARY_DIR}/Bin
   CACHE PATH
