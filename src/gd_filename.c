@@ -93,7 +93,7 @@ static const struct FileType {
 static const struct FileType *
 ftype(const char *filename) {
     int n;
-    char *ext;
+    const char *ext;
 
     /* Find the file extension (i.e. the last period in the string. */
     ext = strrchr(filename, '.');
