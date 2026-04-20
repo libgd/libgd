@@ -3881,8 +3881,7 @@ BGD_EXPORT_DATA_PROT gdFontPtr gdFontSmall = &gdFontSmallRep;
  *
  * Returns the built-in small font.
  */
-BGD_DECLARE(gdFontPtr)
-gdFontGetSmall (void)
+BGD_DECLARE(gdFontPtr) gdFontGetSmall(void)
 {
 	return gdFontSmall;
 }

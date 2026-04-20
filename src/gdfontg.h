@@ -2,8 +2,7 @@
 #define _GDFONTG_H_ 1
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*

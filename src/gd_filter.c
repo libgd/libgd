@@ -44,7 +44,7 @@ BGD_DECLARE(int) gdImageScatter(gdImagePtr im, int sub, int plus)
 {
 	gdScatter s;
 
-	s.sub  = sub;
+	s.sub = sub;
 	s.plus = plus;
 	s.num_colors = 0;
 	s.seed = GD_SCATTER_SEED();
@@ -570,7 +570,7 @@ BGD_DECLARE(int) gdImageConvolution(gdImagePtr src, float filter[3][3], float fi
 /*
 	Function: gdImageSelectiveBlur
  */
-BGD_DECLARE(int) gdImageSelectiveBlur( gdImagePtr src)
+BGD_DECLARE(int) gdImageSelectiveBlur(gdImagePtr src)
 {
 	int         x, y, i, j;
 	float       new_r, new_g, new_b;
@@ -737,10 +737,10 @@ BGD_DECLARE(int) gdImageEdgeDetectQuick(gdImagePtr src)
 BGD_DECLARE(int) gdImageGaussianBlur(gdImagePtr im)
 {
 	float filter[3][3] = {
-        {1.0, 2.0, 1.0},
-        {2.0, 4.0, 2.0},
-        {1.0, 2.0, 1.0}
-    };
+		{1.0, 2.0, 1.0},
+		{2.0, 4.0, 2.0},
+		{1.0, 2.0, 1.0}
+	};
 
 	return gdImageConvolution(im, filter, 16, 0);
 }

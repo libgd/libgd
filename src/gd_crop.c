@@ -31,8 +31,8 @@ static int gdGuessBackgroundColorFromCorners(gdImagePtr im, int *color);
 
 /**
  * Function: gdImageCrop
- *
- * Crop an image to a given rectangle
+ *  Crops the src image using the area defined by the <crop> rectangle.
+ *  The result is returned as a new image.
  *
  * Parameters:
  *   src  - The image.
