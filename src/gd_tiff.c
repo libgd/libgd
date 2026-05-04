@@ -816,7 +816,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 	char	has_alpha, is_bw, is_gray;
 	char	force_rgba = FALSE;
 	char	save_transparent;
-	int		image_type;
+	int		image_type = 0;
 	int   ret;
 	float res_float;
 
