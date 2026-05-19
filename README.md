@@ -83,10 +83,10 @@ it will be much appreciated!
 |---------------|:-------:|:--:|
 | Linux x64     | ✓       | ✓ |
 | Linux x86     | ✓       | ✗ |
-| Linux ARM64   | ✓       | ✗ |
+| Linux ARM64   | ✓       | ✓ |
 | Windows x86   | ✓       | ✓ |
 | Windows x64   | ✓       | ✓ |
-| Windows arm64 | ✓       | ✗ |
+| Windows arm64 | ✓       | ✓ |
 | macOS arm64   | ✓       | ✓ |
 | macOS x64     | ✓       | ✗ |
 | macOS M1      | ✓       | ✗ |
