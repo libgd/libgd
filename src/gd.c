@@ -2203,6 +2203,17 @@ BGD_DECLARE(void) gdImageEllipse(gdImagePtr im, int mx, int my, int w, int h, in
 
 	a=w>>1;
 	b=h>>1;
+	if (a <= 0 || b <= 0) {
+		return;
+	}
+
+	if (a > (INT64_MAX >> 1) / b / b) {
+		return;
+	}
+
+	if (b > (INT64_MAX >> 1) / a / a) {
+		return;
+	}
 	gdImageSetPixel(im,mx+a, my, c);
 	gdImageSetPixel(im,mx-a, my, c);
 	mx1 = mx-a;
@@ -2253,6 +2264,17 @@ BGD_DECLARE(void) gdImageFilledEllipse (gdImagePtr im, int mx, int my, int w, in
 	a=w>>1;
 	b=h>>1;
 
+	if (a <= 0 || b <= 0) {
+		return;
+	}
+
+	if (a > (INT64_MAX >> 1) / b / b) {
+		return;
+	}
+
+	if (b > (INT64_MAX >> 1) / a / a) {
+		return;
+	}
 	for (x = mx-a; x <= mx+a; x++) {
 		gdImageSetPixel(im, x, my, c);
 	}
