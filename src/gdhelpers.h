@@ -34,6 +34,17 @@ extern "C" {
 
 	int overflow2(int a, int b);
 
+	/* Returns nonzero if any coordinate or dimension would cause integer overflow
+	or if invalid parameters are supplied when copying a rectangle between
+	images. */
+	int overflowCopyRectBounds(
+		const gdImagePtr dst,
+		const gdImagePtr src,
+		int dstX, int dstY,
+		int srcX, int srcY,
+		int w, int h
+	);
+
 	/* 2.0.16: portable mutex support for thread safety. */
 #if defined(CPP_SHARP)
 # define gdMutexDeclare(x)

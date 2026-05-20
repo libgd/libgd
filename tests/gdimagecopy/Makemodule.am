@@ -1,5 +1,6 @@
 libgd_test_programs += \
 	gdimagecopy/bug00007
+	gdimagecopy/bug00981
 
 if HAVE_LIBPNG
 libgd_test_programs += \

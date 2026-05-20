@@ -2959,6 +2959,10 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
 BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
 							   int srcY, int w, int h)
 {
+	if (overflowCopyRectBounds(dst, src, dstX, dstY, srcX, srcY, w, h)) {
+		return;
+	}
+
 	int c;
 	int x, y;
 	int tox, toy;
@@ -3072,6 +3076,9 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 BGD_DECLARE(void) gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 									int srcX, int srcY, int w, int h, int pct)
 {
+	if (overflowCopyRectBounds(dst, src, dstX, dstY, srcX, srcY, w, h)) {
+		return;
+	}
 
 	int c, dc;
 	int x, y;
@@ -3141,6 +3148,9 @@ BGD_DECLARE(void) gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, in
 BGD_DECLARE(void) gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
 										int srcX, int srcY, int w, int h, int pct)
 {
+	if (overflowCopyRectBounds(dst, src, dstX, dstY, srcX, srcY, w, h)) {
+		return;
+	}
 
 	int c, dc;
 	int x, y;
@@ -3224,6 +3234,14 @@ BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, 
 									  int srcX, int srcY, int dstW, int dstH, int srcW,
 									  int srcH)
 {
+	if (overflowCopyRectBounds(dst, src, dstX, dstY, srcX, srcY, srcW, srcH)) {
+		return;
+	}
+
+	if (overflowCopyRectBounds(dst, src, dstX, dstY, srcX, srcY, dstW, dstH)) {
+		return;
+	}
+
 	int c;
 	int x, y;
 	int tox, toy;
@@ -3375,6 +3393,10 @@ BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
 									  int srcX, int srcY,
 									  int srcWidth, int srcHeight, int angle)
 {
+	if (overflowCopyRectBounds(dst, src, (int)dstX, (int)dstY, srcX, srcY, srcWidth, srcHeight)) {
+		return;
+	}
+
 	double dx, dy;
 	double radius = sqrt (srcWidth * srcWidth + srcHeight * srcHeight);
 	double aCos = cos (angle * .0174532925);
@@ -3483,6 +3505,14 @@ BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
 										int srcX, int srcY,
 										int dstW, int dstH, int srcW, int srcH)
 {
+	if (overflowCopyRectBounds(dst, src, (int)dstX, (int)dstY, srcX, srcY, dstW, dstH)) {
+		return;
+	}
+
+	if (overflowCopyRectBounds(dst, src, (int)dstX, (int)dstY, srcX, srcY, srcW, srcH)) {
+		return;
+	}
+
 	int x, y;
 	if (!dst->trueColor) {
 		gdImageCopyResized (dst, src, dstX, dstY, srcX, srcY, dstW, dstH, srcW, srcH);

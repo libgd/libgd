@@ -25,6 +25,7 @@ gdimagecolorresolve\gdimagecolorresolve \
 gdimagecolortransparent\gdimagecolortransparent \
 gdimagecopy\bug00007 \
 gdimagecopy\bug00081 \
+gdimagecopy\bug00981 \
 gdimagecopyrotated\bug00020 \
 gdimagecrop\php_bug_72494 \
 gdimagefile\gdnametest \
