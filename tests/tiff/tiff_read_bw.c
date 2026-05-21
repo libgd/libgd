@@ -13,13 +13,12 @@ int main()
 	fclose(fp);
 
 	gdTestAssert(im != NULL);
-	gdTestAssert(!gdImageTrueColor(im));
+	gdTestAssert(im && !gdImageTrueColor(im));
 
 	path = gdTestFilePath2("tiff", "tiff_read_bw_exp.png");
 	gdAssertImageEqualsToFile(path, im);
 	gdFree(path);
-
-	gdImageDestroy(im);
+	if (im) gdImageDestroy(im);
 
 	return gdNumFailures();
 }

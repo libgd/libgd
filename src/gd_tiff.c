@@ -92,7 +92,7 @@ tiff_handle;
          tiff (assuming one already exists)
 */
 
-tiff_handle * new_tiff_handle(gdIOCtx *g)
+static tiff_handle * new_tiff_handle(gdIOCtx *g, int initial_size)
 {
 	tiff_handle * t;
 
@@ -107,7 +107,7 @@ tiff_handle * new_tiff_handle(gdIOCtx *g)
 		return NULL;
 	}
 
-	t->size = 0;
+	t->size = initial_size;
 	t->pos = 0;
 	t->ctx = g;
 	t->written = 0;
@@ -214,6 +214,39 @@ static void tiff_unmapproc(thandle_t h, tdata_t d, toff_t o)
 	(void)o;
 }
 
+static int tiff_file_size(FILE *fp)
+{
+	long current_pos;
+	long end_pos;
+
+	if (!fp) {
+		return 0;
+	}
+
+	current_pos = ftell(fp);
+	if (current_pos < 0) {
+		return 0;
+	}
+
+	if (fseek(fp, 0, SEEK_END) != 0) {
+		(void)fseek(fp, current_pos, SEEK_SET);
+		return 0;
+	}
+
+	end_pos = ftell(fp);
+	(void)fseek(fp, current_pos, SEEK_SET);
+
+	if (end_pos < 0) {
+		return 0;
+	}
+
+	if (end_pos > INT_MAX) {
+		return INT_MAX;
+	}
+
+	return (int)end_pos;
+}
+
 
 /*  tiffWriter
  *  ----------
@@ -244,7 +277,7 @@ void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 
 	tiff_handle *th;
 
-	th = new_tiff_handle(out);
+	th = new_tiff_handle(out, 0);
 	if (!th) {
 		return;
 	}
@@ -803,7 +836,7 @@ static int createFromTiffRgba(TIFF * tif, gdImagePtr im)
 
 	Create a gdImage from a TIFF file input from an gdIOCtx.
 */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
+static gdImagePtr gdImageCreateFromTiffCtxEx(gdIOCtx *infile, int initial_size)
 {
 	TIFF *tif;
 	tiff_handle *th;
@@ -822,7 +855,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
 
 	gdImagePtr im = NULL;
 
-	th = new_tiff_handle(infile);
+	th = new_tiff_handle(infile, initial_size);
 	if (!th) {
 		return NULL;
 	}
@@ -1013,6 +1046,11 @@ error:
 	return im;
 }
 
+BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile)
+{
+	return gdImageCreateFromTiffCtxEx(infile, 0);
+}
+
 /*
 	Function: gdImageCreateFromTIFF
 */
@@ -1020,8 +1058,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile)
 {
 	gdImagePtr im;
 	gdIOCtx *in = gdNewFileCtx(inFile);
+	int initial_size = tiff_file_size(inFile);
+
 	if (in == NULL) return NULL;
-	im = gdImageCreateFromTiffCtx(in);
+	im = gdImageCreateFromTiffCtxEx(in, initial_size);
 	in->gd_free(in);
 	return im;
 }
@@ -1034,7 +1074,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffPtr(int size, void *data)
 	gdImagePtr im;
 	gdIOCtx *in = gdNewDynamicCtxEx (size, data, 0);
 	if (in == NULL) return NULL;
-	im = gdImageCreateFromTiffCtx(in);
+	im = gdImageCreateFromTiffCtxEx(in, size);
 	in->gd_free(in);
 	return im;
 }
