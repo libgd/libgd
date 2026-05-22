@@ -2571,6 +2571,10 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 
 	wx2=im->sx;
 	wy2=im->sy;
+	oc = gdImageGetPixel(im, x, y);
+	if (oc==nc || x<0 || x>wx2 || y<0 || y>wy2) {
+		return;
+	}
 
 	if(overflow2(im->sy, im->sx)) {
 		return;
@@ -2591,8 +2595,6 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 		return;
 	}
 	sp = stack;
-
-	oc = gdImageGetPixel(im, x, y);
 
 	/* required! */
 	FILL_PUSH(y,x,x,1);
