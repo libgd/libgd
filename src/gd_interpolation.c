@@ -1772,6 +1772,7 @@ BGD_DECLARE(int) gdTransformAffineGetImage(gdImagePtr *dst,
 	}
 	(*dst)->saveAlphaFlag = 1;
 	gdImageAlphaBlending(*dst, 0);
+	/* The API has no background-color parameter, so uncovered output starts transparent. */
 	gdImageFilledRectangle(*dst, 0, 0, bbox.width - 1, bbox.height - 1, gdTrueColorAlpha(0, 0, 0, gdAlphaTransparent));
 
 	if (!src->trueColor) {
@@ -1839,14 +1840,39 @@ static int getPixelRgbInterpolated(gdImagePtr im, const int tcolor)
 	return ct;
 }
 
+#define GD_AFFINE_KERNEL_SUPPORT 2.0
+
+typedef struct {
+	gdImagePtr src;
+	gdRectPtr clip;
+	int bgColor;
+} gdAffineSampleContext;
+
 static inline int gdAffineSampleIntersectsRegion(const double x, const double y, const gdRectPtr region)
 {
-	const double left = (double)region->x - 2.0;
-	const double top = (double)region->y - 2.0;
-	const double right = (double)(region->x + region->width - 1) + 2.0;
-	const double bottom = (double)(region->y + region->height - 1) + 2.0;
+	const double left = (double)region->x - GD_AFFINE_KERNEL_SUPPORT;
+	const double top = (double)region->y - GD_AFFINE_KERNEL_SUPPORT;
+	const double right = (double)(region->x + region->width - 1) + GD_AFFINE_KERNEL_SUPPORT;
+	const double bottom = (double)(region->y + region->height - 1) + GD_AFFINE_KERNEL_SUPPORT;
 
 	return x >= left && x <= right && y >= top && y <= bottom;
+}
+
+static inline int gdAffineSample(const gdAffineSampleContext *ctx, const double x, const double y, int *color)
+{
+	int c;
+
+	if (!gdAffineSampleIntersectsRegion(x, y, ctx->clip)) {
+		return GD_FALSE;
+	}
+
+	c = getPixelInterpolatedClipped(ctx->src, x, y, ctx->bgColor, ctx->clip);
+	if (gdTrueColorGetAlpha(c) == gdAlphaTransparent) {
+		return GD_FALSE;
+	}
+
+	*color = c;
+	return GD_TRUE;
 }
 
 /**
@@ -1878,6 +1904,7 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 	gdRect bbox;
 	int end_x, end_y;
 	const int transparent = gdTrueColorAlpha(0, 0, 0, gdAlphaTransparent);
+	gdAffineSampleContext sample_ctx;
 
 	gdImageClipRectangle(src, src_region);
 
@@ -1916,6 +1943,9 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 
 	src_offset_x =  src_region->x;
 	src_offset_y =  src_region->y;
+	sample_ctx.src = src;
+	sample_ctx.clip = src_region;
+	sample_ctx.bgColor = transparent;
 
 	if (dst->alphaBlendingFlag) {
 		for (y = bbox.y; y <= end_y; y++) {
@@ -1926,11 +1956,7 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 				gdAffineApplyToPointF(&src_pt, &pt, inv);
 				const double sample_x = src_offset_x + src_pt.x;
 				const double sample_y = src_offset_y + src_pt.y;
-				if (!gdAffineSampleIntersectsRegion(sample_x, sample_y, src_region)) {
-					continue;
-				}
-				c = getPixelInterpolatedClipped(src, sample_x, sample_y, transparent, src_region);
-				if (gdTrueColorGetAlpha(c) == gdAlphaTransparent) {
+				if (!gdAffineSample(&sample_ctx, sample_x, sample_y, &c)) {
 					continue;
 				}
 				gdImageSetPixel(dst, dst_x + x, dst_y + y, c);
@@ -1963,11 +1989,7 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 					const double sample_y = src_offset_y + src_pt.y;
 					int c;
 
-					if (!gdAffineSampleIntersectsRegion(sample_x, sample_y, src_region)) {
-						continue;
-					}
-					c = getPixelInterpolatedClipped(src, sample_x, sample_y, transparent, src_region);
-					if (gdTrueColorGetAlpha(c) == gdAlphaTransparent) {
+					if (!gdAffineSample(&sample_ctx, sample_x, sample_y, &c)) {
 						continue;
 					}
 					if (dst->trueColor) {
