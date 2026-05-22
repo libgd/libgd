@@ -10,6 +10,7 @@ libgd_test_programs += \
 	gif/uninitialized_memory_read \
 	gif/bug00006 \
 	gif/bug00060 \
+	gif/bug000953 \
 	gif/gif_im2im
 
 if HAVE_LIBPNG

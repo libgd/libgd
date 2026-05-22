@@ -12,6 +12,7 @@ LIST(APPEND TESTS_FILES
 	bug00060
 	gif_im2im
 	bug00415
+	bug000953
 )
 
 IF(PNG_FOUND)

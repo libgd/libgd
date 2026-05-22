@@ -1601,16 +1601,16 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 			gdImageDestroy(nim);
 		}
 		nim = gdImageNeuQuant(oim, colorsWanted, oim->paletteQuantizationSpeed ? oim->paletteQuantizationSpeed : 2);
-		if (cimP) {
-			*cimP = nim;
-		}
 		if (!nim) {
 			return FALSE;
-		} else {
-			free_truecolor_image_data(oim);
-			gdImageCopy(oim, nim, 0, 0, 0, 0, oim->sx, oim->sy);
-			gdImageDestroy(nim);
 		}
+		if (cimP) {
+			*cimP = nim;
+			return TRUE;
+		}
+		free_truecolor_image_data(oim);
+		gdImageCopy(oim, nim, 0, 0, 0, 0, oim->sx, oim->sy);
+		gdImageDestroy(nim);
 		return TRUE;
 	}
 

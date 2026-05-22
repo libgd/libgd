@@ -3037,6 +3037,7 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 			} else {
 				mapTo = colorMap[c];
 			}
+			printf("x: %d, y: %d, c: %d, mapTo: %d\n", x, y, c, mapTo);
 			gdImageSetPixel (dst, tox, toy, mapTo);
 			tox++;
 		}
