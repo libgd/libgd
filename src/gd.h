@@ -282,9 +282,9 @@ enum gdPaletteQuantizationMethod {
  *
  *  GD_BELL				 - Bell
  *  GD_BESSEL			 - Bessel
- *  GD_BILINEAR_FIXED 	 - fixed point bilinear
+ *  GD_BILINEAR_FIXED 	 - compatibility alias for bilinear
  *  GD_BICUBIC 			 - Bicubic
- *  GD_BICUBIC_FIXED 	 - fixed point bicubic integer
+ *  GD_BICUBIC_FIXED 	 - compatibility alias for bicubic
  *  GD_BLACKMAN			 - Blackman
  *  GD_BOX				 - Box
  *  GD_BSPLINE			 - BSpline

@@ -23,6 +23,7 @@ if (BUILD_TEST)
 		gd2
 		gdcolormaplookup
 		gdimagearc
+		gdimageaffine
 		gdimagebrightness
 		gdimageclone
 		gdimagecolor

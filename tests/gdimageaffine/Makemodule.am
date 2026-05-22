@@ -1,0 +1,7 @@
+libgd_test_programs += \
+	gdimageaffine/edge \
+	gdimageaffine/fractional \
+	gdimageaffine/rotate
+
+EXTRA_DIST += \
+	gdimageaffine/CMakeLists.txt
