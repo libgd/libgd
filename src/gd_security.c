@@ -30,3 +30,29 @@ int overflow2(int a, int b)
 	}
 	return 0;
 }
+
+int overflowMul3(int a, int b, int c)
+{
+    if (a < 0 || b < 0 || c < 0) {
+        return 1;
+    }
+    if (a == 0 || b == 0 || c == 0) {
+        return 0;
+    }
+    /* check a*b fits in int first */
+    if (a > INT_MAX / b) {
+        return 1;
+    }
+#ifdef HAVE_INT64_T
+    /* check a*b*c fits in int64 */
+    if ((int64_t)a * b > INT64_MAX / c) {
+        return 1;
+    }
+#else
+    /* no 64-bit type available, check against INT_MAX */
+    if (a > INT_MAX / b / c) {
+        return 1;
+    }
+#endif
+    return 0;
+}

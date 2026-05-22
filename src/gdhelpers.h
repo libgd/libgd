@@ -33,6 +33,7 @@ extern "C" {
 		netpbm fixes by Alan Cox. */
 
 	int overflow2(int a, int b);
+	int overflowMul3(int a, int b, int c);
 
 	/* 2.0.16: portable mutex support for thread safety. */
 #if defined(CPP_SHARP)

@@ -264,6 +264,9 @@ else (USE_EXT_GD)
 	CHECK_INCLUDE_FILE("stdint.h"	HAVE_STDINT_H)
 	CHECK_INCLUDE_FILE("inttypes.h"	HAVE_INTTYPES_H)
 
+	include(CheckTypeSize)
+	check_type_size("int64_t" INT64_T)
+
 	CONFIGURE_FILE(${GD_SOURCE_DIR}/src/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/src/config.h ESCAPE_QUOTES)
 	include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
