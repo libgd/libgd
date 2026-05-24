@@ -702,6 +702,7 @@ static int _gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
 		*/
 		gdImagePtr prev_pim = 0, prev_tim = previm;
 		int x, y;
+		int no_changes = 0;
 		int min_x = 0;
 		int min_y = tim->sy;
 		int max_x = 0;
@@ -737,9 +738,10 @@ static int _gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out,
 
 break_top:
 		if (tim->sy == min_y) {
-			/* No changes in this frame!! Encode empty image. */
+			/* No changes in this frame. Encode a 1x1 transparent placeholder. */
+			no_changes = 1;
 			transparent = 0;
-			min_x = min_y = 1;
+			min_x = min_y = 0;
 			max_x = max_y = 0;
 		} else {
 			/* Then the bottom row */
@@ -837,7 +839,7 @@ break_right:
 		if (transparent >= 0) {
 			for(y = 0; y < tim->sy; ++y) {
 				for (x = 0; x < tim->sx; ++x) {
-					if(comparewithmap
+					if(no_changes || comparewithmap
 					        (prev_tim, tim,
 					         prev_tim->pixels[min_y + y][min_x + x],
 					         tim->pixels[y][x], 0)) {
