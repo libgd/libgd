@@ -50,6 +50,16 @@ static int bmp_read_rle(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info);
 
 static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
 
+static int bmp_validate_info(bmp_info_t *info, bmp_hdr_t *hdr);
+static int bmp_read_bitfield_masks(gdIOCtxPtr infile, bmp_info_t *info, int read_alpha);
+static int bmp_skip_bytes(gdIOCtxPtr infile, int count);
+static int bmp_check_palette_index(gdImagePtr im, int index);
+static int bmp_row_padding(int width, int depth, int *padding);
+static int bmp_image_size(int width, int height, int depth, int *size);
+static int bmp_get_mask_shift(unsigned int mask);
+static int bmp_get_mask_bits(unsigned int mask);
+static int bmp_extract_mask(unsigned int pixel, unsigned int mask);
+
 #define BMP_DEBUG(s)
 
 static int gdBMPPutWord(gdIOCtx *out, int w)
@@ -536,6 +546,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx(gdIOCtxPtr infile)
 		return NULL;
 	}
 
+	if (bmp_validate_info(info, hdr)) {
+		gdFree(hdr);
+		gdFree(info);
+		return NULL;
+	}
+
 	BMP_DEBUG(printf("Numcolours: %d\n", info->numcolors));
 	BMP_DEBUG(printf("Width: %d\n", info->width));
 	BMP_DEBUG(printf("Height: %d\n", info->height));
@@ -638,8 +654,101 @@ static int bmp_read_info(gdIOCtx *infile, bmp_info_t *info)
 	return 0;
 }
 
+static int bmp_skip_bytes(gdIOCtxPtr infile, int count)
+{
+	int i, c;
+
+	for (i = 0; i < count; i++) {
+		if (!gdGetByte(&c, infile)) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+static int bmp_read_bitfield_masks(gdIOCtxPtr infile, bmp_info_t *info, int read_alpha)
+{
+	int red, green, blue, alpha;
+
+	if (
+	    !gdGetIntLSB(&red, infile) ||
+	    !gdGetIntLSB(&green, infile) ||
+	    !gdGetIntLSB(&blue, infile)
+	) {
+		return 1;
+	}
+
+	info->red_mask = (unsigned int) red;
+	info->green_mask = (unsigned int) green;
+	info->blue_mask = (unsigned int) blue;
+
+	if (read_alpha) {
+		if (!gdGetIntLSB(&alpha, infile)) {
+			return 1;
+		}
+		info->alpha_mask = (unsigned int) alpha;
+	}
+
+	return 0;
+}
+
+static int bmp_validate_info(bmp_info_t *info, bmp_hdr_t *hdr)
+{
+	int image_size;
+	int min_size;
+
+	if (hdr->off < 14 + info->len || hdr->size < 0 || hdr->off < 0) {
+		return 1;
+	}
+
+	if (info->numplanes != 1) {
+		return 1;
+	}
+
+	if (info->depth != 1 && info->depth != 4 && info->depth != 8 &&
+	        info->depth != 16 && info->depth != 24 && info->depth != 32) {
+		return 1;
+	}
+
+	if (info->topdown &&
+	        (info->enctype == BMP_BI_RLE4 || info->enctype == BMP_BI_RLE8)) {
+		return 1;
+	}
+
+	if (overflow2(info->width, info->height)) {
+		return 1;
+	}
+
+	if (info->hres < 0 || info->vres < 0) {
+		return 1;
+	}
+	if (info->hres > 0 && info->vres > 0 &&
+	        (info->hres / info->vres > 1000 || info->vres / info->hres > 1000)) {
+		return 1;
+	}
+
+	if (info->enctype == BMP_BI_RGB || info->enctype == BMP_BI_BITFIELDS) {
+		if (bmp_image_size(info->width, info->height, info->depth, &image_size)) {
+			return 1;
+		}
+		if (info->size != 0 && info->size != image_size) {
+			return 1;
+		}
+		if (hdr->size != 0) {
+			min_size = hdr->off + image_size;
+			if (min_size < hdr->off || hdr->size < min_size || hdr->size - min_size > 1024 * 1024) {
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+}
+
 static int bmp_read_windows_v3_info(gdIOCtxPtr infile, bmp_info_t *info)
 {
+	int extra = info->len - BMP_WINDOWS_V3;
+
 	if (
 	    !gdGetIntLSB(&info->width, infile) ||
 	    !gdGetIntLSB(&info->height, infile) ||
@@ -666,6 +775,16 @@ static int bmp_read_windows_v3_info(gdIOCtxPtr infile, bmp_info_t *info)
 	}
 
 	info->type = BMP_PALETTE_4;
+
+	if (extra > 0) {
+		if (extra < 16 || bmp_read_bitfield_masks(infile, info, 1)) {
+			return 1;
+		}
+		extra -= 16;
+		if (bmp_skip_bytes(infile, extra)) {
+			return 1;
+		}
+	}
 
 	/* Height was checked above. */
 	if (info->width <= 0 || info->numplanes <= 0 || info->depth <= 0 ||
@@ -753,8 +872,20 @@ static int bmp_read_os2_v2_info(gdIOCtxPtr infile, bmp_info_t *info)
 static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header)
 {
 	int ypos = 0, xpos = 0, row = 0;
-	int padding = 0, alpha = 0, red = 0, green = 0, blue = 0;
-	signed short int data = 0;
+	int padding = 0, red = 0, green = 0, blue = 0;
+	signed short int data16 = 0;
+	int data32 = 0;
+	unsigned int mask = 0;
+
+	if (info->depth == 16 && info->enctype == BMP_BI_RGB) {
+		info->red_mask = 0x7C00;
+		info->green_mask = 0x03E0;
+		info->blue_mask = 0x001F;
+	} else if (info->depth == 32 && info->enctype == BMP_BI_RGB) {
+		info->red_mask = 0x00FF0000;
+		info->green_mask = 0x0000FF00;
+		info->blue_mask = 0x000000FF;
+	}
 
 	switch(info->enctype) {
 	case BMP_BI_RGB:
@@ -766,8 +897,9 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 			BMP_DEBUG(printf("Bitfield compression isn't supported for 24-bit\n"));
 			return 1;
 		}
-		BMP_DEBUG(printf("Currently no bitfield support\n"));
-		return 1;
+		if (info->len == BMP_WINDOWS_V3 && bmp_read_bitfield_masks(infile, info, 0)) {
+			return 1;
+		}
 		break;
 
 	case BMP_BI_RLE8:
@@ -784,9 +916,24 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 		break;
 	case BMP_BI_JPEG:
 	case BMP_BI_PNG:
+	case BMP_BI_ALPHABITFIELDS:
 	default:
 		BMP_DEBUG(printf("Unsupported BMP compression format\n"));
 		return 1;
+	}
+
+	if (info->depth == 16 || info->depth == 32) {
+		mask = info->red_mask | info->green_mask | info->blue_mask;
+		if (info->red_mask == 0 || info->green_mask == 0 || info->blue_mask == 0) {
+			return 1;
+		}
+		if ((info->red_mask & info->green_mask) || (info->red_mask & info->blue_mask) ||
+		        (info->green_mask & info->blue_mask)) {
+			return 1;
+		}
+		if (info->depth == 16 && (mask & 0xFFFF0000U)) {
+			return 1;
+		}
 	}
 
 	/* There is a chance the data isn't until later, would be weird but it is possible */
@@ -798,9 +945,8 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 	}
 
 	/* The line must be divisible by 4, else its padded with NULLs */
-	padding = ((int)(info->depth / 8) * info->width) % 4;
-	if (padding) {
-		padding = 4 - padding;
+	if (bmp_row_padding(info->width, info->depth, &padding)) {
+		return 1;
 	}
 
 
@@ -813,22 +959,25 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 
 		for (xpos = 0; xpos < info->width; xpos++) {
 			if (info->depth == 16) {
-				if (!gdGetWordLSB(&data, infile)) {
+				if (!gdGetWordLSB(&data16, infile)) {
 					return 1;
 				}
-				BMP_DEBUG(printf("Data: %X\n", data));
-				red = ((data & 0x7C00) >> 10) << 3;
-				green = ((data & 0x3E0) >> 5) << 3;
-				blue = (data & 0x1F) << 3;
+				BMP_DEBUG(printf("Data: %X\n", data16));
+				red = bmp_extract_mask((unsigned short) data16, info->red_mask);
+				green = bmp_extract_mask((unsigned short) data16, info->green_mask);
+				blue = bmp_extract_mask((unsigned short) data16, info->blue_mask);
 				BMP_DEBUG(printf("R: %d, G: %d, B: %d\n", red, green, blue));
 			} else if (info->depth == 24) {
 				if (!gdGetByte(&blue, infile) || !gdGetByte(&green, infile) || !gdGetByte(&red, infile)) {
 					return 1;
 				}
 			} else {
-				if (!gdGetByte(&blue, infile) || !gdGetByte(&green, infile) || !gdGetByte(&red, infile) || !gdGetByte(&alpha, infile)) {
+				if (!gdGetIntLSB(&data32, infile)) {
 					return 1;
 				}
+				red = bmp_extract_mask((unsigned int) data32, info->red_mask);
+				green = bmp_extract_mask((unsigned int) data32, info->green_mask);
+				blue = bmp_extract_mask((unsigned int) data32, info->blue_mask);
 			}
 			/*alpha = gdAlphaMax - (alpha >> 1);*/
 			gdImageSetPixel(im, xpos, row, gdTrueColor(red, green, blue));
@@ -865,6 +1014,99 @@ static int bmp_read_palette(gdImagePtr im, gdIOCtxPtr infile, int count, int rea
 	return 0;
 }
 
+static int bmp_check_palette_index(gdImagePtr im, int index)
+{
+	return index >= 0 && index < im->colorsTotal;
+}
+
+static int bmp_row_padding(int width, int depth, int *padding)
+{
+	int bits_per_row;
+	int bytes_per_row;
+
+	if (overflow2(width, depth)) {
+		return 1;
+	}
+	bits_per_row = width * depth;
+	if (bits_per_row > INT_MAX - 31) {
+		return 1;
+	}
+	bytes_per_row = ((bits_per_row + 31) / 32) * 4;
+	*padding = bytes_per_row - ((bits_per_row + 7) / 8);
+	return 0;
+}
+
+static int bmp_image_size(int width, int height, int depth, int *size)
+{
+	int bits_per_row;
+	int bytes_per_row;
+
+	if (overflow2(width, depth)) {
+		return 1;
+	}
+	bits_per_row = width * depth;
+	if (bits_per_row > INT_MAX - 31) {
+		return 1;
+	}
+	bytes_per_row = ((bits_per_row + 31) / 32) * 4;
+	if (overflow2(bytes_per_row, height)) {
+		return 1;
+	}
+	*size = bytes_per_row * height;
+	return 0;
+}
+
+static int bmp_get_mask_shift(unsigned int mask)
+{
+	int shift = 0;
+
+	if (mask == 0) {
+		return 0;
+	}
+	while ((mask & 1U) == 0) {
+		mask >>= 1;
+		shift++;
+	}
+	return shift;
+}
+
+static int bmp_get_mask_bits(unsigned int mask)
+{
+	int bits = 0;
+
+	if (mask == 0) {
+		return 0;
+	}
+	mask >>= bmp_get_mask_shift(mask);
+	while (mask & 1U) {
+		bits++;
+		mask >>= 1;
+	}
+	return bits;
+}
+
+static int bmp_extract_mask(unsigned int pixel, unsigned int mask)
+{
+	unsigned int value;
+	int bits;
+
+	if (mask == 0) {
+		return 0;
+	}
+	value = (pixel & mask) >> bmp_get_mask_shift(mask);
+	bits = bmp_get_mask_bits(mask);
+	if (bits <= 0) {
+		return 0;
+	}
+	if (bits >= 32) {
+		return (int) (value >> 24);
+	}
+	if (bits >= 8) {
+		return (int) ((value * 255U) / ((1U << bits) - 1U));
+	}
+	return (int) ((value * 255U + ((1U << bits) - 1U) / 2U) / ((1U << bits) - 1U));
+}
+
 static int bmp_read_1bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header)
 {
 	int ypos = 0, xpos = 0, row = 0, index = 0;
@@ -894,10 +1136,8 @@ static int bmp_read_1bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 		}
 	}
 
-	/* The line must be aligned on a 32 bits word, else it is padded with zeros */
-	padding = (info->width + 7) / 8 % 4;
-	if (padding) {
-		padding = 4 - padding;
+	if (bmp_row_padding(info->width, info->depth, &padding)) {
+		return 1;
 	}
 
 	for (ypos = 0; ypos < info->height; ++ypos) {
@@ -915,14 +1155,17 @@ static int bmp_read_1bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 
 			for (bit = 0; bit < 8; bit++) {
 				index = ((current_byte & (0x80 >> bit)) != 0 ? 0x01 : 0x00);
-				if (im->open[index]) {
-					im->open[index] = 0;
-				}
-				gdImageSetPixel(im, xpos + bit, row, index);
 				/* No need to read anything extra */
 				if ((xpos + bit) >= info->width) {
 					break;
 				}
+				if (!bmp_check_palette_index(im, index)) {
+					return 1;
+				}
+				if (im->open[index]) {
+					im->open[index] = 0;
+				}
+				gdImageSetPixel(im, xpos + bit, row, index);
 			}
 		}
 
@@ -964,10 +1207,8 @@ static int bmp_read_4bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 		}
 	}
 
-	/* The line must be divisible by 4, else its padded with NULLs */
-	padding = ((int)ceil(0.5 * info->width)) % 4;
-	if (padding) {
-		padding = 4 - padding;
+	if (bmp_row_padding(info->width, info->depth, &padding)) {
+		return 1;
 	}
 
 	switch (info->enctype) {
@@ -985,17 +1226,23 @@ static int bmp_read_4bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 				}
 
 				index = (current_byte >> 4) & 0x0f;
+				if (!bmp_check_palette_index(im, index)) {
+					return 1;
+				}
 				if (im->open[index]) {
 					im->open[index] = 0;
 				}
 				gdImageSetPixel(im, xpos, row, index);
 
 				/* This condition may get called often, potential optimsations */
-				if (xpos >= info->width) {
+				if (xpos + 1 >= info->width) {
 					break;
 				}
 
 				index = current_byte & 0x0f;
+				if (!bmp_check_palette_index(im, index)) {
+					return 1;
+				}
 				if (im->open[index]) {
 					im->open[index] = 0;
 				}
@@ -1051,10 +1298,8 @@ static int bmp_read_8bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 		}
 	}
 
-	/* The line must be divisible by 4, else its padded with NULLs */
-	padding = (1 * info->width) % 4;
-	if (padding) {
-		padding = 4 - padding;
+	if (bmp_row_padding(info->width, info->depth, &padding)) {
+		return 1;
 	}
 
 	switch (info->enctype) {
@@ -1071,6 +1316,9 @@ static int bmp_read_8bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 					return 1;
 				}
 
+				if (!bmp_check_palette_index(im, index)) {
+					return 1;
+				}
 				if (im->open[index]) {
 					im->open[index] = 0;
 				}
@@ -1105,20 +1353,29 @@ static int bmp_read_rle(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info)
 	int i = 0, j = 0;
 	int pixels_per_byte = 8 / info->depth;
 
+	if (info->topdown) {
+		return 1;
+	}
+
 	for (ypos = 0; ypos < info->height && xpos <= info->width;) {
 		if (!gdGetByte(&rle_length, infile) || !gdGetByte(&rle_data, infile)) {
 			return 1;
 		}
 		row = info->height - ypos - 1;
+		if (row < 0 || row >= info->height) {
+			return 1;
+		}
 
 		if (rle_length != BMP_RLE_COMMAND) {
-			if (im->open[rle_data]) {
-				im->open[rle_data] = 0;
-			}
-
-			for (i = 0; (i < rle_length) && (xpos < info->width);) {
-				for (j = 1; (j <= pixels_per_byte) && (xpos < info->width) && (i < rle_length); j++, xpos++, i++) {
+			for (i = 0; i < rle_length;) {
+				for (j = 1; (j <= pixels_per_byte) && (i < rle_length); j++, xpos++, i++) {
 					index = (rle_data & (((1 << info->depth) - 1) << (8 - (j * info->depth)))) >> (8 - (j * info->depth));
+					if (xpos >= info->width) {
+						return 1;
+					}
+					if (!bmp_check_palette_index(im, index)) {
+						return 1;
+					}
 					if (im->open[index]) {
 						im->open[index] = 0;
 					}
@@ -1128,7 +1385,7 @@ static int bmp_read_rle(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info)
 		} else if (rle_length == BMP_RLE_COMMAND && rle_data > 2) {
 			/* Uncompressed RLE needs to be even */
 			padding = 0;
-			for (i = 0; (i < rle_data) && (xpos < info->width); i += pixels_per_byte) {
+			for (i = 0; i < rle_data; i += pixels_per_byte) {
 				int max_pixels = pixels_per_byte;
 
 				if (!gdGetByte(&index, infile)) {
@@ -1140,12 +1397,19 @@ static int bmp_read_rle(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info)
 					max_pixels = rle_data - i;
 				}
 
-				for (j = 1; (j <= max_pixels)  && (xpos < info->width); j++, xpos++) {
+				for (j = 1; j <= max_pixels; j++) {
 					int temp = (index >> (8 - (j * info->depth))) & ((1 << info->depth) - 1);
+					if (xpos >= info->width) {
+						return 1;
+					}
+					if (!bmp_check_palette_index(im, temp)) {
+						return 1;
+					}
 					if (im->open[temp]) {
 						im->open[temp] = 0;
 					}
 					gdImageSetPixel(im, xpos, row, temp);
+					xpos++;
 				}
 			}
 
@@ -1160,6 +1424,9 @@ static int bmp_read_rle(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info)
 		} else if (rle_length == BMP_RLE_COMMAND && rle_data == BMP_RLE_DELTA) {
 			/* Delta Record, used for bmp files that contain other data*/
 			if (!gdGetByte(&rle_length, infile) || !gdGetByte(&rle_data, infile)) {
+				return 1;
+			}
+			if (xpos + rle_length > info->width || ypos + rle_data >= info->height) {
 				return 1;
 			}
 			xpos += rle_length;

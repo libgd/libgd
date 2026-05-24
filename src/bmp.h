@@ -36,6 +36,7 @@ extern "C" {
 #define BMP_BI_BITFIELDS 3
 #define BMP_BI_JPEG 4
 #define BMP_BI_PNG 5
+#define BMP_BI_ALPHABITFIELDS 6
 
 #define BMP_RLE_COMMAND 0
 #define BMP_RLE_ENDOFLINE 0
@@ -101,6 +102,12 @@ extern "C" {
 
 		/* 32bit - The number of color indices important for displaying the bitmap. */
 		signed int mincolors;
+
+		/* 32bit - Color masks for BI_BITFIELDS and v4/v5 headers. */
+		unsigned int red_mask;
+		unsigned int green_mask;
+		unsigned int blue_mask;
+		unsigned int alpha_mask;
 
 	} bmp_info_t;
 
