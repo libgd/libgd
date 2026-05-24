@@ -44,6 +44,7 @@ static int bmp_read_os2_v2_info(gdIOCtxPtr infile, bmp_info_t *info);
 
 static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header);
 static int bmp_read_1bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header);
+static int bmp_read_2bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header);
 static int bmp_read_4bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header);
 static int bmp_read_8bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header);
 static int bmp_read_rle(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info);
@@ -59,6 +60,7 @@ static int bmp_image_size(int width, int height, int depth, int *size);
 static int bmp_get_mask_shift(unsigned int mask);
 static int bmp_get_mask_bits(unsigned int mask);
 static int bmp_extract_mask(unsigned int pixel, unsigned int mask);
+static int bmp_alpha_to_gd(int alpha);
 
 #define BMP_DEBUG(s)
 
@@ -576,6 +578,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx(gdIOCtxPtr infile)
 		BMP_DEBUG(printf("1-bit image\n"));
 		error = bmp_read_1bit(im, infile, info, hdr);
 		break;
+	case 2:
+		BMP_DEBUG(printf("2-bit image\n"));
+		error = bmp_read_2bit(im, infile, info, hdr);
+		break;
 	case 4:
 		BMP_DEBUG(printf("4-bit image\n"));
 		error = bmp_read_4bit(im, infile, info, hdr);
@@ -630,6 +636,8 @@ static int bmp_read_info(gdIOCtx *infile, bmp_info_t *info)
 	switch (info->len) {
 		/* For now treat Windows v4 + v5 as v3 */
 	case BMP_WINDOWS_V3:
+	case BMP_WINDOWS_V2:
+	case BMP_WINDOWS_V3_ALPHA:
 	case BMP_WINDOWS_V4:
 	case BMP_WINDOWS_V5:
 		BMP_DEBUG(printf("Reading Windows Header\n"));
@@ -642,6 +650,7 @@ static int bmp_read_info(gdIOCtx *infile, bmp_info_t *info)
 			return 1;
 		}
 		break;
+	case BMP_OS2_V2_SHORT:
 	case BMP_OS2_V2:
 		if (bmp_read_os2_v2_info(infile, info)) {
 			return 1;
@@ -705,7 +714,7 @@ static int bmp_validate_info(bmp_info_t *info, bmp_hdr_t *hdr)
 		return 1;
 	}
 
-	if (info->depth != 1 && info->depth != 4 && info->depth != 8 &&
+	if (info->depth != 1 && info->depth != 2 && info->depth != 4 && info->depth != 8 &&
 	        info->depth != 16 && info->depth != 24 && info->depth != 32) {
 		return 1;
 	}
@@ -727,7 +736,8 @@ static int bmp_validate_info(bmp_info_t *info, bmp_hdr_t *hdr)
 		return 1;
 	}
 
-	if (info->enctype == BMP_BI_RGB || info->enctype == BMP_BI_BITFIELDS) {
+	if (info->enctype == BMP_BI_RGB || info->enctype == BMP_BI_BITFIELDS ||
+	        info->enctype == BMP_BI_ALPHABITFIELDS) {
 		if (bmp_image_size(info->width, info->height, info->depth, &image_size)) {
 			return 1;
 		}
@@ -736,7 +746,13 @@ static int bmp_validate_info(bmp_info_t *info, bmp_hdr_t *hdr)
 		}
 		if (hdr->size != 0) {
 			min_size = hdr->off + image_size;
-			if (min_size < hdr->off || hdr->size < min_size || hdr->size - min_size > 1024 * 1024) {
+			if (min_size < hdr->off) {
+				return 1;
+			}
+			if (hdr->size < min_size && hdr->size != 14 + info->len) {
+				return 1;
+			}
+			if (hdr->size > min_size && hdr->size - min_size > 1024 * 1024) {
 				return 1;
 			}
 		}
@@ -777,10 +793,10 @@ static int bmp_read_windows_v3_info(gdIOCtxPtr infile, bmp_info_t *info)
 	info->type = BMP_PALETTE_4;
 
 	if (extra > 0) {
-		if (extra < 16 || bmp_read_bitfield_masks(infile, info, 1)) {
+		if (extra < 12 || bmp_read_bitfield_masks(infile, info, extra >= 16)) {
 			return 1;
 		}
-		extra -= 16;
+		extra -= (extra >= 16) ? 16 : 12;
 		if (bmp_skip_bytes(infile, extra)) {
 			return 1;
 		}
@@ -815,7 +831,7 @@ static int bmp_read_os2_v1_info(gdIOCtxPtr infile, bmp_info_t *info)
 		return 1;
 	}
 
-	info->numcolors = 1 << info->depth;
+	info->numcolors = (info->depth <= 8) ? (1 << info->depth) : 0;
 	info->type = BMP_PALETTE_3;
 
 	if (info->width <= 0 || info->height <= 0 || info->numplanes <= 0) {
@@ -832,7 +848,22 @@ static int bmp_read_os2_v2_info(gdIOCtxPtr infile, bmp_info_t *info)
 	    !gdGetIntLSB(&info->width, infile) ||
 	    !gdGetIntLSB(&info->height, infile) ||
 	    !gdGetWordLSB(&info->numplanes, infile) ||
-	    !gdGetWordLSB(&info->depth, infile) ||
+	    !gdGetWordLSB(&info->depth, infile)
+	) {
+		return 1;
+	}
+
+	if (info->len == BMP_OS2_V2_SHORT) {
+		info->enctype = BMP_BI_RGB;
+		info->size = 0;
+		info->hres = 0;
+		info->vres = 0;
+		info->numcolors = (info->depth <= 8) ? (1 << info->depth) : 0;
+		info->mincolors = 0;
+		goto done;
+	}
+
+	if (
 	    !gdGetIntLSB(&info->enctype, infile) ||
 	    !gdGetIntLSB(&info->size, infile) ||
 	    !gdGetIntLSB(&info->hres, infile) ||
@@ -848,6 +879,7 @@ static int bmp_read_os2_v2_info(gdIOCtxPtr infile, bmp_info_t *info)
 		return 1;
 	}
 
+done:
 	/* Unlikely, but possible -- largest signed value won't fit in unsigned. */
 	if (info->height == 0 || info->height == INT_MIN)
 		return 1;
@@ -873,6 +905,7 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 {
 	int ypos = 0, xpos = 0, row = 0;
 	int padding = 0, red = 0, green = 0, blue = 0;
+	int alpha = gdAlphaOpaque;
 	signed short int data16 = 0;
 	int data32 = 0;
 	unsigned int mask = 0;
@@ -901,6 +934,14 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 			return 1;
 		}
 		break;
+	case BMP_BI_ALPHABITFIELDS:
+		if (info->depth != 16 && info->depth != 32) {
+			return 1;
+		}
+		if (info->len == BMP_WINDOWS_V3 && bmp_read_bitfield_masks(infile, info, 1)) {
+			return 1;
+		}
+		break;
 
 	case BMP_BI_RLE8:
 		if (info->depth != 8) {
@@ -916,7 +957,6 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 		break;
 	case BMP_BI_JPEG:
 	case BMP_BI_PNG:
-	case BMP_BI_ALPHABITFIELDS:
 	default:
 		BMP_DEBUG(printf("Unsupported BMP compression format\n"));
 		return 1;
@@ -966,11 +1006,13 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 				red = bmp_extract_mask((unsigned short) data16, info->red_mask);
 				green = bmp_extract_mask((unsigned short) data16, info->green_mask);
 				blue = bmp_extract_mask((unsigned short) data16, info->blue_mask);
+				alpha = info->alpha_mask ? bmp_alpha_to_gd(bmp_extract_mask((unsigned short) data16, info->alpha_mask)) : gdAlphaOpaque;
 				BMP_DEBUG(printf("R: %d, G: %d, B: %d\n", red, green, blue));
 			} else if (info->depth == 24) {
 				if (!gdGetByte(&blue, infile) || !gdGetByte(&green, infile) || !gdGetByte(&red, infile)) {
 					return 1;
 				}
+				alpha = gdAlphaOpaque;
 			} else {
 				if (!gdGetIntLSB(&data32, infile)) {
 					return 1;
@@ -978,9 +1020,9 @@ static int bmp_read_direct(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, b
 				red = bmp_extract_mask((unsigned int) data32, info->red_mask);
 				green = bmp_extract_mask((unsigned int) data32, info->green_mask);
 				blue = bmp_extract_mask((unsigned int) data32, info->blue_mask);
+				alpha = info->alpha_mask ? bmp_alpha_to_gd(bmp_extract_mask((unsigned int) data32, info->alpha_mask)) : gdAlphaOpaque;
 			}
-			/*alpha = gdAlphaMax - (alpha >> 1);*/
-			gdImageSetPixel(im, xpos, row, gdTrueColor(red, green, blue));
+			gdImageSetPixel(im, xpos, row, gdTrueColorAlpha(red, green, blue, alpha));
 		}
 		for (xpos = padding; xpos > 0; --xpos) {
 			if (!gdGetByte(&red, infile)) {
@@ -1107,6 +1149,17 @@ static int bmp_extract_mask(unsigned int pixel, unsigned int mask)
 	return (int) ((value * 255U + ((1U << bits) - 1U) / 2U) / ((1U << bits) - 1U));
 }
 
+static int bmp_alpha_to_gd(int alpha)
+{
+	if (alpha <= 0) {
+		return gdAlphaTransparent;
+	}
+	if (alpha >= 255) {
+		return gdAlphaOpaque;
+	}
+	return gdAlphaMax - (alpha * gdAlphaMax + 127) / 255;
+}
+
 static int bmp_read_1bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header)
 {
 	int ypos = 0, xpos = 0, row = 0, index = 0;
@@ -1166,6 +1219,73 @@ static int bmp_read_1bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 					im->open[index] = 0;
 				}
 				gdImageSetPixel(im, xpos + bit, row, index);
+			}
+		}
+
+		for (xpos = padding; xpos > 0; --xpos) {
+			if (!gdGetByte(&index, infile)) {
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+static int bmp_read_2bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header)
+{
+	int ypos = 0, xpos = 0, row = 0, index = 0;
+	int padding = 0, current_byte = 0, shift = 0;
+
+	if (info->enctype != BMP_BI_RGB) {
+		return 1;
+	}
+
+	if (!info->numcolors) {
+		info->numcolors = 4;
+	} else if (info->numcolors < 0 || info->numcolors > 4) {
+		return 1;
+	}
+
+	if (bmp_read_palette(im, infile, info->numcolors, (info->type == BMP_PALETTE_4))) {
+		return 1;
+	}
+
+	im->colorsTotal = info->numcolors;
+
+	if (gdTell(infile) != header->off) {
+		if (!gdSeek(infile, header->off)) {
+			return 1;
+		}
+	}
+
+	if (bmp_row_padding(info->width, info->depth, &padding)) {
+		return 1;
+	}
+
+	for (ypos = 0; ypos < info->height; ++ypos) {
+		if (info->topdown) {
+			row = ypos;
+		} else {
+			row = info->height - ypos - 1;
+		}
+
+		for (xpos = 0; xpos < info->width; xpos += 4) {
+			if (!gdGetByte(&current_byte, infile)) {
+				return 1;
+			}
+
+			for (shift = 6; shift >= 0; shift -= 2) {
+				if (xpos + ((6 - shift) / 2) >= info->width) {
+					break;
+				}
+				index = (current_byte >> shift) & 0x03;
+				if (!bmp_check_palette_index(im, index)) {
+					return 1;
+				}
+				if (im->open[index]) {
+					im->open[index] = 0;
+				}
+				gdImageSetPixel(im, xpos + ((6 - shift) / 2), row, index);
 			}
 		}
 
@@ -1273,6 +1393,8 @@ static int bmp_read_8bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 {
 	int ypos = 0, xpos = 0, row = 0, index = 0;
 	int padding = 0;
+	int palette_entries = 0;
+	int palette_entry_size = (info->type == BMP_PALETTE_4) ? 4 : 3;
 
 	if (info->enctype != BMP_BI_RGB && info->enctype != BMP_BI_RLE8) {
 		return 1;
@@ -1280,8 +1402,19 @@ static int bmp_read_8bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 
 	if (!info->numcolors) {
 		info->numcolors = 256;
-	} else if (info->numcolors < 0 || info->numcolors > 256) {
+	} else if (info->numcolors < 0 || info->numcolors > 1024) {
 		return 1;
+	}
+
+	palette_entries = (header->off - (14 + info->len)) / palette_entry_size;
+	if (palette_entries <= 0) {
+		return 1;
+	}
+	if (info->numcolors > palette_entries) {
+		info->numcolors = palette_entries;
+	}
+	if (info->numcolors > gdMaxColors) {
+		info->numcolors = gdMaxColors;
 	}
 
 	if (bmp_read_palette(im, infile, info->numcolors, (info->type == BMP_PALETTE_4))) {

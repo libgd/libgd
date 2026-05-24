@@ -25,7 +25,10 @@ extern "C" {
 #define BMP_PALETTE_4 2
 
 #define BMP_WINDOWS_V3 40
+#define BMP_WINDOWS_V2 52
+#define BMP_WINDOWS_V3_ALPHA 56
 #define BMP_OS2_V1 12
+#define BMP_OS2_V2_SHORT 16
 #define BMP_OS2_V2 64
 #define BMP_WINDOWS_V4 108
 #define BMP_WINDOWS_V5 124
