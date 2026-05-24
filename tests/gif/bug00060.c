@@ -6,7 +6,7 @@
 int main()
 {
 	gdImagePtr im;
-	FILE *fp = gdTestFileOpen("gif/bug00060.gif");
+	FILE *fp = gdTestFileOpen("gif/bug000498.gif");
 	im = gdImageCreateFromGif(fp);
 	fclose(fp);
 	gdImageDestroy(im);

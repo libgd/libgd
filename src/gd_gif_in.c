@@ -469,14 +469,27 @@ GetCode_(gdIOCtx *fd, CODE_STATIC_DATA *scd, int code_size, int flag, int *ZeroD
 
 		scd->buf[0] = scd->buf[scd->last_byte - 2];
 		scd->buf[1] = scd->buf[scd->last_byte - 1];
-
-		if((count = GetDataBlock(fd, &scd->buf[2], ZeroDataBlockP)) <= 0) {
-			scd->done = TRUE;
-		}
-
-		scd->last_byte = 2 + count;
+		scd->last_byte = 2;
 		scd->curbit = (scd->curbit - scd->lastbit) + 16;
-		scd->lastbit = (2 + count) * 8;
+		scd->lastbit = 16;
+
+		do {
+			if(scd->last_byte > (CSD_BUF_SIZE - 255)) {
+				return -1;
+			}
+
+			if((count = GetDataBlock(fd, &scd->buf[scd->last_byte], ZeroDataBlockP)) <= 0) {
+				scd->done = TRUE;
+				break;
+			}
+
+			scd->last_byte += count;
+			scd->lastbit += count * 8;
+		} while((scd->curbit + code_size) > scd->lastbit);
+	}
+
+	if ((scd->curbit + code_size) > scd->lastbit) {
+		return -1;
 	}
 
 	if ((scd->curbit + code_size - 1) >= (CSD_BUF_SIZE * 8)) {

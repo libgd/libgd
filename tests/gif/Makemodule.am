@@ -11,7 +11,9 @@ libgd_test_programs += \
 	gif/bug00006 \
 	gif/bug00060 \
 	gif/bug000953 \
-	gif/gif_im2im
+	gif/gif_im2im \
+	gif/bug000971 \
+	gif/bug000498
 
 if HAVE_LIBPNG
 libgd_test_programs += \
