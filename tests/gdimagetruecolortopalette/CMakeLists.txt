@@ -1,5 +1,6 @@
 LIST(APPEND TESTS_FILES
 	bug00307
+	neuquant_palette_order
 	php_bug_72512
 )
 

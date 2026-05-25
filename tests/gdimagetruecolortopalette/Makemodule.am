@@ -1,5 +1,6 @@
 libgd_test_programs += \
 	gdimagetruecolortopalette/bug00307 \
+	gdimagetruecolortopalette/neuquant_palette_order \
 	gdimagetruecolortopalette/php_bug_72512
 
 if HAVE_LIBJPEG
