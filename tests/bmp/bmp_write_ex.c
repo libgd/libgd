@@ -111,6 +111,116 @@ static void assert_roundtrip(gdImagePtr im, int bpp, int compression, int flags,
 	gdFree(data);
 }
 
+static gdImagePtr create_index_pattern_image(int index0_rgb, int index1_rgb, int transparent)
+{
+	gdImagePtr im;
+	int color0, color1;
+
+	im = gdImageCreate(8, 1);
+	if (im == NULL) {
+		return NULL;
+	}
+	color0 = gdImageColorAllocate(im, (index0_rgb >> 16) & 0xff, (index0_rgb >> 8) & 0xff, index0_rgb & 0xff);
+	color1 = gdImageColorAllocate(im, (index1_rgb >> 16) & 0xff, (index1_rgb >> 8) & 0xff, index1_rgb & 0xff);
+	gdImageSetPixel(im, 0, 0, color1);
+	gdImageSetPixel(im, 1, 0, color0);
+	gdImageSetPixel(im, 2, 0, color1);
+	gdImageSetPixel(im, 3, 0, color0);
+	gdImageSetPixel(im, 4, 0, color1);
+	gdImageSetPixel(im, 5, 0, color0);
+	gdImageSetPixel(im, 6, 0, color1);
+	gdImageSetPixel(im, 7, 0, color0);
+	if (transparent) {
+		gdImageColorTransparent(im, color1);
+	}
+	return im;
+}
+
+static void assert_1bpp_literal_indexes(void)
+{
+	gdImagePtr white_black, black_white, transparent_black;
+	void *data;
+	int size;
+	unsigned int off;
+
+	white_black = create_index_pattern_image(0xffffff, 0x000000, 0);
+	black_white = create_index_pattern_image(0x000000, 0xffffff, 0);
+	transparent_black = create_index_pattern_image(0xffffff, 0x000000, 1);
+	gdTestAssert(white_black != NULL);
+	gdTestAssert(black_white != NULL);
+	gdTestAssert(transparent_black != NULL);
+
+	data = gdImageBmpPtrEx(white_black, &size, 1, GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE);
+	assert_bmp_fields((unsigned char *) data, size, 1, 0, 40);
+	off = get_field((unsigned char *) data, OFFSET_BF_OFF_BITS);
+	gdTestAssertMsg(((unsigned char *) data)[off] == 0xaa,
+		"1bpp white/index0 black/index1 pattern should write literal bits 10101010");
+	gdFree(data);
+
+	data = gdImageBmpPtrEx(black_white, &size, 1, GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE);
+	assert_bmp_fields((unsigned char *) data, size, 1, 0, 40);
+	off = get_field((unsigned char *) data, OFFSET_BF_OFF_BITS);
+	gdTestAssertMsg(((unsigned char *) data)[off] == 0xaa,
+		"1bpp black/index0 white/index1 pattern should write the same literal index bits");
+	gdFree(data);
+
+	data = gdImageBmpPtrEx(transparent_black, &size, 1, GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE);
+	assert_bmp_fields((unsigned char *) data, size, 1, 0, 40);
+	off = get_field((unsigned char *) data, OFFSET_BF_OFF_BITS);
+	gdTestAssertMsg(((unsigned char *) data)[off] == 0xaa,
+		"1bpp transparent palette index should still be written as its literal index");
+	gdFree(data);
+
+	gdImageDestroy(white_black);
+	gdImageDestroy(black_white);
+	gdImageDestroy(transparent_black);
+}
+
+static gdImagePtr create_4bpp_pattern_image(int transparent)
+{
+	gdImagePtr im;
+	int colors[16];
+	int i;
+
+	im = gdImageCreate(4, 1);
+	if (im == NULL) {
+		return NULL;
+	}
+	for (i = 0; i < 16; i++) {
+		colors[i] = gdImageColorAllocate(im, i * 17, i * 17, i * 17);
+	}
+	gdImageSetPixel(im, 0, 0, colors[0]);
+	gdImageSetPixel(im, 1, 0, colors[15]);
+	gdImageSetPixel(im, 2, 0, colors[1]);
+	gdImageSetPixel(im, 3, 0, colors[14]);
+	if (transparent) {
+		gdImageColorTransparent(im, colors[15]);
+	}
+	return im;
+}
+
+static void assert_4bpp_literal_indexes(void)
+{
+	gdImagePtr im;
+	void *data;
+	int size;
+	unsigned int off;
+
+	im = create_4bpp_pattern_image(1);
+	gdTestAssert(im != NULL);
+
+	data = gdImageBmpPtrEx(im, &size, 4, GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE);
+	assert_bmp_fields((unsigned char *) data, size, 4, 0, 40);
+	off = get_field((unsigned char *) data, OFFSET_BF_OFF_BITS);
+	gdTestAssertMsg(((unsigned char *) data)[off] == 0x0f,
+		"4bpp first byte should contain literal indexes 0 and 15");
+	gdTestAssertMsg(((unsigned char *) data)[off + 1] == 0x1e,
+		"4bpp second byte should contain literal indexes 1 and 14");
+	gdFree(data);
+
+	gdImageDestroy(im);
+}
+
 int main()
 {
 	gdImagePtr mono, pal, tc, tca;
@@ -134,6 +244,8 @@ int main()
 	assert_roundtrip(tc, 16, GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE, 3, 40);
 	assert_roundtrip(tc, 24, GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE, 0, 40);
 	assert_roundtrip(tca, 32, GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE, 3, 108);
+	assert_1bpp_literal_indexes();
+	assert_4bpp_literal_indexes();
 
 	data = gdImageBmpPtrEx(tc, &size, 8, GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE);
 	gdTestAssertMsg(data == NULL, "truecolor to indexed without quantize flag should fail");
