@@ -1,7 +1,8 @@
 libgd_test_programs += \
 	gdimagetruecolortopalette/bug00307 \
 	gdimagetruecolortopalette/neuquant_palette_order \
-	gdimagetruecolortopalette/php_bug_72512
+	gdimagetruecolortopalette/php_bug_72512 \
+	gdimagetruecolortopalette/transparent_preserved
 
 if HAVE_LIBJPEG
 libgd_test_programs += \

@@ -2,6 +2,7 @@ LIST(APPEND TESTS_FILES
 	bug00307
 	neuquant_palette_order
 	php_bug_72512
+	transparent_preserved
 )
 
 IF(JPEG_FOUND)

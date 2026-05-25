@@ -1499,17 +1499,89 @@ static void convert_gdpixel_to_rgba(liq_color output_row[], int y, int width, vo
 	gdImagePtr oim = userinfo;
 	int x;
 	for(x = 0; x < width; x++) {
-		output_row[x].r = gdTrueColorGetRed(input_buf[y][x]) * 255/gdRedMax;
-		output_row[x].g = gdTrueColorGetGreen(input_buf[y][x]) * 255/gdGreenMax;
-		output_row[x].b = gdTrueColorGetBlue(input_buf[y][x]) * 255/gdBlueMax;
-		int alpha = gdTrueColorGetAlpha(input_buf[y][x]);
-		if (gdAlphaOpaque < gdAlphaTransparent) {
-			alpha = gdAlphaTransparent - alpha;
+		int pixel = input_buf[y][x];
+		output_row[x].r = gdTrueColorGetRed(pixel) * 255/gdRedMax;
+		output_row[x].g = gdTrueColorGetGreen(pixel) * 255/gdGreenMax;
+		output_row[x].b = gdTrueColorGetBlue(pixel) * 255/gdBlueMax;
+		if (oim->transparent >= 0 && pixel == oim->transparent) {
+			output_row[x].a = 0;
+		} else {
+			int alpha = gdTrueColorGetAlpha(pixel);
+			if (gdAlphaOpaque < gdAlphaTransparent) {
+				alpha = gdAlphaTransparent - alpha;
+			}
+			output_row[x].a = alpha * 255/gdAlphaMax;
 		}
-		output_row[x].a = alpha * 255/gdAlphaMax;
 	}
 }
 #endif
+
+static int ensure_transparent_palette_entry(gdImagePtr im, int transparentColor)
+{
+	int transparent;
+
+	if (transparentColor < 0) {
+		return -1;
+	}
+
+	transparent = im->transparent;
+	if (transparent >= 0 && transparent < im->colorsTotal) {
+		im->alpha[transparent] = gdAlphaTransparent;
+		return transparent;
+	}
+
+	if (im->colorsTotal >= gdMaxColors) {
+		return -1;
+	}
+
+	transparent = im->colorsTotal;
+	im->red[transparent] = gdTrueColorGetRed(transparentColor);
+	im->green[transparent] = gdTrueColorGetGreen(transparentColor);
+	im->blue[transparent] = gdTrueColorGetBlue(transparentColor);
+	im->alpha[transparent] = gdAlphaTransparent;
+	im->open[transparent] = 0;
+	im->transparent = transparent;
+	im->colorsTotal++;
+
+	return transparent;
+}
+
+static void remap_transparent_pixels(gdImagePtr src, gdImagePtr dst, int transparentColor, int transparentIndex)
+{
+	int x, y;
+
+	if (transparentColor < 0 || transparentIndex < 0) {
+		return;
+	}
+
+	for (y = 0; y < src->sy; y++) {
+		for (x = 0; x < src->sx; x++) {
+			if (src->tpixels[y][x] == transparentColor) {
+				dst->pixels[y][x] = transparentIndex;
+			}
+		}
+	}
+}
+
+static void copy_palette_image_data(gdImagePtr dst, gdImagePtr src)
+{
+	int i, y;
+
+	for (y = 0; y < src->sy; y++) {
+		memcpy(dst->pixels[y], src->pixels[y], src->sx);
+	}
+
+	dst->trueColor = 0;
+	dst->colorsTotal = src->colorsTotal;
+	dst->transparent = src->transparent;
+	for (i = 0; i < gdMaxColors; i++) {
+		dst->red[i] = src->red[i];
+		dst->green[i] = src->green[i];
+		dst->blue[i] = src->blue[i];
+		dst->alpha[i] = src->alpha[i];
+		dst->open[i] = src->open[i];
+	}
+}
 
 static void free_truecolor_image_data(gdImagePtr oim)
 {
@@ -1548,6 +1620,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 {
 	my_cquantize_ptr cquantize = NULL;
 	int i, conversionSucceeded=0;
+	int transparentColor;
 
 	/* Allocate the JPEG palette-storage */
 	size_t arraysize;
@@ -1573,9 +1646,11 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 		return TRUE;
 	}
 
+	transparentColor = oim->transparent;
+
 	/* If we have a transparent color (the alphaless mode of transparency), we
 	 * must reserve a palette entry for it at the end of the palette. */
-	if (oim->transparent >= 0) {
+	if (transparentColor >= 0) {
 		maxColors--;
 	}
 	if (colorsWanted > maxColors) {
@@ -1604,12 +1679,20 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 		if (!nim) {
 			return FALSE;
 		}
+		if (transparentColor >= 0) {
+			int transparent = ensure_transparent_palette_entry(nim, transparentColor);
+			if (transparent < 0) {
+				gdImageDestroy(nim);
+				return FALSE;
+			}
+			remap_transparent_pixels(oim, nim, transparentColor, transparent);
+		}
 		if (cimP) {
 			*cimP = nim;
 			return TRUE;
 		}
 		free_truecolor_image_data(oim);
-		gdImageCopy(oim, nim, 0, 0, 0, 0, oim->sx, oim->sy);
+		copy_palette_image_data(oim, nim);
 		gdImageDestroy(nim);
 		return TRUE;
 	}
@@ -1659,6 +1742,14 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 				}
 			}
 			nim->colorsTotal = pal->count;
+			if (transparentColor >= 0) {
+				int transparent = ensure_transparent_palette_entry(nim, transparentColor);
+				if (transparent >= 0) {
+					remap_transparent_pixels(oim, nim, transparentColor, transparent);
+				} else {
+					remapped_ok = 0;
+				}
+			}
 		}
 		liq_result_destroy(remap);
 		liq_image_destroy(image);
@@ -1756,7 +1847,7 @@ static int gdImageTrueColorToPaletteBody (gdImagePtr oim, int dither, int colors
 	 * an index rather than a color (Its data already exists and transparent
 	 * pixels have already been mapped to it by this point, it is done late as to
 	 * avoid color matching / dithering with it). */
-	if (oim->transparent >= 0) {
+	if (transparentColor >= 0) {
 		nim->transparent = nim->colorsTotal;
 		nim->colorsTotal++;
 	}
