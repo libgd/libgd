@@ -49,7 +49,39 @@ static int bmp_read_4bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp
 static int bmp_read_8bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header);
 static int bmp_read_rle(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info);
 
-static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
+typedef struct {
+	int bpp;
+	int compression;
+	int header_ver;
+	int row_stride;
+	int bitmap_size;
+	int info_size;
+	int palette_size;
+	int mask_size;
+	unsigned int red_mask;
+	unsigned int green_mask;
+	unsigned int blue_mask;
+	unsigned int alpha_mask;
+} bmp_write_ctx_t;
+
+static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compression, int flags);
+static int bmp_resolve_write_ctx(gdImagePtr im, int bpp_hint, int compression, int flags, bmp_write_ctx_t *ctx);
+static int bmp_auto_bpp(gdImagePtr im);
+static int bmp_has_alpha(gdImagePtr im);
+static int bmp_prepare_write_image(gdImagePtr im, int bpp, int flags, gdImagePtr *write_im);
+static void bmp_write_file_header(gdIOCtxPtr out, bmp_write_ctx_t *ctx);
+static void bmp_write_info_header(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx);
+static void bmp_write_palette(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx);
+static int bmp_write_pixels(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx);
+static int bmp_write_pixels_1bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx);
+static int bmp_write_pixels_4bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx);
+static int bmp_write_pixels_8bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx);
+static int bmp_write_pixels_16bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx);
+static int bmp_write_pixels_24bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx);
+static int bmp_write_pixels_32bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx);
+static int bmp_write_rle4_row(gdIOCtxPtr out, gdImagePtr im, int row);
+static int bmp_write_padding(gdIOCtxPtr out, int count);
+static int bmp_write_tmpfile_to_ctx(gdIOCtxPtr out, gdIOCtxPtr out_original);
 
 static int bmp_validate_info(bmp_info_t *info, bmp_hdr_t *hdr);
 static int bmp_read_bitfield_masks(gdIOCtxPtr infile, bmp_info_t *info, int read_alpha);
@@ -60,7 +92,9 @@ static int bmp_image_size(int width, int height, int depth, int *size);
 static int bmp_get_mask_shift(unsigned int mask);
 static int bmp_get_mask_bits(unsigned int mask);
 static int bmp_extract_mask(unsigned int pixel, unsigned int mask);
+static unsigned int bmp_pack_mask(int channel_8bit, unsigned int mask);
 static int bmp_alpha_to_gd(int alpha);
+static int bmp_gd_to_alpha(int gd_alpha);
 
 #define BMP_DEBUG(s)
 
@@ -88,6 +122,12 @@ static int gdBMPPutInt(gdIOCtx *out, int w)
 	Outputs the given image as BMP data, but using a <gdIOCtx> instead
 	of a file. See <gdImageBmp>.
 
+	This is the legacy BMP memory API. A zero <compression> value writes
+	uncompressed BMP data. A nonzero <compression> value requests legacy
+	RLE output when the automatically selected BMP bit depth supports RLE.
+	For explicit bit depth, compression, and conversion control, use
+	<gdImageBmpPtrEx>.
+
 	Parameters:
 		im			- the image to save.
 		size 		- Output: size in bytes of the result.
@@ -99,10 +139,35 @@ static int gdBMPPutInt(gdIOCtx *out, int w)
 */
 BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression)
 {
+	return gdImageBmpPtrEx(im, size, 0, compression ? -1 : GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE);
+}
+
+/*
+	Function: gdImageBmpPtrEx
+
+		<gdImageBmpPtrEx> outputs the given image as BMP data in memory.
+		See <gdImageBmpEx> for the meaning of <bpp>, <compression>, and
+		<flags>.
+
+	Parameters:
+
+		im          - The image to save.
+		size        - Output: size in bytes of the returned data.
+		bpp         - Requested output bit depth, or 0 for automatic selection.
+		compression - Requested BMP compression mode.
+		flags       - BMP writer option flags.
+
+	Returns:
+
+		A pointer to memory containing the image data, or NULL on error.
+		The returned memory must be freed with <gdFree>.
+*/
+BGD_DECLARE(void *) gdImageBmpPtrEx(gdImagePtr im, int *size, int bpp, int compression, int flags)
+{
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
-	if (!_gdImageBmpCtx(im, out, compression))
+	if (!_gdImageBmpCtx(im, out, bpp, compression, flags))
 		rv = gdDPExtractData(out, size);
 	else
 		rv = NULL;
@@ -123,6 +188,12 @@ BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression)
     In addition, <gdImageBmp> allows to specify whether RLE compression
     should be applied.
 
+	This is the legacy BMP file API. A zero <compression> value writes
+	uncompressed BMP data. A nonzero <compression> value requests legacy
+	RLE output when the automatically selected BMP bit depth supports RLE.
+	For explicit bit depth, compression, and conversion control, use
+	<gdImageBmpEx>.
+
 	Variants:
 
 		<gdImageBmpCtx> write via a <gdIOCtx> instead of a file handle.
@@ -140,9 +211,105 @@ BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression)
 */
 BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression)
 {
+	gdImageBmpEx(im, outFile, 0, compression ? -1 : GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE);
+}
+
+/*
+	Function: gdImageBmpEx
+
+		<gdImageBmpEx> outputs the specified image to the specified file in
+		BMP format. The file must be open for writing. Under MSDOS and all
+		versions of Windows, it is important to use "wb" as opposed to
+		simply "w" as the mode when opening the file, and under Unix there
+		is no penalty for doing so. <gdImageBmpEx> does not close the file;
+		your code must do so.
+
+		This extended BMP writer supports 1, 4, 8, 16, 24, and 32 bits per
+		pixel. It writes Windows BMP headers only: BITMAPINFOHEADER for most
+		outputs, BITMAPV4HEADER for 32 bpp alpha output or when
+		<GD_BMP_FLAG_FORCE_V4HDR> is set. It does not write OS/2 BMP
+		headers, 2 bpp BMPs, top-down BMPs, custom bit masks, V5 color
+		profiles, embedded JPEG/PNG BMP data, or non-standard high-depth
+		bitfield formats.
+
+	Bit depth:
+
+		Pass 0 for automatic bit depth selection. Automatic selection writes
+		truecolor images with non-opaque pixels as 32 bpp, opaque truecolor
+		images as 24 bpp, palette images with 2 or fewer colors as 1 bpp,
+		palette images with 16 or fewer colors as 4 bpp, and other palette
+		images as 8 bpp.
+
+		Explicit <bpp> values must be one of 1, 4, 8, 16, 24, or 32.
+		Indexed output at 1, 4, or 8 bpp requires a palette image with no
+		more colors than the selected bit depth can store. If the source is
+		truecolor, explicit indexed output is a lossy conversion and fails
+		unless <GD_BMP_FLAG_QUANTIZE> is set. With that flag, the writer
+		clones the image, converts the clone with <gdImageTrueColorToPalette>,
+		writes the clone, and leaves the caller's image unchanged.
+
+	Compression:
+
+		<GD_BMP_COMPRESS_NONE> writes uncompressed BMP pixels.
+		<GD_BMP_COMPRESS_RLE4> is valid only for 4 bpp output and writes
+		BI_RLE4. <GD_BMP_COMPRESS_RLE8> is valid only for 8 bpp output and
+		writes BI_RLE8. Any invalid bit depth/compression combination fails
+		before producing a valid BMP.
+
+		16 bpp and 32 bpp output use BI_BITFIELDS automatically, regardless
+		of the requested compression. 16 bpp defaults to RGB565 masks; set
+		<GD_BMP_FLAG_RGB555> to write RGB555 masks instead. 32 bpp writes
+		red, green, blue, and alpha masks and stores alpha as BMP opacity
+		(255 is opaque), converted from gd's alpha representation.
+
+		Palette alpha is not preserved in 1, 4, or 8 bpp BMP output. The
+		writer stores indexed palettes as B, G, R, reserved byte entries,
+		and writes the reserved byte as zero. Truecolor images that need
+		alpha preservation should be written as 32 bpp, either explicitly or
+		by using automatic bit depth selection on an image with non-opaque
+		pixels. If a truecolor image is quantized to indexed BMP with
+		<GD_BMP_FLAG_QUANTIZE>, alpha is not preserved in the indexed BMP.
+
+	Flags:
+
+		<GD_BMP_FLAG_NONE> selects default behavior.
+		<GD_BMP_FLAG_QUANTIZE> allows explicit lossy truecolor to indexed
+		conversion for 1, 4, or 8 bpp output.
+		<GD_BMP_FLAG_RGB555> selects RGB555 masks for 16 bpp output.
+		<GD_BMP_FLAG_FORCE_V4HDR> writes a BITMAPV4HEADER even when it is
+		not otherwise required.
+
+	Variants:
+
+		<gdImageBmpPtrEx> stores the image in RAM.
+
+		<gdImageBmpCtxEx> writes using a <gdIOCtx> struct.
+
+		<gdImageBmp>, <gdImageBmpPtr>, and <gdImageBmpCtx> are legacy
+		wrappers using automatic bit depth selection and no flags.
+
+	Parameters:
+
+		im          - The image to save.
+		outFile     - The FILE pointer to write to.
+		bpp         - Requested bit depth, or 0 for automatic selection.
+		compression - One of <GD_BMP_COMPRESS_NONE>,
+		              <GD_BMP_COMPRESS_RLE4>, or <GD_BMP_COMPRESS_RLE8>.
+		flags       - A bitwise OR of <GD_BMP_FLAG_NONE>,
+		              <GD_BMP_FLAG_FORCE_V4HDR>, <GD_BMP_FLAG_QUANTIZE>,
+		              and <GD_BMP_FLAG_RGB555>.
+
+	Returns:
+
+		For <gdImageBmpEx> and <gdImageBmpCtxEx>, nothing.
+		For <gdImageBmpPtrEx>, a pointer to the image in memory, or NULL
+		on error.
+*/
+BGD_DECLARE(void) gdImageBmpEx(gdImagePtr im, FILE *outFile, int bpp, int compression, int flags)
+{
 	gdIOCtx *out = gdNewFileCtx(outFile);
 	if (out == NULL) return;
-	gdImageBmpCtx(im, out, compression);
+	gdImageBmpCtxEx(im, out, bpp, compression, flags);
 	out->gd_free(out);
 }
 
@@ -152,6 +319,12 @@ BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression)
 	Outputs the given image as BMP data, but using a <gdIOCtx> instead
 	of a file. See <gdImageBmp>.
 
+	This is the legacy BMP context API. A zero <compression> value writes
+	uncompressed BMP data. A nonzero <compression> value requests legacy
+	RLE output when the automatically selected BMP bit depth supports RLE.
+	For explicit bit depth, compression, and conversion control, use
+	<gdImageBmpCtxEx>.
+
 	Parameters:
 		im			- the image to save.
 		out 		- the <gdIOCtx> to write to.
@@ -159,197 +332,97 @@ BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression)
 */
 BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
 {
-	_gdImageBmpCtx(im, out, compression);
+	gdImageBmpCtxEx(im, out, 0, compression ? -1 : GD_BMP_COMPRESS_NONE, GD_BMP_FLAG_NONE);
 }
 
-static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression)
+/*
+	Function: gdImageBmpCtxEx
+
+		<gdImageBmpCtxEx> outputs the given image as BMP data using a
+		<gdIOCtx> structure. See <gdImageBmpEx> for the meaning of <bpp>,
+		<compression>, and <flags>, including automatic bit depth selection,
+		RLE restrictions, quantization behavior, bitfield output, and
+		unsupported BMP variants.
+
+	Parameters:
+
+		im          - The image to save.
+		out         - The <gdIOCtx> to write to.
+		bpp         - Requested output bit depth, or 0 for automatic selection.
+		compression - Requested BMP compression mode.
+		flags       - BMP writer option flags.
+*/
+BGD_DECLARE(void) gdImageBmpCtxEx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compression, int flags)
 {
-	int bitmap_size = 0, info_size, total_size, padding;
-	int i, row, xpos, pixel;
+	_gdImageBmpCtx(im, out, bpp, compression, flags);
+}
+
+static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compression, int flags)
+{
+	bmp_write_ctx_t ctx;
 	int error = 0;
-	unsigned char *uncompressed_row = NULL, *uncompressed_row_start = NULL;
 	FILE *tmpfile_for_compression = NULL;
 	gdIOCtxPtr out_original = NULL;
 	int ret = 1;
+	gdImagePtr write_im = im;
 
-	/* No compression if its true colour or we don't support seek */
-	if (im->trueColor) {
-		compression = 0;
+	if (im == NULL || out == NULL) {
+		return 1;
 	}
 
-	if (compression && !out->seek) {
+	if (bmp_prepare_write_image(im, bpp, flags, &write_im)) {
+		return 1;
+	}
+
+	if (bmp_resolve_write_ctx(write_im, bpp, compression, flags, &ctx)) {
+		goto cleanup;
+	}
+
+	if ((ctx.compression == BMP_BI_RLE8 || ctx.compression == BMP_BI_RLE4) && !out->seek) {
 		/* Try to create a temp file where we can seek */
 		if ((tmpfile_for_compression = tmpfile()) == NULL) {
-			compression = 0;
+			ctx.compression = BMP_BI_RGB;
+			if (ctx.bpp == 4 || ctx.bpp == 8) {
+				ctx.bitmap_size = ctx.row_stride * write_im->sy;
+			}
 		} else {
 			out_original = out;
 			if ((out = (gdIOCtxPtr)gdNewFileCtx(tmpfile_for_compression)) == NULL) {
 				out = out_original;
 				out_original = NULL;
-				compression = 0;
+				ctx.compression = BMP_BI_RGB;
+				if (ctx.bpp == 4 || ctx.bpp == 8) {
+					ctx.bitmap_size = ctx.row_stride * write_im->sy;
+				}
 			}
 		}
 	}
 
-	bitmap_size = ((im->sx * (im->trueColor ? 24 : 8)) / 8) * im->sy;
-
-	/* 40 byte Windows v3 header */
-	info_size = BMP_WINDOWS_V3;
-
-	/* data for the palette */
-	if (!im->trueColor) {
-		info_size += im->colorsTotal * 4;
-		if (compression) {
-			bitmap_size = 0;
-		}
+	bmp_write_file_header(out, &ctx);
+	bmp_write_info_header(out, write_im, &ctx);
+	if (ctx.palette_size) {
+		bmp_write_palette(out, write_im, &ctx);
 	}
 
-	/* The line must be divisible by 4, else its padded with NULLs */
-	padding = ((int)(im->trueColor ? 3 : 1) * im->sx) % 4;
-	if (padding) {
-		padding = 4 - padding;
+	error = bmp_write_pixels(out, write_im, &ctx);
+
+	if (!error && (ctx.compression == BMP_BI_RLE8 || ctx.compression == BMP_BI_RLE4)) {
+		gdPutC(BMP_RLE_COMMAND, out);
+		gdPutC(BMP_RLE_ENDOFBITMAP, out);
+		ctx.bitmap_size += 2;
+
+		gdSeek(out, 2);
+		gdBMPPutInt(out, 14 + ctx.info_size + ctx.bitmap_size);
+
+		gdSeek(out, 34);
+		gdBMPPutInt(out, ctx.bitmap_size);
 	}
-
-	/* bitmap header + info header + data */
-	total_size = 14 + info_size + bitmap_size;
-
-	/* write bmp header info */
-	gdPutBuf("BM", 2, out);
-	gdBMPPutInt(out, total_size + padding * im->sy);
-	gdBMPPutWord(out, 0);
-	gdBMPPutWord(out, 0);
-	gdBMPPutInt(out, 14 + info_size);
-
-	/* write Windows v3 headers */
-	gdBMPPutInt(out, BMP_WINDOWS_V3); /* header size */
-	gdBMPPutInt(out, im->sx); /* width */
-	gdBMPPutInt(out, im->sy); /* height */
-	gdBMPPutWord(out, 1); /* colour planes */
-	gdBMPPutWord(out, (im->trueColor ? 24 : 8)); /* bit count */
-	gdBMPPutInt(out, (compression ? BMP_BI_RLE8 : BMP_BI_RGB)); /* compression */
-	gdBMPPutInt(out, bitmap_size + padding * im->sy); /* image size */
-	gdBMPPutInt(out, 0); /* H resolution */
-	gdBMPPutInt(out, 0); /* V ressolution */
-	gdBMPPutInt(out, im->colorsTotal); /* colours used */
-	gdBMPPutInt(out, 0); /* important colours */
-
-	/* 8-bit colours */
-	if (!im->trueColor) {
-		for(i = 0; i< im->colorsTotal; ++i) {
-			gdPutC(gdImageBlue(im, i), out);
-			gdPutC(gdImageGreen(im, i), out);
-			gdPutC(gdImageRed(im, i), out);
-			gdPutC(0, out);
-		}
-
-		if (compression) {
-			/* Can potentially change this to X + ((X / 128) * 3) */
-			uncompressed_row = uncompressed_row_start = (unsigned char *) gdCalloc(gdImageSX(im) * 2, sizeof(char));
-			if (!uncompressed_row) {
-				/* malloc failed */
-				goto cleanup;
-			}
-		}
-
-		for (row = (im->sy - 1); row >= 0; row--) {
-			if (compression) {
-				memset (uncompressed_row, 0, gdImageSX(im));
-			}
-
-			for (xpos = 0; xpos < im->sx; xpos++) {
-				if (compression) {
-					*uncompressed_row++ = (unsigned char)gdImageGetPixel(im, xpos, row);
-				} else {
-					gdPutC(gdImageGetPixel(im, xpos, row), out);
-				}
-			}
-
-			if (!compression) {
-				/* Add padding to make sure we have n mod 4 == 0 bytes per row */
-				for (xpos = padding; xpos > 0; --xpos) {
-					gdPutC('\0', out);
-				}
-			} else {
-				int compressed_size = 0;
-				uncompressed_row = uncompressed_row_start;
-				if ((compressed_size = compress_row(uncompressed_row, gdImageSX(im))) < 0) {
-					error = 1;
-					break;
-				}
-				bitmap_size += compressed_size;
-
-
-				if (gdPutBuf(uncompressed_row, compressed_size, out) != compressed_size){
-					gd_error("gd-bmp write error\n");
-					error = 1;
-					break;
-				}
-				gdPutC(BMP_RLE_COMMAND, out);
-				gdPutC(BMP_RLE_ENDOFLINE, out);
-				bitmap_size += 2;
-			}
-		}
-
-		if (compression && uncompressed_row) {
-			gdFree(uncompressed_row);
-			if (error != 0) {
-				goto cleanup;
-			}
-			/* Update filesize based on new values and set compression flag */
-			gdPutC(BMP_RLE_COMMAND, out);
-			gdPutC(BMP_RLE_ENDOFBITMAP, out);
-			bitmap_size += 2;
-
-			/* Write new total bitmap size */
-			gdSeek(out, 2);
-			gdBMPPutInt(out, total_size + bitmap_size);
-
-			/* Total length of image data */
-			gdSeek(out, 34);
-			gdBMPPutInt(out, bitmap_size);
-		}
-
-	} else {
-		for (row = (im->sy - 1); row >= 0; row--) {
-			for (xpos = 0; xpos < im->sx; xpos++) {
-				pixel = gdImageGetPixel(im, xpos, row);
-
-				gdPutC(gdTrueColorGetBlue(pixel), out);
-				gdPutC(gdTrueColorGetGreen(pixel), out);
-				gdPutC(gdTrueColorGetRed(pixel), out);
-			}
-
-			/* Add padding to make sure we have n mod 4 == 0 bytes per row */
-			for (xpos = padding; xpos > 0; --xpos) {
-				gdPutC('\0', out);
-			}
-		}
-	}
-
 
 	/* If we needed a tmpfile for compression copy it over to out_original */
-	if (tmpfile_for_compression) {
-		unsigned char* copy_buffer = NULL;
-		int buffer_size = 0;
-
-		gdSeek(out, 0);
-		copy_buffer = (unsigned char *) gdMalloc(1024 * sizeof(unsigned char));
-		if (copy_buffer == NULL) {
-			goto cleanup;
-		}
-
-		while ((buffer_size = gdGetBuf(copy_buffer, 1024, out)) != EOF) {
-			if (buffer_size == 0) {
-				break;
-			}
-			if (gdPutBuf(copy_buffer , buffer_size, out_original) != buffer_size) {
-				gd_error("gd-bmp write error\n");
-				error = 1;
-			}
-		}
-		gdFree(copy_buffer);
-
-		/* Replace the temp with the original which now has data */
+	if (!error && tmpfile_for_compression && bmp_write_tmpfile_to_ctx(out, out_original)) {
+		error = 1;
+	}
+	if (tmpfile_for_compression && out_original) {
 		out->gd_free(out);
 		out = out_original;
 		out_original = NULL;
@@ -369,7 +442,504 @@ cleanup:
 	if (out_original) {
 		out_original->gd_free(out_original);
 	}
+	if (write_im != im) {
+		gdImageDestroy(write_im);
+	}
 	return ret;
+}
+
+static int bmp_prepare_write_image(gdImagePtr im, int bpp, int flags, gdImagePtr *write_im)
+{
+	gdImagePtr clone;
+
+	*write_im = im;
+	if ((bpp == 1 || bpp == 4 || bpp == 8) && im->trueColor) {
+		if (!(flags & GD_BMP_FLAG_QUANTIZE)) {
+			return 1;
+		}
+		clone = gdImageClone(im);
+		if (clone == NULL) {
+			return 1;
+		}
+		if (!gdImageTrueColorToPalette(clone, 0, 1 << bpp)) {
+			gdImageDestroy(clone);
+			return 1;
+		}
+		*write_im = clone;
+	}
+	return 0;
+}
+
+static int bmp_auto_bpp(gdImagePtr im)
+{
+	if (im->trueColor) {
+		return bmp_has_alpha(im) ? 32 : 24;
+	}
+	if (im->colorsTotal <= 2) {
+		return 1;
+	}
+	if (im->colorsTotal <= 16) {
+		return 4;
+	}
+	return 8;
+}
+
+static int bmp_has_alpha(gdImagePtr im)
+{
+	int x, y;
+
+	for (y = 0; y < im->sy; y++) {
+		for (x = 0; x < im->sx; x++) {
+			if (gdTrueColorGetAlpha(gdImageGetPixel(im, x, y)) != gdAlphaOpaque) {
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+static int bmp_resolve_write_ctx(gdImagePtr im, int bpp_hint, int compression, int flags, bmp_write_ctx_t *ctx)
+{
+	memset(ctx, 0, sizeof(*ctx));
+
+	ctx->bpp = (bpp_hint > 0) ? bpp_hint : bmp_auto_bpp(im);
+	switch (ctx->bpp) {
+	case 1:
+	case 4:
+	case 8:
+	case 16:
+	case 24:
+	case 32:
+		break;
+	default:
+		return 1;
+	}
+
+	if ((ctx->bpp == 1 || ctx->bpp == 4 || ctx->bpp == 8) && im->trueColor) {
+		return 1;
+	}
+	if ((ctx->bpp == 1 || ctx->bpp == 4 || ctx->bpp == 8) && im->colorsTotal > (1 << ctx->bpp)) {
+		return 1;
+	}
+
+	if (compression == -1) {
+		if (ctx->bpp == 8) {
+			ctx->compression = BMP_BI_RLE8;
+		} else if (ctx->bpp == 4) {
+			ctx->compression = BMP_BI_RLE4;
+		} else {
+			ctx->compression = BMP_BI_RGB;
+		}
+	} else {
+		switch (compression) {
+		case GD_BMP_COMPRESS_NONE:
+			ctx->compression = BMP_BI_RGB;
+			break;
+		case GD_BMP_COMPRESS_RLE8:
+			if (ctx->bpp != 8) {
+				return 1;
+			}
+			ctx->compression = BMP_BI_RLE8;
+			break;
+		case GD_BMP_COMPRESS_RLE4:
+			if (ctx->bpp != 4) {
+				return 1;
+			}
+			ctx->compression = BMP_BI_RLE4;
+			break;
+		default:
+			return 1;
+		}
+	}
+
+	if (ctx->bpp == 16) {
+		if (flags & GD_BMP_FLAG_RGB555) {
+			ctx->red_mask = 0x7C00;
+			ctx->green_mask = 0x03E0;
+			ctx->blue_mask = 0x001F;
+		} else {
+			ctx->red_mask = 0xF800;
+			ctx->green_mask = 0x07E0;
+			ctx->blue_mask = 0x001F;
+		}
+		ctx->compression = BMP_BI_BITFIELDS;
+	} else if (ctx->bpp == 32) {
+		ctx->red_mask = 0x00FF0000;
+		ctx->green_mask = 0x0000FF00;
+		ctx->blue_mask = 0x000000FF;
+		ctx->alpha_mask = 0xFF000000;
+		ctx->compression = BMP_BI_BITFIELDS;
+	}
+
+	ctx->header_ver = ((ctx->bpp == 32 && ctx->alpha_mask) || (flags & GD_BMP_FLAG_FORCE_V4HDR)) ?
+		BMP_WINDOWS_V4 : BMP_WINDOWS_V3;
+	ctx->palette_size = (ctx->bpp <= 8) ? (1 << ctx->bpp) * 4 : 0;
+	ctx->mask_size = (ctx->header_ver == BMP_WINDOWS_V3 && ctx->compression == BMP_BI_BITFIELDS) ? 12 : 0;
+	ctx->info_size = ctx->header_ver + ctx->mask_size + ctx->palette_size;
+	ctx->row_stride = (((ctx->bpp * im->sx) + 31) / 32) * 4;
+	if (ctx->compression != BMP_BI_RLE8 && ctx->compression != BMP_BI_RLE4) {
+		ctx->bitmap_size = ctx->row_stride * im->sy;
+	}
+	return 0;
+}
+
+static void bmp_write_file_header(gdIOCtxPtr out, bmp_write_ctx_t *ctx)
+{
+	gdPutBuf("BM", 2, out);
+	gdBMPPutInt(out, 14 + ctx->info_size + ctx->bitmap_size);
+	gdBMPPutWord(out, 0);
+	gdBMPPutWord(out, 0);
+	gdBMPPutInt(out, 14 + ctx->info_size);
+}
+
+static void bmp_write_info_header(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx)
+{
+	int i;
+
+	gdBMPPutInt(out, ctx->header_ver);
+	gdBMPPutInt(out, im->sx);
+	gdBMPPutInt(out, im->sy);
+	gdBMPPutWord(out, 1);
+	gdBMPPutWord(out, ctx->bpp);
+	gdBMPPutInt(out, ctx->compression);
+	gdBMPPutInt(out, ctx->bitmap_size);
+	gdBMPPutInt(out, 0);
+	gdBMPPutInt(out, 0);
+	gdBMPPutInt(out, ctx->palette_size ? (ctx->palette_size / 4) : 0);
+	gdBMPPutInt(out, 0);
+
+	if (ctx->header_ver == BMP_WINDOWS_V4) {
+		gdBMPPutInt(out, ctx->red_mask);
+		gdBMPPutInt(out, ctx->green_mask);
+		gdBMPPutInt(out, ctx->blue_mask);
+		gdBMPPutInt(out, ctx->alpha_mask);
+		gdBMPPutInt(out, 0x73524742);
+		for (i = 0; i < 9; i++) {
+			gdBMPPutInt(out, 0);
+		}
+		gdBMPPutInt(out, 0);
+		gdBMPPutInt(out, 0);
+		gdBMPPutInt(out, 0);
+	} else if (ctx->mask_size) {
+		gdBMPPutInt(out, ctx->red_mask);
+		gdBMPPutInt(out, ctx->green_mask);
+		gdBMPPutInt(out, ctx->blue_mask);
+	}
+}
+
+static void bmp_write_palette(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx)
+{
+	int i, count;
+
+	count = 1 << ctx->bpp;
+	for (i = 0; i < count; i++) {
+		if (i < im->colorsTotal) {
+			gdPutC(gdImageBlue(im, i), out);
+			gdPutC(gdImageGreen(im, i), out);
+			gdPutC(gdImageRed(im, i), out);
+		} else {
+			gdPutC(0, out);
+			gdPutC(0, out);
+			gdPutC(0, out);
+		}
+		gdPutC(0, out);
+	}
+}
+
+static int bmp_write_pixels(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx)
+{
+	switch (ctx->bpp) {
+	case 1:
+		return bmp_write_pixels_1bit(out, im, ctx);
+	case 4:
+		return bmp_write_pixels_4bit(out, im, ctx);
+	case 8:
+		return bmp_write_pixels_8bit(out, im, ctx);
+	case 16:
+		return bmp_write_pixels_16bit(out, im, ctx);
+	case 24:
+		return bmp_write_pixels_24bit(out, im, ctx);
+	case 32:
+		return bmp_write_pixels_32bit(out, im, ctx);
+	default:
+		return 1;
+	}
+}
+
+static int bmp_write_padding(gdIOCtxPtr out, int count)
+{
+	while (count-- > 0) {
+		gdPutC(0, out);
+	}
+	return 0;
+}
+
+static int bmp_write_pixels_1bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx)
+{
+	int row, xpos, bit, byte, bytes_written, index;
+
+	for (row = im->sy - 1; row >= 0; row--) {
+		bytes_written = 0;
+		for (xpos = 0; xpos < im->sx; xpos += 8) {
+			byte = 0;
+			for (bit = 0; bit < 8 && xpos + bit < im->sx; bit++) {
+				index = gdImageGetPixel(im, xpos + bit, row);
+				if (index < 0 || index > 1) {
+					return 1;
+				}
+				byte |= (index & 0x01) << (7 - bit);
+			}
+			gdPutC(byte, out);
+			bytes_written++;
+		}
+		bmp_write_padding(out, ctx->row_stride - bytes_written);
+	}
+	return 0;
+}
+
+static int bmp_write_pixels_4bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx)
+{
+	int row, xpos, high, low, bytes_written;
+
+	if (ctx->compression == BMP_BI_RLE4) {
+		for (row = im->sy - 1; row >= 0; row--) {
+			int compressed_size = bmp_write_rle4_row(out, im, row);
+			if (compressed_size < 0) {
+				return 1;
+			}
+			ctx->bitmap_size += compressed_size;
+			ctx->bitmap_size += 2;
+			gdPutC(BMP_RLE_COMMAND, out);
+			gdPutC(BMP_RLE_ENDOFLINE, out);
+		}
+		return 0;
+	}
+
+	for (row = im->sy - 1; row >= 0; row--) {
+		bytes_written = 0;
+		for (xpos = 0; xpos < im->sx; xpos += 2) {
+			high = gdImageGetPixel(im, xpos, row);
+			if (high < 0 || high > 15) {
+				return 1;
+			}
+			if (xpos + 1 < im->sx) {
+				low = gdImageGetPixel(im, xpos + 1, row);
+				if (low < 0 || low > 15) {
+					return 1;
+				}
+			} else {
+				low = 0;
+			}
+			gdPutC(((high & 0x0f) << 4) | (low & 0x0f), out);
+			bytes_written++;
+		}
+		bmp_write_padding(out, ctx->row_stride - bytes_written);
+	}
+	return 0;
+}
+
+static int bmp_write_rle4_row(gdIOCtxPtr out, gdImagePtr im, int row)
+{
+	int xpos, chunk, i, value, next;
+	int bytes;
+	int total = 0;
+
+	for (xpos = 0; xpos < im->sx;) {
+		chunk = im->sx - xpos;
+		if (chunk > 255) {
+			chunk = 255;
+		}
+		if (chunk < 3) {
+			value = gdImageGetPixel(im, xpos, row);
+			if (value < 0 || value > 15) {
+				return 1;
+			}
+			next = value;
+			if (chunk == 2) {
+				next = gdImageGetPixel(im, xpos + 1, row);
+				if (next < 0 || next > 15) {
+					return 1;
+				}
+			}
+			gdPutC(chunk, out);
+			gdPutC(((value & 0x0f) << 4) | (next & 0x0f), out);
+			total += 2;
+			xpos += chunk;
+			continue;
+		}
+		gdPutC(BMP_RLE_COMMAND, out);
+		gdPutC(chunk, out);
+		total += 2;
+		bytes = (chunk + 1) / 2;
+		for (i = 0; i < chunk; i += 2) {
+			value = gdImageGetPixel(im, xpos + i, row);
+			if (value < 0 || value > 15) {
+				return 1;
+			}
+			if (i + 1 < chunk) {
+				next = gdImageGetPixel(im, xpos + i + 1, row);
+				if (next < 0 || next > 15) {
+					return 1;
+				}
+			} else {
+				next = 0;
+			}
+			gdPutC(((value & 0x0f) << 4) | (next & 0x0f), out);
+			total++;
+		}
+		if (bytes & 1) {
+			gdPutC(0, out);
+			total++;
+		}
+		xpos += chunk;
+	}
+	return total;
+}
+
+static int bmp_write_pixels_8bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx)
+{
+	int row, xpos;
+	unsigned char *uncompressed_row = NULL;
+
+	if (ctx->compression == BMP_BI_RLE8) {
+		uncompressed_row = (unsigned char *) gdCalloc(gdImageSX(im) * 2, sizeof(char));
+		if (!uncompressed_row) {
+			return 1;
+		}
+		for (row = im->sy - 1; row >= 0; row--) {
+			int compressed_size;
+			for (xpos = 0; xpos < im->sx; xpos++) {
+				uncompressed_row[xpos] = (unsigned char) gdImageGetPixel(im, xpos, row);
+			}
+			compressed_size = compress_row(uncompressed_row, gdImageSX(im));
+			if (compressed_size < 0) {
+				gdFree(uncompressed_row);
+				return 1;
+			}
+			ctx->bitmap_size += compressed_size;
+			if (gdPutBuf(uncompressed_row, compressed_size, out) != compressed_size) {
+				gd_error("gd-bmp write error\n");
+				gdFree(uncompressed_row);
+				return 1;
+			}
+			gdPutC(BMP_RLE_COMMAND, out);
+			gdPutC(BMP_RLE_ENDOFLINE, out);
+			ctx->bitmap_size += 2;
+		}
+		gdFree(uncompressed_row);
+		return 0;
+	}
+
+	for (row = im->sy - 1; row >= 0; row--) {
+		for (xpos = 0; xpos < im->sx; xpos++) {
+			gdPutC(gdImageGetPixel(im, xpos, row), out);
+		}
+		bmp_write_padding(out, ctx->row_stride - im->sx);
+	}
+	return 0;
+}
+
+static int bmp_write_pixels_16bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx)
+{
+	int row, xpos, pixel, red, green, blue;
+	unsigned int packed;
+
+	for (row = im->sy - 1; row >= 0; row--) {
+		for (xpos = 0; xpos < im->sx; xpos++) {
+			pixel = gdImageGetPixel(im, xpos, row);
+			if (im->trueColor) {
+				red = gdTrueColorGetRed(pixel);
+				green = gdTrueColorGetGreen(pixel);
+				blue = gdTrueColorGetBlue(pixel);
+			} else {
+				red = gdImageRed(im, pixel);
+				green = gdImageGreen(im, pixel);
+				blue = gdImageBlue(im, pixel);
+			}
+			packed = bmp_pack_mask(red, ctx->red_mask) |
+				bmp_pack_mask(green, ctx->green_mask) |
+				bmp_pack_mask(blue, ctx->blue_mask);
+			gdBMPPutWord(out, (int) packed);
+		}
+		bmp_write_padding(out, ctx->row_stride - im->sx * 2);
+	}
+	return 0;
+}
+
+static int bmp_write_pixels_24bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx)
+{
+	int row, xpos, pixel;
+
+	for (row = im->sy - 1; row >= 0; row--) {
+		for (xpos = 0; xpos < im->sx; xpos++) {
+			pixel = gdImageGetPixel(im, xpos, row);
+			if (im->trueColor) {
+				gdPutC(gdTrueColorGetBlue(pixel), out);
+				gdPutC(gdTrueColorGetGreen(pixel), out);
+				gdPutC(gdTrueColorGetRed(pixel), out);
+			} else {
+				gdPutC(gdImageBlue(im, pixel), out);
+				gdPutC(gdImageGreen(im, pixel), out);
+				gdPutC(gdImageRed(im, pixel), out);
+			}
+		}
+		bmp_write_padding(out, ctx->row_stride - im->sx * 3);
+	}
+	return 0;
+}
+
+static int bmp_write_pixels_32bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t *ctx)
+{
+	int row, xpos, pixel, red, green, blue, alpha;
+	unsigned int packed;
+
+	for (row = im->sy - 1; row >= 0; row--) {
+		for (xpos = 0; xpos < im->sx; xpos++) {
+			pixel = gdImageGetPixel(im, xpos, row);
+			if (im->trueColor) {
+				red = gdTrueColorGetRed(pixel);
+				green = gdTrueColorGetGreen(pixel);
+				blue = gdTrueColorGetBlue(pixel);
+				alpha = bmp_gd_to_alpha(gdTrueColorGetAlpha(pixel));
+			} else {
+				red = gdImageRed(im, pixel);
+				green = gdImageGreen(im, pixel);
+				blue = gdImageBlue(im, pixel);
+				alpha = bmp_gd_to_alpha(im->alpha[pixel]);
+			}
+			packed = bmp_pack_mask(red, ctx->red_mask) |
+				bmp_pack_mask(green, ctx->green_mask) |
+				bmp_pack_mask(blue, ctx->blue_mask) |
+				bmp_pack_mask(alpha, ctx->alpha_mask);
+			gdBMPPutInt(out, (int) packed);
+		}
+	}
+	return 0;
+}
+
+static int bmp_write_tmpfile_to_ctx(gdIOCtxPtr out, gdIOCtxPtr out_original)
+{
+	unsigned char* copy_buffer = NULL;
+	int buffer_size = 0;
+
+	gdSeek(out, 0);
+	copy_buffer = (unsigned char *) gdMalloc(1024 * sizeof(unsigned char));
+	if (copy_buffer == NULL) {
+		return 1;
+	}
+
+	while ((buffer_size = gdGetBuf(copy_buffer, 1024, out)) != EOF) {
+		if (buffer_size == 0) {
+			break;
+		}
+		if (gdPutBuf(copy_buffer, buffer_size, out_original) != buffer_size) {
+			gd_error("gd-bmp write error\n");
+			gdFree(copy_buffer);
+			return 1;
+		}
+	}
+	gdFree(copy_buffer);
+	return 0;
 }
 
 static int compress_row(unsigned char *row, int length)
@@ -1149,6 +1719,30 @@ static int bmp_extract_mask(unsigned int pixel, unsigned int mask)
 	return (int) ((value * 255U + ((1U << bits) - 1U) / 2U) / ((1U << bits) - 1U));
 }
 
+static unsigned int bmp_pack_mask(int channel_8bit, unsigned int mask)
+{
+	int bits;
+	int shift;
+	unsigned int max_val;
+	unsigned int value;
+
+	if (mask == 0) {
+		return 0;
+	}
+	bits = bmp_get_mask_bits(mask);
+	shift = bmp_get_mask_shift(mask);
+	if (bits <= 0) {
+		return 0;
+	}
+	if (bits >= 32) {
+		value = (unsigned int) channel_8bit << 24;
+	} else {
+		max_val = (1U << bits) - 1U;
+		value = ((unsigned int) channel_8bit * max_val + 127U) / 255U;
+	}
+	return (value << shift) & mask;
+}
+
 static int bmp_alpha_to_gd(int alpha)
 {
 	if (alpha <= 0) {
@@ -1158,6 +1752,17 @@ static int bmp_alpha_to_gd(int alpha)
 		return gdAlphaOpaque;
 	}
 	return gdAlphaMax - (alpha * gdAlphaMax + 127) / 255;
+}
+
+static int bmp_gd_to_alpha(int gd_alpha)
+{
+	if (gd_alpha <= gdAlphaOpaque) {
+		return 255;
+	}
+	if (gd_alpha >= gdAlphaTransparent) {
+		return 0;
+	}
+	return (gdAlphaMax - gd_alpha) * 255 / gdAlphaMax;
 }
 
 static int bmp_read_1bit(gdImagePtr im, gdIOCtxPtr infile, bmp_info_t *info, bmp_hdr_t *header)

@@ -1106,6 +1106,19 @@ BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression);
 BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression);
 BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
 
+#define GD_BMP_COMPRESS_NONE   0
+#define GD_BMP_COMPRESS_RLE8   1
+#define GD_BMP_COMPRESS_RLE4   2
+
+#define GD_BMP_FLAG_NONE        0
+#define GD_BMP_FLAG_FORCE_V4HDR (1<<0)
+#define GD_BMP_FLAG_QUANTIZE    (1<<1)
+#define GD_BMP_FLAG_RGB555      (1<<2)
+
+BGD_DECLARE(void *) gdImageBmpPtrEx(gdImagePtr im, int *size, int bpp, int compression, int flags);
+BGD_DECLARE(void) gdImageBmpEx(gdImagePtr im, FILE *outFile, int bpp, int compression, int flags);
+BGD_DECLARE(void) gdImageBmpCtxEx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compression, int flags);
+
 /* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
    1 is FASTEST but produces larger files, 9 provides the best
    compression (smallest files) but takes a long time to compress, and
