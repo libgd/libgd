@@ -1,4 +1,5 @@
 LIST(APPEND TESTS_FILES
+	animated_gif_reader
 	bug00005_2
 	bug00181
 	bug00227
@@ -11,6 +12,7 @@ LIST(APPEND TESTS_FILES
 	bug00006
 	bug00060
 	gif_im2im
+	gif_conformance
 	bug00415
 	bug000953
 	bug000971
