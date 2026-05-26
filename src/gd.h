@@ -663,6 +663,41 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGif (FILE * fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifPtr (int size, void *data);
+
+typedef struct gdGifReadStruct *gdGifReadPtr;
+
+typedef struct {
+	int width;
+	int height;
+	int backgroundIndex;
+	int globalColorTable;
+	int loopCount;
+} gdGifInfo;
+
+typedef struct {
+	int frameIndex;
+	int x;
+	int y;
+	int width;
+	int height;
+	int delay;
+	int disposal;
+	int transparentIndex;
+	int localColorTable;
+	int interlace;
+} gdGifFrameInfo;
+
+BGD_DECLARE(int) gdGifIsAnimated(FILE *fd);
+BGD_DECLARE(int) gdGifIsAnimatedCtx(gdIOCtxPtr in);
+BGD_DECLARE(int) gdGifIsAnimatedPtr(int size, void *data);
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpen(FILE *fd);
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpenCtx(gdIOCtxPtr in);
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpenPtr(int size, void *data);
+BGD_DECLARE(void) gdGifReadClose(gdGifReadPtr gif);
+BGD_DECLARE(int) gdGifReadGetInfo(gdGifReadPtr gif, gdGifInfo *info);
+BGD_DECLARE(int) gdGifReadNextFrame(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *frame);
+BGD_DECLARE(int) gdGifReadNextImage(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *image);
+BGD_DECLARE(gdImagePtr) gdGifReadCloneImage(gdGifReadPtr gif);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr (int size, void *data);

@@ -347,6 +347,8 @@ INSTALL(FILES examples/copyrotated.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${G
 INSTALL(FILES examples/crop.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/flip.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/gif.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/gif_frames.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/gif_rewrite.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/nnquant.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/noIcon.pic DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/noIcon.sgi DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})

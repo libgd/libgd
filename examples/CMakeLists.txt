@@ -2,10 +2,11 @@ include_directories (BEFORE "${GD_SOURCE_DIR}/src" "${CMAKE_BINARY_DIR}")
 
 SET(TESTS_FILES
 	gif
+	gif_rewrite
 )
 
 if (PNG_FOUND)
-	LIST(APPEND TEST_FILES arc crop tgaread)
+	LIST(APPEND TESTS_FILES arc crop gif_frames tgaread)
 
 	if (JPEG_FOUND)
 		LIST(APPEND TESTS_FILES copyrotated flip nnquant imagescale)
