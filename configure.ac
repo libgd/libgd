@@ -41,6 +41,7 @@ AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
 AM_PROG_AR
 AC_PROG_CC_STDC
+AC_PROG_CXX
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
@@ -215,6 +216,10 @@ GD_LIB_PKG_CHECK([LIBPNG], [PNG], [libpng], [
     AC_MSG_RESULT(no)
   fi
 ])
+
+dnl Test-only dependency for metadata validation. Do not merge into libgd LIBS.
+PKG_CHECK_MODULES([LIBEXIV2], [exiv2], [gd_found_libexiv2=yes], [gd_found_libexiv2=no])
+AM_CONDITIONAL([HAVE_LIBEXIV2], [test "$gd_found_libexiv2" = yes])
 
 dnl Check for FreeType support.
 dnl NB: "9.8.3" corresponds to freetype-2.1.10.
