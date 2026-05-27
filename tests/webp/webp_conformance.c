@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
+#if defined(_WIN32)
 #include "readdir.h"
 #else
 #include <dirent.h>
