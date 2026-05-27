@@ -18,8 +18,6 @@ typedef enum {
 	WEBP_EXPECT_ROBUST
 } webp_expectation;
 
-static int total_files = 0;
-
 static int has_webp_suffix(const char *name)
 {
 	size_t len = strlen(name);
@@ -154,14 +152,16 @@ static void assert_robust_file(const char *path)
 	free(data);
 }
 
-static void scan_directory(const char *dir, webp_expectation expectation)
+static int scan_directory(const char *dir, webp_expectation expectation)
 {
 	DIR *handle;
 	struct dirent *entry;
+	int files = 0;
 
 	handle = opendir(dir);
 	if (handle == NULL) {
-		return;
+		gdTestErrorMsg("cannot open WebP conformance directory: %s\n", dir);
+		return 0;
 	}
 
 	while ((entry = readdir(handle)) != NULL) {
@@ -175,13 +175,13 @@ static void scan_directory(const char *dir, webp_expectation expectation)
 			continue;
 		}
 		if (is_directory(path)) {
-			scan_directory(path, expectation);
+			files += scan_directory(path, expectation);
 			continue;
 		}
 		if (!has_webp_suffix(entry->d_name)) {
 			continue;
 		}
-		total_files++;
+		files++;
 		if (expectation == WEBP_EXPECT_DECODE) {
 			assert_valid_file(path);
 		} else {
@@ -190,6 +190,7 @@ static void scan_directory(const char *dir, webp_expectation expectation)
 	}
 
 	closedir(handle);
+	return files;
 }
 
 int main(void)
@@ -197,14 +198,20 @@ int main(void)
 	char *valid = gdTestFilePathX("webp", "webp-conformance", "valid", NULL);
 	char *non_conformant = gdTestFilePathX("webp", "webp-conformance", "non-conformant", NULL);
 	char *invalid = gdTestFilePathX("webp", "webp-conformance", "invalid", NULL);
+	int valid_files;
+	int non_conformant_files;
+	int invalid_files;
 
 	gdSetErrorMethod(gdSilence);
-	scan_directory(valid, WEBP_EXPECT_DECODE);
-	scan_directory(non_conformant, WEBP_EXPECT_DECODE);
-	scan_directory(invalid, WEBP_EXPECT_ROBUST);
+	valid_files = scan_directory(valid, WEBP_EXPECT_DECODE);
+	non_conformant_files = scan_directory(non_conformant, WEBP_EXPECT_DECODE);
+	invalid_files = scan_directory(invalid, WEBP_EXPECT_ROBUST);
 	gdClearErrorMethod();
 
-	gdTestAssertMsg(total_files > 0, "WebP conformance corpus has no .webp files\n");
+	gdTestAssertMsg(valid_files > 0,
+	                "WebP conformance valid corpus has no .webp files in %s "
+	                "(valid=%d non-conformant=%d invalid=%d)\n",
+	                valid, valid_files, non_conformant_files, invalid_files);
 
 	free(valid);
 	free(non_conformant);

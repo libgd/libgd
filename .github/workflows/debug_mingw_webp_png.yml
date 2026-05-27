@@ -78,6 +78,10 @@ jobs:
             pkg-config --libs --cflags libwebpdemux || true
             pkg-config --modversion libwebpmux || true
             pkg-config --libs --cflags libwebpmux || true
+            git rev-parse HEAD || true
+            git status --short || true
+            find tests/webp/webp-conformance -maxdepth 2 -type f -name '*.webp' | wc -l || true
+            find tests/webp/webp-conformance -maxdepth 2 -type f | head -50 || true
             pacman -Q
           } 2>&1 | tee debug-artifacts/environment.txt
 
