@@ -59,9 +59,12 @@ jobs:
           mingw-w64-${{ matrix.env }}-libwebp
           mingw-w64-${{ matrix.env }}-libheif
           mingw-w64-${{ matrix.env }}-libraqm
-          mingw-w64-${{ matrix.env }}-libimagequant
           mingw-w64-${{ matrix.env }}-libavif
           mingw-w64-${{ matrix.env }}-cmake
+
+    - name: '${{ matrix.icon }} Install libimagequant (non-mingw32)'
+      if: matrix.sys != 'mingw32'
+      run: pacman --noconfirm -S --needed mingw-w64-${{ matrix.env }}-libimagequant
 
     - name: '🚧 Cmake Configure'
       run:  |

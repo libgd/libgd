@@ -210,7 +210,7 @@ static int getfilesystemtime(struct timeval *tv)
 	return 0;
 }
 #endif
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
 
 static void randtemplate(char *template, size_t l) {
 	// just to avoid calls within the same second 
