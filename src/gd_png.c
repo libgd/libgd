@@ -6,6 +6,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "gd.h"
 #include "gd_errors.h"
 
@@ -14,9 +15,215 @@
 
 #include "gdhelpers.h"
 #include "png.h"		/* includes zlib.h and setjmp.h */
+#include "zlib.h"
 
 #define TRUE 1
 #define FALSE 0
+
+static const unsigned char gdPngSignature[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
+
+static unsigned int gdPngGetUint32(const unsigned char *data)
+{
+	return ((unsigned int)data[0] << 24) | ((unsigned int)data[1] << 16) | ((unsigned int)data[2] << 8) | (unsigned int)data[3];
+}
+
+static void gdPngPutUint32(unsigned char *data, size_t value)
+{
+	data[0] = (unsigned char)((value >> 24) & 0xff);
+	data[1] = (unsigned char)((value >> 16) & 0xff);
+	data[2] = (unsigned char)((value >> 8) & 0xff);
+	data[3] = (unsigned char)(value & 0xff);
+}
+
+static int gdPngChunkIs(const unsigned char *type, const char *name)
+{
+	return memcmp(type, name, 4) == 0;
+}
+
+static int gdPngIsXmpItxt(const unsigned char *data, size_t size)
+{
+	static const char keyword[] = "XML:com.adobe.xmp";
+	size_t keyword_size = sizeof(keyword) - 1;
+
+	return size > keyword_size && memcmp(data, keyword, keyword_size) == 0 && data[keyword_size] == 0;
+}
+
+static int gdPngIsRawProfile(const unsigned char *data, size_t size, const char *profile_type)
+{
+	static const char prefix[] = "Raw profile type ";
+	size_t prefix_size = sizeof(prefix) - 1;
+	size_t profile_type_size;
+
+	if (data == NULL) {
+		return FALSE;
+	}
+
+	profile_type_size = strlen(profile_type);
+	return size > prefix_size + profile_type_size &&
+	       memcmp(data, prefix, prefix_size) == 0 &&
+	       memcmp(data + prefix_size, profile_type, profile_type_size) == 0 &&
+	       data[prefix_size + profile_type_size] == 0;
+}
+
+static int gdPngSetTextProfile(gdImageMetadata *metadata, const unsigned char *data, size_t size)
+{
+	const unsigned char *nul;
+	size_t keyword_size;
+	char *key;
+	int status;
+
+	nul = (const unsigned char *)memchr(data, 0, size);
+	if (nul == NULL || nul == data) {
+		return GD_META_OK;
+	}
+
+	keyword_size = (size_t)(nul - data);
+	key = (char *)gdMalloc(sizeof("png:text:") + keyword_size);
+	if (key == NULL) {
+		return GD_META_ERR_NOMEM;
+	}
+	memcpy(key, "png:text:", sizeof("png:text:") - 1);
+	memcpy(key + sizeof("png:text:") - 1, data, keyword_size);
+	key[sizeof("png:text:") - 1 + keyword_size] = '\0';
+
+	status = gdImageMetadataSetProfile(metadata, key, data, size);
+	gdFree(key);
+	return status;
+}
+
+static int gdPngReadMetadataFromMemory(const unsigned char *png, size_t png_size, gdImageMetadata *metadata)
+{
+	size_t pos = 8;
+
+	if (metadata == NULL) {
+		return GD_META_OK;
+	}
+	if (png == NULL || png_size < 8 || memcmp(png, gdPngSignature, 8) != 0) {
+		return GD_META_ERR_FORMAT;
+	}
+
+	while (pos + 12 <= png_size) {
+		unsigned int chunk_size = gdPngGetUint32(png + pos);
+		const unsigned char *type = png + pos + 4;
+		const unsigned char *chunk_data = png + pos + 8;
+		int status = GD_META_OK;
+
+		if ((size_t)chunk_size > png_size - pos - 12) {
+			return GD_META_ERR_PARSE;
+		}
+
+		if (gdPngChunkIs(type, "eXIf")) {
+			status = gdImageMetadataSetProfile(metadata, "exif", chunk_data, chunk_size);
+		} else if (gdPngChunkIs(type, "zTXt") && gdPngIsRawProfile(chunk_data, chunk_size, "exif")) {
+			status = gdImageMetadataSetProfile(metadata, "exif", chunk_data, chunk_size);
+		} else if (gdPngChunkIs(type, "iCCP")) {
+			status = gdImageMetadataSetProfile(metadata, "icc", chunk_data, chunk_size);
+		} else if (gdPngChunkIs(type, "iTXt") && gdPngIsXmpItxt(chunk_data, chunk_size)) {
+			status = gdImageMetadataSetProfile(metadata, "xmp", chunk_data, chunk_size);
+		} else if (gdPngChunkIs(type, "zTXt") && gdPngIsRawProfile(chunk_data, chunk_size, "xmp")) {
+			status = gdImageMetadataSetProfile(metadata, "xmp", chunk_data, chunk_size);
+		} else if (gdPngChunkIs(type, "tEXt")) {
+			status = gdPngSetTextProfile(metadata, chunk_data, chunk_size);
+		}
+		if (status != GD_META_OK) {
+			return status;
+		}
+
+		pos += (size_t)chunk_size + 12;
+		if (gdPngChunkIs(type, "IEND")) {
+			return GD_META_OK;
+		}
+	}
+
+	return GD_META_ERR_PARSE;
+}
+
+static int gdPngAppendChunk(unsigned char *out, size_t *out_pos, const char *type, const unsigned char *data, size_t size)
+{
+	uLong crc;
+
+	if (data == NULL || size > UINT32_MAX) {
+		return GD_META_ERR_INVALID;
+	}
+
+	gdPngPutUint32(out + *out_pos, size);
+	memcpy(out + *out_pos + 4, type, 4);
+	if (size != 0) {
+		memcpy(out + *out_pos + 8, data, size);
+	}
+	crc = crc32(0L, Z_NULL, 0);
+	crc = crc32(crc, out + *out_pos + 4, (uInt)(size + 4));
+	gdPngPutUint32(out + *out_pos + 8 + size, crc);
+	*out_pos += size + 12;
+	return GD_META_OK;
+}
+
+static int gdPngMetadataChunkSize(size_t *total, const unsigned char *data, size_t size)
+{
+	if (data == NULL) {
+		return GD_META_OK;
+	}
+	if (size > UINT32_MAX || (size_t)-1 - *total < size + 12) {
+		return GD_META_ERR_LIMIT;
+	}
+	*total += size + 12;
+	return GD_META_OK;
+}
+
+static int gdPngShouldSkipChunk(const unsigned char *type, const unsigned char *data, size_t size, const gdImageMetadata *metadata)
+{
+	return (gdImageMetadataGetProfile(metadata, "exif", NULL) != NULL &&
+	        (gdPngChunkIs(type, "eXIf") || (gdPngChunkIs(type, "zTXt") && gdPngIsRawProfile(data, size, "exif")))) ||
+	       (gdImageMetadataGetProfile(metadata, "icc", NULL) != NULL && gdPngChunkIs(type, "iCCP")) ||
+	       (gdImageMetadataGetProfile(metadata, "xmp", NULL) != NULL &&
+	        ((gdPngChunkIs(type, "iTXt") && gdPngIsXmpItxt(data, size)) || (gdPngChunkIs(type, "zTXt") && gdPngIsRawProfile(data, size, "xmp"))));
+}
+
+static void *gdPngReadCtxToMemory(gdIOCtx *infile, int *size)
+{
+	enum { GD_PNG_ALLOC_STEP = 8192 };
+	unsigned char *data = NULL;
+	int logical_size = 0;
+	int real_size = 0;
+
+	if (size != NULL) {
+		*size = 0;
+	}
+	if (infile == NULL || size == NULL) {
+		return NULL;
+	}
+
+	for (;;) {
+		int n;
+
+		if (real_size - logical_size < GD_PNG_ALLOC_STEP) {
+			unsigned char *temp;
+			int new_size;
+
+			if (real_size > INT_MAX - GD_PNG_ALLOC_STEP) {
+				gdFree(data);
+				return NULL;
+			}
+			new_size = real_size + GD_PNG_ALLOC_STEP;
+			temp = (unsigned char *)gdRealloc(data, new_size);
+			if (temp == NULL) {
+				gdFree(data);
+				return NULL;
+			}
+			data = temp;
+			real_size = new_size;
+		}
+
+		n = gdGetBuf(data + logical_size, GD_PNG_ALLOC_STEP, infile);
+		if (n <= 0) {
+			break;
+		}
+		logical_size += n;
+	}
+
+	*size = logical_size;
+	return data;
+}
 
 /*---------------------------------------------------------------------------
 
@@ -189,6 +396,42 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data)
 		return 0;
 	im = gdImageCreateFromPngCtx (in);
 	in->gd_free (in);
+	return im;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtrWithMetadata(int size, void *data, gdImageMetadata *metadata)
+{
+	gdImagePtr im;
+	gdIOCtx *in;
+
+	if (metadata != NULL) {
+		int status = gdPngReadMetadataFromMemory((const unsigned char *)data, size, metadata);
+		if (status != GD_META_OK) {
+			return NULL;
+		}
+	}
+
+	in = gdNewDynamicCtxEx(size, data, 0);
+	if(!in)
+		return 0;
+	im = gdImageCreateFromPngCtx(in);
+	in->gd_free(in);
+	return im;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtxWithMetadata(gdIOCtx *infile, gdImageMetadata *metadata)
+{
+	void *data;
+	int size;
+	gdImagePtr im;
+
+	data = gdPngReadCtxToMemory(infile, &size);
+	if (data == NULL) {
+		return NULL;
+	}
+
+	im = gdImageCreateFromPngPtrWithMetadata(size, data, metadata);
+	gdFree(data);
 	return im;
 }
 
@@ -715,6 +958,155 @@ BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 	return rv;
 }
 
+BGD_DECLARE(void *) gdImagePngPtrWithMetadata(gdImagePtr im, int *size, const gdImageMetadata *metadata)
+{
+	return gdImagePngPtrExWithMetadata(im, size, -1, metadata);
+}
+
+BGD_DECLARE(void *) gdImagePngPtrExWithMetadata(gdImagePtr im, int *size, int level, const gdImageMetadata *metadata)
+{
+	void *rv;
+
+	rv = gdImagePngPtrEx(im, size, level);
+	if (rv == NULL) {
+		return NULL;
+	}
+	if (gdImageMetadataInjectPng(&rv, size, metadata) != GD_META_OK) {
+		gdFree(rv);
+		if (size != NULL) {
+			*size = 0;
+		}
+		return NULL;
+	}
+	return rv;
+}
+
+BGD_DECLARE(int) gdImageMetadataInjectPng(void **data, int *size, const gdImageMetadata *metadata)
+{
+	const unsigned char *png;
+	unsigned char *out;
+	const unsigned char *profile;
+	size_t profile_size;
+	size_t png_size;
+	size_t pos;
+	size_t out_pos;
+	size_t out_size;
+	size_t extra_size = 0;
+	size_t i;
+	int wrote_after_ihdr = FALSE;
+
+	if (data == NULL || size == NULL || *data == NULL || *size < 0) {
+		return GD_META_ERR_INVALID;
+	}
+	if (metadata == NULL) {
+		return GD_META_OK;
+	}
+
+	png = (const unsigned char *)*data;
+	png_size = (size_t)*size;
+	if (png_size < 8 || memcmp(png, gdPngSignature, 8) != 0) {
+		return GD_META_ERR_FORMAT;
+	}
+
+	profile = gdImageMetadataGetProfile(metadata, "exif", &profile_size);
+	if (gdPngMetadataChunkSize(&extra_size, profile, profile_size) != GD_META_OK) {
+		return GD_META_ERR_LIMIT;
+	}
+	profile = gdImageMetadataGetProfile(metadata, "icc", &profile_size);
+	if (gdPngMetadataChunkSize(&extra_size, profile, profile_size) != GD_META_OK) {
+		return GD_META_ERR_LIMIT;
+	}
+	profile = gdImageMetadataGetProfile(metadata, "xmp", &profile_size);
+	if (gdPngMetadataChunkSize(&extra_size, profile, profile_size) != GD_META_OK) {
+		return GD_META_ERR_LIMIT;
+	}
+	for (i = 0; i < gdImageMetadataGetProfileCount(metadata); i++) {
+		const char *key = NULL;
+		const unsigned char *text_data = NULL;
+		size_t text_size = 0;
+		if (gdImageMetadataGetProfileAt(metadata, i, &key, &text_data, &text_size) == GD_META_OK &&
+		        key != NULL && strncmp(key, "png:text:", 9) == 0) {
+			if (gdPngMetadataChunkSize(&extra_size, text_data, text_size) != GD_META_OK) {
+				return GD_META_ERR_LIMIT;
+			}
+		}
+	}
+
+	if ((size_t)-1 - png_size < extra_size || png_size + extra_size > INT_MAX) {
+		return GD_META_ERR_LIMIT;
+	}
+	out_size = png_size + extra_size;
+	out = (unsigned char *)gdMalloc(out_size);
+	if (out == NULL) {
+		return GD_META_ERR_NOMEM;
+	}
+
+	memcpy(out, png, 8);
+	pos = 8;
+	out_pos = 8;
+	while (pos + 12 <= png_size) {
+		unsigned int chunk_size = gdPngGetUint32(png + pos);
+		const unsigned char *type = png + pos + 4;
+		const unsigned char *chunk_data = png + pos + 8;
+		size_t chunk_total;
+
+		if ((size_t)chunk_size > png_size - pos - 12) {
+			gdFree(out);
+			return GD_META_ERR_PARSE;
+		}
+		chunk_total = (size_t)chunk_size + 12;
+
+		if (!gdPngShouldSkipChunk(type, chunk_data, chunk_size, metadata)) {
+			memcpy(out + out_pos, png + pos, chunk_total);
+			out_pos += chunk_total;
+		}
+		pos += chunk_total;
+
+		if (gdPngChunkIs(type, "IHDR") && !wrote_after_ihdr) {
+			int status;
+			profile = gdImageMetadataGetProfile(metadata, "exif", &profile_size);
+			if (profile != NULL && (status = gdPngAppendChunk(out, &out_pos, gdPngIsRawProfile(profile, profile_size, "exif") ? "zTXt" : "eXIf", profile, profile_size)) != GD_META_OK) {
+				gdFree(out);
+				return status;
+			}
+			profile = gdImageMetadataGetProfile(metadata, "icc", &profile_size);
+			if (profile != NULL && (status = gdPngAppendChunk(out, &out_pos, "iCCP", profile, profile_size)) != GD_META_OK) {
+				gdFree(out);
+				return status;
+			}
+			profile = gdImageMetadataGetProfile(metadata, "xmp", &profile_size);
+			if (profile != NULL && (status = gdPngAppendChunk(out, &out_pos, gdPngIsRawProfile(profile, profile_size, "xmp") ? "zTXt" : "iTXt", profile, profile_size)) != GD_META_OK) {
+				gdFree(out);
+				return status;
+			}
+			for (i = 0; i < gdImageMetadataGetProfileCount(metadata); i++) {
+				const char *key = NULL;
+				const unsigned char *text_data = NULL;
+				size_t text_size = 0;
+				if (gdImageMetadataGetProfileAt(metadata, i, &key, &text_data, &text_size) == GD_META_OK &&
+				        key != NULL && strncmp(key, "png:text:", 9) == 0) {
+					status = gdPngAppendChunk(out, &out_pos, "tEXt", text_data, text_size);
+					if (status != GD_META_OK) {
+						gdFree(out);
+						return status;
+					}
+				}
+			}
+			wrote_after_ihdr = TRUE;
+		}
+
+		if (gdPngChunkIs(type, "IEND")) {
+			gdFree(*data);
+			*data = out;
+			*size = (int)out_pos;
+			return GD_META_OK;
+		}
+	}
+
+	gdFree(out);
+	return GD_META_ERR_PARSE;
+}
+
 
 
 /*
@@ -737,6 +1129,11 @@ BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 {
 	/* 2.0.13: 'return' here was an error, thanks to Kevin Smith */
 	gdImagePngCtxEx (im, outfile, -1);
+}
+
+BGD_DECLARE(void) gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtx *outfile, const gdImageMetadata *metadata)
+{
+	gdImagePngCtxExWithMetadata(im, outfile, -1, metadata);
 }
 
 
@@ -762,6 +1159,19 @@ BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 {
 	_gdImagePngCtxEx(im, outfile, level);
+}
+
+BGD_DECLARE(void) gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtx *outfile, int level, const gdImageMetadata *metadata)
+{
+	void *data;
+	int size = 0;
+
+	data = gdImagePngPtrExWithMetadata(im, &size, level, metadata);
+	if (data == NULL) {
+		return;
+	}
+	gdPutBuf(data, size, outfile);
+	gdFree(data);
 }
 
 /* This routine is based in part on code from Dale Lutz (Safe Software Inc.)
@@ -1122,6 +1532,21 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data)
 	return NULL;
 }
 
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtrWithMetadata(int size, void *data, gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
+	ARG_NOT_USED(metadata);
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtxWithMetadata(gdIOCtx *infile, gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(infile);
+	ARG_NOT_USED(metadata);
+	return NULL;
+}
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 {
 	ARG_NOT_USED(infile);
@@ -1158,10 +1583,43 @@ BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 	return NULL;
 }
 
+BGD_DECLARE(void *) gdImagePngPtrWithMetadata(gdImagePtr im, int *size, const gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(metadata);
+	return NULL;
+}
+
+BGD_DECLARE(void *) gdImagePngPtrExWithMetadata(gdImagePtr im, int *size, int level, const gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(level);
+	ARG_NOT_USED(metadata);
+	return NULL;
+}
+
+BGD_DECLARE(int) gdImageMetadataInjectPng(void **data, int *size, const gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(data);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(metadata);
+	return GD_META_ERR_UNSUPPORTED;
+}
+
 BGD_DECLARE(void) gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 {
 	ARG_NOT_USED(im);
 	ARG_NOT_USED(outfile);
+	_noPngError();
+}
+
+BGD_DECLARE(void) gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtx *outfile, const gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(metadata);
 	_noPngError();
 }
 
@@ -1170,6 +1628,15 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	ARG_NOT_USED(im);
 	ARG_NOT_USED(outfile);
 	ARG_NOT_USED(level);
+	_noPngError();
+}
+
+BGD_DECLARE(void) gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtx *outfile, int level, const gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(level);
+	ARG_NOT_USED(metadata);
 	_noPngError();
 }
 

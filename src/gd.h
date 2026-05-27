@@ -511,6 +511,30 @@ gdImage;
 
 typedef gdImage *gdImagePtr;
 
+typedef struct gdImageMetadata gdImageMetadata;
+
+#define GD_META_OK               0
+#define GD_META_ERR_FORMAT      -1
+#define GD_META_ERR_PARSE       -2
+#define GD_META_ERR_NOMEM       -3
+#define GD_META_ERR_LIMIT       -4
+#define GD_META_ERR_UNSUPPORTED -5
+#define GD_META_ERR_INVALID     -6
+
+#define GD_METADATA_DEFAULT_MAX_PROFILE_SIZE ((size_t)64 * 1024 * 1024)
+#define GD_METADATA_DEFAULT_MAX_TOTAL_SIZE   ((size_t)256 * 1024 * 1024)
+
+BGD_DECLARE(gdImageMetadata *) gdImageMetadataCreate(void);
+BGD_DECLARE(void) gdImageMetadataFree(gdImageMetadata *metadata);
+BGD_DECLARE(void) gdImageMetadataReset(gdImageMetadata *metadata);
+BGD_DECLARE(int) gdImageMetadataSetLimits(gdImageMetadata *metadata, size_t max_profile_size, size_t max_total_size);
+BGD_DECLARE(void) gdImageMetadataGetLimits(const gdImageMetadata *metadata, size_t *max_profile_size, size_t *max_total_size);
+BGD_DECLARE(int) gdImageMetadataSetProfile(gdImageMetadata *metadata, const char *key, const unsigned char *data, size_t size);
+BGD_DECLARE(const unsigned char *) gdImageMetadataGetProfile(const gdImageMetadata *metadata, const char *key, size_t *size);
+BGD_DECLARE(int) gdImageMetadataRemoveProfile(gdImageMetadata *metadata, const char *key);
+BGD_DECLARE(size_t) gdImageMetadataGetProfileCount(const gdImageMetadata *metadata);
+BGD_DECLARE(int) gdImageMetadataGetProfileAt(const gdImageMetadata *metadata, size_t index, const char **key, const unsigned char **data, size_t *size);
+
 
 /* Point type for use in polygon drawing. */
 
@@ -657,7 +681,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy);
    JPEG is always truecolor. */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtxPtr in);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtxWithMetadata(gdIOCtxPtr in, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
 
 /* These read the first frame only */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGif (FILE * fd);
@@ -670,8 +696,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg (FILE * infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx (FILE * infile, int ignore_warning);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtxPtr infile, int ignore_warning);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxWithMetadata(gdIOCtxPtr infile, gdImageMetadata *metadata);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxExWithMetadata(gdIOCtxPtr infile, int ignore_warning, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx (int size, void *data, int ignore_warning);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrExWithMetadata(int size, void *data, int ignore_warning, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx(gdIOCtxPtr infile);
@@ -1097,6 +1127,7 @@ BGD_DECLARE(int) gdImageColorReplaceCallback(gdImagePtr im, gdCallbackImageColor
 BGD_DECLARE(void) gdImageGif (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImagePngCtx(gdImagePtr im, gdIOCtxPtr out);
+BGD_DECLARE(void) gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, const gdImageMetadata *metadata);
 BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out);
 BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile);
 BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size);
@@ -1112,6 +1143,7 @@ BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
    -1 selects the default compiled into the zlib library. */
 BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * out, int level);
 BGD_DECLARE(void) gdImagePngCtxEx(gdImagePtr im, gdIOCtxPtr out, int level);
+BGD_DECLARE(void) gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int level, const gdImageMetadata *metadata);
 
 BGD_DECLARE(void) gdImageWBMP (gdImagePtr image, int fg, FILE * out);
 BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtxPtr out);
@@ -1131,9 +1163,11 @@ BGD_DECLARE(void *) gdImageWBMPPtr (gdImagePtr im, int *size, int fg);
    0 is lowest. 10 is about the lowest useful setting. */
 BGD_DECLARE(void) gdImageJpeg (gdImagePtr im, FILE * out, int quality);
 BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtxPtr out, int quality);
+BGD_DECLARE(void) gdImageJpegCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, int quality, const gdImageMetadata *metadata);
 
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImageJpegPtr (gdImagePtr im, int *size, int quality);
+BGD_DECLARE(void *) gdImageJpegPtrWithMetadata(gdImagePtr im, int *size, int quality, const gdImageMetadata *metadata);
 
 /**
  * Group: WebP
@@ -1246,6 +1280,9 @@ BGD_DECLARE(void *) gdImageGifPtr (gdImagePtr im, int *size);
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size);
 BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level);
+BGD_DECLARE(void *) gdImagePngPtrWithMetadata(gdImagePtr im, int *size, const gdImageMetadata *metadata);
+BGD_DECLARE(void *) gdImagePngPtrExWithMetadata(gdImagePtr im, int *size, int level, const gdImageMetadata *metadata);
+BGD_DECLARE(int) gdImageMetadataInjectPng(void **data, int *size, const gdImageMetadata *metadata);
 
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size);
