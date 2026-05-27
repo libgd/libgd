@@ -1,0 +1,182 @@
+name: Debug MinGW WebP/PNG
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BUILD_TYPE: RELWITHDEBINFO
+
+jobs:
+  debug-mingw:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { icon: '⬛', sys: MINGW32 }
+          - { icon: '🟦', sys: MINGW64 }
+    name: debug-${{ matrix.icon }}-${{ matrix.sys }}
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: git config
+        run: git config --global core.autocrlf input
+        shell: bash
+
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.sys }}
+          update: true
+          install: >
+            git
+            base-devel
+            tree
+          pacboy: >
+            toolchain:p
+            libpng:p
+            libjpeg-turbo:p
+            freetype:p
+            libtiff:p
+            libwebp:p
+            libheif:p
+            libraqm:p
+            libavif:p
+            ${{ matrix.sys != 'MINGW32' && 'libimagequant:p' || '' }}
+            xpm-nox:p
+            cmake:p
+            ninja:p
+
+      - name: Diagnostics
+        run: |
+          mkdir -p debug-artifacts
+          {
+            echo "MSYSTEM=$MSYSTEM"
+            echo "MINGW_PREFIX=$MINGW_PREFIX"
+            echo "PATH=$PATH"
+            uname -a
+            cmake --version
+            ninja --version || true
+            gcc --version || true
+            clang --version || true
+            gdb --version || true
+            pkg-config --modversion libpng || true
+            pkg-config --libs --cflags libpng || true
+            pkg-config --modversion libwebp || true
+            pkg-config --libs --cflags libwebp || true
+            pkg-config --modversion libwebpdemux || true
+            pkg-config --libs --cflags libwebpdemux || true
+            pkg-config --modversion libwebpmux || true
+            pkg-config --libs --cflags libwebpmux || true
+            pacman -Q
+          } 2>&1 | tee debug-artifacts/environment.txt
+
+      - name: Configure
+        run: |
+          cmake -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DENABLE_PNG=1 \
+            -DENABLE_FREETYPE=1 \
+            -DENABLE_XPM=1 \
+            -DENABLE_JPEG=1 \
+            -DENABLE_TIFF=1 \
+            -DENABLE_WEBP=1 \
+            -DENABLE_GD_FORMATS=1 \
+            -DENABLE_HEIF=1 \
+            -DENABLE_ICONV=1 \
+            -DENABLE_CPP=1 \
+            -DBUILD_TEST=1 \
+            -B build \
+            2>&1 | tee debug-artifacts/configure.txt
+
+      - name: Build
+        run: |
+          cmake --build build 2>&1 | tee debug-artifacts/build.txt
+
+      - name: Run suspect tests with CTest verbose
+        continue-on-error: true
+        run: |
+          mkdir -p tmp debug-artifacts
+          export TMP="$PWD/tmp"
+          export TEMP="$PWD/tmp"
+          export CTEST_OUTPUT_ON_FAILURE=1
+          ctest --test-dir build -R 'test_(png_bug00033|webp_webp_conformance)$' -VV \
+            2>&1 | tee debug-artifacts/ctest-suspect-vv.txt
+
+      - name: Run full WebP/PNG subset with output on failure
+        continue-on-error: true
+        run: |
+          mkdir -p tmp debug-artifacts
+          export TMP="$PWD/tmp"
+          export TEMP="$PWD/tmp"
+          export CTEST_OUTPUT_ON_FAILURE=1
+          ctest --test-dir build -R 'test_(png_|webp_)' --output-on-failure \
+            2>&1 | tee debug-artifacts/ctest-png-webp.txt
+
+      - name: Direct test execution
+        continue-on-error: true
+        run: |
+          mkdir -p tmp debug-artifacts
+          export TMP="$PWD/tmp"
+          export TEMP="$PWD/tmp"
+          {
+            echo "### test_png_bug00033"
+            ./build/Bin/test_png_bug00033
+            echo "exit=$?"
+            echo "### test_webp_webp_conformance"
+            ./build/Bin/test_webp_webp_conformance
+            echo "exit=$?"
+          } 2>&1 | tee debug-artifacts/direct-tests.txt
+
+      - name: GDB backtraces
+        continue-on-error: true
+        run: |
+          mkdir -p debug-artifacts
+          if command -v gdb >/dev/null 2>&1; then
+            gdb --batch \
+              -ex "set pagination off" \
+              -ex "run" \
+              -ex "thread apply all bt full" \
+              --args ./build/Bin/test_png_bug00033 \
+              > debug-artifacts/gdb-test_png_bug00033.txt 2>&1 || true
+            gdb --batch \
+              -ex "set pagination off" \
+              -ex "run" \
+              -ex "thread apply all bt full" \
+              --args ./build/Bin/test_webp_webp_conformance \
+              > debug-artifacts/gdb-test_webp_webp_conformance.txt 2>&1 || true
+          else
+            echo "gdb not found" > debug-artifacts/gdb-missing.txt
+          fi
+
+      - name: Collect files
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p debug-artifacts
+          cp build/CMakeCache.txt debug-artifacts/CMakeCache.txt || true
+          cp build/Testing/Temporary/LastTest.log debug-artifacts/LastTest.log || true
+          cp -r build/Testing debug-artifacts/Testing || true
+          find tmp -maxdepth 3 -type f -print > debug-artifacts/tmp-files.txt 2>/dev/null || true
+          find . -maxdepth 3 -type f \( -name 'gd_test_*.png' -o -name '*.log' -o -name '*.stackdump' -o -name 'core*' \) -print > debug-artifacts/found-debug-files.txt 2>/dev/null || true
+          tar -czf debug-artifacts.tar.gz debug-artifacts tmp 2>/dev/null || tar -czf debug-artifacts.tar.gz debug-artifacts
+
+      - name: Upload debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mingw-debug-${{ matrix.sys }}
+          path: |
+            debug-artifacts.tar.gz
+            debug-artifacts/**
+          if-no-files-found: warn
