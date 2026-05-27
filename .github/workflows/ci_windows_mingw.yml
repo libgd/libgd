@@ -54,7 +54,6 @@ jobs:
           freetype:p
           libtiff:p
           libwebp:p
-          exiv2:p
           libheif:p
           libraqm:p
           libavif:p
