@@ -24,6 +24,13 @@ if (HEIF_FOUND)
 	LIST(APPEND TESTS_FILES	png2heif)
 endif (HEIF_FOUND)
 
+if (WEBP_FOUND)
+	LIST(APPEND TESTS_FILES webp_rewrite)
+	if (PNG_FOUND)
+		LIST(APPEND TESTS_FILES webp_frames)
+	endif (PNG_FOUND)
+endif (WEBP_FOUND)
+
 if (BUILD_SHARED_LIBS)
 	set(GD_LINK_LIB ${GD_LIB})
 else()
