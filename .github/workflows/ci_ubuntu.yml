@@ -27,7 +27,7 @@ jobs:
               name: "Ubuntu 24.04 Intel Clang",
               os: ubuntu-latest,
               cc: "clang",
-              cxx: "clang"
+              cxx: "clang++"
             }
 
     name: ${{ matrix.config.name }}
