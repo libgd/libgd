@@ -35,7 +35,7 @@
 
 /** Standard library input stream specialization of gdIOCtx
 */
-class BGD_EXPORT_DATA_IMPL istreamIOCtx : public gdIOCtx
+class BGD_EXPORT_DATA_PROT istreamIOCtx : public gdIOCtx
 {
 public:
 	typedef std::istream	stream_type;
@@ -79,7 +79,7 @@ inline gdIOCtxPtr gdNewIstreamCtx(std::istream *__stream)
 
 /** Standard library output stream specialization of gdIOCtx
 */
-class BGD_EXPORT_DATA_IMPL ostreamIOCtx : public gdIOCtx
+class BGD_EXPORT_DATA_PROT ostreamIOCtx : public gdIOCtx
 {
 public:
 	typedef std::ostream	stream_type;
