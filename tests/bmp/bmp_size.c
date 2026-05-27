@@ -25,7 +25,7 @@ int main()
     gdImagePtr im;
     unsigned char *data;
     int size;
-    unsigned int bfSize, biSizeImage;
+    unsigned int bfSize, biSizeImage, expectedSize;
 
     im = gdImageCreate(19, 19);
     gdImageColorAllocate(im, 0, 0, 0);
@@ -33,18 +33,20 @@ int main()
     data = gdImageBmpPtr(im, &size, 0);
     gdTestAssert(data != NULL);
     gdTestAssert(data[0] == 'B' && data[1] == 'M');
+    expectedSize = (unsigned int) size;
     bfSize = get_field(data, OFFSET_BF_SIZE);
-    gdTestAssertMsg(bfSize == size, "expected %d, got %u", size, bfSize);
+    gdTestAssertMsg(bfSize == expectedSize, "expected %u, got %u", expectedSize, bfSize);
     biSizeImage = get_field(data, OFFSET_BI_SIZE_IMAGE);
-    gdTestAssertMsg(biSizeImage == size - HEADER_SIZE, "expected %d, got %u", size - HEADER_SIZE, biSizeImage);
+    gdTestAssertMsg(biSizeImage == expectedSize - HEADER_SIZE, "expected %u, got %u", expectedSize - HEADER_SIZE, biSizeImage);
 
     data = gdImageBmpPtr(im, &size, 1);
     gdTestAssert(data != NULL);
     gdTestAssert(data[0] == 'B' && data[1] == 'M');
+    expectedSize = (unsigned int) size;
     bfSize = get_field(data, OFFSET_BF_SIZE);
-    gdTestAssertMsg(bfSize == size, "expected %d, got %u", size, bfSize);
+    gdTestAssertMsg(bfSize == expectedSize, "expected %u, got %u", expectedSize, bfSize);
     biSizeImage = get_field(data, OFFSET_BI_SIZE_IMAGE);
-    gdTestAssertMsg(biSizeImage == size - HEADER_SIZE, "expected %d, got %u", size - HEADER_SIZE, biSizeImage);
+    gdTestAssertMsg(biSizeImage == expectedSize - HEADER_SIZE, "expected %u, got %u", expectedSize - HEADER_SIZE, biSizeImage);
 
     gdImageDestroy(im);
     return gdNumFailures();
