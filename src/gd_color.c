@@ -20,7 +20,7 @@ int gdColorMatch(gdImagePtr im, int col1, int col2, float threshold)
 
 	return (100.0 * dist / 195075) < threshold;
 }
-    
+
 /*
  * To be implemented when we have more image formats.
  * Buffer like gray8 gray16 or rgb8 will require some tweak

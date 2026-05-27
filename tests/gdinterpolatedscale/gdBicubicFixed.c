@@ -1,7 +1,7 @@
 #include "gd.h"
 #include "gdtest.h"
 
-/* 
+/*
  using gradient here so it can be easily verified so repeated row scaling can be caught easily
 */
 static gdImagePtr
