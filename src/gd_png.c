@@ -278,6 +278,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx (gdIOCtx * infile)
 	png_set_sig_bytes (png_ptr, 8);	/* we already read the 8 signature bytes */
 
 	png_set_read_fn (png_ptr, (void *) infile, gdPngReadData);
+	png_set_user_limits(png_ptr, 0x7fffffffL, 0x7fffffffL);
 	png_read_info (png_ptr, info_ptr);	/* read all PNG info up to image data */
 
 	png_get_IHDR (png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, NULL, NULL);
@@ -830,6 +831,8 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 
 	png_set_write_fn (png_ptr, (void *) outfile, gdPngWriteData,
 	                  gdPngFlushData);
+
+	png_set_user_limits(png_ptr, 0x7fffffffL, 0x7fffffffL);
 
 	/* This is best for palette images, and libpng defaults to it for
 	   palette images anyway, so we don't need to do it explicitly.
