@@ -2,6 +2,12 @@
 #include "config.h"
 #endif
 
+/**
+ * File: UltraHDR IO
+ *
+ * Read and write UltraHDR images with gain map preservation.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -422,6 +428,15 @@ static gdUhdrImagePtr gdUhdrImageCreateFromData(void *data, int size, int format
 
 #endif
 
+/*
+	Function: gdUhdrIsAvailable
+
+		Returns whether UltraHDR support is available in this libgd build.
+
+	Returns:
+
+		1 if available, 0 otherwise.
+*/
 BGD_DECLARE(int) gdUhdrIsAvailable(void)
 {
 #ifdef HAVE_LIBUHDR
@@ -431,6 +446,27 @@ BGD_DECLARE(int) gdUhdrIsAvailable(void)
 #endif
 }
 
+/*
+	Function: gdUhdrImageCreateFromFile
+
+		Loads an UltraHDR image from a file.
+
+	Variants:
+
+		<gdUhdrImageCreateFromCtx> loads from a <gdIOCtx>.
+
+		<gdUhdrImageCreateFromPtr> loads from memory.
+
+	Parameters:
+
+		filename - input file path.
+		format   - input format (currently <GD_UHDR_FORMAT_JPEG>).
+		err      - optional output error details.
+
+	Returns:
+
+		A new <gdUhdrImagePtr> on success, or NULL on error.
+*/
 BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromFile(const char *filename, int format, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
@@ -468,6 +504,11 @@ BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromFile(const char *filename, int 
 #endif
 }
 
+/*
+	Function: gdUhdrImageCreateFromCtx
+
+		See <gdUhdrImageCreateFromFile>.
+*/
 BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromCtx(gdIOCtxPtr ctx, int format, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
@@ -498,6 +539,11 @@ BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromCtx(gdIOCtxPtr ctx, int format,
 #endif
 }
 
+/*
+	Function: gdUhdrImageCreateFromPtr
+
+		See <gdUhdrImageCreateFromFile>.
+*/
 BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromPtr(int size, void *data, int format, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
@@ -516,6 +562,11 @@ BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromPtr(int size, void *data, int f
 #endif
 }
 
+/*
+	Function: gdUhdrImageDestroy
+
+		Releases an UltraHDR image created by <gdUhdrImageCreateFromFile> or its variants.
+*/
 BGD_DECLARE(void) gdUhdrImageDestroy(gdUhdrImagePtr im)
 {
 	if (!im) {
@@ -527,6 +578,11 @@ BGD_DECLARE(void) gdUhdrImageDestroy(gdUhdrImagePtr im)
 	gdFree(im);
 }
 
+/*
+  Function: gdUhdrImageWidth
+
+    Returns the image width in pixels.
+*/
 BGD_DECLARE(int) gdUhdrImageWidth(gdUhdrImagePtr im)
 {
 	if (!im) {
@@ -535,6 +591,11 @@ BGD_DECLARE(int) gdUhdrImageWidth(gdUhdrImagePtr im)
 	return im->width;
 }
 
+/*
+  Function: gdUhdrImageHeight
+
+    Returns the image height in pixels.
+*/
 BGD_DECLARE(int) gdUhdrImageHeight(gdUhdrImagePtr im)
 {
 	if (!im) {
@@ -543,6 +604,11 @@ BGD_DECLARE(int) gdUhdrImageHeight(gdUhdrImagePtr im)
 	return im->height;
 }
 
+/*
+  Function: gdUhdrImageHasGainMap
+
+    Returns nonzero when the loaded image contains a gain map.
+*/
 BGD_DECLARE(int) gdUhdrImageHasGainMap(gdUhdrImagePtr im)
 {
 	if (!im) {
@@ -551,6 +617,11 @@ BGD_DECLARE(int) gdUhdrImageHasGainMap(gdUhdrImagePtr im)
 	return im->has_gain_map;
 }
 
+/*
+  Function: gdUhdrImageResize
+
+    Queues a resize operation to be applied at save time.
+*/
 BGD_DECLARE(int) gdUhdrImageResize(gdUhdrImagePtr im, int width, int height, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
@@ -577,6 +648,11 @@ BGD_DECLARE(int) gdUhdrImageResize(gdUhdrImagePtr im, int width, int height, gdU
 #endif
 }
 
+/*
+	Function: gdUhdrImageCrop
+
+		Queues a crop operation to be applied at save time.
+*/
 BGD_DECLARE(int) gdUhdrImageCrop(gdUhdrImagePtr im, int left, int top, int width, int height, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
@@ -611,6 +687,11 @@ BGD_DECLARE(int) gdUhdrImageCrop(gdUhdrImagePtr im, int left, int top, int width
 #endif
 }
 
+/*
+	Function: gdUhdrImageRotate
+
+		Queues a clockwise rotation (90, 180, or 270 degrees) to be applied at save time.
+*/
 BGD_DECLARE(int) gdUhdrImageRotate(gdUhdrImagePtr im, int degrees, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
@@ -636,6 +717,11 @@ BGD_DECLARE(int) gdUhdrImageRotate(gdUhdrImagePtr im, int degrees, gdUhdrErrorPt
 #endif
 }
 
+/*
+	Function: gdUhdrImageMirror
+
+		Queues a mirror operation to be applied at save time.
+*/
 BGD_DECLARE(int) gdUhdrImageMirror(gdUhdrImagePtr im, int axis, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
@@ -661,6 +747,17 @@ BGD_DECLARE(int) gdUhdrImageMirror(gdUhdrImagePtr im, int axis, gdUhdrErrorPtr e
 #endif
 }
 
+/*
+	Function: gdUhdrImageFile
+
+		Saves an UltraHDR image to a file path.
+
+	Variants:
+
+		<gdUhdrImageCtx> writes via <gdIOCtx>.
+
+		<gdUhdrImageWritePtr> writes to memory.
+*/
 BGD_DECLARE(int) gdUhdrImageFile(gdUhdrImagePtr im, const char *filename, int format, int quality, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
@@ -700,6 +797,11 @@ BGD_DECLARE(int) gdUhdrImageFile(gdUhdrImagePtr im, const char *filename, int fo
 #endif
 }
 
+/*
+	Function: gdUhdrImageCtx
+
+		See <gdUhdrImageFile>.
+*/
 BGD_DECLARE(int) gdUhdrImageCtx(gdUhdrImagePtr im, gdIOCtxPtr ctx, int format, int quality, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
@@ -948,6 +1050,11 @@ BGD_DECLARE(int) gdUhdrImageCtx(gdUhdrImagePtr im, gdIOCtxPtr ctx, int format, i
 #endif
 }
 
+/*
+	Function: gdUhdrImageWritePtr
+
+		See <gdUhdrImageFile>.
+*/
 BGD_DECLARE(void *) gdUhdrImageWritePtr(gdUhdrImagePtr im, int *size, int format, int quality, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
@@ -985,6 +1092,11 @@ BGD_DECLARE(void *) gdUhdrImageWritePtr(gdUhdrImagePtr im, int *size, int format
 #endif
 }
 
+/*
+	Function: gdUhdrImageGetSdr
+
+		Decodes and returns the SDR base image as a <gdImagePtr>.
+*/
 BGD_DECLARE(gdImagePtr) gdUhdrImageGetSdr(gdUhdrImagePtr im, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR

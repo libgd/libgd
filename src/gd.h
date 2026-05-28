@@ -788,40 +788,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromFile(const char *filename);
 
 /* UltraHDR load API */
 
-/**
- * Function: gdUhdrImageCreateFromFile
- *
- * Loads an UltraHDR image from a file path.
- *
- * Parameters:
- *  filename - input path
- *  format   - container format (<gdUhdrFormat>)
- *  err      - optional error output
- *
- * Returns:
- *  A new <gdUhdrImagePtr> on success, or NULL on failure.
- */
 BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromFile(const char *filename, int format, gdUhdrErrorPtr err);
-
-/**
- * Function: gdUhdrImageCreateFromCtx
- *
- * Loads an UltraHDR image from a <gdIOCtx>.
- */
 BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromCtx(gdIOCtxPtr ctx, int format, gdUhdrErrorPtr err);
-
-/**
- * Function: gdUhdrImageCreateFromPtr
- *
- * Loads an UltraHDR image from memory.
- */
 BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromPtr(int size, void *data, int format, gdUhdrErrorPtr err);
-
-/**
- * Function: gdUhdrImageDestroy
- *
- * Destroys an UltraHDR image handle.
- */
 BGD_DECLARE(void) gdUhdrImageDestroy(gdUhdrImagePtr im);
 
 
@@ -1246,94 +1215,17 @@ BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtxPtr out);
 BGD_DECLARE(int) gdImageFile(gdImagePtr im, const char *filename);
 BGD_DECLARE(int) gdSupportsFileType(const char *filename, int writing);
 
-/**
- * Function: gdUhdrIsAvailable
- *
- * Reports whether this libgd build has UltraHDR support enabled.
- *
- * Returns:
- *  1 if available, 0 otherwise.
- */
 BGD_DECLARE(int) gdUhdrIsAvailable(void);
-
-/**
- * Function: gdUhdrImageWidth
- *
- * Returns the current image width in pixels.
- */
 BGD_DECLARE(int) gdUhdrImageWidth(gdUhdrImagePtr im);
-
-/**
- * Function: gdUhdrImageHeight
- *
- * Returns the current image height in pixels.
- */
 BGD_DECLARE(int) gdUhdrImageHeight(gdUhdrImagePtr im);
-
-/**
- * Function: gdUhdrImageHasGainMap
- *
- * Returns whether the image currently includes a gain map.
- */
 BGD_DECLARE(int) gdUhdrImageHasGainMap(gdUhdrImagePtr im);
-
-/**
- * Function: gdUhdrImageResize
- *
- * Queues a resize operation to be applied at save time.
- */
 BGD_DECLARE(int) gdUhdrImageResize(gdUhdrImagePtr im, int width, int height, gdUhdrErrorPtr err);
-
-/**
- * Function: gdUhdrImageCrop
- *
- * Queues a crop operation to be applied at save time.
- */
 BGD_DECLARE(int) gdUhdrImageCrop(gdUhdrImagePtr im, int left, int top, int width, int height, gdUhdrErrorPtr err);
-
-/**
- * Function: gdUhdrImageRotate
- *
- * Queues a clockwise rotation (90/180/270 degrees) to be applied at save time.
- */
 BGD_DECLARE(int) gdUhdrImageRotate(gdUhdrImagePtr im, int degrees, gdUhdrErrorPtr err);
-
-/**
- * Function: gdUhdrImageMirror
- *
- * Queues a mirror operation to be applied at save time.
- */
 BGD_DECLARE(int) gdUhdrImageMirror(gdUhdrImagePtr im, int axis, gdUhdrErrorPtr err);
-
-/**
- * Function: gdUhdrImageFile
- *
- * Saves an UltraHDR image to a file path.
- */
 BGD_DECLARE(int) gdUhdrImageFile(gdUhdrImagePtr im, const char *filename, int format, int quality, gdUhdrErrorPtr err);
-
-/**
- * Function: gdUhdrImageCtx
- *
- * Saves an UltraHDR image to a <gdIOCtx>.
- */
 BGD_DECLARE(int) gdUhdrImageCtx(gdUhdrImagePtr im, gdIOCtxPtr ctx, int format, int quality, gdUhdrErrorPtr err);
-
-/**
- * Function: gdUhdrImageWritePtr
- *
- * Saves an UltraHDR image to memory.
- *
- * Returns:
- *  Pointer to encoded output buffer on success, NULL on failure.
- */
 BGD_DECLARE(void *) gdUhdrImageWritePtr(gdUhdrImagePtr im, int *size, int format, int quality, gdUhdrErrorPtr err);
-
-/**
- * Function: gdUhdrImageGetSdr
- *
- * Decodes and returns the SDR base image as a regular <gdImagePtr>.
- */
 BGD_DECLARE(gdImagePtr) gdUhdrImageGetSdr(gdUhdrImagePtr im, gdUhdrErrorPtr err);
 
 
