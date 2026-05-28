@@ -727,11 +727,6 @@ static int getPixelInterpolateWeightClipped(gdImagePtr im, const double x, const
 	return gdTrueColorAlpha(r, g, b, a);
 }
 
-static int getPixelInterpolateWeight(gdImagePtr im, const double x, const double y, const int bgColor)
-{
-	return getPixelInterpolateWeightClipped(im, x, y, bgColor, NULL);
-}
-
 /**
  * InternalFunction: getPixelInterpolated
  *  Returns the interpolated color value using the default interpolation
