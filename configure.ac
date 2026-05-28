@@ -310,6 +310,14 @@ GD_LIB_PKG_CHECK([LIBAVIF], [AVIF], [libavif >= 0.8.2], [
   ])
 ])
 
+dnl Check for UltraHDR support.
+GD_LIB_PKG_CHECK([LIBUHDR], [UHDR], [libuhdr >= 1.4.0], [
+  AC_CHECK_LIB([uhdr], [uhdr_create_encoder], [dnl
+    AS_VAR_APPEND([LIBUHDR_LIBS], [" -luhdr"])
+    gd_found_lib=yes
+  ])
+])
+
 gl_VISIBILITY()
 CFLAGS="$CFLAGS $CFLAG_VISIBILITY"
 
@@ -341,6 +349,7 @@ AC_MSG_RESULT([
    Support for WebP library:         $gd_with_LIBWEBP
    Support for HEIF library:         $gd_with_LIBHEIF
    Support for AVIF library:         $gd_with_LIBAVIF
+  Support for UltraHDR library:     $gd_with_LIBUHDR
    Support for TIFF library:         $gd_with_LIBTIFF
    Support for Freetype 2.x library: $gd_with_LIBFREETYPE
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG

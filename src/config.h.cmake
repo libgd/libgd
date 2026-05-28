@@ -39,6 +39,9 @@
 /* Define if you have heif */
 #cmakedefine HAVE_LIBHEIF
 
+/* Define if you have uhdr */
+#cmakedefine HAVE_LIBUHDR
+
 /* Define if you have liq */
 #cmakedefine HAVE_LIBIMAGEQUANT
 

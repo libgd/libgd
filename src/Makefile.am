@@ -97,6 +97,7 @@ libgd_la_SOURCES = \
 	gd_tiff.c \
 	gd_topal.c \
 	gd_transform.c \
+	gd_uhdr.c \
 	gd_version.c \
 	gd_wbmp.c \
 	gd_webp.c \

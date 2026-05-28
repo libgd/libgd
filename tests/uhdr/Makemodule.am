@@ -1,0 +1,17 @@
+if HAVE_LIBUHDR
+libgd_test_programs += \
+	uhdr/uhdr_null \
+	uhdr/uhdr_plain_jpeg_rejected \
+	uhdr/uhdr_roundtrip \
+	uhdr/uhdr_ptr_roundtrip
+
+uhdr_uhdr_roundtrip_CPPFLAGS = $(AM_CPPFLAGS) -DGD_UHDR_SAMPLE_PATH='"$(abs_top_builddir)/tmptest/generated_uhdr.jpg"'
+uhdr_uhdr_ptr_roundtrip_CPPFLAGS = $(AM_CPPFLAGS) -DGD_UHDR_SAMPLE_PATH='"$(abs_top_builddir)/tmptest/generated_uhdr.jpg"'
+endif
+
+EXTRA_DIST += \
+	uhdr/CMakeLists.txt \
+	uhdr/uhdr_null.c \
+	uhdr/uhdr_plain_jpeg_rejected.c \
+	uhdr/uhdr_roundtrip.c \
+	uhdr/uhdr_ptr_roundtrip.c

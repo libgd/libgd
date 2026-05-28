@@ -382,6 +382,95 @@ typedef const char *gdHeifChroma;
 #define GD_HEIF_CHROMA_422 "422"
 #define GD_HEIF_CHROMA_444 "444"
 
+/**
+ * Group: UltraHDR
+ *
+ * UltraHDR (gain map) APIs are separate from <gdImage>. The UltraHDR handle
+ * type is opaque and cannot be passed to existing <gdImage*> functions.
+ */
+
+/**
+ * Constants: gdUhdrStatus
+ *
+ * Return status values used by UltraHDR APIs.
+ *
+ *  GD_UHDR_SUCCESS        - operation succeeded
+ *  GD_UHDR_NOT_AVAILABLE  - libgd was built without UltraHDR support
+ *  GD_UHDR_E_INVALID      - invalid argument or state
+ *  GD_UHDR_E_UNSUPPORTED  - unsupported format or operation
+ *  GD_UHDR_E_ENCODE       - encode failure
+ *  GD_UHDR_E_DECODE       - decode failure
+ */
+#define GD_UHDR_SUCCESS             0
+#define GD_UHDR_NOT_AVAILABLE      -1
+#define GD_UHDR_E_INVALID          -2
+#define GD_UHDR_E_UNSUPPORTED      -3
+#define GD_UHDR_E_ENCODE           -4
+#define GD_UHDR_E_DECODE           -5
+
+/**
+ * Constants: gdUhdrMirrorAxis
+ *
+ * Mirror axis values used by <gdUhdrImageMirror>.
+ *
+ *  GD_UHDR_MIRROR_HORIZONTAL
+ *  GD_UHDR_MIRROR_VERTICAL
+ */
+#define GD_UHDR_MIRROR_HORIZONTAL   0
+#define GD_UHDR_MIRROR_VERTICAL     1
+
+/**
+ * Enum: gdUhdrFormat
+ *
+ * UltraHDR container format selector.
+ *
+ *  GD_UHDR_FORMAT_JPEG - UltraHDR JPEG (currently supported)
+ *  GD_UHDR_FORMAT_WEBP - reserved for future support
+ *  GD_UHDR_FORMAT_HEIF - reserved for future support
+ */
+typedef enum {
+   GD_UHDR_FORMAT_JPEG = 0,
+   GD_UHDR_FORMAT_WEBP = 1,
+   GD_UHDR_FORMAT_HEIF = 2
+} gdUhdrFormat;
+
+/**
+ * Typedef: gdUhdrImage
+ *
+ * Opaque UltraHDR image handle.
+ */
+typedef struct gdUhdrImageStruct gdUhdrImage;
+
+/**
+ * Typedef: gdUhdrImagePtr
+ *
+ * Pointer to <gdUhdrImage>.
+ */
+typedef gdUhdrImage *gdUhdrImagePtr;
+
+/**
+ * Typedef: gdUhdrError
+ *
+ * Structured error details for UltraHDR APIs.
+ *
+ * Fields:
+ *  code          - libgd UltraHDR status code (GD_UHDR_*)
+ *  provider_code - underlying provider error code, if any
+ *  message       - optional human-readable detail string
+ */
+typedef struct {
+   int code;
+   int provider_code;
+   char message[128];
+} gdUhdrError;
+
+/**
+ * Typedef: gdUhdrErrorPtr
+ *
+ * Pointer to <gdUhdrError>.
+ */
+typedef gdUhdrError *gdUhdrErrorPtr;
+
 /* define struct with name and func ptr and add it to gdImageStruct gdInterpolationMethod interpolation; */
 
 /* Interpolation function ptr */
@@ -696,6 +785,44 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromBmp (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromFile(const char *filename);
+
+/* UltraHDR load API */
+
+/**
+ * Function: gdUhdrImageCreateFromFile
+ *
+ * Loads an UltraHDR image from a file path.
+ *
+ * Parameters:
+ *  filename - input path
+ *  format   - container format (<gdUhdrFormat>)
+ *  err      - optional error output
+ *
+ * Returns:
+ *  A new <gdUhdrImagePtr> on success, or NULL on failure.
+ */
+BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromFile(const char *filename, int format, gdUhdrErrorPtr err);
+
+/**
+ * Function: gdUhdrImageCreateFromCtx
+ *
+ * Loads an UltraHDR image from a <gdIOCtx>.
+ */
+BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromCtx(gdIOCtxPtr ctx, int format, gdUhdrErrorPtr err);
+
+/**
+ * Function: gdUhdrImageCreateFromPtr
+ *
+ * Loads an UltraHDR image from memory.
+ */
+BGD_DECLARE(gdUhdrImagePtr) gdUhdrImageCreateFromPtr(int size, void *data, int format, gdUhdrErrorPtr err);
+
+/**
+ * Function: gdUhdrImageDestroy
+ *
+ * Destroys an UltraHDR image handle.
+ */
+BGD_DECLARE(void) gdUhdrImageDestroy(gdUhdrImagePtr im);
 
 
 /*
@@ -1118,6 +1245,96 @@ BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtxPtr out);
 
 BGD_DECLARE(int) gdImageFile(gdImagePtr im, const char *filename);
 BGD_DECLARE(int) gdSupportsFileType(const char *filename, int writing);
+
+/**
+ * Function: gdUhdrIsAvailable
+ *
+ * Reports whether this libgd build has UltraHDR support enabled.
+ *
+ * Returns:
+ *  1 if available, 0 otherwise.
+ */
+BGD_DECLARE(int) gdUhdrIsAvailable(void);
+
+/**
+ * Function: gdUhdrImageWidth
+ *
+ * Returns the current image width in pixels.
+ */
+BGD_DECLARE(int) gdUhdrImageWidth(gdUhdrImagePtr im);
+
+/**
+ * Function: gdUhdrImageHeight
+ *
+ * Returns the current image height in pixels.
+ */
+BGD_DECLARE(int) gdUhdrImageHeight(gdUhdrImagePtr im);
+
+/**
+ * Function: gdUhdrImageHasGainMap
+ *
+ * Returns whether the image currently includes a gain map.
+ */
+BGD_DECLARE(int) gdUhdrImageHasGainMap(gdUhdrImagePtr im);
+
+/**
+ * Function: gdUhdrImageResize
+ *
+ * Queues a resize operation to be applied at save time.
+ */
+BGD_DECLARE(int) gdUhdrImageResize(gdUhdrImagePtr im, int width, int height, gdUhdrErrorPtr err);
+
+/**
+ * Function: gdUhdrImageCrop
+ *
+ * Queues a crop operation to be applied at save time.
+ */
+BGD_DECLARE(int) gdUhdrImageCrop(gdUhdrImagePtr im, int left, int top, int width, int height, gdUhdrErrorPtr err);
+
+/**
+ * Function: gdUhdrImageRotate
+ *
+ * Queues a clockwise rotation (90/180/270 degrees) to be applied at save time.
+ */
+BGD_DECLARE(int) gdUhdrImageRotate(gdUhdrImagePtr im, int degrees, gdUhdrErrorPtr err);
+
+/**
+ * Function: gdUhdrImageMirror
+ *
+ * Queues a mirror operation to be applied at save time.
+ */
+BGD_DECLARE(int) gdUhdrImageMirror(gdUhdrImagePtr im, int axis, gdUhdrErrorPtr err);
+
+/**
+ * Function: gdUhdrImageFile
+ *
+ * Saves an UltraHDR image to a file path.
+ */
+BGD_DECLARE(int) gdUhdrImageFile(gdUhdrImagePtr im, const char *filename, int format, int quality, gdUhdrErrorPtr err);
+
+/**
+ * Function: gdUhdrImageCtx
+ *
+ * Saves an UltraHDR image to a <gdIOCtx>.
+ */
+BGD_DECLARE(int) gdUhdrImageCtx(gdUhdrImagePtr im, gdIOCtxPtr ctx, int format, int quality, gdUhdrErrorPtr err);
+
+/**
+ * Function: gdUhdrImageWritePtr
+ *
+ * Saves an UltraHDR image to memory.
+ *
+ * Returns:
+ *  Pointer to encoded output buffer on success, NULL on failure.
+ */
+BGD_DECLARE(void *) gdUhdrImageWritePtr(gdUhdrImagePtr im, int *size, int format, int quality, gdUhdrErrorPtr err);
+
+/**
+ * Function: gdUhdrImageGetSdr
+ *
+ * Decodes and returns the SDR base image as a regular <gdImagePtr>.
+ */
+BGD_DECLARE(gdImagePtr) gdUhdrImageGetSdr(gdUhdrImagePtr im, gdUhdrErrorPtr err);
 
 
 /* Guaranteed to correctly free memory returned by the gdImage*Ptr

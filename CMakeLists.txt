@@ -21,6 +21,7 @@ OPTION(ENABLE_FONTCONFIG "Enable FontConfig support" 0)
 OPTION(ENABLE_WEBP "Enable WebP support" 0)
 OPTION(ENABLE_HEIF "Enable HEIF support" 0)
 OPTION(ENABLE_AVIF "Enable AVIF support" 0)
+OPTION(ENABLE_ULTRAHDR "Enable UltraHDR support" 0)
 OPTION(ENABLE_RAQM "Enable RAQM support" 0)
 OPTION(ENABLE_ASAN "Enable (gcc) ASAN support" 0)
 OPTION(ENABLE_CPP "Enable CPP GD API" 1)
@@ -162,6 +163,28 @@ else (USE_EXT_GD)
 		SET(AVIF_FOUND 1)
 	ENDIF (ENABLE_AVIF)
 
+	IF (ENABLE_ULTRAHDR)
+		find_package(PkgConfig QUIET)
+		if (PkgConfig_FOUND)
+			pkg_check_modules(UHDR_PKG QUIET libuhdr>=1.4.0)
+		endif()
+
+		find_path(UHDR_INCLUDE_DIR
+			NAMES ultrahdr_api.h
+			HINTS ${UHDR_PKG_INCLUDE_DIRS} /usr/local/include /usr/include)
+		find_library(UHDR_LIBRARY
+			NAMES uhdr
+			HINTS ${UHDR_PKG_LIBRARY_DIRS} /usr/local/lib /usr/lib)
+
+		if (UHDR_LIBRARY AND UHDR_INCLUDE_DIR)
+			SET(HAVE_LIBUHDR 1)
+			SET(UHDR_FOUND 1)
+			SET(UHDR_LIBRARIES ${UHDR_LIBRARY})
+		else ()
+			message(FATAL_ERROR "ENABLE_ULTRAHDR is enabled but libuhdr >= 1.4.0 was not found")
+		endif ()
+	ENDIF (ENABLE_ULTRAHDR)
+
 	IF (ENABLE_LIQ)
 		FIND_PACKAGE(LIQ REQUIRED)
 	ENDIF (ENABLE_LIQ)
@@ -218,6 +241,15 @@ else (USE_EXT_GD)
 		INCLUDE_DIRECTORIES(${HEIF_INCLUDE_DIR})
 		SET(HAVE_LIBHEIF 1)
 	ENDIF(HEIF_FOUND)
+
+	IF(UHDR_FOUND)
+		INCLUDE_DIRECTORIES(${UHDR_INCLUDE_DIR})
+		SET(HAVE_LIBUHDR 1)
+		LIST(APPEND PKG_REQUIRES_PRIVATES libuhdr)
+	ELSE(UHDR_FOUND)
+		SET(UHDR_LIBRARY "")
+		SET(UHDR_INCLUDE_DIR "")
+	ENDIF(UHDR_FOUND)
 
 	IF(PNG_FOUND)
 		INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
@@ -355,6 +387,7 @@ INSTALL(FILES examples/noIconAlpha.tga DESTINATION share/doc/gd-${GDLIB_MAJOR}.$
 INSTALL(FILES examples/test_crop_threshold.png DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/tgaread.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/tiffread.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/uhdr.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/windows.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 
 
