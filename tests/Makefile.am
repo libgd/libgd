@@ -84,6 +84,7 @@ include gif/Makemodule.am
 include heif/Makemodule.am
 include jpeg/Makemodule.am
 include png/Makemodule.am
+include uhdr/Makemodule.am
 include tga/Makemodule.am
 include tiff/Makemodule.am
 include wbmp/Makemodule.am
@@ -92,7 +93,9 @@ include xbm/Makemodule.am
 include xpm/Makemodule.am
 
 LDADD = libgdtest.a ../src/libgd.la
-AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/tests/gdtest
+AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/tests/gdtest \
+	-DGD_UHDR_SAMPLE_PATH='"$(top_builddir)/tmptest/generated_uhdr.jpg"' \
+	-DGD_UHDR_PLAIN_JPEG_PATH='"$(top_srcdir)/tests/jpeg/conv_test.jpeg"'
 
 check_PROGRAMS = $(libgd_test_programs) $(libgd_helper_programs)
 TESTS += $(libgd_test_programs)

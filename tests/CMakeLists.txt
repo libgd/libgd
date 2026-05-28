@@ -87,6 +87,7 @@ if (BUILD_TEST)
 		jpeg
 		perceptualdiff
 		png
+		uhdr
 		tga
 		tiff
 		wbmp
