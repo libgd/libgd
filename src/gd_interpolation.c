@@ -2034,7 +2034,7 @@ BGD_DECLARE(int) gdTransformAffineCopy(gdImagePtr dst,
 BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine[6], gdRectPtr bbox)
 {
 	gdPointF extent[4], min, max, point;
-	double width, height;
+	double bbox_x_d, bbox_y_d, bbox_width_d, bbox_height_d;
 	int bbox_x, bbox_y, bbox_width, bbox_height;
 	int i;
 
@@ -2066,23 +2066,22 @@ BGD_DECLARE(int) gdTransformAffineBoundingBox(gdRectPtr src, const double affine
 		if (max.y < extent[i].y)
 			max.y=extent[i].y;
 	}
-	bbox->x = (int) floor(min.x);
-	bbox->y = (int) floor(min.y);
-	bbox->width  = (int) ceil(max.x) - bbox->x;
-	bbox->height = (int) ceil(max.y) - bbox->y;
-	width = ceil(max.x - min.x);
-	height = ceil(max.y - min.y);
-	if (!isfinite(min.x) || !isfinite(min.y) || !isfinite(width) || !isfinite(height)
-		|| min.x <= INT_MIN || min.x > INT_MAX
-		|| min.y <= INT_MIN || min.y > INT_MAX
-		|| width < 0.0 || width > INT_MAX
-		|| height < 0.0 || height > INT_MAX) {
+	bbox_x_d = floor(min.x);
+	bbox_y_d = floor(min.y);
+	bbox_width_d = ceil(max.x) - bbox_x_d;
+	bbox_height_d = ceil(max.y) - bbox_y_d;
+	if (!isfinite(bbox_x_d) || !isfinite(bbox_y_d)
+		|| !isfinite(bbox_width_d) || !isfinite(bbox_height_d)
+		|| bbox_x_d < INT_MIN || bbox_x_d > INT_MAX
+		|| bbox_y_d < INT_MIN || bbox_y_d > INT_MAX
+		|| bbox_width_d < 0.0 || bbox_width_d > INT_MAX
+		|| bbox_height_d < 0.0 || bbox_height_d > INT_MAX) {
 		return GD_FALSE;
 	}
-	bbox_x = (int) min.x;
-	bbox_y = (int) min.y;
-	bbox_width = (int) width;
-	bbox_height = (int) height;
+	bbox_x = (int) bbox_x_d;
+	bbox_y = (int) bbox_y_d;
+	bbox_width = (int) bbox_width_d;
+	bbox_height = (int) bbox_height_d;
 	if ((bbox_x < 0 && bbox_width > INT_MAX + bbox_x)
 		|| (bbox_x > 0 && bbox_width > INT_MAX - bbox_x)
 		|| (bbox_y < 0 && bbox_height > INT_MAX + bbox_y)
