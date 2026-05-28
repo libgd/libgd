@@ -1,6 +1,5 @@
 /**
- * Simple test case that confirms the failure of using `gdImageCreateFromHeif`
- * with a NULL pointer.
+ * Simple test case that checks reading images using `gdImageCreateFromHeif`.
  */
 
 

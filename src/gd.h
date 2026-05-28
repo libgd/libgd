@@ -382,6 +382,10 @@ typedef const char *gdHeifChroma;
 #define GD_HEIF_CHROMA_422 "422"
 #define GD_HEIF_CHROMA_444 "444"
 
+BGD_DECLARE(int) gdHeifInit();
+
+BGD_DECLARE(void) gdHeifDeinit();
+
 /* define struct with name and func ptr and add it to gdImageStruct gdInterpolationMethod interpolation; */
 
 /* Interpolation function ptr */
