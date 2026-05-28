@@ -2585,6 +2585,10 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 
 	wx2=im->sx;
 	wy2=im->sy;
+	oc = gdImageGetPixel(im, x, y);
+	if (oc==nc || x<0 || x>wx2 || y<0 || y>wy2) {
+		return;
+	}
 
 	if(overflow2(im->sy, im->sx)) {
 		return;
@@ -2605,8 +2609,6 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 		return;
 	}
 	sp = stack;
-
-	oc = gdImageGetPixel(im, x, y);
 
 	/* required! */
 	FILL_PUSH(y,x,x,1);
@@ -2977,7 +2979,9 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 	int tox, toy;
 	int i;
 	int colorMap[gdMaxColors];
-
+    if (!gdImageClipCopy(dst, &dstX, &dstY, &srcX, &srcY, &w, &h)) {
+        return;
+    }
 	if (dst->trueColor) {
 		/* 2.0: much easier when the destination is truecolor. */
 		/* 2.0.10: needs a transparent-index check that is still valid if
@@ -3049,6 +3053,7 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 			} else {
 				mapTo = colorMap[c];
 			}
+			printf("x: %d, y: %d, c: %d, mapTo: %d\n", x, y, c, mapTo);
 			gdImageSetPixel (dst, tox, toy, mapTo);
 			tox++;
 		}
@@ -3090,6 +3095,9 @@ BGD_DECLARE(void) gdImageCopyMerge (gdImagePtr dst, gdImagePtr src, int dstX, in
 	int x, y;
 	int tox, toy;
 	int ncR, ncG, ncB;
+    if (!gdImageClipCopy(dst, &dstX, &dstY, &srcX, &srcY, &w, &h)) {
+        return;
+    }
 	toy = dstY;
 	for (y = srcY; (y < (srcY + h)); y++) {
 		tox = dstX;
@@ -3160,6 +3168,11 @@ BGD_DECLARE(void) gdImageCopyMergeGray (gdImagePtr dst, gdImagePtr src, int dstX
 	int tox, toy;
 	int ncR, ncG, ncB;
 	float g;
+
+    if (!gdImageClipCopy(dst, &dstX, &dstY, &srcX, &srcY, &w, &h)) {
+        return;
+    }
+
 	toy = dstY;
 	for (y = srcY; (y < (srcY + h)); y++) {
 		tox = dstX;
@@ -3252,6 +3265,9 @@ BGD_DECLARE(void) gdImageCopyResized (gdImagePtr dst, gdImagePtr src, int dstX, 
 		return;
 	}
 	if (overflow2(sizeof (int), srcH)) {
+		return;
+	}
+	if (!gdImageClipCopyResized(dst, &dstX, &dstY, &dstW, &dstH, &srcX, &srcY, &srcW, &srcH)) {
 		return;
 	}
 	stx = (int *) gdMalloc (sizeof (int) * srcW);
@@ -3396,6 +3412,9 @@ BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
 	double scY = srcY + ((double) srcHeight) / 2;
 	int cmap[gdMaxColors];
 	int i;
+	const double safe_max = (double)INT_MAX / 2.0;
+	const double safe_min = (double)INT_MIN / 2.0;
+	double dyMin, dyMax, dxMin, dxMax;
 
 	/*
 		 2.0.34: transparency preservation. The transparentness of
@@ -3410,8 +3429,22 @@ BGD_DECLARE(void) gdImageCopyRotated (gdImagePtr dst,
 	for (i = 0; (i < gdMaxColors); i++) {
 		cmap[i] = (-1);
 	}
-	for (dy = dstY - radius; (dy <= dstY + radius); dy++) {
-		for (dx = dstX - radius; (dx <= dstX + radius); dx++) {
+
+	dyMin = dstY - radius;
+	dyMax = dstY + radius;
+	dxMin = dstX - radius;
+	dxMax = dstX + radius;
+
+	/* clamp loop bounds so sx/sy casts are always safe */
+	if (dxMin < safe_min + radius + scX) dxMin = safe_min + radius + scX;
+	if (dxMax > safe_max - radius - scX) dxMax = safe_max - radius - scX;
+	if (dyMin < safe_min + radius + scY) dyMin = safe_min + radius + scY;
+	if (dyMax > safe_max - radius - scY) dyMax = safe_max - radius - scY;
+
+	for (dy = dyMin; dy <= dyMax; dy++) {
+		for (dx = dxMin; dx <= dxMax; dx++) {
+	// for (dy = dstY - radius; (dy <= dstY + radius); dy++) {
+	// 	for (dx = dstX - radius; (dx <= dstX + radius); dx++) {
 			double sxd = (dx - dstX) * aCos - (dy - dstY) * aSin;
 			double syd = (dy - dstY) * aCos + (dx - dstX) * aSin;
 			int sx = sxd + scX;
@@ -3499,6 +3532,9 @@ BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
 	int x, y;
 	if (!dst->trueColor) {
 		gdImageCopyResized (dst, src, dstX, dstY, srcX, srcY, dstW, dstH, srcW, srcH);
+		return;
+	}
+	if (!gdImageClipCopyResized(dst, &dstX, &dstY, &dstW, &dstH, &srcX, &srcY, &srcW, &srcH)) {
 		return;
 	}
 	for (y = dstY; (y < dstY + dstH); y++) {

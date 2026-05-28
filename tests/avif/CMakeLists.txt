@@ -9,6 +9,7 @@ LIST(APPEND TESTS_FILES
 IF(PNG_FOUND)
 LIST(APPEND TESTS_FILES
 	compare_avif_to_png
+	avif_alpha
 )
 ENDIF(PNG_FOUND)
 

@@ -1,9 +1,9 @@
 /**
- * Test that adding identical images to GIF animations do no double-free
+ * Test that adding identical images to GIF animations preserves the frame
  *
  * We are adding two frames to a GIF animation in gdDisposalNone mode, were the
- * second frame is identical to the first, which result in that image to have
- * zero extent.  This program must not cause any memory issues.
+ * second frame is identical to the first. The optimized frame should be a
+ * valid placeholder, not a zero-extent image.
  *
  * See also <https://github.com/libgd/libgd/issues/499>.
  */
@@ -35,7 +35,8 @@ int main()
     }
 
     res = gdImageGifAnimAddPtr(im, &size, 0, 0, 0, 100, gdDisposalNone, im);
-    gdTestAssert(res == NULL);
+    gdTestAssert(res != NULL);
+    gdTestAssert(size > 0);
     if (res != NULL) {
          gdFree(res);
     }

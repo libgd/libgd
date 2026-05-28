@@ -9,6 +9,7 @@ libgd_test_programs += \
 
 if HAVE_LIBPNG
 libgd_test_programs += \
+	tga/tga_conformance \
 	tga/tga_read
 endif
 
@@ -21,6 +22,41 @@ EXTRA_DIST += \
 	tga/bug00248a.tga \
 	tga/heap_overflow_1.tga \
 	tga/heap_overflow_2.tga \
+	tga/conformance/LICENSE \
+	tga/conformance/b5-attrib.png \
+	tga/conformance/b5-attrib.tga \
+	tga/conformance/b5-cmap.png \
+	tga/conformance/b5-cmap.tga \
+	tga/conformance/b5-noattrib.png \
+	tga/conformance/b5-noattrib.tga \
+	tga/conformance/b5-unused-cmap.png \
+	tga/conformance/b5-unused-cmap.tga \
+	tga/conformance/bottom_left.png \
+	tga/conformance/bottom_left.tga \
+	tga/conformance/bottom_right.png \
+	tga/conformance/bottom_right.tga \
+	tga/conformance/cbw8.png \
+	tga/conformance/cbw8.tga \
+	tga/conformance/ccm8.png \
+	tga/conformance/ccm8.tga \
+	tga/conformance/cmap_offset.png \
+	tga/conformance/cmap_offset.tga \
+	tga/conformance/ctc24.png \
+	tga/conformance/ctc24.tga \
+	tga/conformance/top_left.png \
+	tga/conformance/top_left.tga \
+	tga/conformance/top_right.png \
+	tga/conformance/top_right.tga \
+	tga/conformance/ubw8.png \
+	tga/conformance/ubw8.tga \
+	tga/conformance/ucm8.png \
+	tga/conformance/ucm8.tga \
+	tga/conformance/utc16.png \
+	tga/conformance/utc16.tga \
+	tga/conformance/utc24.png \
+	tga/conformance/utc24.tga \
+	tga/conformance/utc32.png \
+	tga/conformance/utc32.tga \
 	tga/tga_read_rgb.png \
 	tga/tga_read_rgb.tga \
 	tga/tga_read_rgb_rle.tga

@@ -1,4 +1,5 @@
 libgd_test_programs += \
+	gdinterpolatedscale/gdBicubicFixed \
 	gdinterpolatedscale/gdModesAndPalettes \
 	gdinterpolatedscale/gdTrivialResize
 

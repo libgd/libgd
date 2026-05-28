@@ -7,6 +7,8 @@
 #  WEBP_FOUND, If false, do not try to use WEBP.
 # also defined, but not for general use are
 #  WEBP_LIBRARY, where to find the WEBP library.
+#  WEBP_DEMUX_LIBRARY, where to find the WEBP demux library.
+#  WEBP_MUX_LIBRARY, where to find the WEBP mux library.
 #
 # Copyright (c) 2002 Kitware, Inc., Insight Consortium.  All rights reserved.
 #
@@ -48,13 +50,21 @@ find_library(WEBP_LIBRARY
   NAMES ${WEBP_NAMES}
   PATHS /usr/lib64 /usr/lib /usr/local/lib
   )
+find_library(WEBP_DEMUX_LIBRARY
+  NAMES webpdemux
+  PATHS /usr/lib64 /usr/lib /usr/local/lib
+  )
+find_library(WEBP_MUX_LIBRARY
+  NAMES webpmux
+  PATHS /usr/lib64 /usr/lib /usr/local/lib
+  )
 
-if (WEBP_LIBRARY AND WEBP_INCLUDE_DIR)
+if (WEBP_LIBRARY AND WEBP_DEMUX_LIBRARY AND WEBP_MUX_LIBRARY AND WEBP_INCLUDE_DIR)
   set(WEBP_INCLUDE_DIR ${WEBP_INCLUDE_DIR})
-  set(WEBP_LIBRARIES ${WEBP_LIBRARY})
+  set(WEBP_LIBRARIES ${WEBP_LIBRARY} ${WEBP_DEMUX_LIBRARY} ${WEBP_MUX_LIBRARY})
   set(WEBP_FOUND "YES")
 
-endif (WEBP_LIBRARY AND WEBP_INCLUDE_DIR)
+endif (WEBP_LIBRARY AND WEBP_DEMUX_LIBRARY AND WEBP_MUX_LIBRARY AND WEBP_INCLUDE_DIR)
 
 if (WEBP_FOUND)
   if (NOT WEBP_FIND_QUIETLY)
@@ -66,5 +76,4 @@ else (WEBP_FOUND)
   endif (WEBP_FIND_REQUIRED)
 endif (WEBP_FOUND)
 
-mark_as_advanced(WEBP_INCLUDE_DIR WEBP_LIBRARY )
-set(WEBP_LIBRARIES ${WEBP_LIBRARY})
+mark_as_advanced(WEBP_INCLUDE_DIR WEBP_LIBRARY WEBP_DEMUX_LIBRARY WEBP_MUX_LIBRARY)

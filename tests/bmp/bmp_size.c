@@ -9,11 +9,8 @@
 #include "gdtest.h"
 
 #define OFFSET_BF_SIZE 2
+#define OFFSET_BF_OFF_BITS 10
 #define OFFSET_BI_SIZE_IMAGE 34
-#define BIMAP_HEADER_SIZE 14
-#define INFO_HEADER_SIZE 40
-#define PALETTE_SIZE 4
-#define HEADER_SIZE (BIMAP_HEADER_SIZE + INFO_HEADER_SIZE + PALETTE_SIZE)
 
 unsigned int get_field(unsigned char *data, int offset)
 {
@@ -26,6 +23,7 @@ int main()
     unsigned char *data;
     int size;
     unsigned int bfSize, biSizeImage;
+    unsigned int bfOffBits;
 
     im = gdImageCreate(19, 19);
     gdImageColorAllocate(im, 0, 0, 0); // bg
@@ -35,16 +33,18 @@ int main()
     gdTestAssert(data[0] == 'B' && data[1] == 'M');
     bfSize = get_field(data, OFFSET_BF_SIZE);
     gdTestAssertMsg(bfSize == size, "expected %d, got %u", size, bfSize);
+    bfOffBits = get_field(data, OFFSET_BF_OFF_BITS);
     biSizeImage = get_field(data, OFFSET_BI_SIZE_IMAGE);
-    gdTestAssertMsg(biSizeImage == size - HEADER_SIZE, "expected %d, got %u", size - HEADER_SIZE, biSizeImage);
+    gdTestAssertMsg(biSizeImage == size - bfOffBits, "expected %u, got %u", size - bfOffBits, biSizeImage);
 
     data = gdImageBmpPtr(im, &size, 1);
     gdTestAssert(data != NULL);
     gdTestAssert(data[0] == 'B' && data[1] == 'M');
     bfSize = get_field(data, OFFSET_BF_SIZE);
     gdTestAssertMsg(bfSize == size, "expected %d, got %u", size, bfSize);
+    bfOffBits = get_field(data, OFFSET_BF_OFF_BITS);
     biSizeImage = get_field(data, OFFSET_BI_SIZE_IMAGE);
-    gdTestAssertMsg(biSizeImage == size - HEADER_SIZE, "expected %d, got %u", size - HEADER_SIZE, biSizeImage);
+    gdTestAssertMsg(biSizeImage == size - bfOffBits, "expected %u, got %u", size - bfOffBits, biSizeImage);
 
     gdImageDestroy(im);
     return gdNumFailures();

@@ -1,4 +1,5 @@
 LIST(APPEND TESTS_FILES
+	gdBicubicFixed
 	gdModesAndPalettes
 	gdTrivialResize
 )

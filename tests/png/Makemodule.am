@@ -7,6 +7,7 @@ libgd_test_programs += \
 	png/bug00193 \
 	png/bug00338 \
 	png/bug00381_1 \
+	png/png_conformance \
 	png/png_im2im \
 	png/png_null \
 	png/png_resolution
@@ -19,6 +20,7 @@ endif
 
 EXTRA_DIST += \
 	png/CMakeLists.txt \
+	png/png-conformance \
 	png/bug00033.png \
 	png/bug00088_1.png \
 	png/bug00088_1_exp.png \

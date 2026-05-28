@@ -238,10 +238,16 @@ BGD_DECLARE(void) gdImageXbmCtx(gdImagePtr image, char* file_name, int fg, gdIOC
 		name = strdup("image");
 	} else {
 		for (i=0; i<l; i++) {
-			/* only in C-locale isalnum() would work */
-			if (!isupper(name[i]) && !islower(name[i]) && !isdigit(name[i])) {
-				name[i] = '_';
-			}
+			char c = name[i];
+				// Explicitly check for valid ASCII ranges and the underscore
+				if (!((c >= 'a' && c <= 'z') || 
+					(c >= 'A' && c <= 'Z') || 
+					(c >= '0' && c <= '9') || 
+					(c == '_'))) {
+					
+					// Anything else (spaces, punctuation, accents, UTF-8 bytes) becomes '_'
+					name[i] = '_';
+				}
 		}
 	}
 

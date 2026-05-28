@@ -663,6 +663,41 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGif (FILE * fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifPtr (int size, void *data);
+
+typedef struct gdGifReadStruct *gdGifReadPtr;
+
+typedef struct {
+	int width;
+	int height;
+	int backgroundIndex;
+	int globalColorTable;
+	int loopCount;
+} gdGifInfo;
+
+typedef struct {
+	int frameIndex;
+	int x;
+	int y;
+	int width;
+	int height;
+	int delay;
+	int disposal;
+	int transparentIndex;
+	int localColorTable;
+	int interlace;
+} gdGifFrameInfo;
+
+BGD_DECLARE(int) gdGifIsAnimated(FILE *fd);
+BGD_DECLARE(int) gdGifIsAnimatedCtx(gdIOCtxPtr in);
+BGD_DECLARE(int) gdGifIsAnimatedPtr(int size, void *data);
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpen(FILE *fd);
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpenCtx(gdIOCtxPtr in);
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpenPtr(int size, void *data);
+BGD_DECLARE(void) gdGifReadClose(gdGifReadPtr gif);
+BGD_DECLARE(int) gdGifReadGetInfo(gdGifReadPtr gif, gdGifInfo *info);
+BGD_DECLARE(int) gdGifReadNextFrame(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *frame);
+BGD_DECLARE(int) gdGifReadNextImage(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *image);
+BGD_DECLARE(gdImagePtr) gdGifReadCloneImage(gdGifReadPtr gif);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr (int size, void *data);
@@ -675,6 +710,74 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx (int size, void *data, int ig
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx(gdIOCtxPtr infile);
+
+typedef struct gdWebpReadStruct *gdWebpReadPtr;
+typedef struct gdWebpWriteStruct *gdWebpWritePtr;
+
+typedef struct {
+	int width;
+	int height;
+	int frameCount;
+	int loopCount;
+	int backgroundColor;
+	int formatFlags;
+} gdWebpInfo;
+
+typedef struct {
+	int frameIndex;
+	int x;
+	int y;
+	int width;
+	int height;
+	int duration;
+	int timestamp;
+	int dispose;
+	int blend;
+	int hasAlpha;
+	int complete;
+} gdWebpFrameInfo;
+
+typedef struct {
+	int canvasWidth;
+	int canvasHeight;
+	int loopCount;
+	int backgroundColor;
+	int quality;
+	int lossless;
+	int method;
+	int minimizeSize;
+	int kmin;
+	int kmax;
+	int allowMixed;
+} gdWebpWriteOptions;
+
+enum {
+	gdWebpDisposeNone,
+	gdWebpDisposeBackground
+};
+
+enum {
+	gdWebpBlendAlpha,
+	gdWebpBlendNone
+};
+
+BGD_DECLARE(int) gdWebpIsAnimated(FILE *fd);
+BGD_DECLARE(int) gdWebpIsAnimatedCtx(gdIOCtxPtr in);
+BGD_DECLARE(int) gdWebpIsAnimatedPtr(int size, void *data);
+BGD_DECLARE(gdWebpReadPtr) gdWebpReadOpen(FILE *fd);
+BGD_DECLARE(gdWebpReadPtr) gdWebpReadOpenCtx(gdIOCtxPtr in);
+BGD_DECLARE(gdWebpReadPtr) gdWebpReadOpenPtr(int size, void *data);
+BGD_DECLARE(void) gdWebpReadClose(gdWebpReadPtr webp);
+BGD_DECLARE(int) gdWebpReadGetInfo(gdWebpReadPtr webp, gdWebpInfo *info);
+BGD_DECLARE(int) gdWebpReadNextFrame(gdWebpReadPtr webp, gdWebpFrameInfo *info, gdImagePtr *frame);
+BGD_DECLARE(int) gdWebpReadNextImage(gdWebpReadPtr webp, gdWebpFrameInfo *info, gdImagePtr *image);
+BGD_DECLARE(gdImagePtr) gdWebpReadCloneImage(gdWebpReadPtr webp);
+BGD_DECLARE(gdWebpWritePtr) gdWebpWriteOpen(FILE *outFile, const gdWebpWriteOptions *options);
+BGD_DECLARE(gdWebpWritePtr) gdWebpWriteOpenCtx(gdIOCtxPtr out, const gdWebpWriteOptions *options);
+BGD_DECLARE(gdWebpWritePtr) gdWebpWriteOpenPtr(const gdWebpWriteOptions *options);
+BGD_DECLARE(int) gdWebpWriteAddImage(gdWebpWritePtr webp, gdImagePtr image, int durationMs);
+BGD_DECLARE(void) gdWebpWriteClose(gdWebpWritePtr webp);
+BGD_DECLARE(void *) gdWebpWritePtrFinish(gdWebpWritePtr webp, int *size);
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data);
@@ -1105,6 +1208,19 @@ BGD_DECLARE(void) gdImageTiffCtx(gdImagePtr image, gdIOCtxPtr out);
 BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression);
 BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression);
 BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
+
+#define GD_BMP_COMPRESS_NONE   0
+#define GD_BMP_COMPRESS_RLE8   1
+#define GD_BMP_COMPRESS_RLE4   2
+
+#define GD_BMP_FLAG_NONE        0
+#define GD_BMP_FLAG_FORCE_V4HDR (1<<0)
+#define GD_BMP_FLAG_QUANTIZE    (1<<1)
+#define GD_BMP_FLAG_RGB555      (1<<2)
+
+BGD_DECLARE(void *) gdImageBmpPtrEx(gdImagePtr im, int *size, int bpp, int compression, int flags);
+BGD_DECLARE(void) gdImageBmpEx(gdImagePtr im, FILE *outFile, int bpp, int compression, int flags);
+BGD_DECLARE(void) gdImageBmpCtxEx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compression, int flags);
 
 /* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
    1 is FASTEST but produces larger files, 9 provides the best

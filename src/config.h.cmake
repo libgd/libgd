@@ -45,6 +45,9 @@
 /* Define if you have jpeg */
 #cmakedefine HAVE_LIBJPEG
 
+/* Define to 1 if you have the `m' library (-lm). */
+#cmakedefine HAVE_LIBM
+
 /* Define if you have png */
 #cmakedefine HAVE_LIBPNG
 
@@ -63,9 +66,6 @@
 /* Define if you have zlib */
 #cmakedefine HAVE_LIBZ
 
-/* Define to 1 if you have the <memory.h> header file. */
-#cmakedefine HAVE_MEMORY_H
-
 /* Define if OpenMP is enabled */
 #cmakedefine HAVE_OPENMP
 
@@ -77,6 +77,9 @@
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#cmakedefine HAVE_STDIO_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #cmakedefine HAVE_STDLIB_H
@@ -131,7 +134,9 @@
    your system. */
 #cmakedefine PTHREAD_CREATE_JOINABLE
 
-/* Define to 1 if you have the ANSI C header files. */
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
 #cmakedefine STDC_HEADERS
 
 /* Version number of package */

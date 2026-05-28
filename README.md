@@ -110,8 +110,8 @@ We do have CI using:
 
 ## Supported Versions
 
-- GD 2.3 (Branch GD-2.3) serie is in active support for bug fixes.
-  No new additions will be added.
+- GD 2.3 (Branch GD-2.3) serie is in active support for bug fixes, for one or two releases (as of May 2026).
+  No new additions will be added. Then it will be moved to security only until January 1st, 2027, which will mark the end of 2.3.x maintainance.
 - GD 2.4 (master) is the active development branch. No release date yet.
 - GD 3.0 has been started, focusing on high quality 2D Vector drawing APIs
   and full support of actual ARGB 32 bits/8bits or float.

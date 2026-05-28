@@ -1,5 +1,6 @@
 libgd_test_programs += \
-	gdtransformaffineboundingbox/github_bug_00221
+	gdtransformaffineboundingbox/github_bug_00221 \
+	gdtransformaffineboundingbox/bug_pr_00996
 
 EXTRA_DIST += \
 	gdtransformaffineboundingbox/CMakeLists.txt
