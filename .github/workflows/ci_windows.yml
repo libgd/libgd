@@ -44,7 +44,14 @@ jobs:
           mkdir libultrahdr-install
           tar -xzf libultrahdr-1.4.0.tar.gz -C libultrahdr-src --strip-components=1
           cmake -S libultrahdr-src -B libultrahdr-build -G "Ninja" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}\libultrahdr-install -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ matrix.arch == 'amd64_arm64' && 'arm64-windows' || format('{0}-windows', matrix.arch) }} -DUHDR_BUILD_TESTS=1
-          cmake --build libultrahdr-build --config ${{env.BUILD_TYPE}} --target install
+          cmake --build libultrahdr-build --config ${{env.BUILD_TYPE}}
+          mkdir libultrahdr-install\include
+          mkdir libultrahdr-install\lib
+          mkdir libultrahdr-install\bin
+          copy libultrahdr-src\ultrahdr_api.h libultrahdr-install\include\
+          copy libultrahdr-build\uhdr.lib libultrahdr-install\lib\
+          copy libultrahdr-build\uhdr.dll libultrahdr-install\bin\
+          if exist libultrahdr-build\ultrahdr_app.exe copy libultrahdr-build\ultrahdr_app.exe libultrahdr-install\bin\
           dir /s /b libultrahdr-install
 
       - name: Install exiv2 test dependency
