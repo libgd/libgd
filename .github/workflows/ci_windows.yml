@@ -46,6 +46,7 @@ jobs:
           cmake -S libultrahdr-src -B libultrahdr-build -G "Ninja" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}\libultrahdr-install -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ matrix.arch == 'amd64_arm64' && 'arm64-windows' || format('{0}-windows', matrix.arch) }} -DUHDR_BUILD_TESTS=1
           cmake --build libultrahdr-build --config ${{env.BUILD_TYPE}}
           cmake --install libultrahdr-build --config ${{env.BUILD_TYPE}}
+          dir /s /b libultrahdr-install
 
       - name: Install exiv2 test dependency
         if: matrix.arch == 'x64'
@@ -59,6 +60,7 @@ jobs:
         run:  cmake -D CMAKE_GENERATOR="Ninja" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1
               -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1 -DENABLE_ULTRAHDR=1 -DBUILD_TEST=1
               -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+              -DCMAKE_PREFIX_PATH=${{github.workspace}}\libultrahdr-install
               -DCMAKE_LIBRARY_PATH="${{github.workspace}}\vcpkgusr\arm64-windows\lib;${{github.workspace}}\libultrahdr-install\lib"
               -DCMAKE_INCLUDE_PATH="${{github.workspace}}\vcpkgusr\arm64-windows\include;${{github.workspace}}\libultrahdr-install\include"
 
@@ -67,6 +69,7 @@ jobs:
         run:  cmake -D CMAKE_GENERATOR="Ninja" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1
                -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1 -DENABLE_HEIF=1
               -DENABLE_ULTRAHDR=1 -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+              -DCMAKE_PREFIX_PATH=${{github.workspace}}\libultrahdr-install
               -DCMAKE_LIBRARY_PATH="${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\lib;${{github.workspace}}\libultrahdr-install\lib"
               -DCMAKE_INCLUDE_PATH="${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\include;${{github.workspace}}\libultrahdr-install\include"
               ${{ matrix.arch == 'x64' && format('-DEXIV2_ROOT={0}\\exiv2\\exiv2-0.28.8-2022msvc-AMD64', github.workspace) || '' }}

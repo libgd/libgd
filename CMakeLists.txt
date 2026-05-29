@@ -171,10 +171,12 @@ else (USE_EXT_GD)
 
 		find_path(UHDR_INCLUDE_DIR
 			NAMES ultrahdr_api.h
-			HINTS ${UHDR_PKG_INCLUDE_DIRS} /usr/local/include /usr/include)
+			HINTS ${UHDR_PKG_INCLUDE_DIRS} /usr/local/include /usr/include
+			PATH_SUFFIXES include include/ultrahdr)
 		find_library(UHDR_LIBRARY
-			NAMES uhdr
-			HINTS ${UHDR_PKG_LIBRARY_DIRS} /usr/local/lib /usr/lib)
+			NAMES uhdr libuhdr ultrahdr
+			HINTS ${UHDR_PKG_LIBRARY_DIRS} /usr/local/lib /usr/lib
+			PATH_SUFFIXES lib)
 
 		if (UHDR_LIBRARY AND UHDR_INCLUDE_DIR)
 			SET(HAVE_LIBUHDR 1)
