@@ -14,6 +14,7 @@
 #include <limits.h>
 
 #include "gd.h"
+#include "gd_errors.h"
 #include "gdhelpers.h"
 
 #ifdef HAVE_LIBUHDR
@@ -60,24 +61,6 @@ static void gdUhdrSetError(gdUhdrErrorPtr err, int code, int provider_code, cons
 		strncpy(err->message, message, sizeof(err->message) - 1);
 		err->message[sizeof(err->message) - 1] = '\0';
 	}
-}
-
-static int gdUhdrUnavailableCode(void)
-{
-#ifdef HAVE_LIBUHDR
-	return GD_UHDR_E_UNSUPPORTED;
-#else
-	return GD_UHDR_NOT_AVAILABLE;
-#endif
-}
-
-static const char *gdUhdrUnavailableMessage(void)
-{
-#ifdef HAVE_LIBUHDR
-	return "UltraHDR support is not implemented yet in this build";
-#else
-	return "UltraHDR support is not enabled in this build";
-#endif
 }
 
 #ifdef HAVE_LIBUHDR
@@ -424,6 +407,20 @@ static gdUhdrImagePtr gdUhdrImageCreateFromData(void *data, int size, int format
 	gdUhdrSetError(err, GD_UHDR_SUCCESS, 0, NULL);
 	uhdr_release_decoder(dec);
 	return im;
+}
+
+#endif
+
+#ifndef HAVE_LIBUHDR
+
+static int gdUhdrUnavailableCode(void)
+{
+	return GD_UHDR_NOT_AVAILABLE;
+}
+
+static const char *gdUhdrUnavailableMessage(void)
+{
+	return "UltraHDR support is not enabled in this build";
 }
 
 #endif
