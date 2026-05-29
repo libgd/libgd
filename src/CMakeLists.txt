@@ -20,6 +20,7 @@ SET (LIBGD_SRC_FILES
 	gd_io_ss.c
 	gd_jpeg.c
 	gd_matrix.c
+	gd_metadata.c
 	gd_nnquant.c
 	gd_png.c
 	gd_rotate.c

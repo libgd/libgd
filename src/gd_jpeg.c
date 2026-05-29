@@ -117,7 +117,7 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 	exit(99);
 }
 
-static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality);
+static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality, const gdImageMetadata *metadata);
 
 /*
  * Write IM to OUTFILE as a JFIF-formatted JPEG image, using quality
@@ -233,7 +233,21 @@ BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
-	if (!_gdImageJpegCtx(im, out, quality)) {
+	if (!_gdImageJpegCtx(im, out, quality, NULL)) {
+		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
+	}
+	out->gd_free(out);
+	return rv;
+}
+
+BGD_DECLARE(void *) gdImageJpegPtrWithMetadata(gdImagePtr im, int *size, int quality, const gdImageMetadata *metadata)
+{
+	void *rv;
+	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+	if (out == NULL) return NULL;
+	if (!_gdImageJpegCtx(im, out, quality, metadata)) {
 		rv = gdDPExtractData(out, size);
 	} else {
 		rv = NULL;
@@ -259,11 +273,99 @@ static void jpeg_gdIOCtx_dest(j_compress_ptr cinfo, gdIOCtx *outfile);
 */
 BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 {
-	_gdImageJpegCtx(im, outfile, quality);
+	_gdImageJpegCtx(im, outfile, quality, NULL);
+}
+
+BGD_DECLARE(void) gdImageJpegCtxWithMetadata(gdImagePtr im, gdIOCtx *outfile, int quality, const gdImageMetadata *metadata)
+{
+	_gdImageJpegCtx(im, outfile, quality, metadata);
 }
 
 /* returns 0 on success, 1 on failure */
-static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
+static int gdJpegWriteAppMarker(j_compress_ptr cinfo, int marker, const unsigned char *data, size_t size)
+{
+	if (data == NULL && size != 0) {
+		return 1;
+	}
+	if (size > 65533) {
+		return 1;
+	}
+	jpeg_write_marker(cinfo, marker, data, (unsigned int)size);
+	return 0;
+}
+
+static int gdJpegWriteIccProfile(j_compress_ptr cinfo, const unsigned char *data, size_t size)
+{
+	static const unsigned char icc_signature[] = "ICC_PROFILE";
+	unsigned char *segment;
+	size_t offset = 0;
+	size_t max_payload = 65533 - 14;
+	int segment_count;
+	int segment_index;
+
+	if (data == NULL && size != 0) {
+		return 1;
+	}
+	if (size == 0) {
+		return 0;
+	}
+	if (size > max_payload * 255) {
+		return 1;
+	}
+
+	segment_count = (int)((size + max_payload - 1) / max_payload);
+	segment = (unsigned char *)gdMalloc(65533);
+	if (segment == NULL) {
+		return 1;
+	}
+	memcpy(segment, icc_signature, 12);
+
+	for (segment_index = 1; segment_index <= segment_count; segment_index++) {
+		size_t chunk_size = size - offset;
+		if (chunk_size > max_payload) {
+			chunk_size = max_payload;
+		}
+		segment[12] = (unsigned char)segment_index;
+		segment[13] = (unsigned char)segment_count;
+		memcpy(segment + 14, data + offset, chunk_size);
+		jpeg_write_marker(cinfo, JPEG_APP0 + 2, segment, (unsigned int)(chunk_size + 14));
+		offset += chunk_size;
+	}
+
+	gdFree(segment);
+	return 0;
+}
+
+static int gdJpegWriteMetadata(j_compress_ptr cinfo, const gdImageMetadata *metadata)
+{
+	const unsigned char *data;
+	size_t size;
+
+	if (metadata == NULL) {
+		return 0;
+	}
+
+	data = gdImageMetadataGetProfile(metadata, "exif", &size);
+	if (data != NULL && gdJpegWriteAppMarker(cinfo, JPEG_APP0 + 1, data, size)) {
+		return 1;
+	}
+	data = gdImageMetadataGetProfile(metadata, "xmp", &size);
+	if (data != NULL && gdJpegWriteAppMarker(cinfo, JPEG_APP0 + 1, data, size)) {
+		return 1;
+	}
+	data = gdImageMetadataGetProfile(metadata, "icc", &size);
+	if (data != NULL && gdJpegWriteIccProfile(cinfo, data, size)) {
+		return 1;
+	}
+	data = gdImageMetadataGetProfile(metadata, "iptc", &size);
+	if (data != NULL && gdJpegWriteAppMarker(cinfo, JPEG_APP0 + 13, data, size)) {
+		return 1;
+	}
+
+	return 0;
+}
+
+static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality, const gdImageMetadata *metadata)
 {
 	struct jpeg_compress_struct cinfo;
 	struct jpeg_error_mgr jerr;
@@ -346,6 +448,11 @@ static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 
 	jpeg_start_compress(&cinfo, TRUE);
 
+	if (gdJpegWriteMetadata(&cinfo, metadata)) {
+		gd_error("gd-jpeg: error: unable to write metadata\n");
+		goto error;
+	}
+
 	sprintf(comment, "CREATOR: gd-jpeg v%s (using IJG JPEG v%d),", GD_JPEG_VERSION, JPEG_LIB_VERSION);
 
 	if(quality >= 0) {
@@ -417,6 +524,13 @@ static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 	jpeg_destroy_compress(&cinfo);
 	gdFree(row);
 	return 0;
+
+error:
+	jpeg_destroy_compress(&cinfo);
+	if(row) {
+		gdFree(row);
+	}
+	return 1;
 }
 
 
@@ -536,9 +650,139 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx(int size, void *data, int ign
 	return im;
 }
 
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrWithMetadata(int size, void *data, gdImageMetadata *metadata)
+{
+	return gdImageCreateFromJpegPtrExWithMetadata(size, data, 1, metadata);
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrExWithMetadata(int size, void *data, int ignore_warning, gdImageMetadata *metadata)
+{
+	gdImagePtr im;
+	gdIOCtx *in = gdNewDynamicCtxEx(size, data, 0);
+	if(!in) {
+		return 0;
+	}
+	im = gdImageCreateFromJpegCtxExWithMetadata(in, ignore_warning, metadata);
+	in->gd_free(in);
+	return im;
+}
+
 static void jpeg_gdIOCtx_src(j_decompress_ptr cinfo, gdIOCtx *infile);
 
 static int CMYKToRGB(int c, int m, int y, int k, int inverted);
+
+static int gdJpegMarkerStartsWith(jpeg_saved_marker_ptr marker, const unsigned char *prefix, size_t prefix_size)
+{
+	return marker->data_length >= prefix_size && memcmp(marker->data, prefix, prefix_size) == 0;
+}
+
+static int gdJpegCollectIccProfile(j_decompress_ptr cinfo, gdImageMetadata *metadata)
+{
+	static const unsigned char icc_signature[] = "ICC_PROFILE";
+	jpeg_saved_marker_ptr marker;
+	jpeg_saved_marker_ptr segments[256];
+	unsigned int segment_sizes[256];
+	unsigned int segment_count = 0;
+	unsigned int i;
+	size_t total_size = 0;
+	size_t offset = 0;
+	unsigned char *icc;
+	int status;
+
+	memset(segments, 0, sizeof(segments));
+	memset(segment_sizes, 0, sizeof(segment_sizes));
+
+	for (marker = cinfo->marker_list; marker != NULL; marker = marker->next) {
+		unsigned int sequence;
+		unsigned int count;
+
+		if (marker->marker != JPEG_APP0 + 2 || !gdJpegMarkerStartsWith(marker, icc_signature, 12) || marker->data_length < 14) {
+			continue;
+		}
+
+		sequence = marker->data[12];
+		count = marker->data[13];
+		if (sequence == 0 || count == 0 || sequence > count) {
+			return GD_META_ERR_PARSE;
+		}
+		if (segment_count == 0) {
+			segment_count = count;
+		} else if (segment_count != count) {
+			return GD_META_ERR_PARSE;
+		}
+		if (segments[sequence] != NULL) {
+			return GD_META_ERR_PARSE;
+		}
+		segments[sequence] = marker;
+		segment_sizes[sequence] = marker->data_length - 14;
+		if ((size_t)-1 - total_size < segment_sizes[sequence]) {
+			return GD_META_ERR_LIMIT;
+		}
+		total_size += segment_sizes[sequence];
+	}
+
+	if (segment_count == 0) {
+		return GD_META_OK;
+	}
+
+	for (i = 1; i <= segment_count; i++) {
+		if (segments[i] == NULL) {
+			return GD_META_ERR_PARSE;
+		}
+	}
+
+	icc = (unsigned char *)gdMalloc(total_size);
+	if (icc == NULL && total_size != 0) {
+		return GD_META_ERR_NOMEM;
+	}
+
+	for (i = 1; i <= segment_count; i++) {
+		if (segment_sizes[i] != 0) {
+			memcpy(icc + offset, segments[i]->data + 14, segment_sizes[i]);
+		}
+		offset += segment_sizes[i];
+	}
+
+	status = gdImageMetadataSetProfile(metadata, "icc", icc, total_size);
+	if (icc != NULL) {
+		gdFree(icc);
+	}
+	return status;
+}
+
+static int gdJpegCollectMetadata(j_decompress_ptr cinfo, gdImageMetadata *metadata)
+{
+	static const unsigned char exif_signature[] = { 'E', 'x', 'i', 'f', '\0', '\0' };
+	static const unsigned char xmp_signature[] = "http://ns.adobe.com/xap/1.0/";
+	static const unsigned char iptc_signature[] = "Photoshop 3.0";
+	jpeg_saved_marker_ptr marker;
+	int status;
+
+	if (metadata == NULL) {
+		return GD_META_OK;
+	}
+
+	for (marker = cinfo->marker_list; marker != NULL; marker = marker->next) {
+		if (marker->marker == JPEG_APP0 + 1 && gdJpegMarkerStartsWith(marker, exif_signature, sizeof(exif_signature))) {
+			status = gdImageMetadataSetProfile(metadata, "exif", marker->data, marker->data_length);
+			if (status != GD_META_OK) {
+				return status;
+			}
+		} else if (marker->marker == JPEG_APP0 + 1 && gdJpegMarkerStartsWith(marker, xmp_signature, sizeof(xmp_signature))) {
+			status = gdImageMetadataSetProfile(metadata, "xmp", marker->data, marker->data_length);
+			if (status != GD_META_OK) {
+				return status;
+			}
+		} else if (marker->marker == JPEG_APP0 + 13 && gdJpegMarkerStartsWith(marker, iptc_signature, sizeof(iptc_signature))) {
+			status = gdImageMetadataSetProfile(metadata, "iptc", marker->data, marker->data_length);
+			if (status != GD_META_OK) {
+				return status;
+			}
+		}
+	}
+
+	return gdJpegCollectIccProfile(cinfo, metadata);
+}
 
 /*
   Function: gdImageCreateFromJpegCtx
@@ -550,12 +794,22 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 	return gdImageCreateFromJpegCtxEx(infile, 1);
 }
 
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxWithMetadata(gdIOCtx *infile, gdImageMetadata *metadata)
+{
+	return gdImageCreateFromJpegCtxExWithMetadata(infile, 1, metadata);
+}
+
 /*
   Function: gdImageCreateFromJpegCtxEx
 
   See <gdImageCreateFromJpeg>.
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_warning)
+{
+	return gdImageCreateFromJpegCtxExWithMetadata(infile, ignore_warning, NULL);
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxExWithMetadata(gdIOCtx *infile, int ignore_warning, gdImageMetadata *metadata)
 {
 	struct jpeg_decompress_struct cinfo;
 	struct jpeg_error_mgr jerr;
@@ -607,11 +861,22 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 	 * files with inverted components.
 	 */
 	jpeg_save_markers(&cinfo, JPEG_APP0 + 14, 256);
+	if (metadata != NULL) {
+		jpeg_save_markers(&cinfo, JPEG_APP0 + 1, 0xFFFF);
+		jpeg_save_markers(&cinfo, JPEG_APP0 + 2, 0xFFFF);
+		jpeg_save_markers(&cinfo, JPEG_APP0 + 13, 0xFFFF);
+	}
 
 	retval = jpeg_read_header(&cinfo, TRUE);
 	if(retval != JPEG_HEADER_OK) {
 		gd_error("gd-jpeg: warning: jpeg_read_header returns"
 		         " %d, expected %d\n", retval, JPEG_HEADER_OK);
+	}
+
+	retval = gdJpegCollectMetadata(&cinfo, metadata);
+	if(retval != GD_META_OK) {
+		gd_error("gd-jpeg: error: unable to read metadata\n");
+		goto error;
 	}
 
 	if(cinfo.image_height > INT_MAX) {
@@ -1228,11 +1493,30 @@ BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
 	return NULL;
 }
 
+BGD_DECLARE(void *) gdImageJpegPtrWithMetadata(gdImagePtr im, int *size, int quality, const gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(metadata);
+	_noJpegError();
+	return NULL;
+}
+
 BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 {
 	ARG_NOT_USED(im);
 	ARG_NOT_USED(outfile);
 	ARG_NOT_USED(quality);
+	_noJpegError();
+}
+
+BGD_DECLARE(void) gdImageJpegCtxWithMetadata(gdImagePtr im, gdIOCtx *outfile, int quality, const gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(metadata);
 	_noJpegError();
 }
 
@@ -1268,6 +1552,25 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx(int size, void *data, int ign
 	return NULL;
 }
 
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrWithMetadata(int size, void *data, gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
+	ARG_NOT_USED(metadata);
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrExWithMetadata(int size, void *data, int ignore_warning, gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
+	ARG_NOT_USED(ignore_warning);
+	ARG_NOT_USED(metadata);
+	_noJpegError();
+	return NULL;
+}
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtx *infile)
 {
 	ARG_NOT_USED(infile);
@@ -1279,6 +1582,23 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtx *infile, int ignore_w
 {
 	ARG_NOT_USED(infile);
 	ARG_NOT_USED(ignore_warning);
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxWithMetadata(gdIOCtx *infile, gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(infile);
+	ARG_NOT_USED(metadata);
+	_noJpegError();
+	return NULL;
+}
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxExWithMetadata(gdIOCtx *infile, int ignore_warning, gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(infile);
+	ARG_NOT_USED(ignore_warning);
+	ARG_NOT_USED(metadata);
 	_noJpegError();
 	return NULL;
 }

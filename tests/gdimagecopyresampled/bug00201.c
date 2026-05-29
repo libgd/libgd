@@ -43,11 +43,6 @@ int main()
     gdImagePtr layers[2], background, logo_source, logo, scaled_logo, img;
     FILE *fp;
 
-// Rounding issue, won't fix as it only happens on mingw 32bit.
-// __aarch64__/graviton. It fails within the CI while outside is 100% success over 100s builds&runs
-#if defined(__MINGW32__) || defined(__aarch64__) || defined(_M_ARM64)
-    return 77;
-#endif 
     background = blank_image(DEST_WIDTH,DEST_HEIGHT);
 
     fp = gdTestFileOpen2("gdimagecopyresampled", "bug00201_src.png");
@@ -70,7 +65,7 @@ int main()
     gdImageDestroy(background);
     gdImageDestroy(scaled_logo);
 
-    gdAssertImageEqualsToFile("gdimagecopyresampled/bug00201_exp.png", img);
+    gdAssertImageEqualsToFilePerceptual("gdimagecopyresampled/bug00201_exp.png", img, 0.05, 200);
     gdImageDestroy(img);
     return gdNumFailures();
 }

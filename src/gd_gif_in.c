@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gd.h"
+#include "gdhelpers.h"
 
 /* Used only when debugging GIF compression code */
 /* #define DEBUGGING_ENVARS */
@@ -108,7 +109,772 @@ static int GetDataBlock (gdIOCtx *fd, unsigned char *buf, int *ZeroDataBlockP);
 static int GetCode (gdIOCtx *fd, CODE_STATIC_DATA *scd, int code_size, int flag, int *ZeroDataBlockP);
 static int LWZReadByte (gdIOCtx *fd, LZW_STATIC_DATA *sd, char flag, int input_code_size, int *ZeroDataBlockP);
 
-static void ReadImage (gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)[256], int interlace, int *ZeroDataBlockP); /*1.4//, int ignore); */
+static int ReadImage (gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)[256], int colorCount, int interlace, int *ZeroDataBlockP); /*1.4//, int ignore); */
+
+typedef struct {
+	int transparent;
+	int delay;
+	int disposal;
+} GifGraphicControl;
+
+typedef struct gdGifReadStruct {
+	gdIOCtxPtr in;
+	int ownsCtx;
+	int done;
+	int error;
+	int pendingSeparator;
+	int frameIndex;
+	int screenWidth;
+	int screenHeight;
+	int backgroundIndex;
+	int haveGlobalColormap;
+	int globalColorCount;
+	int loopCount;
+	unsigned char globalColorMap[3][MAXCOLORMAPSIZE];
+	unsigned char localColorMap[3][MAXCOLORMAPSIZE];
+	GifGraphicControl gce;
+	gdImagePtr rawFrame;
+	gdImagePtr canvas;
+	gdImagePtr previousCanvas;
+	gdGifFrameInfo lastInfo;
+} gdGifRead;
+
+static void GifResetGraphicControl(GifGraphicControl *gce);
+static void GifTrimColorTable(gdImagePtr im);
+static int GifReadHeader(gdGifRead *gif);
+static int GifPrimeFirstImage(gdGifRead *gif);
+static int GifSkipSubBlocks(gdIOCtxPtr in, int *ZeroDataBlockP);
+static int GifReadApplicationExtension(gdGifRead *gif, int *ZeroDataBlockP);
+static int GifReadExtension(gdGifRead *gif, int label, int *ZeroDataBlockP);
+static void GifFillFrameInfo(gdGifRead *gif, gdGifFrameInfo *info);
+static int GifFrameToColor(gdImagePtr frame, int color);
+static int GifBackgroundColor(gdGifRead *gif, int transparentIndex);
+static int GifEnsureCanvas(gdGifRead *gif, int transparentIndex);
+static gdImagePtr GifCloneImage(gdImagePtr src);
+static void GifApplyPreviousDisposal(gdGifRead *gif);
+static int GifCompositeFrame(gdGifRead *gif);
+static int GifProbeIsAnimated(gdIOCtxPtr in);
+
+static void
+GifResetGraphicControl(GifGraphicControl *gce)
+{
+	gce->transparent = -1;
+	gce->delay = 0;
+	gce->disposal = gdDisposalUnknown;
+}
+
+static void
+GifTrimColorTable(gdImagePtr im)
+{
+	int i;
+
+	for(i = im->colorsTotal - 1; i >= 0; i--) {
+		if(im->open[i]) {
+			im->colorsTotal--;
+		} else {
+			break;
+		}
+	}
+}
+
+static int
+GifReadHeader(gdGifRead *gif)
+{
+	unsigned char buf[16];
+	int bitPixel;
+
+	memset(gif->globalColorMap, 0, 3 * MAXCOLORMAPSIZE);
+	memset(gif->localColorMap, 0, 3 * MAXCOLORMAPSIZE);
+	GifResetGraphicControl(&gif->gce);
+	gif->loopCount = 1;
+
+	if(!ReadOK(gif->in, buf, 6)) {
+		return 0;
+	}
+	if(strncmp((char *)buf, "GIF", 3) != 0) {
+		return 0;
+	}
+	if(memcmp((char *)buf + 3, "87a", 3) != 0 &&
+	        memcmp((char *)buf + 3, "89a", 3) != 0) {
+		return 0;
+	}
+	if(!ReadOK(gif->in, buf, 7)) {
+		return 0;
+	}
+
+	gif->screenWidth = LM_to_uint(buf[0], buf[1]);
+	gif->screenHeight = LM_to_uint(buf[2], buf[3]);
+	if(gif->screenWidth <= 0 || gif->screenHeight <= 0) {
+		return 0;
+	}
+
+	gif->backgroundIndex = buf[5];
+	bitPixel = 2 << (buf[4] & 0x07);
+	gif->globalColorCount = bitPixel;
+	gif->haveGlobalColormap = BitSet(buf[4], LOCALCOLORMAP);
+	if(gif->haveGlobalColormap) {
+		if(ReadColorMap(gif->in, bitPixel, gif->globalColorMap)) {
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+static int
+GifSkipSubBlocks(gdIOCtxPtr in, int *ZeroDataBlockP)
+{
+	unsigned char buf[256];
+	int count;
+
+	do {
+		count = GetDataBlock(in, buf, ZeroDataBlockP);
+		if(count < 0) {
+			return 0;
+		}
+	} while(count > 0);
+
+	return 1;
+}
+
+static int
+GifReadApplicationExtension(gdGifRead *gif, int *ZeroDataBlockP)
+{
+	unsigned char buf[256];
+	int count;
+
+	count = GetDataBlock(gif->in, buf, ZeroDataBlockP);
+	if(count < 0) {
+		return 0;
+	}
+
+	if(count == 11 && memcmp(buf, "NETSCAPE2.0", 11) == 0) {
+		count = GetDataBlock(gif->in, buf, ZeroDataBlockP);
+		if(count < 0) {
+			return 0;
+		}
+		if(count >= 3 && buf[0] == 1) {
+			gif->loopCount = LM_to_uint(buf[1], buf[2]);
+		}
+		while(count > 0) {
+			count = GetDataBlock(gif->in, buf, ZeroDataBlockP);
+			if(count < 0) {
+				return 0;
+			}
+		}
+		return 1;
+	}
+
+	while(count > 0) {
+		count = GetDataBlock(gif->in, buf, ZeroDataBlockP);
+		if(count < 0) {
+			return 0;
+		}
+	}
+	return 1;
+}
+
+static int
+GifReadExtension(gdGifRead *gif, int label, int *ZeroDataBlockP)
+{
+	unsigned char buf[256];
+	int count;
+
+	if(label == 0xf9) {
+		count = GetDataBlock(gif->in, buf, ZeroDataBlockP);
+		if(count < 0) {
+			return 0;
+		}
+		if(count >= 4) {
+			gif->gce.disposal = (buf[0] >> 2) & 0x7;
+			if(gif->gce.disposal == 4) {
+				gif->gce.disposal = gdDisposalRestorePrevious;
+			}
+			gif->gce.delay = LM_to_uint(buf[1], buf[2]);
+			gif->gce.transparent = (buf[0] & 0x1) ? buf[3] : -1;
+		}
+		while(count > 0) {
+			count = GetDataBlock(gif->in, buf, ZeroDataBlockP);
+			if(count < 0) {
+				return 0;
+			}
+		}
+		return 1;
+	}
+
+	if(label == 0xff) {
+		return GifReadApplicationExtension(gif, ZeroDataBlockP);
+	}
+
+	return GifSkipSubBlocks(gif->in, ZeroDataBlockP);
+}
+
+static int
+GifPrimeFirstImage(gdGifRead *gif)
+{
+	unsigned char c;
+	int ZeroDataBlock = FALSE;
+
+	for(;;) {
+		if(!ReadOK(gif->in, &c, 1)) {
+			return 0;
+		}
+		if(c == ';') {
+			gif->done = 1;
+			return 1;
+		}
+		if(c == ',') {
+			gif->pendingSeparator = 1;
+			return 1;
+		}
+		if(c == '!') {
+			if(!ReadOK(gif->in, &c, 1) || !GifReadExtension(gif, c, &ZeroDataBlock)) {
+				return 0;
+			}
+			continue;
+		}
+	}
+}
+
+static void
+GifFillFrameInfo(gdGifRead *gif, gdGifFrameInfo *info)
+{
+	if(info != NULL) {
+		*info = gif->lastInfo;
+	}
+}
+
+static int
+GifFrameToColor(gdImagePtr frame, int color)
+{
+	return gdTrueColorAlpha(frame->red[color], frame->green[color], frame->blue[color],
+	                        frame->alpha[color]);
+}
+
+static int
+GifBackgroundColor(gdGifRead *gif, int transparentIndex)
+{
+	int bg = gif->backgroundIndex;
+
+	if(bg == transparentIndex) {
+		return gdTrueColorAlpha(0, 0, 0, gdAlphaTransparent);
+	}
+	if(gif->haveGlobalColormap && bg >= 0 && bg < MAXCOLORMAPSIZE) {
+		return gdTrueColorAlpha(gif->globalColorMap[CM_RED][bg],
+		                        gif->globalColorMap[CM_GREEN][bg],
+		                        gif->globalColorMap[CM_BLUE][bg],
+		                        gdAlphaOpaque);
+	}
+	return gdTrueColorAlpha(0, 0, 0, gdAlphaTransparent);
+}
+
+static int
+GifEnsureCanvas(gdGifRead *gif, int transparentIndex)
+{
+	int x, y, bg;
+
+	if(gif->canvas != NULL) {
+		return 1;
+	}
+
+	gif->canvas = gdImageCreateTrueColor(gif->screenWidth, gif->screenHeight);
+	if(gif->canvas == NULL) {
+		return 0;
+	}
+	gdImageAlphaBlending(gif->canvas, 0);
+	gdImageSaveAlpha(gif->canvas, 1);
+
+	bg = GifBackgroundColor(gif, transparentIndex);
+	for(y = 0; y < gif->screenHeight; y++) {
+		for(x = 0; x < gif->screenWidth; x++) {
+			gdImageSetPixel(gif->canvas, x, y, bg);
+		}
+	}
+
+	return 1;
+}
+
+static gdImagePtr
+GifCloneImage(gdImagePtr src)
+{
+	gdImagePtr dst;
+	int x, y;
+
+	if(src == NULL) {
+		return NULL;
+	}
+
+	dst = src->trueColor ? gdImageCreateTrueColor(src->sx, src->sy) : gdImageCreate(src->sx, src->sy);
+	if(dst == NULL) {
+		return NULL;
+	}
+
+	if(src->trueColor) {
+		gdImageAlphaBlending(dst, 0);
+		gdImageSaveAlpha(dst, src->saveAlphaFlag);
+		for(y = 0; y < src->sy; y++) {
+			for(x = 0; x < src->sx; x++) {
+				gdImageSetPixel(dst, x, y, gdImageGetPixel(src, x, y));
+			}
+		}
+	} else {
+		for(x = 0; x < gdMaxColors; x++) {
+			dst->red[x] = src->red[x];
+			dst->green[x] = src->green[x];
+			dst->blue[x] = src->blue[x];
+			dst->alpha[x] = src->alpha[x];
+			dst->open[x] = src->open[x];
+		}
+		dst->colorsTotal = src->colorsTotal;
+		dst->transparent = src->transparent;
+		for(y = 0; y < src->sy; y++) {
+			for(x = 0; x < src->sx; x++) {
+				gdImageSetPixel(dst, x, y, gdImageGetPixel(src, x, y));
+			}
+		}
+	}
+
+	return dst;
+}
+
+static void
+GifApplyPreviousDisposal(gdGifRead *gif)
+{
+	gdGifFrameInfo *info = &gif->lastInfo;
+	int x, y, bg;
+
+	if(gif->canvas == NULL || gif->frameIndex <= 0) {
+		return;
+	}
+
+	if(info->disposal == gdDisposalRestoreBackground) {
+		bg = GifBackgroundColor(gif, info->transparentIndex);
+		for(y = info->y; y < info->y + info->height; y++) {
+			for(x = info->x; x < info->x + info->width; x++) {
+				gdImageSetPixel(gif->canvas, x, y, bg);
+			}
+		}
+	} else if(info->disposal == gdDisposalRestorePrevious && gif->previousCanvas != NULL) {
+		for(y = info->y; y < info->y + info->height; y++) {
+			for(x = info->x; x < info->x + info->width; x++) {
+				gdImageSetPixel(gif->canvas, x, y, gdImageGetPixel(gif->previousCanvas, x, y));
+			}
+		}
+	}
+
+	if(gif->previousCanvas != NULL) {
+		gdImageDestroy(gif->previousCanvas);
+		gif->previousCanvas = NULL;
+	}
+}
+
+static int
+GifCompositeFrame(gdGifRead *gif)
+{
+	gdGifFrameInfo *info = &gif->lastInfo;
+	int x, y, c;
+
+	if(!GifEnsureCanvas(gif, info->transparentIndex)) {
+		return 0;
+	}
+
+	if(info->disposal == gdDisposalRestorePrevious) {
+		gif->previousCanvas = GifCloneImage(gif->canvas);
+		if(gif->previousCanvas == NULL) {
+			return 0;
+		}
+	}
+
+	for(y = 0; y < info->height; y++) {
+		for(x = 0; x < info->width; x++) {
+			c = gdImageGetPixel(gif->rawFrame, x, y);
+			if(c == info->transparentIndex) {
+				continue;
+			}
+			gdImageSetPixel(gif->canvas, info->x + x, info->y + y,
+			                GifFrameToColor(gif->rawFrame, c));
+		}
+	}
+
+	return 1;
+}
+
+static int
+GifProbeIsAnimated(gdIOCtxPtr in)
+{
+	unsigned char buf[16], c;
+	int bitPixel, frameCount = 0, zero = 0;
+
+	if(in == NULL || !ReadOK(in, buf, 6)) {
+		return -1;
+	}
+	if(strncmp((char *)buf, "GIF", 3) != 0 ||
+	        (memcmp((char *)buf + 3, "87a", 3) != 0 &&
+	         memcmp((char *)buf + 3, "89a", 3) != 0)) {
+		return -1;
+	}
+	if(!ReadOK(in, buf, 7)) {
+		return -1;
+	}
+	if(LM_to_uint(buf[0], buf[1]) <= 0 || LM_to_uint(buf[2], buf[3]) <= 0) {
+		return -1;
+	}
+	bitPixel = 2 << (buf[4] & 0x07);
+	if(BitSet(buf[4], LOCALCOLORMAP)) {
+		while(bitPixel-- > 0) {
+			if(!ReadOK(in, buf, 3)) {
+				return -1;
+			}
+		}
+	}
+
+	for(;;) {
+		if(!ReadOK(in, &c, 1)) {
+			return -1;
+		}
+		if(c == ';') {
+			return frameCount > 1 ? 1 : 0;
+		}
+		if(c == '!') {
+			if(!ReadOK(in, &c, 1) || !GifSkipSubBlocks(in, &zero)) {
+				return -1;
+			}
+			continue;
+		}
+		if(c == ',') {
+			int localColorCount;
+			if(!ReadOK(in, buf, 9)) {
+				return -1;
+			}
+			localColorCount = BitSet(buf[8], LOCALCOLORMAP) ? (2 << (buf[8] & 0x07)) : 0;
+			while(localColorCount-- > 0) {
+				if(!ReadOK(in, buf, 3)) {
+					return -1;
+				}
+			}
+			if(!ReadOK(in, &c, 1) || !GifSkipSubBlocks(in, &zero)) {
+				return -1;
+			}
+			frameCount++;
+			if(frameCount > 1) {
+				return 1;
+			}
+			continue;
+		}
+		return -1;
+	}
+}
+
+BGD_DECLARE(int) gdGifIsAnimated(FILE *fdFile)
+{
+	gdIOCtx *fd;
+	int result, pos;
+
+	if(fdFile == NULL) {
+		return -1;
+	}
+	fd = gdNewFileCtx(fdFile);
+	if(fd == NULL) {
+		return -1;
+	}
+	pos = (int) gdTell(fd);
+	if(pos < 0) {
+		fd->gd_free(fd);
+		return -1;
+	}
+	result = GifProbeIsAnimated(fd);
+	if(!gdSeek(fd, pos)) {
+		result = -1;
+	}
+	fd->gd_free(fd);
+	return result;
+}
+
+BGD_DECLARE(int) gdGifIsAnimatedCtx(gdIOCtxPtr in)
+{
+	int result, pos;
+
+	if(in == NULL || in->tell == NULL || in->seek == NULL) {
+		return -1;
+	}
+	pos = (int) gdTell(in);
+	if(pos < 0) {
+		return -1;
+	}
+	result = GifProbeIsAnimated(in);
+	if(!gdSeek(in, pos)) {
+		return -1;
+	}
+	return result;
+}
+
+BGD_DECLARE(int) gdGifIsAnimatedPtr(int size, void *data)
+{
+	gdIOCtx *in;
+	int result;
+
+	if(size <= 0 || data == NULL) {
+		return -1;
+	}
+	in = gdNewDynamicCtxEx(size, data, 0);
+	if(in == NULL) {
+		return -1;
+	}
+	result = GifProbeIsAnimated(in);
+	in->gd_free(in);
+	return result;
+}
+
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpen(FILE *fdFile)
+{
+	gdIOCtx *fd;
+	gdGifReadPtr gif;
+
+	if(fdFile == NULL) {
+		return NULL;
+	}
+	fd = gdNewFileCtx(fdFile);
+	if(fd == NULL) {
+		return NULL;
+	}
+	gif = gdGifReadOpenCtx(fd);
+	if(gif == NULL) {
+		fd->gd_free(fd);
+		return NULL;
+	}
+	gif->ownsCtx = 1;
+	return gif;
+}
+
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpenPtr(int size, void *data)
+{
+	gdIOCtx *in;
+	gdGifReadPtr gif;
+
+	if(size <= 0 || data == NULL) {
+		return NULL;
+	}
+	in = gdNewDynamicCtxEx(size, data, 0);
+	if(in == NULL) {
+		return NULL;
+	}
+	gif = gdGifReadOpenCtx(in);
+	if(gif == NULL) {
+		in->gd_free(in);
+		return NULL;
+	}
+	gif->ownsCtx = 1;
+	return gif;
+}
+
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpenCtx(gdIOCtxPtr in)
+{
+	gdGifReadPtr gif;
+
+	if(in == NULL) {
+		return NULL;
+	}
+
+	gif = (gdGifReadPtr) gdCalloc(1, sizeof(gdGifRead));
+	if(gif == NULL) {
+		return NULL;
+	}
+	gif->in = in;
+	gif->ownsCtx = 0;
+	GifResetGraphicControl(&gif->gce);
+	if(!GifReadHeader(gif) || !GifPrimeFirstImage(gif)) {
+		gdFree(gif);
+		return NULL;
+	}
+
+	return gif;
+}
+
+BGD_DECLARE(void) gdGifReadClose(gdGifReadPtr gif)
+{
+	if(gif == NULL) {
+		return;
+	}
+	if(gif->rawFrame != NULL) {
+		gdImageDestroy(gif->rawFrame);
+	}
+	if(gif->canvas != NULL) {
+		gdImageDestroy(gif->canvas);
+	}
+	if(gif->previousCanvas != NULL) {
+		gdImageDestroy(gif->previousCanvas);
+	}
+	if(gif->ownsCtx && gif->in != NULL) {
+		gif->in->gd_free(gif->in);
+	}
+	gdFree(gif);
+}
+
+BGD_DECLARE(int) gdGifReadGetInfo(gdGifReadPtr gif, gdGifInfo *info)
+{
+	if(gif == NULL || info == NULL) {
+		return 0;
+	}
+	info->width = gif->screenWidth;
+	info->height = gif->screenHeight;
+	info->backgroundIndex = gif->backgroundIndex;
+	info->globalColorTable = gif->haveGlobalColormap;
+	info->loopCount = gif->loopCount;
+	return 1;
+}
+
+BGD_DECLARE(int) gdGifReadNextFrame(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *frame)
+{
+	unsigned char buf[16], c;
+	int ZeroDataBlock = FALSE;
+
+	if(frame != NULL) {
+		*frame = NULL;
+	}
+	if(gif == NULL || gif->error) {
+		return -1;
+	}
+	if(gif->done) {
+		return 0;
+	}
+
+	for(;;) {
+		int top, left, width, height;
+		int useGlobalColormap, bitPixel, interlace, hasLocal;
+
+		if(gif->pendingSeparator) {
+			c = ',';
+			gif->pendingSeparator = 0;
+		} else if(!ReadOK(gif->in, &c, 1)) {
+			gif->error = 1;
+			return -1;
+		}
+		if(c == ';') {
+			gif->done = 1;
+			return 0;
+		}
+		if(c == '!') {
+			if(!ReadOK(gif->in, &c, 1) || !GifReadExtension(gif, c, &ZeroDataBlock)) {
+				gif->error = 1;
+				return -1;
+			}
+			continue;
+		}
+		if(c != ',') {
+			continue;
+		}
+
+		if(!ReadOK(gif->in, buf, 9)) {
+			gif->error = 1;
+			return -1;
+		}
+
+		hasLocal = BitSet(buf[8], LOCALCOLORMAP);
+		useGlobalColormap = !hasLocal;
+		bitPixel = 1 << ((buf[8] & 0x07) + 1);
+		left = LM_to_uint(buf[0], buf[1]);
+		top = LM_to_uint(buf[2], buf[3]);
+		width = LM_to_uint(buf[4], buf[5]);
+		height = LM_to_uint(buf[6], buf[7]);
+		interlace = BitSet(buf[8], INTERLACE);
+
+		if(width <= 0 || height <= 0 ||
+		        ((left + width) > gif->screenWidth) || ((top + height) > gif->screenHeight)) {
+			gif->error = 1;
+			return -1;
+		}
+		if(useGlobalColormap && !gif->haveGlobalColormap) {
+			gif->globalColorMap[CM_RED][1] = 0xff;
+			gif->globalColorMap[CM_GREEN][1] = 0xff;
+			gif->globalColorMap[CM_BLUE][1] = 0xff;
+		}
+
+		if(gif->rawFrame != NULL) {
+			gdImageDestroy(gif->rawFrame);
+			gif->rawFrame = NULL;
+		}
+		gif->rawFrame = gdImageCreate(width, height);
+		if(gif->rawFrame == NULL) {
+			gif->error = 1;
+			return -1;
+		}
+		gif->rawFrame->interlace = interlace;
+
+		if(hasLocal) {
+			if(ReadColorMap(gif->in, bitPixel, gif->localColorMap) ||
+			        !ReadImage(gif->rawFrame, gif->in, width, height, gif->localColorMap, bitPixel, interlace, &ZeroDataBlock)) {
+				gif->error = 1;
+				return -1;
+			}
+		} else {
+			if(!ReadImage(gif->rawFrame, gif->in, width, height, gif->globalColorMap, gif->globalColorCount, interlace, &ZeroDataBlock)) {
+				gif->error = 1;
+				return -1;
+			}
+		}
+
+		if(gif->gce.transparent != -1) {
+			gdImageColorTransparent(gif->rawFrame, gif->gce.transparent);
+		}
+		GifTrimColorTable(gif->rawFrame);
+		if(!gif->rawFrame->colorsTotal) {
+			gif->error = 1;
+			return -1;
+		}
+
+		gif->lastInfo.frameIndex = gif->frameIndex;
+		gif->lastInfo.x = left;
+		gif->lastInfo.y = top;
+		gif->lastInfo.width = width;
+		gif->lastInfo.height = height;
+		gif->lastInfo.delay = gif->gce.delay;
+		gif->lastInfo.disposal = gif->gce.disposal;
+		gif->lastInfo.transparentIndex = gif->gce.transparent;
+		gif->lastInfo.localColorTable = hasLocal;
+		gif->lastInfo.interlace = interlace;
+		gif->frameIndex++;
+		GifFillFrameInfo(gif, info);
+		if(frame != NULL) {
+			*frame = gif->rawFrame;
+		}
+		GifResetGraphicControl(&gif->gce);
+		return 1;
+	}
+}
+
+BGD_DECLARE(int) gdGifReadNextImage(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *image)
+{
+	int result;
+
+	if(image != NULL) {
+		*image = NULL;
+	}
+	if(gif == NULL) {
+		return -1;
+	}
+
+	GifApplyPreviousDisposal(gif);
+	result = gdGifReadNextFrame(gif, info, NULL);
+	if(result <= 0) {
+		return result;
+	}
+	if(!GifCompositeFrame(gif)) {
+		gif->error = 1;
+		return -1;
+	}
+	if(image != NULL) {
+		*image = gif->canvas;
+	}
+	return 1;
+}
+
+BGD_DECLARE(gdImagePtr) gdGifReadCloneImage(gdGifReadPtr gif)
+{
+	if(gif == NULL) {
+		return NULL;
+	}
+	return GifCloneImage(gif->canvas);
+}
 
 /*
   Function: gdImageCreateFromGif
@@ -312,7 +1078,14 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 				return 0;
 			}
 
-			ReadImage(im, fd, width, height, localColorMap, BitSet(buf[8], INTERLACE), &ZeroDataBlock);
+			/* Legacy gdImageCreateFromGif* is intentionally tolerant of out-of-palette
+			 * LZW results and maps them to color 0. The newer iterator API passes the
+			 * actual color table size and rejects those malformed frames instead.
+			 */
+			if(!ReadImage(im, fd, width, height, localColorMap, 0, BitSet(buf[8], INTERLACE), &ZeroDataBlock)) {
+				gdImageDestroy(im);
+				return 0;
+			}
 		} else {
 			if(!haveGlobalColormap) {
 				// Still a valid gif, apply simple default palette as per spec
@@ -321,7 +1094,13 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr fd)
 				ColorMap[CM_BLUE][1] = 0xff;
 			}
 
-			ReadImage(im, fd, width, height, ColorMap, BitSet(buf[8], INTERLACE), &ZeroDataBlock);
+			/* Keep legacy tolerance here as above; strict validation is used by the
+			 * animated GIF iterator.
+			 */
+			if(!ReadImage(im, fd, width, height, ColorMap, 0, BitSet(buf[8], INTERLACE), &ZeroDataBlock)) {
+				gdImageDestroy(im);
+				return 0;
+			}
 		}
 
 		if(Transparent != (-1)) {
@@ -671,8 +1450,8 @@ LWZReadByte(gdIOCtx *fd, LZW_STATIC_DATA *sd, char flag, int input_code_size, in
 	return rv;
 }
 
-static void
-ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)[256], int interlace, int *ZeroDataBlockP) /*1.4//, int ignore) */
+static int
+ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)[256], int colorCount, int interlace, int *ZeroDataBlockP) /*1.4//, int ignore) */
 {
 	unsigned char c;
 	int xpos = 0, ypos = 0, pass = 0;
@@ -681,11 +1460,11 @@ ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)
 
 	/* Initialize the Compression routines */
 	if(!ReadOK(fd, &c, 1)) {
-		return;
+		return 0;
 	}
 
 	if(c > MAX_LWZ_BITS) {
-		return;
+		return 0;
 	}
 
 	/* Stash the color map into the image */
@@ -699,7 +1478,7 @@ ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)
 	/* Many (perhaps most) of these colors will remain marked open. */
 	im->colorsTotal = gdMaxColors;
 	if(LWZReadByte(fd, &sd, TRUE, c, ZeroDataBlockP) < 0) {
-		return;
+		return 0;
 	}
 
 	/*
@@ -713,6 +1492,9 @@ ReadImage(gdImagePtr im, gdIOCtx *fd, int len, int height, unsigned char (*cmap)
 	/*} */
 
 	while((v = LWZReadByte(fd, &sd, FALSE, c, ZeroDataBlockP)) >= 0 ) {
+		if(colorCount > 0 && v >= colorCount) {
+			return 0;
+		}
 		if(v >= gdMaxColors) {
 			v = 0;
 		}
@@ -771,4 +1553,5 @@ fini:
 	if(LWZReadByte(fd, &sd, FALSE, c, ZeroDataBlockP) >=0) {
 		/* Ignore extra */
 	}
+	return 1;
 }

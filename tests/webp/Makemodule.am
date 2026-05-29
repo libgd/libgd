@@ -2,6 +2,8 @@ if HAVE_LIBWEBP
 libgd_test_programs += \
 	webp/bug00111 \
 	webp/gdImageWebpEx \
+	webp/webp_anim \
+	webp/webp_conformance \
 	webp/webp_ll_im2im
 if HAVE_LIBJPEG
 libgd_test_programs += \
@@ -11,4 +13,5 @@ endif
 
 EXTRA_DIST += \
 	webp/CMakeLists.txt \
+	webp/webp-conformance \
 	webp/bug_double_free.jpg

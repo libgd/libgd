@@ -5,6 +5,7 @@ libgd_test_programs += \
 	bmp/bmp_im2im \
 	bmp/bug00276 \
 	bmp/bmp_size \
+	bmp/bmp_write_ex \
 	bmp/bmpsuite_read
 
 EXTRA_DIST += \

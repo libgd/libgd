@@ -23,6 +23,7 @@ if (BUILD_TEST)
 		gd2
 		gdcolormaplookup
 		gdimagearc
+		gdimageaffine
 		gdimagebrightness
 		gdimageclone
 		gdimagecolor
@@ -85,6 +86,7 @@ if (BUILD_TEST)
 		gif
 		heif
 		jpeg
+		metadata
 		perceptualdiff
 		png
 		uhdr

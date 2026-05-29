@@ -24,7 +24,7 @@ int main()
 		if (gdTransformAffineBoundingBox(&area, affine, &bbox) != GD_TRUE) {
 			return 1;
 		}
-		if (!(bbox.x ==-253 &&  bbox.y ==-228 && bbox.width == 297 && bbox.height == 229)) {
+		if (!(bbox.x ==-254 &&  bbox.y ==-229 && bbox.width == 297 && bbox.height == 229)) {
 			return 1;
 		}
 

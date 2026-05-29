@@ -731,6 +731,94 @@ int gdTestImageCompareToFile(const char* file, unsigned int line, const char* me
 	return res;
 }
 
+int gdTestImagePerceptualCompareToFile(const char* file, unsigned int line, const char* message,
+                                       const char *expected_file, gdImagePtr actual,
+                                       double threshold, unsigned int max_pixels_changed)
+{
+	unsigned int width_a, height_a;
+	unsigned int width_b, height_b;
+	gdImagePtr expected = NULL;
+	gdImagePtr surface_diff = NULL;
+	CuTestImageResult result = {0, 0};
+	int res = 0;
+
+	(void)message;
+
+	if (!actual) {
+		_gdTestErrorMsg(file, line, "Image is NULL\n");
+		goto done;
+	}
+
+	expected = gdTestImageFromPng(expected_file);
+	if (!expected) {
+		_gdTestErrorMsg(file, line, "Cannot open PNG <%s>\n", expected_file);
+		goto done;
+	}
+
+	width_a  = gdImageSX(expected);
+	height_a = gdImageSY(expected);
+	width_b  = gdImageSX(actual);
+	height_b = gdImageSY(actual);
+
+	if (width_a != width_b || height_a != height_b) {
+		_gdTestErrorMsg(file, line,
+				"Image size mismatch: (%ux%u) vs. (%ux%u)\n       for %s vs. buffer\n",
+				width_a, height_a,
+				width_b, height_b,
+				file);
+		goto done;
+	}
+
+	surface_diff = gdImageCreateTrueColor(width_a, height_a);
+	if (surface_diff == NULL) {
+		goto done;
+	}
+
+	gdTestImagePerceptualDiff(expected, actual, surface_diff, &result, threshold);
+	if (result.pixels_changed > max_pixels_changed) {
+		char file_diff[255];
+		char file_out[1024];
+		FILE *fp;
+		int p;
+
+		_gdTestErrorMsg(file, line,
+				"Perceptual diff changed %u pixels; allowed %u with threshold %.4f.\n",
+				result.pixels_changed,
+				max_pixels_changed,
+				threshold);
+
+		p = strlen(file) - 1;
+		while(p > 0 && (file[p] != '/' && file[p] != '\\')) {
+			p--;
+		}
+		sprintf(file_diff, "%s_%u_diff.png", file + p + 1, line);
+		sprintf(file_out, "%s_%u_out.png", file + p + 1, line);
+
+		fp = fopen(file_diff, "wb");
+		if (fp) {
+			gdImagePng(surface_diff, fp);
+			fclose(fp);
+		}
+		fp = fopen(file_out, "wb");
+		if (fp) {
+			gdImagePng(actual, fp);
+			fclose(fp);
+		}
+		goto done;
+	}
+
+	res = 1;
+
+done:
+	if (surface_diff) {
+		gdImageDestroy(surface_diff);
+	}
+	if (expected) {
+		gdImageDestroy(expected);
+	}
+	return res;
+}
+
 static int failureCount = 0;
 
 int gdNumFailures() {

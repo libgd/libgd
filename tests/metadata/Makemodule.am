@@ -1,0 +1,35 @@
+libgd_test_programs += \
+	metadata/metadata_core
+
+if HAVE_LIBJPEG
+libgd_test_programs += \
+	metadata/jpeg_metadata
+endif
+
+if HAVE_LIBEXIV2
+libgd_test_programs += \
+	metadata/jpeg_exiv2
+metadata_jpeg_exiv2_SOURCES = metadata/jpeg_exiv2.cpp
+metadata_jpeg_exiv2_LDADD = libgdtest.a ../src/libgd.la $(LIBEXIV2_LIBS)
+metadata_jpeg_exiv2_CPPFLAGS = $(AM_CPPFLAGS) $(LIBEXIV2_CFLAGS)
+endif
+
+if HAVE_LIBPNG
+libgd_test_programs += \
+	metadata/png_metadata
+endif
+
+if HAVE_LIBPNG
+if HAVE_LIBEXIV2
+libgd_test_programs += \
+	metadata/png_exiv2
+metadata_png_exiv2_SOURCES = metadata/png_exiv2.cpp
+metadata_png_exiv2_LDADD = libgdtest.a ../src/libgd.la $(LIBEXIV2_LIBS)
+metadata_png_exiv2_CPPFLAGS = $(AM_CPPFLAGS) $(LIBEXIV2_CFLAGS)
+endif
+endif
+
+EXTRA_DIST += \
+	metadata/CMakeLists.txt \
+	metadata/jpeg_exiv2.cpp \
+	metadata/png_exiv2.cpp

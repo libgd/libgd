@@ -86,6 +86,7 @@ libgd_la_SOURCES = \
 	gd_io_stream.h \
 	gd_jpeg.c \
 	gd_matrix.c \
+	gd_metadata.c \
 	gd_nnquant.c \
 	gd_nnquant.h \
 	gd_png.c \
