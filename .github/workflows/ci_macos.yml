@@ -39,7 +39,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install libheif libjpeg-turbo libimagequant libde265 x265
+          brew install libheif libjpeg-turbo libimagequant libde265 x265 libultrahdr
 
       - name: Prepare environment
 
@@ -62,7 +62,7 @@ jobs:
           ${{github.workspace}}/.github/scripts/removemono.sh
 
       - name: Configure CMake
-        run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+        run:  cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_ULTRAHDR=1 -DENABLE_WEBP=1
               -DENABLE_TIFF=1  -DENABLE_GD_FORMATS=1 -DENABLE_CPP=0 -DENABLE_HEIF=1 -D CMAKE_PREFIX_PATH=/usr/local
               -DBUILD_TEST=1 -DVERBOSE_MAKEFILE=1 -DPNG_PNG_INCLUDE_DIR=/opt/homebrew/Cellar/libpng/${{ env.LIBPNG_VERSION }}/include -DPNG_PNG_LIBRARY_DIR=/usr/local/Cellar/libpng/${{ env.LIBPNG_VERSION }}/lib -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
