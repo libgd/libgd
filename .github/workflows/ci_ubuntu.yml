@@ -52,7 +52,21 @@ jobs:
       - name: install dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
-        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang lld gcc build-essential libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libheif-plugin-aomenc libheif-plugin-x265 libheif-plugin-aomdec libfreetype-dev libavif-dev libavifile-0.7-dev libxpm-dev libraqm-dev libexiv2-dev dh-autoreconf ninja-build nasm meson
+        run: sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 cmake clang lld gcc build-essential curl libjpeg-turbo8-dev libimagequant-dev libde265-dev libpng-dev libwebp-dev libtiff5-dev libx265-dev libheif-dev libheif-plugin-aomenc libheif-plugin-x265 libheif-plugin-aomdec libfreetype-dev libavif-dev libavifile-0.7-dev libxpm-dev libraqm-dev libexiv2-dev dh-autoreconf ninja-build nasm meson
+
+      - name: Build and install libultrahdr
+        run: |
+          curl -L -o /tmp/libultrahdr-1.4.0.tar.gz https://github.com/google/libultrahdr/archive/refs/tags/v1.4.0.tar.gz
+          mkdir -p /tmp/libultrahdr-src /tmp/libultrahdr-build
+          tar -xzf /tmp/libultrahdr-1.4.0.tar.gz -C /tmp/libultrahdr-src --strip-components=1
+          cmake -S /tmp/libultrahdr-src -B /tmp/libultrahdr-build -G "Ninja" \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DUHDR_BUILD_TESTS=1
+          cmake --build /tmp/libultrahdr-build
+          sudo cmake --install /tmp/libultrahdr-build
+          sudo ldconfig
+          echo "PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}" >> $GITHUB_ENV
 
       - name: Debug CC Env
         env:
@@ -71,7 +85,7 @@ jobs:
           CXX: ${{ matrix.config.cxx }}
           CFLAGS: ${{ matrix.config.cflags }}
         run:
-          cmake -G "Unix Makefiles" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+          cmake -G "Unix Makefiles" -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_ULTRAHDR=1 -DENABLE_WEBP=1
           -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_AVIF=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
@@ -82,7 +96,7 @@ jobs:
           CXX: ${{ matrix.config.cxx }}
           CFLAGS: ${{ matrix.config.cflags }}
         run:
-          cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+          cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_ULTRAHDR=1 -DENABLE_WEBP=1
           -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_AVIF=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
@@ -108,7 +122,7 @@ jobs:
           CFLAGS: ${{ matrix.config.cflags }}
         if: contains(matrix.config.cc, 'gcc')
         run:
-          cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_WEBP=1
+          cmake -DENABLE_PNG=1 -DENABLE_FREETYPE=1 -DENABLE_JPEG=1 -DENABLE_ULTRAHDR=1 -DENABLE_WEBP=1
           -DENABLE_TIFF=1 -DENABLE_XPM=1 -DENABLE_GD_FORMATS=1 -DENABLE_HEIF=1 -DENABLE_AVIF=1
           -DBUILD_TEST=1 -B ${{github.workspace}}/buildasan -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
@@ -132,7 +146,7 @@ jobs:
         working-directory: ${{github.workspace}}/
         run: |
           ./bootstrap.sh
-          ./configure --with-png --with-jpeg --with-heif --with-xpm --with-tiff --with-webp --with-liq --enable-gd --enable-gd-formats --with-zlib
+          ./configure --with-png --with-jpeg --with-heif --with-uhdr --with-xpm --with-tiff --with-webp --with-liq --enable-gd --enable-gd-formats --with-zlib
           make
           make dist
 
