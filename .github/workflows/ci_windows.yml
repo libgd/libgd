@@ -37,12 +37,13 @@ jobs:
 
       - name: Build and install libultrahdr
         run: |
+          C:\vcpkg\vcpkg.exe install libjpeg-turbo:${{ matrix.arch == 'amd64_arm64' && 'arm64-windows' || format('{0}-windows', matrix.arch) }}
           curl -L -o libultrahdr-1.4.0.tar.gz https://github.com/google/libultrahdr/archive/refs/tags/v1.4.0.tar.gz
           mkdir libultrahdr-src
           mkdir libultrahdr-build
           mkdir libultrahdr-install
           tar -xzf libultrahdr-1.4.0.tar.gz -C libultrahdr-src --strip-components=1
-          cmake -S libultrahdr-src -B libultrahdr-build -G "Ninja" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}\libultrahdr-install -DUHDR_BUILD_TESTS=1
+          cmake -S libultrahdr-src -B libultrahdr-build -G "Ninja" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}\libultrahdr-install -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ matrix.arch == 'amd64_arm64' && 'arm64-windows' || format('{0}-windows', matrix.arch) }} -DUHDR_BUILD_TESTS=1
           cmake --build libultrahdr-build --config ${{env.BUILD_TYPE}}
           cmake --install libultrahdr-build --config ${{env.BUILD_TYPE}}
 
