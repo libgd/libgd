@@ -41,6 +41,7 @@ AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
 AM_PROG_AR
 AC_PROG_CC_STDC
+AC_PROG_CXX
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
@@ -216,6 +217,10 @@ GD_LIB_PKG_CHECK([LIBPNG], [PNG], [libpng], [
   fi
 ])
 
+dnl Test-only dependency for metadata validation. Do not merge into libgd LIBS.
+PKG_CHECK_MODULES([LIBEXIV2], [exiv2], [gd_found_libexiv2=yes], [gd_found_libexiv2=no])
+AM_CONDITIONAL([HAVE_LIBEXIV2], [test "$gd_found_libexiv2" = yes])
+
 dnl Check for FreeType support.
 dnl NB: "9.8.3" corresponds to freetype-2.1.10.
 GD_LIB_PKG_CHECK([LIBFREETYPE], [FREETYPE], [freetype2 >= 9.8.3], [
@@ -288,10 +293,14 @@ GD_LIB_PKG_CHECK([LIBTIFF], [TIFF], [libtiff-4], [
 ])
 
 dnl Check for webp support.
-GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [libwebp >= 0.2.0], [
+GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [libwebp >= 0.2.0 libwebpdemux libwebpmux], [
   AC_CHECK_LIB([webp], [WebPGetInfo], [dnl
-    AS_VAR_APPEND([LIBWEBP_LIBS], [" -lwebp"])
-    gd_found_lib=yes
+    AC_CHECK_LIB([webpdemux], [WebPDemux], [dnl
+      AC_CHECK_LIB([webpmux], [WebPAnimEncoderNewInternal], [dnl
+        AS_VAR_APPEND([LIBWEBP_LIBS], [" -lwebp -lwebpdemux -lwebpmux"])
+        gd_found_lib=yes
+      ])
+    ])
   ])
 ])
 

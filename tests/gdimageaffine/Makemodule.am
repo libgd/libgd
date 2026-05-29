@@ -1,0 +1,10 @@
+libgd_test_programs += \
+	gdimageaffine/edge \
+	gdimageaffine/fractional \
+	gdimageaffine/matrix \
+	gdimageaffine/rotate \
+	gdimageaffine/visual
+
+EXTRA_DIST += \
+	gdimageaffine/CMakeLists.txt \
+	gdimageaffine/visual_mixed.png

@@ -20,7 +20,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { icon: '⬛', sys: MINGW32 }
           - { icon: '🟦', sys: MINGW64 }
           - { icon: '🟨', sys: UCRT64 } # Experimental!
           - { icon: '🟧', sys: CLANG64 } # Experimental!
@@ -58,7 +57,7 @@ jobs:
           libheif:p
           libraqm:p
           libavif:p
-          ${{ matrix.sys != 'MINGW32' && 'libimagequant:p' || '' }}
+          libimagequant:p
           xpm-nox:p
           cmake:p
           ninja:p

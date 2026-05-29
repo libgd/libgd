@@ -56,6 +56,10 @@ int gdTestImageCompareToImage(const char* file, unsigned int line, const char* m
 int gdTestImageCompareToFile(const char* file, unsigned int line, const char* message,
                              const char *expected_file, gdImagePtr actual);
 
+int gdTestImagePerceptualCompareToFile(const char* file, unsigned int line, const char* message,
+                                       const char *expected_file, gdImagePtr actual,
+                                       double threshold, unsigned int max_pixels_changed);
+
 unsigned int gdMaxPixelDiff(gdImagePtr a, gdImagePtr b);
 
 int _gdTestAssert(const char* file, unsigned int line, int condition);
@@ -67,6 +71,8 @@ int _gdTestErrorMsg(const char* file, unsigned int line, const char* string, ...
 
 /* public assert functions */
 #define gdAssertImageEqualsToFile(ex,ac) gdTestImageCompareToFile(__FILE__,__LINE__,NULL,(ex),(ac))
+
+#define gdAssertImageEqualsToFilePerceptual(ex,ac,threshold,max_pixels_changed) gdTestImagePerceptualCompareToFile(__FILE__,__LINE__,NULL,(ex),(ac),(threshold),(max_pixels_changed))
 
 #define gdAssertImageEquals(ex,ac) gdTestImageCompareToImage(__FILE__,__LINE__,NULL,(ex),(ac))
 

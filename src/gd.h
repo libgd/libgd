@@ -282,9 +282,9 @@ enum gdPaletteQuantizationMethod {
  *
  *  GD_BELL				 - Bell
  *  GD_BESSEL			 - Bessel
- *  GD_BILINEAR_FIXED 	 - fixed point bilinear
+ *  GD_BILINEAR_FIXED 	 - compatibility alias for bilinear
  *  GD_BICUBIC 			 - Bicubic
- *  GD_BICUBIC_FIXED 	 - fixed point bicubic integer
+ *  GD_BICUBIC_FIXED 	 - compatibility alias for bicubic
  *  GD_BLACKMAN			 - Blackman
  *  GD_BOX				 - Box
  *  GD_BSPLINE			 - BSpline
@@ -600,6 +600,30 @@ gdImage;
 
 typedef gdImage *gdImagePtr;
 
+typedef struct gdImageMetadata gdImageMetadata;
+
+#define GD_META_OK               0
+#define GD_META_ERR_FORMAT      -1
+#define GD_META_ERR_PARSE       -2
+#define GD_META_ERR_NOMEM       -3
+#define GD_META_ERR_LIMIT       -4
+#define GD_META_ERR_UNSUPPORTED -5
+#define GD_META_ERR_INVALID     -6
+
+#define GD_METADATA_DEFAULT_MAX_PROFILE_SIZE ((size_t)64 * 1024 * 1024)
+#define GD_METADATA_DEFAULT_MAX_TOTAL_SIZE   ((size_t)256 * 1024 * 1024)
+
+BGD_DECLARE(gdImageMetadata *) gdImageMetadataCreate(void);
+BGD_DECLARE(void) gdImageMetadataFree(gdImageMetadata *metadata);
+BGD_DECLARE(void) gdImageMetadataReset(gdImageMetadata *metadata);
+BGD_DECLARE(int) gdImageMetadataSetLimits(gdImageMetadata *metadata, size_t max_profile_size, size_t max_total_size);
+BGD_DECLARE(void) gdImageMetadataGetLimits(const gdImageMetadata *metadata, size_t *max_profile_size, size_t *max_total_size);
+BGD_DECLARE(int) gdImageMetadataSetProfile(gdImageMetadata *metadata, const char *key, const unsigned char *data, size_t size);
+BGD_DECLARE(const unsigned char *) gdImageMetadataGetProfile(const gdImageMetadata *metadata, const char *key, size_t *size);
+BGD_DECLARE(int) gdImageMetadataRemoveProfile(gdImageMetadata *metadata, const char *key);
+BGD_DECLARE(size_t) gdImageMetadataGetProfileCount(const gdImageMetadata *metadata);
+BGD_DECLARE(int) gdImageMetadataGetProfileAt(const gdImageMetadata *metadata, size_t index, const char **key, const unsigned char **data, size_t *size);
+
 
 /* Point type for use in polygon drawing. */
 
@@ -746,12 +770,49 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy);
    JPEG is always truecolor. */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng (FILE * fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtxPtr in);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtxWithMetadata(gdIOCtxPtr in, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
 
 /* These read the first frame only */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGif (FILE * fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifPtr (int size, void *data);
+
+typedef struct gdGifReadStruct *gdGifReadPtr;
+
+typedef struct {
+	int width;
+	int height;
+	int backgroundIndex;
+	int globalColorTable;
+	int loopCount;
+} gdGifInfo;
+
+typedef struct {
+	int frameIndex;
+	int x;
+	int y;
+	int width;
+	int height;
+	int delay;
+	int disposal;
+	int transparentIndex;
+	int localColorTable;
+	int interlace;
+} gdGifFrameInfo;
+
+BGD_DECLARE(int) gdGifIsAnimated(FILE *fd);
+BGD_DECLARE(int) gdGifIsAnimatedCtx(gdIOCtxPtr in);
+BGD_DECLARE(int) gdGifIsAnimatedPtr(int size, void *data);
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpen(FILE *fd);
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpenCtx(gdIOCtxPtr in);
+BGD_DECLARE(gdGifReadPtr) gdGifReadOpenPtr(int size, void *data);
+BGD_DECLARE(void) gdGifReadClose(gdGifReadPtr gif);
+BGD_DECLARE(int) gdGifReadGetInfo(gdGifReadPtr gif, gdGifInfo *info);
+BGD_DECLARE(int) gdGifReadNextFrame(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *frame);
+BGD_DECLARE(int) gdGifReadNextImage(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *image);
+BGD_DECLARE(gdImagePtr) gdGifReadCloneImage(gdGifReadPtr gif);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr (int size, void *data);
@@ -759,11 +820,83 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg (FILE * infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegEx (FILE * infile, int ignore_warning);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxEx(gdIOCtxPtr infile, int ignore_warning);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxWithMetadata(gdIOCtxPtr infile, gdImageMetadata *metadata);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtxExWithMetadata(gdIOCtxPtr infile, int ignore_warning, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx (int size, void *data, int ignore_warning);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrExWithMetadata(int size, void *data, int ignore_warning, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx(gdIOCtxPtr infile);
+
+typedef struct gdWebpReadStruct *gdWebpReadPtr;
+typedef struct gdWebpWriteStruct *gdWebpWritePtr;
+
+typedef struct {
+	int width;
+	int height;
+	int frameCount;
+	int loopCount;
+	int backgroundColor;
+	int formatFlags;
+} gdWebpInfo;
+
+typedef struct {
+	int frameIndex;
+	int x;
+	int y;
+	int width;
+	int height;
+	int duration;
+	int timestamp;
+	int dispose;
+	int blend;
+	int hasAlpha;
+	int complete;
+} gdWebpFrameInfo;
+
+typedef struct {
+	int canvasWidth;
+	int canvasHeight;
+	int loopCount;
+	int backgroundColor;
+	int quality;
+	int lossless;
+	int method;
+	int minimizeSize;
+	int kmin;
+	int kmax;
+	int allowMixed;
+} gdWebpWriteOptions;
+
+enum {
+	gdWebpDisposeNone,
+	gdWebpDisposeBackground
+};
+
+enum {
+	gdWebpBlendAlpha,
+	gdWebpBlendNone
+};
+
+BGD_DECLARE(int) gdWebpIsAnimated(FILE *fd);
+BGD_DECLARE(int) gdWebpIsAnimatedCtx(gdIOCtxPtr in);
+BGD_DECLARE(int) gdWebpIsAnimatedPtr(int size, void *data);
+BGD_DECLARE(gdWebpReadPtr) gdWebpReadOpen(FILE *fd);
+BGD_DECLARE(gdWebpReadPtr) gdWebpReadOpenCtx(gdIOCtxPtr in);
+BGD_DECLARE(gdWebpReadPtr) gdWebpReadOpenPtr(int size, void *data);
+BGD_DECLARE(void) gdWebpReadClose(gdWebpReadPtr webp);
+BGD_DECLARE(int) gdWebpReadGetInfo(gdWebpReadPtr webp, gdWebpInfo *info);
+BGD_DECLARE(int) gdWebpReadNextFrame(gdWebpReadPtr webp, gdWebpFrameInfo *info, gdImagePtr *frame);
+BGD_DECLARE(int) gdWebpReadNextImage(gdWebpReadPtr webp, gdWebpFrameInfo *info, gdImagePtr *image);
+BGD_DECLARE(gdImagePtr) gdWebpReadCloneImage(gdWebpReadPtr webp);
+BGD_DECLARE(gdWebpWritePtr) gdWebpWriteOpen(FILE *outFile, const gdWebpWriteOptions *options);
+BGD_DECLARE(gdWebpWritePtr) gdWebpWriteOpenCtx(gdIOCtxPtr out, const gdWebpWriteOptions *options);
+BGD_DECLARE(gdWebpWritePtr) gdWebpWriteOpenPtr(const gdWebpWriteOptions *options);
+BGD_DECLARE(int) gdWebpWriteAddImage(gdWebpWritePtr webp, gdImagePtr image, int durationMs);
+BGD_DECLARE(void) gdWebpWriteClose(gdWebpWritePtr webp);
+BGD_DECLARE(void *) gdWebpWritePtrFinish(gdWebpWritePtr webp, int *size);
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data);
@@ -1193,6 +1326,7 @@ BGD_DECLARE(int) gdImageColorReplaceCallback(gdImagePtr im, gdCallbackImageColor
 BGD_DECLARE(void) gdImageGif (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImagePngCtx(gdImagePtr im, gdIOCtxPtr out);
+BGD_DECLARE(void) gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, const gdImageMetadata *metadata);
 BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out);
 BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile);
 BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size);
@@ -1202,12 +1336,26 @@ BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression);
 BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression);
 BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
 
+#define GD_BMP_COMPRESS_NONE   0
+#define GD_BMP_COMPRESS_RLE8   1
+#define GD_BMP_COMPRESS_RLE4   2
+
+#define GD_BMP_FLAG_NONE        0
+#define GD_BMP_FLAG_FORCE_V4HDR (1<<0)
+#define GD_BMP_FLAG_QUANTIZE    (1<<1)
+#define GD_BMP_FLAG_RGB555      (1<<2)
+
+BGD_DECLARE(void *) gdImageBmpPtrEx(gdImagePtr im, int *size, int bpp, int compression, int flags);
+BGD_DECLARE(void) gdImageBmpEx(gdImagePtr im, FILE *outFile, int bpp, int compression, int flags);
+BGD_DECLARE(void) gdImageBmpCtxEx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compression, int flags);
+
 /* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
    1 is FASTEST but produces larger files, 9 provides the best
    compression (smallest files) but takes a long time to compress, and
    -1 selects the default compiled into the zlib library. */
 BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * out, int level);
 BGD_DECLARE(void) gdImagePngCtxEx(gdImagePtr im, gdIOCtxPtr out, int level);
+BGD_DECLARE(void) gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int level, const gdImageMetadata *metadata);
 
 BGD_DECLARE(void) gdImageWBMP (gdImagePtr image, int fg, FILE * out);
 BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtxPtr out);
@@ -1240,9 +1388,11 @@ BGD_DECLARE(void *) gdImageWBMPPtr (gdImagePtr im, int *size, int fg);
    0 is lowest. 10 is about the lowest useful setting. */
 BGD_DECLARE(void) gdImageJpeg (gdImagePtr im, FILE * out, int quality);
 BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtxPtr out, int quality);
+BGD_DECLARE(void) gdImageJpegCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, int quality, const gdImageMetadata *metadata);
 
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImageJpegPtr (gdImagePtr im, int *size, int quality);
+BGD_DECLARE(void *) gdImageJpegPtrWithMetadata(gdImagePtr im, int *size, int quality, const gdImageMetadata *metadata);
 
 /**
  * Group: WebP
@@ -1355,6 +1505,9 @@ BGD_DECLARE(void *) gdImageGifPtr (gdImagePtr im, int *size);
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImagePngPtr (gdImagePtr im, int *size);
 BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level);
+BGD_DECLARE(void *) gdImagePngPtrWithMetadata(gdImagePtr im, int *size, const gdImageMetadata *metadata);
+BGD_DECLARE(void *) gdImagePngPtrExWithMetadata(gdImagePtr im, int *size, int level, const gdImageMetadata *metadata);
+BGD_DECLARE(int) gdImageMetadataInjectPng(void **data, int *size, const gdImageMetadata *metadata);
 
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size);

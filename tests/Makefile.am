@@ -21,6 +21,7 @@ include gd/Makemodule.am
 include gd2/Makemodule.am
 include gdcolormaplookup/Makemodule.am
 include gdimagearc/Makemodule.am
+include gdimageaffine/Makemodule.am
 include gdimagebrightness/Makemodule.am
 include gdimageclone/Makemodule.am
 include gdimagecolor/Makemodule.am
@@ -83,6 +84,7 @@ include gdtransformaffinecopy/Makemodule.am
 include gif/Makemodule.am
 include heif/Makemodule.am
 include jpeg/Makemodule.am
+include metadata/Makemodule.am
 include png/Makemodule.am
 include uhdr/Makemodule.am
 include tga/Makemodule.am

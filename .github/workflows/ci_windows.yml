@@ -35,6 +35,12 @@ jobs:
           curl -o ${{ matrix.arch }}-windows.7z  https://raw.githubusercontent.com/libgd/libgd-windows-vcpkg-prebuild/main/${{matrix.arch}}-windows.7z
           7z.exe x ${{ matrix.arch }}-windows.7z -o${{github.workspace}}\vcpkgusr
 
+      - name: Install exiv2 test dependency
+        if: matrix.arch == 'x64'
+        run: |
+          curl -L -o exiv2-msvc.zip https://exiv2.org/builds/exiv2-0.28.8-2022msvc.zip
+          7z.exe x exiv2-msvc.zip -o${{github.workspace}}\exiv2
+
       - name: Configure CMake
         # vcpkg libde265 fails on arm64 and match prefix
         if: matrix.arch == 'amd64_arm64'
@@ -51,6 +57,7 @@ jobs:
               -DBUILD_TEST=1 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
               -DCMAKE_LIBRARY_PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\lib
               -DCMAKE_INCLUDE_PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\include
+              ${{ matrix.arch == 'x64' && format('-DEXIV2_ROOT={0}\\exiv2\\exiv2-0.28.8-2022msvc-AMD64', github.workspace) || '' }}
 
       - name: Build
         run: |
@@ -66,5 +73,6 @@ jobs:
           echo %TMP%
           echo %TEMP%
           set PATH=${{github.workspace}}\vcpkgusr\${{ matrix.arch }}-windows\bin;%PATH%
+          if exist ${{github.workspace}}\exiv2\exiv2-0.28.8-2022msvc-AMD64\bin set PATH=${{github.workspace}}\exiv2\exiv2-0.28.8-2022msvc-AMD64\bin;%PATH%
           set CTEST_OUTPUT_ON_FAILURE=1
           ctest -C ${{env.BUILD_TYPE}}

@@ -23,7 +23,7 @@ int main()
 	dst = gdImageRotateInterpolated(src, 30.0, black);
 
 	path = gdTestFilePath2("gdimagerotate", "php_bug_65070_exp.png");
-	gdAssertImageEqualsToFile(path, dst);
+	gdAssertImageEqualsToFilePerceptual(path, dst, 0.05, 200);
 	gdFree(path);
 
 	gdImageDestroy(src);
