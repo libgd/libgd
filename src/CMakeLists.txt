@@ -41,6 +41,7 @@ SET (LIBGD_SRC_FILES
 	gdfontmb.c
 	gdfonts.c
 	gdfontt.c
+	entities.c
 	gdft.c
 	gdfx.c
 	gdhelpers.c
