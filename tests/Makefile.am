@@ -95,9 +95,7 @@ include xbm/Makemodule.am
 include xpm/Makemodule.am
 
 LDADD = libgdtest.a ../src/libgd.la
-AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/tests/gdtest \
-	-DGD_UHDR_SAMPLE_PATH='"$(top_builddir)/tmptest/generated_uhdr.jpg"' \
-	-DGD_UHDR_PLAIN_JPEG_PATH='"$(top_srcdir)/tests/jpeg/conv_test.jpeg"'
+AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/tests/gdtest
 
 check_PROGRAMS = $(libgd_test_programs) $(libgd_helper_programs)
 TESTS += $(libgd_test_programs)

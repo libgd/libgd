@@ -5,20 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef GD_UHDR_SAMPLE_PATH
-#define GD_UHDR_SAMPLE_PATH "generated_uhdr.jpg"
-#endif
-
-static int sample_exists(void)
-{
-	FILE *fp = fopen(GD_UHDR_SAMPLE_PATH, "rb");
-	if (!fp) {
-		return 0;
-	}
-	fclose(fp);
-	return 1;
-}
-
 int main()
 {
 	gdUhdrImagePtr im = NULL;
@@ -26,17 +12,19 @@ int main()
 	gdImagePtr sdr = NULL;
 	gdImagePtr sdr_reloaded = NULL;
 	gdUhdrError err;
+	char *sample_path = NULL;
 	char *uhdr_path = NULL;
 	char *sdr_path = NULL;
 	FILE *fp = NULL;
 	int rc;
 
-	if (!sample_exists()) {
-		return 77;
+	sample_path = gdTestFilePath("uhdr/uhdr_sample.jpg");
+	if (!gdTestAssertMsg(sample_path != NULL, "failed to resolve UltraHDR sample path\n")) {
+		goto cleanup;
 	}
 
 	memset(&err, 0, sizeof(err));
-	im = gdUhdrImageCreateFromFile(GD_UHDR_SAMPLE_PATH, GD_UHDR_FORMAT_JPEG, &err);
+	im = gdUhdrImageCreateFromFile(sample_path, GD_UHDR_FORMAT_JPEG, &err);
 	if (!gdTestAssertMsg(im != NULL, "failed to load UltraHDR sample: code=%d provider=%d message=%s\n",
 		err.code, err.provider_code, err.message)) {
 		goto cleanup;
@@ -139,6 +127,7 @@ int main()
 	if (im != NULL) {
 		gdUhdrImageDestroy(im);
 	}
+	gdFree(sample_path);
 	gdFree(uhdr_path);
 	gdFree(sdr_path);
 

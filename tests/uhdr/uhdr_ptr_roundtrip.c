@@ -5,21 +5,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef GD_UHDR_SAMPLE_PATH
-#define GD_UHDR_SAMPLE_PATH "generated_uhdr.jpg"
-#endif
-
-static unsigned char *read_file(const char *path, int *size)
+static unsigned char *read_sample_file(int *size)
 {
 	FILE *fp;
 	long len;
 	unsigned char *buf;
 
-	if (!path || !size) {
+	if (!size) {
 		return NULL;
 	}
 
-	fp = fopen(path, "rb");
+	fp = gdTestFileOpen("uhdr/uhdr_sample.jpg");
 	if (!fp) {
 		return NULL;
 	}
@@ -62,9 +58,9 @@ int main()
 	int output_size = 0;
 	int rc;
 
-	input = read_file(GD_UHDR_SAMPLE_PATH, &input_size);
-	if (!input) {
-		return 77;
+	input = read_sample_file(&input_size);
+	if (!gdTestAssertMsg(input != NULL, "failed to read UltraHDR sample fixture\n")) {
+		goto cleanup;
 	}
 
 	memset(&err, 0, sizeof(err));
