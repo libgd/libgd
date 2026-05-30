@@ -23,6 +23,7 @@ SET (LIBGD_SRC_FILES
 	gd_metadata.c
 	gd_nnquant.c
 	gd_png.c
+	gd_qoi.c
 	gd_rotate.c
 	gd_security.c
 	gd_ss.c

@@ -89,6 +89,7 @@ if (BUILD_TEST)
 		metadata
 		perceptualdiff
 		png
+		qoi
 		uhdr
 		tga
 		tiff

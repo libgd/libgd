@@ -1,0 +1,12 @@
+LIST(APPEND TESTS_FILES
+	qoi_im2im
+	qoi_null
+)
+
+IF(PNG_FOUND)
+LIST(APPEND TESTS_FILES
+	qoi_conformance
+)
+ENDIF(PNG_FOUND)
+
+ADD_GD_TESTS()

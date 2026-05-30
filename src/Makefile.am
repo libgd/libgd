@@ -90,6 +90,8 @@ libgd_la_SOURCES = \
 	gd_nnquant.c \
 	gd_nnquant.h \
 	gd_png.c \
+	gd_qoi.c \
+	gd_qoi.h \
 	gd_rotate.c \
 	gd_security.c \
 	gd_ss.c \

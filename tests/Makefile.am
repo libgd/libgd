@@ -86,6 +86,7 @@ include heif/Makemodule.am
 include jpeg/Makemodule.am
 include metadata/Makemodule.am
 include png/Makemodule.am
+include qoi/Makemodule.am
 include uhdr/Makemodule.am
 include tga/Makemodule.am
 include tiff/Makemodule.am

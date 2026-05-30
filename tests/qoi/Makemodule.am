@@ -1,0 +1,12 @@
+libgd_test_programs += \
+	qoi/qoi_im2im \
+	qoi/qoi_null
+
+if HAVE_LIBPNG
+libgd_test_programs += \
+	qoi/qoi_conformance
+endif
+
+EXTRA_DIST += \
+	qoi/CMakeLists.txt \
+	qoi/conformance

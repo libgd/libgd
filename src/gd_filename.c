@@ -59,6 +59,8 @@ static const struct FileType {
     {".png",    gdImageCreateFromPng,   gdImagePng,     NULL},
 #endif
 
+    {".qoi",    gdImageCreateFromQoi,   gdImageQoi,     NULL},
+
 #ifdef HAVE_LIBJPEG
     {".jpg",    gdImageCreateFromJpeg,  writejpeg,      NULL},
     {".jpeg",   gdImageCreateFromJpeg,  writejpeg,      NULL},
@@ -136,6 +138,7 @@ ftype(const char *filename) {
         - .xbm
         - .tga
         - .png
+        - .qoi
         - .jpg, .jpeg
         - .heif, .heix
         - .avif

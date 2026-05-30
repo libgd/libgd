@@ -773,6 +773,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtxWithMetadata(gdIOCtxPtr in, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromQoi(FILE *fd);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiCtx(gdIOCtxPtr in);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiCtxWithMetadata(gdIOCtxPtr in, gdImageMetadata *metadata);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiPtr(int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
 
 /* These read the first frame only */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGif (FILE * fd);
@@ -962,6 +967,7 @@ gdSource, *gdSourcePtr;
 
 /* Deprecated in favor of gdImageCreateFromPngCtx */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngSource (gdSourcePtr in);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiSource(gdSourcePtr in);
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd (FILE * in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGdCtx(gdIOCtxPtr in);
@@ -1327,6 +1333,9 @@ BGD_DECLARE(void) gdImageGif (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImagePng (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImagePngCtx(gdImagePtr im, gdIOCtxPtr out);
 BGD_DECLARE(void) gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, const gdImageMetadata *metadata);
+BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
+BGD_DECLARE(void) gdImageQoiCtx(gdImagePtr im, gdIOCtxPtr out);
+BGD_DECLARE(void) gdImageQoiCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, const gdImageMetadata *metadata);
 BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out);
 BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile);
 BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size);
@@ -1356,6 +1365,15 @@ BGD_DECLARE(void) gdImageBmpCtxEx(gdImagePtr im, gdIOCtxPtr out, int bpp, int co
 BGD_DECLARE(void) gdImagePngEx (gdImagePtr im, FILE * out, int level);
 BGD_DECLARE(void) gdImagePngCtxEx(gdImagePtr im, gdIOCtxPtr out, int level);
 BGD_DECLARE(void) gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int level, const gdImageMetadata *metadata);
+
+enum {
+	GD_QOI_SRGB = 0,
+	GD_QOI_LINEAR = 1
+};
+
+BGD_DECLARE(void) gdImageQoiEx(gdImagePtr im, FILE *out, int colorspace);
+BGD_DECLARE(void) gdImageQoiCtxEx(gdImagePtr im, gdIOCtxPtr out, int colorspace);
+BGD_DECLARE(void) gdImageQoiCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int colorspace, const gdImageMetadata *metadata);
 
 BGD_DECLARE(void) gdImageWBMP (gdImagePtr image, int fg, FILE * out);
 BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtxPtr out);
@@ -1495,6 +1513,7 @@ typedef struct {
 gdSink, *gdSinkPtr;
 
 BGD_DECLARE(void) gdImagePngToSink (gdImagePtr im, gdSinkPtr out);
+BGD_DECLARE(void) gdImageQoiToSink(gdImagePtr im, gdSinkPtr out);
 
 BGD_DECLARE(void) gdImageGd (gdImagePtr im, FILE * out);
 BGD_DECLARE(void) gdImageGd2 (gdImagePtr im, FILE * out, int cs, int fmt);
@@ -1508,6 +1527,11 @@ BGD_DECLARE(void *) gdImagePngPtrEx (gdImagePtr im, int *size, int level);
 BGD_DECLARE(void *) gdImagePngPtrWithMetadata(gdImagePtr im, int *size, const gdImageMetadata *metadata);
 BGD_DECLARE(void *) gdImagePngPtrExWithMetadata(gdImagePtr im, int *size, int level, const gdImageMetadata *metadata);
 BGD_DECLARE(int) gdImageMetadataInjectPng(void **data, int *size, const gdImageMetadata *metadata);
+BGD_DECLARE(void *) gdImageQoiPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImageQoiPtrEx(gdImagePtr im, int *size, int colorspace);
+BGD_DECLARE(void *) gdImageQoiPtrWithMetadata(gdImagePtr im, int *size, const gdImageMetadata *metadata);
+BGD_DECLARE(void *) gdImageQoiPtrExWithMetadata(gdImagePtr im, int *size, int colorspace, const gdImageMetadata *metadata);
+BGD_DECLARE(int) gdImageMetadataInjectQoi(void **data, int *size, const gdImageMetadata *metadata);
 
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImageGdPtr (gdImagePtr im, int *size);
