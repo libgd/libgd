@@ -134,42 +134,6 @@ static int gdUhdrReadAllFromCtx(gdIOCtxPtr ctx, void **out_data, int *out_size)
 	return GD_UHDR_SUCCESS;
 }
 
-static int gdUhdrApplyOps(uhdr_codec_private_t *codec, gdUhdrImagePtr im, gdUhdrErrorPtr err)
-{
-	int i;
-
-	for (i = 0; i < im->op_count; i++) {
-		uhdr_error_info_t rc;
-		gdUhdrOp *op = &im->ops[i];
-
-		switch (op->type) {
-			case GD_UHDR_OP_RESIZE:
-				rc = uhdr_add_effect_resize(codec, op->p1, op->p2);
-				break;
-			case GD_UHDR_OP_CROP:
-				rc = uhdr_add_effect_crop(codec, op->p1, op->p2, op->p3, op->p4);
-				break;
-			case GD_UHDR_OP_ROTATE:
-				rc = uhdr_add_effect_rotate(codec, op->p1);
-				break;
-			case GD_UHDR_OP_MIRROR:
-				rc = uhdr_add_effect_mirror(codec,
-					op->p1 == GD_UHDR_MIRROR_HORIZONTAL ? UHDR_MIRROR_HORIZONTAL : UHDR_MIRROR_VERTICAL);
-				break;
-			default:
-				gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Unknown queued UltraHDR operation");
-				return GD_UHDR_E_INVALID;
-		}
-
-		if (rc.error_code != UHDR_CODEC_OK) {
-			gdUhdrSetError(err, GD_UHDR_E_INVALID, rc.error_code, rc.has_detail ? rc.detail : "UltraHDR effect failed");
-			return GD_UHDR_E_INVALID;
-		}
-	}
-
-	return GD_UHDR_SUCCESS;
-}
-
 static void gdUhdrInitCompressedImage(uhdr_compressed_image_t *image, void *data, int size)
 {
 	memset(image, 0, sizeof(*image));
