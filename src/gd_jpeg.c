@@ -38,6 +38,7 @@
 
 #include "gd.h"
 #include "gd_errors.h"
+#include "gd_intern.h"
 /* TBB: move this up so include files are not brought in */
 /* JCE: arrange HAVE_LIBJPEG so that it can be set in gd.h */
 #ifdef HAVE_LIBJPEG
@@ -117,7 +118,7 @@ static void fatal_jpeg_error(j_common_ptr cinfo)
 	exit(99);
 }
 
-static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality, const gdImageMetadata *metadata);
+static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality, const gdImageMetadata *metadata, int force_no_subsampling);
 
 /*
  * Write IM to OUTFILE as a JFIF-formatted JPEG image, using quality
@@ -233,7 +234,7 @@ BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
-	if (!_gdImageJpegCtx(im, out, quality, NULL)) {
+	if (!_gdImageJpegCtx(im, out, quality, NULL, 0)) {
 		rv = gdDPExtractData(out, size);
 	} else {
 		rv = NULL;
@@ -247,7 +248,21 @@ BGD_DECLARE(void *) gdImageJpegPtrWithMetadata(gdImagePtr im, int *size, int qua
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
 	if (out == NULL) return NULL;
-	if (!_gdImageJpegCtx(im, out, quality, metadata)) {
+	if (!_gdImageJpegCtx(im, out, quality, metadata, 0)) {
+		rv = gdDPExtractData(out, size);
+	} else {
+		rv = NULL;
+	}
+	out->gd_free(out);
+	return rv;
+}
+
+void *gdImageJpegPtrWithMetadataNoSubsampling(gdImagePtr im, int *size, int quality, const gdImageMetadata *metadata)
+{
+	void *rv;
+	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+	if (out == NULL) return NULL;
+	if (!_gdImageJpegCtx(im, out, quality, metadata, 1)) {
 		rv = gdDPExtractData(out, size);
 	} else {
 		rv = NULL;
@@ -273,12 +288,12 @@ static void jpeg_gdIOCtx_dest(j_compress_ptr cinfo, gdIOCtx *outfile);
 */
 BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality)
 {
-	_gdImageJpegCtx(im, outfile, quality, NULL);
+	_gdImageJpegCtx(im, outfile, quality, NULL, 0);
 }
 
 BGD_DECLARE(void) gdImageJpegCtxWithMetadata(gdImagePtr im, gdIOCtx *outfile, int quality, const gdImageMetadata *metadata)
 {
-	_gdImageJpegCtx(im, outfile, quality, metadata);
+	_gdImageJpegCtx(im, outfile, quality, metadata, 0);
 }
 
 /* returns 0 on success, 1 on failure */
@@ -365,7 +380,7 @@ static int gdJpegWriteMetadata(j_compress_ptr cinfo, const gdImageMetadata *meta
 	return 0;
 }
 
-static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality, const gdImageMetadata *metadata)
+static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality, const gdImageMetadata *metadata, int force_no_subsampling)
 {
 	struct jpeg_compress_struct cinfo;
 	struct jpeg_error_mgr jerr;
@@ -421,9 +436,11 @@ static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality, const g
 
 	if(quality >= 0) {
 		jpeg_set_quality(&cinfo, quality, TRUE);
-		if (quality >= 90) {
-			cinfo.comp_info[0].h_samp_factor = 1;
-			cinfo.comp_info[0].v_samp_factor = 1;
+	}
+	if (force_no_subsampling || quality >= 90) {
+		for (i = 0; i < cinfo.num_components; i++) {
+			cinfo.comp_info[i].h_samp_factor = 1;
+			cinfo.comp_info[i].v_samp_factor = 1;
 		}
 	}
 
@@ -1494,6 +1511,16 @@ BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality)
 }
 
 BGD_DECLARE(void *) gdImageJpegPtrWithMetadata(gdImagePtr im, int *size, int quality, const gdImageMetadata *metadata)
+{
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(metadata);
+	_noJpegError();
+	return NULL;
+}
+
+void *gdImageJpegPtrWithMetadataNoSubsampling(gdImagePtr im, int *size, int quality, const gdImageMetadata *metadata)
 {
 	ARG_NOT_USED(im);
 	ARG_NOT_USED(size);

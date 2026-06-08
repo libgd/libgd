@@ -16,6 +16,7 @@
 #include "gd.h"
 #include "gd_errors.h"
 #include "gdhelpers.h"
+#include "gd_intern.h"
 
 #ifdef HAVE_LIBUHDR
 #include <ultrahdr_api.h>
@@ -244,6 +245,310 @@ static void gdUhdrFreeCopiedRawImage(uhdr_raw_image_t *img)
 
 	gdFree(img->planes[UHDR_PLANE_PACKED]);
 	memset(img, 0, sizeof(*img));
+}
+
+static void gdUhdrInitCompressedImage(uhdr_compressed_image_t *image, void *data, int size)
+{
+	memset(image, 0, sizeof(*image));
+	image->data = data;
+	image->data_sz = (size_t) size;
+	image->capacity = (size_t) size;
+	image->cg = UHDR_CG_UNSPECIFIED;
+	image->ct = UHDR_CT_UNSPECIFIED;
+	image->range = UHDR_CR_FULL_RANGE;
+}
+
+static int gdUhdrCopyMetadataProfile(gdImageMetadata **dst, const gdImageMetadata *src,
+		const char *key, gdUhdrErrorPtr err)
+{
+	const unsigned char *profile;
+	size_t profile_size;
+	int status;
+
+	profile = gdImageMetadataGetProfile(src, key, &profile_size);
+	if (!profile) {
+		return GD_UHDR_SUCCESS;
+	}
+
+	if (!*dst) {
+		*dst = gdImageMetadataCreate();
+		if (!*dst) {
+			gdUhdrSetError(err, GD_UHDR_E_ENCODE, 0, "Out of memory copying JPEG metadata");
+			return GD_UHDR_E_ENCODE;
+		}
+	}
+
+	status = gdImageMetadataSetProfile(*dst, key, profile, profile_size);
+	if (status != GD_META_OK) {
+		gdUhdrSetError(err, GD_UHDR_E_ENCODE, status, "Failed to copy JPEG metadata");
+		return GD_UHDR_E_ENCODE;
+	}
+
+	return GD_UHDR_SUCCESS;
+}
+
+static int gdUhdrCreateJpegMetadataFromBlock(uhdr_mem_block_t *block, int copy_exif, int copy_icc,
+		gdImageMetadata **out, gdUhdrErrorPtr err)
+{
+	gdImageMetadata *src_metadata;
+	gdImagePtr decoded;
+	int status;
+
+	*out = NULL;
+	if (!block || !block->data || block->data_sz == 0) {
+		return GD_UHDR_SUCCESS;
+	}
+	if (block->data_sz > (size_t) INT_MAX) {
+		gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "JPEG metadata block is too large");
+		return GD_UHDR_E_INVALID;
+	}
+
+	src_metadata = gdImageMetadataCreate();
+	if (!src_metadata) {
+		gdUhdrSetError(err, GD_UHDR_E_ENCODE, 0, "Out of memory reading JPEG metadata");
+		return GD_UHDR_E_ENCODE;
+	}
+
+	decoded = gdImageCreateFromJpegPtrWithMetadata((int) block->data_sz, block->data, src_metadata);
+	if (!decoded) {
+		gdImageMetadataFree(src_metadata);
+		gdUhdrSetError(err, GD_UHDR_E_DECODE, 0, "Failed to read JPEG metadata");
+		return GD_UHDR_E_DECODE;
+	}
+	gdImageDestroy(decoded);
+
+	if (copy_exif) {
+		status = gdUhdrCopyMetadataProfile(out, src_metadata, "exif", err);
+		if (status != GD_UHDR_SUCCESS) {
+			gdImageMetadataFree(src_metadata);
+			return status;
+		}
+	}
+	if (copy_icc) {
+		status = gdUhdrCopyMetadataProfile(out, src_metadata, "icc", err);
+		if (status != GD_UHDR_SUCCESS) {
+			gdImageMetadataFree(src_metadata);
+			return status;
+		}
+	}
+
+	gdImageMetadataFree(src_metadata);
+	return GD_UHDR_SUCCESS;
+}
+
+static gdImagePtr gdUhdrCreateGdImageFromJpegBlock(uhdr_mem_block_t *block, const char *label,
+		gdUhdrErrorPtr err)
+{
+	gdImagePtr image;
+
+	if (!block || !block->data || block->data_sz == 0 || block->data_sz > (size_t) INT_MAX) {
+		gdUhdrSetError(err, GD_UHDR_E_DECODE, 0, "Invalid compressed UltraHDR component");
+		return NULL;
+	}
+
+	image = gdImageCreateFromJpegPtr((int) block->data_sz, block->data);
+	if (!image) {
+		gdUhdrSetError(err, GD_UHDR_E_DECODE, 0,
+			label && label[0] ? label : "Failed to decode UltraHDR JPEG component");
+		return NULL;
+	}
+
+	return image;
+}
+
+static int gdUhdrScaleValue(int value, int from_extent, int to_extent, int *out)
+{
+	long long scaled;
+
+	if (!out || value < 0 || from_extent <= 0 || to_extent <= 0) {
+		return 0;
+	}
+
+	scaled = ((long long) value * (long long) to_extent + from_extent / 2) / from_extent;
+	if (scaled < 0 || scaled > INT_MAX) {
+		return 0;
+	}
+
+	*out = (int) scaled;
+	return 1;
+}
+
+static int gdUhdrReplaceImage(gdImagePtr *image, gdImagePtr replacement, gdUhdrErrorPtr err)
+{
+	if (!replacement) {
+		gdUhdrSetError(err, GD_UHDR_E_ENCODE, 0, "Failed to transform UltraHDR image component");
+		return GD_UHDR_E_ENCODE;
+	}
+
+	gdImageDestroy(*image);
+	*image = replacement;
+	return GD_UHDR_SUCCESS;
+}
+
+static gdImagePtr gdUhdrScaleImage(gdImagePtr image, unsigned int width, unsigned int height)
+{
+	/* Mitchell uses GD's two-pass scaler and reduces downscale aliasing. */
+	if (!gdImageSetInterpolationMethod(image, GD_MITCHELL)) {
+		return NULL;
+	}
+
+	return gdImageScale(image, width, height);
+}
+
+static int gdUhdrApplyGdOps(gdImagePtr *base_image, gdImagePtr *gainmap_image,
+		gdUhdrImagePtr im, gdUhdrErrorPtr err)
+{
+	int i;
+
+	if (!base_image || !*base_image || !gainmap_image || !*gainmap_image || !im) {
+		gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Invalid UltraHDR transform state");
+		return GD_UHDR_E_INVALID;
+	}
+
+	for (i = 0; i < im->op_count; i++) {
+		gdUhdrOp *op = &im->ops[i];
+		int base_w = gdImageSX(*base_image);
+		int base_h = gdImageSY(*base_image);
+		int gain_w = gdImageSX(*gainmap_image);
+		int gain_h = gdImageSY(*gainmap_image);
+		int status;
+
+		switch (op->type) {
+			case GD_UHDR_OP_RESIZE: {
+				int scaled_gain_w;
+				int scaled_gain_h;
+
+				if (!gdUhdrScaleValue(op->p1, base_w, gain_w, &scaled_gain_w) ||
+						!gdUhdrScaleValue(op->p2, base_h, gain_h, &scaled_gain_h)) {
+					gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Invalid UltraHDR resize operation");
+					return GD_UHDR_E_INVALID;
+				}
+				if (scaled_gain_w <= 0) {
+					scaled_gain_w = 1;
+				}
+				if (scaled_gain_h <= 0) {
+					scaled_gain_h = 1;
+				}
+
+				status = gdUhdrReplaceImage(base_image,
+					gdUhdrScaleImage(*base_image, (unsigned int) op->p1, (unsigned int) op->p2), err);
+				if (status != GD_UHDR_SUCCESS) {
+					return status;
+				}
+				status = gdUhdrReplaceImage(gainmap_image,
+					gdUhdrScaleImage(*gainmap_image, (unsigned int) scaled_gain_w, (unsigned int) scaled_gain_h), err);
+				if (status != GD_UHDR_SUCCESS) {
+					return status;
+				}
+				break;
+			}
+			case GD_UHDR_OP_CROP: {
+				gdRect base_crop;
+				gdRect gain_crop;
+				int gain_left;
+				int gain_right;
+				int gain_top;
+				int gain_bottom;
+
+				if (op->p1 < 0 || op->p3 < 0 || op->p2 <= op->p1 || op->p4 <= op->p3 ||
+						op->p2 > base_w || op->p4 > base_h) {
+					gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Invalid UltraHDR crop operation");
+					return GD_UHDR_E_INVALID;
+				}
+				if (!gdUhdrScaleValue(op->p1, base_w, gain_w, &gain_left) ||
+						!gdUhdrScaleValue(op->p2, base_w, gain_w, &gain_right) ||
+						!gdUhdrScaleValue(op->p3, base_h, gain_h, &gain_top) ||
+						!gdUhdrScaleValue(op->p4, base_h, gain_h, &gain_bottom) ||
+						gain_right <= gain_left || gain_bottom <= gain_top) {
+					gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Invalid UltraHDR gain map crop operation");
+					return GD_UHDR_E_INVALID;
+				}
+
+				base_crop.x = op->p1;
+				base_crop.y = op->p3;
+				base_crop.width = op->p2 - op->p1;
+				base_crop.height = op->p4 - op->p3;
+				gain_crop.x = gain_left;
+				gain_crop.y = gain_top;
+				gain_crop.width = gain_right - gain_left;
+				gain_crop.height = gain_bottom - gain_top;
+
+				status = gdUhdrReplaceImage(base_image, gdImageCrop(*base_image, &base_crop), err);
+				if (status != GD_UHDR_SUCCESS) {
+					return status;
+				}
+				status = gdUhdrReplaceImage(gainmap_image, gdImageCrop(*gainmap_image, &gain_crop), err);
+				if (status != GD_UHDR_SUCCESS) {
+					return status;
+				}
+				break;
+			}
+			case GD_UHDR_OP_ROTATE: {
+				gdImagePtr rotated_base = NULL;
+				gdImagePtr rotated_gainmap = NULL;
+
+				if (op->p1 == 90) {
+					rotated_base = gdImageRotate90(*base_image, 0);
+					rotated_gainmap = gdImageRotate90(*gainmap_image, 0);
+				} else if (op->p1 == 180) {
+					rotated_base = gdImageRotate180(*base_image, 0);
+					rotated_gainmap = gdImageRotate180(*gainmap_image, 0);
+				} else if (op->p1 == 270) {
+					rotated_base = gdImageRotate270(*base_image, 0);
+					rotated_gainmap = gdImageRotate270(*gainmap_image, 0);
+				}
+
+				status = gdUhdrReplaceImage(base_image, rotated_base, err);
+				if (status != GD_UHDR_SUCCESS) {
+					if (rotated_gainmap) {
+						gdImageDestroy(rotated_gainmap);
+					}
+					return status;
+				}
+				status = gdUhdrReplaceImage(gainmap_image, rotated_gainmap, err);
+				if (status != GD_UHDR_SUCCESS) {
+					return status;
+				}
+				break;
+			}
+			case GD_UHDR_OP_MIRROR:
+				if (op->p1 == GD_UHDR_MIRROR_HORIZONTAL) {
+					gdImageFlipHorizontal(*base_image);
+					gdImageFlipHorizontal(*gainmap_image);
+				} else {
+					gdImageFlipVertical(*base_image);
+					gdImageFlipVertical(*gainmap_image);
+				}
+				break;
+			default:
+				gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Unknown queued UltraHDR operation");
+				return GD_UHDR_E_INVALID;
+		}
+	}
+
+	return GD_UHDR_SUCCESS;
+}
+
+static int gdUhdrEncodeJpegComponent(gdImagePtr image, int quality, const gdImageMetadata *metadata,
+		int no_subsampling, void **out_data, int *out_size, gdUhdrErrorPtr err)
+{
+	void *jpeg;
+	int jpeg_size = 0;
+
+	if (no_subsampling) {
+		jpeg = gdImageJpegPtrWithMetadataNoSubsampling(image, &jpeg_size, quality, metadata);
+	} else {
+		jpeg = gdImageJpegPtrWithMetadata(image, &jpeg_size, quality, metadata);
+	}
+	if (!jpeg || jpeg_size <= 0) {
+		gdFree(jpeg);
+		gdUhdrSetError(err, GD_UHDR_E_ENCODE, 0, "Failed to encode UltraHDR JPEG component");
+		return GD_UHDR_E_ENCODE;
+	}
+
+	*out_data = jpeg;
+	*out_size = jpeg_size;
+	return GD_UHDR_SUCCESS;
 }
 
 static int gdUhdrDecodeRawIntent(gdUhdrImagePtr im, uhdr_img_fmt_t fmt, uhdr_color_transfer_t ct,
@@ -662,8 +967,13 @@ BGD_DECLARE(int) gdUhdrImageCrop(gdUhdrImagePtr im, int left, int top, int width
 		return GD_UHDR_E_INVALID;
 	}
 
-	right = left + width - 1;
-	bottom = top + height - 1;
+	if (gdUhdrIntAddOverflow(left, width) || gdUhdrIntAddOverflow(top, height)) {
+		gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Invalid crop arguments");
+		return GD_UHDR_E_INVALID;
+	}
+
+	right = left + width;
+	bottom = top + height;
 
 	rc = gdUhdrQueueOp(im, GD_UHDR_OP_CROP, left, right, top, bottom);
 	if (rc != GD_UHDR_SUCCESS) {
@@ -802,14 +1112,27 @@ BGD_DECLARE(int) gdUhdrImageFile(gdUhdrImagePtr im, const char *filename, int fo
 BGD_DECLARE(int) gdUhdrImageCtx(gdUhdrImagePtr im, gdIOCtxPtr ctx, int format, int quality, gdUhdrErrorPtr err)
 {
 #ifdef HAVE_LIBUHDR
-	uhdr_codec_private_t *dec;
-	uhdr_codec_private_t *enc;
+	uhdr_codec_private_t *dec = NULL;
+	uhdr_codec_private_t *enc = NULL;
 	uhdr_compressed_image_t source;
+	uhdr_compressed_image_t base_jpeg;
+	uhdr_compressed_image_t gainmap_jpeg;
 	uhdr_error_info_t rc;
 	uhdr_compressed_image_t *encoded;
-	uhdr_raw_image_t raw_sdr;
-	uhdr_raw_image_t raw_hdr;
+	uhdr_gainmap_metadata_t *source_metadata;
+	uhdr_gainmap_metadata_t metadata;
+	uhdr_mem_block_t *base_block = NULL;
+	uhdr_mem_block_t *gainmap_block = NULL;
+	gdImageMetadata *base_metadata = NULL;
+	gdImageMetadata *gainmap_metadata = NULL;
+	gdImagePtr base_image = NULL;
+	gdImagePtr gainmap_image = NULL;
+	void *base_jpeg_data = NULL;
+	void *gainmap_jpeg_data = NULL;
+	int base_jpeg_size = 0;
+	int gainmap_jpeg_size = 0;
 	int write_result;
+	int status = GD_UHDR_SUCCESS;
 
 	if (!im || !ctx || !im->blob || im->blob_size <= 0) {
 		gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Invalid UltraHDR image or output context");
@@ -837,148 +1160,155 @@ BGD_DECLARE(int) gdUhdrImageCtx(gdUhdrImagePtr im, gdIOCtxPtr ctx, int format, i
 		return GD_UHDR_SUCCESS;
 	}
 
-	memset(&raw_sdr, 0, sizeof(raw_sdr));
-	memset(&raw_hdr, 0, sizeof(raw_hdr));
-
 	dec = uhdr_create_decoder();
 	enc = uhdr_create_encoder();
 	if (!dec || !enc) {
-		if (dec) {
-			uhdr_release_decoder(dec);
-		}
-		if (enc) {
-			uhdr_release_encoder(enc);
-		}
 		gdUhdrSetError(err, GD_UHDR_E_ENCODE, 0, "Failed to create UltraHDR codec contexts");
-		return GD_UHDR_E_ENCODE;
+		status = GD_UHDR_E_ENCODE;
+		goto cleanup;
 	}
 
-	source.data = im->blob;
-	source.data_sz = (size_t) im->blob_size;
-	source.capacity = (size_t) im->blob_size;
-	source.cg = UHDR_CG_UNSPECIFIED;
-	source.ct = UHDR_CT_UNSPECIFIED;
-	source.range = UHDR_CR_FULL_RANGE;
+	gdUhdrInitCompressedImage(&source, im->blob, im->blob_size);
 
 	rc = uhdr_dec_set_image(dec, &source);
 	if (rc.error_code != UHDR_CODEC_OK) {
 		gdUhdrSetError(err, GD_UHDR_E_DECODE, rc.error_code, rc.has_detail ? rc.detail : "uhdr_dec_set_image failed");
-		uhdr_release_encoder(enc);
-		uhdr_release_decoder(dec);
-		return GD_UHDR_E_DECODE;
+		status = GD_UHDR_E_DECODE;
+		goto cleanup;
 	}
 
 	rc = uhdr_dec_probe(dec);
 	if (rc.error_code != UHDR_CODEC_OK) {
 		gdUhdrSetError(err, GD_UHDR_E_DECODE, rc.error_code, rc.has_detail ? rc.detail : "uhdr_dec_probe failed");
-		uhdr_release_encoder(enc);
-		uhdr_release_decoder(dec);
-		return GD_UHDR_E_DECODE;
+		status = GD_UHDR_E_DECODE;
+		goto cleanup;
 	}
 
-	{
-		int status;
+	source_metadata = uhdr_dec_get_gainmap_metadata(dec);
+	if (!source_metadata) {
+		gdUhdrSetError(err, GD_UHDR_E_DECODE, 0, "UltraHDR gain map metadata is missing");
+		status = GD_UHDR_E_DECODE;
+		goto cleanup;
+	}
+	metadata = *source_metadata;
 
-		status = gdUhdrDecodeRawIntent(im, UHDR_IMG_FMT_32bppRGBA8888, UHDR_CT_SRGB, &raw_sdr, err);
+	base_block = uhdr_dec_get_base_image(dec);
+	gainmap_block = uhdr_dec_get_gainmap_image(dec);
+
+	/*
+	 * Geometry transforms make source EXIF dimensions, orientation, and
+	 * thumbnails stale. Preserve ICC, but copy EXIF only for pass-through
+	 * writes unless GD learns to rewrite those tags.
+	 */
+	status = gdUhdrCreateJpegMetadataFromBlock(base_block, im->op_count == 0, 1, &base_metadata, err);
+	if (status != GD_UHDR_SUCCESS) {
+		goto cleanup;
+	}
+
+	if (!metadata.use_base_cg) {
+		status = gdUhdrCreateJpegMetadataFromBlock(gainmap_block, 0, 1, &gainmap_metadata, err);
 		if (status != GD_UHDR_SUCCESS) {
-			uhdr_release_encoder(enc);
-			uhdr_release_decoder(dec);
-			return status;
+			goto cleanup;
 		}
-		raw_sdr.ct = UHDR_CT_SRGB;
-		raw_sdr.range = UHDR_CR_FULL_RANGE;
-
-		status = gdUhdrDecodeRawIntent(im, UHDR_IMG_FMT_32bppRGBA1010102, UHDR_CT_PQ, &raw_hdr, err);
-		if (status != GD_UHDR_SUCCESS) {
-			gdUhdrFreeCopiedRawImage(&raw_sdr);
-			uhdr_release_encoder(enc);
-			uhdr_release_decoder(dec);
-			return status;
-		}
-		raw_hdr.ct = UHDR_CT_PQ;
-		raw_hdr.range = UHDR_CR_FULL_RANGE;
 	}
 
-	rc = uhdr_enc_set_raw_image(enc, &raw_hdr, UHDR_HDR_IMG);
-	if (rc.error_code != UHDR_CODEC_OK) {
-		gdUhdrSetError(err, GD_UHDR_E_ENCODE, rc.error_code, rc.has_detail ? rc.detail : "uhdr_enc_set_raw_image(HDR) failed");
-		gdUhdrFreeCopiedRawImage(&raw_hdr);
-		gdUhdrFreeCopiedRawImage(&raw_sdr);
-		uhdr_release_encoder(enc);
-		uhdr_release_decoder(dec);
-		return GD_UHDR_E_ENCODE;
+	base_image = gdUhdrCreateGdImageFromJpegBlock(base_block, "Failed to decode UltraHDR base image", err);
+	if (!base_image) {
+		status = GD_UHDR_E_DECODE;
+		goto cleanup;
 	}
 
-	rc = uhdr_enc_set_raw_image(enc, &raw_sdr, UHDR_SDR_IMG);
-	if (rc.error_code != UHDR_CODEC_OK) {
-		gdUhdrSetError(err, GD_UHDR_E_ENCODE, rc.error_code, rc.has_detail ? rc.detail : "uhdr_enc_set_raw_image(SDR) failed");
-		gdUhdrFreeCopiedRawImage(&raw_hdr);
-		gdUhdrFreeCopiedRawImage(&raw_sdr);
-		uhdr_release_encoder(enc);
-		uhdr_release_decoder(dec);
-		return GD_UHDR_E_ENCODE;
+	gainmap_image = gdUhdrCreateGdImageFromJpegBlock(gainmap_block, "Failed to decode UltraHDR gain map image", err);
+	if (!gainmap_image) {
+		status = GD_UHDR_E_DECODE;
+		goto cleanup;
 	}
 
-	rc = uhdr_enc_set_quality(enc, quality, UHDR_BASE_IMG);
-	if (rc.error_code != UHDR_CODEC_OK) {
-		gdUhdrSetError(err, GD_UHDR_E_ENCODE, rc.error_code, rc.has_detail ? rc.detail : "uhdr_enc_set_quality(base) failed");
-		uhdr_release_encoder(enc);
-		uhdr_release_decoder(dec);
-		return GD_UHDR_E_ENCODE;
+	status = gdUhdrApplyGdOps(&base_image, &gainmap_image, im, err);
+	if (status != GD_UHDR_SUCCESS) {
+		goto cleanup;
 	}
 
-	rc = uhdr_enc_set_quality(enc, quality, UHDR_GAIN_MAP_IMG);
-	if (rc.error_code != UHDR_CODEC_OK) {
-		gdUhdrSetError(err, GD_UHDR_E_ENCODE, rc.error_code, rc.has_detail ? rc.detail : "uhdr_enc_set_quality(gainmap) failed");
-		uhdr_release_encoder(enc);
-		uhdr_release_decoder(dec);
-		return GD_UHDR_E_ENCODE;
+	status = gdUhdrEncodeJpegComponent(base_image, quality, base_metadata, 0, &base_jpeg_data, &base_jpeg_size, err);
+	if (status != GD_UHDR_SUCCESS) {
+		goto cleanup;
 	}
+
+	status = gdUhdrEncodeJpegComponent(gainmap_image, quality, gainmap_metadata, 1, &gainmap_jpeg_data, &gainmap_jpeg_size, err);
+	if (status != GD_UHDR_SUCCESS) {
+		goto cleanup;
+	}
+
+	gdUhdrInitCompressedImage(&base_jpeg, base_jpeg_data, base_jpeg_size);
+	gdUhdrInitCompressedImage(&gainmap_jpeg, gainmap_jpeg_data, gainmap_jpeg_size);
 
 	rc = uhdr_enc_set_output_format(enc, UHDR_CODEC_JPG);
 	if (rc.error_code != UHDR_CODEC_OK) {
 		gdUhdrSetError(err, GD_UHDR_E_ENCODE, rc.error_code, rc.has_detail ? rc.detail : "uhdr_enc_set_output_format failed");
-		uhdr_release_encoder(enc);
-		uhdr_release_decoder(dec);
-		return GD_UHDR_E_ENCODE;
+		status = GD_UHDR_E_ENCODE;
+		goto cleanup;
+	}
+
+	rc = uhdr_enc_set_compressed_image(enc, &base_jpeg, UHDR_BASE_IMG);
+	if (rc.error_code != UHDR_CODEC_OK) {
+		gdUhdrSetError(err, GD_UHDR_E_ENCODE, rc.error_code, rc.has_detail ? rc.detail : "uhdr_enc_set_compressed_image(base) failed");
+		status = GD_UHDR_E_ENCODE;
+		goto cleanup;
+	}
+
+	rc = uhdr_enc_set_gainmap_image(enc, &gainmap_jpeg, &metadata);
+	if (rc.error_code != UHDR_CODEC_OK) {
+		gdUhdrSetError(err, GD_UHDR_E_ENCODE, rc.error_code, rc.has_detail ? rc.detail : "uhdr_enc_set_gainmap_image failed");
+		status = GD_UHDR_E_ENCODE;
+		goto cleanup;
 	}
 
 	rc = uhdr_encode(enc);
 	if (rc.error_code != UHDR_CODEC_OK) {
 		gdUhdrSetError(err, GD_UHDR_E_ENCODE, rc.error_code, rc.has_detail ? rc.detail : "uhdr_encode failed");
-		gdUhdrFreeCopiedRawImage(&raw_hdr);
-		gdUhdrFreeCopiedRawImage(&raw_sdr);
-		uhdr_release_encoder(enc);
-		uhdr_release_decoder(dec);
-		return GD_UHDR_E_ENCODE;
+		status = GD_UHDR_E_ENCODE;
+		goto cleanup;
 	}
 
 	encoded = uhdr_get_encoded_stream(enc);
 	if (!encoded || !encoded->data || encoded->data_sz == 0) {
 		gdUhdrSetError(err, GD_UHDR_E_ENCODE, 0, "Encoded UltraHDR stream is empty");
-		gdUhdrFreeCopiedRawImage(&raw_hdr);
-		gdUhdrFreeCopiedRawImage(&raw_sdr);
-		uhdr_release_encoder(enc);
-		uhdr_release_decoder(dec);
-		return GD_UHDR_E_ENCODE;
+		status = GD_UHDR_E_ENCODE;
+		goto cleanup;
 	}
 
 	write_result = gdPutBuf(encoded->data, (int) encoded->data_sz, ctx);
 	if (write_result != (int) encoded->data_sz) {
 		gdUhdrSetError(err, GD_UHDR_E_ENCODE, 0, "Failed to write UltraHDR output");
-		gdUhdrFreeCopiedRawImage(&raw_hdr);
-		gdUhdrFreeCopiedRawImage(&raw_sdr);
-		uhdr_release_encoder(enc);
-		uhdr_release_decoder(dec);
-		return GD_UHDR_E_ENCODE;
+		status = GD_UHDR_E_ENCODE;
+		goto cleanup;
 	}
 
 	gdUhdrSetError(err, GD_UHDR_SUCCESS, 0, NULL);
-	gdUhdrFreeCopiedRawImage(&raw_hdr);
-	gdUhdrFreeCopiedRawImage(&raw_sdr);
-	uhdr_release_encoder(enc);
-	uhdr_release_decoder(dec);
-	return GD_UHDR_SUCCESS;
+	status = GD_UHDR_SUCCESS;
+
+cleanup:
+	gdFree(gainmap_jpeg_data);
+	gdFree(base_jpeg_data);
+	if (gainmap_image) {
+		gdImageDestroy(gainmap_image);
+	}
+	if (base_image) {
+		gdImageDestroy(base_image);
+	}
+	if (gainmap_metadata) {
+		gdImageMetadataFree(gainmap_metadata);
+	}
+	if (base_metadata) {
+		gdImageMetadataFree(base_metadata);
+	}
+	if (enc) {
+		uhdr_release_encoder(enc);
+	}
+	if (dec) {
+		uhdr_release_decoder(dec);
+	}
+	return status;
 #else
 	ARG_NOT_USED(im);
 	ARG_NOT_USED(ctx);

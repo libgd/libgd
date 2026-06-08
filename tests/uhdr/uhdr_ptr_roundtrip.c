@@ -93,8 +93,8 @@ int main()
 		err.code, err.provider_code, err.message)) {
 		goto cleanup;
 	}
-	gdTestAssertMsg(gdUhdrImageWidth(out_im) == 639, "expected width 639 (libuhdr crop behavior), got %d\n", gdUhdrImageWidth(out_im));
-	gdTestAssertMsg(gdUhdrImageHeight(out_im) == 359, "expected height 359 (libuhdr crop behavior), got %d\n", gdUhdrImageHeight(out_im));
+	gdTestAssertMsg(gdUhdrImageWidth(out_im) == 640, "expected width 640, got %d\n", gdUhdrImageWidth(out_im));
+	gdTestAssertMsg(gdUhdrImageHeight(out_im) == 360, "expected height 360, got %d\n", gdUhdrImageHeight(out_im));
 	gdTestAssertMsg(gdUhdrImageHasGainMap(out_im) == 1, "expected output gain map\n");
 
 	cleanup:

@@ -79,6 +79,9 @@ uchar_clamp(double clr, unsigned char max) {
 
 /* Internal prototypes: */
 
+/* gd_jpeg.c */
+void *gdImageJpegPtrWithMetadataNoSubsampling(gdImagePtr im, int *size, int quality, const gdImageMetadata *metadata);
+
 /* gd_rotate.c */
 gdImagePtr gdImageRotate90(gdImagePtr src, int ignoretransparent);
 gdImagePtr gdImageRotate180(gdImagePtr src, int ignoretransparent);

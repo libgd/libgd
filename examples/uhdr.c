@@ -1,5 +1,7 @@
 #include "gd.h"
 
+#include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +12,7 @@ static void usage(const char *prog)
 		"Usage: %s <input_uhdr.jpg> <output_uhdr.jpg> [options]\n"
 		"Options:\n"
 		"  --quality <1..95>           JPEG quality for output (default: 90)\n"
-		"  --resize <w>x<h>            Queue resize\n"
+		"  --resize <w>x<h>|<percent>%% Queue resize\n"
 		"  --crop <x>,<y>,<w>,<h>      Queue crop\n"
 		"  --rotate <90|180|270>       Queue clockwise rotation\n"
 		"  --mirror <h|v>              Queue mirror horizontal/vertical\n"
@@ -38,6 +40,61 @@ static int parse_int(const char *s, int *out)
 
 	*out = (int) v;
 	return 1;
+}
+
+static int parse_resize(const char *s, gdUhdrImagePtr uhdr, int *out_w, int *out_h)
+{
+	char *end = NULL;
+	long w;
+	long h;
+
+	if (!s || !uhdr || !out_w || !out_h) {
+		return 0;
+	}
+
+	errno = 0;
+	w = strtol(s, &end, 10);
+	if (errno == ERANGE) {
+		return 0;
+	}
+	if (end != s && *end == 'x') {
+		char *height_end = NULL;
+
+		errno = 0;
+		h = strtol(end + 1, &height_end, 10);
+		if (errno != ERANGE && height_end != end + 1 && *height_end == '\0' &&
+				w > 0 && h > 0 && w <= INT_MAX && h <= INT_MAX) {
+			*out_w = (int) w;
+			*out_h = (int) h;
+			return 1;
+		}
+		return 0;
+	}
+
+	if (end != s && *end == '%' && end[1] == '\0' && w > 0) {
+		long long scaled_w;
+		long long scaled_h;
+
+		if (w > INT_MAX) {
+			return 0;
+		}
+		scaled_w = ((long long) gdUhdrImageWidth(uhdr) * w + 50) / 100;
+		scaled_h = ((long long) gdUhdrImageHeight(uhdr) * w + 50) / 100;
+		if (scaled_w > INT_MAX || scaled_h > INT_MAX) {
+			return 0;
+		}
+		if (scaled_w <= 0) {
+			scaled_w = 1;
+		}
+		if (scaled_h <= 0) {
+			scaled_h = 1;
+		}
+		*out_w = (int) scaled_w;
+		*out_h = (int) scaled_h;
+		return 1;
+	}
+
+	return 0;
 }
 
 static void print_error(const char *where, const gdUhdrError *err)
@@ -100,8 +157,8 @@ int main(int argc, char **argv)
 
 		if (strcmp(argv[i], "--resize") == 0) {
 			int w, h;
-			if (i + 1 >= argc || sscanf(argv[i + 1], "%dx%d", &w, &h) != 2) {
-				fprintf(stderr, "Invalid --resize value, expected <w>x<h>\n");
+			if (i + 1 >= argc || !parse_resize(argv[i + 1], uhdr, &w, &h)) {
+				fprintf(stderr, "Invalid --resize value, expected <w>x<h> or <percent>%%\n");
 				gdUhdrImageDestroy(uhdr);
 				return 1;
 			}

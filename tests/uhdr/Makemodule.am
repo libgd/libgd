@@ -4,6 +4,7 @@ libgd_test_programs += \
 	uhdr/uhdr_plain_jpeg_rejected \
 	uhdr/uhdr_cli_parity_noop \
 	uhdr/uhdr_cli_parity_quality_noop \
+	uhdr/uhdr_metadata_resize \
 	uhdr/uhdr_roundtrip \
 	uhdr/uhdr_ptr_roundtrip
 endif
@@ -15,5 +16,6 @@ EXTRA_DIST += \
 	uhdr/uhdr_plain_jpeg_rejected.c \
 	uhdr/uhdr_cli_parity_noop.c \
 	uhdr/uhdr_cli_parity_quality_noop.c \
+	uhdr/uhdr_metadata_resize.c \
 	uhdr/uhdr_roundtrip.c \
 	uhdr/uhdr_ptr_roundtrip.c
