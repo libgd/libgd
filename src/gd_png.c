@@ -1193,7 +1193,7 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 	png_color palette[gdMaxColors];
 	png_structp png_ptr;
 	png_infop info_ptr;
-	png_bytep *row_pointers = NULL;
+	png_bytep *volatile row_pointers = NULL;
 	volatile int transparent = im->transparent;
 	volatile int remap = FALSE;
 #ifdef PNG_SETJMP_SUPPORTED
@@ -1471,7 +1471,6 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 		gdFree (row_pointers);
 	} else {
 		if (remap) {
-			png_bytep *row_pointers;
 			if (overflow2(sizeof (png_bytep), height)) {
 				ret = 1;
 				goto bail;
@@ -1497,12 +1496,11 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx * outfile, int level)
 			}
 
 			png_write_image (png_ptr, row_pointers);
+			png_write_end (png_ptr, info_ptr);
 
 			for (j = 0; j < height; ++j)
 				gdFree (row_pointers[j]);
 			gdFree (row_pointers);
-
-			png_write_end (png_ptr, info_ptr);
 		} else {
 			png_write_image (png_ptr, im->pixels);
 			png_write_end (png_ptr, info_ptr);
