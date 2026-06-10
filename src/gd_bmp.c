@@ -366,7 +366,7 @@ static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compressio
 	int ret = 1;
 	gdImagePtr write_im = im;
 
-	if (im == NULL || out == NULL) {
+	if (im == NULL || out == NULL || gdImageSX(im) <= 0 || gdImageSY(im) <= 0) {
 		return 1;
 	}
 
