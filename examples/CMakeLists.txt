@@ -20,6 +20,9 @@ endif (JPEG_FOUND)
 
 if (TIFF_FOUND)
 	LIST(APPEND TESTS_FILES	tiffread)
+	if (PNG_FOUND)
+		LIST(APPEND TESTS_FILES tiff_pages)
+	endif (PNG_FOUND)
 endif (TIFF_FOUND)
 
 if (HEIF_FOUND)

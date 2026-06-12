@@ -33,8 +33,7 @@
  *
  * Read and write TIFF images.
  *
- * There is only most basic support for the TIFF format available for now;
- * for instance, multiple pages are not yet supported.
+ * Multi-page TIFF reading is supported via the gdTiffRead* API.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -48,6 +47,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <string.h>
 
 #include "gdhelpers.h"
 
@@ -123,6 +123,9 @@ static tsize_t tiff_readproc(thandle_t clientdata, tdata_t data, tsize_t size)
 	gdIOCtx *ctx = th->ctx;
 
 	size = (ctx->getBuf)(ctx, data, size);
+	if (size > 0) {
+		th->pos += size;
+	}
 
 	return size;
 }
@@ -135,9 +138,11 @@ static tsize_t tiff_writeproc(thandle_t clientdata, tdata_t data, tsize_t size)
 	gdIOCtx *ctx = th->ctx;
 
 	size = (ctx->putBuf)(ctx, data, size);
-	if(size + th->pos>th->size) {
-		th->size = size + th->pos;
+	if (size > 0) {
 		th->pos += size;
+	}
+	if(th->pos > th->size) {
+		th->size = th->pos;
 	}
 
 	return size;
@@ -836,11 +841,8 @@ static int createFromTiffRgba(TIFF * tif, gdImagePtr im)
 
 	Create a gdImage from a TIFF file input from an gdIOCtx.
 */
-static gdImagePtr gdImageCreateFromTiffCtxEx(gdIOCtx *infile, int initial_size)
+static gdImagePtr TiffDecodeCurrentDirectory(TIFF *tif)
 {
-	TIFF *tif;
-	tiff_handle *th;
-
 	uint16_t bps, spp, photometric;
 	uint16_t orientation;
 	int width, height;
@@ -855,36 +857,32 @@ static gdImagePtr gdImageCreateFromTiffCtxEx(gdIOCtx *infile, int initial_size)
 
 	gdImagePtr im = NULL;
 
-	th = new_tiff_handle(infile, initial_size);
-	if (!th) {
-		return NULL;
-	}
-
-	tif = TIFFClientOpen("", "rb", th, tiff_readproc,
-	                     tiff_writeproc,
-	                     tiff_seekproc,
-	                     tiff_closeproc,
-	                     tiff_sizeproc,
-	                     tiff_mapproc,
-	                     tiff_unmapproc);
-
-	if (!tif) {
-		gd_error("Cannot open TIFF image");
-		gdFree(th);
-		return NULL;
-	}
-
 	if (!TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width)) {
 		gd_error("TIFF error, Cannot read image width");
-		goto error;
+		return NULL;
 	}
 
 	if (!TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height)) {
-		gd_error("TIFF error, Cannot read image width");
-		goto error;
+		gd_error("TIFF error, Cannot read image height");
+		return NULL;
+	}
+
+	if (width <= 0 || height <= 0) {
+		gd_error("TIFF error, image dimensions must be greater than 0");
+		return NULL;
+	}
+
+	if (overflow2(width, height)) {
+		gd_error("TIFF error, image dimensions are too large");
+		return NULL;
 	}
 
 	TIFFGetFieldDefaulted (tif, TIFFTAG_BITSPERSAMPLE, &bps);
+
+	if (bps == 0 || bps > 32) {
+		gd_error("TIFF error, invalid bits per sample: %u", (unsigned)bps);
+		return NULL;
+	}
 
 	/* Unsupported bps, force to RGBA */
 	if (bps != 1 /*bps > 8 && bps != 16*/) {
@@ -892,6 +890,11 @@ static gdImagePtr gdImageCreateFromTiffCtxEx(gdIOCtx *infile, int initial_size)
 	}
 
 	TIFFGetFieldDefaulted (tif, TIFFTAG_SAMPLESPERPIXEL, &spp);
+
+	if (spp == 0 || spp > 4) {
+		gd_error("TIFF error, invalid samples per pixel: %u", (unsigned)spp);
+		return NULL;
+	}
 
 	if (!TIFFGetField (tif, TIFFTAG_EXTRASAMPLES, &extra, &extra_types)) {
 		extra = 0;
@@ -987,11 +990,11 @@ static gdImagePtr gdImageCreateFromTiffCtxEx(gdIOCtx *infile, int initial_size)
 	if (!force_rgba &&
 	        (image_type == GD_PALETTE || image_type == GD_INDEXED || image_type == GD_GRAY)) {
 		im = gdImageCreate(width, height);
-		if (!im) goto error;
+		if (!im) return NULL;
 		readTiffColorMap(im, tif, is_bw, photometric);
 	} else {
 		im = gdImageCreateTrueColor(width, height);
-		if (!im) goto error;
+		if (!im) return NULL;
 	}
 
 #ifdef DEBUG
@@ -1016,8 +1019,7 @@ static gdImagePtr gdImageCreateFromTiffCtxEx(gdIOCtx *infile, int initial_size)
 
 	if (!ret) {
 		gdImageDestroy(im);
-		im = NULL;
-		goto error;
+		return NULL;
 	}
 
 	if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &res_float)) {
@@ -1040,7 +1042,37 @@ static gdImagePtr gdImageCreateFromTiffCtxEx(gdIOCtx *infile, int initial_size)
 			break;
 		}
 	}
-error:
+
+	return im;
+}
+
+static gdImagePtr gdImageCreateFromTiffCtxEx(gdIOCtx *infile, int initial_size)
+{
+	TIFF *tif;
+	tiff_handle *th;
+	gdImagePtr im = NULL;
+
+	th = new_tiff_handle(infile, initial_size);
+	if (!th) {
+		return NULL;
+	}
+
+	tif = TIFFClientOpen("", "rb", th, tiff_readproc,
+	                     tiff_writeproc,
+	                     tiff_seekproc,
+	                     tiff_closeproc,
+	                     tiff_sizeproc,
+	                     tiff_mapproc,
+	                     tiff_unmapproc);
+
+	if (!tif) {
+		gd_error("Cannot open TIFF image");
+		gdFree(th);
+		return NULL;
+	}
+
+	im = TiffDecodeCurrentDirectory(tif);
+
 	TIFFClose(tif);
 	gdFree(th);
 	return im;
@@ -1102,6 +1134,497 @@ BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size)
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
 	return rv;
+}
+
+#define GD_TIFF_ALLOC_STEP (4*1024)
+
+typedef struct gdTiffReadStruct {
+	uint8_t *data;
+	size_t size;
+	TIFF *tif;
+	tiff_handle *th;
+	gdIOCtx *memCtx;
+	int pageCount;
+	int currentPage;
+	gdImagePtr image;
+} gdTiffRead;
+
+static uint8_t *TiffReadCtxData(gdIOCtx *infile, size_t *size)
+{
+	uint8_t *filedata = NULL, *temp, *read;
+	ssize_t n;
+
+	*size = 0;
+	do {
+		temp = gdRealloc(filedata, *size + GD_TIFF_ALLOC_STEP);
+		if (temp == NULL) {
+			gdFree(filedata);
+			gd_error("TIFF decode: realloc failed");
+			return NULL;
+		}
+		filedata = temp;
+		read = temp + *size;
+		n = gdGetBuf(read, GD_TIFF_ALLOC_STEP, infile);
+		if (n > 0 && n != EOF) {
+			*size += n;
+		}
+	} while (n > 0 && n != EOF);
+
+	if (*size == 0) {
+		gdFree(filedata);
+		return NULL;
+	}
+
+	return filedata;
+}
+
+static void TiffFillInfo(TIFF *tif, gdTiffInfo *info, int pageCount)
+{
+	uint16_t bps, spp, photometric, compression;
+	float res_float;
+	uint16_t resUnit;
+
+	if (info == NULL || tif == NULL) {
+		return;
+	}
+	memset(info, 0, sizeof(*info));
+	info->pageCount = pageCount;
+
+	TIFFGetFieldDefaulted(tif, TIFFTAG_IMAGEWIDTH, (uint32_t *)&info->width);
+	TIFFGetFieldDefaulted(tif, TIFFTAG_IMAGELENGTH, (uint32_t *)&info->height);
+	TIFFGetFieldDefaulted(tif, TIFFTAG_BITSPERSAMPLE, &bps);
+	TIFFGetFieldDefaulted(tif, TIFFTAG_SAMPLESPERPIXEL, &spp);
+	info->bitsPerSample = bps;
+	info->samplesPerPixel = spp;
+
+	if (TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression)) {
+		info->compression = compression;
+	}
+	if (TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &photometric)) {
+		info->photometric = photometric;
+	}
+	if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &res_float)) {
+		info->xResolution = res_float;
+	}
+	if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &res_float)) {
+		info->yResolution = res_float;
+	}
+	if (TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resUnit)) {
+		info->resolutionUnit = resUnit;
+	} else {
+		info->resolutionUnit = 2;
+	}
+}
+
+static void TiffFillPageInfo(TIFF *tif, gdTiffPageInfo *info, int pageIndex)
+{
+	uint16_t bps, spp, photometric, compression, planar;
+	uint16_t extra, *extra_types;
+	uint16_t resUnit;
+	float res_float;
+
+	if (info == NULL || tif == NULL) {
+		return;
+	}
+	memset(info, 0, sizeof(*info));
+	info->pageIndex = pageIndex;
+
+	TIFFGetFieldDefaulted(tif, TIFFTAG_IMAGEWIDTH, (uint32_t *)&info->width);
+	TIFFGetFieldDefaulted(tif, TIFFTAG_IMAGELENGTH, (uint32_t *)&info->height);
+	TIFFGetFieldDefaulted(tif, TIFFTAG_BITSPERSAMPLE, &bps);
+	TIFFGetFieldDefaulted(tif, TIFFTAG_SAMPLESPERPIXEL, &spp);
+	info->bitsPerSample = bps;
+	info->samplesPerPixel = spp;
+	info->isTiled = TIFFIsTiled(tif);
+
+	if (TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression)) {
+		info->compression = compression;
+	}
+	if (TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &photometric)) {
+		info->photometric = photometric;
+	}
+	if (TIFFGetField(tif, TIFFTAG_PLANARCONFIG, &planar)) {
+		info->planar = planar;
+	} else {
+		info->planar = PLANARCONFIG_CONTIG;
+	}
+
+	if (!TIFFGetField(tif, TIFFTAG_EXTRASAMPLES, &extra, &extra_types)) {
+		extra = 0;
+	}
+	info->hasAlpha = (extra > 0);
+
+	if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &res_float)) {
+		info->xResolution = res_float;
+	}
+	if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &res_float)) {
+		info->yResolution = res_float;
+	}
+	if (TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resUnit)) {
+		info->resolutionUnit = resUnit;
+	} else {
+		info->resolutionUnit = 2;
+	}
+}
+
+static gdTiffReadPtr TiffReadOpenFromData(uint8_t *data, size_t size)
+{
+	gdTiffReadPtr tiff;
+	gdIOCtx *memCtx;
+	tiff_handle *th;
+	TIFF *tif;
+
+	tiff = (gdTiffReadPtr) gdCalloc(1, sizeof(gdTiffRead));
+	if (tiff == NULL) {
+		return NULL;
+	}
+
+	tiff->data = data;
+	tiff->size = size;
+
+	memCtx = gdNewDynamicCtxEx((int)size, data, 0);
+	if (memCtx == NULL) {
+		gdFree(tiff);
+		return NULL;
+	}
+	tiff->memCtx = memCtx;
+
+	th = new_tiff_handle(memCtx, (int)size);
+	if (th == NULL) {
+		memCtx->gd_free(memCtx);
+		gdFree(tiff);
+		return NULL;
+	}
+	tiff->th = th;
+
+	tif = TIFFClientOpen("", "rb", th, tiff_readproc,
+	                     tiff_writeproc,
+	                     tiff_seekproc,
+	                     tiff_closeproc,
+	                     tiff_sizeproc,
+	                     tiff_mapproc,
+	                     tiff_unmapproc);
+	if (tif == NULL) {
+		gdFree(th);
+		memCtx->gd_free(memCtx);
+		gdFree(tiff);
+		return NULL;
+	}
+	tiff->tif = tif;
+
+	tiff->pageCount = (int) TIFFNumberOfDirectories(tif);
+	if (tiff->pageCount <= 0) {
+		gd_error("TIFF error, invalid page count: %d", tiff->pageCount);
+		TIFFClose(tif);
+		tiff->tif = NULL;
+		gdFree(th);
+		tiff->th = NULL;
+		memCtx->gd_free(memCtx);
+		tiff->memCtx = NULL;
+		gdFree(tiff);
+		return NULL;
+	}
+	tiff->currentPage = -1;
+	tiff->image = NULL;
+
+	return tiff;
+}
+
+BGD_DECLARE(gdTiffReadPtr) gdTiffReadOpen(FILE *fd)
+{
+	gdIOCtx *in;
+	gdTiffReadPtr tiff;
+	uint8_t *data;
+	size_t size;
+
+	if (fd == NULL) {
+		return NULL;
+	}
+	in = gdNewFileCtx(fd);
+	if (in == NULL) {
+		return NULL;
+	}
+	data = TiffReadCtxData(in, &size);
+	in->gd_free(in);
+	if (data == NULL) {
+		return NULL;
+	}
+	tiff = TiffReadOpenFromData(data, size);
+	if (tiff == NULL) {
+		gdFree(data);
+	}
+	return tiff;
+}
+
+BGD_DECLARE(gdTiffReadPtr) gdTiffReadOpenCtx(gdIOCtxPtr in)
+{
+	uint8_t *data;
+	size_t size;
+
+	if (in == NULL) {
+		return NULL;
+	}
+	data = TiffReadCtxData(in, &size);
+	if (data == NULL) {
+		return NULL;
+	}
+	return TiffReadOpenFromData(data, size);
+}
+
+BGD_DECLARE(gdTiffReadPtr) gdTiffReadOpenPtr(int size, void *data)
+{
+	uint8_t *buf;
+
+	if (size <= 0 || data == NULL) {
+		return NULL;
+	}
+	buf = (uint8_t *) gdMalloc((size_t) size);
+	if (buf == NULL) {
+		return NULL;
+	}
+	memcpy(buf, data, (size_t) size);
+	return TiffReadOpenFromData(buf, (size_t) size);
+}
+
+BGD_DECLARE(void) gdTiffReadClose(gdTiffReadPtr tiff)
+{
+	if (tiff == NULL) {
+		return;
+	}
+	if (tiff->image != NULL) {
+		gdImageDestroy(tiff->image);
+	}
+	if (tiff->tif != NULL) {
+		TIFFClose(tiff->tif);
+	}
+	if (tiff->th != NULL) {
+		gdFree(tiff->th);
+	}
+	if (tiff->memCtx != NULL) {
+		tiff->memCtx->gd_free(tiff->memCtx);
+	}
+	if (tiff->data != NULL) {
+		gdFree(tiff->data);
+	}
+	gdFree(tiff);
+}
+
+BGD_DECLARE(int) gdTiffReadGetInfo(gdTiffReadPtr tiff, gdTiffInfo *info)
+{
+	tdir_t savedDir;
+
+	if (tiff == NULL || info == NULL || tiff->tif == NULL) {
+		return 0;
+	}
+	savedDir = TIFFCurrentDirectory(tiff->tif);
+	TIFFSetDirectory(tiff->tif, 0);
+	TiffFillInfo(tiff->tif, info, tiff->pageCount);
+	TIFFSetDirectory(tiff->tif, savedDir);
+	return 1;
+}
+
+BGD_DECLARE(int) gdTiffReadNextImage(gdTiffReadPtr tiff, gdTiffPageInfo *info, gdImagePtr *image)
+{
+	int ok;
+
+	if (image != NULL) {
+		*image = NULL;
+	}
+	if (tiff == NULL || tiff->tif == NULL || tiff->pageCount <= 0) {
+		return -1;
+	}
+
+	if (tiff->currentPage >= tiff->pageCount - 1 && tiff->currentPage >= 0) {
+		return 0;
+	}
+
+	if (tiff->currentPage < 0) {
+		if (!TIFFSetDirectory(tiff->tif, 0)) {
+			return 0;
+		}
+		tiff->currentPage = 0;
+	} else {
+		if (!TIFFReadDirectory(tiff->tif)) {
+			return 0;
+		}
+		tiff->currentPage++;
+	}
+
+	TiffFillPageInfo(tiff->tif, info, tiff->currentPage);
+
+	if (tiff->image != NULL) {
+		gdImageDestroy(tiff->image);
+		tiff->image = NULL;
+	}
+
+	tiff->image = TiffDecodeCurrentDirectory(tiff->tif);
+	if (tiff->image == NULL) {
+		ok = TIFFSetDirectory(tiff->tif, TIFFCurrentDirectory(tiff->tif));
+		(void)ok;
+		return -1;
+	}
+
+	if (image != NULL) {
+		*image = tiff->image;
+	}
+	return 1;
+}
+
+BGD_DECLARE(gdImagePtr) gdTiffReadCloneImage(gdTiffReadPtr tiff)
+{
+	gdImagePtr dst;
+	int x, y;
+
+	if (tiff == NULL || tiff->image == NULL) {
+		return NULL;
+	}
+	dst = gdImageCreateTrueColor(gdImageSX(tiff->image), gdImageSY(tiff->image));
+	if (dst == NULL) {
+		return NULL;
+	}
+	gdImageAlphaBlending(dst, 0);
+	gdImageSaveAlpha(dst, tiff->image->saveAlphaFlag);
+	for (y = 0; y < gdImageSY(tiff->image); y++) {
+		for (x = 0; x < gdImageSX(tiff->image); x++) {
+			dst->tpixels[y][x] = gdImageGetPixel(tiff->image, x, y);
+		}
+	}
+	return dst;
+}
+
+BGD_DECLARE(int) gdTiffIsMultiPage(FILE *fd)
+{
+	gdIOCtx *in;
+	uint8_t *data;
+	size_t size;
+	gdIOCtx *memCtx;
+	tiff_handle *th;
+	TIFF *tif;
+	tdir_t dirCount;
+	int pos;
+
+	if (fd == NULL) {
+		return -1;
+	}
+	in = gdNewFileCtx(fd);
+	if (in == NULL) {
+		return -1;
+	}
+	pos = (int) gdTell(in);
+	if (pos < 0) {
+		in->gd_free(in);
+		return -1;
+	}
+	data = TiffReadCtxData(in, &size);
+	if (data == NULL) {
+		in->gd_free(in);
+		return -1;
+	}
+	memCtx = gdNewDynamicCtxEx((int)size, data, 0);
+	if (memCtx == NULL) {
+		gdFree(data);
+		in->gd_free(in);
+		return -1;
+	}
+	th = new_tiff_handle(memCtx, (int)size);
+	if (th == NULL) {
+		memCtx->gd_free(memCtx);
+		gdFree(data);
+		in->gd_free(in);
+		return -1;
+	}
+	tif = TIFFClientOpen("", "rb", th, tiff_readproc,
+	                     tiff_writeproc, tiff_seekproc,
+	                     tiff_closeproc, tiff_sizeproc,
+	                     tiff_mapproc, tiff_unmapproc);
+	if (tif == NULL) {
+		gdFree(th);
+		memCtx->gd_free(memCtx);
+		gdFree(data);
+		in->gd_free(in);
+		return -1;
+	}
+	dirCount = TIFFNumberOfDirectories(tif);
+	TIFFClose(tif);
+	gdFree(th);
+	memCtx->gd_free(memCtx);
+	gdFree(data);
+	if (!gdSeek(in, pos)) {
+		in->gd_free(in);
+		return -1;
+	}
+	in->gd_free(in);
+	return dirCount > 1 ? 1 : 0;
+}
+
+BGD_DECLARE(int) gdTiffIsMultiPageCtx(gdIOCtxPtr in)
+{
+	uint8_t *data;
+	size_t size;
+	gdIOCtx *memCtx;
+	tiff_handle *th;
+	TIFF *tif;
+	tdir_t dirCount;
+	int pos;
+
+	if (in == NULL || in->tell == NULL || in->seek == NULL) {
+		return -1;
+	}
+	pos = (int) gdTell(in);
+	if (pos < 0) {
+		return -1;
+	}
+	data = TiffReadCtxData(in, &size);
+	if (data == NULL) {
+		return -1;
+	}
+	memCtx = gdNewDynamicCtxEx((int)size, data, 0);
+	if (memCtx == NULL) {
+		gdFree(data);
+		return -1;
+	}
+	th = new_tiff_handle(memCtx, (int)size);
+	if (th == NULL) {
+		memCtx->gd_free(memCtx);
+		gdFree(data);
+		return -1;
+	}
+	tif = TIFFClientOpen("", "rb", th, tiff_readproc,
+	                     tiff_writeproc, tiff_seekproc,
+	                     tiff_closeproc, tiff_sizeproc,
+	                     tiff_mapproc, tiff_unmapproc);
+	if (tif == NULL) {
+		gdFree(th);
+		memCtx->gd_free(memCtx);
+		gdFree(data);
+		return -1;
+	}
+	dirCount = TIFFNumberOfDirectories(tif);
+	TIFFClose(tif);
+	gdFree(th);
+	memCtx->gd_free(memCtx);
+	gdFree(data);
+	if (!gdSeek(in, pos)) {
+		return -1;
+	}
+	return dirCount > 1 ? 1 : 0;
+}
+
+BGD_DECLARE(int) gdTiffIsMultiPagePtr(int size, void *data)
+{
+	gdIOCtx *in;
+	int result;
+
+	if (size <= 0 || data == NULL) {
+		return -1;
+	}
+	in = gdNewDynamicCtxEx(size, data, 0);
+	if (in == NULL) {
+		return -1;
+	}
+	result = gdTiffIsMultiPageCtx(in);
+	in->gd_free(in);
+	return result;
 }
 
 #else

@@ -915,6 +915,48 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffPtr(int size, void *data);
 
+typedef struct gdTiffReadStruct *gdTiffReadPtr;
+
+typedef struct {
+	int width;
+	int height;
+	int pageCount;
+	int bitsPerSample;
+	int samplesPerPixel;
+	int compression;
+	int photometric;
+	float xResolution;
+	float yResolution;
+	int resolutionUnit;
+} gdTiffInfo;
+
+typedef struct {
+	int pageIndex;
+	int width;
+	int height;
+	int bitsPerSample;
+	int samplesPerPixel;
+	int compression;
+	int photometric;
+	int planar;
+	int hasAlpha;
+	int isTiled;
+	float xResolution;
+	float yResolution;
+	int resolutionUnit;
+} gdTiffPageInfo;
+
+BGD_DECLARE(int) gdTiffIsMultiPage(FILE *fd);
+BGD_DECLARE(int) gdTiffIsMultiPageCtx(gdIOCtxPtr in);
+BGD_DECLARE(int) gdTiffIsMultiPagePtr(int size, void *data);
+BGD_DECLARE(gdTiffReadPtr) gdTiffReadOpen(FILE *fd);
+BGD_DECLARE(gdTiffReadPtr) gdTiffReadOpenCtx(gdIOCtxPtr in);
+BGD_DECLARE(gdTiffReadPtr) gdTiffReadOpenPtr(int size, void *data);
+BGD_DECLARE(void) gdTiffReadClose(gdTiffReadPtr tiff);
+BGD_DECLARE(int) gdTiffReadGetInfo(gdTiffReadPtr tiff, gdTiffInfo *info);
+BGD_DECLARE(int) gdTiffReadNextImage(gdTiffReadPtr tiff, gdTiffPageInfo *info, gdImagePtr *image);
+BGD_DECLARE(gdImagePtr) gdTiffReadCloneImage(gdTiffReadPtr tiff);
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTga( FILE * fp );
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtxPtr ctx);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaPtr(int size, void *data);
