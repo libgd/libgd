@@ -717,13 +717,14 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16_t bps, uint16_t 
 			}
 			width = MIN(im_width - x, tile_width);
 			height = MIN(im_height - y, tile_height);
-			if (bps == 16) {
-			} else if (bps == 8) {
+			if (bps == 8) {
 				readTiff8bit(buffer, im, photometric, x, y, width, height, has_alpha, extra, 0);
 			} else if (is_bw) {
 				readTiffBw(buffer, im, photometric, x, y, width, height, has_alpha, extra, 0);
 			} else {
-				/* TODO: implement some default reader or detect this case earlier use force_rgb */
+				gd_error("TIFF error, unsupported tiled image format in direct reader");
+				success = GD_FAILURE;
+				goto end;
 			}
 		}
 	}
@@ -764,12 +765,6 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16_t bps, uint16_t 
 	}
 	if (planar == PLANARCONFIG_CONTIG) {
 		switch (bps) {
-		case 16:
-			/* TODO
-			 * or simply use force_rgba
-			 */
-			break;
-
 		case 8:
 			for (y = 0; y < im_height; y++ ) {
 				if (TIFFReadScanline (tif, buffer, y, 0) < 0) {
@@ -794,12 +789,14 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16_t bps, uint16_t 
 					readTiffBw(buffer, im, photometric, 0, y, im_width, 1, has_alpha, extra, 0);
 				}
 			} else {
-				/* TODO: implement some default reader or detect this case earlier > force_rgb */
+				gd_error("TIFF error, unsupported scanline image format in direct reader");
+				success = GD_FAILURE;
 			}
 			break;
 		}
 	} else {
-		/* TODO: implement a reader for separate panes. We detect this case earlier for now and use force_rgb */
+		gd_error("TIFF error, unsupported separate planar image in direct reader");
+		success = GD_FAILURE;
 	}
 
 	gdFree(buffer);
@@ -901,11 +898,6 @@ static gdImagePtr TiffDecodeCurrentDirectory(TIFF *tif)
 		return NULL;
 	}
 
-	/* Unsupported bps, force to RGBA */
-	if (bps != 1 /*bps > 8 && bps != 16*/) {
-		force_rgba = TRUE;
-	}
-
 	TIFFGetFieldDefaulted (tif, TIFFTAG_SAMPLESPERPIXEL, &spp);
 
 	if (spp == 0 || spp > 4) {
@@ -990,17 +982,17 @@ static gdImagePtr TiffDecodeCurrentDirectory(TIFF *tif)
 		break;
 	}
 
-	/* Force rgba if image has 1bps, but is not bw */
-	if (bps == 1 && !is_bw) {
-		force_rgba = TRUE;
-	}
-
 	if (!TIFFGetField (tif, TIFFTAG_PLANARCONFIG, &planar)) {
 		planar = PLANARCONFIG_CONTIG;
 	}
 
-	/* Force rgba if image plans are not contiguous */
-	if (force_rgba || planar != PLANARCONFIG_CONTIG) {
+	/* The direct scanline/tile readers only implement contiguous 1-bit BW images. */
+	if (!is_bw || bps != 1 || spp != 1 || has_alpha || planar != PLANARCONFIG_CONTIG) {
+		force_rgba = TRUE;
+	}
+
+	/* Force rgba if image planes are not contiguous or the format is otherwise unsupported. */
+	if (force_rgba) {
 		image_type = GD_RGB;
 	}
 
