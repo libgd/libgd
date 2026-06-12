@@ -335,6 +335,12 @@ MINGW_AC_WIN32_NATIVE_HOST()
 if test "$mingw_cv_win32_host" = yes; then
 AC_DEFINE([BGDWIN32], [], [Define is you are building for Win32 API])
 fi
+gd_mingw_ucrt64=no
+if test "$mingw_cv_win32_host" = yes; then
+  AS_CASE(["$MSYSTEM:$MINGW_PACKAGE_PREFIX"],
+    [UCRT64:*|*:mingw-w64-ucrt-*], [gd_mingw_ucrt64=yes])
+fi
+AM_CONDITIONAL([MINGW_UCRT64], [test "$gd_mingw_ucrt64" = yes])
 
 dnl Enable -Wall if possible.  Do it after all other tests.
 AX_CFLAGS_WARN_ALL

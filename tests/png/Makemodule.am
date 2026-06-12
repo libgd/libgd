@@ -2,7 +2,6 @@ if HAVE_LIBPNG
 libgd_test_programs += \
 	png/bug00011 \
 	png/bug00033 \
-	png/bug00086 \
 	png/bug00088 \
 	png/bug00193 \
 	png/bug00338 \
@@ -11,6 +10,12 @@ libgd_test_programs += \
 	png/png_im2im \
 	png/png_null \
 	png/png_resolution
+
+if MINGW_UCRT64
+else
+libgd_test_programs += \
+	png/bug00086
+endif
 
 if ENABLE_GD_FORMATS
 libgd_test_programs += \
