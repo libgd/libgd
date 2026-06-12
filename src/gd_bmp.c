@@ -366,7 +366,17 @@ static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compressio
 	int ret = 1;
 	gdImagePtr write_im = im;
 
-	if (im == NULL || out == NULL || gdImageSX(im) <= 0 || gdImageSY(im) <= 0) {
+	if (im == NULL || out == NULL) {
+		return 1;
+	}
+
+	if (gdImageSX(im) <= 0 || gdImageSY(im) <= 0) {
+		gd_error("image dimensions must be greater than 0");
+		return 1;
+	}
+
+	if (overflow2(gdImageSX(im), gdImageSY(im))) {
+		gd_error("image dimensions are too large");
 		return 1;
 	}
 
