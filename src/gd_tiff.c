@@ -279,6 +279,7 @@ static void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 	uint16_t *colorMapRed = NULL;
 	uint16_t *colorMapGreen = NULL;
 	uint16_t *colorMapBlue = NULL;
+	size_t colorMapSize;
 
 	tiff_handle *th;
 
@@ -330,18 +331,23 @@ static void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
 
 	/* build the color map for 8 bit images */
 	if(bitDepth != 24) {
-		colorMapRed   = (uint16_t *) gdMalloc(3 * (1 << bitsPerSample));
+		if (overflow2(1 << bitsPerSample, sizeof(uint16_t))) {
+			gdFree(th);
+			return;
+		}
+		colorMapSize = (size_t) (1 << bitsPerSample) * sizeof(uint16_t);
+		colorMapRed = (uint16_t *) gdMalloc(colorMapSize);
 		if (!colorMapRed) {
 			gdFree(th);
 			return;
 		}
-		colorMapGreen = (uint16_t *) gdMalloc(3 * (1 << bitsPerSample));
+		colorMapGreen = (uint16_t *) gdMalloc(colorMapSize);
 		if (!colorMapGreen) {
 			gdFree(colorMapRed);
 			gdFree(th);
 			return;
 		}
-		colorMapBlue  = (uint16_t *) gdMalloc(3 *  (1 << bitsPerSample));
+		colorMapBlue = (uint16_t *) gdMalloc(colorMapSize);
 		if (!colorMapBlue) {
 			gdFree(colorMapRed);
 			gdFree(colorMapGreen);
@@ -749,7 +755,10 @@ static int createFromTiffLines(TIFF *tif, gdImagePtr im, uint16_t bps, uint16_t 
 		return FALSE;
 	}
 
-	buffer = (unsigned char *)gdMalloc(im_width * 4);
+	if (im_width > INT_MAX || overflow2((int) im_width, 4)) {
+		return GD_FAILURE;
+	}
+	buffer = (unsigned char *)gdMalloc((size_t) im_width * 4);
 	if (!buffer) {
 		return GD_FAILURE;
 	}
