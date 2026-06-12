@@ -678,6 +678,7 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16_t bps, uint16_t 
 	int tile_width, tile_height;
 	int  x, y, height, width;
 	unsigned char *buffer;
+	tmsize_t tile_size;
 	int success = GD_SUCCESS;
 
 	if (!TIFFGetField (tif, TIFFTAG_PLANARCONFIG, &planar)) {
@@ -686,11 +687,18 @@ static int createFromTiffTiles(TIFF *tif, gdImagePtr im, uint16_t bps, uint16_t 
 	if (TIFFGetField (tif, TIFFTAG_IMAGEWIDTH, &im_width) == 0 ||
 		TIFFGetField (tif, TIFFTAG_IMAGELENGTH, &im_height) == 0 ||
 		TIFFGetField (tif, TIFFTAG_TILEWIDTH, &tile_width) ==  0 ||
-		TIFFGetField (tif, TIFFTAG_TILELENGTH, &tile_height) == 0) {
+			TIFFGetField (tif, TIFFTAG_TILELENGTH, &tile_height) == 0) {
+		return FALSE;
+	}
+	if (tile_width <= 0 || tile_height <= 0) {
 		return FALSE;
 	}
 
-	buffer = (unsigned char *) gdMalloc (TIFFTileSize (tif));
+	tile_size = TIFFTileSize(tif);
+	if (tile_size <= 0) {
+		return FALSE;
+	}
+	buffer = (unsigned char *) gdMalloc ((size_t) tile_size);
 	if (!buffer) {
 		return FALSE;
 	}
