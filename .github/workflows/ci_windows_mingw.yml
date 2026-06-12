@@ -21,7 +21,7 @@ jobs:
       matrix:
         include:
           - { icon: '🟦', sys: MINGW64 }
-          - { icon: '🟨', sys: UCRT64 } # Experimental!
+#          - { icon: '🟨', sys: UCRT64 } # Experimental!
           - { icon: '🟧', sys: CLANG64 } # Experimental!
     name: 🚧${{ matrix.icon }}-${{ matrix.sys }}
     defaults:
