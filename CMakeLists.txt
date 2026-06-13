@@ -392,6 +392,7 @@ INSTALL(FILES examples/noIconAlpha.tga DESTINATION share/doc/gd-${GDLIB_MAJOR}.$
 INSTALL(FILES examples/test_crop_threshold.png DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/tgaread.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/tiffread.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+INSTALL(FILES examples/tiff_write_pages.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/uhdr.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 INSTALL(FILES examples/windows.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
 
