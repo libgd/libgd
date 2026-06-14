@@ -838,18 +838,17 @@ _gdContributionsAlloc(unsigned int line_length, unsigned int windows_size) {
 	LineContribType *res;
 	size_t weights_size;
 
-	if (overflow2(windows_size, sizeof(double))) {
+	if (windows_size == 0 || windows_size > SIZE_MAX / sizeof(double)) {
 		return NULL;
-	} else {
-		weights_size = windows_size * sizeof(double);
 	}
+	weights_size = windows_size * sizeof(double);
 	res = (LineContribType *)gdMalloc(sizeof(LineContribType));
 	if (!res) {
 		return NULL;
 	}
 	res->WindowSize = windows_size;
 	res->LineLength = line_length;
-	if (overflow2(line_length, sizeof(ContributionType))) {
+	if (line_length == 0 || line_length > SIZE_MAX / sizeof(ContributionType)) {
 		gdFree(res);
 		return NULL;
 	}
