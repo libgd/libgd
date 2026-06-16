@@ -932,7 +932,6 @@ gdWebpWriteAddImage(gdWebpWritePtr webp, gdImagePtr image, int durationMs);
 BGD_DECLARE(void) gdWebpWriteClose(gdWebpWritePtr webp);
 BGD_DECLARE(void *) gdWebpWritePtrFinish(gdWebpWritePtr webp, int *size);
 
-#ifdef HAVE_LIBJXL
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJxl(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJxlPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJxlCtx(gdIOCtxPtr infile);
@@ -1006,7 +1005,6 @@ BGD_DECLARE(int) gdImageJxlAnimAddFrame(
 
 BGD_DECLARE(int) gdImageJxlAnimEnd(gdJxlAnimPtr anim);
 BGD_DECLARE(void *) gdImageJxlAnimEndPtr(gdJxlAnimPtr anim, int *size);
-#endif /* HAVE_LIBJXL */
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data);
