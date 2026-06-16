@@ -304,6 +304,16 @@ GD_LIB_PKG_CHECK([LIBWEBP], [WEBP], [libwebp >= 0.2.0 libwebpdemux libwebpmux], 
   ])
 ])
 
+dnl Check for JPEG XL support.
+GD_LIB_PKG_CHECK([LIBJXL], [JXL], [libjxl libjxl_cms], [
+  AC_CHECK_LIB([jxl], [JxlDecoderCreate], [dnl
+    AC_CHECK_LIB([jxl_cms], [JxlGetDefaultCms], [dnl
+      AS_VAR_APPEND([LIBJXL_LIBS], [" -ljxl -ljxl_cms"])
+      gd_found_lib=yes
+    ])
+  ])
+])
+
 dnl Check for heif support.
 GD_LIB_PKG_CHECK([LIBHEIF], [HEIF], [libheif >= 1.7.0], [
   AC_CHECK_LIB([heif], [heif_get_version], [dnl
@@ -362,6 +372,7 @@ AC_MSG_RESULT([
    Support for PNG library:          $gd_with_LIBPNG
    Support for JPEG library:         $gd_with_LIBJPEG
    Support for WebP library:         $gd_with_LIBWEBP
+   Support for JPEG XL library:      $gd_with_LIBJXL
    Support for HEIF library:         $gd_with_LIBHEIF
    Support for AVIF library:         $gd_with_LIBAVIF
   Support for UltraHDR library:     $gd_with_LIBUHDR

@@ -39,7 +39,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install exiv2 libheif libjpeg-turbo libimagequant libde265 x265 libultrahdr
+          brew install exiv2 libheif libjpeg-turbo libimagequant libde265 x265 libultrahdr jpeg-xl libpng freetype libtiff webp libavif exiv2
 
       - name: Prepare environment
 

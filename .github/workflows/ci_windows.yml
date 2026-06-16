@@ -83,8 +83,11 @@ jobs:
           -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1
           -DENABLE_HEIF=${{matrix.enable_heif}}
           -DENABLE_AVIF=${{matrix.enable_avif}}
+          -DENABLE_JXL=1
+          -DENABLE_PNG=1
           -DENABLE_ULTRAHDR=${{matrix.enable_ultrahdr}}
           -DENABLE_WEBP=1
+          -DENABLE_FREETYPE=1
           -DENABLE_ICONV=1
           -DBUILD_TEST=1
           -B ${{github.workspace}}/build
