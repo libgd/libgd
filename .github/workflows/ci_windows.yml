@@ -22,6 +22,7 @@ jobs:
             prebuild_archive: x64-windows
             enable_avif: 1
             enable_heif: 1
+            enable_jxl: 1
             enable_ultrahdr: 1
           - arch: x86
             runner: windows-latest
@@ -30,6 +31,7 @@ jobs:
             prebuild_archive: x86-windows
             enable_avif: 0
             enable_heif: 0
+            enable_jxl: 0
             enable_ultrahdr: 0
           - arch: arm64
             runner: windows-11-arm
@@ -38,6 +40,7 @@ jobs:
             prebuild_archive: amd64_arm64-windows
             enable_avif: 1
             enable_heif: 1
+            enable_jxl: 1
             enable_ultrahdr: 1
     defaults:
       run:
@@ -83,7 +86,7 @@ jobs:
           -DENABLE_GD_FORMATS=1 -DENABLE_TIFF=1
           -DENABLE_HEIF=${{matrix.enable_heif}}
           -DENABLE_AVIF=${{matrix.enable_avif}}
-          -DENABLE_JXL=1
+          -DENABLE_JXL=${{matrix.enable_jxl}}
           -DENABLE_PNG=1
           -DENABLE_ULTRAHDR=${{matrix.enable_ultrahdr}}
           -DENABLE_WEBP=1
