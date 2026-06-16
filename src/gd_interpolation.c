@@ -2304,9 +2304,7 @@ gdImageSetInterpolationMethod(gdImagePtr im, gdInterpolationMethod id) {
  *   - <gdImageSetInterpolationMethod>
  */
 BGD_DECLARE(gdInterpolationMethod)
-gdImageGetInterpolationMethod(gdImagePtr im) {
-	return im->interpolation_id;
-}
+gdImageGetInterpolationMethod(gdImagePtr im) { return im->interpolation_id; }
 
 #ifdef _MSC_VER
 #pragma optimize("", on)

@@ -1,0 +1,32 @@
+if HAVE_LIBJXL
+libgd_test_programs += \
+	jxl/jxl_null \
+	jxl/jxl_im2im \
+	jxl/jxl_lossless_im2im \
+	jxl/jxl_alpha \
+	jxl/jxl_read_file \
+	jxl/jxl_palette \
+	jxl/jxl_anim \
+	jxl/jxl_anim_lossless \
+	jxl/jxl_anim_raw \
+	jxl/jxl_still_as_anim
+endif
+
+EXTRA_DIST += \
+	jxl/CMakeLists.txt \
+	jxl/Makemodule.am \
+	jxl/jxl_test_helpers.h \
+	jxl/generate_test_images.sh \
+	jxl/basic.jxl \
+	jxl/3x3_srgb_lossless.jxl \
+	jxl/3x3_srgb_lossy.jxl \
+	jxl/alpha_distance_1_0.jxl \
+	jxl/animation_distance_0_0.jxl \
+	jxl/animation_distance_1_0.jxl \
+	jxl/cropped_traffic_light.jxl \
+	jxl/flower_small_rgb.jxl \
+	jxl/flower_small_rgb_lossless.jxl \
+	jxl/flower_small_rgba.jxl \
+	jxl/hdr_pq_test.jxl \
+	jxl/palette_358.jxl \
+	jxl/pq_gradient.jxl

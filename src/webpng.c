@@ -59,10 +59,11 @@ static void err(const char *fmt, ...) {
 
 	exit(1);
 }
-
+extern char *optarg;
+extern int optind;
 int main(int argc, char **argv) {
 	FILE *in;
-	FILE *out;
+	FILE *out = NULL;
 	const char *infile;
 	char *tmpfile;
 	int i;
@@ -82,7 +83,6 @@ int main(int argc, char **argv) {
 	int got_a_flag = 0;
 
 	/* Consider each argument in turn. */
-	opterr = 0;
 	while ((i = getopt(argc, argv, "i:lt:da")) != -1) {
 		got_a_flag = 1;
 		switch (i) {
@@ -270,7 +270,10 @@ int main(int argc, char **argv) {
 	gdImagePng(im, out);
 
 	if (!use_stdin_stdout) {
-		fclose(out);
+		if (out) {
+			fclose(out);
+		}
+
 		/* Erase the old PNG. */
 		unlink(infile);
 		/* Rename the new to the old. */

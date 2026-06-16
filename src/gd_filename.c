@@ -82,6 +82,10 @@ static const struct FileType {
 			 {".webp", gdImageCreateFromWebp, gdImageWebp, NULL},
 #endif
 
+#ifdef HAVE_LIBJXL
+			 {".jxl", gdImageCreateFromJxl, gdImageJxl, NULL},
+#endif
+
 #ifdef HAVE_LIBXPM
 			 {".xpm", NULL, NULL, gdImageCreateFromXpm},
 #endif
@@ -139,6 +143,7 @@ static const struct FileType *ftype(const char *filename) {
 		- .avif
 		- .tiff, .tif
 		- .webp
+		- .jxl
 		- .xpm
 
 	Names are parsed case-insenstively.

@@ -14,6 +14,7 @@ SET (LIBGD_SRC_FILES
 	gd_gif_out.c
 	gd_heif.c
 	gd_interpolation.c
+	gd_jxl.c
 	gd_io.c
 	gd_io_dp.c
 	gd_io_file.c
@@ -123,6 +124,7 @@ SET(LIBGD_DEP_LIBS
 	${UHDR_LIBRARIES}
 	${RAQM_LIBRARIES}
 	${HEIF_LIBRARIES}
+	${JXL_LIBRARIES}
 )
 
 if (NEED_LINKING_AGAINST_LIBM)

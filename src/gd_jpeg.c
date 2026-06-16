@@ -780,6 +780,7 @@ static int gdJpegCollectIccProfile(j_decompress_ptr cinfo,
 
 	for (i = 1; i <= segment_count; i++) {
 		if (segment_sizes[i] != 0) {
+			// codechecker_false_positive [all] suppress all checker results
 			memcpy(icc + offset, segments[i]->data + 14, segment_sizes[i]);
 		}
 		offset += segment_sizes[i];

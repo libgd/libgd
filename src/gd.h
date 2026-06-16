@@ -932,6 +932,82 @@ gdWebpWriteAddImage(gdWebpWritePtr webp, gdImagePtr image, int durationMs);
 BGD_DECLARE(void) gdWebpWriteClose(gdWebpWritePtr webp);
 BGD_DECLARE(void *) gdWebpWritePtrFinish(gdWebpWritePtr webp, int *size);
 
+#ifdef HAVE_LIBJXL
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJxl(FILE *inFile);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJxlPtr(int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJxlCtx(gdIOCtxPtr infile);
+
+BGD_DECLARE(void) gdImageJxl(gdImagePtr im, FILE *outFile);
+BGD_DECLARE(void) gdImageJxlEx(gdImagePtr im, FILE *outFile,
+                                int lossless, float distance, int effort);
+BGD_DECLARE(void *) gdImageJxlPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImageJxlPtrEx(gdImagePtr im, int *size,
+                                     int lossless, float distance, int effort);
+BGD_DECLARE(void) gdImageJxlCtx(gdImagePtr im, gdIOCtxPtr outfile);
+BGD_DECLARE(void) gdImageJxlCtxEx(gdImagePtr im, gdIOCtxPtr outfile,
+                                   int lossless, float distance, int effort);
+
+/* Animation API */
+typedef struct gdJxlAnimReader *gdJxlAnimReaderPtr;
+typedef struct gdJxlAnim      *gdJxlAnimPtr;
+
+typedef struct {
+    int delay_ms;
+    int x_offset;
+    int y_offset;
+    int width;
+    int height;
+    int blend_mode;
+    int is_last;
+} gdJxlFrameInfo;
+
+#define GD_JXL_BLEND_REPLACE  0
+#define GD_JXL_BLEND_ADD      1
+#define GD_JXL_BLEND_BLEND    2
+#define GD_JXL_BLEND_MULADD   3
+#define GD_JXL_BLEND_MUL      4
+
+BGD_DECLARE(gdJxlAnimReaderPtr) gdImageJxlAnimReaderCreate(FILE *inFile);
+BGD_DECLARE(gdJxlAnimReaderPtr) gdImageJxlAnimReaderCreatePtr(int size, void *data);
+BGD_DECLARE(gdJxlAnimReaderPtr) gdImageJxlAnimReaderCreateCtx(gdIOCtxPtr inCtx);
+
+BGD_DECLARE(gdImagePtr) gdJxlReadNextImage(
+    gdJxlAnimReaderPtr reader,
+    int *delay_ms);
+
+BGD_DECLARE(gdJxlAnimReaderPtr) gdImageJxlAnimReaderCreateRaw(FILE *inFile);
+BGD_DECLARE(gdJxlAnimReaderPtr) gdImageJxlAnimReaderCreateRawPtr(int size, void *data);
+BGD_DECLARE(gdJxlAnimReaderPtr) gdImageJxlAnimReaderCreateRawCtx(gdIOCtxPtr inCtx);
+
+BGD_DECLARE(gdImagePtr) gdJxlReadNextFrame(
+    gdJxlAnimReaderPtr reader,
+    gdJxlFrameInfo *info);
+
+BGD_DECLARE(void) gdImageJxlAnimReaderDestroy(gdJxlAnimReaderPtr reader);
+
+BGD_DECLARE(gdJxlAnimPtr) gdImageJxlAnimBegin(
+    FILE *outFile,
+    int width, int height,
+    int lossless, float distance, int effort);
+
+BGD_DECLARE(gdJxlAnimPtr) gdImageJxlAnimBeginCtx(
+    gdIOCtxPtr outCtx,
+    int width, int height,
+    int lossless, float distance, int effort);
+
+BGD_DECLARE(gdJxlAnimPtr) gdImageJxlAnimBeginPtr(
+    int width, int height,
+    int lossless, float distance, int effort);
+
+BGD_DECLARE(int) gdImageJxlAnimAddFrame(
+    gdJxlAnimPtr anim,
+    gdImagePtr im,
+    int delay_ms);
+
+BGD_DECLARE(int) gdImageJxlAnimEnd(gdJxlAnimPtr anim);
+BGD_DECLARE(void *) gdImageJxlAnimEndPtr(gdJxlAnimPtr anim, int *size);
+#endif /* HAVE_LIBJXL */
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtxPtr infile);
