@@ -1224,6 +1224,7 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx *outfile, int level) {
 	png_bytep *row_pointers = NULL;
 	volatile int transparent = im->transparent;
 	volatile int remap = FALSE;
+	volatile int is_gray = 0;
 #ifdef PNG_SETJMP_SUPPORTED
 	jmpbuf_wrapper jbw;
 #endif
@@ -1345,9 +1346,48 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx *outfile, int level) {
 						 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 		}
 	} else {
-		png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth,
-					 PNG_COLOR_TYPE_PALETTE, interlace_type,
-					 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+		/* Check if all palette colors are greyscale (R == G == B) */
+		is_gray = 1;
+		for (i = 0; i < im->colorsTotal; ++i) {
+			if (!open[i]) {
+				if (im->red[i] != im->green[i] || im->red[i] != im->blue[i]) {
+					is_gray = 0;
+					break;
+				}
+			}
+		}
+		/* Greyscale mode requires all palette entries to be opaque */
+		if (is_gray) {
+			for (i = 0; i < im->colorsTotal; ++i) {
+				if (!open[i] && im->alpha[i] != gdAlphaOpaque) {
+					is_gray = 0;
+					break;
+				}
+			}
+		}
+		if (is_gray) {
+			int max_gray = 0;
+			int gi;
+			for (gi = 0; gi < im->colorsTotal; ++gi) {
+				if (!open[gi] && im->red[gi] > max_gray)
+					max_gray = im->red[gi];
+			}
+			if (max_gray <= 1)
+				bit_depth = 1;
+			else if (max_gray <= 3)
+				bit_depth = 2;
+			else if (max_gray <= 15)
+				bit_depth = 4;
+			else
+				bit_depth = 8;
+			png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth,
+						 PNG_COLOR_TYPE_GRAY, interlace_type,
+						 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+		} else {
+			png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth,
+						 PNG_COLOR_TYPE_PALETTE, interlace_type,
+						 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+		}
 	}
 	if (im->trueColor && (!im->saveAlphaFlag) && (transparent >= 0)) {
 		/* 2.0.9: fixed by Thomas Winzig */
@@ -1419,7 +1459,8 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx *outfile, int level) {
 				palette[i].green = im->green[i];
 				palette[i].blue = im->blue[i];
 			}
-		png_set_PLTE(png_ptr, info_ptr, palette, colors);
+		if (!is_gray)
+			png_set_PLTE(png_ptr, info_ptr, palette, colors);
 	}
 
 	/* write out the PNG header info (everything up to first IDAT) */
@@ -1498,7 +1539,36 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx *outfile, int level) {
 			gdFree(row_pointers[j]);
 		gdFree(row_pointers);
 	} else {
-		if (remap) {
+		if (is_gray) {
+			png_bytep *row_pointers;
+			if (overflow2(sizeof(png_bytep), height)) {
+				ret = 1;
+				goto bail;
+			}
+			row_pointers = gdMalloc(sizeof(png_bytep) * height);
+			if (row_pointers == NULL) {
+				gd_error("gd-png error: unable to allocate rows\n");
+				ret = 1;
+				goto bail;
+			}
+			for (j = 0; j < height; ++j) {
+				if ((row_pointers[j] = (png_bytep)gdMalloc(width)) == NULL) {
+					gd_error("gd-png error: unable to allocate rows\n");
+					for (i = 0; i < j; ++i)
+						gdFree(row_pointers[i]);
+					gdFree(row_pointers);
+					ret = 1;
+					goto bail;
+				}
+				for (i = 0; i < width; ++i)
+					row_pointers[j][i] = (png_byte)im->red[im->pixels[j][i]];
+			}
+			png_write_image(png_ptr, row_pointers);
+			for (j = 0; j < height; ++j)
+				gdFree(row_pointers[j]);
+			gdFree(row_pointers);
+			png_write_end(png_ptr, info_ptr);
+		} else if (remap) {
 			png_bytep *row_pointers;
 			if (overflow2(sizeof(png_bytep), height)) {
 				ret = 1;
