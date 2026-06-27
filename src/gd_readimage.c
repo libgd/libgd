@@ -9,7 +9,7 @@
 
 #define GD_READIMAGE_PROBE_SIZE 32
 
-typedef gdImagePtr (*ReadCtxFn)(gdIOCtxPtr);
+typedef gdImagePtr(BGD_STDCALL *ReadCtxFn)(gdIOCtxPtr);
 
 struct FormatEntry {
 	const char *name;
