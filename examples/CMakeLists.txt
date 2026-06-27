@@ -18,6 +18,9 @@ SET(TESTS_FILES
 	path_arcfillimage
 	path_imagesource
 	path_pattern
+	ctx_image_basic
+	ctx_image_advanced
+	ctx_image_blend_modes
 )
 
 if (PNG_FOUND)
@@ -58,6 +61,7 @@ if (PNG_FOUND AND JPEG_FOUND)
 	if (UNIX)
 		target_link_libraries(copyrotated m)
 		target_link_libraries (path_pattern m)
+		target_link_libraries (ctx_image_advanced m)
 	endif (UNIX)
 endif(PNG_FOUND AND JPEG_FOUND)
 

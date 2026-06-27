@@ -187,17 +187,17 @@ typedef struct GD_FT_Outline_Funcs_ {
 #define ONE_PIXEL (1L << PIXEL_BITS)
 #define PIXEL_MASK (-1L << PIXEL_BITS)
 #define TRUNC(x) ((TCoord)((x) >> PIXEL_BITS))
-#define SUBPIXELS(x) ((TPos)(x) << PIXEL_BITS)
+#define SUBPIXELS(x) ((TPos)(x) * ONE_PIXEL)
 #define FLOOR(x) ((x) & -ONE_PIXEL)
 #define CEILING(x) (((x) + ONE_PIXEL - 1) & -ONE_PIXEL)
 #define ROUND(x) (((x) + ONE_PIXEL / 2) & -ONE_PIXEL)
 
 #if PIXEL_BITS >= 6
-#define UPSCALE(x) ((x) << (PIXEL_BITS - 6))
+#define UPSCALE(x) ((x) * (1L << (PIXEL_BITS - 6)))
 #define DOWNSCALE(x) ((x) >> (PIXEL_BITS - 6))
 #else
 #define UPSCALE(x) ((x) >> (6 - PIXEL_BITS))
-#define DOWNSCALE(x) ((x) << (6 - PIXEL_BITS))
+#define DOWNSCALE(x) ((x) * (1L << (6 - PIXEL_BITS)))
 #endif
 
 /* Compute `dividend / divisor' and return both its quotient and     */
@@ -1011,7 +1011,7 @@ static int GD_FT_Outline_Decompose(const GD_FT_Outline*       outline,
                                    void*                      user)
 {
 #undef SCALED
-#define SCALED(x) (((x) << shift) - delta)
+#define SCALED(x) (((TPos)(x) * (1L << shift)) - delta)
 
     GD_FT_Vector v_last;
     GD_FT_Vector v_control;
@@ -1378,9 +1378,11 @@ static int gray_raster_render(gray_PRaster               raster,
     ras.render_span_data = params->user;
 
     gray_convert_glyph(RAS_VAR);
-    params->bbox_cb(ras.bound_left, ras.bound_top,
-                    ras.bound_right - ras.bound_left,
-                    ras.bound_bottom - ras.bound_top + 1, params->user);
+    if (ras.bound_right > ras.bound_left && ras.bound_bottom > ras.bound_top) {
+        params->bbox_cb(ras.bound_left, ras.bound_top,
+                        ras.bound_right - ras.bound_left,
+                        ras.bound_bottom - ras.bound_top + 1, params->user);
+    }
     return 1;
 }
 

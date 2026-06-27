@@ -275,11 +275,38 @@
                         GD_FT_UInt    *anum_contours );
 
 
-  /**************************************************************
-   *
-   * @function:
-   *   GD_FT_Stroker_Export
-   *
+/**************************************************************
+ *
+ * @function:
+ *   GD_FT_Stroker_ExportBorder
+ *
+ * @description:
+ *   Export a single border of a stroked outline.
+ *
+ * @input:
+ *   stroker ::
+ *     The target stroker handle.
+ *
+ *   border ::
+ *     The border to export (LEFT or RIGHT).
+ *
+ *   outline ::
+ *     The target outline handle.
+ *
+ * @note:
+ *   Call this after GD_FT_Stroker_GetCounts to get individual borders.
+ *   The outline must be pre-allocated with sufficient space.
+ */
+void
+GD_FT_Stroker_ExportBorder( GD_FT_Stroker      stroker,
+                           GD_FT_StrokerBorder border,
+                           GD_FT_Outline*     outline );
+
+/**************************************************************
+ *
+ * @function:
+ *   GD_FT_Stroker_Export
+ *
    * @description:
    *   Call this function after @GD_FT_Stroker_GetBorderCounts to
    *   export all borders to your own @GD_FT_Outline structure.

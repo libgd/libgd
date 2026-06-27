@@ -34,7 +34,6 @@ int main()
     int width = 512, height = 512;
     int w,h;
     gdSurface *surface;
-    unsigned char *data;
     gdSurfacePtr surface_fill = read_png("../examples/images/isar_256x.png");
     if (!surface_fill) {
         fprintf(stderr,  "can't read image\n");
@@ -60,7 +59,6 @@ int main()
     gdContextTranslate (cr, -width/2, -height/2);
 
     gdPathMatrix matrix;
-    gdPathPatternSetMatrix(pattern, &matrix);
     gdPathMatrixInitScale (&matrix, 1/(w/(double)width * 5.0), 1/(h/(double)height * 5.0));
     gdPathPatternSetMatrix (pattern, &matrix);
 

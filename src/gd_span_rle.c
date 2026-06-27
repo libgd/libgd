@@ -192,7 +192,7 @@ void gdSpanRlePathClip(gdSpanRlePtr rle, const gdSpanRlePtr clip)
     gdSpanRleDestroy(result);
 }
 
-static GD_FT_Outline *gd_ft_outline_create(int points, int contours)
+GD_FT_Outline *gd_ft_outline_create(int points, int contours)
 {
     GD_FT_Outline *ft = gdMalloc(sizeof(GD_FT_Outline));
     if (!ft)
@@ -206,7 +206,7 @@ static GD_FT_Outline *gd_ft_outline_create(int points, int contours)
     return ft;
 }
 
-static void gd_ft_outline_close(GD_FT_Outline *ft)
+void gd_ft_outline_close(GD_FT_Outline *ft)
 {
     ft->contours_flag[ft->n_contours] = 0;
     int index = ft->n_contours ? ft->contours[ft->n_contours - 1] + 1 : 0;
@@ -219,7 +219,7 @@ static void gd_ft_outline_close(GD_FT_Outline *ft)
     ft->n_points++;
 }
 
-static void gd_ft_outline_end(GD_FT_Outline *ft)
+void gd_ft_outline_end(GD_FT_Outline *ft)
 {
     if (ft->n_points)
     {
@@ -229,7 +229,7 @@ static void gd_ft_outline_end(GD_FT_Outline *ft)
 }
 
 #define FT_COORD(x) (GD_FT_Pos)((x)*64)
-static void gd_ft_outline_move_to(GD_FT_Outline *ft, double x, double y)
+void gd_ft_outline_move_to(GD_FT_Outline *ft, double x, double y)
 {
     ft->points[ft->n_points].x = FT_COORD(x);
     ft->points[ft->n_points].y = FT_COORD(y);
@@ -244,7 +244,7 @@ static void gd_ft_outline_move_to(GD_FT_Outline *ft, double x, double y)
     ft->n_points++;
 }
 
-static void gd_ft_outline_line_to(GD_FT_Outline *ft, double x, double y)
+void gd_ft_outline_line_to(GD_FT_Outline *ft, double x, double y)
 {
     ft->points[ft->n_points].x = FT_COORD(x);
     ft->points[ft->n_points].y = FT_COORD(y);
@@ -252,7 +252,7 @@ static void gd_ft_outline_line_to(GD_FT_Outline *ft, double x, double y)
     ft->n_points++;
 }
 
-static void gd_ft_outline_cubic_to(GD_FT_Outline *ft, double x1, double y1, double x2, double y2, double x3, double y3)
+void gd_ft_outline_cubic_to(GD_FT_Outline *ft, double x1, double y1, double x2, double y2, double x3, double y3)
 {
     ft->points[ft->n_points].x = FT_COORD(x1);
     ft->points[ft->n_points].y = FT_COORD(y1);
@@ -270,7 +270,20 @@ static void gd_ft_outline_cubic_to(GD_FT_Outline *ft, double x1, double y1, doub
     ft->n_points++;
 }
 
-static GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMatrixPtr matrix)
+void gd_ft_outline_conic_to(GD_FT_Outline *ft, double x1, double y1, double x2, double y2)
+{
+    ft->points[ft->n_points].x = FT_COORD(x1);
+    ft->points[ft->n_points].y = FT_COORD(y1);
+    ft->tags[ft->n_points] = GD_FT_CURVE_TAG_CONIC;
+    ft->n_points++;
+
+    ft->points[ft->n_points].x = FT_COORD(x2);
+    ft->points[ft->n_points].y = FT_COORD(y2);
+    ft->tags[ft->n_points] = GD_FT_CURVE_TAG_ON;
+    ft->n_points++;
+}
+
+GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMatrixPtr matrix)
 {
     GD_FT_Outline *outline = gd_ft_outline_create(gdArrayNumElements(&path->points), path->contours);
     gdPointF p[3];
@@ -311,7 +324,12 @@ static GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMa
             pointsIndex += 1;
             break;
          case gdPathOpsQuadTo:
-                break;
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            point = gdArrayIndex(&path->points, pointsIndex + 1);
+            gdPathMatrixMapPoint(matrix, point, &p[1]);
+            gd_ft_outline_conic_to(outline, p[0].x, p[0].y, p[1].x, p[1].y);
+            pointsIndex += 2;
+            break;
         }
     }
 
@@ -319,15 +337,7 @@ static GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMa
     return outline;
 }
 
-static GD_FT_Outline* gd_ft_outline_convert_dash(const gdPathPtr path, const gdPathMatrixPtr matrix, const gdPathDashPtr dash)
-{
-    gdPathPtr dashed = gdPathApplyDash(dash, path);
-    GD_FT_Outline* outline = gd_ft_outline_convert(dashed, matrix);
-    gdPathDestroy(dashed);
-    return outline;
-}
-
-static void gd_ft_outline_destroy(GD_FT_Outline *ft)
+void gd_ft_outline_destroy(GD_FT_Outline *ft)
 {
     gdFree(ft->points);
     gdFree(ft->tags);
@@ -354,8 +364,9 @@ static void bbox_callback(int x, int y, int w, int h, void *user)
     rle->h = h;
 }
 
-void gdSpanRleRasterize(gdSpanRlePtr rle, const gdPathPtr path, const gdPathMatrixPtr matrix, const gdRectFPtr clip, const gdStrokePtr stroke, gdFillRule winding)
+static void _rasterize_fill(gdSpanRlePtr rle, const gdPathPtr path, const gdPathMatrixPtr matrix, const gdRectFPtr clip, gdFillRule winding)
 {
+    static const gdPathMatrix identity_matrix = {1.0, 0.0, 0.0, 1.0, 0.0, 0.0};
     GD_FT_Raster_Params params;
     params.flags = GD_FT_RASTER_FLAG_DIRECT | GD_FT_RASTER_FLAG_AA;
     params.gray_spans = generation_callback;
@@ -371,86 +382,45 @@ void gdSpanRleRasterize(gdSpanRlePtr rle, const gdPathPtr path, const gdPathMatr
         params.clip_box.yMax = (GD_FT_Pos)(clip->y + clip->h);
     }
 
-    if (stroke)
+    GD_FT_Outline *outline = gd_ft_outline_convert(path, matrix ? matrix : &identity_matrix);
+    if (!outline)
+        return;
+    outline->flags = winding == gdFillRulEvenOdd ? GD_FT_OUTLINE_EVEN_ODD_FILL : GD_FT_OUTLINE_NONE;
+    params.source = outline;
+    gd_ft_grays_raster.raster_render(NULL, &params);
+    gd_ft_outline_destroy(outline);
+}
+
+void gdSpanRleRasterize(gdSpanRlePtr rle, const gdPathPtr path, const gdPathMatrixPtr matrix, const gdRectFPtr clip, const gdStrokePtr stroke, gdFillRule winding)
+{
+    if (stroke && stroke->width > 0)
     {
-        GD_FT_Stroker_LineCap ftCap;
-        GD_FT_Stroker_LineJoin ftJoin;
-        GD_FT_Fixed ftWidth;
-        GD_FT_Fixed ftMiterLimit;
+        gdPathPtr pathToStroke = (gdPathPtr)path;
 
-        gdPointF p1 = {0, 0};
-        gdPointF p2 = {SQRT2, SQRT2};
-
-        gdPathMatrixMapPoint(matrix, &p1, &p1);
-        gdPathMatrixMapPoint(matrix, &p2, &p2);
-
-        double dx = p2.x - p1.x;
-        double dy = p2.y - p1.y;
-
-        double scale = sqrt(dx * dx + dy * dy) / 2.0;
-        double radius = stroke->width / 2.0;
-
-        ftWidth = (GD_FT_Fixed)(radius * scale * (1 << 6));
-        ftMiterLimit = (GD_FT_Fixed)(stroke->miterlimit * (1 << 16));
-
-        switch (stroke->cap)
+        // Apply dash pattern to original path BEFORE stroke conversion
+        if (stroke->dash)
         {
-        case gdLineCapSquare:
-            ftCap = GD_FT_STROKER_LINECAP_SQUARE;
-            break;
-        case gdLineCapRound:
-            ftCap = GD_FT_STROKER_LINECAP_ROUND;
-            break;
-        case gdLineCapButt:
-        default:
-            ftCap = GD_FT_STROKER_LINECAP_BUTT;
-            break;
+            pathToStroke = gdPathApplyDash(stroke->dash, path);
+            if (!pathToStroke)
+                return;
         }
 
-        switch (stroke->join)
+        gdPathPtr strokePath = gdPathStrokeToPath(pathToStroke, stroke, matrix);
+        if (!strokePath)
         {
-        case gdLineJoinBevel:
-            ftJoin = GD_FT_STROKER_LINEJOIN_BEVEL;
-            break;
-        case gdLineJoinRound:
-            ftJoin = GD_FT_STROKER_LINEJOIN_ROUND;
-            break;
-        case gdLineJoinMiter:
-        default:
-            ftJoin = GD_FT_STROKER_LINEJOIN_MITER_FIXED;
-            break;
+            if (pathToStroke != path)
+                gdPathDestroy(pathToStroke);
+            return;
         }
 
-        GD_FT_Outline *outline = stroke->dash ? gd_ft_outline_convert_dash(path, matrix, stroke->dash) : gd_ft_outline_convert(path, matrix);
-        if (!outline)
-            return;
-        GD_FT_Stroker stroker;
-        GD_FT_Stroker_New(&stroker);
-        GD_FT_Stroker_Set(stroker, ftWidth, ftCap, ftJoin, ftMiterLimit);
-        GD_FT_Stroker_ParseOutline(stroker, outline);
+        if (pathToStroke != path)
+            gdPathDestroy(pathToStroke);
 
-        GD_FT_UInt points;
-        GD_FT_UInt contours;
-        GD_FT_Stroker_GetCounts(stroker, &points, &contours);
-
-        GD_FT_Outline *strokeOutline = gd_ft_outline_create((int)points, (int)contours);
-        if (!strokeOutline)
-            return;
-        GD_FT_Stroker_Export(stroker, strokeOutline);
-        GD_FT_Stroker_Done(stroker);
-
-        strokeOutline->flags = GD_FT_OUTLINE_NONE;
-        params.source = strokeOutline;
-        gd_ft_grays_raster.raster_render(NULL, &params);
-        gd_ft_outline_destroy(outline);
-        gd_ft_outline_destroy(strokeOutline);
+        _rasterize_fill(rle, strokePath, NULL, clip, winding);
+        gdPathDestroy(strokePath);
     }
     else
     {
-        GD_FT_Outline *outline = gd_ft_outline_convert(path, matrix);
-        outline->flags = winding == gdFillRulEvenOdd ? GD_FT_OUTLINE_EVEN_ODD_FILL : GD_FT_OUTLINE_NONE;
-        params.source = outline;
-        gd_ft_grays_raster.raster_render(NULL, &params);
-        gd_ft_outline_destroy(outline);
+        _rasterize_fill(rle, path, matrix, clip, winding);
     }
 }

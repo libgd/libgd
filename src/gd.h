@@ -2106,21 +2106,23 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    } gdPath;
    typedef gdPath *gdPathPtr;
 
-   typedef struct gdContextStruct
-   {
-      int ref;
-      gdSurfacePtr surface;
-      gdPathPtr path;
-      gdStatePtr state;
-      gdSpanRlePtr rle;
-      gdSpanRlePtr clippath;
-      gdRectF clip;
-      /*
-   void* render;
-   void* clippath;
-   void* clip;
-   */
-   } gdContext;
+typedef struct gdContextStruct
+{
+   int ref;
+   gdSurfacePtr surface;
+   gdPathPtr path;
+   gdStatePtr state;
+   gdSpanRlePtr rle;
+   gdSpanRlePtr clippath;
+   gdRectF clip;
+   gdImagePtr image;
+   int imageOwned;
+   /*
+void* render;
+void* clippath;
+void* clip;
+*/
+} gdContext;
    typedef gdContext *gdContextPtr;
 
    BGD_DECLARE(gdSurfacePtr)
@@ -2202,10 +2204,16 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
 
 
 
-   BGD_DECLARE(gdContextPtr)
-   gdContextCreate(gdSurfacePtr surface);
-   BGD_DECLARE(void)
-   gdContextDestroy(gdContextPtr context);
+BGD_DECLARE(gdContextPtr)
+gdContextCreate(gdSurfacePtr surface);
+BGD_DECLARE(gdContextPtr)
+gdContextCreateForImage(gdImagePtr im);
+BGD_DECLARE(void)
+gdContextFlushImage(gdContextPtr context);
+BGD_DECLARE(gdImagePtr)
+gdContextGetImage(gdContextPtr context);
+BGD_DECLARE(void)
+gdContextDestroy(gdContextPtr context);
    BGD_DECLARE(void)
    gdContextClip(gdContextPtr context);
    BGD_DECLARE(void)
@@ -2307,6 +2315,7 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
     BGD_DECLARE(void) gdPathQuadTo(gdPathPtr path, double x1, double y1, double x2, double y2);
     BGD_DECLARE(void) gdPathCurveTo(gdPathPtr path, double x1, double y1, double x2, double y2, double x3, double y3);
     BGD_DECLARE(void) gdPathClose(gdPathPtr path);
+BGD_DECLARE(gdPathPtr) gdPathStrokeToPath(const gdPathPtr path, const gdStrokePtr stroke, const gdPathMatrixPtr matrix);
 /* newfangled special effects */
 #include "gdfx.h"
 

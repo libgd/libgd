@@ -43,8 +43,6 @@ static inline uint32_t fetch_pixel_general (gdSurfacePtr surface, int x, int y, 
 }
 
 #define SIZEOF_LONG 8
-#if 1
-#if SIZEOF_LONG > 4
 
 static inline uint32_t bilinear_interpolation (uint32_t tl, uint32_t tr, uint32_t bl, uint32_t br, int distx, int disty)
 {
@@ -87,56 +85,6 @@ static inline uint32_t bilinear_interpolation (uint32_t tl, uint32_t tr, uint32_
 
     return (uint32_t)(r >> 16);
 }
-
-#else
-
-static inline uint32_t
-bilinear_interpolation (uint32_t tl, uint32_t tr,
-        uint32_t bl, uint32_t br,
-int distx, int disty)
-{
-    int distxy, distxiy, distixy, distixiy;
-    uint32_t f, r;
-
-    distx <<= (8 - BILINEAR_INTERPOLATION_BITS);
-    disty <<= (8 - BILINEAR_INTERPOLATION_BITS);
-
-    distxy = distx * disty;
-    distxiy = (distx << 8) - distxy;	/* distx * (256 - disty) */
-    distixy = (disty << 8) - distxy;	/* disty * (256 - distx) */
-    distixiy =
-    256 * 256 - (disty << 8) -
-    (distx << 8) + distxy;		/* (256 - distx) * (256 - disty) */
-
-    /* Blue */
-    r = (tl & 0x000000ff) * distixiy + (tr & 0x000000ff) * distxiy
-        + (bl & 0x000000ff) * distixy  + (br & 0x000000ff) * distxy;
-
-    /* Green */
-    f = (tl & 0x0000ff00) * distixiy + (tr & 0x0000ff00) * distxiy
-        + (bl & 0x0000ff00) * distixy  + (br & 0x0000ff00) * distxy;
-    r |= f & 0xff000000;
-
-    tl >>= 16;
-    tr >>= 16;
-    bl >>= 16;
-    br >>= 16;
-    r >>= 16;
-
-    /* Red */
-    f = (tl & 0x000000ff) * distixiy + (tr & 0x000000ff) * distxiy
-        + (bl & 0x000000ff) * distixy  + (br & 0x000000ff) * distxy;
-    r |= f & 0x00ff0000;
-
-    /* Alpha */
-    f = (tl & 0x0000ff00) * distixiy + (tr & 0x0000ff00) * distxiy
-        + (bl & 0x0000ff00) * distixy  + (br & 0x0000ff00) * distxy;
-    r |= f & 0xff000000;
-
-    return r;
-}
-#endif
-#endif
 
 static inline int _update_w_repeat (gdExtendMode repeat, int *c, int size)
 {
@@ -435,8 +383,7 @@ static void argb32_compose_dst_in(uint32_t* dest, int length, const uint32_t* sr
 
 #define BUFFER_SIZE 1024
 static void render_spans_compose_source(const gdSurface *surface, const _spans_pattern *pattern, uint32_t *buffer,
-                                        const gdExtendMode extend, const int image_width_1616,
-                                        const int image_height_1616, int fdx, int fdy, int count, gdSpanPtr spans) {
+                                        const gdExtendMode extend, int fdx, int fdy, int count, gdSpanPtr spans) {
     while(count--) {
         uint32_t* target = (uint32_t*)(surface->data + spans->y * surface->stride) + spans->x;
         const double cx = spans->x + 0.5;
@@ -449,22 +396,10 @@ static void render_spans_compose_source(const gdSurface *surface, const _spans_p
             int l = MIN(length, BUFFER_SIZE);
             const uint32_t* end = buffer + l;
             uint32_t* b = buffer;
-            int px1616 = x;
-            int py1616 = y;
-            int px_delta_1616 = fdx;
-            int py_delta_1616 = fdy;
             while(b < end) {
-                int px = gd_fixed_to_int(px1616);
-                int py = gd_fixed_to_int(py1616);
-                *b = _surface_fetch_pixel_bilinear(pattern->surface, gd_int_to_fixed(px), gd_int_to_fixed(py), extend);
+                *b = _surface_fetch_pixel_bilinear(pattern->surface, x, y, extend);
                 x += fdx;
                 y += fdy;
-                px1616 += px_delta_1616;
-                if(px1616 >= image_width_1616)
-                    px1616 -= image_width_1616;
-                py1616 += py_delta_1616;
-                if(py1616 >= image_height_1616)
-                    py1616 -= image_height_1616;
                 ++b;
             }
             argb32_compose_source_over(target, l, buffer, coverage);
@@ -476,8 +411,7 @@ static void render_spans_compose_source(const gdSurface *surface, const _spans_p
 }
 
 static void render_spans_compose_source_over(const gdSurface *surface, const _spans_pattern *pattern, uint32_t *buffer,
-                                             const gdExtendMode extend, const int image_width_1616,
-                                             const int image_height_1616, int fdx, int fdy, int count, gdSpanPtr spans) {
+                                             const gdExtendMode extend, int fdx, int fdy, int count, gdSpanPtr spans) {
     while(count--) {
         uint32_t* target = (uint32_t*)(surface->data + spans->y * surface->stride) + spans->x;
         const double cx = spans->x + 0.5;
@@ -490,22 +424,10 @@ static void render_spans_compose_source_over(const gdSurface *surface, const _sp
             int l = MIN(length, BUFFER_SIZE);
             const uint32_t* end = buffer + l;
             uint32_t* b = buffer;
-            int px1616 = x;
-            int py1616 = y;
-            int px_delta_1616 = fdx;
-            int py_delta_1616 = fdy;
             while(b < end) {
-                int px = gd_fixed_to_int(px1616);
-                int py = gd_fixed_to_int(py1616);
-                *b = _surface_fetch_pixel_bilinear(pattern->surface, gd_int_to_fixed(px), gd_int_to_fixed(py), extend);
+                *b = _surface_fetch_pixel_bilinear(pattern->surface, x, y, extend);
                 x += fdx;
                 y += fdy;
-                px1616 += px_delta_1616;
-                if(px1616 >= image_width_1616)
-                    px1616 -= image_width_1616;
-                py1616 += py_delta_1616;
-                if(py1616 >= image_height_1616)
-                    py1616 -= image_height_1616;
                 ++b;
             }
             argb32_compose_source_over(target, l, buffer, coverage);
@@ -517,8 +439,7 @@ static void render_spans_compose_source_over(const gdSurface *surface, const _sp
 }
 
 static void render_spans_compose_dst_in(const gdSurface *surface, const _spans_pattern *pattern, uint32_t *buffer,
-                                        const gdExtendMode extend, const int image_width_1616,
-                                        const int image_height_1616, int fdx, int fdy, int count, gdSpanPtr spans) {
+                                        const gdExtendMode extend, int fdx, int fdy, int count, gdSpanPtr spans) {
     while(count--) {
         uint32_t* target = (uint32_t*)(surface->data + spans->y * surface->stride) + spans->x;
         const double cx = spans->x + 0.5;
@@ -531,22 +452,10 @@ static void render_spans_compose_dst_in(const gdSurface *surface, const _spans_p
             int l = MIN(length, BUFFER_SIZE);
             const uint32_t* end = buffer + l;
             uint32_t* b = buffer;
-            int px1616 = x;
-            int py1616 = y;
-            int px_delta_1616 = fdx;
-            int py_delta_1616 = fdy;
             while(b < end) {
-                int px = gd_fixed_to_int(px1616);
-                int py = gd_fixed_to_int(py1616);
-                *b = _surface_fetch_pixel_bilinear(pattern->surface, gd_int_to_fixed(px), gd_int_to_fixed(py), extend);
+                *b = _surface_fetch_pixel_bilinear(pattern->surface, x, y, extend);
                 x += fdx;
                 y += fdy;
-                px1616 += px_delta_1616;
-                if(px1616 >= image_width_1616)
-                    px1616 -= image_width_1616;
-                py1616 += py_delta_1616;
-                if(py1616 >= image_height_1616)
-                    py1616 -= image_height_1616;
                 ++b;
             }
             argb32_compose_dst_in(target, l, buffer, coverage);
@@ -558,8 +467,7 @@ static void render_spans_compose_dst_in(const gdSurface *surface, const _spans_p
 }
 
 static void render_spans_compose_dst_out(const gdSurface *surface, const _spans_pattern *pattern, uint32_t *buffer,
-                                         const gdExtendMode extend, const int image_width_1616,
-                                         const int image_height_1616, int fdx, int fdy, int count, gdSpanPtr spans) {
+                                         const gdExtendMode extend, int fdx, int fdy, int count, gdSpanPtr spans) {
     while(count--) {
         uint32_t* target = (uint32_t*)(surface->data + spans->y * surface->stride) + spans->x;
         const double cx = spans->x + 0.5;
@@ -572,22 +480,10 @@ static void render_spans_compose_dst_out(const gdSurface *surface, const _spans_
             int l = MIN(length, BUFFER_SIZE);
             const uint32_t* end = buffer + l;
             uint32_t* b = buffer;
-            int px1616 = x;
-            int py1616 = y;
-            int px_delta_1616 = fdx;
-            int py_delta_1616 = fdy;
             while(b < end) {
-                int px = gd_fixed_to_int(px1616);
-                int py = gd_fixed_to_int(py1616);
-                *b = _surface_fetch_pixel_bilinear(pattern->surface, gd_int_to_fixed(px), gd_int_to_fixed(py), extend);
+                *b = _surface_fetch_pixel_bilinear(pattern->surface, x, y, extend);
                 x += fdx;
                 y += fdy;
-                px1616 += px_delta_1616;
-                if(px1616 >= image_width_1616)
-                    px1616 -= image_width_1616;
-                py1616 += py_delta_1616;
-                if(py1616 >= image_height_1616)
-                    py1616 -= image_height_1616;
                 ++b;
             }
             argb32_compose_dst_out(target, l, buffer, coverage);
@@ -601,28 +497,22 @@ static void argb32_pattern_tiled_blend_transformed(gdSurfacePtr surface, gdImage
 {
     uint32_t buffer[BUFFER_SIZE];
     const gdExtendMode extend = pattern->extend;
-    const int image_width_1616 = gd_int_to_fixed(pattern->width);
-    const int image_height_1616 = gd_int_to_fixed(pattern->height);
     int fdx = gd_double_to_fixed(pattern->matrix.m00);
     int fdy = gd_double_to_fixed(pattern->matrix.m10);
     int count = rle->spans.size;
     gdSpanPtr spans = rle->spans.data;
     switch (op) {
         case gdImageOpsSrc:
-            render_spans_compose_source(surface, pattern, buffer, extend, image_width_1616, image_height_1616, fdx,
-                                        fdy, count, spans);
+            render_spans_compose_source(surface, pattern, buffer, extend, fdx, fdy, count, spans);
             break;
         case gdImageOpsSrcOver:
-            render_spans_compose_source_over(surface, pattern, buffer, extend, image_width_1616, image_height_1616, fdx,
-                                        fdy, count, spans);
+            render_spans_compose_source_over(surface, pattern, buffer, extend, fdx, fdy, count, spans);
             break;
         case gdImageOpsDstIn:
-            render_spans_compose_dst_in(surface, pattern, buffer, extend, image_width_1616, image_height_1616, fdx,
-                                             fdy, count, spans);
+            render_spans_compose_dst_in(surface, pattern, buffer, extend, fdx, fdy, count, spans);
             break;
         case gdImageOpsDstOut:
-            render_spans_compose_dst_out(surface, pattern, buffer, extend, image_width_1616, image_height_1616, fdx,
-                                        fdy, count, spans);
+            render_spans_compose_dst_out(surface, pattern, buffer, extend, fdx, fdy, count, spans);
             break;
         default:
             gd_error("Invalid Composition method %i.", op);
@@ -670,6 +560,7 @@ static void argb32_pattern_blend_untransformed(gdSurfacePtr surface, gdImageOp o
         case gdImageOpsSrcOver:
             spans_untransformed_blend_loop(argb32_compose_source_over);
             break;
+        case gdImageOpsDstIn:
             spans_untransformed_blend_loop(argb32_compose_dst_in);
             break;
         case gdImageOpsDstOut:
@@ -721,8 +612,6 @@ void gdPathBlend(gdContextPtr context, const gdSpanRlePtr rle)
         return;
 
     gdPaintPtr source = context->state->source;
-    if(source->type==gdPaintTypeColor)
-        gdBlendColor(context, rle, source->color);
     switch (source->type) {
         case gdPaintTypeColor:
             gdBlendColor(context, rle, source->color);

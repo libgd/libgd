@@ -20,7 +20,7 @@ typedef gd_fixed_16_16	gd_fixed_t;
 #define gd_fixed_1_minus_e		(gd_fixed_1 - gd_fixed_e)
 #define gd_fixed_minus_1		(pixman_int_to_fixed(-1))
 #define gd_fixed_to_int(f)		((int) ((f) >> 16))
-#define gd_int_to_fixed(i)		((gd_fixed_t) ((i) << 16))
+#define gd_int_to_fixed(i)		((gd_fixed_t) (i) * (gd_fixed_t) 65536)
 #define gd_fixed_to_double(f)	(double) ((f) / (double) gd_fixed_1)
 #define gd_double_to_fixed(d)	((gd_fixed_t) ((d) * 65536.0))
 #define gd_fixed_frac(f)		((f) & gd_fixed_1_minus_e)

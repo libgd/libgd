@@ -18,6 +18,31 @@
 #include "gd_path_matrix.h"
 #include "gd_path_dash.h"
 
+/* Conversion helpers: legacy gdImage truecolor <-> premultiplied ARGB32 */
+static inline uint32_t gdcolor_to_premul(int gdcolor)
+{
+    int a = gdTrueColorGetAlpha(gdcolor);
+    int r = gdTrueColorGetRed(gdcolor);
+    int g = gdTrueColorGetGreen(gdcolor);
+    int b = gdTrueColorGetBlue(gdcolor);
+    int a_s = (255 * (127 - a)) / 127;
+    int pr = (r * a_s) / 255;
+    int pg = (g * a_s) / 255;
+    int pb = (b * a_s) / 255;
+    return ((uint32_t)a_s << 24) | ((uint32_t)pr << 16) | ((uint32_t)pg << 8) | (uint32_t)pb;
+}
+
+static inline int premul_to_gdcolor(uint32_t pm)
+{
+    int a_s = pm >> 24;
+    int a = (127 * (255 - a_s)) / 255;
+    if (a > 127) a = 127;
+    int r = (a_s > 0) ? ((int)(pm >> 16 & 0xFF) * 255 / a_s) : 0;
+    int g = (a_s > 0) ? ((int)(pm >> 8 & 0xFF) * 255 / a_s) : 0;
+    int b = (a_s > 0) ? ((int)(pm & 0xFF) * 255 / a_s) : 0;
+    return gdTrueColorAlpha(r, g, b, a);
+}
+
 BGD_DECLARE(void)
 gdContextSetSourceRgba(gdContextPtr context, double r, double g, double b, double a)
 {
@@ -76,6 +101,7 @@ gdContextCreate(gdSurfacePtr surface)
     }
     context->ref = 1;
     context->surface = gdSurfaceAddRef(surface);
+    context->image = NULL;
     context->clippath= NULL;
     context->clip.x = 0.0;
     context->clip.y = 0.0;
@@ -89,6 +115,67 @@ failPath:
 failState:
     gdFree(context);
     return NULL;
+}
+
+BGD_DECLARE(gdContextPtr)
+gdContextCreateForImage(gdImagePtr im)
+{
+    if (!im || !im->trueColor)
+    {
+        return NULL;
+    }
+
+    gdSurfacePtr scratch = gdSurfaceCreate(im->sx, im->sy, GD_SURFACE_ARGB32);
+    if (!scratch)
+    {
+        return NULL;
+    }
+
+    for (int y = 0; y < im->sy; y++)
+    {
+        uint32_t *dst = (uint32_t *)(scratch->data + y * scratch->stride);
+        for (int x = 0; x < im->sx; x++)
+        {
+            dst[x] = gdcolor_to_premul(im->tpixels[y][x]);
+        }
+    }
+
+    gdContextPtr ctx = gdContextCreate(scratch);
+    if (!ctx)
+    {
+        gdSurfaceDestroy(scratch);
+        return NULL;
+    }
+
+    ctx->image = im;
+    ctx->imageOwned = 0;
+    return ctx;
+}
+
+BGD_DECLARE(void)
+gdContextFlushImage(gdContextPtr ctx)
+{
+    if (!ctx || !ctx->image)
+    {
+        return;
+    }
+    gdImagePtr im = ctx->image;
+    gdSurfacePtr scratch = ctx->surface;
+
+    for (int y = 0; y < im->sy; y++)
+    {
+        uint32_t *src = (uint32_t *)(scratch->data + y * scratch->stride);
+        for (int x = 0; x < im->sx; x++)
+        {
+            im->tpixels[y][x] = premul_to_gdcolor(src[x]);
+        }
+    }
+}
+
+BGD_DECLARE(gdImagePtr)
+gdContextGetImage(gdContextPtr ctx)
+{
+    return ctx ? ctx->image : NULL;
 }
 
 BGD_DECLARE(void)
@@ -172,6 +259,10 @@ gdContextDestroy(gdContextPtr context)
     context->ref--;
     if (context->ref == 0)
     {
+        if (context->image)
+        {
+            gdContextFlushImage(context);
+        }
         gdSurfaceDestroy(context->surface);
         gdPathDestroy(context->path);
         gdStateDestroy(context->state);
