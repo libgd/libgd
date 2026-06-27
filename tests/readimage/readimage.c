@@ -8,11 +8,13 @@
 #include <stdio.h>
 #include <string.h>
 
-static int test_readfile(const char * subdir, const char * filename) {
+static int test_readfile(const char *subdir, const char *filename) {
 	char *path;
 	gdImagePtr im;
 
 	path = gdTestFilePath2(subdir, filename);
+	printf("Testing %s/%s\n", subdir, filename);
+	printf("  path: %s\n", path);
 	im = gdImageReadFile(path);
 	free(path);
 
@@ -25,7 +27,7 @@ static int test_readfile(const char * subdir, const char * filename) {
 	return 1;
 }
 
-static int test_readctx(const char * subdir, const char * filename) {
+static int test_readctx(const char *subdir, const char *filename) {
 	char *path;
 	FILE *fh;
 	gdIOCtxPtr ctx;
@@ -61,8 +63,6 @@ static int test_readctx(const char * subdir, const char * filename) {
 }
 
 int main() {
-	int failures = 0;
-
 #ifdef HAVE_LIBPNG
 	gdTestAssert(test_readfile("png", "bug00088_1.png"));
 	gdTestAssert(test_readctx("png", "bug00088_1.png"));
@@ -85,8 +85,8 @@ int main() {
 #endif
 
 #ifdef HAVE_LIBWEBP
-	gdTestAssert(test_readfile("webp", "simple-rgb.webp"));
-	gdTestAssert(test_readctx("webp", "simple-rgb.webp"));
+	gdTestAssert(test_readfile("webp", "webp-conformance/valid/simple-rgb.webp"));
+	gdTestAssert(test_readctx("webp", "webp-conformance/valid/simple-rgb.webp"));
 #endif
 
 #ifdef HAVE_LIBAVIF

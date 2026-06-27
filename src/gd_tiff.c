@@ -243,6 +243,31 @@ static int tiff_file_size(FILE *fp) {
 	return (int)end_pos;
 }
 
+static int tiff_ctx_size(gdIOCtx *ctx) {
+	unsigned char buffer[4096];
+	long current_pos;
+	long end_pos;
+
+	if (ctx == NULL || ctx->tell == NULL || ctx->seek == NULL)
+		return 0;
+
+	current_pos = ctx->tell(ctx);
+	if (current_pos < 0)
+		return 0;
+
+	while (ctx->getBuf(ctx, buffer, sizeof(buffer)) > 0)
+		;
+	end_pos = ctx->tell(ctx);
+	(void)ctx->seek(ctx, (int)current_pos);
+
+	if (end_pos < 0)
+		return 0;
+	if (end_pos > INT_MAX)
+		return INT_MAX;
+
+	return (int)end_pos;
+}
+
 /*  tiffWriter
  *  ----------
  *  Write the gd image as a tiff file (called by gdImageTiffCtx)
@@ -1087,7 +1112,7 @@ static gdImagePtr gdImageCreateFromTiffCtxEx(gdIOCtx *infile,
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile) {
-	return gdImageCreateFromTiffCtxEx(infile, 0);
+	return gdImageCreateFromTiffCtxEx(infile, tiff_ctx_size(infile));
 }
 
 /*
