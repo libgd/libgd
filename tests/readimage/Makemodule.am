@@ -1,0 +1,7 @@
+if HAVE_LIBPNG
+libgd_test_programs += \
+	readimage/readimage
+endif HAVE_LIBPNG
+
+EXTRA_DIST += \
+	readimage/CMakeLists.txt

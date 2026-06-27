@@ -1107,6 +1107,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromBmp(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromFile(const char *filename);
+BGD_DECLARE(gdImagePtr) gdImageReadFile(const char *filename);
+BGD_DECLARE(gdImagePtr) gdImageReadCtx(gdIOCtxPtr ctx);
 
 /* UltraHDR load API */
 

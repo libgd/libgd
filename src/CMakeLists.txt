@@ -7,6 +7,7 @@ SET (LIBGD_SRC_FILES
 	gd_color_match.c
 	gd_crop.c
 	gd_filename.c
+	gd_readimage.c
 	gd_filter.c
 	gd_gd.c
 	gd_gd2.c

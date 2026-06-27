@@ -91,6 +91,7 @@ if (BUILD_TEST)
 		perceptualdiff
 		png
 		qoi
+		readimage
 		uhdr
 		tga
 		tiff
