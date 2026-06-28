@@ -7,7 +7,7 @@ void gdPathMatrixInitTranslate(gdPathMatrixPtr matrix, double x, double y);
 void gdPathMatrixInitScale(gdPathMatrixPtr matrix, double x, double y);
 void gdPathMatrixInitShear(gdPathMatrixPtr matrix, double x, double y);
 void gdPathMatrixInitRotate(gdPathMatrixPtr matrix, double radians);
-void gdPathMatrixInitRotate_translate(gdPathMatrixPtr matrix, double radians, double x, double y);
+void gdPathMatrixInitRotateTranslate(gdPathMatrixPtr matrix, double radians, double x, double y);
 void gdPathMatrixTranslate(gdPathMatrixPtr matrix, double x, double y);
 BGD_DECLARE(void) gdPathMatrixScale(gdPathMatrixPtr matrix, double x, double y);
 void gdPathMatrixShear(gdPathMatrixPtr matrix, double x, double y);

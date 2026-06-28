@@ -60,18 +60,6 @@
 #include "gd.h"
 #include "gd_path_matrix.h"
 
-/* Path-to-outline helpers implemented by gd_span_rle.c. */
-GD_FT_Outline *gd_ft_outline_create(int points, int contours);
-void gd_ft_outline_close(GD_FT_Outline *outline);
-void gd_ft_outline_end(GD_FT_Outline *outline);
-void gd_ft_outline_move_to(GD_FT_Outline *outline, double x, double y);
-void gd_ft_outline_line_to(GD_FT_Outline *outline, double x, double y);
-void gd_ft_outline_cubic_to(GD_FT_Outline *outline, double x1, double y1,
-                            double x2, double y2, double x3, double y3);
-void gd_ft_outline_conic_to(GD_FT_Outline *outline, double x1, double y1,
-                            double x2, double y2);
-void gd_ft_outline_destroy(GD_FT_Outline *outline);
-
 /* Auxiliary macros for token concatenation. */
 #define GD_FT_ERR_XCAT(x, y) x##y
 #define GD_FT_ERR_CAT(x, y) GD_FT_ERR_XCAT(x, y)
@@ -347,7 +335,16 @@ typedef struct gray_TWorker_ {
     PCell* ycells;
     TPos   ycount;
 
+    /* Source abstraction for direct path rendering */
+    struct gray_TSource_ *source;
 } gray_TWorker, *gray_PWorker;
+
+typedef struct gray_TSource_
+{
+    int (*get_cbox)(void *source, GD_FT_BBox *box);
+    int (*decompose)(void *source, void *worker);
+    void *source;
+} gray_TSource;
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
@@ -393,6 +390,19 @@ static void gray_init_cells(RAS_ARG_ void* buffer, long byte_size)
 /*                                                                       */
 static void gray_compute_cbox(RAS_ARG)
 {
+    if (ras.source && ras.source->get_cbox) {
+        GD_FT_BBox box;
+        int error = ras.source->get_cbox(ras.source->source, &box);
+        if (!error) {
+            ras.min_ex = box.xMin >> 6;
+            ras.min_ey = box.yMin >> 6;
+            ras.max_ex = (box.xMax + 63) >> 6;
+            ras.max_ey = (box.yMax + 63) >> 6;
+            return;
+        }
+    }
+
+    /* Fallback to outline */
     GD_FT_Outline* outline = &ras.outline;
     GD_FT_Vector*  vec = outline->points;
     GD_FT_Vector*  limit = vec + outline->n_points;
@@ -1220,7 +1230,11 @@ static int gray_convert_glyph_inner(RAS_ARG)
     volatile int error = 0;
 
     if (ft_setjmp(ras.jump_buffer) == 0) {
-        error = GD_FT_Outline_Decompose(&ras.outline, &func_interface, &ras);
+        if (ras.source && ras.source->decompose) {
+            error = ras.source->decompose(ras.source->source, &ras);
+        } else {
+            error = GD_FT_Outline_Decompose(&ras.outline, &func_interface, &ras);
+        }
         if (!ras.invalid) gray_record_cell(RAS_VAR);
     } else
         error = GD_FT_THROW(Memory_Overflow);
@@ -1383,6 +1397,7 @@ static int gray_raster_render(gray_PRaster               raster,
     gray_init_cells(RAS_VAR_ buffer, buffer_size);
 
     ras.outline = *outline;
+    ras.source = NULL;
     ras.num_cells = 0;
     ras.invalid = 1;
     ras.band_size = band_size;
@@ -1434,6 +1449,195 @@ GD_FT_DEFINE_RASTER_FUNCS(gd_ft_grays_raster,
                           (GD_FT_Raster_Render_Func)gray_raster_render,
                           (GD_FT_Raster_Done_Func)gray_raster_done)
 
+typedef struct gdPathRasterSource_
+{
+    gdPathPtr path;
+    gdPathMatrixPtr matrix;
+} gdPathRasterSource;
+
+static void gdpath_include_point(GD_FT_BBox *box, int *first,
+                                 const gdPointF *point)
+{
+    TPos x = (TPos)(point->x * 64.0);
+    TPos y = (TPos)(point->y * 64.0);
+
+    if (*first) {
+        box->xMin = box->xMax = x;
+        box->yMin = box->yMax = y;
+        *first = 0;
+        return;
+    }
+
+    if (x < box->xMin) box->xMin = x;
+    if (x > box->xMax) box->xMax = x;
+    if (y < box->yMin) box->yMin = y;
+    if (y > box->yMax) box->yMax = y;
+}
+
+static GD_FT_Vector gdpath_vector(const gdPointF *point)
+{
+    GD_FT_Vector vector = {
+        (GD_FT_Pos)(point->x * 64.0),
+        (GD_FT_Pos)(point->y * 64.0)
+    };
+    return vector;
+}
+
+static int gdpath_get_cbox(void *source, GD_FT_BBox *box)
+{
+    const gdPathRasterSource *path_source = source;
+    gdPathPtr path = path_source->path;
+    gdPathMatrixPtr matrix = path_source->matrix;
+    unsigned int numElements = gdArrayNumElements(&path->elements);
+    unsigned int pointsIndex = 0;
+    int first = 1;
+    gdPointF p[3];
+
+    for (unsigned int i = 0; i < numElements; i++) {
+        gdPathOpsPtr element = (gdPathOpsPtr)gdArrayIndex(&path->elements, i);
+        gdPointFPtr point = gdArrayIndex(&path->points, pointsIndex);
+
+        switch (*element) {
+        case gdPathOpsMoveTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            gdpath_include_point(box, &first, &p[0]);
+            pointsIndex += 1;
+            break;
+        case gdPathOpsLineTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            gdpath_include_point(box, &first, &p[0]);
+            pointsIndex += 1;
+            break;
+        case gdPathOpsCubicTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            point = gdArrayIndex(&path->points, pointsIndex + 1);
+            gdPathMatrixMapPoint(matrix, point, &p[1]);
+            point = gdArrayIndex(&path->points, pointsIndex + 2);
+            gdPathMatrixMapPoint(matrix, point, &p[2]);
+            gdpath_include_point(box, &first, &p[0]);
+            gdpath_include_point(box, &first, &p[1]);
+            gdpath_include_point(box, &first, &p[2]);
+            pointsIndex += 3;
+            break;
+        case gdPathOpsQuadTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            point = gdArrayIndex(&path->points, pointsIndex + 1);
+            gdPathMatrixMapPoint(matrix, point, &p[1]);
+            gdpath_include_point(box, &first, &p[0]);
+            gdpath_include_point(box, &first, &p[1]);
+            pointsIndex += 2;
+            break;
+        case gdPathOpsClose:
+            pointsIndex += 1;
+            break;
+        }
+    }
+
+    if (first) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static int gdpath_decompose(void *source, void *worker_data)
+{
+    const gdPathRasterSource *path_source = source;
+    gdPathPtr path = path_source->path;
+    gdPathMatrixPtr matrix = path_source->matrix;
+    gray_PWorker worker = worker_data;
+    unsigned int pointsIndex = 0;
+    gdPointF p[3];
+    GD_FT_Vector contour_start = {0, 0};
+    int contour_open = 0;
+
+    for (unsigned int i = 0; i < gdArrayNumElements(&path->elements); i++) {
+        gdPathOpsPtr element = (gdPathOpsPtr)gdArrayIndex(&path->elements, i);
+        gdPointFPtr point = gdArrayIndex(&path->points, pointsIndex);
+
+        switch (*element) {
+        case gdPathOpsMoveTo:
+            if (contour_open)
+                gray_line_to(&contour_start, worker);
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            {
+                GD_FT_Vector v = gdpath_vector(&p[0]);
+                gray_move_to(&v, worker);
+                contour_start = v;
+                contour_open = 1;
+            }
+            pointsIndex += 1;
+            break;
+        case gdPathOpsLineTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            {
+                GD_FT_Vector v = gdpath_vector(&p[0]);
+                if (contour_open) {
+                    gray_line_to(&v, worker);
+                } else {
+                    gray_move_to(&v, worker);
+                    contour_start = v;
+                    contour_open = 1;
+                }
+            }
+            pointsIndex += 1;
+            break;
+        case gdPathOpsCubicTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            point = gdArrayIndex(&path->points, pointsIndex + 1);
+            gdPathMatrixMapPoint(matrix, point, &p[1]);
+            point = gdArrayIndex(&path->points, pointsIndex + 2);
+            gdPathMatrixMapPoint(matrix, point, &p[2]);
+            {
+                GD_FT_Vector v1 = gdpath_vector(&p[0]);
+                GD_FT_Vector v2 = gdpath_vector(&p[1]);
+                GD_FT_Vector v3 = gdpath_vector(&p[2]);
+                if (contour_open) {
+                    gray_cubic_to(&v1, &v2, &v3, worker);
+                } else {
+                    gray_move_to(&v3, worker);
+                    contour_start = v3;
+                    contour_open = 1;
+                }
+            }
+            pointsIndex += 3;
+            break;
+        case gdPathOpsQuadTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            point = gdArrayIndex(&path->points, pointsIndex + 1);
+            gdPathMatrixMapPoint(matrix, point, &p[1]);
+            {
+                GD_FT_Vector v1 = gdpath_vector(&p[0]);
+                GD_FT_Vector v2 = gdpath_vector(&p[1]);
+                if (contour_open) {
+                    gray_conic_to(&v1, &v2, worker);
+                } else {
+                    gray_move_to(&v2, worker);
+                    contour_start = v2;
+                    contour_open = 1;
+                }
+            }
+            pointsIndex += 2;
+            break;
+        case gdPathOpsClose:
+            if (contour_open) {
+                gdPathMatrixMapPoint(matrix, point, &p[0]);
+                {
+                    GD_FT_Vector v = gdpath_vector(&p[0]);
+                    gray_line_to(&v, worker);
+                }
+                contour_open = 0;
+            }
+            pointsIndex += 1;
+            break;
+        }
+    }
+
+    if (contour_open)
+        gray_line_to(&contour_start, worker);
+    return 0;
+}
+
 /* END */
 
 GD_FT_Error gd_ft_raster_render_path(
@@ -1445,99 +1649,35 @@ GD_FT_Error gd_ft_raster_render_path(
     if (!path || !params)
         return GD_FT_THROW(Invalid_Argument);
 
-    /* Use static raster worker */
 #ifndef GD_FT_STATIC_RASTER
     gray_TWorker worker_storage;
     gray_PWorker worker = &worker_storage;
 #else
-    /* Save the shared worker while this direct rendering call uses it. */
     gray_TWorker save_ras = ras;
 #endif
 
+    gdPathRasterSource path_source = {path, matrix};
+    gray_TSource source = {gdpath_get_cbox, gdpath_decompose, &path_source};
+    ras.source = &source;
 
-/* Count path elements to estimate outline size */
-    unsigned int numElements = gdArrayNumElements(&path->elements);
-    int numPoints = 0;
-    int numContours = 0;
-
-    for (unsigned int i = 0; i < numElements; i++) {
-        gdPathOpsPtr element = (gdPathOpsPtr)gdArrayIndex(&path->elements, i);
-        switch (*element) {
-            case gdPathOpsMoveTo: numPoints += 1; numContours++; break;
-            case gdPathOpsLineTo: numPoints += 1; break;
-            case gdPathOpsCubicTo: numPoints += 3; break;
-            case gdPathOpsQuadTo: numPoints += 2; break;
-            case gdPathOpsClose: break;
-        }
+    params->flags |= GD_FT_RASTER_FLAG_DIRECT | GD_FT_RASTER_FLAG_AA;
+    if (params->flags & GD_FT_RASTER_FLAG_CLIP) {
+        ras.clip_box = params->clip_box;
+    } else {
+        ras.clip_box.xMin = -32768L;
+        ras.clip_box.yMin = -32768L;
+        ras.clip_box.xMax = 32767L;
+        ras.clip_box.yMax = 32767L;
     }
 
-    /* Create outline structure */
-    GD_FT_Outline *outline = gd_ft_outline_create(numPoints, numContours);
-    if (!outline)
-        return GD_FT_THROW(Memory_Overflow);
-
-    /* Build outline from path */
-    unsigned int pointsIndex = 0;
-    gdPointF p[3];
-
-    for (unsigned int i = 0; i < numElements; i++)
-    {
-        gdPathOpsPtr element = (gdPathOpsPtr)gdArrayIndex(&path->elements, i);
-        gdPointFPtr point = gdArrayIndex(&path->points, pointsIndex);
-
-        switch (*element)
-        {
-        case gdPathOpsMoveTo:
-            gdPathMatrixMapPoint(matrix, point, &p[0]);
-            gd_ft_outline_move_to(outline, p[0].x, p[0].y);
-            pointsIndex += 1;
-            break;
-        case gdPathOpsLineTo:
-            gdPathMatrixMapPoint(matrix, point, &p[0]);
-            gd_ft_outline_line_to(outline, p[0].x, p[0].y);
-            pointsIndex += 1;
-            break;
-        case gdPathOpsCubicTo:
-            gdPathMatrixMapPoint(matrix, point, &p[0]);
-            point = gdArrayIndex(&path->points, pointsIndex + 1);
-            gdPathMatrixMapPoint(matrix, point, &p[1]);
-            point = gdArrayIndex(&path->points, pointsIndex + 2);
-            gdPathMatrixMapPoint(matrix, point, &p[2]);
-            gd_ft_outline_cubic_to(outline, p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y);
-            pointsIndex += 3;
-            break;
-        case gdPathOpsQuadTo:
-            gdPathMatrixMapPoint(matrix, point, &p[0]);
-            point = gdArrayIndex(&path->points, pointsIndex + 1);
-            gdPathMatrixMapPoint(matrix, point, &p[1]);
-            gd_ft_outline_conic_to(outline, p[0].x, p[0].y, p[1].x, p[1].y);
-            pointsIndex += 2;
-            break;
-        case gdPathOpsClose:
-            gd_ft_outline_close(outline);
-            pointsIndex += 1;
-            break;
-        }
-    }
-
-    gd_ft_outline_end(outline);
-    outline->flags = outline_flags;
-
-    /* Use the standard raster pipeline */
     TCell buffer[GD_FT_RENDER_POOL_SIZE / sizeof(TCell)];
     long buffer_size = sizeof(buffer);
     int band_size = (int)(buffer_size / (long)(sizeof(TCell) * 8));
 
-#ifdef GD_FT_STATIC_RASTER
-    /* Save the shared raster state.  Non-static builds use worker_storage. */
-    gray_TWorker save_ras = ras;
-#endif
-
-    /* Set up the raster */
-    params->flags |= GD_FT_RASTER_FLAG_DIRECT | GD_FT_RASTER_FLAG_AA;
-    ras.clip_box = params->clip_box;
-    gray_init_cells(&ras, buffer, buffer_size);
-    ras.outline = *outline;
+    gray_init_cells(RAS_VAR_ buffer, buffer_size);
+    ras.outline.n_contours = 0;
+    ras.outline.n_points = 0;
+    ras.outline.flags = outline_flags;
     ras.num_cells = 0;
     ras.invalid = 1;
     ras.band_size = band_size;
@@ -1545,9 +1685,7 @@ GD_FT_Error gd_ft_raster_render_path(
     ras.render_span = (GD_FT_Raster_Span_Func)params->gray_spans;
     ras.render_span_data = params->user;
 
-    /* Run the full conversion pipeline (band setup + sweep + span generation) */
-    gray_convert_glyph(&ras);
-
+    int error = gray_convert_glyph(RAS_VAR);
     int bound_left = ras.bound_left;
     int bound_top = ras.bound_top;
     int bound_right = ras.bound_right;
@@ -1557,14 +1695,14 @@ GD_FT_Error gd_ft_raster_render_path(
     ras = save_ras;
 #endif
 
-    /* Clean up outline */
-    gd_ft_outline_destroy(outline);
-
-    if (bound_right > bound_left && bound_bottom > bound_top) {
+    if (!error && params->bbox_cb &&
+        bound_right > bound_left && bound_bottom > bound_top) {
         params->bbox_cb(bound_left, bound_top,
                         bound_right - bound_left,
                         bound_bottom - bound_top + 1, params->user);
     }
 
-    return 0;
+    if (error)
+        return error;
+    return gdArrayNumElements(&path->elements) > 0 ? 1 : 0;
 }

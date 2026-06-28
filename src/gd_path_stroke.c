@@ -2,13 +2,10 @@
 #include "gdhelpers.h"
 #include "gd_path.h"
 #include "gd_path_matrix.h"
+#include "gd_path_outline.h"
 #include "ftraster/gd_ft_stroker.h"
 #include "ftraster/gd_ft_raster.h"
 #include <math.h>
-
-extern GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMatrixPtr matrix);
-extern GD_FT_Outline *gd_ft_outline_create(int points, int contours);
-extern void gd_ft_outline_destroy(GD_FT_Outline *ft);
 
 static gdPathPtr ft_outline_to_gdpath(const GD_FT_Outline* outline)
 {
@@ -19,59 +16,100 @@ static gdPathPtr ft_outline_to_gdpath(const GD_FT_Outline* outline)
     if (!path)
         return NULL;
 
-    for (int contour = 0; contour < outline->n_contours; contour++)
-    {
-        int end_idx = outline->contours[contour];
-        int start_idx = (contour == 0) ? 0 : outline->contours[contour - 1] + 1;
+    int first = 0;
+    for (int contour = 0; contour < outline->n_contours; contour++) {
+        int last = outline->contours[contour];
+        int point = first;
+        GD_FT_Vector start;
 
-        if (end_idx < start_idx)
-            continue;
+        if (last < first)
+            goto invalid_outline;
 
-        for (int i = start_idx; i <= end_idx; i++)
-        {
-            char tag = GD_FT_CURVE_TAG(outline->tags[i]);
-            double x = outline->points[i].x / 64.0;
-            double y = outline->points[i].y / 64.0;
+        char first_tag = GD_FT_CURVE_TAG(outline->tags[first]);
+        char last_tag = GD_FT_CURVE_TAG(outline->tags[last]);
 
-            if (i == start_idx)
-            {
-                gdPathMoveTo(path, x, y);
+        if (first_tag == GD_FT_CURVE_TAG_ON) {
+            start = outline->points[point++];
+        } else if (first_tag == GD_FT_CURVE_TAG_CONIC) {
+            if (last_tag == GD_FT_CURVE_TAG_ON) {
+                start = outline->points[last--];
+            } else if (last_tag == GD_FT_CURVE_TAG_CONIC) {
+                start.x = (outline->points[first].x + outline->points[last].x) / 2;
+                start.y = (outline->points[first].y + outline->points[last].y) / 2;
+            } else {
+                goto invalid_outline;
             }
-            else
-            {
-                if (tag == GD_FT_CURVE_TAG_ON)
-                {
-                    gdPathLineTo(path, x, y);
-                }
-                else if (tag == GD_FT_CURVE_TAG_CONIC)
-                {
-                    if (i + 1 <= end_idx)
-                    {
-                        i++;
-                        double x2 = outline->points[i].x / 64.0;
-                        double y2 = outline->points[i].y / 64.0;
-                        gdPathQuadTo(path, x, y, x2, y2);
-                    }
-                }
-                else if (tag == GD_FT_CURVE_TAG_CUBIC)
-                {
-                    if (i + 2 <= end_idx)
-                    {
-                        double x2 = outline->points[i + 1].x / 64.0;
-                        double y2 = outline->points[i + 1].y / 64.0;
-                        i++;
-                        double x3 = outline->points[i + 1].x / 64.0;
-                        double y3 = outline->points[i + 1].y / 64.0;
-                        i++;
-                        gdPathCurveTo(path, x, y, x2, y2, x3, y3);
-                    }
-                }
-            }
+        } else {
+            goto invalid_outline;
         }
+
+        gdPathMoveTo(path, start.x / 64.0, start.y / 64.0);
+
+        while (point <= last) {
+            char tag = GD_FT_CURVE_TAG(outline->tags[point]);
+            GD_FT_Vector current = outline->points[point++];
+
+            if (tag == GD_FT_CURVE_TAG_ON) {
+                gdPathLineTo(path, current.x / 64.0, current.y / 64.0);
+                continue;
+            }
+
+            if (tag == GD_FT_CURVE_TAG_CONIC) {
+                GD_FT_Vector control = current;
+                for (;;) {
+                    if (point > last) {
+                        gdPathQuadTo(path, control.x / 64.0, control.y / 64.0,
+                                    start.x / 64.0, start.y / 64.0);
+                        break;
+                    }
+
+                    tag = GD_FT_CURVE_TAG(outline->tags[point]);
+                    current = outline->points[point++];
+                    if (tag == GD_FT_CURVE_TAG_ON) {
+                        gdPathQuadTo(path, control.x / 64.0, control.y / 64.0,
+                                    current.x / 64.0, current.y / 64.0);
+                        break;
+                    }
+                    if (tag != GD_FT_CURVE_TAG_CONIC)
+                        goto invalid_outline;
+
+                    GD_FT_Vector middle = {
+                        (control.x + current.x) / 2,
+                        (control.y + current.y) / 2
+                    };
+                    gdPathQuadTo(path, control.x / 64.0, control.y / 64.0,
+                                middle.x / 64.0, middle.y / 64.0);
+                    control = current;
+                }
+                continue;
+            }
+
+            if (tag != GD_FT_CURVE_TAG_CUBIC || point > last ||
+                GD_FT_CURVE_TAG(outline->tags[point]) != GD_FT_CURVE_TAG_CUBIC)
+                goto invalid_outline;
+
+            GD_FT_Vector control1 = current;
+            GD_FT_Vector control2 = outline->points[point++];
+            GD_FT_Vector end = start;
+            if (point <= last) {
+                if (GD_FT_CURVE_TAG(outline->tags[point]) != GD_FT_CURVE_TAG_ON)
+                    goto invalid_outline;
+                end = outline->points[point++];
+            }
+            gdPathCurveTo(path, control1.x / 64.0, control1.y / 64.0,
+                          control2.x / 64.0, control2.y / 64.0,
+                          end.x / 64.0, end.y / 64.0);
+        }
+
         gdPathClose(path);
+        first = outline->contours[contour] + 1;
     }
 
     return path;
+
+invalid_outline:
+    gdPathDestroy(path);
+    return NULL;
 }
 
 BGD_DECLARE(gdPathPtr) gdPathStrokeToPath(const gdPathPtr path, const gdStrokePtr stroke, const gdPathMatrixPtr matrix)

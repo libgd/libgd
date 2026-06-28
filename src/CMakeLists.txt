@@ -105,7 +105,7 @@ if (BUILD_SHARED_LIBS)
 	)
 endif()
 
-if (BUILD_STATIC_LIBS)
+if (BUILD_STATIC_LIBS OR BUILD_TEST)
 	add_library(${GD_LIB_STATIC} STATIC ${LIBGD_SRC_FILES})
 	if (UNIX)
 		set_target_properties(${GD_LIB_STATIC} PROPERTIES OUTPUT_NAME ${GD_LIB})
@@ -152,7 +152,7 @@ SET(LIBGD_DEP_LIBS
 if (BUILD_SHARED_LIBS)
 	target_link_libraries(${GD_LIB} ${LIBGD_DEP_LIBS})
 endif()
-if (BUILD_STATIC_LIBS)
+if (BUILD_STATIC_LIBS OR BUILD_TEST)
 	target_link_libraries(${GD_LIB_STATIC} ${LIBGD_DEP_LIBS})
 endif()
 

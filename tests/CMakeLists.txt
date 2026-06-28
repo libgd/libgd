@@ -90,6 +90,7 @@ if (BUILD_TEST)
 		tiff
 		wbmp
 		webp
+		vector2d
 		xbm
 		xpm
 	)

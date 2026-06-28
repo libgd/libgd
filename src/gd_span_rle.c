@@ -17,6 +17,7 @@
 #include "gd_span_rle.h"
 #include "gd_path_matrix.h"
 #include "gd_path.h"
+#include "gd_path_outline.h"
 #include "gd_path_dash.h"
 #include "ftraster/gd_ft_raster.h"
 #include "ftraster/gd_ft_stroker.h"
@@ -183,7 +184,10 @@ void gdSpanRlePathClip(gdSpanRlePtr rle, const gdSpanRlePtr clip)
         return;
     }
     _rle_spans_allocate(rle->spans, result->spans.size);
-    memcpy(rle->spans.data, result->spans.data, (size_t)result->spans.size * sizeof(gdSpan));
+    if (result->spans.size > 0) {
+        memcpy(rle->spans.data, result->spans.data,
+               (size_t)result->spans.size * sizeof(gdSpan));
+    }
     rle->spans.size = result->spans.size;
     rle->x = result->x;
     rle->y = result->y;
@@ -285,11 +289,16 @@ void gd_ft_outline_conic_to(GD_FT_Outline *ft, double x1, double y1, double x2, 
 
 GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMatrixPtr matrix)
 {
-    GD_FT_Outline *outline = gd_ft_outline_create(gdArrayNumElements(&path->points), path->contours);
+    /* A path may begin with LineTo/CurveTo.  The outline bridge treats that
+       prefix as an implicit contour before the first explicit MoveTo. */
+    int contour_capacity = path->contours + 1;
+    GD_FT_Outline *outline = gd_ft_outline_create(
+        gdArrayNumElements(&path->points), contour_capacity);
     gdPointF p[3];
     unsigned int numElements = gdArrayNumElements(&path->elements);
     unsigned int pointsIndex = 0;
     unsigned int i = 0;
+    int contour_open = 0;
 
     memset(p, 0, sizeof(gdPointF) * 3);
     if (!outline)
@@ -303,11 +312,17 @@ GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMatrixPtr
         case gdPathOpsMoveTo:
             gdPathMatrixMapPoint(matrix, point, &p[0]);
             gd_ft_outline_move_to(outline, p[0].x, p[0].y);
+            contour_open = 1;
             pointsIndex += 1;
             break;
         case gdPathOpsLineTo:
             gdPathMatrixMapPoint(matrix, point, &p[0]);
-            gd_ft_outline_line_to(outline, p[0].x, p[0].y);
+            if (contour_open)
+                gd_ft_outline_line_to(outline, p[0].x, p[0].y);
+            else {
+                gd_ft_outline_move_to(outline, p[0].x, p[0].y);
+                contour_open = 1;
+            }
             pointsIndex += 1;
             break;
         case gdPathOpsCubicTo:
@@ -316,18 +331,33 @@ GD_FT_Outline *gd_ft_outline_convert(const gdPathPtr path, const gdPathMatrixPtr
             gdPathMatrixMapPoint(matrix, point, &p[1]);
             point = gdArrayIndex(&path->points, pointsIndex + 2);
             gdPathMatrixMapPoint(matrix, point, &p[2]);
-            gd_ft_outline_cubic_to(outline, p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y);
+            if (contour_open)
+                gd_ft_outline_cubic_to(outline, p[0].x, p[0].y,
+                                       p[1].x, p[1].y, p[2].x, p[2].y);
+            else {
+                gd_ft_outline_move_to(outline, p[2].x, p[2].y);
+                contour_open = 1;
+            }
             pointsIndex += 3;
             break;
         case gdPathOpsClose:
-            gd_ft_outline_close(outline);
+            if (contour_open) {
+                gd_ft_outline_close(outline);
+                contour_open = 0;
+            }
             pointsIndex += 1;
             break;
          case gdPathOpsQuadTo:
             gdPathMatrixMapPoint(matrix, point, &p[0]);
             point = gdArrayIndex(&path->points, pointsIndex + 1);
             gdPathMatrixMapPoint(matrix, point, &p[1]);
-            gd_ft_outline_conic_to(outline, p[0].x, p[0].y, p[1].x, p[1].y);
+            if (contour_open)
+                gd_ft_outline_conic_to(outline, p[0].x, p[0].y,
+                                       p[1].x, p[1].y);
+            else {
+                gd_ft_outline_move_to(outline, p[1].x, p[1].y);
+                contour_open = 1;
+            }
             pointsIndex += 2;
             break;
         }

@@ -562,14 +562,12 @@ BGD_DECLARE(void) gdPathCurveTo(gdPathPtr path, double x1, double y1, double x2,
 
 BGD_DECLARE(void) gdPathQuadTo(gdPathPtr path, double x1, double y1, double x2, double y2)
 {
-    double x, y;
-    _path_get_current_point(path, &x, &y);
+    const gdPathOps op = gdPathOpsQuadTo;
+    gdPointF points[2] = {{x1, y1}, {x2, y2}};
 
-    double cx = 2.0 / 3.0 * x1 + 1.0 / 3.0 * x;
-    double cy = 2.0 / 3.0 * y1 + 1.0 / 3.0 * y;
-    double cx1 = 2.0 / 3.0 * x1 + 1.0 / 3.0 * x2;
-    double cy1 = 2.0 / 3.0 * y1 + 1.0 / 3.0 * y2;
-    gdPathCurveTo(path, cx, cy, cx1, cy1, x2, y2);
+    gdArrayAppend(&path->elements, &op);
+    gdArrayAppend(&path->points, &points[0]);
+    gdArrayAppend(&path->points, &points[1]);
 }
 
 /*
@@ -641,11 +639,11 @@ void gdPathAddRectangle(gdPathPtr path, double x, double y, double w, double h)
 BGD_DECLARE(void) gdPathClose(gdPathPtr path)
 {
     const int numElements = gdArrayNumElements(&path->elements);
-    const int numPoints = gdArrayNumElements(&path->points);
-    const gdPathOpsPtr lastOpPtr = gdArrayIndex(&path->points, numPoints - 1);
     const gdPathOps OpClose = gdPathOpsClose;
     if (numElements == 0)
         return;
+    const gdPathOpsPtr lastOpPtr = gdArrayIndex(&path->elements,
+                                                (unsigned int)numElements - 1);
     if (*lastOpPtr == gdPathOpsClose)
         return;
 
