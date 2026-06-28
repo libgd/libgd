@@ -79,6 +79,7 @@ SET (LIBGD_SRC_FILES
 	gd_path_arc.c
 	gd_path_dash.c
 	gd_path.c
+	gd_gradient.c
 	gd_path_stroke.c
 	gd_compositor.c
 	gd_draw_blend.c

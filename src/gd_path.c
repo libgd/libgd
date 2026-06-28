@@ -15,6 +15,7 @@
 #include "gd_path.h"
 #include "gd_path_arc.h"
 #include "gd_path_dash.h"
+#include "gd_gradient.h"
 
 gdPaintPtr gdPaintAddRef(gdPaintPtr paint)
 {
@@ -39,6 +40,8 @@ BGD_DECLARE(void) gdPaintDestroy(gdPaintPtr paint)
             gdFree(paint->color);
             break;
         case gdPaintTypeGradient:
+            gdGradientDestroy(paint->gradient);
+            break;
         case gdPaintTypeSurface:
             // Not implemented
             break;

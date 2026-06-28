@@ -19,6 +19,7 @@
 
 #include "gd_fixed.h"
 #include "gd_compositor.h"
+#include "gd_gradient.h"
 
 #define BILINEAR_INTERPOLATION_BITS 7
 #define BILINEAR_INTERPOLATION_RANGE (1 << BILINEAR_INTERPOLATION_BITS)
@@ -661,6 +662,50 @@ static gdPremulPixelF pattern_pixel_at(const _spans_pattern *pattern, int px, in
         _surface_fetch_pixel_bilinear(pattern->surface, x, y, pattern->extend));
 }
 
+typedef struct {
+    const gdGradient *gradient;
+    gdPathMatrix device_to_pattern;
+    int valid;
+} gdGradientSampler;
+
+static void gradient_sampler_init(gdGradientSampler *s, const gdGradient *g,
+                                  const gdStatePtr state)
+{
+    s->gradient = g;
+    s->device_to_pattern = g->matrix;
+    gdPathMatrixMultiply(&s->device_to_pattern, &s->device_to_pattern,
+                         &state->matrix);
+    s->valid = gdPathMatrixInvert(&s->device_to_pattern);
+}
+
+static gdPremulPixelF gradient_pixel_at(const gdGradientSampler *s, int x, int y)
+{
+    gdPremulPixelF z = {0, 0, 0, 0};
+    return s->valid ? gdGradientSample(s->gradient, &s->device_to_pattern,
+                                      x + 0.5, y + 0.5) : z;
+}
+
+static void gdDrawBlendGradient(gdContextPtr context, const gdSpanRlePtr rle,
+                                const gdGradient *gradient)
+{
+    gdGradientSampler sampler;
+    gdStatePtr state = context->state;
+    int count = rle->spans.size;
+    gdSpanPtr span = rle->spans.data;
+    gradient_sampler_init(&sampler, gradient, state);
+    while (count--) {
+        uint32_t *dst = (uint32_t *)(context->surface->data +
+                        span->y * context->surface->stride) + span->x;
+        float coverage = (float)(span->coverage / 255.0 * state->opacity);
+        for (int i = 0; i < span->len; i++) {
+            gdPremulPixelF src = gradient_pixel_at(&sampler, span->x + i, span->y);
+            gdPremulPixelF old = gdCompositePixelFromArgb32(dst[i]);
+            dst[i] = gdCompositePixelToArgb32(gdCompositePixel(state->op, src, old, coverage));
+        }
+        span++;
+    }
+}
+
 static gdPremulPixelF lerp_clip(gdPremulPixelF dst, gdPremulPixelF result,
                                 float coverage)
 {
@@ -679,6 +724,7 @@ static void blend_unbounded(gdContextPtr context, const gdSpanRlePtr shape)
     gdSpanRlePtr clip_path = state->clippath;
     gdPremulPixelF solid = {0, 0, 0, 0};
     _spans_pattern pattern;
+    gdGradientSampler gradient;
     float paint_opacity = (float)state->opacity;
     int shape_cursor = 0, clip_cursor = 0;
     int x0 = MAX(0, (int)floor(context->clip.x));
@@ -696,6 +742,8 @@ static void blend_unbounded(gdContextPtr context, const gdSpanRlePtr shape)
         gdPathMatrixMultiply(&pattern.matrix, &pattern.matrix, &state->matrix);
         gdPathMatrixInvert(&pattern.matrix);
         paint_opacity *= (float)p->opacity;
+    } else if (source->type == gdPaintTypeGradient) {
+        gradient_sampler_init(&gradient, source->gradient, state);
     } else {
         gd_error("Paint method not implemented or does not exist.");
         return;
@@ -706,8 +754,9 @@ static void blend_unbounded(gdContextPtr context, const gdSpanRlePtr shape)
         for (int x = x0; x < x1; x++) {
             float mask = rle_coverage_at(shape, x, y, &shape_cursor) / 255.0f;
             float clip = clip_path ? rle_coverage_at(clip_path, x, y, &clip_cursor) / 255.0f : 1.0f;
-            gdPremulPixelF src = source->type == gdPaintTypeColor
-                                 ? solid : pattern_pixel_at(&pattern, x, y);
+            gdPremulPixelF src = source->type == gdPaintTypeColor ? solid :
+                (source->type == gdPaintTypePattern ? pattern_pixel_at(&pattern, x, y) :
+                 gradient_pixel_at(&gradient, x, y));
             gdPremulPixelF dst = gdCompositePixelFromArgb32(row[x]);
             gdPremulPixelF result;
             if (clip == 0.0f)
@@ -742,6 +791,8 @@ void gdPathBlend(gdContextPtr context, const gdSpanRlePtr rle)
             gdDrawBlendPattern(context, rle, source->pattern);
             break;
         case gdPaintTypeGradient:
+            gdDrawBlendGradient(context, rle, source->gradient);
+            break;
         case gdPaintTypeSurface:
         default:
             gd_error("Paint method not implemented or does not exist.");

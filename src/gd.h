@@ -2072,6 +2072,8 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
    } gdPathPattern;
    typedef gdPathPattern * gdPathPatternPtr;
 
+   typedef struct gdGradientStruct gdGradient;
+
    typedef struct gdPaintStruct
    {
       int ref;
@@ -2081,7 +2083,7 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
          gdColorPtr color;
          gdSurfacePtr surface;
          gdPathPatternPtr pattern;
-         //TODO gradient
+         gdGradient *gradient;
       };
    } gdPaint;
    typedef gdPaint *gdPaintPtr;
@@ -2316,6 +2318,21 @@ gdContextSetOperator(gdContextPtr context, gdCompositeOperator op);
 
    BGD_DECLARE(gdPaintPtr)
    gdPaintCreateFromPattern(gdPathPatternPtr pattern);
+   BGD_DECLARE(gdPaintPtr)
+   gdPaintCreateLinear(double x0, double y0, double x1, double y1);
+   BGD_DECLARE(gdPaintPtr)
+   gdPaintCreateRadial(double x0, double y0, double r0,
+                       double x1, double y1, double r1);
+   BGD_DECLARE(int)
+   gdPaintAddColorStopRgb(gdPaintPtr paint, double offset,
+                          double r, double g, double b);
+   BGD_DECLARE(int)
+   gdPaintAddColorStopRgba(gdPaintPtr paint, double offset,
+                           double r, double g, double b, double a);
+   BGD_DECLARE(int)
+   gdPaintSetExtend(gdPaintPtr paint, gdExtendMode extend);
+   BGD_DECLARE(int)
+   gdPaintSetMatrix(gdPaintPtr paint, const gdPathMatrixPtr matrix);
    BGD_DECLARE(void)
    gdPaintDestroy(gdPaintPtr paint);
    BGD_DECLARE(gdPathPatternPtr)
