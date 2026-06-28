@@ -21,6 +21,9 @@ SET(TESTS_FILES
 	ctx_image_basic
 	ctx_image_advanced
 	ctx_image_blend_modes
+	gradient_art
+	gradient_operators
+	composite_operators
 )
 
 if (PNG_FOUND)
@@ -55,6 +58,12 @@ FOREACH(test_name ${TESTS_FILES})
 	target_link_libraries (${test_name} ${GD_LINK_LIB})
 ENDFOREACH(test_name)
 
+if (UNIX)
+	target_link_libraries(gradient_art m)
+	target_link_libraries(gradient_operators m)
+	target_link_libraries(composite_operators m)
+endif (UNIX)
+
 # Add libraries *after* we've called add_executable on all the tests.
 
 if (PNG_FOUND AND JPEG_FOUND)
@@ -81,4 +90,3 @@ else (WIN32 AND NOT MINGW AND NOT MSYS)
 		target_link_libraries(windows ${GD_LINK_LIB} stdc++ gdi32)
 	endif (MINGW OR MSYS)
 endif (WIN32 AND NOT MINGW AND NOT MSYS)
-

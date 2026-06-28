@@ -210,7 +210,7 @@ void test_polygon()
     /* Star polygon */
     gdContextSetSourceRgba(ctx, 1.0, 0.8, 0.0, 0.8);  // gold, 80% alpha
     gdContextSetLineWidth(ctx, 2.0);
-    gdContextMoveTo(ctx, 100, 20);
+    gdContextMoveTo(ctx, 100, 30);
     for (int i = 1; i < 10; i++)
     {
         double angle = i * 2 * M_PI / 10 - M_PI / 2;
@@ -223,7 +223,7 @@ void test_polygon()
     /* Outline */
     gdContextSetSourceRgba(ctx, 0.8, 0.0, 0.0, 1.0);
     gdContextSetLineWidth(ctx, 3.0);
-    gdContextMoveTo(ctx, 100, 20);
+    gdContextMoveTo(ctx, 100, 30);
     for (int i = 1; i < 10; i++)
     {
         double angle = i * 2 * M_PI / 10 - M_PI / 2;
