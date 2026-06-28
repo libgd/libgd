@@ -22,7 +22,7 @@ int main()
 	if (gdTrueColorGetGreen(gdImageGetPixel(im, 0, 128)) != 0x40) {
 		r = 1;
 	}
-	if (gdTrueColorGetGreen(gdImageGetPixel(im, 128, 128)) != 0x5f) {
+	if (gdTrueColorGetGreen(gdImageGetPixel(im, 128, 128)) != 0x60) {
 		r = 1;
 	}
 	if (gdTrueColorGetGreen(gdImageGetPixel(im, 255, 128)) != 0x7f) {

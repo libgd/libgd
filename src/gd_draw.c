@@ -17,30 +17,17 @@
 #include "gd_draw_blend.h"
 #include "gd_path_matrix.h"
 #include "gd_path_dash.h"
+#include "gd_compositor.h"
 
 /* Conversion helpers: legacy gdImage truecolor <-> premultiplied ARGB32 */
 static inline uint32_t gdcolor_to_premul(int gdcolor)
 {
-    int a = gdTrueColorGetAlpha(gdcolor);
-    int r = gdTrueColorGetRed(gdcolor);
-    int g = gdTrueColorGetGreen(gdcolor);
-    int b = gdTrueColorGetBlue(gdcolor);
-    int a_s = (255 * (127 - a)) / 127;
-    int pr = (r * a_s) / 255;
-    int pg = (g * a_s) / 255;
-    int pb = (b * a_s) / 255;
-    return ((uint32_t)a_s << 24) | ((uint32_t)pr << 16) | ((uint32_t)pg << 8) | (uint32_t)pb;
+    return gdCompositePixelToArgb32(gdCompositePixelFromGd(gdcolor));
 }
 
 static inline int premul_to_gdcolor(uint32_t pm)
 {
-    int a_s = pm >> 24;
-    int a = (127 * (255 - a_s)) / 255;
-    if (a > 127) a = 127;
-    int r = (a_s > 0) ? ((int)(pm >> 16 & 0xFF) * 255 / a_s) : 0;
-    int g = (a_s > 0) ? ((int)(pm >> 8 & 0xFF) * 255 / a_s) : 0;
-    int b = (a_s > 0) ? ((int)(pm & 0xFF) * 255 / a_s) : 0;
-    return gdTrueColorAlpha(r, g, b, a);
+    return gdCompositePixelToGd(gdCompositePixelFromArgb32(pm));
 }
 
 BGD_DECLARE(void)
@@ -63,6 +50,18 @@ BGD_DECLARE(void)
 gdContextSetSourceSurface(gdContextPtr context, gdSurfacePtr surface, double x, double y)
 {
     gdPaintSetSourceSurface(context, surface, x, y);
+}
+
+BGD_DECLARE(void)
+gdContextSetOperator(gdContextPtr context, gdCompositeOperator op)
+{
+    if (!context)
+        return;
+    if (!gdCompositeOperatorIsValid(op)) {
+        gd_error("gdContextSetOperator: invalid operator %d.\n", (int)op);
+        return;
+    }
+    context->state->op = op;
 }
 
 BGD_DECLARE(void)
@@ -184,7 +183,8 @@ gdContextStrokePreserve(gdContextPtr context)
     gdStatePtr state = context->state;
     gdSpanRleClear(context->rle);
     gdSpanRleRasterize(context->rle, context->path, &state->matrix, &context->clip, &state->stroke, gdFillRuleNonZero);
-    gdSpanRlePathClip(context->rle, state->clippath);
+    if (!gdCompositeOperatorIsUnbounded(state->op))
+        gdSpanRlePathClip(context->rle, state->clippath);
     gdPathBlend(context, context->rle);
 }
 
@@ -195,7 +195,8 @@ gdContextFillPreserve(gdContextPtr context)
     gdSpanRleClear(context->rle);
     //gdPathDumpPathTransform(context->path, NULL);
     gdSpanRleRasterize(context->rle, context->path, &state->matrix, &context->clip, NULL, state->winding);
-    gdSpanRlePathClip(context->rle, state->clippath);
+    if (!gdCompositeOperatorIsUnbounded(state->op))
+        gdSpanRlePathClip(context->rle, state->clippath);
     gdPathBlend(context, context->rle);
 }
 

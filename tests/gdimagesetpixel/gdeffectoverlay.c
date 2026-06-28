@@ -19,13 +19,13 @@ int main()
 	gdImageAlphaBlending( im, gdEffectOverlay );
 	gdImageFilledRectangle(im, 0, 0, 255, 255, 0xff7f00);
 
-	if (gdTrueColorGetGreen(gdImageGetPixel(im, 0, 128)) != 0x00) {
+	if (gdTrueColorGetGreen(gdImageGetPixel(im, 0, 128)) != 0x40) {
 		r = 1;
 	}
-	if (gdTrueColorGetGreen(gdImageGetPixel(im, 128, 128)) != 0x80) {
+	if (gdTrueColorGetGreen(gdImageGetPixel(im, 128, 128)) != 0x7f) {
 		r = 1;
 	}
-	if (gdTrueColorGetGreen(gdImageGetPixel(im, 255, 128)) != 0xff) {
+	if (gdTrueColorGetGreen(gdImageGetPixel(im, 255, 128)) != 0xbe) {
 		r = 1;
 	}
 	gdImageDestroy(im);

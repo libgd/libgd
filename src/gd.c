@@ -15,9 +15,41 @@
 #include "gdhelpers.h"
 #include "gd_color.h"
 #include "gd_errors.h"
+#include "gd_compositor.h"
 
 /* 2.0.12: this now checks the clipping rectangle */
 #define gdImageBoundsSafeMacro(im, x, y) (!((((y) < (im)->cy1) || ((y) > (im)->cy2)) || (((x) < (im)->cx1) || ((x) > (im)->cx2))))
+
+/* Historical gd source-over rounding retained only by copy/resample APIs,
+ * whose behavior is outside the gd3 compositor migration. */
+static int gdAlphaBlendLegacy(int dst, int src)
+{
+	int src_alpha = gdTrueColorGetAlpha(src);
+	int dst_alpha, alpha, red, green, blue;
+	int src_weight, dst_weight, tot_weight;
+	if (src_alpha == gdAlphaOpaque) return src;
+	dst_alpha = gdTrueColorGetAlpha(dst);
+	if (src_alpha == gdAlphaTransparent) return dst;
+	if (dst_alpha == gdAlphaTransparent) return src;
+	src_weight = gdAlphaTransparent - src_alpha;
+	dst_weight = (gdAlphaTransparent - dst_alpha) * src_alpha / gdAlphaMax;
+	tot_weight = src_weight + dst_weight;
+	alpha = src_alpha * dst_alpha / gdAlphaMax;
+	red = (gdTrueColorGetRed(src) * src_weight + gdTrueColorGetRed(dst) * dst_weight) / tot_weight;
+	green = (gdTrueColorGetGreen(src) * src_weight + gdTrueColorGetGreen(dst) * dst_weight) / tot_weight;
+	blue = (gdTrueColorGetBlue(src) * src_weight + gdTrueColorGetBlue(dst) * dst_weight) / tot_weight;
+	return (alpha << 24) | (red << 16) | (green << 8) | blue;
+}
+
+static void gdImageSetPixelCopy(gdImagePtr im, int x, int y, int color)
+{
+	if (im->trueColor && gdImageBoundsSafeMacro(im, x, y) &&
+	    (im->alphaBlendingFlag == gdEffectAlphaBlend ||
+	     im->alphaBlendingFlag == gdEffectNormal))
+		im->tpixels[y][x] = gdAlphaBlendLegacy(im->tpixels[y][x], color);
+	else
+		gdImageSetPixel(im, x, y, color);
+}
 
 #ifdef _OSD_POSIX		/* BS2000 uses the EBCDIC char set instead of ASCII */
 #define CHARSET_EBCDIC
@@ -2954,7 +2986,7 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 				for (x = 0; (x < w); x++) {
 					int c = gdImageGetTrueColorPixel (src, srcX + x, srcY + y);
 					if (c != src->transparent) {
-						gdImageSetPixel (dst, dstX + x, dstY + y, c);
+						gdImageSetPixelCopy(dst, dstX + x, dstY + y, c);
 					}
 				}
 			}
@@ -2964,7 +2996,7 @@ BGD_DECLARE(void) gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dst
 				for (x = 0; (x < w); x++) {
 					int c = gdImageGetPixel (src, srcX + x, srcY + y);
 					if (c != src->transparent) {
-						gdImageSetPixel(dst, dstX + x, dstY + y, gdTrueColorAlpha(src->red[c], src->green[c], src->blue[c], src->alpha[c]));
+						gdImageSetPixelCopy(dst, dstX + x, dstY + y, gdTrueColorAlpha(src->red[c], src->green[c], src->blue[c], src->alpha[c]));
 					}
 				}
 			}
@@ -3552,7 +3584,15 @@ BGD_DECLARE(void) gdImageCopyResampled (gdImagePtr dst,
 			if (alpha > gdAlphaMax) {
 				alpha = gdAlphaMax;
 			}
-			gdImageSetPixel(dst, x, y, gdTrueColorAlpha ((int) red, (int) green, (int) blue, (int) alpha));
+			{
+				int color = gdTrueColorAlpha((int)red, (int)green, (int)blue, (int)alpha);
+				if (gdImageBoundsSafeMacro(dst, x, y) &&
+				    (dst->alphaBlendingFlag == gdEffectAlphaBlend ||
+				     dst->alphaBlendingFlag == gdEffectNormal))
+					dst->tpixels[y][x] = gdAlphaBlendLegacy(dst->tpixels[y][x], color);
+				else
+					gdImageSetPixel(dst, x, y, color);
+			}
 		}
 	}
 }
@@ -4059,50 +4099,10 @@ BGD_DECLARE(int) gdImageCompare (gdImagePtr im1, gdImagePtr im2)
  */
 BGD_DECLARE(int) gdAlphaBlend (int dst, int src)
 {
-	int src_alpha = gdTrueColorGetAlpha(src);
-	int dst_alpha, alpha, red, green, blue;
-	int src_weight, dst_weight, tot_weight;
-
-	/* -------------------------------------------------------------------- */
-	/*      Simple cases we want to handle fast.                            */
-	/* -------------------------------------------------------------------- */
-	if( src_alpha == gdAlphaOpaque )
-		return src;
-
-	dst_alpha = gdTrueColorGetAlpha(dst);
-	if( src_alpha == gdAlphaTransparent )
-		return dst;
-	if( dst_alpha == gdAlphaTransparent )
-		return src;
-
-	/* -------------------------------------------------------------------- */
-	/*      What will the source and destination alphas be?  Note that      */
-	/*      the destination weighting is substantially reduced as the       */
-	/*      overlay becomes quite opaque.                                   */
-	/* -------------------------------------------------------------------- */
-	src_weight = gdAlphaTransparent - src_alpha;
-	dst_weight = (gdAlphaTransparent - dst_alpha) * src_alpha / gdAlphaMax;
-	tot_weight = src_weight + dst_weight;
-
-	/* -------------------------------------------------------------------- */
-	/*      What red, green and blue result values will we use?             */
-	/* -------------------------------------------------------------------- */
-	alpha = src_alpha * dst_alpha / gdAlphaMax;
-
-	red = (gdTrueColorGetRed(src) * src_weight
-	       + gdTrueColorGetRed(dst) * dst_weight) / tot_weight;
-	green = (gdTrueColorGetGreen(src) * src_weight
-	         + gdTrueColorGetGreen(dst) * dst_weight) / tot_weight;
-	blue = (gdTrueColorGetBlue(src) * src_weight
-	        + gdTrueColorGetBlue(dst) * dst_weight) / tot_weight;
-
-	/* -------------------------------------------------------------------- */
-	/*      Return merged result.                                           */
-	/* -------------------------------------------------------------------- */
-	return ((alpha << 24) + (red << 16) + (green << 8) + blue);
+	return gdCompositePixelToGd(gdCompositePixel(
+		GD_OP_OVER, gdCompositePixelFromGd(src),
+		gdCompositePixelFromGd(dst), 1.0f));
 }
-
-static int gdAlphaOverlayColor (int src, int dst, int max );
 
 /**
  * Function: gdLayerOverlay
@@ -4120,27 +4120,9 @@ static int gdAlphaOverlayColor (int src, int dst, int max );
  */
 BGD_DECLARE(int) gdLayerOverlay (int dst, int src)
 {
-	int a1, a2;
-	a1 = gdAlphaMax - gdTrueColorGetAlpha(dst);
-	a2 = gdAlphaMax - gdTrueColorGetAlpha(src);
-	return ( ((gdAlphaMax - a1*a2/gdAlphaMax) << 24) +
-		(gdAlphaOverlayColor( gdTrueColorGetRed(src), gdTrueColorGetRed(dst), gdRedMax ) << 16) +
-		(gdAlphaOverlayColor( gdTrueColorGetGreen(src), gdTrueColorGetGreen(dst), gdGreenMax ) << 8) +
-		(gdAlphaOverlayColor( gdTrueColorGetBlue(src), gdTrueColorGetBlue(dst), gdBlueMax ))
-		);
-}
-
-/* Apply 'overlay' effect - background pixels are colourised by the foreground colour */
-static int gdAlphaOverlayColor (int src, int dst, int max )
-{
-	dst = dst << 1;
-	if( dst > max ) {
-		/* in the "light" zone */
-		return dst + (src << 1) - (dst * src / max) - max;
-	} else {
-		/* in the "dark" zone */
-		return dst * src / max;
-	}
+	return gdCompositePixelToGd(gdCompositePixel(
+		GD_OP_OVERLAY, gdCompositePixelFromGd(src),
+		gdCompositePixelFromGd(dst), 1.0f));
 }
 
 /**
@@ -4159,24 +4141,9 @@ static int gdAlphaOverlayColor (int src, int dst, int max )
  */
 BGD_DECLARE(int) gdLayerMultiply (int dst, int src)
 {
-	int a1, a2, r1, r2, g1, g2, b1, b2;
-	a1 = gdAlphaMax - gdTrueColorGetAlpha(src);
-	a2 = gdAlphaMax - gdTrueColorGetAlpha(dst);
-
-	r1 = gdRedMax - (a1 * (gdRedMax - gdTrueColorGetRed(src))) / gdAlphaMax;
-	r2 = gdRedMax - (a2 * (gdRedMax - gdTrueColorGetRed(dst))) / gdAlphaMax;
-	g1 = gdGreenMax - (a1 * (gdGreenMax - gdTrueColorGetGreen(src))) / gdAlphaMax;
-	g2 = gdGreenMax - (a2 * (gdGreenMax - gdTrueColorGetGreen(dst))) / gdAlphaMax;
-	b1 = gdBlueMax - (a1 * (gdBlueMax - gdTrueColorGetBlue(src))) / gdAlphaMax;
-	b2 = gdBlueMax - (a2 * (gdBlueMax - gdTrueColorGetBlue(dst))) / gdAlphaMax ;
-
-	a1 = gdAlphaMax - a1;
-	a2 = gdAlphaMax - a2;
-	return ( ((a1*a2/gdAlphaMax) << 24) +
-			 ((r1*r2/gdRedMax) << 16) +
-			 ((g1*g2/gdGreenMax) << 8) +
-			 ((b1*b2/gdBlueMax))
-		);
+	return gdCompositePixelToGd(gdCompositePixel(
+		GD_OP_MULTIPLY, gdCompositePixelFromGd(src),
+		gdCompositePixelFromGd(dst), 1.0f));
 }
 
 /**

@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 #include "gd.h"
 #include "gdtest.h"
+
+static const char *generate_root;
 
 int gen_image(const char* filename, int idx, int reverse_x, int width, int height, int bgd)
 {
@@ -34,7 +37,13 @@ int gen_image(const char* filename, int idx, int reverse_x, int width, int heigh
 
 	gdImageLine(im, 0, im->sy - 1, im->sx, im->sy - 1, 0x40FF0000);
 
-	if (!gdAssertImageEqualsToFile(filename, im)) {
+	if (generate_root) {
+		char path[1024];
+		snprintf(path, sizeof(path), "%s/%s", generate_root, filename);
+		FILE *out = fopen(path, "wb");
+		if (!out) error = 1;
+		else { gdImagePng(im, out); fclose(out); }
+	} else if (!gdAssertImageEqualsToFile(filename, im)) {
 		gdTestErrorMsg("gdAssertImageEqualsToFile failed: <%s>\n", filename);
 		error = 1;
 	}
@@ -42,9 +51,11 @@ int gen_image(const char* filename, int idx, int reverse_x, int width, int heigh
 	return error;
 }
 
-int main()
+int main(int argc, char **argv)
 {
 	int error = 0;
+	if (argc == 3 && strcmp(argv[1], "--generate") == 0)
+		generate_root = argv[2];
 
 	error |= gen_image("gdimageline/gdimageline_aa_a_0_exp.png", 0, 1, 10, 100, 1);
 

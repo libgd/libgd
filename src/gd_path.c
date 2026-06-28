@@ -195,7 +195,7 @@ gdStatePtr gdStateCreate()
     state->stroke.cap = gdLineCapButt;
     state->stroke.join = gdLineJoinMiter;
     state->stroke.dash = NULL;
-    state->op = gdImageOpsSrcOver;
+    state->op = GD_OP_OVER;
     //state->fontsize = 12.0;
     state->opacity = 1.0;
     state->clippath = NULL;

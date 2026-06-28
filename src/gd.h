@@ -235,10 +235,9 @@ extern "C"
 #define M_PI 3.14159265358979323846
 #endif
 
-   /* This function accepts truecolor pixel values only. The
-   source color is composited with the destination color
-   based on the alpha channel value of the source color.
-   The resulting color is opaque. */
+   /* These functions accept truecolor pixel values only. Source and
+   destination are composited using standard premultiplied-alpha formulas;
+   the result is converted back to gd's inverted 7-bit alpha format. */
 
    BGD_DECLARE(int)
    gdAlphaBlend(int dest, int src);
@@ -2016,11 +2015,44 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
 
    typedef enum
    {
-      gdImageOpsSrc,
-      gdImageOpsSrcOver,
-      gdImageOpsDstIn,
-      gdImageOpsDstOut
-   } gdImageOp;
+      GD_OP_CLEAR,
+      GD_OP_SOURCE,
+      GD_OP_OVER,
+      GD_OP_IN,
+      GD_OP_OUT,
+      GD_OP_ATOP,
+      GD_OP_DEST,
+      GD_OP_DEST_OVER,
+      GD_OP_DEST_IN,
+      GD_OP_DEST_OUT,
+      GD_OP_DEST_ATOP,
+      GD_OP_XOR,
+      GD_OP_ADD,
+      GD_OP_SATURATE,
+      GD_OP_MULTIPLY,
+      GD_OP_SCREEN,
+      GD_OP_OVERLAY,
+      GD_OP_DARKEN,
+      GD_OP_LIGHTEN,
+      GD_OP_COLOR_DODGE,
+      GD_OP_COLOR_BURN,
+      GD_OP_HARD_LIGHT,
+      GD_OP_SOFT_LIGHT,
+      GD_OP_DIFFERENCE,
+      GD_OP_EXCLUSION,
+      GD_OP_HSL_HUE,
+      GD_OP_HSL_SATURATION,
+      GD_OP_HSL_COLOR,
+      GD_OP_HSL_LUMINOSITY,
+      GD_OP_COUNT
+   } gdCompositeOperator;
+
+   /* Compatibility names used by the experimental surface API. */
+   typedef gdCompositeOperator gdImageOp;
+#define gdImageOpsSrc GD_OP_SOURCE
+#define gdImageOpsSrcOver GD_OP_OVER
+#define gdImageOpsDstIn GD_OP_DEST_IN
+#define gdImageOpsDstOut GD_OP_DEST_OUT
 
    typedef struct gdColorStruct
    {
@@ -2079,7 +2111,7 @@ gdTransformAffineCopy(gdImagePtr dst, int x0, int y0, int x1, int y1,
       gdPathMatrix matrix;
       gdFillRule winding;
       gdStroke stroke;
-      gdImageOp op;
+      gdCompositeOperator op;
       //double fontsize;
       double opacity;
       struct gdStateStruct *next;
@@ -2226,8 +2258,10 @@ gdContextDestroy(gdContextPtr context);
    gdContextSetSourceRgba(gdContextPtr context, double r, double g, double b, double a);
    BGD_DECLARE(void)
    gdContextSetSourceRgb(gdContextPtr context, double r, double g, double b);
-   BGD_DECLARE(void)
-   gdContextSetSourceSurface(gdContextPtr context, gdSurfacePtr surface, double x, double y);
+BGD_DECLARE(void)
+gdContextSetSourceSurface(gdContextPtr context, gdSurfacePtr surface, double x, double y);
+BGD_DECLARE(void)
+gdContextSetOperator(gdContextPtr context, gdCompositeOperator op);
 
    BGD_DECLARE(void)
    gdContextMoveTo(gdContextPtr context, double x, double y);

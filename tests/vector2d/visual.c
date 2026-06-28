@@ -160,6 +160,35 @@ static gdImagePtr render_surface_pattern(gdImagePtr *image_backend)
     return surface_image;
 }
 
+static gdImagePtr render_blend_modes(void)
+{
+    const int tile = 48, columns = 5;
+    gdImagePtr result = gdImageCreateTrueColor(columns * tile, 6 * tile);
+    gdImageAlphaBlending(result, gdEffectReplace);
+    fill_image(result, gdTrueColorAlpha(245, 245, 245, 0));
+
+    for (int op = 0; op < GD_OP_COUNT; op++) {
+        gdImagePtr cell = gdImageCreateTrueColor(tile, tile);
+        gdImageAlphaBlending(cell, gdEffectReplace);
+        fill_image(cell, gdTrueColorAlpha(0, 0, 0, gdAlphaTransparent));
+        gdContextPtr context = gdContextCreateForImage(cell);
+        gdContextSetSourceRgba(context, 0.85, 0.12, 0.08, 0.72);
+        gdContextRectangle(context, 5, 8, 27, 27);
+        gdContextFill(context);
+        gdContextSetOperator(context, (gdCompositeOperator)op);
+        gdContextSetSourceRgba(context, 0.05, 0.25, 0.9, 0.58);
+        gdContextRectangle(context, 17, 15, 27, 27);
+        gdContextFill(context);
+        gdContextFlushImage(context);
+        gdContextDestroy(context);
+        gdImageCopy(result, cell, (op % columns) * tile,
+                    (op / columns) * tile, 0, 0, tile, tile);
+        gdImageDestroy(cell);
+    }
+    gdImageSaveAlpha(result, 1);
+    return result;
+}
+
 static int write_png(const char *directory, const char *name, gdImagePtr image)
 {
     char path[1024];
@@ -177,16 +206,19 @@ int main(int argc, char **argv)
     gdImagePtr fills = render_fills();
     gdImagePtr image_backend = NULL;
     gdImagePtr pattern = render_surface_pattern(&image_backend);
+    gdImagePtr blend_modes = render_blend_modes();
 
     if (argc == 3 && strcmp(argv[1], "--generate") == 0) {
         if (!write_png(argv[2], "visual_strokes.png", strokes) ||
             !write_png(argv[2], "visual_fills.png", fills) ||
-            !write_png(argv[2], "visual_pattern.png", pattern))
+            !write_png(argv[2], "visual_pattern.png", pattern) ||
+            !write_png(argv[2], "visual_blend_modes.png", blend_modes))
             gdTestErrorMsg("could not write vector2d golden images\n");
     } else {
         gdAssertImageEqualsToFile("vector2d/visual_strokes.png", strokes);
         gdAssertImageEqualsToFile("vector2d/visual_fills.png", fills);
         gdAssertImageEqualsToFile("vector2d/visual_pattern.png", pattern);
+        gdAssertImageEqualsToFile("vector2d/visual_blend_modes.png", blend_modes);
         gdAssertImageEquals(pattern, image_backend);
     }
 
@@ -194,5 +226,6 @@ int main(int argc, char **argv)
     gdImageDestroy(fills);
     gdImageDestroy(pattern);
     gdImageDestroy(image_backend);
+    gdImageDestroy(blend_modes);
     return gdNumFailures();
 }
