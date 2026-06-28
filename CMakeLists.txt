@@ -22,6 +22,7 @@ OPTION(ENABLE_WEBP "Enable WebP support" 0)
 OPTION(ENABLE_HEIF "Enable HEIF support" 0)
 OPTION(ENABLE_AVIF "Enable AVIF support" 0)
 OPTION(ENABLE_RAQM "Enable RAQM support" 0)
+OPTION(BUILD_BENCHMARKS "Build non-blocking benchmark programs" 0)
 
 if (BUILD_TEST)
 	ENABLE_TESTING()
@@ -150,6 +151,9 @@ else (USE_EXT_GD)
 
 	if (ENABLE_FREETYPE)
 		FIND_PACKAGE(Freetype REQUIRED)
+		# CMake's FindFreetype uses Freetype_FOUND; retain the legacy spelling
+		# consumed by the existing libgd build and test conditions.
+		SET(FREETYPE_FOUND ${Freetype_FOUND})
 	endif (ENABLE_FREETYPE)
 
 	if (ENABLE_XPM)
@@ -282,6 +286,9 @@ endif (USE_EXT_GD)
 
 add_subdirectory(tests)
 add_subdirectory(examples)
+if (BUILD_BENCHMARKS)
+	add_subdirectory(benchmark)
+endif()
 
 add_custom_target(distclean ${GD_SOURCE_DIR}/cmake/distclean.sh)
 
