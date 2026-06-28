@@ -1,6 +1,8 @@
 #ifndef GD_PATH_H
 #define GD_PATH_H
 
+#include <math.h>
+
 gdPathPtr gdPathCreate();
 gdPathPtr gdPathAddRef(gdPathPtr path);
 void gdPathDestroy(gdPathPtr path);

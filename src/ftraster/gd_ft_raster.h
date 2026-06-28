@@ -27,6 +27,9 @@
 
 #include "gd_ft_types.h"
 
+typedef struct gdPathStruct *gdPathPtr;
+typedef struct gdPathMatrixStruct *gdPathMatrixPtr;
+
   /*************************************************************************/
   /*                                                                       */
   /* <Struct>                                                              */
@@ -603,5 +606,13 @@ GD_FT_Outline_Get_CBox( const GD_FT_Outline*  outline,
 
 
 extern const GD_FT_Raster_Funcs   gd_ft_grays_raster;
+
+/* Direct path rendering without FT_Outline intermediate */
+GD_FT_Error gd_ft_raster_render_path(
+    const gdPathPtr path,
+    gdPathMatrixPtr matrix,
+    GD_FT_Raster_Params *params,
+    int outline_flags
+);
 
 #endif // GD_FT_IMG_H

@@ -366,8 +366,8 @@ static void bbox_callback(int x, int y, int w, int h, void *user)
 
 static void _rasterize_fill(gdSpanRlePtr rle, const gdPathPtr path, const gdPathMatrixPtr matrix, const gdRectFPtr clip, gdFillRule winding)
 {
-    static const gdPathMatrix identity_matrix = {1.0, 0.0, 0.0, 1.0, 0.0, 0.0};
-    GD_FT_Raster_Params params;
+    static gdPathMatrix identity_matrix = {1.0, 0.0, 0.0, 1.0, 0.0, 0.0};
+    GD_FT_Raster_Params params = {0};
     params.flags = GD_FT_RASTER_FLAG_DIRECT | GD_FT_RASTER_FLAG_AA;
     params.gray_spans = generation_callback;
     params.bbox_cb = bbox_callback;
@@ -382,13 +382,9 @@ static void _rasterize_fill(gdSpanRlePtr rle, const gdPathPtr path, const gdPath
         params.clip_box.yMax = (GD_FT_Pos)(clip->y + clip->h);
     }
 
-    GD_FT_Outline *outline = gd_ft_outline_convert(path, matrix ? matrix : &identity_matrix);
-    if (!outline)
-        return;
-    outline->flags = winding == gdFillRulEvenOdd ? GD_FT_OUTLINE_EVEN_ODD_FILL : GD_FT_OUTLINE_NONE;
-    params.source = outline;
-    gd_ft_grays_raster.raster_render(NULL, &params);
-    gd_ft_outline_destroy(outline);
+    gd_ft_raster_render_path(path, matrix ? matrix : &identity_matrix, &params,
+                             winding == gdFillRulEvenOdd ? GD_FT_OUTLINE_EVEN_ODD_FILL
+                                                        : GD_FT_OUTLINE_NONE);
 }
 
 void gdSpanRleRasterize(gdSpanRlePtr rle, const gdPathPtr path, const gdPathMatrixPtr matrix, const gdRectFPtr clip, const gdStrokePtr stroke, gdFillRule winding)

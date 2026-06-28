@@ -57,6 +57,20 @@
 
 #include "gd_ft_raster.h"
 #include "gd_ft_math.h"
+#include "gd.h"
+#include "gd_path_matrix.h"
+
+/* Path-to-outline helpers implemented by gd_span_rle.c. */
+GD_FT_Outline *gd_ft_outline_create(int points, int contours);
+void gd_ft_outline_close(GD_FT_Outline *outline);
+void gd_ft_outline_end(GD_FT_Outline *outline);
+void gd_ft_outline_move_to(GD_FT_Outline *outline, double x, double y);
+void gd_ft_outline_line_to(GD_FT_Outline *outline, double x, double y);
+void gd_ft_outline_cubic_to(GD_FT_Outline *outline, double x1, double y1,
+                            double x2, double y2, double x3, double y3);
+void gd_ft_outline_conic_to(GD_FT_Outline *outline, double x1, double y1,
+                            double x2, double y2);
+void gd_ft_outline_destroy(GD_FT_Outline *outline);
 
 /* Auxiliary macros for token concatenation. */
 #define GD_FT_ERR_XCAT(x, y) x##y
@@ -1421,3 +1435,136 @@ GD_FT_DEFINE_RASTER_FUNCS(gd_ft_grays_raster,
                           (GD_FT_Raster_Done_Func)gray_raster_done)
 
 /* END */
+
+GD_FT_Error gd_ft_raster_render_path(
+    const gdPathPtr path,
+    gdPathMatrixPtr matrix,
+    GD_FT_Raster_Params *params,
+    int outline_flags)
+{
+    if (!path || !params)
+        return GD_FT_THROW(Invalid_Argument);
+
+    /* Use static raster worker */
+#ifndef GD_FT_STATIC_RASTER
+    gray_TWorker worker_storage;
+    gray_PWorker worker = &worker_storage;
+#else
+    /* Save the shared worker while this direct rendering call uses it. */
+    gray_TWorker save_ras = ras;
+#endif
+
+
+/* Count path elements to estimate outline size */
+    unsigned int numElements = gdArrayNumElements(&path->elements);
+    int numPoints = 0;
+    int numContours = 0;
+
+    for (unsigned int i = 0; i < numElements; i++) {
+        gdPathOpsPtr element = (gdPathOpsPtr)gdArrayIndex(&path->elements, i);
+        switch (*element) {
+            case gdPathOpsMoveTo: numPoints += 1; numContours++; break;
+            case gdPathOpsLineTo: numPoints += 1; break;
+            case gdPathOpsCubicTo: numPoints += 3; break;
+            case gdPathOpsQuadTo: numPoints += 2; break;
+            case gdPathOpsClose: break;
+        }
+    }
+
+    /* Create outline structure */
+    GD_FT_Outline *outline = gd_ft_outline_create(numPoints, numContours);
+    if (!outline)
+        return GD_FT_THROW(Memory_Overflow);
+
+    /* Build outline from path */
+    unsigned int pointsIndex = 0;
+    gdPointF p[3];
+
+    for (unsigned int i = 0; i < numElements; i++)
+    {
+        gdPathOpsPtr element = (gdPathOpsPtr)gdArrayIndex(&path->elements, i);
+        gdPointFPtr point = gdArrayIndex(&path->points, pointsIndex);
+
+        switch (*element)
+        {
+        case gdPathOpsMoveTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            gd_ft_outline_move_to(outline, p[0].x, p[0].y);
+            pointsIndex += 1;
+            break;
+        case gdPathOpsLineTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            gd_ft_outline_line_to(outline, p[0].x, p[0].y);
+            pointsIndex += 1;
+            break;
+        case gdPathOpsCubicTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            point = gdArrayIndex(&path->points, pointsIndex + 1);
+            gdPathMatrixMapPoint(matrix, point, &p[1]);
+            point = gdArrayIndex(&path->points, pointsIndex + 2);
+            gdPathMatrixMapPoint(matrix, point, &p[2]);
+            gd_ft_outline_cubic_to(outline, p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y);
+            pointsIndex += 3;
+            break;
+        case gdPathOpsQuadTo:
+            gdPathMatrixMapPoint(matrix, point, &p[0]);
+            point = gdArrayIndex(&path->points, pointsIndex + 1);
+            gdPathMatrixMapPoint(matrix, point, &p[1]);
+            gd_ft_outline_conic_to(outline, p[0].x, p[0].y, p[1].x, p[1].y);
+            pointsIndex += 2;
+            break;
+        case gdPathOpsClose:
+            gd_ft_outline_close(outline);
+            pointsIndex += 1;
+            break;
+        }
+    }
+
+    gd_ft_outline_end(outline);
+    outline->flags = outline_flags;
+
+    /* Use the standard raster pipeline */
+    TCell buffer[GD_FT_RENDER_POOL_SIZE / sizeof(TCell)];
+    long buffer_size = sizeof(buffer);
+    int band_size = (int)(buffer_size / (long)(sizeof(TCell) * 8));
+
+#ifdef GD_FT_STATIC_RASTER
+    /* Save the shared raster state.  Non-static builds use worker_storage. */
+    gray_TWorker save_ras = ras;
+#endif
+
+    /* Set up the raster */
+    params->flags |= GD_FT_RASTER_FLAG_DIRECT | GD_FT_RASTER_FLAG_AA;
+    ras.clip_box = params->clip_box;
+    gray_init_cells(&ras, buffer, buffer_size);
+    ras.outline = *outline;
+    ras.num_cells = 0;
+    ras.invalid = 1;
+    ras.band_size = band_size;
+    ras.num_gray_spans = 0;
+    ras.render_span = (GD_FT_Raster_Span_Func)params->gray_spans;
+    ras.render_span_data = params->user;
+
+    /* Run the full conversion pipeline (band setup + sweep + span generation) */
+    gray_convert_glyph(&ras);
+
+    int bound_left = ras.bound_left;
+    int bound_top = ras.bound_top;
+    int bound_right = ras.bound_right;
+    int bound_bottom = ras.bound_bottom;
+
+#ifdef GD_FT_STATIC_RASTER
+    ras = save_ras;
+#endif
+
+    /* Clean up outline */
+    gd_ft_outline_destroy(outline);
+
+    if (bound_right > bound_left && bound_bottom > bound_top) {
+        params->bbox_cb(bound_left, bound_top,
+                        bound_right - bound_left,
+                        bound_bottom - bound_top + 1, params->user);
+    }
+
+    return 0;
+}

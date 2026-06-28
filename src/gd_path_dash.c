@@ -14,7 +14,7 @@
 #include "gd_path_dash.h"
 #include "gd_path_matrix.h"
 
-gdPathDashPtr gdPathDashCreate(double *data, int size, double offset)
+gdPathDashPtr gdPathDashCreate(const double *data, int size, double offset)
 {
     if (data == NULL || size == 0)
         return NULL;
