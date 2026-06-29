@@ -6,6 +6,9 @@
 /* Whether to support gd image formats */
 #cmakedefine01 ENABLE_GD_FORMATS
 
+/* Route selected legacy blending APIs through the normalized compositor. */
+#cmakedefine01 ENABLE_CORRECTED_LEGACY_COMPOSITING
+
 /* Define to 1 if you have the <dirent.h> header file. */
 #cmakedefine HAVE_DIRENT_H
 

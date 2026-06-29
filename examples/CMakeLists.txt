@@ -7,7 +7,7 @@ SET(TESTS_FILES
 )
 
 if (PNG_FOUND)
-	LIST(APPEND TESTS_FILES arc crop gif_frames tgaread)
+	LIST(APPEND TESTS_FILES arc crop ctx_image_advanced ctx_image_basic ctx_image_blend_modes gif_frames tgaread)
 
 	if (JPEG_FOUND)
 		LIST(APPEND TESTS_FILES copyrotated flip nnquant imagescale)

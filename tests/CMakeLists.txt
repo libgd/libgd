@@ -91,6 +91,7 @@ if (BUILD_TEST)
 		png
 		qoi
 		uhdr
+		vector2d
 		tga
 		tiff
 		wbmp

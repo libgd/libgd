@@ -52,7 +52,7 @@ EXTRA_DIST = \
 	msinttypes/inttypes.h \
 	msinttypes/stdint.h
 
-include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h gd_color_map.h gd_errors.h gdpp.h
+include_HEADERS = gd.h gd_vector2d.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h gd_color_map.h gd_errors.h gdpp.h
 
 lib_LTLIBRARIES = libgd.la
 
@@ -68,9 +68,12 @@ libgd_la_SOURCES = \
 	gd_color_map.c \
 	gd_color_map.h \
 	gd_color_match.c \
+	gd_compositor.c gd_compositor.h \
 	gd_crop.c \
+	gd_draw.c gd_draw_blend.c gd_draw_blend.h \
 	gd_filename.c \
 	gd_filter.c \
+	gd_gradient.c gd_gradient.h \
 	gd_gd.c \
 	gd_gd2.c \
 	gd_gif_in.c \
@@ -89,12 +92,15 @@ libgd_la_SOURCES = \
 	gd_metadata.c \
 	gd_nnquant.c \
 	gd_nnquant.h \
+	gd_path.c gd_path.h gd_path_arc.c gd_path_arc.h gd_path_dash.c gd_path_dash.h \
+	gd_path_matrix.c gd_path_matrix.h gd_path_outline.h gd_path_stroke.c \
 	gd_png.c \
 	gd_qoi.c \
 	gd_qoi.h \
 	gd_rotate.c \
 	gd_security.c \
 	gd_ss.c \
+	gd_span_rle.c gd_span_rle.h gd_surface.c gd_surface.h \
 	gd_tga.c \
 	gd_tga.h \
 	gd_tiff.c \
@@ -105,6 +111,10 @@ libgd_la_SOURCES = \
 	gd_wbmp.c \
 	gd_webp.c \
 	gd_xbm.c \
+	gd_array.c gd_array.h gd_fixed.h gd_vector2d.h gd_vector2d_private.h \
+	ftraster/gd_ft_math.c ftraster/gd_ft_math.h \
+	ftraster/gd_ft_raster.c ftraster/gd_ft_raster.h \
+	ftraster/gd_ft_stroker.c ftraster/gd_ft_stroker.h ftraster/gd_ft_types.h \
 	gdcache.c \
 	gdcache.h \
 	gdfontg.c \

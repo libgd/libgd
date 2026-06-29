@@ -1,0 +1,12 @@
+SET(TESTS_FILES image_context)
+ADD_GD_TESTS()
+SET_TESTS_PROPERTIES(test_vector2d_image_context PROPERTIES LABELS "vector2d-public")
+
+IF(BUILD_STATIC_LIBS)
+	SET(TESTS_FILES path_structure raster_parity compositor gradient)
+	ADD_GD_TESTS(${GD_LIB_STATIC})
+	SET_TESTS_PROPERTIES(test_vector2d_path_structure PROPERTIES LABELS "vector2d-structural")
+	SET_TESTS_PROPERTIES(test_vector2d_raster_parity PROPERTIES LABELS "vector2d-parity")
+	SET_TESTS_PROPERTIES(test_vector2d_compositor PROPERTIES LABELS "vector2d-compositor")
+	SET_TESTS_PROPERTIES(test_vector2d_gradient PROPERTIES LABELS "vector2d-gradient")
+ENDIF()

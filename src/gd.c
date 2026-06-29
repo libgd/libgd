@@ -15,6 +15,9 @@
 #include "gd_color.h"
 #include "gd_errors.h"
 #include "gdhelpers.h"
+#if ENABLE_CORRECTED_LEGACY_COMPOSITING
+#include "gd_compositor.h"
+#endif
 
 /* 2.0.12: this now checks the clipping rectangle */
 #define gdImageBoundsSafeMacro(im, x, y)                                       \
@@ -4089,6 +4092,10 @@ BGD_DECLARE(int) gdImageCompare(gdImagePtr im1, gdImagePtr im2) {
  *   - <gdLayerMultiply>
  */
 BGD_DECLARE(int) gdAlphaBlend(int dst, int src) {
+#if ENABLE_CORRECTED_LEGACY_COMPOSITING
+	return gdCompositePixelToGd(gdCompositePixel(
+		GD_OP_OVER, gdCompositePixelFromGd(src), gdCompositePixelFromGd(dst), 1.0f));
+#else
 	int src_alpha = gdTrueColorGetAlpha(src);
 	int dst_alpha, alpha, red, green, blue;
 	int src_weight, dst_weight, tot_weight;
@@ -4133,9 +4140,12 @@ BGD_DECLARE(int) gdAlphaBlend(int dst, int src) {
 	/*      Return merged result.                                           */
 	/* -------------------------------------------------------------------- */
 	return ((alpha << 24) + (red << 16) + (green << 8) + blue);
+#endif
 }
 
+#if !ENABLE_CORRECTED_LEGACY_COMPOSITING
 static int gdAlphaOverlayColor(int src, int dst, int max);
+#endif
 
 /**
  * Function: gdLayerOverlay
@@ -4152,6 +4162,10 @@ static int gdAlphaOverlayColor(int src, int dst, int max);
  *   - <gdLayerMultiply>
  */
 BGD_DECLARE(int) gdLayerOverlay(int dst, int src) {
+#if ENABLE_CORRECTED_LEGACY_COMPOSITING
+	return gdCompositePixelToGd(gdCompositePixel(
+		GD_OP_OVERLAY, gdCompositePixelFromGd(src), gdCompositePixelFromGd(dst), 1.0f));
+#else
 	int a1, a2;
 	a1 = gdAlphaMax - gdTrueColorGetAlpha(dst);
 	a2 = gdAlphaMax - gdTrueColorGetAlpha(src);
@@ -4164,10 +4178,12 @@ BGD_DECLARE(int) gdLayerOverlay(int dst, int src) {
 			 << 8) +
 			(gdAlphaOverlayColor(gdTrueColorGetBlue(src),
 								 gdTrueColorGetBlue(dst), gdBlueMax)));
+#endif
 }
 
 /* Apply 'overlay' effect - background pixels are colourised by the foreground
  * colour */
+#if !ENABLE_CORRECTED_LEGACY_COMPOSITING
 static int gdAlphaOverlayColor(int src, int dst, int max) {
 	dst = dst << 1;
 	if (dst > max) {
@@ -4178,6 +4194,7 @@ static int gdAlphaOverlayColor(int src, int dst, int max) {
 		return dst * src / max;
 	}
 }
+#endif
 
 /**
  * Function: gdLayerMultiply
@@ -4194,6 +4211,10 @@ static int gdAlphaOverlayColor(int src, int dst, int max) {
  *   - <gdLayerOverlay>
  */
 BGD_DECLARE(int) gdLayerMultiply(int dst, int src) {
+#if ENABLE_CORRECTED_LEGACY_COMPOSITING
+	return gdCompositePixelToGd(gdCompositePixel(
+		GD_OP_MULTIPLY, gdCompositePixelFromGd(src), gdCompositePixelFromGd(dst), 1.0f));
+#else
 	int a1, a2, r1, r2, g1, g2, b1, b2;
 	a1 = gdAlphaMax - gdTrueColorGetAlpha(src);
 	a2 = gdAlphaMax - gdTrueColorGetAlpha(dst);
@@ -4211,6 +4232,7 @@ BGD_DECLARE(int) gdLayerMultiply(int dst, int src) {
 	a2 = gdAlphaMax - a2;
 	return (((a1 * a2 / gdAlphaMax) << 24) + ((r1 * r2 / gdRedMax) << 16) +
 			((g1 * g2 / gdGreenMax) << 8) + ((b1 * b2 / gdBlueMax)));
+#endif
 }
 
 /**

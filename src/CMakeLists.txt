@@ -5,9 +5,13 @@ SET (LIBGD_SRC_FILES
 	gd_color.c
 	gd_color_map.c
 	gd_color_match.c
+	gd_compositor.c
 	gd_crop.c
+	gd_draw.c
+	gd_draw_blend.c
 	gd_filename.c
 	gd_filter.c
+	gd_gradient.c
 	gd_gd.c
 	gd_gd2.c
 	gd_gif_in.c
@@ -22,11 +26,18 @@ SET (LIBGD_SRC_FILES
 	gd_matrix.c
 	gd_metadata.c
 	gd_nnquant.c
+	gd_path.c
+	gd_path_arc.c
+	gd_path_dash.c
+	gd_path_matrix.c
+	gd_path_stroke.c
 	gd_png.c
 	gd_qoi.c
 	gd_rotate.c
 	gd_security.c
 	gd_ss.c
+	gd_span_rle.c
+	gd_surface.c
 	gd_tga.c
 	gd_tiff.c
 	gd_topal.c
@@ -49,6 +60,10 @@ SET (LIBGD_SRC_FILES
 	gdtables.c
 	gdxpm.c
 	wbmp.c
+	gd_array.c
+	ftraster/gd_ft_math.c
+	ftraster/gd_ft_raster.c
+	ftraster/gd_ft_stroker.c
 )
 
 if(ENABLE_CPP)
@@ -192,6 +207,7 @@ install(TARGETS ${GD_INSTALL_TARGETS}
 install(PROGRAMS bdftogd DESTINATION bin)
 install(FILES
 	gd.h
+	gd_vector2d.h
 	gd_color_map.h
 	gd_errors.h
 	gd_io.h
