@@ -11,10 +11,10 @@ if (PNG_FOUND)
 		arc crop
 		ctx_image_advanced ctx_image_basic ctx_image_blend_modes
 		curvedrectangle curveto fillandstroke
-		gradient_art gradient_operators
+		gradient_art gradient_operators composite_operators
 		path_arcfillimage path_imagesource path_pattern
 		patharc pathclip pathnegativearc
-		smiley smileylarge tiger
+		smiley smileylarge tiger tigerclipped
 		gif_frames tgaread
 	)
 

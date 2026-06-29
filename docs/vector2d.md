@@ -33,3 +33,16 @@ pixel effects routed through them use the normalized Vector2D compositor.
 This makes their output build-dependent. Copy and resampling paths retain their
 historical behavior. With the option disabled, existing GD APIs retain the GD
 2.4 compositing implementation and golden output.
+
+## Building the tests
+
+Enable tests with `-DBUILD_TEST=ON`. A shared-only build produces the public
+API test at `build/Bin/test_vector2d_image_context`. The structural, raster,
+compositor, and gradient tests exercise private implementation details and are
+built when the static library is enabled:
+
+```sh
+cmake -S . -B build -DBUILD_TEST=ON -DBUILD_STATIC_LIBS=ON
+cmake --build build
+ctest --test-dir build -R vector2d --output-on-failure
+```

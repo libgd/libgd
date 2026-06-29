@@ -1,6 +1,5 @@
 #include "vector2d_example.h"
 #include <stdio.h>
-#include <string.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -48,7 +47,7 @@ static void label(gdContextPtr c,const char *text,double x,double y,double scale
 
 static gdImagePtr render_tile(int op,int size)
 {
-    gdImagePtr image=vector2d_create_checker(size,size); gdContextPtr c; gdPaintPtr p;
+    gdImagePtr image=vector2d_create_image(size,size,gdTrueColorAlpha(255,255,255,127)); gdContextPtr c; gdPaintPtr p;
     if(!image)return NULL;
     c=gdContextCreateForImage(image); if(!c){gdImageDestroy(image);return NULL;}
     p=gdPaintCreateLinear(0,0,size,size);
@@ -60,8 +59,7 @@ static gdImagePtr render_tile(int op,int size)
     gdPaintAddColorStopRgba(p,1,.20,.02,.55,.12);
     use(c,p); gdContextArc(c,size*.58,size*.52,size*.43,0,2*M_PI); gdContextFill(c);
     gdContextSetOperator(c,GD_OP_OVER);
-    gdContextSetSourceRgba(c,.01,.02,.06,.66); gdContextRectangle(c,0,0,size,23); gdContextFill(c);
-    gdContextSetSourceRgba(c,1,1,1,.95); label(c,short_names[op],6,5,1.8);
+    gdContextSetSourceRgba(c,.05,.05,.08,1); label(c,short_names[op],6,5,1.8);
     gdContextDestroy(c); return image;
 }
 
@@ -69,14 +67,16 @@ int main(void)
 {
     const int cols=5, tile=150, gap=8, rows=(GD_OP_COUNT+cols-1)/cols;
     const int w=cols*tile+(cols+1)*gap, h=rows*tile+(rows+1)*gap;
-    gdImagePtr out=vector2d_create_image(w,h,gdTrueColorAlpha(18,18,26,0));
+    gdImagePtr out=vector2d_create_image(w,h,gdTrueColorAlpha(255,255,255,127));
     if(!out)return 1;
+    gdImageAlphaBlending(out,0);
     for(int op=0;op<GD_OP_COUNT;op++){
         gdImagePtr t=render_tile(op,tile); int ox=gap+(op%cols)*(tile+gap),oy=gap+(op/cols)*(tile+gap);
         if(!t){gdImageDestroy(out);return 1;}
         gdImageCopy(out,t,ox,oy,0,0,tile,tile);
         gdImageDestroy(t); printf("%02d  %s\n",op,names[op]);
     }
+    gdImageAlphaBlending(out,1);
     if(!vector2d_save_png(out,"gradient_operators.png")){gdImageDestroy(out);return 1;}
     gdImageDestroy(out);
     puts("Saved gradient_operators.png");return 0;

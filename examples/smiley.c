@@ -8,7 +8,7 @@ int main()
     const int height = 150;
     gdImagePtr image;
 
-    image = vector2d_create_image(width, height, gdTrueColorAlpha(255, 255, 255, 0));
+    image = vector2d_create_image(width, height, gdTrueColorAlpha(255, 255, 255, 127));
     if (!image)
     {
         fprintf(stderr, "Can't create image\n");

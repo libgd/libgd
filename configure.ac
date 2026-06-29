@@ -117,6 +117,19 @@ fi
 AC_DEFINE_UNQUOTED([ENABLE_GD_FORMATS], [$gd_ac_value], [Whether to support gd image formats])
 AM_CONDITIONAL([ENABLE_GD_FORMATS], test "$gd_enable_gd_formats" = yes)
 
+AC_MSG_CHECKING([whether to enable corrected legacy compositing])
+AC_ARG_ENABLE([corrected-legacy-compositing],
+  [AS_HELP_STRING([--enable-corrected-legacy-compositing],
+    [Use the experimental normalized compositor in selected legacy blending APIs])],
+  [gd_enable_corrected_legacy_compositing=$enableval],
+  [gd_enable_corrected_legacy_compositing=no])
+AC_MSG_RESULT([$gd_enable_corrected_legacy_compositing])
+AS_IF([test "x$gd_enable_corrected_legacy_compositing" = xyes],
+  [AC_DEFINE([ENABLE_CORRECTED_LEGACY_COMPOSITING], [1],
+    [Route selected legacy blending APIs through the normalized compositor])],
+  [AC_DEFINE([ENABLE_CORRECTED_LEGACY_COMPOSITING], [0],
+    [Route selected legacy blending APIs through the normalized compositor])])
+
 dnl Helper macro for working with external libraries.
 dnl GD_LIB_CHECK([SYM], [FEATURE], [name], [...test...])
 dnl $1 - upper case symbol

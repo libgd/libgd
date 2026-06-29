@@ -19,8 +19,13 @@ static inline int vector2d_save_png(gdImagePtr image, const char *filename)
 static inline gdImagePtr vector2d_create_image(int width, int height, int color)
 {
 	gdImagePtr image = gdImageCreateTrueColor(width, height);
-	if (image)
+	if (image) {
+		/* Store the requested alpha verbatim while initializing the canvas. */
+		gdImageAlphaBlending(image, 0);
 		gdImageFilledRectangle(image, 0, 0, width - 1, height - 1, color);
+		gdImageAlphaBlending(image, 1);
+		gdImageSaveAlpha(image, 1);
+	}
 	return image;
 }
 

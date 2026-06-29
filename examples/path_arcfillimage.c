@@ -8,7 +8,7 @@
 int main(void)
 {
 	gdImagePtr source = vector2d_create_checker(128, 128);
-	gdImagePtr image = vector2d_create_image(256, 256, gdTrueColorAlpha(255, 255, 255, 0));
+	gdImagePtr image = vector2d_create_image(256, 256, gdTrueColorAlpha(255, 255, 255, 127));
 	gdContextPtr context;
 	if (!source || !image) return 1;
 	context = gdContextCreateForImage(image);

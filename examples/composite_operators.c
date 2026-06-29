@@ -1,12 +1,11 @@
-#include "gd.h"
+#include "vector2d_example.h"
 #include <stdio.h>
-#include <string.h>
 
 static const char *names[GD_OP_COUNT]={
- "CLEAR","SOURCE","OVER","IN","OUT","ATOP","DEST","DOVER","DIN","DOUT",
- "DATOP","XOR","ADD","SATURATE","MULTIPLY","SCREEN","OVERLAY","DARKEN",
- "LIGHTEN","DODGE","BURN","HARDLIGHT","SOFTLIGHT","DIFFERENCE","EXCLUSION",
- "HUE","SATURATION","COLOR","LUMINOSITY"
+ "CLEAR","SOURCE","OVER","IN","OUT","ATOP","DEST","DEST_OVER","DEST_IN",
+ "DEST_OUT","DEST_ATOP","XOR","ADD","SATURATE","MULTIPLY","SCREEN","OVERLAY",
+ "DARKEN","LIGHTEN","COLOR_DODGE","COLOR_BURN","HARD_LIGHT","SOFT_LIGHT",
+ "DIFFERENCE","EXCLUSION","HSL_HUE","HSL_SATURATION","HSL_COLOR","HSL_LUMINOSITY"
 };
 
 /* Tiny 5x7 capitals keep this example independent of font libraries. */
@@ -35,73 +34,52 @@ static void label(gdContextPtr c,const char *text,double x,double y,double scale
     }
 }
 
-static gdSurfacePtr render_tile(gdCompositeOperator op,int size)
+static void render_example(gdContextPtr c,gdCompositeOperator op,double x,double y)
 {
-    gdSurfacePtr surface=gdSurfaceCreate(size,size,GD_SURFACE_ARGB32);
-    gdContextPtr c=gdContextCreate(surface);
-
     /* Composite on genuine transparency: destination (red), then source (blue). */
-    memset(surface->data,0,(size_t)surface->stride*surface->height);
-    gdContextSetSourceRgb(c,.92,.03,.06);
-    gdContextRectangle(c,18,30,92,82); gdContextFill(c);
+    gdContextSetOperator(c,GD_OP_OVER);
+    gdContextSetSourceRgba(c,.7,0,0,.8);
+    gdContextRectangle(c,x,y,120,90); gdContextFill(c);
 
     gdContextSetOperator(c,op);
-    gdContextSetSourceRgb(c,.04,.12,1.0);
-    gdContextRectangle(c,52,62,92,82); gdContextFill(c);
-
-    /* Labels are annotations, not part of the operator comparison. */
-    gdContextSetOperator(c,GD_OP_OVER);
-    gdContextSetSourceRgba(c,.01,.01,.025,.76);
-    gdContextRectangle(c,0,0,size,23); gdContextFill(c);
-    gdContextSetSourceRgba(c,1,1,1,.96);
-    label(c,names[op],6,5,1.8);
-
-    gdContextDestroy(c);
-    return surface;
-}
-
-static unsigned int over_checker(unsigned int src,int x,int y)
-{
-    unsigned int a=src>>24;
-    unsigned int bg=((x/10+y/10)&1)?0xff8d8d8du:0xffc8c8c8u;
-    unsigned int inv=255-a;
-    unsigned int r=((src>>16)&255)+(((bg>>16)&255)*inv+127)/255;
-    unsigned int g=((src>>8)&255)+(((bg>>8)&255)*inv+127)/255;
-    unsigned int b=(src&255)+((bg&255)*inv+127)/255;
-    return 0xff000000u|(r<<16)|(g<<8)|b;
+    gdContextSetSourceRgba(c,0,0,.9,.4);
+    gdContextRectangle(c,x+40,y+30,120,90); gdContextFill(c);
 }
 
 int main(void)
 {
-    const int columns=5,tile=160,gap=8;
+    const int columns=5,tile_width=160,tile_height=120,label_height=18,gap=8;
     const int rows=(GD_OP_COUNT+columns-1)/columns;
-    const int width=columns*tile+(columns+1)*gap;
-    const int height=rows*tile+(rows+1)*gap;
-    gdSurfacePtr gallery=gdSurfaceCreate(width,height,GD_SURFACE_ARGB32);
-    FILE *fp;
+    const int width=columns*tile_width+(columns+1)*gap;
+    const int height=rows*(label_height+tile_height)+(rows+1)*gap;
+    gdImagePtr gallery=vector2d_create_image(width,height,gdTrueColorAlpha(255,255,255,127));
     if(!gallery)return 1;
 
-    for(int y=0;y<height;y++) {
-        unsigned int *row=(unsigned int *)(gallery->data+y*gallery->stride);
-        for(int x=0;x<width;x++)row[x]=0xff181820u;
-    }
-
     for(int op=0;op<GD_OP_COUNT;op++) {
-        gdSurfacePtr tile_surface=render_tile((gdCompositeOperator)op,tile);
-        int x=gap+(op%columns)*(tile+gap);
-        int y=gap+(op/columns)*(tile+gap);
-        for(int row=0;row<tile;row++) {
-            unsigned int *src=(unsigned int *)(tile_surface->data+row*tile_surface->stride);
-            unsigned int *dst=(unsigned int *)(gallery->data+(y+row)*gallery->stride)+x;
-            for(int col=0;col<tile;col++)dst[col]=over_checker(src[col],col,row);
-        }
-        gdSurfaceDestroy(tile_surface);
+        int x=gap+(op%columns)*(tile_width+gap);
+        int y=gap+(op/columns)*(label_height+tile_height+gap);
+        gdContextPtr tile_context=gdContextCreateForImage(gallery);
+        if(!tile_context){gdImageDestroy(gallery);return 1;}
+        gdContextRectangle(tile_context,x,y+label_height,tile_width,tile_height);
+        gdContextClip(tile_context);
+        render_example(tile_context,(gdCompositeOperator)op,x,y+label_height);
+        gdContextDestroy(tile_context);
         printf("%-12s destination=red, source=blue\n",names[op]);
     }
 
-    fp=fopen("composite_operators.png","wb");
-    if(!fp){gdSurfaceDestroy(gallery);return 1;}
-    gdSurfacePng(gallery,fp);fclose(fp);gdSurfaceDestroy(gallery);
+    {
+        gdContextPtr labels=gdContextCreateForImage(gallery);
+        if(!labels){gdImageDestroy(gallery);return 1;}
+        gdContextSetSourceRgb(labels,.05,.05,.08);
+        for(int op=0;op<GD_OP_COUNT;op++) {
+            int x=gap+(op%columns)*(tile_width+gap);
+            int y=gap+(op/columns)*(label_height+tile_height+gap);
+            label(labels,names[op],x,y,1.5);
+        }
+        gdContextDestroy(labels);
+    }
+    if(!vector2d_save_png(gallery,"composite_operators.png")){gdImageDestroy(gallery);return 1;}
+    gdImageDestroy(gallery);
     puts("Saved composite_operators.png");
     return 0;
 }

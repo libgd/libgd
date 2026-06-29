@@ -6,7 +6,7 @@ int main()
 {
     gdImagePtr image;
 
-    image = vector2d_create_image(256, 256, gdTrueColorAlpha(255, 255, 255, 0));
+    image = vector2d_create_image(256, 256, gdTrueColorAlpha(255, 255, 255, 127));
     if (!image)
     {
         fprintf(stderr, "Can't create image\n");
