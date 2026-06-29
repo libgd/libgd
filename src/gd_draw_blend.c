@@ -58,10 +58,10 @@ static inline uint32_t bilinear_interpolation (uint32_t tl, uint32_t tr, uint32_
     distx <<= (8 - BILINEAR_INTERPOLATION_BITS);
     disty <<= (8 - BILINEAR_INTERPOLATION_BITS);
 
-    distxy = distx * disty;
-    distxiy = distx * (256 - disty);
-    distixy = (256 - distx) * disty;
-    distixiy = (256 - distx) * (256 - disty);
+    distxy = (uint64_t)distx * disty;
+    distxiy = (uint64_t)distx * (256 - disty);
+    distixy = (uint64_t)(256 - distx) * disty;
+    distixiy = (uint64_t)(256 - distx) * (256 - disty);
 
     /* Alpha and Blue */
     tl64 = tl & 0xff0000ff;

@@ -76,6 +76,12 @@ int gdArrayReallocBy(gdArrayPtr array, unsigned int additional)
         new_size = new_size * 2;
 
     array->size = new_size;
+
+    if (overflow2(array->size, array->element_size)) {
+        array->size = old_size;
+        return 0;
+    }
+
     new_elements = gdRealloc(array->elements, array->size * array->element_size);
 
     if (new_elements == NULL)
