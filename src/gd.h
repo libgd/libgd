@@ -1538,6 +1538,43 @@ BGD_DECLARE(void) gdImagePngCtx(gdImagePtr im, gdIOCtxPtr out);
 BGD_DECLARE(void)
 gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out,
 						  const gdImageMetadata *metadata);
+
+#define GD_PNG_FILTER_AUTO 0U
+#define GD_PNG_FILTER_NONE (1U << 0)
+#define GD_PNG_FILTER_SUB (1U << 1)
+#define GD_PNG_FILTER_UP (1U << 2)
+#define GD_PNG_FILTER_AVERAGE (1U << 3)
+#define GD_PNG_FILTER_PAETH (1U << 4)
+#define GD_PNG_FILTER_ALL                                                    \
+	(GD_PNG_FILTER_NONE | GD_PNG_FILTER_SUB | GD_PNG_FILTER_UP |             \
+	 GD_PNG_FILTER_AVERAGE | GD_PNG_FILTER_PAETH)
+
+enum {
+	GD_PNG_COMPRESSION_STRATEGY_DEFAULT = 0,
+	GD_PNG_COMPRESSION_STRATEGY_FILTERED,
+	GD_PNG_COMPRESSION_STRATEGY_HUFFMAN_ONLY,
+	GD_PNG_COMPRESSION_STRATEGY_RLE,
+	GD_PNG_COMPRESSION_STRATEGY_FIXED
+};
+
+typedef struct {
+	size_t struct_size;
+	int compression_level;
+	unsigned int filters;
+	int compression_strategy;
+	const gdImageMetadata *metadata;
+} gdPngWriteOptions;
+
+BGD_DECLARE(void) gdPngWriteOptionsInit(gdPngWriteOptions *options);
+BGD_DECLARE(int)
+gdImagePngWithOptions(gdImagePtr im, FILE *out,
+					  const gdPngWriteOptions *options);
+BGD_DECLARE(int)
+gdImagePngCtxWithOptions(gdImagePtr im, gdIOCtxPtr out,
+						 const gdPngWriteOptions *options);
+BGD_DECLARE(void *)
+gdImagePngPtrWithOptions(gdImagePtr im, int *size,
+						 const gdPngWriteOptions *options);
 BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
 BGD_DECLARE(void) gdImageQoiCtx(gdImagePtr im, gdIOCtxPtr out);
 BGD_DECLARE(void)

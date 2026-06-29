@@ -9,6 +9,7 @@ LIST(APPEND TESTS_FILES
 	png_conformance
 	png_null
 	png_resolution
+	png_write_options
 	bug00011
 	bug00033
 	bug00088

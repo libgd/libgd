@@ -9,7 +9,8 @@ libgd_test_programs += \
 	png/png_conformance \
 	png/png_im2im \
 	png/png_null \
-	png/png_resolution
+	png/png_resolution \
+	png/png_write_options
 
 if MINGW_UCRT64
 else
