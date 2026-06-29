@@ -72,17 +72,24 @@ int gdArrayReallocBy(gdArrayPtr array, unsigned int additional)
     else
         new_size = old_size * 2;
 
-    while (new_size <= required_size)
-        new_size = new_size * 2;
+    while (new_size <= required_size) {
+        if (new_size > (unsigned int)INT_MAX / 2) {
+            new_size = required_size;
+            break;
+        }
+        new_size *= 2;
+    }
 
     array->size = new_size;
 
-    if (overflow2(array->size, array->element_size)) {
+    if (array->size > (unsigned int)INT_MAX
+            || array->element_size > (unsigned int)INT_MAX
+            || overflow2((int)array->size, (int)array->element_size)) {
         array->size = old_size;
         return 0;
     }
-
-    new_elements = gdRealloc(array->elements, array->size * array->element_size);
+    new_elements = gdRealloc(array->elements,
+        (size_t)array->size * array->element_size);
 
     if (new_elements == NULL)
     {
@@ -111,8 +118,7 @@ int gdArrayAppendMultiple(gdArrayPtr array,
     status = gdArrayAlloc(array, cnt_elements, &dest);
     if (!status)
         return status;
-
-    memcpy(dest, elements, cnt_elements * array->element_size);
+    memcpy(dest, elements, (size_t)cnt_elements * array->element_size);
 
     return 1;
 }
@@ -128,7 +134,7 @@ int gdArrayAlloc(gdArrayPtr array,
         return status;
 
     *elements = (unsigned char *)array->elements
-        + array->cnt_elements * array->element_size;
+        + (size_t)array->cnt_elements * array->element_size;
 
     array->cnt_elements += cnt_elements;
 
