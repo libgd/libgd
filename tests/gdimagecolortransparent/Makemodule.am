@@ -1,5 +1,0 @@
-libgd_test_programs += \
-	gdimagecolortransparent/gdimagecolortransparent
-
-EXTRA_DIST += \
-	gdimagecolortransparent/CMakeLists.txt

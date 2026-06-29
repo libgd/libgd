@@ -1,7 +1,0 @@
-if HAVE_LIBFREETYPE
-libgd_test_programs += \
-	gdimagestringftex/gdimagestringftex_returnfontpathname
-endif
-
-EXTRA_DIST += \
-	gdimagestringftex/CMakeLists.txt

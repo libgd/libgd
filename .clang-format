@@ -1,8 +1,0 @@
-BasedOnStyle: LLVM
-IndentWidth: 4
-TabWidth: 4
-UseTab: Always # Change to "Never" if you prefer spaces over tabs
-BreakBeforeBraces: Attach
-AllowShortIfStatementsOnASingleLine: false
-AlignAfterOpenBracket: Align
-ContinuationIndentWidth: 4

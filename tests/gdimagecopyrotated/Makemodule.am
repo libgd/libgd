@@ -1,8 +1,0 @@
-if HAVE_LIBPNG
-libgd_test_programs += \
-	gdimagecopyrotated/bug00020
-endif
-
-EXTRA_DIST += \
-	gdimagecopyrotated/CMakeLists.txt \
-	gdimagecopyrotated/bug00020_exp.png

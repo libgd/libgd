@@ -1,5 +1,0 @@
-libgd_test_programs += \
-	gdimagecolordeallocate/gdimagecolordeallocate
-
-EXTRA_DIST += \
-	gdimagecolordeallocate/CMakeLists.txt

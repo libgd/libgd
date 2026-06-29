@@ -1725,7 +1725,7 @@ gdImageDashedLine(gdImagePtr im, int x1, int y1, int x2, int y2, int color) {
 		/* More-or-less horizontal. use wid for vertical stroke */
 		/* 2.0.12: Michael Schwartz: divide rather than multiply;
 		   TBB: but watch out for /0! */
-		double as = sin(atan2(dy, dx));
+		double as = cos(atan2(dy, dx));
 		if (as != 0) {
 			wid = thick / as;
 		} else {

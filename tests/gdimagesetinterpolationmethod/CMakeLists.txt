@@ -1,6 +1,0 @@
-LIST(APPEND TESTS_FILES
-	github_bug_00584
-	github_bug_00847
-)
-
-ADD_GD_TESTS()

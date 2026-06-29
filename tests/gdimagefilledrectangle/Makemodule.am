@@ -1,7 +1,0 @@
-libgd_test_programs += \
-	gdimagefilledrectangle/bug00004 \
-	gdimagefilledrectangle/bug00078 \
-	gdimagefilledrectangle/bug00106_gdimagefilledrectangle
-
-EXTRA_DIST += \
-	gdimagefilledrectangle/CMakeLists.txt

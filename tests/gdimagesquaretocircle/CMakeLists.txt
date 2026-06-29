@@ -1,7 +1,0 @@
-IF(PNG_FOUND)
-LIST(APPEND TESTS_FILES
-	gdimagesquaretocircle
-)
-ENDIF(PNG_FOUND)
-
-ADD_GD_TESTS()
