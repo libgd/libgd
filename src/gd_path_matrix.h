@@ -2,16 +2,16 @@
 #define GD_PATH_MATRIX_H
 
 void gdPathMatrixInit(gdPathMatrixPtr matrix, double m00, double m10, double m01, double m11, double m02, double m12);
-void gdPathMatrixInitIdentity(gdPathMatrixPtr matrix);
-void gdPathMatrixInitTranslate(gdPathMatrixPtr matrix, double x, double y);
-void gdPathMatrixInitScale(gdPathMatrixPtr matrix, double x, double y);
+BGD_DECLARE(void) gdPathMatrixInitIdentity(gdPathMatrixPtr matrix);
+BGD_DECLARE(void) gdPathMatrixInitTranslate(gdPathMatrixPtr matrix, double x, double y);
+BGD_DECLARE(void) gdPathMatrixInitScale(gdPathMatrixPtr matrix, double x, double y);
 void gdPathMatrixInitShear(gdPathMatrixPtr matrix, double x, double y);
 void gdPathMatrixInitRotate(gdPathMatrixPtr matrix, double radians);
 void gdPathMatrixInitRotateTranslate(gdPathMatrixPtr matrix, double radians, double x, double y);
 void gdPathMatrixTranslate(gdPathMatrixPtr matrix, double x, double y);
 BGD_DECLARE(void) gdPathMatrixScale(gdPathMatrixPtr matrix, double x, double y);
 void gdPathMatrixShear(gdPathMatrixPtr matrix, double x, double y);
-void gdPathMatrixRotate(gdPathMatrixPtr matrix, double radians);
+BGD_DECLARE(void) gdPathMatrixRotate(gdPathMatrixPtr matrix, double radians);
 void gdPathMatrixRotateTranslate(gdPathMatrixPtr matrix, double radians, double x, double y);
 void gdPathMatrixMultiply(gdPathMatrixPtr matrix, const gdPathMatrixPtr a, const gdPathMatrixPtr b);
 int gdPathMatrixInvert(gdPathMatrixPtr matrix);
