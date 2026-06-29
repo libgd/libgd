@@ -39,7 +39,7 @@ gdArrayIndex(gdArrayPtr array, unsigned int index)
     if (index == 0 && array->cnt_elements == 0)
         return NULL;
 
-    return array->elements + index * array->element_size;
+    return (unsigned char *)array->elements + index * array->element_size;
 }
 
 const void *
@@ -48,9 +48,9 @@ gdArrayIndexConst(gdArrayPtr array, unsigned int index)
     if (index == 0 && array->cnt_elements == 0)
         return NULL;
 
-    if (index < array->cnt_elements) return NULL;
+    if (index >= array->cnt_elements) return NULL;
 
-    return array->elements + index * array->element_size;
+    return (const unsigned char *)array->elements + index * array->element_size;
 }
 
 int gdArrayReallocBy(gdArrayPtr array, unsigned int additional)
@@ -121,7 +121,8 @@ int gdArrayAlloc(gdArrayPtr array,
     if (!status)
         return status;
 
-    *elements = array->elements + array->cnt_elements * array->element_size;
+    *elements = (unsigned char *)array->elements
+        + array->cnt_elements * array->element_size;
 
     array->cnt_elements += cnt_elements;
 
