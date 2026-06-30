@@ -8,6 +8,7 @@ LIST(APPEND TESTS_FILES
 	bug00072
 	bug00111
 	bug00315
+	bug00547
 	gdimageline_aa
 	gdimageline_bug5
 	gdImageAALine_thickness
