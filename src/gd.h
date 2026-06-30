@@ -848,8 +848,6 @@ gdImageQoiCtxEx(gdImagePtr im, gdIOCtxPtr out, int colorspace);
 BGD_DECLARE(void)
 gdImageQoiCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int colorspace,
 							const gdImageMetadata *metadata);
-/* for completeness with Sink 2.x APIs, will be removed in 3.0 with all Sink APIs */
-BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiSource(gdSourcePtr in);
 
 /* GIF */
 /* These read the first frame only */
@@ -1275,6 +1273,8 @@ typedef struct {
 
 /* Deprecated in favor of gdImageCreateFromPngCtx */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngSource(gdSourcePtr in);
+/* for completeness with Sink 2.x APIs, will be removed in 3.0 with all Sink APIs */
+BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiSource(gdSourcePtr in);
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd(FILE *in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGdCtx(gdIOCtxPtr in);
