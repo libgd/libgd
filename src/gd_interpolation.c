@@ -823,8 +823,8 @@ static int getPixelInterpolatedClipped(gdImagePtr im, const double x,
 	new_b = CLAMP(new_b, 0, 255);
 	new_a = CLAMP(new_a, 0, gdAlphaMax);
 
-	return gdTrueColorAlpha(((int)new_r), ((int)new_g), ((int)new_b),
-							((int)new_a));
+	return gdTrueColorAlpha((int)(new_r + 0.5), (int)(new_g + 0.5),
+							(int)(new_b + 0.5), (int)(new_a + 0.5));
 }
 
 static int getPixelInterpolated(gdImagePtr im, const double x, const double y,
@@ -1066,18 +1066,17 @@ static gdImagePtr gdImageScaleTwoPass(const gdImagePtr src,
 	/* First, handle the trivial case. */
 	if (src_width == new_width && src_height == new_height) {
 		return gdImageClone(src);
-	} /* if */
+	}
 
 	/* Convert to truecolor if it isn't; this code requires it. */
 	if (!src->trueColor) {
 		gdImagePaletteToTrueColor(src);
-	} /* if */
+	}
 
 	/* Scale horizontally unless sizes are the same. */
 	if (src_width == new_width) {
 		tmp_im = src;
 	} else {
-
 		tmp_im = gdImageCreateTrueColor(new_width, src_height);
 		if (tmp_im == NULL) {
 			return NULL;
@@ -1090,13 +1089,13 @@ static gdImagePtr gdImageScaleTwoPass(const gdImagePtr src,
 			gdImageDestroy(tmp_im);
 			return NULL;
 		}
-	} /* if .. else*/
+	}
 
 	/* If vertical sizes match, we're done. */
 	if (src_height == new_height) {
 		assert(tmp_im != src);
 		return tmp_im;
-	} /* if */
+	}
 
 	/* Otherwise, we need to scale vertically. */
 	dst = gdImageCreateTrueColor(new_width, new_height);
@@ -1111,11 +1110,11 @@ static gdImagePtr gdImageScaleTwoPass(const gdImagePtr src,
 			}
 			return NULL;
 		}
-	} /* if */
+	}
 
 	if (src != tmp_im) {
 		gdImageDestroy(tmp_im);
-	} /* if */
+	}
 
 	return dst;
 } /* gdImageScaleTwoPass*/

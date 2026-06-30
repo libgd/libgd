@@ -168,7 +168,6 @@ else (USE_EXT_GD)
 		SET(AVIF_LIBRARIES avif)
 		SET(AVIF_FOUND 1)
 	ENDIF (ENABLE_AVIF)
-
 	IF (ENABLE_ULTRAHDR)
 		find_package(PkgConfig QUIET)
 		if (PkgConfig_FOUND)
@@ -188,10 +187,24 @@ else (USE_EXT_GD)
 			SET(HAVE_LIBUHDR 1)
 			SET(UHDR_FOUND 1)
 			SET(UHDR_LIBRARIES ${UHDR_LIBRARY})
+
+			# --- NEW CHECK FOR UHDR_WRITE_XMP ---
+			if (PkgConfig_FOUND AND UHDR_PKG_FOUND)
+				# Extract the variable value from the .pc file
+				pkg_get_variable(UHDR_XMP_STATUS libuhdr UHDR_WRITE_XMP)
+				
+				# Check if it is ON, TRUE, or 1
+				if (UHDR_XMP_STATUS)
+					message(FATAL_ERROR "libuhdr was compiled with UHDR_WRITE_XMP enabled, but this project requires it to be OFF.")
+				endif()
+			endif()
+			# ------------------------------------
+
 		else ()
 			message(FATAL_ERROR "ENABLE_ULTRAHDR is enabled but libuhdr >= 1.4.0 was not found")
 		endif ()
 	ENDIF (ENABLE_ULTRAHDR)
+
 
 	IF (ENABLE_LIQ)
 		FIND_PACKAGE(LIQ REQUIRED)
