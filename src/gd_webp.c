@@ -634,7 +634,7 @@ static int _gdImageWebpCtx(gdImagePtr im, gdIOCtx *outfile, int quality) {
 	uint8_t *p;
 	uint8_t *out;
 	size_t out_size;
-	int ret = 0;
+	size_t ret = 0;
 
 	if (im == NULL) {
 		return 1;
@@ -680,11 +680,9 @@ static int _gdImageWebpCtx(gdImagePtr im, gdIOCtx *outfile, int quality) {
 		}
 	}
 	if (quality >= gdWebpLossless) {
-		out_size = WebPEncodeLosslessRGBA(argb, gdImageSX(im), gdImageSY(im),
-										  gdImageSX(im) * 4, &out);
+		out_size = WebPEncodeLosslessRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, &out);
 	} else {
-		out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im),
-								  gdImageSX(im) * 4, quality, &out);
+		out_size = WebPEncodeRGBA(argb, gdImageSX(im), gdImageSY(im), gdImageSX(im) * 4, quality, &out);
 	}
 	if (out_size == 0) {
 		gd_error("gd-webp encoding failed");
