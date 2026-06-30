@@ -17,7 +17,7 @@
 #define ROTATE_DEG2RAD  3.1415926535897932384626433832795/180
 void gdImageSkewX (gdImagePtr dst, gdImagePtr src, int uRow, int iOffset, double dWeight, int clrBack, int ignoretransparent)
 {
-	typedef int (*FuncPtr)(gdImagePtr, int, int);
+	typedef int(BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
 	int i, r, g, b, a, clrBackR, clrBackG, clrBackB, clrBackA;
 	FuncPtr f;
 
@@ -114,7 +114,7 @@ void gdImageSkewX (gdImagePtr dst, gdImagePtr src, int uRow, int iOffset, double
 
 void gdImageSkewY (gdImagePtr dst, gdImagePtr src, int uCol, int iOffset, double dWeight, int clrBack, int ignoretransparent)
 {
-	typedef int (*FuncPtr)(gdImagePtr, int, int);
+	typedef int(BGD_STDCALL *FuncPtr)(gdImagePtr, int, int);
 	int i, iYPos=0, r, g, b, a;
 	FuncPtr f;
 	int pxlOldLeft, pxlLeft=0, pxlSrc;
