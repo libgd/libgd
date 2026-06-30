@@ -17,6 +17,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 int overflow2(int a, int b) {
 	if (a <= 0 || b <= 0) {
