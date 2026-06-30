@@ -753,6 +753,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor(int sx, int sy);
    nature of the file being loaded. Truecolor PNG
    stays truecolor; palette PNG stays palette-based;
    JPEG is always truecolor. */
+/* PNG */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng(FILE *fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr)
@@ -760,6 +761,64 @@ gdImageCreateFromPngCtxWithMetadata(gdIOCtxPtr in, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromPngPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
+BGD_DECLARE(void) gdImagePng(gdImagePtr im, FILE *out);
+BGD_DECLARE(void) gdImagePngCtx(gdImagePtr im, gdIOCtxPtr out);
+/* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
+   1 is FASTEST but produces larger files, 9 provides the best
+   compression (smallest files) but takes a long time to compress, and
+   -1 selects the default compiled into the zlib library. */
+BGD_DECLARE(void) gdImagePngEx(gdImagePtr im, FILE *out, int level);
+BGD_DECLARE(void) gdImagePngCtxEx(gdImagePtr im, gdIOCtxPtr out, int level);
+BGD_DECLARE(void)
+gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, const gdImageMetadata *metadata);
+BGD_DECLARE(void)
+gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int level, const gdImageMetadata *metadata);
+
+/* Best to free this memory with gdFree(), not free() */
+BGD_DECLARE(void *) gdImagePngPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImagePngPtrEx(gdImagePtr im, int *size, int level);
+BGD_DECLARE(void *)
+gdImagePngPtrWithMetadata(gdImagePtr im, int *size,
+						  const gdImageMetadata *metadata);
+BGD_DECLARE(void *)
+gdImagePngPtrExWithMetadata(gdImagePtr im, int *size, int level,
+							const gdImageMetadata *metadata);
+BGD_DECLARE(int)
+gdImageMetadataInjectPng(void **data, int *size, const gdImageMetadata *metadata);
+
+#define GD_PNG_FILTER_AUTO 0U
+#define GD_PNG_FILTER_NONE (1U << 0)
+#define GD_PNG_FILTER_SUB (1U << 1)
+#define GD_PNG_FILTER_UP (1U << 2)
+#define GD_PNG_FILTER_AVERAGE (1U << 3)
+#define GD_PNG_FILTER_PAETH (1U << 4)
+#define GD_PNG_FILTER_ALL                                                    \
+	(GD_PNG_FILTER_NONE | GD_PNG_FILTER_SUB | GD_PNG_FILTER_UP |             \
+	 GD_PNG_FILTER_AVERAGE | GD_PNG_FILTER_PAETH)
+
+enum {
+	GD_PNG_COMPRESSION_STRATEGY_DEFAULT = 0,
+	GD_PNG_COMPRESSION_STRATEGY_FILTERED,
+	GD_PNG_COMPRESSION_STRATEGY_HUFFMAN_ONLY,
+	GD_PNG_COMPRESSION_STRATEGY_RLE,
+	GD_PNG_COMPRESSION_STRATEGY_FIXED
+};
+
+typedef struct {
+	size_t struct_size;
+	int compression_level;
+	unsigned int filters;
+	int compression_strategy;
+	const gdImageMetadata *metadata;
+} gdPngWriteOptions;
+
+BGD_DECLARE(void) gdPngWriteOptionsInit(gdPngWriteOptions *options);
+BGD_DECLARE(int) gdImagePngWithOptions(gdImagePtr im, FILE *out, const gdPngWriteOptions *options);
+BGD_DECLARE(int) gdImagePngCtxWithOptions(gdImagePtr im, gdIOCtxPtr out, const gdPngWriteOptions *options);
+BGD_DECLARE(void *) gdImagePngPtrWithOptions(gdImagePtr im, int *size, const gdPngWriteOptions *options);
+
+
+/* QOI */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromQoi(FILE *fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr)
@@ -767,12 +826,41 @@ gdImageCreateFromQoiCtxWithMetadata(gdIOCtxPtr in, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromQoiPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
+BGD_DECLARE(void *) gdImageQoiPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImageQoiPtrEx(gdImagePtr im, int *size, int colorspace);
+BGD_DECLARE(void *) gdImageQoiPtrWithMetadata(gdImagePtr im, int *size, const gdImageMetadata *metadata);
+BGD_DECLARE(void *) gdImageQoiPtrExWithMetadata(gdImagePtr im, int *size, int colorspace, const gdImageMetadata *metadata);
+BGD_DECLARE(int) gdImageMetadataInjectQoi(void **data, int *size, const gdImageMetadata *metadata);
 
+BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
+BGD_DECLARE(void) gdImageQoiCtx(gdImagePtr im, gdIOCtxPtr out);
+BGD_DECLARE(void) gdImageQoiCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, const gdImageMetadata *metadata);
+enum { GD_QOI_SRGB = 0, GD_QOI_LINEAR = 1 };
+
+BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
+BGD_DECLARE(void) gdImageQoiCtx(gdImagePtr im, gdIOCtxPtr out);
+BGD_DECLARE(void)
+gdImageQoiCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out,
+						  const gdImageMetadata *metadata);
+BGD_DECLARE(void) gdImageQoiEx(gdImagePtr im, FILE *out, int colorspace);
+BGD_DECLARE(void)
+gdImageQoiCtxEx(gdImagePtr im, gdIOCtxPtr out, int colorspace);
+BGD_DECLARE(void)
+gdImageQoiCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int colorspace,
+							const gdImageMetadata *metadata);
+
+/* GIF */
 /* These read the first frame only */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGif(FILE *fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifPtr(int size, void *data);
+BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out);
+BGD_DECLARE(void) gdImageGif(gdImagePtr im, FILE *out);
+/* Best to free this memory with gdFree(), not free() */
+BGD_DECLARE(void *) gdImageGifPtr(gdImagePtr im, int *size);
 
+
+/* Anims, frames or compositions */
 typedef struct gdGifReadStruct *gdGifReadPtr;
 
 typedef struct {
@@ -809,9 +897,56 @@ gdGifReadNextFrame(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *frame);
 BGD_DECLARE(int)
 gdGifReadNextImage(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *image);
 BGD_DECLARE(gdImagePtr) gdGifReadCloneImage(gdGifReadPtr gif);
+
+/**
+ * Group: GifAnim
+ *
+ *   Legal values for Disposal. gdDisposalNone is always used by
+ *   the built-in optimizer if previm is passed.
+ *
+ * Constants: gdImageGifAnim
+ *
+ *   gdDisposalUnknown              - Not recommended
+ *   gdDisposalNone                 - Preserve previous frame
+ *   gdDisposalRestoreBackground    - First allocated color of palette
+ *   gdDisposalRestorePrevious      - Restore to before start of frame
+ *
+ * See also:
+ *   - <gdImageGifAnimAdd>
+ */
+enum {
+	gdDisposalUnknown,
+	gdDisposalNone,
+	gdDisposalRestoreBackground,
+	gdDisposalRestorePrevious
+};
+
+BGD_DECLARE(void)
+gdImageGifAnimBegin(gdImagePtr im, FILE *outFile, int GlobalCM, int Loops);
+BGD_DECLARE(void)
+gdImageGifAnimAdd(gdImagePtr im, FILE *outFile, int LocalCM, int LeftOfs,
+				  int TopOfs, int Delay, int Disposal, gdImagePtr previm);
+BGD_DECLARE(void) gdImageGifAnimEnd(FILE *outFile);
+BGD_DECLARE(void)
+gdImageGifAnimBeginCtx(gdImagePtr im, gdIOCtxPtr out, int GlobalCM, int Loops);
+BGD_DECLARE(void)
+gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalCM, int LeftOfs,
+					 int TopOfs, int Delay, int Disposal, gdImagePtr previm);
+BGD_DECLARE(void) gdImageGifAnimEndCtx(gdIOCtxPtr out);
+BGD_DECLARE(void *)
+gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalCM, int Loops);
+BGD_DECLARE(void *)
+gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, int LeftOfs,
+					 int TopOfs, int Delay, int Disposal, gdImagePtr previm);
+BGD_DECLARE(void *) gdImageGifAnimEndPtr(int *size);
+
+
+/* WBMP */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr(int size, void *data);
+
+/* JPEG */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *infile);
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromJpegEx(FILE *infile, int ignore_warning);
@@ -831,6 +966,8 @@ BGD_DECLARE(gdImagePtr)
 gdImageCreateFromJpegPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrExWithMetadata(int size, void *data, int ignore_warning, gdImageMetadata *metadata);
 BGD_DECLARE(const char *) gdJpegGetVersionString();
+
+/* WEBP */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx(gdIOCtxPtr infile);
@@ -904,6 +1041,7 @@ gdWebpWriteAddImage(gdWebpWritePtr webp, gdImagePtr image, int durationMs);
 BGD_DECLARE(void) gdWebpWriteClose(gdWebpWritePtr webp);
 BGD_DECLARE(void *) gdWebpWritePtrFinish(gdWebpWritePtr webp, int *size);
 
+/* JXL */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJxl(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJxlPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJxlCtx(gdIOCtxPtr infile);
@@ -978,14 +1116,17 @@ BGD_DECLARE(int) gdImageJxlAnimAddFrame(
 BGD_DECLARE(int) gdImageJxlAnimEnd(gdJxlAnimPtr anim);
 BGD_DECLARE(void *) gdImageJxlAnimEndPtr(gdJxlAnimPtr anim, int *size);
 
+/* HEIF */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtxPtr infile);
 
+/* AVIF */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtxPtr infile);
 
+/* TIFF */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffPtr(int size, void *data);
@@ -1071,19 +1212,25 @@ BGD_DECLARE(int) gdTiffWriteAddImage(gdTiffWritePtr write, gdImagePtr image);
 BGD_DECLARE(void) gdTiffWriteClose(gdTiffWritePtr write);
 BGD_DECLARE(void *) gdTiffWritePtrFinish(gdTiffWritePtr write, int *size);
 
+BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile);
+BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void) gdImageTiffCtx(gdImagePtr image, gdIOCtxPtr out);
+
+/* TGA */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTga(FILE *fp);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtxPtr ctx);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaPtr(int size, void *data);
 
+/* BMP */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmp(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx(gdIOCtxPtr infile);
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromFile(const char *filename);
 BGD_DECLARE(gdImagePtr) gdImageReadFile(const char *filename);
 BGD_DECLARE(gdImagePtr) gdImageReadCtx(gdIOCtxPtr ctx);
 
-/* UltraHDR load API */
-
+/* UltraHDR  */
 BGD_DECLARE(gdUhdrImagePtr)
 gdUhdrImageCreateFromFile(const char *filename, int format, gdUhdrErrorPtr err);
 BGD_DECLARE(gdUhdrImagePtr)
@@ -1126,7 +1273,6 @@ typedef struct {
 
 /* Deprecated in favor of gdImageCreateFromPngCtx */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngSource(gdSourcePtr in);
-BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiSource(gdSourcePtr in);
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd(FILE *in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGdCtx(gdIOCtxPtr in);
@@ -1144,60 +1290,14 @@ gdImageCreateFromGd2Part(FILE *in, int srcx, int srcy, int w, int h);
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromGd2PartCtx(gdIOCtxPtr in, int srcx, int srcy, int w, int h);
 BGD_DECLARE(gdImagePtr)
-gdImageCreateFromGd2PartPtr(int size, void *data, int srcx, int srcy, int w,
-							int h);
-/* 2.0.10: prototype was missing */
+gdImageCreateFromGd2PartPtr(int size, void *data, int srcx, int srcy, int w, int h);
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm(FILE *in);
 BGD_DECLARE(void)
 gdImageXbmCtx(gdImagePtr image, char *file_name, int fg, gdIOCtxPtr out);
 
 /* NOTE: filename, not FILE */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename);
-
-BGD_DECLARE(void) gdImageGif(gdImagePtr im, FILE *out);
-BGD_DECLARE(void) gdImagePng(gdImagePtr im, FILE *out);
-BGD_DECLARE(void) gdImagePngCtx(gdImagePtr im, gdIOCtxPtr out);
-BGD_DECLARE(void)
-gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out,
-						  const gdImageMetadata *metadata);
-
-#define GD_PNG_FILTER_AUTO 0U
-#define GD_PNG_FILTER_NONE (1U << 0)
-#define GD_PNG_FILTER_SUB (1U << 1)
-#define GD_PNG_FILTER_UP (1U << 2)
-#define GD_PNG_FILTER_AVERAGE (1U << 3)
-#define GD_PNG_FILTER_PAETH (1U << 4)
-#define GD_PNG_FILTER_ALL                                                    \
-	(GD_PNG_FILTER_NONE | GD_PNG_FILTER_SUB | GD_PNG_FILTER_UP |             \
-	 GD_PNG_FILTER_AVERAGE | GD_PNG_FILTER_PAETH)
-
-enum {
-	GD_PNG_COMPRESSION_STRATEGY_DEFAULT = 0,
-	GD_PNG_COMPRESSION_STRATEGY_FILTERED,
-	GD_PNG_COMPRESSION_STRATEGY_HUFFMAN_ONLY,
-	GD_PNG_COMPRESSION_STRATEGY_RLE,
-	GD_PNG_COMPRESSION_STRATEGY_FIXED
-};
-
-typedef struct {
-	size_t struct_size;
-	int compression_level;
-	unsigned int filters;
-	int compression_strategy;
-	const gdImageMetadata *metadata;
-} gdPngWriteOptions;
-
-BGD_DECLARE(void) gdPngWriteOptionsInit(gdPngWriteOptions *options);
-BGD_DECLARE(int) gdImagePngWithOptions(gdImagePtr im, FILE *out, const gdPngWriteOptions *options);
-BGD_DECLARE(int) gdImagePngCtxWithOptions(gdImagePtr im, gdIOCtxPtr out, const gdPngWriteOptions *options);
-BGD_DECLARE(void *) gdImagePngPtrWithOptions(gdImagePtr im, int *size, const gdPngWriteOptions *options);
-BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
-BGD_DECLARE(void) gdImageQoiCtx(gdImagePtr im, gdIOCtxPtr out);
-BGD_DECLARE(void) gdImageQoiCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, const gdImageMetadata *metadata);
-BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out);
-BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile);
-BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size);
-BGD_DECLARE(void) gdImageTiffCtx(gdImagePtr image, gdIOCtxPtr out);
 
 BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression);
 BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression);
@@ -1220,28 +1320,6 @@ BGD_DECLARE(void)
 gdImageBmpCtxEx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compression,
 				int flags);
 
-/* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
-   1 is FASTEST but produces larger files, 9 provides the best
-   compression (smallest files) but takes a long time to compress, and
-   -1 selects the default compiled into the zlib library. */
-BGD_DECLARE(void) gdImagePngEx(gdImagePtr im, FILE *out, int level);
-BGD_DECLARE(void) gdImagePngCtxEx(gdImagePtr im, gdIOCtxPtr out, int level);
-BGD_DECLARE(void)
-gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int level, const gdImageMetadata *metadata);
-
-enum { GD_QOI_SRGB = 0, GD_QOI_LINEAR = 1 };
-
-BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
-BGD_DECLARE(void) gdImageQoiCtx(gdImagePtr im, gdIOCtxPtr out);
-BGD_DECLARE(void)
-gdImageQoiCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out,
-						  const gdImageMetadata *metadata);
-BGD_DECLARE(void) gdImageQoiEx(gdImagePtr im, FILE *out, int colorspace);
-BGD_DECLARE(void)
-gdImageQoiCtxEx(gdImagePtr im, gdIOCtxPtr out, int colorspace);
-BGD_DECLARE(void)
-gdImageQoiCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int colorspace,
-							const gdImageMetadata *metadata);
 
 BGD_DECLARE(void) gdImageWBMP(gdImagePtr image, int fg, FILE *out);
 BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtxPtr out);
@@ -1337,48 +1415,6 @@ gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed);
 BGD_DECLARE(void)
 gdImageAvifCtx(gdImagePtr im, gdIOCtxPtr outfile, int quality, int speed);
 
-/**
- * Group: GifAnim
- *
- *   Legal values for Disposal. gdDisposalNone is always used by
- *   the built-in optimizer if previm is passed.
- *
- * Constants: gdImageGifAnim
- *
- *   gdDisposalUnknown              - Not recommended
- *   gdDisposalNone                 - Preserve previous frame
- *   gdDisposalRestoreBackground    - First allocated color of palette
- *   gdDisposalRestorePrevious      - Restore to before start of frame
- *
- * See also:
- *   - <gdImageGifAnimAdd>
- */
-enum {
-	gdDisposalUnknown,
-	gdDisposalNone,
-	gdDisposalRestoreBackground,
-	gdDisposalRestorePrevious
-};
-
-BGD_DECLARE(void)
-gdImageGifAnimBegin(gdImagePtr im, FILE *outFile, int GlobalCM, int Loops);
-BGD_DECLARE(void)
-gdImageGifAnimAdd(gdImagePtr im, FILE *outFile, int LocalCM, int LeftOfs,
-				  int TopOfs, int Delay, int Disposal, gdImagePtr previm);
-BGD_DECLARE(void) gdImageGifAnimEnd(FILE *outFile);
-BGD_DECLARE(void)
-gdImageGifAnimBeginCtx(gdImagePtr im, gdIOCtxPtr out, int GlobalCM, int Loops);
-BGD_DECLARE(void)
-gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalCM, int LeftOfs,
-					 int TopOfs, int Delay, int Disposal, gdImagePtr previm);
-BGD_DECLARE(void) gdImageGifAnimEndCtx(gdIOCtxPtr out);
-BGD_DECLARE(void *)
-gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalCM, int Loops);
-BGD_DECLARE(void *)
-gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, int LeftOfs,
-					 int TopOfs, int Delay, int Disposal, gdImagePtr previm);
-BGD_DECLARE(void *) gdImageGifAnimEndPtr(int *size);
-
 /*
   Group: Types
 
@@ -1416,27 +1452,6 @@ BGD_DECLARE(void) gdImagePngToSink(gdImagePtr im, gdSinkPtr out);
 BGD_DECLARE(void) gdImageQoiToSink(gdImagePtr im, gdSinkPtr out);
 
 BGD_DECLARE(void) gdImageGd2(gdImagePtr im, FILE *out, int cs, int fmt);
-
-/* Best to free this memory with gdFree(), not free() */
-BGD_DECLARE(void *) gdImageGifPtr(gdImagePtr im, int *size);
-
-/* Best to free this memory with gdFree(), not free() */
-BGD_DECLARE(void *) gdImagePngPtr(gdImagePtr im, int *size);
-BGD_DECLARE(void *) gdImagePngPtrEx(gdImagePtr im, int *size, int level);
-BGD_DECLARE(void *)
-gdImagePngPtrWithMetadata(gdImagePtr im, int *size,
-						  const gdImageMetadata *metadata);
-BGD_DECLARE(void *)
-gdImagePngPtrExWithMetadata(gdImagePtr im, int *size, int level,
-							const gdImageMetadata *metadata);
-BGD_DECLARE(int)
-gdImageMetadataInjectPng(void **data, int *size, const gdImageMetadata *metadata);
-BGD_DECLARE(void *) gdImageQoiPtr(gdImagePtr im, int *size);
-BGD_DECLARE(void *) gdImageQoiPtrEx(gdImagePtr im, int *size, int colorspace);
-BGD_DECLARE(void *) gdImageQoiPtrWithMetadata(gdImagePtr im, int *size, const gdImageMetadata *metadata);
-BGD_DECLARE(void *) gdImageQoiPtrExWithMetadata(gdImagePtr im, int *size, int colorspace, const gdImageMetadata *metadata);
-BGD_DECLARE(int) gdImageMetadataInjectQoi(void **data, int *size, const gdImageMetadata *metadata);
-
 
 /* Best to free this memory with gdFree(), not free() */
 BGD_DECLARE(void *) gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
