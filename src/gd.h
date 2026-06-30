@@ -848,6 +848,8 @@ gdImageQoiCtxEx(gdImagePtr im, gdIOCtxPtr out, int colorspace);
 BGD_DECLARE(void)
 gdImageQoiCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int colorspace,
 							const gdImageMetadata *metadata);
+/* for completeness with Sink 2.x APIs, will be removed in 3.0 with all Sink APIs */
+BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiSource(gdSourcePtr in);
 
 /* GIF */
 /* These read the first frame only */
