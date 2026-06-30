@@ -858,6 +858,7 @@ gdImageCreateFromJpegPtrWithMetadata(int size, void *data,
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromJpegPtrExWithMetadata(int size, void *data, int ignore_warning,
 									   gdImageMetadata *metadata);
+BGD_DECLARE(const char *) gdJpegGetVersionString();
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx(gdIOCtxPtr infile);
