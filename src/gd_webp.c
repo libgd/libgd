@@ -335,6 +335,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx(gdIOCtx *infile) {
 
 	filedata = WebpReadCtxData(infile, &size);
 	if (filedata == NULL) {
+		gd_error("gd-webp cannot get webp info");
 		return NULL;
 	}
 
