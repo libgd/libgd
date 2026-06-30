@@ -8,5 +8,11 @@ int main() {
 		gdImageDestroy(im);
 		return 1;
 	}
+
+	im = gdImageCreateFromTgaCtx(NULL);
+	if (im != NULL) {
+		gdImageDestroy(im);
+		return 1;
+	}
 	return 0;
 }

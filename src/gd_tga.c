@@ -78,6 +78,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx *ctx) {
 	int x = 0;
 	int y = 0;
 
+	if (ctx == NULL) {
+		return NULL;
+	}
+
 	tga = (oTga *)gdMalloc(sizeof(oTga));
 	if (!tga) {
 		return NULL;
@@ -164,7 +168,7 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga) {
 	tga->flipv = (header[17] & 0x20) ? 0 : 1;
 	tga->has_alpha = 0;
 
-#if DEBUG
+#ifdef DEBUG
 	printf("format bps: %i\n", tga->bits);
 	printf("flip h/v: %i / %i\n", tga->fliph, tga->flipv);
 	printf("alpha: %i\n", tga->alphabits);
@@ -408,78 +412,76 @@ static void tga_apply_attribute_type(gdIOCtx *ctx, oTga *tga, int pixel_count) {
 	static const unsigned char signature[18] = {'T', 'R', 'U', 'E', 'V', 'I',
 												'S', 'I', 'O', 'N', '-', 'X',
 												'F', 'I', 'L', 'E', '.', '\0'};
+	unsigned char footer_ring[26];
 	unsigned char footer[26];
-	unsigned char *rest = NULL;
-	int rest_size = 0;
-	int rest_alloc = 0;
+	size_t trailing_size = 0;
+	size_t i;
 	int c;
 	long start;
-	int extension_offset;
-	int attr_type_offset;
+	uint32_t extension_offset;
+	uint32_t attr_type_offset;
+	uint32_t end_offset;
 	int attr_type;
 
 	if (!tga->has_alpha) {
 		return;
 	}
 
+	if (ctx->tell == NULL || ctx->seek == NULL) {
+		return;
+	}
+
 	start = gdTell(ctx);
-	if (start < 0) {
+	if (start < 0 || start > INT_MAX) {
 		return;
 	}
 
 	while ((c = gdGetC(ctx)) != EOF) {
-		if (rest_size == rest_alloc) {
-			int new_alloc = rest_alloc == 0 ? 1024 : rest_alloc * 2;
-			unsigned char *tmp;
-
-			if (new_alloc < rest_alloc ||
-				overflow2(new_alloc, sizeof(unsigned char))) {
-				gdFree(rest);
-				return;
-			}
-
-			tmp = (unsigned char *)gdRealloc(rest,
-											 new_alloc * sizeof(unsigned char));
-			if (tmp == NULL) {
-				gdFree(rest);
-				return;
-			}
-			rest = tmp;
-			rest_alloc = new_alloc;
+		footer_ring[trailing_size % sizeof(footer_ring)] = (unsigned char)c;
+		if (trailing_size == SIZE_MAX) {
+			return;
 		}
-		rest[rest_size++] = (unsigned char)c;
+		trailing_size++;
 	}
 
-	if (rest_size < 26) {
-		gdFree(rest);
+	if (trailing_size < sizeof(footer)) {
 		return;
 	}
 
-	memcpy(footer, rest + rest_size - 26, sizeof(footer));
+	for (i = 0; i < sizeof(footer); i++) {
+		footer[i] = footer_ring[(trailing_size + i) % sizeof(footer_ring)];
+	}
 	if (memcmp(footer + 8, signature, sizeof(signature)) != 0) {
-		gdFree(rest);
 		return;
 	}
 
-	extension_offset =
-		footer[0] | (footer[1] << 8) | (footer[2] << 16) | (footer[3] << 24);
-	if (extension_offset <= 0 || extension_offset < start) {
-		gdFree(rest);
+	extension_offset = (uint32_t)footer[0] | ((uint32_t)footer[1] << 8) |
+					   ((uint32_t)footer[2] << 16) |
+					   ((uint32_t)footer[3] << 24);
+	if (extension_offset == 0 || extension_offset < (uint32_t)start ||
+		extension_offset > (uint32_t)INT_MAX - 494) {
 		return;
 	}
 
-	attr_type_offset = extension_offset - (int)start + 494;
-	if (attr_type_offset < 0 || attr_type_offset >= rest_size) {
-		gdFree(rest);
+	attr_type_offset = extension_offset + 494;
+	if (trailing_size > (size_t)INT_MAX - (size_t)start ||
+		attr_type_offset >= (uint32_t)start + (uint32_t)trailing_size -
+										 sizeof(footer)) {
 		return;
 	}
+	end_offset = (uint32_t)start + (uint32_t)trailing_size;
 
-	attr_type = rest[attr_type_offset];
+	if (!gdSeek(ctx, (int)attr_type_offset)) {
+		return;
+	}
+	attr_type = gdGetC(ctx);
+	gdSeek(ctx, (int)end_offset);
+	if (attr_type == EOF) {
+		return;
+	}
 	if (attr_type != 3 && attr_type != 4) {
 		tga_strip_alpha(tga, pixel_count);
 	}
-
-	gdFree(rest);
 }
 
 static int tga_decode_color(const unsigned char *buf, int bits, int alpha_bits,

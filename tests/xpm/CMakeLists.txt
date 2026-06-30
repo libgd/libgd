@@ -3,6 +3,7 @@ LIST(APPEND TESTS_FILES
 	bug00166
 	bug00185
 	color_name
+	invalid_color
 )
 ENDIF(XPM_FOUND)
 

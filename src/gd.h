@@ -15,6 +15,7 @@ extern "C" {
 #define GD_MINOR_VERSION 4		/*version605b5d1778*/
 #define GD_RELEASE_VERSION 0	/*version605b5d1778*/
 #define GD_EXTRA_VERSION "-dev" /*version605b5d1778*/
+
 /* End parsable section. */
 
 /* The version string.  This is constructed from the version number
@@ -851,11 +852,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromJpegPtrEx(int size, void *data, int ignore_warning);
 BGD_DECLARE(gdImagePtr)
-gdImageCreateFromJpegPtrWithMetadata(int size, void *data,
-									 gdImageMetadata *metadata);
-BGD_DECLARE(gdImagePtr)
-gdImageCreateFromJpegPtrExWithMetadata(int size, void *data, int ignore_warning,
-									   gdImageMetadata *metadata);
+gdImageCreateFromJpegPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrExWithMetadata(int size, void *data, int ignore_warning, gdImageMetadata *metadata);
 BGD_DECLARE(const char *) gdJpegGetVersionString();
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr(int size, void *data);
@@ -1608,6 +1606,11 @@ gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int level, const gdIm
 
 enum { GD_QOI_SRGB = 0, GD_QOI_LINEAR = 1 };
 
+BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
+BGD_DECLARE(void) gdImageQoiCtx(gdImagePtr im, gdIOCtxPtr out);
+BGD_DECLARE(void)
+gdImageQoiCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out,
+						  const gdImageMetadata *metadata);
 BGD_DECLARE(void) gdImageQoiEx(gdImagePtr im, FILE *out, int colorspace);
 BGD_DECLARE(void)
 gdImageQoiCtxEx(gdImagePtr im, gdIOCtxPtr out, int colorspace);
@@ -2165,7 +2168,6 @@ BGD_DECLARE(void *) gdDPExtractData(gdIOCtxPtr ctx, int *size);
 
 #define GD2_VERS 2
 #define GD2_ID "gd2"
-
 #define GD2_FMT_RAW 1
 #define GD2_FMT_COMPRESSED 2
 

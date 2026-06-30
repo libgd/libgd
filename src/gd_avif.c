@@ -91,8 +91,7 @@
 static int quality2Quantizer(int quality) {
 	int clampedQuality = CLAMP(quality, 0, MAX_QUALITY);
 
-	float scaleFactor =
-		(float)AVIF_QUANTIZER_WORST_QUALITY / (float)MAX_QUALITY;
+	float scaleFactor = (float)AVIF_QUANTIZER_WORST_QUALITY / (float)MAX_QUALITY;
 
 	return round(scaleFactor * (MAX_QUALITY - clampedQuality));
 }
@@ -282,9 +281,9 @@ static avifIO *createAvifIOFromCtx(gdIOCtx *ctx) {
 		image). <gdImageCreateFromAvif> does not close the file.
 
 		This function creates a gdIOCtx struct from the file pointer it's
-   passed. And then it relies on <gdImageCreateFromAvifCtx> to do the real
-   decoding work. If the file contains an image sequence, we simply read the
-   first one, discarding the rest.
+		passed. And then it relies on <gdImageCreateFromAvifCtx> to do the real
+		decoding work. If the file contains an image sequence, we simply read the
+		first one, discarding the rest.
 
 	Variants:
 
@@ -578,18 +577,13 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality,
 
 	avifIm->colorPrimaries = AVIF_COLOR_PRIMARIES_BT709;
 	avifIm->transferCharacteristics = AVIF_TRANSFER_CHARACTERISTICS_SRGB;
-	avifIm->matrixCoefficients = lossless ? AVIF_MATRIX_COEFFICIENTS_IDENTITY
-										  : AVIF_MATRIX_COEFFICIENTS_BT709;
+	avifIm->matrixCoefficients = lossless ? AVIF_MATRIX_COEFFICIENTS_IDENTITY : AVIF_MATRIX_COEFFICIENTS_BT709;
 
 	avifRGBImageSetDefaults(&rgb, avifIm);
 	// this allocates memory, and sets rgb.rowBytes and rgb.pixels.
-#if AVIF_VERSION >= 1000000
 	result = avifRGBImageAllocatePixels(&rgb);
 	if (isAvifError(result, "Allocating RGB pixels failed"))
 		goto cleanup;
-#else
-	avifRGBImageAllocatePixels(&rgb);
-#endif
 
 	// Parse RGB data from the GD image, and copy it into the AVIF RGB image.
 	// Convert 7-bit GD alpha channel values to 8-bit AVIF values.
