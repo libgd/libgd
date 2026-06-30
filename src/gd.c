@@ -289,7 +289,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor(int sx, int sy) {
 		return NULL;
 	}
 	if (overflow2(sizeof(int *), sy)) {
-		return 0;
+		return NULL;
 	}
 	if (overflow2(sizeof(int), sx)) {
 		return NULL;
@@ -456,6 +456,7 @@ gdImageColorClosestAlpha(gdImagePtr im, int r, int g, int b, int a) {
 	int ct = (-1);
 	int first = 1;
 	long mindist = 0;
+
 	if (im->trueColor) {
 		return gdTrueColorAlpha(r, g, b, a);
 	}
@@ -580,7 +581,6 @@ static float HWB_Diff(int r1, int g1, int b1, int r2, int g2, int b2) {
 static RGBType *
 HWB_to_RGB (HWBType HWB, RGBType * RGB)
 {
-
 	/*
 	 * H is given on [0, 6] or UNDEFINED. W and B are given on [0, 1].
 	 * RGB are each returned on [0, 1].
@@ -614,7 +614,6 @@ HWB_to_RGB (HWBType HWB, RGBType * RGB)
 	}
 
 	return RGB;
-
 }
 #endif
 
@@ -1324,6 +1323,7 @@ static void gdImageBrushApply(gdImagePtr im, int x, int y) {
 	int hx;
 	int x1, y1, x2, y2;
 	int srcx, srcy;
+
 	if (!im->brush) {
 		return;
 	}
@@ -2466,7 +2466,7 @@ BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc) {
 
 	/* stack of filled segments */
 	/* struct seg stack[FILL_MAX],*sp = stack; */
-	struct seg *stack;
+	struct seg *stack = NULL;
 	struct seg *sp;
 
 	if (!im->trueColor && nc > (im->colorsTotal - 1)) {
@@ -2516,8 +2516,7 @@ BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int nc) {
 		return;
 	}
 
-	stack = (struct seg *)gdMalloc(sizeof(struct seg) *
-								   ((int)(im->sy * im->sx) / 4));
+	stack = (struct seg *)gdMalloc(sizeof(struct seg) *((int)(im->sy * im->sx) / 4));
 	if (!stack) {
 		return;
 	}
@@ -2606,6 +2605,8 @@ static void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc) {
 		return;
 	}
 	sp = stack;
+
+	oc = gdImageGetPixel(im, x, y);
 
 	/* required! */
 	FILL_PUSH(y, x, x, 1);
@@ -2751,8 +2752,7 @@ gdImageRectangle(gdImagePtr im, int x1, int y1, int x2, int y2, int color) {
 	}
 }
 
-static void _gdImageFilledHRectangle(gdImagePtr im, int x1, int y1, int x2,
-									 int y2, int color) {
+static void _gdImageFilledHRectangle(gdImagePtr im, int x1, int y1, int x2, int y2, int color) {
 	int x, y;
 
 	if (x1 == x2 && y1 == y2) {
@@ -2795,8 +2795,7 @@ static void _gdImageFilledHRectangle(gdImagePtr im, int x1, int y1, int x2,
 	}
 }
 
-static void _gdImageFilledVRectangle(gdImagePtr im, int x1, int y1, int x2,
-									 int y2, int color) {
+static void _gdImageFilledVRectangle(gdImagePtr im, int x1, int y1, int x2, int y2, int color) {
 	int x, y;
 
 	if (x1 == x2 && y1 == y2) {
@@ -3057,7 +3056,6 @@ gdImageCopy(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
 			} else {
 				mapTo = colorMap[c];
 			}
-			printf("x: %d, y: %d, c: %d, mapTo: %d\n", x, y, c, mapTo);
 			gdImageSetPixel(dst, tox, toy, mapTo);
 			tox++;
 		}
@@ -3709,6 +3707,7 @@ gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c) {
 	if (n <= 0) {
 		return;
 	}
+
 
 	if (c == gdAntiAliased) {
 		fill_color = im->AA_color;
