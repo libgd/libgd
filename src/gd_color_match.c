@@ -4,6 +4,7 @@
 #include "gd.h"
 #include "gdhelpers.h"
 #include <string.h>
+#include "gd_intern.h"
 
 /*
 	Function: gdImageColorMatch
@@ -29,9 +30,10 @@ BGD_DECLARE(int) gdImageColorMatch(gdImagePtr im1, gdImagePtr im2) {
 	if (im2->colorsTotal < 1) {
 		return -4; /* At least 1 color must be allocated */
 	}
-
+	// gdMaxColors == 255
 	buf = (unsigned long *)gdMalloc(sizeof(unsigned long) * 5 * gdMaxColors);
 	memset(buf, 0, sizeof(unsigned long) * 5 * gdMaxColors);
+
 	for (x = 0; x < im1->sx; x++) {
 		for (y = 0; y < im1->sy; y++) {
 			color = im2->pixels[y][x];
@@ -59,3 +61,5 @@ BGD_DECLARE(int) gdImageColorMatch(gdImagePtr im1, gdImagePtr im2) {
 	gdFree(buf);
 	return 0;
 }
+
+

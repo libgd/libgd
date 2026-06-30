@@ -837,8 +837,6 @@ BGD_DECLARE(int) gdImageSmooth(gdImagePtr im, float weight) {
 	return gdImageConvolution(im, filter, weight + 8, 0);
 }
 
-/* ======================== Gaussian Blur Code ======================== */
-
 /* Return an array of coefficients for 'radius' and 'sigma' (sigma >=
  * 0 means compute it).  Result length is 2*radius+1. */
 static double *gaussian_coeffs(int radius, double sigmaArg) {

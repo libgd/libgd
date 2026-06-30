@@ -46,7 +46,6 @@ if (WEBP_FOUND)
 endif (WEBP_FOUND)
 
 if (JXL_FOUND)
-	add_definitions(-DHAVE_LIBJXL)
 	LIST(APPEND TESTS_FILES jxl_create_anim)
 	if (PNG_FOUND)
 		LIST(APPEND TESTS_FILES jxl_frames)
