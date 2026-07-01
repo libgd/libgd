@@ -1225,10 +1225,6 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromBmp(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx(gdIOCtxPtr infile);
 
-BGD_DECLARE(gdImagePtr) gdImageCreateFromFile(const char *filename);
-BGD_DECLARE(gdImagePtr) gdImageReadFile(const char *filename);
-BGD_DECLARE(gdImagePtr) gdImageReadCtx(gdIOCtxPtr ctx);
-
 /* UltraHDR  */
 BGD_DECLARE(gdUhdrImagePtr)
 gdUhdrImageCreateFromFile(const char *filename, int format, gdUhdrErrorPtr err);
@@ -1237,6 +1233,11 @@ gdUhdrImageCreateFromCtx(gdIOCtxPtr ctx, int format, gdUhdrErrorPtr err);
 BGD_DECLARE(gdUhdrImagePtr)
 gdUhdrImageCreateFromPtr(int size, void *data, int format, gdUhdrErrorPtr err);
 BGD_DECLARE(void) gdUhdrImageDestroy(gdUhdrImagePtr im);
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromFile(const char *filename);
+BGD_DECLARE(gdImagePtr) gdImageReadFile(const char *filename);
+BGD_DECLARE(gdImagePtr) gdImageReadCtx(gdIOCtxPtr ctx);
+
 
 /*
   Group: Types
