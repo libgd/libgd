@@ -23,9 +23,9 @@
 /*#define IO_DBG(s) (s) */
 #define IO_DBG(s)
 
-#define GD_IO_EOF_CHK(r)                                                       \
-	if (r == EOF) {                                                            \
-		return 0;                                                              \
+#define GD_IO_EOF_CHK(r) \
+	if (r == EOF) { \
+		return 0; \
 	}
 
 void gdPutC(const unsigned char c, gdIOCtx *ctx) { (ctx->putC)(ctx, c); }

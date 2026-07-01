@@ -14,7 +14,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdlib.h>
+#include "gd_errors.h"
 /* Used only when debugging GIF compression code */
 /* #define DEBUGGING_ENVARS */
 
@@ -22,7 +23,6 @@
 
 static int verbose_set = 0;
 static int verbose;
-
 #define VERBOSE (verbose_set ? verbose : set_verbose())
 
 static int set_verbose(void) {
