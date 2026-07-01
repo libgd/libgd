@@ -32,7 +32,7 @@ jobs:
             enable_avif: 0
             enable_heif: 0
             enable_jxl: 0
-            enable_ultrahdr: 0
+            enable_ultrahdr: 1
           - arch: arm64
             runner: windows-11-arm
             msvc_arch: arm64
@@ -59,26 +59,6 @@ jobs:
           curl -o deps.7z https://raw.githubusercontent.com/libgd/libgd-windows-vcpkg-prebuild/main/${{matrix.prebuild_archive}}.7z
           7z.exe x deps.7z -o${{github.workspace}}\vcpkgusr
 
-      - name: Build and install libultrahdr
-        if: matrix.enable_ultrahdr == 1
-        run: |
-          C:\vcpkg\vcpkg.exe install libjpeg-turbo:${{ matrix.vcpkg_triplet }}
-          curl -L -o libultrahdr-1.4.0.tar.gz https://github.com/google/libultrahdr/archive/refs/tags/v1.4.0.tar.gz
-          mkdir libultrahdr-src
-          mkdir libultrahdr-build
-          mkdir libultrahdr-install
-          tar -xzf libultrahdr-1.4.0.tar.gz -C libultrahdr-src --strip-components=1
-          cmake -S libultrahdr-src -B libultrahdr-build -G "Ninja" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}\libultrahdr-install -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} -DUHDR_BUILD_TESTS=1
-          cmake --build libultrahdr-build --config ${{env.BUILD_TYPE}}
-          mkdir libultrahdr-install\include
-          mkdir libultrahdr-install\lib
-          mkdir libultrahdr-install\bin
-          copy libultrahdr-src\ultrahdr_api.h libultrahdr-install\include\
-          copy libultrahdr-build\uhdr.lib libultrahdr-install\lib\
-          copy libultrahdr-build\uhdr.dll libultrahdr-install\bin\
-          for /R libultrahdr-build %%f in (ultrahdr_app.exe) do copy "%%f" libultrahdr-install\bin\
-          dir /s /b libultrahdr-install
-
       - name: Configure CMake
         run: >
           cmake -G "Ninja"
@@ -95,9 +75,9 @@ jobs:
           -DBUILD_TEST=1
           -B ${{github.workspace}}/build
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-          "-DCMAKE_PREFIX_PATH=${{github.workspace}}\vcpkgusr\${{matrix.vcpkg_triplet}};${{github.workspace}}\libultrahdr-install"
-          "-DCMAKE_LIBRARY_PATH=${{github.workspace}}\vcpkgusr\${{matrix.vcpkg_triplet}}\lib;${{github.workspace}}\libultrahdr-install\lib"
-          "-DCMAKE_INCLUDE_PATH=${{github.workspace}}\vcpkgusr\${{matrix.vcpkg_triplet}}\include;${{github.workspace}}\libultrahdr-install\include"
+          "-DCMAKE_PREFIX_PATH=${{github.workspace}}\vcpkgusr\${{matrix.vcpkg_triplet}}"
+          "-DCMAKE_LIBRARY_PATH=${{github.workspace}}\vcpkgusr\${{matrix.vcpkg_triplet}}\lib"
+          "-DCMAKE_INCLUDE_PATH=${{github.workspace}}\vcpkgusr\${{matrix.vcpkg_triplet}}\include"
 
       - name: Build
         run: |
@@ -111,6 +91,5 @@ jobs:
           echo %TMP%
           echo %TEMP%
           set PATH=${{github.workspace}}\vcpkgusr\${{matrix.vcpkg_triplet}}\bin;%PATH%
-          if "${{matrix.enable_ultrahdr}}"=="1" set PATH=${{github.workspace}}\libultrahdr-install\bin;%PATH%
           set CTEST_OUTPUT_ON_FAILURE=1
           ctest -C ${{env.BUILD_TYPE}}
