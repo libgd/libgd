@@ -106,7 +106,7 @@
 #cmakedefine HAVE_SYS_TYPES_H
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H
+#cmakedefine HAVE_UNISTD_H 1
 
 /* Define to 1 or 0, depending whether the compiler supports simple visibility
    declarations. */

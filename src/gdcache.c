@@ -58,9 +58,7 @@
 /*********************************************************/
 
 /* create a new cache */
-gdCache_head_t *gdCacheCreate(int size, gdCacheTestFn_t gdCacheTest,
-							  gdCacheFetchFn_t gdCacheFetch,
-							  gdCacheReleaseFn_t gdCacheRelease) {
+gdCache_head_t *gdCacheCreate(int size, gdCacheTestFn_t gdCacheTest, gdCacheFetchFn_t gdCacheFetch, gdCacheReleaseFn_t gdCacheRelease) {
 	gdCache_head_t *head;
 
 	head = (gdCache_head_t *)gdMalloc(sizeof(gdCache_head_t));
@@ -87,7 +85,6 @@ void gdCacheDelete(gdCache_head_t *head) {
 		elem = elem->next;
 		gdFree((char *)prev);
 	}
-
 	gdFree((char *)head);
 }
 
@@ -106,16 +103,13 @@ void *gdCacheGet(gdCache_head_t *head, void *keydata) {
 				elem->next = head->mru;
 				head->mru = elem;
 			}
-
 			return elem->userdata;
 		}
-
 		prevprev = prev;
 		prev = elem;
 		elem = elem->next;
 		i++;
 	}
-
 	userdata = (*(head->gdCacheFetch))(&(head->error), keydata);
 	if (!userdata) {
 		/* if there was an error in the fetch then don't cache */
