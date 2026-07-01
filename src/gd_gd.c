@@ -70,9 +70,9 @@
 /*#define GD2_DBG(s) (s) */
 #define GD2_DBG(s)
 
-/* */
-/* Shared code to read color tables from gd file. */
-/* */
+/*
+ * Shared code to read color tables from gd file. 
+ */
 int _gdGetColors(gdIOCtx *in, gdImagePtr im, int gd2xFlag) {
 	int i;
 	if (gd2xFlag) {
@@ -108,12 +108,10 @@ int _gdGetColors(gdIOCtx *in, gdImagePtr im, int gd2xFlag) {
 		}
 	}
 	/* Make sure transparent index is within bounds of the palette. */
-	if (!(im->trueColor) &&
-		(im->transparent >= im->colorsTotal || im->transparent < 0)) {
+	if (!(im->trueColor) && (im->transparent >= im->colorsTotal || im->transparent < 0)) {
 		im->transparent = (-1);
 	}
-	GD2_DBG(printf("Palette had %d colours (T=%d)\n", im->colorsTotal,
-				   im->transparent));
+	GD2_DBG(printf("Palette had %d colours (T=%d)\n", im->colorsTotal, im->transparent));
 	if (im->trueColor) {
 		return TRUE;
 	}
@@ -136,7 +134,7 @@ int _gdGetColors(gdIOCtx *in, gdImagePtr im, int gd2xFlag) {
 
 	for (i = 0; (i < im->colorsTotal); i++) {
 		im->open[i] = 0;
-	};
+	}
 
 	return TRUE;
 fail1:
@@ -150,15 +148,14 @@ static gdImagePtr _gdCreateFromFile(gdIOCtx *in, int *sx, int *sy) {
 	gdImagePtr im;
 	int gd2xFlag = 0;
 	int trueColorFlag = 0;
+
 	if (!gdGetWord(sx, in)) {
 		goto fail1;
 	}
 	if ((*sx == 65535) || (*sx == 65534)) {
 		/* This is a gd 2.0 .gd file */
 		gd2xFlag = 1;
-		/* 2.0.12: 65534 signals a truecolor .gd file.
-		   There is a slight redundancy here but we can
-		   live with it. */
+		/* 2.0.12: 65534 signals a truecolor .gd file. There is a slight redundancy here but we can live with it. */
 		if (*sx == 65534) {
 			trueColorFlag = 1;
 		}
@@ -171,6 +168,7 @@ static gdImagePtr _gdCreateFromFile(gdIOCtx *in, int *sx, int *sy) {
 	}
 
 	GD2_DBG(printf("Image is %dx%d\n", *sx, *sy));
+
 	if (trueColorFlag) {
 		im = gdImageCreateTrueColor(*sx, *sy);
 	} else {
@@ -264,6 +262,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGdPtr(int size, void *data) {
 		return 0;
 	im = gdImageCreateFromGdCtx(in);
 	in->gd_free(in);
+
 	return im;
 }
 
@@ -283,11 +282,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGdCtx(gdIOCtxPtr in) {
 
 	if (im == NULL) {
 		goto fail1;
-	};
+	}
 
 	/* Then the data... */
-	/* 2.0.12: support truecolor properly in .gd as well as in .gd2.
-	   Problem reported by Andreas Pfaller. */
+	/* 2.0.12: support truecolor properly in .gd as well as in .gd2. Problem reported by Andreas Pfaller. */
 	if (im->trueColor) {
 		for (y = 0; (y < sy); y++) {
 			for (x = 0; (x < sx); x++) {
@@ -311,6 +309,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromGdCtx(gdIOCtxPtr in) {
 			}
 		}
 	}
+
 	return im;
 
 fail2:
@@ -339,7 +338,8 @@ void _gdPutColors(gdImagePtr im, gdIOCtx *out) {
 
 static void _gdPutHeader(gdImagePtr im, gdIOCtx *out) {
 	/* 65535 indicates this is a gd 2.x .gd file.
-	   2.0.12: 65534 indicates truecolor. */
+	 * 2.0.12: 65534 indicates truecolor.
+	 */
 	if (im->trueColor) {
 		gdPutWord(65534, out);
 	} else {
