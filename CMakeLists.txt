@@ -232,6 +232,11 @@ else (USE_EXT_GD)
 
 	if (ENABLE_FONTCONFIG)
 		FIND_PACKAGE(Fontconfig REQUIRED)
+		if (Fontconfig_FOUND)
+			set(FONTCONFIG_FOUND ${Fontconfig_FOUND})
+			set(FONTCONFIG_LIBRARY ${Fontconfig_LIBRARY})
+			set(FONTCONFIG_INCLUDE_DIR ${Fontconfig_INCLUDE_DIR})
+		endif ()
 	endif (ENABLE_FONTCONFIG)
 
 	if (ENABLE_RAQM)

@@ -1,11 +1,14 @@
 if HAVE_LIBFREETYPE
 if HAVE_LIBPNG
 libgd_test_programs += \
-	freetype/bug00132
+	freetype/bug00132 \
+	freetype/charmap_selection
 endif
 endif
 
 EXTRA_DIST += \
 	freetype/CMakeLists.txt \
 	freetype/bug00132_exp.png \
-	freetype/DejaVuSans.ttf
+	freetype/DejaVuSans.ttf \
+	freetype/Rochester-Regular.otf \
+	freetype/Rochester-Regular.otf.LICENSE.txt

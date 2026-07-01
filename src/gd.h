@@ -1757,6 +1757,8 @@ BGD_DECLARE(int) gdFTUseFontConfig(int flag);
 #define gdFTEX_Shift_JIS 1
 #define gdFTEX_Big5 2
 #define gdFTEX_Adobe_Custom 3
+/* Deprecated compatibility name used by bundled PHP's historical libgd. */
+#define gdFTEX_MacRoman gdFTEX_Adobe_Custom
 
 BGD_DECLARE(char *)
 gdImageStringFTEx(gdImagePtr im, int *brect, int fg, const char *fontlist,
