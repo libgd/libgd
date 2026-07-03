@@ -3,7 +3,10 @@ LIST(APPEND TESTS_FILES
 	fractional
 	matrix
 	rotate
-	visual
 )
+
+IF(PNG_FOUND)
+	LIST(APPEND TESTS_FILES visual)
+ENDIF(PNG_FOUND)
 
 ADD_GD_TESTS()

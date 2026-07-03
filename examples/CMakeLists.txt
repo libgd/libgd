@@ -12,6 +12,7 @@ if (PNG_FOUND)
 		ctx_image_advanced ctx_image_basic ctx_image_blend_modes
 		curvedrectangle curveto fillandstroke
 		gradient_art gradient_operators composite_operators
+		save_restore
 		path_arcfillimage path_imagesource path_pattern
 		patharc pathclip pathnegativearc
 		smiley smileylarge tiger tigerclipped
@@ -46,7 +47,6 @@ if (WEBP_FOUND)
 endif (WEBP_FOUND)
 
 if (JXL_FOUND)
-	add_definitions(-DHAVE_LIBJXL)
 	LIST(APPEND TESTS_FILES jxl_create_anim)
 	if (PNG_FOUND)
 		LIST(APPEND TESTS_FILES jxl_frames)

@@ -4,6 +4,7 @@
 #define GD_INTERN_H
 
 #include <limits.h>
+#include "gd.h"
 
 #ifndef MAXPATHLEN
 #ifdef PATH_MAX
@@ -38,21 +39,28 @@
 #define SSIZE_MAX MAXSSIZE_T
 #endif
 #if defined(_MSC_VER)
-#define UNUSED_PARAM(x)                                                        \
-	x /* MSVC naturally accepts the (void)x trick or UNREFERENCED_PARAMETER */
+#define UNUSED_PARAM(x) x
 #elif defined(__GNUC__) || defined(__clang__)
 #define UNUSED_PARAM(x) x __attribute__((unused))
 #else
 #define UNUSED_PARAM(x) x
 #endif
-#include "gd.h"
-
+#ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
+#endif
 #define MIN3(a, b, c) ((a) < (b) ? (MIN(a, c)) : (MIN(b, c)))
+#ifndef MAX
 #define MAX(a, b) ((a) < (b) ? (b) : (a))
+#endif
 #define MAX3(a, b, c) ((a) < (b) ? (MAX(b, c)) : (MAX(a, c)))
 #define CLAMP(x, low, high)                                                    \
 	(((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
+
+#ifdef _MSC_VER
+#define gd_strcasecmp _stricmp
+#else
+#define gd_strcasecmp strcasecmp
+#endif
 
 typedef enum {
 	HORIZONTAL,

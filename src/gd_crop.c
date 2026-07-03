@@ -16,7 +16,7 @@
  *   }
  *   gdImageDestroy(im2);
  *   (end code)
- */
+ **/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -323,3 +323,4 @@ static int gdGuessBackgroundColorFromCorners(gdImagePtr im, int *color) {
 		return 0;
 	}
 }
+

@@ -1,0 +1,6 @@
+/* XPM */
+static char *invalid_color[] = {
+"1 1 1 1",
+"x c definitely-not-an-x11-color",
+"x"
+};

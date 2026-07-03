@@ -2,7 +2,8 @@ if HAVE_LIBXPM
 libgd_test_programs += \
 	xpm/bug00166 \
 	xpm/bug00185 \
-	xpm/color_name
+	xpm/color_name \
+	xpm/invalid_color
 endif
 
 EXTRA_DIST += \
@@ -10,4 +11,5 @@ EXTRA_DIST += \
 	xpm/bug00166.xpm \
 	xpm/bug00185.xpm \
 	xpm/bug00185_damaged.xpm \
-	xpm/color_name.xpm
+	xpm/color_name.xpm \
+	xpm/invalid_color.xpm

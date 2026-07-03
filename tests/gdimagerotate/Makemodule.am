@@ -6,6 +6,9 @@ libgd_test_programs += \
 	gdimagerotate/php_gh10614
 endif
 
+libgd_test_programs += \
+	gdimagerotate/uniform_transparent
+
 EXTRA_DIST += \
 	gdimagerotate/CMakeLists.txt \
 	gdimagerotate/bug00067_000_exp.png \

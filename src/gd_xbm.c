@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "gd_intern.h"
 #define MAX_XBM_LINE_SIZE 255
 
 /*
@@ -228,7 +228,7 @@ gdImageXbmCtx(gdImagePtr image, char *file_name, int fg, gdIOCtx *out) {
 	if ((f = strrchr(name, '\\')) != NULL)
 		name = f + 1;
 	name = strdup(name);
-	if ((f = strrchr(name, '.')) != NULL && !strcasecmp(f, ".XBM"))
+	if ((f = strrchr(name, '.')) != NULL && !gd_strcasecmp(f, ".XBM"))
 		*f = '\0';
 	if ((l = strlen(name)) == 0) {
 		free(name);

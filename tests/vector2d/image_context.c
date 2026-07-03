@@ -12,6 +12,9 @@ static void test_context_rules_and_flush(void)
 	gdTestAssert(gdContextCreateForImage(palette) == NULL);
 	context = gdContextCreateForImage(image);
 	gdTestAssert(context != NULL && gdContextGetImage(context) == image);
+	gdTestAssert(gdContextSave(context) == 1);
+	gdContextTranslate(context, 3.0, 4.0);
+	gdTestAssert(gdContextRestore(context) == 1);
 	gdContextSetSourceRgb(context, 1.0, 0.0, 0.0);
 	gdContextPaint(context);
 	gdTestAssert(gdImageGetTrueColorPixel(image, 0, 0) != red);

@@ -24,6 +24,12 @@
 static const unsigned char gdPngSignature[8] = {137, 80, 78, 71,
 												13,	 10, 26, 10};
 
+
+BGD_DECLARE(const char *) gdPngGetVersionString(void)
+{
+	return PNG_LIBPNG_VER_STRING;
+}
+
 static unsigned int gdPngGetUint32(const unsigned char *data) {
 	return ((unsigned int)data[0] << 24) | ((unsigned int)data[1] << 16) |
 		   ((unsigned int)data[2] << 8) | (unsigned int)data[3];
@@ -892,14 +898,57 @@ BGD_DECLARE(void) gdImagePngEx(gdImagePtr im, FILE *outFile, int level) {
 	Nothing.
 */
 BGD_DECLARE(void) gdImagePng(gdImagePtr im, FILE *outFile) {
-	gdIOCtx *out = gdNewFileCtx(outFile);
-	if (out == NULL)
-		return;
-	gdImagePngCtxEx(im, out, -1);
-	out->gd_free(out);
+	gdImagePngEx(im, outFile, -1);
 }
 
-static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx *outfile, int level);
+static int _gdImagePngCtxWithOptions(gdImagePtr im, gdIOCtx *outfile,
+									 const gdPngWriteOptions *options);
+
+BGD_DECLARE(void) gdPngWriteOptionsInit(gdPngWriteOptions *options) {
+	if (options == NULL)
+		return;
+	memset(options, 0, sizeof(*options));
+	options->struct_size = sizeof(*options);
+	options->compression_level = -1;
+	options->filters = GD_PNG_FILTER_AUTO;
+	options->compression_strategy = GD_PNG_COMPRESSION_STRATEGY_DEFAULT;
+}
+
+static int gdPngWriteOptionsValid(const gdPngWriteOptions *options) {
+	if (options->struct_size < sizeof(*options)) {
+		gd_error("gd-png error: invalid options structure size\n");
+		return FALSE;
+	}
+	if (options->compression_level < -1 || options->compression_level > 9) {
+		gd_error("gd-png error: compression level must be -1 through 9\n");
+		return FALSE;
+	}
+	if ((options->filters & ~GD_PNG_FILTER_ALL) != 0) {
+		gd_error("gd-png error: invalid filter mask\n");
+		return FALSE;
+	}
+	if (options->compression_strategy < GD_PNG_COMPRESSION_STRATEGY_DEFAULT ||
+		options->compression_strategy > GD_PNG_COMPRESSION_STRATEGY_FIXED) {
+		gd_error("gd-png error: invalid compression strategy\n");
+		return FALSE;
+	}
+	return TRUE;
+}
+
+BGD_DECLARE(int)
+gdImagePngWithOptions(gdImagePtr im, FILE *outFile,
+					  const gdPngWriteOptions *options) {
+	gdIOCtx *out;
+	int status;
+	if (im == NULL || outFile == NULL)
+		return 1;
+	out = gdNewFileCtx(outFile);
+	if (out == NULL)
+		return 1;
+	status = gdImagePngCtxWithOptions(im, out, options);
+	out->gd_free(out);
+	return status;
+}
 
 /*
   Function: gdImagePngPtr
@@ -919,17 +968,7 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx *outfile, int level);
 
 */
 BGD_DECLARE(void *) gdImagePngPtr(gdImagePtr im, int *size) {
-	void *rv;
-	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
-	if (out == NULL)
-		return NULL;
-	if (!_gdImagePngCtxEx(im, out, -1)) {
-		rv = gdDPExtractData(out, size);
-	} else {
-		rv = NULL;
-	}
-	out->gd_free(out);
-	return rv;
+	return gdImagePngPtrEx(im, size, -1);
 }
 
 /*
@@ -959,14 +998,47 @@ BGD_DECLARE(void *) gdImagePngPtr(gdImagePtr im, int *size) {
 BGD_DECLARE(void *) gdImagePngPtrEx(gdImagePtr im, int *size, int level) {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
+	gdPngWriteOptions options;
 	if (out == NULL)
 		return NULL;
-	if (!_gdImagePngCtxEx(im, out, level)) {
+	gdPngWriteOptionsInit(&options);
+	options.compression_level = level;
+	if (!_gdImagePngCtxWithOptions(im, out, &options))
 		rv = gdDPExtractData(out, size);
-	} else {
+	else
 		rv = NULL;
-	}
 	out->gd_free(out);
+	return rv;
+}
+
+BGD_DECLARE(void *)
+gdImagePngPtrWithOptions(gdImagePtr im, int *size,
+						 const gdPngWriteOptions *options) {
+	gdPngWriteOptions defaults;
+	gdIOCtx *out;
+	void *rv = NULL;
+	if (size != NULL)
+		*size = 0;
+	if (im == NULL || size == NULL)
+		return NULL;
+	if (options == NULL) {
+		gdPngWriteOptionsInit(&defaults);
+		options = &defaults;
+	}
+	if (!gdPngWriteOptionsValid(options))
+		return NULL;
+	out = gdNewDynamicCtx(2048, NULL);
+	if (out == NULL)
+		return NULL;
+	if (!_gdImagePngCtxWithOptions(im, out, options))
+		rv = gdDPExtractData(out, size);
+	out->gd_free(out);
+	if (rv != NULL && options->metadata != NULL &&
+		gdImageMetadataInjectPng(&rv, size, options->metadata) != GD_META_OK) {
+		gdFree(rv);
+		*size = 0;
+		return NULL;
+	}
 	return rv;
 }
 
@@ -979,17 +1051,13 @@ gdImagePngPtrWithMetadata(gdImagePtr im, int *size,
 BGD_DECLARE(void *)
 gdImagePngPtrExWithMetadata(gdImagePtr im, int *size, int level,
 							const gdImageMetadata *metadata) {
-	void *rv;
-
-	rv = gdImagePngPtrEx(im, size, level);
-	if (rv == NULL) {
+	void *rv = gdImagePngPtrEx(im, size, level);
+	if (rv == NULL)
 		return NULL;
-	}
 	if (gdImageMetadataInjectPng(&rv, size, metadata) != GD_META_OK) {
 		gdFree(rv);
-		if (size != NULL) {
+		if (size != NULL)
 			*size = 0;
-		}
 		return NULL;
 	}
 	return rv;
@@ -1187,7 +1255,10 @@ gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtx *outfile,
 
 */
 BGD_DECLARE(void) gdImagePngCtxEx(gdImagePtr im, gdIOCtx *outfile, int level) {
-	_gdImagePngCtxEx(im, outfile, level);
+	gdPngWriteOptions options;
+	gdPngWriteOptionsInit(&options);
+	options.compression_level = level;
+	(void)_gdImagePngCtxWithOptions(im, outfile, &options);
 }
 
 BGD_DECLARE(void)
@@ -1195,13 +1266,39 @@ gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtx *outfile, int level,
 							const gdImageMetadata *metadata) {
 	void *data;
 	int size = 0;
-
 	data = gdImagePngPtrExWithMetadata(im, &size, level, metadata);
-	if (data == NULL) {
+	if (data == NULL)
 		return;
-	}
 	gdPutBuf(data, size, outfile);
 	gdFree(data);
+}
+
+BGD_DECLARE(int)
+gdImagePngCtxWithOptions(gdImagePtr im, gdIOCtx *outfile,
+						 const gdPngWriteOptions *options) {
+	gdPngWriteOptions defaults;
+	void *data;
+	int size = 0;
+
+	if (im == NULL || outfile == NULL)
+		return 1;
+	if (options == NULL) {
+		gdPngWriteOptionsInit(&defaults);
+		options = &defaults;
+	}
+	if (!gdPngWriteOptionsValid(options))
+		return 1;
+	if (options->metadata == NULL)
+		return _gdImagePngCtxWithOptions(im, outfile, options);
+	data = gdImagePngPtrWithOptions(im, &size, options);
+	if (data == NULL)
+		return 1;
+	if (gdPutBuf(data, size, outfile) != size) {
+		gdFree(data);
+		return 1;
+	}
+	gdFree(data);
+	return 0;
 }
 
 /* This routine is based in part on code from Dale Lutz (Safe Software Inc.)
@@ -1209,7 +1306,8 @@ gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtx *outfile, int level,
  *  (http://www.libpng.org/pub/png/book/).
  */
 /* returns 0 on success, 1 on failure */
-static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx *outfile, int level) {
+static int _gdImagePngCtxWithOptions(gdImagePtr im, gdIOCtx *outfile,
+									 const gdPngWriteOptions *options) {
 	int i, j, bit_depth = 0, interlace_type;
 	int width = im->sx;
 	int height = im->sy;
@@ -1277,14 +1375,40 @@ static int _gdImagePngCtxEx(gdImagePtr im, gdIOCtx *outfile, int level) {
 	   gd is intentionally imperfect and doesn't spend a lot of time
 	   fussing with such things. */
 
-	/* Faster if this is uncommented, but may produce larger truecolor files.
-	   Wait for gdImagePngCtxEx. */
-#if 0
-	png_set_filter (png_ptr, 0, PNG_FILTER_NONE);
-#endif
-
 	/* 2.0.12: this is finally a parameter */
-	png_set_compression_level(png_ptr, level);
+	png_set_compression_level(png_ptr, options->compression_level);
+	if (options->filters != GD_PNG_FILTER_AUTO) {
+		int filters = 0;
+		if (options->filters & GD_PNG_FILTER_NONE)
+			filters |= PNG_FILTER_NONE;
+		if (options->filters & GD_PNG_FILTER_SUB)
+			filters |= PNG_FILTER_SUB;
+		if (options->filters & GD_PNG_FILTER_UP)
+			filters |= PNG_FILTER_UP;
+		if (options->filters & GD_PNG_FILTER_AVERAGE)
+			filters |= PNG_FILTER_AVG;
+		if (options->filters & GD_PNG_FILTER_PAETH)
+			filters |= PNG_FILTER_PAETH;
+		png_set_filter(png_ptr, PNG_FILTER_TYPE_BASE, filters);
+	}
+	if (options->compression_strategy != GD_PNG_COMPRESSION_STRATEGY_DEFAULT) {
+		int strategy = Z_DEFAULT_STRATEGY;
+		switch (options->compression_strategy) {
+		case GD_PNG_COMPRESSION_STRATEGY_FILTERED:
+			strategy = Z_FILTERED;
+			break;
+		case GD_PNG_COMPRESSION_STRATEGY_HUFFMAN_ONLY:
+			strategy = Z_HUFFMAN_ONLY;
+			break;
+		case GD_PNG_COMPRESSION_STRATEGY_RLE:
+			strategy = Z_RLE;
+			break;
+		case GD_PNG_COMPRESSION_STRATEGY_FIXED:
+			strategy = Z_FIXED;
+			break;
+		}
+		png_set_compression_strategy(png_ptr, strategy);
+	}
 
 #ifdef PNG_pHYs_SUPPORTED
 	/* 2.1.0: specify the resolution */
@@ -1546,6 +1670,45 @@ bail:
 
 static void _noPngError(void) {
 	gd_error("PNG image support has been disabled\n");
+}
+
+BGD_DECLARE(void) gdPngWriteOptionsInit(gdPngWriteOptions *options) {
+	if (options == NULL)
+		return;
+	memset(options, 0, sizeof(*options));
+	options->struct_size = sizeof(*options);
+	options->compression_level = -1;
+}
+
+BGD_DECLARE(int)
+gdImagePngWithOptions(gdImagePtr im, FILE *outFile,
+					  const gdPngWriteOptions *options) {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outFile);
+	ARG_NOT_USED(options);
+	_noPngError();
+	return 1;
+}
+
+BGD_DECLARE(int)
+gdImagePngCtxWithOptions(gdImagePtr im, gdIOCtx *outfile,
+						 const gdPngWriteOptions *options) {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(options);
+	_noPngError();
+	return 1;
+}
+
+BGD_DECLARE(void *)
+gdImagePngPtrWithOptions(gdImagePtr im, int *size,
+						 const gdPngWriteOptions *options) {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(options);
+	if (size != NULL)
+		*size = 0;
+	_noPngError();
+	return NULL;
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng(FILE *inFile) {

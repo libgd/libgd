@@ -129,7 +129,7 @@ gdImageStringFTCircle(gdImagePtr im, int cx, int cy, double radius,
 			}
 			for (x = (sx / 2) + 2; (x < xlimit); x++) {
 				int t;
-				int ox = sx - x + (sx / 2) - 1;
+				int ox = sx - x + (sx / 2) - 1;	
 				int oy = sy - y - 1;
 				t = im1->tpixels[oy][ox];
 				im1->tpixels[oy][ox] = im1->tpixels[y][x];

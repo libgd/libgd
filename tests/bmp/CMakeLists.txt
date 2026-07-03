@@ -6,7 +6,10 @@ LIST(APPEND TESTS_FILES
 	bug00276
 	bmp_size
 	bmp_write_ex
-	bmpsuite_read
 )
+
+IF(PNG_FOUND)
+	LIST(APPEND TESTS_FILES bmpsuite_read)
+ENDIF(PNG_FOUND)
 
 ADD_GD_TESTS()

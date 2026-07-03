@@ -71,7 +71,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename) {
 
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename) {
-	XpmInfo info;
+	XpmInfo info = {0};
 	XpmImage image;
 	unsigned int i, j, k, number, len;
 	char buf[5];
@@ -113,6 +113,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename) {
 
 	for (i = 0; i < number; i++) {
 		char *c_color = image.colorTable[i].c_color;
+		int valid_color = 1;
 		if (strcmp(c_color, "None") == 0) {
 			colors[i] = gdImageGetTransparent(im);
 			if (colors[i] == -1)
@@ -122,8 +123,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename) {
 			continue;
 		}
 		len = strlen(c_color);
-		if (len < 1)
-			continue;
+		if (len < 1) {
+			valid_color = 0;
+		}
 		if (c_color[0] == '#') {
 			switch (len) {
 			case 4:
@@ -197,10 +199,20 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename) {
 				blue = strtol(buf, NULL, 16);
 				blue /= 256;
 				break;
+			default:
+				valid_color = 0;
+				break;
 			}
 		} else if (!gdColorMapLookup(GD_COLOR_MAP_X11, c_color, &red, &green,
 									 &blue)) {
-			continue;
+			valid_color = 0;
+		}
+
+		if (!valid_color) {
+			gdFree(colors);
+			gdImageDestroy(im);
+			im = NULL;
+			goto done;
 		}
 
 		colors[i] = gdImageColorResolve(im, red, green, blue);
@@ -211,6 +223,12 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename) {
 	for (i = 0; i < image.height; i++) {
 		for (j = 0; j < image.width; j++) {
 			k = *pointer++;
+			if (k >= number) {
+				gdFree(colors);
+				gdImageDestroy(im);
+				im = NULL;
+				goto done;
+			}
 			gdImageSetPixel(im, j, i, colors[k]);
 		}
 	}

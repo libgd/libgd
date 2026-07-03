@@ -15,6 +15,7 @@ extern "C" {
 #define GD_MINOR_VERSION 4		/*version605b5d1778*/
 #define GD_RELEASE_VERSION 0	/*version605b5d1778*/
 #define GD_EXTRA_VERSION "-dev" /*version605b5d1778*/
+
 /* End parsable section. */
 
 /* The version string.  This is constructed from the version number
@@ -246,33 +247,6 @@ BGD_DECLARE(int) gdLayerOverlay(int dest, int src);
 BGD_DECLARE(int) gdLayerMultiply(int dest, int src);
 
 /**
- * Group: Color Quantization
- *
- * Enum: gdPaletteQuantizationMethod
- *
- * Constants:
- *   GD_QUANT_DEFAULT  - GD_QUANT_LIQ if libimagequant is available,
- *                       GD_QUANT_JQUANT otherwise.
- *   GD_QUANT_JQUANT   - libjpeg's old median cut. Fast, but only uses 16-bit
- *                       color.
- *   GD_QUANT_NEUQUANT - NeuQuant - approximation using Kohonen neural network.
- *   GD_QUANT_LIQ      - A combination of algorithms used in libimagequant
- *                       aiming for the highest quality at cost of speed.
- *
- * Note that GD_QUANT_JQUANT does not retain the alpha channel, and
- * GD_QUANT_NEUQUANT does not support dithering.
- *
- * See also:
- *   - <gdImageTrueColorToPaletteSetMethod>
- */
-enum gdPaletteQuantizationMethod {
-	GD_QUANT_DEFAULT = 0,
-	GD_QUANT_JQUANT = 1,
-	GD_QUANT_NEUQUANT = 2,
-	GD_QUANT_LIQ = 3
-};
-
-/**
  * Group: Transform
  *
  * Constants: gdInterpolationMethod
@@ -302,7 +276,6 @@ enum gdPaletteQuantizationMethod {
  *
  * See also:
  *  - <gdImageSetInterpolationMethod>
- *  - <gdImageGetInterpolationMethod>
  */
 typedef enum {
 	GD_DEFAULT = 0,
@@ -338,135 +311,6 @@ typedef enum {
 	GD_WELSH,
 	GD_METHOD_COUNT = 30
 } gdInterpolationMethod;
-
-/**
- * Group: HEIF Coding Format
- *
- * Values that select the HEIF coding format.
- *
- * Constants: gdHeifCodec
- *
- *  GD_HEIF_CODEC_UNKNOWN
- *  GD_HEIF_CODEC_HEVC
- *  GD_HEIF_CODEC_AV1
- *
- * See also:
- *  - <gdImageHeif>
- */
-typedef enum {
-	GD_HEIF_CODEC_UNKNOWN = 0,
-	GD_HEIF_CODEC_HEVC,
-	GD_HEIF_CODEC_AV1 = 4,
-} gdHeifCodec;
-
-/**
- * Group: HEIF Chroma Subsampling
- *
- * Values that select the HEIF chroma subsampling.
- *
- * Constants: gdHeifCompression
- *
- *  GD_HEIF_CHROMA_420
- *  GD_HEIF_CHROMA_422
- *  GD_HEIF_CHROMA_444
- *
- * See also:
- *  - <gdImageHeif>
- */
-typedef const char *gdHeifChroma;
-
-#define GD_HEIF_CHROMA_420 "420"
-#define GD_HEIF_CHROMA_422 "422"
-#define GD_HEIF_CHROMA_444 "444"
-
-/**
- * Group: UltraHDR
- *
- * UltraHDR (gain map) APIs are separate from <gdImage>. The UltraHDR handle
- * type is opaque and cannot be passed to existing <gdImage*> functions.
- */
-
-/**
- * Constants: gdUhdrStatus
- *
- * Return status values used by UltraHDR APIs.
- *
- *  GD_UHDR_SUCCESS        - operation succeeded
- *  GD_UHDR_NOT_AVAILABLE  - libgd was built without UltraHDR support
- *  GD_UHDR_E_INVALID      - invalid argument or state
- *  GD_UHDR_E_UNSUPPORTED  - unsupported format or operation
- *  GD_UHDR_E_ENCODE       - encode failure
- *  GD_UHDR_E_DECODE       - decode failure
- */
-#define GD_UHDR_SUCCESS 0
-#define GD_UHDR_NOT_AVAILABLE -1
-#define GD_UHDR_E_INVALID -2
-#define GD_UHDR_E_UNSUPPORTED -3
-#define GD_UHDR_E_ENCODE -4
-#define GD_UHDR_E_DECODE -5
-
-/**
- * Constants: gdUhdrMirrorAxis
- *
- * Mirror axis values used by <gdUhdrImageMirror>.
- *
- *  GD_UHDR_MIRROR_HORIZONTAL
- *  GD_UHDR_MIRROR_VERTICAL
- */
-#define GD_UHDR_MIRROR_HORIZONTAL 0
-#define GD_UHDR_MIRROR_VERTICAL 1
-
-/**
- * Enum: gdUhdrFormat
- *
- * UltraHDR container format selector.
- *
- *  GD_UHDR_FORMAT_JPEG - UltraHDR JPEG (currently supported)
- *  GD_UHDR_FORMAT_WEBP - reserved for future support
- *  GD_UHDR_FORMAT_HEIF - reserved for future support
- */
-typedef enum {
-	GD_UHDR_FORMAT_JPEG = 0,
-	GD_UHDR_FORMAT_WEBP = 1,
-	GD_UHDR_FORMAT_HEIF = 2
-} gdUhdrFormat;
-
-/**
- * Typedef: gdUhdrImage
- *
- * Opaque UltraHDR image handle.
- */
-typedef struct gdUhdrImageStruct gdUhdrImage;
-
-/**
- * Typedef: gdUhdrImagePtr
- *
- * Pointer to <gdUhdrImage>.
- */
-typedef gdUhdrImage *gdUhdrImagePtr;
-
-/**
- * Typedef: gdUhdrError
- *
- * Structured error details for UltraHDR APIs.
- *
- * Fields:
- *  code          - libgd UltraHDR status code (GD_UHDR_*)
- *  provider_code - underlying provider error code, if any
- *  message       - optional human-readable detail string
- */
-typedef struct {
-	int code;
-	int provider_code;
-	char message[128];
-} gdUhdrError;
-
-/**
- * Typedef: gdUhdrErrorPtr
- *
- * Pointer to <gdUhdrError>.
- */
-typedef gdUhdrError *gdUhdrErrorPtr;
 
 /* define struct with name and func ptr and add it to gdImageStruct
  * gdInterpolationMethod interpolation; */
@@ -757,7 +601,11 @@ BGD_DECLARE(void) gdClearErrorMethod(void);
 #define gdBrushed (-3)
 #define gdStyledBrushed (-4)
 #define gdTiled (-5)
+
+/* NOT the same as the transparent color index.
+	This is used in line styles only. */
 #define gdTransparent (-6)
+
 #define gdAntiAliased (-7)
 
 /* Functions to manipulate images. */
@@ -776,28 +624,113 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor(int sx, int sy);
    nature of the file being loaded. Truecolor PNG
    stays truecolor; palette PNG stays palette-based;
    JPEG is always truecolor. */
+/* PNG */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPng(FILE *fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromPngCtxWithMetadata(gdIOCtxPtr in, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr)
-gdImageCreateFromPngPtrWithMetadata(int size, void *data,
-									gdImageMetadata *metadata);
+gdImageCreateFromPngPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
+BGD_DECLARE(void) gdImagePng(gdImagePtr im, FILE *out);
+BGD_DECLARE(void) gdImagePngCtx(gdImagePtr im, gdIOCtxPtr out);
+/* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
+   1 is FASTEST but produces larger files, 9 provides the best
+   compression (smallest files) but takes a long time to compress, and
+   -1 selects the default compiled into the zlib library. */
+BGD_DECLARE(void) gdImagePngEx(gdImagePtr im, FILE *out, int level);
+BGD_DECLARE(void) gdImagePngCtxEx(gdImagePtr im, gdIOCtxPtr out, int level);
+BGD_DECLARE(void)
+gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, const gdImageMetadata *metadata);
+BGD_DECLARE(void)
+gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int level, const gdImageMetadata *metadata);
+
+/* Best to free this memory with gdFree(), not free() */
+BGD_DECLARE(void *) gdImagePngPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImagePngPtrEx(gdImagePtr im, int *size, int level);
+BGD_DECLARE(void *)
+gdImagePngPtrWithMetadata(gdImagePtr im, int *size,
+						  const gdImageMetadata *metadata);
+BGD_DECLARE(void *)
+gdImagePngPtrExWithMetadata(gdImagePtr im, int *size, int level,
+							const gdImageMetadata *metadata);
+BGD_DECLARE(int)
+gdImageMetadataInjectPng(void **data, int *size, const gdImageMetadata *metadata);
+
+#define GD_PNG_FILTER_AUTO 0U
+#define GD_PNG_FILTER_NONE (1U << 0)
+#define GD_PNG_FILTER_SUB (1U << 1)
+#define GD_PNG_FILTER_UP (1U << 2)
+#define GD_PNG_FILTER_AVERAGE (1U << 3)
+#define GD_PNG_FILTER_PAETH (1U << 4)
+#define GD_PNG_FILTER_ALL                                                    \
+	(GD_PNG_FILTER_NONE | GD_PNG_FILTER_SUB | GD_PNG_FILTER_UP |             \
+	 GD_PNG_FILTER_AVERAGE | GD_PNG_FILTER_PAETH)
+
+enum {
+	GD_PNG_COMPRESSION_STRATEGY_DEFAULT = 0,
+	GD_PNG_COMPRESSION_STRATEGY_FILTERED,
+	GD_PNG_COMPRESSION_STRATEGY_HUFFMAN_ONLY,
+	GD_PNG_COMPRESSION_STRATEGY_RLE,
+	GD_PNG_COMPRESSION_STRATEGY_FIXED
+};
+
+typedef struct {
+	size_t struct_size;
+	int compression_level;
+	unsigned int filters;
+	int compression_strategy;
+	const gdImageMetadata *metadata;
+} gdPngWriteOptions;
+
+BGD_DECLARE(void) gdPngWriteOptionsInit(gdPngWriteOptions *options);
+BGD_DECLARE(int) gdImagePngWithOptions(gdImagePtr im, FILE *out, const gdPngWriteOptions *options);
+BGD_DECLARE(int) gdImagePngCtxWithOptions(gdImagePtr im, gdIOCtxPtr out, const gdPngWriteOptions *options);
+BGD_DECLARE(void *) gdImagePngPtrWithOptions(gdImagePtr im, int *size, const gdPngWriteOptions *options);
+BGD_DECLARE(const char *) gdPngGetVersionString(void);
+
+/* QOI */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromQoi(FILE *fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromQoiCtxWithMetadata(gdIOCtxPtr in, gdImageMetadata *metadata);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr)
-gdImageCreateFromQoiPtrWithMetadata(int size, void *data,
-									gdImageMetadata *metadata);
+gdImageCreateFromQoiPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
+BGD_DECLARE(void *) gdImageQoiPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImageQoiPtrEx(gdImagePtr im, int *size, int colorspace);
+BGD_DECLARE(void *) gdImageQoiPtrWithMetadata(gdImagePtr im, int *size, const gdImageMetadata *metadata);
+BGD_DECLARE(void *) gdImageQoiPtrExWithMetadata(gdImagePtr im, int *size, int colorspace, const gdImageMetadata *metadata);
+BGD_DECLARE(int) gdImageMetadataInjectQoi(void **data, int *size, const gdImageMetadata *metadata);
 
+BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
+BGD_DECLARE(void) gdImageQoiCtx(gdImagePtr im, gdIOCtxPtr out);
+BGD_DECLARE(void) gdImageQoiCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, const gdImageMetadata *metadata);
+enum { GD_QOI_SRGB = 0, GD_QOI_LINEAR = 1 };
+
+BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
+BGD_DECLARE(void) gdImageQoiCtx(gdImagePtr im, gdIOCtxPtr out);
+BGD_DECLARE(void)
+gdImageQoiCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out,
+						  const gdImageMetadata *metadata);
+BGD_DECLARE(void) gdImageQoiEx(gdImagePtr im, FILE *out, int colorspace);
+BGD_DECLARE(void)
+gdImageQoiCtxEx(gdImagePtr im, gdIOCtxPtr out, int colorspace);
+BGD_DECLARE(void)
+gdImageQoiCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int colorspace,
+							const gdImageMetadata *metadata);
+/* GIF */
 /* These read the first frame only */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGif(FILE *fd);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGifPtr(int size, void *data);
+BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out);
+BGD_DECLARE(void) gdImageGif(gdImagePtr im, FILE *out);
+/* Best to free this memory with gdFree(), not free() */
+BGD_DECLARE(void *) gdImageGifPtr(gdImagePtr im, int *size);
 
+
+/* Anims, frames or compositions */
 typedef struct gdGifReadStruct *gdGifReadPtr;
 
 typedef struct {
@@ -834,9 +767,56 @@ gdGifReadNextFrame(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *frame);
 BGD_DECLARE(int)
 gdGifReadNextImage(gdGifReadPtr gif, gdGifFrameInfo *info, gdImagePtr *image);
 BGD_DECLARE(gdImagePtr) gdGifReadCloneImage(gdGifReadPtr gif);
+
+/**
+ * Group: GifAnim
+ *
+ *   Legal values for Disposal. gdDisposalNone is always used by
+ *   the built-in optimizer if previm is passed.
+ *
+ * Constants: gdImageGifAnim
+ *
+ *   gdDisposalUnknown              - Not recommended
+ *   gdDisposalNone                 - Preserve previous frame
+ *   gdDisposalRestoreBackground    - First allocated color of palette
+ *   gdDisposalRestorePrevious      - Restore to before start of frame
+ *
+ * See also:
+ *   - <gdImageGifAnimAdd>
+ */
+enum {
+	gdDisposalUnknown,
+	gdDisposalNone,
+	gdDisposalRestoreBackground,
+	gdDisposalRestorePrevious
+};
+
+BGD_DECLARE(void)
+gdImageGifAnimBegin(gdImagePtr im, FILE *outFile, int GlobalCM, int Loops);
+BGD_DECLARE(void)
+gdImageGifAnimAdd(gdImagePtr im, FILE *outFile, int LocalCM, int LeftOfs,
+				  int TopOfs, int Delay, int Disposal, gdImagePtr previm);
+BGD_DECLARE(void) gdImageGifAnimEnd(FILE *outFile);
+BGD_DECLARE(void)
+gdImageGifAnimBeginCtx(gdImagePtr im, gdIOCtxPtr out, int GlobalCM, int Loops);
+BGD_DECLARE(void)
+gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalCM, int LeftOfs,
+					 int TopOfs, int Delay, int Disposal, gdImagePtr previm);
+BGD_DECLARE(void) gdImageGifAnimEndCtx(gdIOCtxPtr out);
+BGD_DECLARE(void *)
+gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalCM, int Loops);
+BGD_DECLARE(void *)
+gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, int LeftOfs,
+					 int TopOfs, int Delay, int Disposal, gdImagePtr previm);
+BGD_DECLARE(void *) gdImageGifAnimEndPtr(int *size);
+
+
+/* WBMP */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMP(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr(int size, void *data);
+
+/* JPEG */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *infile);
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromJpegEx(FILE *infile, int ignore_warning);
@@ -853,11 +833,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromJpegPtrEx(int size, void *data, int ignore_warning);
 BGD_DECLARE(gdImagePtr)
-gdImageCreateFromJpegPtrWithMetadata(int size, void *data,
-									 gdImageMetadata *metadata);
-BGD_DECLARE(gdImagePtr)
-gdImageCreateFromJpegPtrExWithMetadata(int size, void *data, int ignore_warning,
-									   gdImageMetadata *metadata);
+gdImageCreateFromJpegPtrWithMetadata(int size, void *data, gdImageMetadata *metadata);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrExWithMetadata(int size, void *data, int ignore_warning, gdImageMetadata *metadata);
+BGD_DECLARE(const char *) gdJpegGetVersionString();
+
+/* WEBP */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx(gdIOCtxPtr infile);
@@ -903,7 +883,6 @@ typedef struct {
 } gdWebpWriteOptions;
 
 enum { gdWebpDisposeNone, gdWebpDisposeBackground };
-
 enum { gdWebpBlendAlpha, gdWebpBlendNone };
 
 BGD_DECLARE(int) gdWebpIsAnimated(FILE *fd);
@@ -932,6 +911,7 @@ gdWebpWriteAddImage(gdWebpWritePtr webp, gdImagePtr image, int durationMs);
 BGD_DECLARE(void) gdWebpWriteClose(gdWebpWritePtr webp);
 BGD_DECLARE(void *) gdWebpWritePtrFinish(gdWebpWritePtr webp, int *size);
 
+/* JXL */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJxl(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJxlPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJxlCtx(gdIOCtxPtr infile);
@@ -1006,14 +986,58 @@ BGD_DECLARE(int) gdImageJxlAnimAddFrame(
 BGD_DECLARE(int) gdImageJxlAnimEnd(gdJxlAnimPtr anim);
 BGD_DECLARE(void *) gdImageJxlAnimEndPtr(gdJxlAnimPtr anim, int *size);
 
+/* HEIF */
+
+/**
+ * Group: HEIF Coding Format
+ *
+ * Values that select the HEIF coding format.
+ *
+ * Constants: gdHeifCodec
+ *
+ *  GD_HEIF_CODEC_UNKNOWN
+ *  GD_HEIF_CODEC_HEVC
+ *  GD_HEIF_CODEC_AV1
+ *
+ * See also:
+ *  - <gdImageHeif>
+ */
+typedef enum {
+	GD_HEIF_CODEC_UNKNOWN = 0,
+	GD_HEIF_CODEC_HEVC,
+	GD_HEIF_CODEC_AV1 = 4,
+} gdHeifCodec;
+
+/**
+ * Group: HEIF Chroma Subsampling
+ *
+ * Values that select the HEIF chroma subsampling.
+ *
+ * Constants: gdHeifCompression
+ *
+ *  GD_HEIF_CHROMA_420
+ *  GD_HEIF_CHROMA_422
+ *  GD_HEIF_CHROMA_444
+ *
+ * See also:
+ *  - <gdImageHeif>
+ */
+typedef const char *gdHeifChroma;
+
+#define GD_HEIF_CHROMA_420 "420"
+#define GD_HEIF_CHROMA_422 "422"
+#define GD_HEIF_CHROMA_444 "444"
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtxPtr infile);
 
+/* AVIF */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtxPtr infile);
 
+/* TIFF */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtxPtr infile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffPtr(int size, void *data);
@@ -1099,18 +1123,110 @@ BGD_DECLARE(int) gdTiffWriteAddImage(gdTiffWritePtr write, gdImagePtr image);
 BGD_DECLARE(void) gdTiffWriteClose(gdTiffWritePtr write);
 BGD_DECLARE(void *) gdTiffWritePtrFinish(gdTiffWritePtr write, int *size);
 
+BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile);
+BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void) gdImageTiffCtx(gdImagePtr image, gdIOCtxPtr out);
+
+/* TGA */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTga(FILE *fp);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtxPtr ctx);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaPtr(int size, void *data);
 
+/* BMP */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmp(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpPtr(int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromBmpCtx(gdIOCtxPtr infile);
-BGD_DECLARE(gdImagePtr) gdImageCreateFromFile(const char *filename);
-BGD_DECLARE(gdImagePtr) gdImageReadFile(const char *filename);
-BGD_DECLARE(gdImagePtr) gdImageReadCtx(gdIOCtxPtr ctx);
 
-/* UltraHDR load API */
+/* UltraHDR  */
+
+/**
+ * Group: UltraHDR
+ *
+ * UltraHDR (gain map) APIs are separate from <gdImage>. The UltraHDR handle
+ * type is opaque and cannot be passed to existing <gdImage*> functions.
+ */
+
+/**
+ * Constants: gdUhdrStatus
+ *
+ * Return status values used by UltraHDR APIs.
+ *
+ *  GD_UHDR_SUCCESS        - operation succeeded
+ *  GD_UHDR_NOT_AVAILABLE  - libgd was built without UltraHDR support
+ *  GD_UHDR_E_INVALID      - invalid argument or state
+ *  GD_UHDR_E_UNSUPPORTED  - unsupported format or operation
+ *  GD_UHDR_E_ENCODE       - encode failure
+ *  GD_UHDR_E_DECODE       - decode failure
+ */
+#define GD_UHDR_SUCCESS 0
+#define GD_UHDR_NOT_AVAILABLE -1
+#define GD_UHDR_E_INVALID -2
+#define GD_UHDR_E_UNSUPPORTED -3
+#define GD_UHDR_E_ENCODE -4
+#define GD_UHDR_E_DECODE -5
+
+/**
+ * Constants: gdUhdrMirrorAxis
+ *
+ * Mirror axis values used by <gdUhdrImageMirror>.
+ *
+ *  GD_UHDR_MIRROR_HORIZONTAL
+ *  GD_UHDR_MIRROR_VERTICAL
+ */
+#define GD_UHDR_MIRROR_HORIZONTAL 0
+#define GD_UHDR_MIRROR_VERTICAL 1
+
+/**
+ * Enum: gdUhdrFormat
+ *
+ * UltraHDR container format selector.
+ *
+ *  GD_UHDR_FORMAT_JPEG - UltraHDR JPEG (currently supported)
+ *  GD_UHDR_FORMAT_WEBP - reserved for future support
+ *  GD_UHDR_FORMAT_HEIF - reserved for future support
+ */
+typedef enum {
+	GD_UHDR_FORMAT_JPEG = 0,
+	GD_UHDR_FORMAT_WEBP = 1,
+	GD_UHDR_FORMAT_HEIF = 2
+} gdUhdrFormat;
+
+/**
+ * Typedef: gdUhdrImage
+ *
+ * Opaque UltraHDR image handle.
+ */
+typedef struct gdUhdrImageStruct gdUhdrImage;
+
+/**
+ * Typedef: gdUhdrImagePtr
+ *
+ * Pointer to <gdUhdrImage>.
+ */
+typedef gdUhdrImage *gdUhdrImagePtr;
+
+/**
+ * Typedef: gdUhdrError
+ *
+ * Structured error details for UltraHDR APIs.
+ *
+ * Fields:
+ *  code          - libgd UltraHDR status code (GD_UHDR_*)
+ *  provider_code - underlying provider error code, if any
+ *  message       - optional human-readable detail string
+ */
+typedef struct {
+	int code;
+	int provider_code;
+	char message[128];
+} gdUhdrError;
+
+/**
+ * Typedef: gdUhdrErrorPtr
+ *
+ * Pointer to <gdUhdrError>.
+ */
+typedef gdUhdrError *gdUhdrErrorPtr;
 
 BGD_DECLARE(gdUhdrImagePtr)
 gdUhdrImageCreateFromFile(const char *filename, int format, gdUhdrErrorPtr err);
@@ -1119,6 +1235,11 @@ gdUhdrImageCreateFromCtx(gdIOCtxPtr ctx, int format, gdUhdrErrorPtr err);
 BGD_DECLARE(gdUhdrImagePtr)
 gdUhdrImageCreateFromPtr(int size, void *data, int format, gdUhdrErrorPtr err);
 BGD_DECLARE(void) gdUhdrImageDestroy(gdUhdrImagePtr im);
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromFile(const char *filename);
+BGD_DECLARE(gdImagePtr) gdImageReadFile(const char *filename);
+BGD_DECLARE(gdImagePtr) gdImageReadCtx(gdIOCtxPtr ctx);
+
 
 /*
   Group: Types
@@ -1154,11 +1275,15 @@ typedef struct {
 
 /* Deprecated in favor of gdImageCreateFromPngCtx */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromPngSource(gdSourcePtr in);
+/* for completeness with Sink 2.x APIs, will be removed in 3.0 with all Sink APIs */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiSource(gdSourcePtr in);
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd(FILE *in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGdCtx(gdIOCtxPtr in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGdPtr(int size, void *data);
+/* Best to free this memory with gdFree(), not free() */
+BGD_DECLARE(void *) gdImageGdPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void) gdImageGd(gdImagePtr im, FILE *out);
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2(FILE *in);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromGd2Ctx(gdIOCtxPtr in);
@@ -1169,9 +1294,8 @@ gdImageCreateFromGd2Part(FILE *in, int srcx, int srcy, int w, int h);
 BGD_DECLARE(gdImagePtr)
 gdImageCreateFromGd2PartCtx(gdIOCtxPtr in, int srcx, int srcy, int w, int h);
 BGD_DECLARE(gdImagePtr)
-gdImageCreateFromGd2PartPtr(int size, void *data, int srcx, int srcy, int w,
-							int h);
-/* 2.0.10: prototype was missing */
+gdImageCreateFromGd2PartPtr(int size, void *data, int srcx, int srcy, int w, int h);
+
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm(FILE *in);
 BGD_DECLARE(void)
 gdImageXbmCtx(gdImagePtr image, char *file_name, int fg, gdIOCtxPtr out);
@@ -1179,7 +1303,302 @@ gdImageXbmCtx(gdImagePtr image, char *file_name, int fg, gdIOCtxPtr out);
 /* NOTE: filename, not FILE */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromXpm(char *filename);
 
+BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression);
+BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression);
+BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
+
+#define GD_BMP_COMPRESS_NONE 0
+#define GD_BMP_COMPRESS_RLE8 1
+#define GD_BMP_COMPRESS_RLE4 2
+
+#define GD_BMP_FLAG_NONE 0
+#define GD_BMP_FLAG_FORCE_V4HDR (1 << 0)
+#define GD_BMP_FLAG_QUANTIZE (1 << 1)
+#define GD_BMP_FLAG_RGB555 (1 << 2)
+
+BGD_DECLARE(void *)
+gdImageBmpPtrEx(gdImagePtr im, int *size, int bpp, int compression, int flags);
+BGD_DECLARE(void)
+gdImageBmpEx(gdImagePtr im, FILE *outFile, int bpp, int compression, int flags);
+BGD_DECLARE(void)
+gdImageBmpCtxEx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compression,
+				int flags);
+
+BGD_DECLARE(void) gdImageWBMP(gdImagePtr image, int fg, FILE *out);
+BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtxPtr out);
+
+BGD_DECLARE(int) gdImageFile(gdImagePtr im, const char *filename);
+BGD_DECLARE(int) gdSupportsFileType(const char *filename, int writing);
+
+BGD_DECLARE(int) gdUhdrIsAvailable(void);
+BGD_DECLARE(int) gdUhdrImageWidth(gdUhdrImagePtr im);
+BGD_DECLARE(int) gdUhdrImageHeight(gdUhdrImagePtr im);
+BGD_DECLARE(int) gdUhdrImageHasGainMap(gdUhdrImagePtr im);
+BGD_DECLARE(int)
+gdUhdrImageResize(gdUhdrImagePtr im, int width, int height, gdUhdrErrorPtr err);
+BGD_DECLARE(int)
+gdUhdrImageCrop(gdUhdrImagePtr im, int left, int top, int width, int height,
+				gdUhdrErrorPtr err);
+BGD_DECLARE(int)
+gdUhdrImageRotate(gdUhdrImagePtr im, int degrees, gdUhdrErrorPtr err);
+BGD_DECLARE(int)
+gdUhdrImageMirror(gdUhdrImagePtr im, int axis, gdUhdrErrorPtr err);
+BGD_DECLARE(int)
+gdUhdrImageFile(gdUhdrImagePtr im, const char *filename, int format,
+				int quality, gdUhdrErrorPtr err);
+BGD_DECLARE(int)
+gdUhdrImageCtx(gdUhdrImagePtr im, gdIOCtxPtr ctx, int format, int quality,
+			   gdUhdrErrorPtr err);
+BGD_DECLARE(void *)
+gdUhdrImageWritePtr(gdUhdrImagePtr im, int *size, int format, int quality,
+					gdUhdrErrorPtr err);
+BGD_DECLARE(gdImagePtr)
+gdUhdrImageGetSdr(gdUhdrImagePtr im, gdUhdrErrorPtr err);
+
+/* Guaranteed to correctly free memory returned by the gdImage*Ptr
+   functions */
+BGD_DECLARE(void) gdFree(void *m);
+
+/* Best to free this memory with gdFree(), not free() */
+BGD_DECLARE(void *) gdImageWBMPPtr(gdImagePtr im, int *size, int fg);
+
+/* 100 is highest quality (there is always a little loss with JPEG).
+   0 is lowest. 10 is about the lowest useful setting. */
+BGD_DECLARE(void) gdImageJpeg(gdImagePtr im, FILE *out, int quality);
+BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtxPtr out, int quality);
+BGD_DECLARE(void)
+gdImageJpegCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, int quality,
+						   const gdImageMetadata *metadata);
+
+/* Best to free this memory with gdFree(), not free() */
+BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality);
+BGD_DECLARE(void *)
+gdImageJpegPtrWithMetadata(gdImagePtr im, int *size, int quality,
+						   const gdImageMetadata *metadata);
+
+/**
+ * Group: WebP
+ *
+ * Constant: gdWebpLossless
+ *
+ * Lossless quality threshold. When image quality is greater than or equal to
+ * <gdWebpLossless>, the image will be written in the lossless WebP format.
+ *
+ * See also:
+ *   - <gdImageWebpEx>
+ */
+#define gdWebpLossless 101
+
+BGD_DECLARE(void) gdImageWebpEx(gdImagePtr im, FILE *outFile, int quantization);
+BGD_DECLARE(void) gdImageWebp(gdImagePtr im, FILE *outFile);
+BGD_DECLARE(void *) gdImageWebpPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *)
+gdImageWebpPtrEx(gdImagePtr im, int *size, int quantization);
+BGD_DECLARE(void)
+gdImageWebpCtx(gdImagePtr im, gdIOCtxPtr outfile, int quantization);
+
+BGD_DECLARE(void)
+gdImageHeifEx(gdImagePtr im, FILE *outFile, int quality, gdHeifCodec codec,
+			  gdHeifChroma chroma);
+BGD_DECLARE(void) gdImageHeif(gdImagePtr im, FILE *outFile);
+BGD_DECLARE(void *) gdImageHeifPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *)
+gdImageHeifPtrEx(gdImagePtr im, int *size, int quality, gdHeifCodec codec,
+				 gdHeifChroma chroma);
+BGD_DECLARE(void)
+gdImageHeifCtx(gdImagePtr im, gdIOCtxPtr outfile, int quality,
+			   gdHeifCodec codec, gdHeifChroma chroma);
+
+BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile);
+BGD_DECLARE(void)
+gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int speed);
+BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *)
+gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed);
+BGD_DECLARE(void)
+gdImageAvifCtx(gdImagePtr im, gdIOCtxPtr outfile, int quality, int speed);
+
+/*
+  Group: Types
+
+  typedef: gdSink
+
+  typedef: gdSinkPtr
+
+	*Note:* This interface is *obsolete* and kept only for
+	*compatibility*.  Use <gdIOCtx> instead.
+
+	Represents a "sink" (destination) to which a PNG can be
+	written. Programmers who do not wish to write PNGs to a file can
+	provide their own alternate output mechanism, using the
+	<gdImagePngToSink> function. See the documentation of that
+	function for an example of the proper use of this type.
+
+	> typedef struct {
+	>     int (*sink) (void *context, char *buffer, int len);
+	>     void *context;
+	> } gdSink, *gdSinkPtr;
+
+	The _sink_ function must return -1 on error, otherwise the number of
+	bytes written, which must be equal to len.
+
+	_context_ will be passed to your sink function.
+
+*/
+
+typedef struct {
+	int (*sink)(void *context, const char *buffer, int len);
+	void *context;
+} gdSink, *gdSinkPtr;
+
+BGD_DECLARE(void) gdImagePngToSink(gdImagePtr im, gdSinkPtr out);
+BGD_DECLARE(void) gdImageQoiToSink(gdImagePtr im, gdSinkPtr out);
+
+BGD_DECLARE(void) gdImageGd2(gdImagePtr im, FILE *out, int cs, int fmt);
+
+/* Best to free this memory with gdFree(), not free() */
+BGD_DECLARE(void *) gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
+
 BGD_DECLARE(void) gdImageDestroy(gdImagePtr im);
+
+/* These functions still work with truecolor images,
+   for which they never return error. */
+BGD_DECLARE(int) gdImageColorAllocate(gdImagePtr im, int r, int g, int b);
+/* gd 2.0: palette entries with non-opaque transparency are permitted. */
+BGD_DECLARE(int)
+gdImageColorAllocateAlpha(gdImagePtr im, int r, int g, int b, int a);
+/* Assumes opaque is the preferred alpha channel value */
+BGD_DECLARE(int) gdImageColorClosest(gdImagePtr im, int r, int g, int b);
+/* Closest match taking all four parameters into account.
+   A slightly different color with the same transparency
+   beats the exact same color with radically different
+   transparency */
+BGD_DECLARE(int)
+gdImageColorClosestAlpha(gdImagePtr im, int r, int g, int b, int a);
+/* An alternate method */
+BGD_DECLARE(int) gdImageColorClosestHWB(gdImagePtr im, int r, int g, int b);
+/* Returns exact, 100% opaque matches only */
+BGD_DECLARE(int) gdImageColorExact(gdImagePtr im, int r, int g, int b);
+/* Returns an exact match only, including alpha */
+BGD_DECLARE(int)
+gdImageColorExactAlpha(gdImagePtr im, int r, int g, int b, int a);
+/* Opaque only */
+BGD_DECLARE(int) gdImageColorResolve(gdImagePtr im, int r, int g, int b);
+/* Based on gdImageColorExactAlpha and gdImageColorClosestAlpha */
+BGD_DECLARE(int)
+gdImageColorResolveAlpha(gdImagePtr im, int r, int g, int b, int a);
+
+/* A simpler way to obtain an opaque truecolor value for drawing on a
+   truecolor image. Not for use with palette images! */
+
+#define gdTrueColor(r, g, b) (((r) << 16) + ((g) << 8) + (b))
+
+/**
+ * Group: Color Composition
+ *
+ * Macro: gdTrueColorAlpha
+ *
+ * Compose a truecolor value from its components
+ *
+ * Parameters:
+ *   r - The red channel (0-255)
+ *   g - The green channel (0-255)
+ *   b - The blue channel (0-255)
+ *   a - The alpha channel (0-127, where 127 is fully transparent, and 0 is
+ *       completely opaque).
+ *
+ * See also:
+ *   - <gdTrueColorGetAlpha>
+ *   - <gdTrueColorGetRed>
+ *   - <gdTrueColorGetGreen>
+ *   - <gdTrueColorGetBlue>
+ *   - <gdImageColorExactAlpha>
+ */
+#define gdTrueColorAlpha(r, g, b, a)                                           \
+	(((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
+
+BGD_DECLARE(void) gdImageColorDeallocate(gdImagePtr im, int color);
+
+/* Converts a truecolor image to a palette-based image,
+   using a high-quality two-pass quantization routine
+   which attempts to preserve alpha channel information
+   as well as R/G/B color information when creating
+   a palette. If ditherFlag is set, the image will be
+   dithered to approximate colors better, at the expense
+   of some obvious "speckling." colorsWanted can be
+   anything up to 256. If the original source image
+   includes photographic information or anything that
+   came out of a JPEG, 256 is strongly recommended.
+
+   Better yet, don't use these function -- write real
+   truecolor PNGs and JPEGs. The disk space gain of
+   conversion to palette is not great (for small images
+   it can be negative) and the quality loss is ugly.
+
+   DIFFERENCES: gdImageCreatePaletteFromTrueColor creates and
+   returns a new image. gdImageTrueColorToPalette modifies
+   an existing image, and the truecolor pixels are discarded.
+
+   gdImageTrueColorToPalette() returns TRUE on success, FALSE on failure.
+*/
+BGD_DECLARE(gdImagePtr)
+gdImageCreatePaletteFromTrueColor(gdImagePtr im, int ditherFlag, int colorsWanted);
+
+BGD_DECLARE(int)
+gdImageTrueColorToPalette(gdImagePtr im, int ditherFlag, int colorsWanted);
+
+BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src);
+
+/* An attempt at getting the results of gdImageTrueColorToPalette to
+ * look a bit more like the original (im1 is the original and im2 is
+ * the palette version */
+
+BGD_DECLARE(int) gdImageColorMatch(gdImagePtr im1, gdImagePtr im2);
+
+/* Selects quantization method used for subsequent gdImageTrueColorToPalette
+   calls. See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT,
+   GD_QUANT_LIQ). Speed is from 1 (highest quality) to 10 (fastest). Speed 0
+   selects method-specific default (recommended).
+
+   Returns FALSE if the given method is invalid or not available.
+*/
+BGD_DECLARE(int)
+gdImageTrueColorToPaletteSetMethod(gdImagePtr im, int method, int speed);
+
+/*
+  Chooses quality range that subsequent call to gdImageTrueColorToPalette will
+  aim for. Min and max quality is in range 1-100 (1 = ugly, 100 = perfect). Max
+  must be higher than min. If palette cannot represent image with at least
+  min_quality, then image will remain true-color. If palette can represent image
+  with quality better than max_quality, then lower number of colors will be
+  used. This function has effect only when GD_QUANT_LIQ method has been selected
+  and the source image is true-color.
+*/
+BGD_DECLARE(void)
+gdImageTrueColorToPaletteSetQuality(gdImagePtr im, int min_quality, int max_quality);
+
+/* Specifies a color index (if a palette image) or an
+   RGB color (if a truecolor image) which should be
+   considered 100% transparent. FOR TRUECOLOR IMAGES,
+   THIS IS IGNORED IF AN ALPHA CHANNEL IS BEING
+   SAVED. Use gdImageSaveAlpha(im, 0); to
+   turn off the saving of a full alpha channel in
+   a truecolor image. Note that gdImageColorTransparent
+   is usually compatible with older browsers that
+   do not understand full alpha channels well. TBB */
+BGD_DECLARE(void) gdImageColorTransparent(gdImagePtr im, int color);
+
+BGD_DECLARE(void) gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src);
+
+typedef int (*gdCallbackImageColor)(gdImagePtr im, int src);
+
+BGD_DECLARE(int) gdImageColorReplace(gdImagePtr im, int src, int dst);
+BGD_DECLARE(int)
+gdImageColorReplaceThreshold(gdImagePtr im, int src, int dst, float threshold);
+BGD_DECLARE(int)
+gdImageColorReplaceArray(gdImagePtr im, int len, int *src, int *dst);
+BGD_DECLARE(int)
+gdImageColorReplaceCallback(gdImagePtr im, gdCallbackImageColor callback);
 
 /* Replaces or blends with the background depending on the
    most recent call to gdImageAlphaBlending and the
@@ -1191,7 +1610,6 @@ BGD_DECLARE(void) gdImageDestroy(gdImagePtr im);
    is passed gdEffectOverlay and gdEffectMultiply */
 
 BGD_DECLARE(void) gdImageSetPixel(gdImagePtr im, int x, int y, int color);
-/* FreeType 2 text output with hook to extra flags */
 
 BGD_DECLARE(int) gdImageGetPixel(gdImagePtr im, int x, int y);
 BGD_DECLARE(int) gdImageGetTrueColorPixel(gdImagePtr im, int x, int y);
@@ -1339,6 +1757,8 @@ BGD_DECLARE(int) gdFTUseFontConfig(int flag);
 #define gdFTEX_Shift_JIS 1
 #define gdFTEX_Big5 2
 #define gdFTEX_Adobe_Custom 3
+/* Deprecated compatibility name used by bundled PHP's historical libgd. */
+#define gdFTEX_MacRoman gdFTEX_Adobe_Custom
 
 BGD_DECLARE(char *)
 gdImageStringFTEx(gdImagePtr im, int *brect, int fg, const char *fontlist,
@@ -1390,411 +1810,17 @@ BGD_DECLARE(void) gdImageOpenPolygon(gdImagePtr im, gdPointPtr p, int n, int c);
 BGD_DECLARE(void)
 gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c);
 
-/* These functions still work with truecolor images,
-   for which they never return error. */
-BGD_DECLARE(int) gdImageColorAllocate(gdImagePtr im, int r, int g, int b);
-/* gd 2.0: palette entries with non-opaque transparency are permitted. */
-BGD_DECLARE(int)
-gdImageColorAllocateAlpha(gdImagePtr im, int r, int g, int b, int a);
-/* Assumes opaque is the preferred alpha channel value */
-BGD_DECLARE(int) gdImageColorClosest(gdImagePtr im, int r, int g, int b);
-/* Closest match taking all four parameters into account.
-   A slightly different color with the same transparency
-   beats the exact same color with radically different
-   transparency */
-BGD_DECLARE(int)
-gdImageColorClosestAlpha(gdImagePtr im, int r, int g, int b, int a);
-/* An alternate method */
-BGD_DECLARE(int) gdImageColorClosestHWB(gdImagePtr im, int r, int g, int b);
-/* Returns exact, 100% opaque matches only */
-BGD_DECLARE(int) gdImageColorExact(gdImagePtr im, int r, int g, int b);
-/* Returns an exact match only, including alpha */
-BGD_DECLARE(int)
-gdImageColorExactAlpha(gdImagePtr im, int r, int g, int b, int a);
-/* Opaque only */
-BGD_DECLARE(int) gdImageColorResolve(gdImagePtr im, int r, int g, int b);
-/* Based on gdImageColorExactAlpha and gdImageColorClosestAlpha */
-BGD_DECLARE(int)
-gdImageColorResolveAlpha(gdImagePtr im, int r, int g, int b, int a);
-
-/* A simpler way to obtain an opaque truecolor value for drawing on a
-   truecolor image. Not for use with palette images! */
-
-#define gdTrueColor(r, g, b) (((r) << 16) + ((g) << 8) + (b))
-
-/**
- * Group: Color Composition
- *
- * Macro: gdTrueColorAlpha
- *
- * Compose a truecolor value from its components
- *
- * Parameters:
- *   r - The red channel (0-255)
- *   g - The green channel (0-255)
- *   b - The blue channel (0-255)
- *   a - The alpha channel (0-127, where 127 is fully transparent, and 0 is
- *       completely opaque).
- *
- * See also:
- *   - <gdTrueColorGetAlpha>
- *   - <gdTrueColorGetRed>
- *   - <gdTrueColorGetGreen>
- *   - <gdTrueColorGetBlue>
- *   - <gdImageColorExactAlpha>
- */
-#define gdTrueColorAlpha(r, g, b, a)                                           \
-	(((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
-
-BGD_DECLARE(void) gdImageColorDeallocate(gdImagePtr im, int color);
-
-/* Converts a truecolor image to a palette-based image,
-   using a high-quality two-pass quantization routine
-   which attempts to preserve alpha channel information
-   as well as R/G/B color information when creating
-   a palette. If ditherFlag is set, the image will be
-   dithered to approximate colors better, at the expense
-   of some obvious "speckling." colorsWanted can be
-   anything up to 256. If the original source image
-   includes photographic information or anything that
-   came out of a JPEG, 256 is strongly recommended.
-
-   Better yet, don't use these function -- write real
-   truecolor PNGs and JPEGs. The disk space gain of
-   conversion to palette is not great (for small images
-   it can be negative) and the quality loss is ugly.
-
-   DIFFERENCES: gdImageCreatePaletteFromTrueColor creates and
-   returns a new image. gdImageTrueColorToPalette modifies
-   an existing image, and the truecolor pixels are discarded.
-
-   gdImageTrueColorToPalette() returns TRUE on success, FALSE on failure.
-*/
-
-BGD_DECLARE(gdImagePtr)
-gdImageCreatePaletteFromTrueColor(gdImagePtr im, int ditherFlag,
-								  int colorsWanted);
-
-BGD_DECLARE(int)
-gdImageTrueColorToPalette(gdImagePtr im, int ditherFlag, int colorsWanted);
-
-BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src);
-
-/* An attempt at getting the results of gdImageTrueColorToPalette to
- * look a bit more like the original (im1 is the original and im2 is
- * the palette version */
-
-BGD_DECLARE(int) gdImageColorMatch(gdImagePtr im1, gdImagePtr im2);
-
-/* Selects quantization method used for subsequent gdImageTrueColorToPalette
-   calls. See gdPaletteQuantizationMethod enum (e.g. GD_QUANT_NEUQUANT,
-   GD_QUANT_LIQ). Speed is from 1 (highest quality) to 10 (fastest). Speed 0
-   selects method-specific default (recommended).
-
-   Returns FALSE if the given method is invalid or not available.
-*/
-BGD_DECLARE(int)
-gdImageTrueColorToPaletteSetMethod(gdImagePtr im, int method, int speed);
-
-/*
-  Chooses quality range that subsequent call to gdImageTrueColorToPalette will
-  aim for. Min and max quality is in range 1-100 (1 = ugly, 100 = perfect). Max
-  must be higher than min. If palette cannot represent image with at least
-  min_quality, then image will remain true-color. If palette can represent image
-  with quality better than max_quality, then lower number of colors will be
-  used. This function has effect only when GD_QUANT_LIQ method has been selected
-  and the source image is true-color.
-*/
 BGD_DECLARE(void)
-gdImageTrueColorToPaletteSetQuality(gdImagePtr im, int min_quality,
-									int max_quality);
-
-/* Specifies a color index (if a palette image) or an
-   RGB color (if a truecolor image) which should be
-   considered 100% transparent. FOR TRUECOLOR IMAGES,
-   THIS IS IGNORED IF AN ALPHA CHANNEL IS BEING
-   SAVED. Use gdImageSaveAlpha(im, 0); to
-   turn off the saving of a full alpha channel in
-   a truecolor image. Note that gdImageColorTransparent
-   is usually compatible with older browsers that
-   do not understand full alpha channels well. TBB */
-BGD_DECLARE(void) gdImageColorTransparent(gdImagePtr im, int color);
-
-BGD_DECLARE(void) gdImagePaletteCopy(gdImagePtr dst, gdImagePtr src);
-
-typedef int (*gdCallbackImageColor)(gdImagePtr im, int src);
-
-BGD_DECLARE(int) gdImageColorReplace(gdImagePtr im, int src, int dst);
-BGD_DECLARE(int)
-gdImageColorReplaceThreshold(gdImagePtr im, int src, int dst, float threshold);
-BGD_DECLARE(int)
-gdImageColorReplaceArray(gdImagePtr im, int len, int *src, int *dst);
-BGD_DECLARE(int)
-gdImageColorReplaceCallback(gdImagePtr im, gdCallbackImageColor callback);
-
-BGD_DECLARE(void) gdImageGif(gdImagePtr im, FILE *out);
-BGD_DECLARE(void) gdImagePng(gdImagePtr im, FILE *out);
-BGD_DECLARE(void) gdImagePngCtx(gdImagePtr im, gdIOCtxPtr out);
+gdImageFilledArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
+				 int color, int style);
 BGD_DECLARE(void)
-gdImagePngCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out,
-						  const gdImageMetadata *metadata);
-BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
-BGD_DECLARE(void) gdImageQoiCtx(gdImagePtr im, gdIOCtxPtr out);
+gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
+		   int color);
 BGD_DECLARE(void)
-gdImageQoiCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out,
-						  const gdImageMetadata *metadata);
-BGD_DECLARE(void) gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out);
-BGD_DECLARE(void) gdImageTiff(gdImagePtr im, FILE *outFile);
-BGD_DECLARE(void *) gdImageTiffPtr(gdImagePtr im, int *size);
-BGD_DECLARE(void) gdImageTiffCtx(gdImagePtr image, gdIOCtxPtr out);
-
-BGD_DECLARE(void *) gdImageBmpPtr(gdImagePtr im, int *size, int compression);
-BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression);
-BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
-
-#define GD_BMP_COMPRESS_NONE 0
-#define GD_BMP_COMPRESS_RLE8 1
-#define GD_BMP_COMPRESS_RLE4 2
-
-#define GD_BMP_FLAG_NONE 0
-#define GD_BMP_FLAG_FORCE_V4HDR (1 << 0)
-#define GD_BMP_FLAG_QUANTIZE (1 << 1)
-#define GD_BMP_FLAG_RGB555 (1 << 2)
-
-BGD_DECLARE(void *)
-gdImageBmpPtrEx(gdImagePtr im, int *size, int bpp, int compression, int flags);
+gdImageEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
 BGD_DECLARE(void)
-gdImageBmpEx(gdImagePtr im, FILE *outFile, int bpp, int compression, int flags);
-BGD_DECLARE(void)
-gdImageBmpCtxEx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compression,
-				int flags);
+gdImageFilledEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
 
-/* 2.0.12: Compression level: 0-9 or -1, where 0 is NO COMPRESSION at all,
-   1 is FASTEST but produces larger files, 9 provides the best
-   compression (smallest files) but takes a long time to compress, and
-   -1 selects the default compiled into the zlib library. */
-BGD_DECLARE(void) gdImagePngEx(gdImagePtr im, FILE *out, int level);
-BGD_DECLARE(void) gdImagePngCtxEx(gdImagePtr im, gdIOCtxPtr out, int level);
-BGD_DECLARE(void)
-gdImagePngCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int level,
-							const gdImageMetadata *metadata);
-
-enum { GD_QOI_SRGB = 0, GD_QOI_LINEAR = 1 };
-
-BGD_DECLARE(void) gdImageQoiEx(gdImagePtr im, FILE *out, int colorspace);
-BGD_DECLARE(void)
-gdImageQoiCtxEx(gdImagePtr im, gdIOCtxPtr out, int colorspace);
-BGD_DECLARE(void)
-gdImageQoiCtxExWithMetadata(gdImagePtr im, gdIOCtxPtr out, int colorspace,
-							const gdImageMetadata *metadata);
-
-BGD_DECLARE(void) gdImageWBMP(gdImagePtr image, int fg, FILE *out);
-BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtxPtr out);
-
-BGD_DECLARE(int) gdImageFile(gdImagePtr im, const char *filename);
-BGD_DECLARE(int) gdSupportsFileType(const char *filename, int writing);
-
-BGD_DECLARE(int) gdUhdrIsAvailable(void);
-BGD_DECLARE(int) gdUhdrImageWidth(gdUhdrImagePtr im);
-BGD_DECLARE(int) gdUhdrImageHeight(gdUhdrImagePtr im);
-BGD_DECLARE(int) gdUhdrImageHasGainMap(gdUhdrImagePtr im);
-BGD_DECLARE(int)
-gdUhdrImageResize(gdUhdrImagePtr im, int width, int height, gdUhdrErrorPtr err);
-BGD_DECLARE(int)
-gdUhdrImageCrop(gdUhdrImagePtr im, int left, int top, int width, int height,
-				gdUhdrErrorPtr err);
-BGD_DECLARE(int)
-gdUhdrImageRotate(gdUhdrImagePtr im, int degrees, gdUhdrErrorPtr err);
-BGD_DECLARE(int)
-gdUhdrImageMirror(gdUhdrImagePtr im, int axis, gdUhdrErrorPtr err);
-BGD_DECLARE(int)
-gdUhdrImageFile(gdUhdrImagePtr im, const char *filename, int format,
-				int quality, gdUhdrErrorPtr err);
-BGD_DECLARE(int)
-gdUhdrImageCtx(gdUhdrImagePtr im, gdIOCtxPtr ctx, int format, int quality,
-			   gdUhdrErrorPtr err);
-BGD_DECLARE(void *)
-gdUhdrImageWritePtr(gdUhdrImagePtr im, int *size, int format, int quality,
-					gdUhdrErrorPtr err);
-BGD_DECLARE(gdImagePtr)
-gdUhdrImageGetSdr(gdUhdrImagePtr im, gdUhdrErrorPtr err);
-
-/* Guaranteed to correctly free memory returned by the gdImage*Ptr
-   functions */
-BGD_DECLARE(void) gdFree(void *m);
-
-/* Best to free this memory with gdFree(), not free() */
-BGD_DECLARE(void *) gdImageWBMPPtr(gdImagePtr im, int *size, int fg);
-
-/* 100 is highest quality (there is always a little loss with JPEG).
-   0 is lowest. 10 is about the lowest useful setting. */
-BGD_DECLARE(void) gdImageJpeg(gdImagePtr im, FILE *out, int quality);
-BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtxPtr out, int quality);
-BGD_DECLARE(void)
-gdImageJpegCtxWithMetadata(gdImagePtr im, gdIOCtxPtr out, int quality,
-						   const gdImageMetadata *metadata);
-
-/* Best to free this memory with gdFree(), not free() */
-BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality);
-BGD_DECLARE(void *)
-gdImageJpegPtrWithMetadata(gdImagePtr im, int *size, int quality,
-						   const gdImageMetadata *metadata);
-
-/**
- * Group: WebP
- *
- * Constant: gdWebpLossless
- *
- * Lossless quality threshold. When image quality is greater than or equal to
- * <gdWebpLossless>, the image will be written in the lossless WebP format.
- *
- * See also:
- *   - <gdImageWebpEx>
- */
-#define gdWebpLossless 101
-
-BGD_DECLARE(void) gdImageWebpEx(gdImagePtr im, FILE *outFile, int quantization);
-BGD_DECLARE(void) gdImageWebp(gdImagePtr im, FILE *outFile);
-BGD_DECLARE(void *) gdImageWebpPtr(gdImagePtr im, int *size);
-BGD_DECLARE(void *)
-gdImageWebpPtrEx(gdImagePtr im, int *size, int quantization);
-BGD_DECLARE(void)
-gdImageWebpCtx(gdImagePtr im, gdIOCtxPtr outfile, int quantization);
-
-BGD_DECLARE(void)
-gdImageHeifEx(gdImagePtr im, FILE *outFile, int quality, gdHeifCodec codec,
-			  gdHeifChroma chroma);
-BGD_DECLARE(void) gdImageHeif(gdImagePtr im, FILE *outFile);
-BGD_DECLARE(void *) gdImageHeifPtr(gdImagePtr im, int *size);
-BGD_DECLARE(void *)
-gdImageHeifPtrEx(gdImagePtr im, int *size, int quality, gdHeifCodec codec,
-				 gdHeifChroma chroma);
-BGD_DECLARE(void)
-gdImageHeifCtx(gdImagePtr im, gdIOCtxPtr outfile, int quality,
-			   gdHeifCodec codec, gdHeifChroma chroma);
-
-BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile);
-BGD_DECLARE(void)
-gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int speed);
-BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size);
-BGD_DECLARE(void *)
-gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed);
-BGD_DECLARE(void)
-gdImageAvifCtx(gdImagePtr im, gdIOCtxPtr outfile, int quality, int speed);
-
-/**
- * Group: GifAnim
- *
- *   Legal values for Disposal. gdDisposalNone is always used by
- *   the built-in optimizer if previm is passed.
- *
- * Constants: gdImageGifAnim
- *
- *   gdDisposalUnknown              - Not recommended
- *   gdDisposalNone                 - Preserve previous frame
- *   gdDisposalRestoreBackground    - First allocated color of palette
- *   gdDisposalRestorePrevious      - Restore to before start of frame
- *
- * See also:
- *   - <gdImageGifAnimAdd>
- */
-enum {
-	gdDisposalUnknown,
-	gdDisposalNone,
-	gdDisposalRestoreBackground,
-	gdDisposalRestorePrevious
-};
-
-BGD_DECLARE(void)
-gdImageGifAnimBegin(gdImagePtr im, FILE *outFile, int GlobalCM, int Loops);
-BGD_DECLARE(void)
-gdImageGifAnimAdd(gdImagePtr im, FILE *outFile, int LocalCM, int LeftOfs,
-				  int TopOfs, int Delay, int Disposal, gdImagePtr previm);
-BGD_DECLARE(void) gdImageGifAnimEnd(FILE *outFile);
-BGD_DECLARE(void)
-gdImageGifAnimBeginCtx(gdImagePtr im, gdIOCtxPtr out, int GlobalCM, int Loops);
-BGD_DECLARE(void)
-gdImageGifAnimAddCtx(gdImagePtr im, gdIOCtxPtr out, int LocalCM, int LeftOfs,
-					 int TopOfs, int Delay, int Disposal, gdImagePtr previm);
-BGD_DECLARE(void) gdImageGifAnimEndCtx(gdIOCtxPtr out);
-BGD_DECLARE(void *)
-gdImageGifAnimBeginPtr(gdImagePtr im, int *size, int GlobalCM, int Loops);
-BGD_DECLARE(void *)
-gdImageGifAnimAddPtr(gdImagePtr im, int *size, int LocalCM, int LeftOfs,
-					 int TopOfs, int Delay, int Disposal, gdImagePtr previm);
-BGD_DECLARE(void *) gdImageGifAnimEndPtr(int *size);
-
-/*
-  Group: Types
-
-  typedef: gdSink
-
-  typedef: gdSinkPtr
-
-	*Note:* This interface is *obsolete* and kept only for
-	*compatibility*.  Use <gdIOCtx> instead.
-
-	Represents a "sink" (destination) to which a PNG can be
-	written. Programmers who do not wish to write PNGs to a file can
-	provide their own alternate output mechanism, using the
-	<gdImagePngToSink> function. See the documentation of that
-	function for an example of the proper use of this type.
-
-	> typedef struct {
-	>     int (*sink) (void *context, char *buffer, int len);
-	>     void *context;
-	> } gdSink, *gdSinkPtr;
-
-	The _sink_ function must return -1 on error, otherwise the number of
-	bytes written, which must be equal to len.
-
-	_context_ will be passed to your sink function.
-
-*/
-
-typedef struct {
-	int (*sink)(void *context, const char *buffer, int len);
-	void *context;
-} gdSink, *gdSinkPtr;
-
-BGD_DECLARE(void) gdImagePngToSink(gdImagePtr im, gdSinkPtr out);
-BGD_DECLARE(void) gdImageQoiToSink(gdImagePtr im, gdSinkPtr out);
-
-BGD_DECLARE(void) gdImageGd(gdImagePtr im, FILE *out);
-BGD_DECLARE(void) gdImageGd2(gdImagePtr im, FILE *out, int cs, int fmt);
-
-/* Best to free this memory with gdFree(), not free() */
-BGD_DECLARE(void *) gdImageGifPtr(gdImagePtr im, int *size);
-
-/* Best to free this memory with gdFree(), not free() */
-BGD_DECLARE(void *) gdImagePngPtr(gdImagePtr im, int *size);
-BGD_DECLARE(void *) gdImagePngPtrEx(gdImagePtr im, int *size, int level);
-BGD_DECLARE(void *)
-gdImagePngPtrWithMetadata(gdImagePtr im, int *size,
-						  const gdImageMetadata *metadata);
-BGD_DECLARE(void *)
-gdImagePngPtrExWithMetadata(gdImagePtr im, int *size, int level,
-							const gdImageMetadata *metadata);
-BGD_DECLARE(int)
-gdImageMetadataInjectPng(void **data, int *size,
-						 const gdImageMetadata *metadata);
-BGD_DECLARE(void *) gdImageQoiPtr(gdImagePtr im, int *size);
-BGD_DECLARE(void *) gdImageQoiPtrEx(gdImagePtr im, int *size, int colorspace);
-BGD_DECLARE(void *)
-gdImageQoiPtrWithMetadata(gdImagePtr im, int *size,
-						  const gdImageMetadata *metadata);
-BGD_DECLARE(void *)
-gdImageQoiPtrExWithMetadata(gdImagePtr im, int *size, int colorspace,
-							const gdImageMetadata *metadata);
-BGD_DECLARE(int)
-gdImageMetadataInjectQoi(void **data, int *size,
-						 const gdImageMetadata *metadata);
-
-/* Best to free this memory with gdFree(), not free() */
-BGD_DECLARE(void *) gdImageGdPtr(gdImagePtr im, int *size);
-
-/* Best to free this memory with gdFree(), not free() */
-BGD_DECLARE(void *) gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
 
 /* Style is a bitwise OR ( | operator ) of these.
    gdArc and gdChord are mutually exclusive;
@@ -1814,16 +1840,6 @@ BGD_DECLARE(void *) gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
 #define gdEdged 4
 
 BGD_DECLARE(void)
-gdImageFilledArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
-				 int color, int style);
-BGD_DECLARE(void)
-gdImageArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e,
-		   int color);
-BGD_DECLARE(void)
-gdImageEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
-BGD_DECLARE(void)
-gdImageFilledEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
-BGD_DECLARE(void)
 gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color);
 BGD_DECLARE(void) gdImageFill(gdImagePtr im, int x, int y, int color);
 BGD_DECLARE(void)
@@ -1840,8 +1856,7 @@ gdImageCopyMergeGray(gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
    to average the entire set of source pixels that scale down onto the
    destination pixel. */
 BGD_DECLARE(void)
-gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
-				   int srcY, int dstW, int dstH, int srcW, int srcH);
+gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH);
 
 /* gd 2.0: stretches or shrinks to fit, as needed. When called with a
    truecolor destination image, this function averages the
@@ -1853,29 +1868,24 @@ gdImageCopyResized(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX,
    destination is a palette image, gdImageCopyResized is
    substituted automatically. */
 BGD_DECLARE(void)
-gdImageCopyResampled(gdImagePtr dst, gdImagePtr src, int dstX, int dstY,
-					 int srcX, int srcY, int dstW, int dstH, int srcW,
-					 int srcH);
+gdImageCopyResampled(gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, int srcY, int dstW, int dstH, int srcW, int srcH);
 
-/* gd 2.0.8: gdImageCopyRotated is added. Source
-   is a rectangle, with its upper left corner at
+/* Source is a rectangle, with its upper left corner at
    srcX and srcY. Destination is the *center* of
    the rotated copy. Angle is in degrees, same as
    gdImageArc. Floating point destination center
    coordinates allow accurate rotation of
    objects of odd-numbered width or height. */
-BGD_DECLARE(void)
-gdImageCopyRotated(gdImagePtr dst, gdImagePtr src, double dstX, double dstY,
-				   int srcX, int srcY, int srcWidth, int srcHeight, int angle);
+BGD_DECLARE(void) gdImageCopyRotated(gdImagePtr dst, gdImagePtr src, double dstX, double dstY, int srcX, int srcY, int srcWidth, int srcHeight, int angle);
 
 BGD_DECLARE(gdImagePtr) gdImageClone(gdImagePtr src);
 
 BGD_DECLARE(void) gdImageSetBrush(gdImagePtr im, gdImagePtr brush);
 BGD_DECLARE(void) gdImageSetTile(gdImagePtr im, gdImagePtr tile);
 BGD_DECLARE(void) gdImageSetAntiAliased(gdImagePtr im, int c);
-BGD_DECLARE(void)
-gdImageSetAntiAliasedDontBlend(gdImagePtr im, int c, int dont_blend);
+BGD_DECLARE(void) gdImageSetAntiAliasedDontBlend(gdImagePtr im, int c, int dont_blend);
 BGD_DECLARE(void) gdImageSetStyle(gdImagePtr im, int *style, int noOfPixels);
+
 /* Line thickness (defaults to 1). Affects lines, ellipses,
    rectangles, polygons and so forth. */
 BGD_DECLARE(void) gdImageSetThickness(gdImagePtr im, int thickness);
@@ -1884,8 +1894,44 @@ BGD_DECLARE(void) gdImageInterlace(gdImagePtr im, int interlaceArg);
 BGD_DECLARE(void) gdImageAlphaBlending(gdImagePtr im, int alphaBlendingArg);
 BGD_DECLARE(void) gdImageSaveAlpha(gdImagePtr im, int saveAlphaArg);
 
+
+/**
+ * Group: Color Quantization
+ *
+ * Enum: gdPaletteQuantizationMethod
+ *
+ * Constants:
+ *   GD_QUANT_DEFAULT  - GD_QUANT_LIQ if libimagequant is available,
+ *                       GD_QUANT_JQUANT otherwise.
+ *   GD_QUANT_JQUANT   - libjpeg's old median cut. Fast, but only uses 16-bit
+ *                       color.
+ *   GD_QUANT_NEUQUANT - NeuQuant - approximation using Kohonen neural network.
+ *   GD_QUANT_LIQ      - A combination of algorithms used in libimagequant
+ *                       aiming for the highest quality at cost of speed.
+ *
+ * Note that GD_QUANT_JQUANT does not retain the alpha channel, and
+ * GD_QUANT_NEUQUANT does not support dithering.
+ *
+ * See also:
+ *   - <gdImageTrueColorToPaletteSetMethod>
+ */
+enum gdPaletteQuantizationMethod {
+	GD_QUANT_DEFAULT = 0,
+	GD_QUANT_JQUANT = 1,
+	GD_QUANT_NEUQUANT = 2,
+	GD_QUANT_LIQ = 3
+};
 BGD_DECLARE(gdImagePtr)
 gdImageNeuQuant(gdImagePtr im, const int max_color, int sample_factor);
+
+
+
+/* filters section
+ *
+ * Negate the imag src, white becomes black,
+ * The red, green, and blue intensities of an image are negated.
+ * White becomes black, yellow becomes blue, etc.
+ */
 
 enum gdPixelateMode { GD_PIXELATE_UPPERLEFT, GD_PIXELATE_AVERAGE };
 
@@ -2145,7 +2191,6 @@ BGD_DECLARE(void *) gdDPExtractData(gdIOCtxPtr ctx, int *size);
 
 #define GD2_VERS 2
 #define GD2_ID "gd2"
-
 #define GD2_FMT_RAW 1
 #define GD2_FMT_COMPRESSED 2
 

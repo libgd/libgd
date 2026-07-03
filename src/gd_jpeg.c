@@ -120,6 +120,34 @@ static void fatal_jpeg_error(j_common_ptr cinfo) {
 	exit(99);
 }
 
+BGD_DECLARE(const char *) gdJpegGetVersionString()
+{
+	switch(JPEG_LIB_VERSION) {
+		case 62:
+			return "6b";
+			break;
+
+		case 70:
+			return "7";
+			break;
+
+		case 80:
+			return "8";
+			break;
+
+		case 90:
+			return "9 compatible";
+			break;
+
+		case 100:
+			return "10 compatible";
+			break;
+
+		default:
+			return "unknown";
+	}
+}
+
 static int _gdImageJpegCtx(gdImagePtr im, gdIOCtx *outfile, int quality,
 						   const gdImageMetadata *metadata,
 						   int force_no_subsampling);
@@ -1280,10 +1308,7 @@ static void init_source(j_decompress_ptr cinfo) {
 static boolean fill_input_buffer(j_decompress_ptr cinfo) {
 	my_src_ptr src = (my_src_ptr)cinfo->src;
 	/* 2.0.12: signed size. Thanks to Geert Jansen */
-	/* 2.0.14: some platforms (mingw-msys) don't have ssize_t. Call
-	 * an int an int.
-	 */
-	int nbytes = 0;
+	ssize_t nbytes = 0;
 	memset(src->buffer, 0, INPUT_BUF_SIZE);
 
 	while (nbytes < INPUT_BUF_SIZE) {
@@ -1484,11 +1509,11 @@ static boolean empty_output_buffer(j_compress_ptr cinfo) {
 
 static void term_destination(j_compress_ptr cinfo) {
 	my_dest_ptr dest = (my_dest_ptr)cinfo->dest;
-	int datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
+	size_t datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
 
 	/* Write any data remaining in the buffer */
 	if (datacount > 0) {
-		if (gdPutBuf(dest->buffer, datacount, dest->outfile) != datacount) {
+		if ((size_t)gdPutBuf(dest->buffer, datacount, dest->outfile) != datacount) {
 			ERREXIT(cinfo, JERR_FILE_WRITE);
 		}
 	}

@@ -44,6 +44,7 @@
 #include "config.h"
 #endif
 
+#include <string.h>
 #include "gd.h"
 #include "gdhelpers.h"
 #include <string.h>
@@ -90,12 +91,12 @@
 #define RIGHT_SHIFT(x, shft) ((x) >> (shft))
 #endif
 
-#define range_limit(x)                                                         \
-	{                                                                          \
-		if (x < 0)                                                             \
-			x = 0;                                                             \
-		if (x > 255)                                                           \
-			x = 255;                                                           \
+#define range_limit(x) \
+	{ \
+		if (x < 0) \
+			x = 0; \
+		if (x > 255) \
+			x = 255; \
 	}
 
 #ifndef INT16
@@ -1794,38 +1795,6 @@ static int gdImageTrueColorToPaletteBody(gdImagePtr oim, int dither,
 	} else {
 		pass2_no_dither(oim, nim, cquantize);
 	}
-#if 0 /* 2.0.12; we no longer attempt full alpha in palettes */
-	if (cquantize->transparentIsPresent) {
-		int mt = -1;
-		int mtIndex = -1;
-		for (i = 0; (i < im->colorsTotal); i++) {
-			if (im->alpha[i] > mt) {
-				mtIndex = i;
-				mt = im->alpha[i];
-			}
-		}
-		for (i = 0; (i < im->colorsTotal); i++) {
-			if (im->alpha[i] == mt) {
-				im->alpha[i] = gdAlphaTransparent;
-			}
-		}
-	}
-	if (cquantize->opaqueIsPresent) {
-		int mo = 128;
-		int moIndex = -1;
-		for (i = 0; (i < im->colorsTotal); i++) {
-			if (im->alpha[i] < mo) {
-				moIndex = i;
-				mo = im->alpha[i];
-			}
-		}
-		for (i = 0; (i < im->colorsTotal); i++) {
-			if (im->alpha[i] == mo) {
-				im->alpha[i] = gdAlphaOpaque;
-			}
-		}
-	}
-#endif
 
 	/* If we had a 'transparent' color, increment the color count so it's
 	 * officially in the palette and convert the transparent variable to point
@@ -1873,6 +1842,8 @@ freeQuantizeData:
 					gdFree(cquantize->histogram[i]);
 				}
 			}
+		}
+		if (cquantize->histogram) {
 			gdFree(cquantize->histogram);
 		}
 		if (cquantize->fserrors) {
@@ -1883,7 +1854,6 @@ freeQuantizeData:
 		}
 		gdFree(cquantize);
 	}
-
 	return conversionSucceeded;
 }
 

@@ -67,7 +67,7 @@ copyresized/resampled)
 /* Comment out this line to enable asserts.
  * TODO: This logic really belongs in cmake and configure.
  */
-#define NDEBUG 1
+//#define NDEBUG 1
 #include <assert.h>
 
 #include "gd.h"
@@ -823,8 +823,8 @@ static int getPixelInterpolatedClipped(gdImagePtr im, const double x,
 	new_b = CLAMP(new_b, 0, 255);
 	new_a = CLAMP(new_a, 0, gdAlphaMax);
 
-	return gdTrueColorAlpha(((int)new_r), ((int)new_g), ((int)new_b),
-							((int)new_a));
+	return gdTrueColorAlpha((int)(new_r + 0.5), (int)(new_g + 0.5),
+							(int)(new_b + 0.5), (int)(new_a + 0.5));
 }
 
 static int getPixelInterpolated(gdImagePtr im, const double x, const double y,
@@ -1066,18 +1066,17 @@ static gdImagePtr gdImageScaleTwoPass(const gdImagePtr src,
 	/* First, handle the trivial case. */
 	if (src_width == new_width && src_height == new_height) {
 		return gdImageClone(src);
-	} /* if */
+	}
 
 	/* Convert to truecolor if it isn't; this code requires it. */
 	if (!src->trueColor) {
 		gdImagePaletteToTrueColor(src);
-	} /* if */
+	}
 
 	/* Scale horizontally unless sizes are the same. */
 	if (src_width == new_width) {
 		tmp_im = src;
 	} else {
-
 		tmp_im = gdImageCreateTrueColor(new_width, src_height);
 		if (tmp_im == NULL) {
 			return NULL;
@@ -1090,13 +1089,13 @@ static gdImagePtr gdImageScaleTwoPass(const gdImagePtr src,
 			gdImageDestroy(tmp_im);
 			return NULL;
 		}
-	} /* if .. else*/
+	}
 
 	/* If vertical sizes match, we're done. */
 	if (src_height == new_height) {
 		assert(tmp_im != src);
 		return tmp_im;
-	} /* if */
+	}
 
 	/* Otherwise, we need to scale vertically. */
 	dst = gdImageCreateTrueColor(new_width, new_height);
@@ -1111,11 +1110,11 @@ static gdImagePtr gdImageScaleTwoPass(const gdImagePtr src,
 			}
 			return NULL;
 		}
-	} /* if */
+	}
 
 	if (src != tmp_im) {
 		gdImageDestroy(tmp_im);
-	} /* if */
+	}
 
 	return dst;
 } /* gdImageScaleTwoPass*/
@@ -1176,56 +1175,6 @@ static gdImagePtr gdImageScaleNearestNeighbour(gdImagePtr im,
 	}
 	return dst_img;
 }
-
-#if 0
-static inline int getPixelOverflowColorTC(gdImagePtr im, const int x, const int y, const int color)
-{
-	if (gdImageBoundsSafe(im, x, y)) {
-		const int c = im->tpixels[y][x];
-		if (c == im->transparent) {
-			return gdTrueColorAlpha(0, 0, 0, 127);
-		}
-		return c;
-	} else {
-		register int border = 0;
-		if (y < im->cy1) {
-			border = im->tpixels[0][im->cx1];
-			goto processborder;
-		}
-
-		if (y < im->cy1) {
-			border = im->tpixels[0][im->cx1];
-			goto processborder;
-		}
-
-		if (y > im->cy2) {
-			if (x >= im->cx1 && x <= im->cx1) {
-				border = im->tpixels[im->cy2][x];
-				goto processborder;
-			} else {
-				return gdTrueColorAlpha(0, 0, 0, 127);
-			}
-		}
-
-		/* y is bound safe at this point */
-		if (x < im->cx1) {
-			border = im->tpixels[y][im->cx1];
-			goto processborder;
-		}
-
-		if (x > im->cx2) {
-			border = im->tpixels[y][im->cx2];
-		}
-
-processborder:
-		if (border == im->transparent) {
-			return gdTrueColorAlpha(0, 0, 0, 127);
-		} else{
-			return gdTrueColorAlpha(gdTrueColorGetRed(border), gdTrueColorGetGreen(border), gdTrueColorGetBlue(border), 127);
-		}
-	}
-}
-#endif
 
 static gdImagePtr gdImageScaleBilinearPalette(gdImagePtr im,
 											  const unsigned int new_width,

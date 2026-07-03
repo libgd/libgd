@@ -39,6 +39,51 @@
 /* number of antialised colors for indexed bitmaps */
 #define GD_NUMCOLORS 8
 
+#ifndef HAVE_LIBFREETYPE
+BGD_DECLARE(char *) gdImageStringFTEx(gdImagePtr im, int *brect, int fg, const char *fontlist, double ptsize, double angle, int x, int y, const char *string, gdFTStringExtraPtr strex) {
+	(void)im;
+	(void)brect;
+	(void)fg;
+	(void)fontlist;
+	(void)ptsize;
+	(void)angle;
+	(void)x;
+	(void)y;
+	(void)string;
+	(void)strex;
+
+	return "libgd was not built with FreeType font support\n";
+}
+
+BGD_DECLARE(char *)
+gdImageStringFT(gdImagePtr im, int *brect, int fg, const char *fontlist, double ptsize, double angle, int x, int y, const char *string) {
+	(void)im;
+	(void)brect;
+	(void)fg;
+	(void)fontlist;
+	(void)ptsize;
+	(void)angle;
+	(void)x;
+	(void)y;
+	(void)string;
+
+	return "libgd was not built with FreeType font support\n";
+}
+#else
+#include "gdcache.h"
+/* 2.0.16 Christophe Thomas: starting with FreeType 2.1.6, this is
+  mandatory, and it has been supported for a long while. */
+#ifdef HAVE_FT2BUILD_H
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
+#include FT_SIZES_H
+#else
+#include <freetype/freetype.h>
+#include <freetype/ftglyph.h>
+#include <freetype/ftsizes.h>
+#endif
+
 #ifdef HAVE_LIBFONTCONFIG
 static int fontConfigFlag = 0;
 
@@ -52,8 +97,18 @@ static char *font_pattern(char **fontpath, char *fontpattern);
 static char *font_path(char **fontpath, char *name_list);
 #endif
 
-/* 2.0.30: move these up here so we can build correctly without freetype
-	but with fontconfig */
+/* number of fonts cached before least recently used is replaced */
+#define FONTCACHESIZE 6
+
+/* number of antialias color lookups cached */
+#define TWEENCOLORCACHESIZE 32
+
+/*
+ * Line separation as a factor of font height.
+ *      No space between if LINESPACE = 1.00
+ *      Line separation will be rounded up to next pixel row.
+ */
+#define LINESPACE 1.05
 
 /*
  * The character (space) used to separate alternate fonts in the
@@ -73,14 +128,13 @@ static char *font_path(char **fontpath, char *name_list);
 #if defined(_WIN32)
 #define DEFAULT_FONTPATH "C:\\WINDOWS\\FONTS;C:\\WINNT\\FONTS"
 #elif defined(__APPLE__) || (defined(__MWERKS__) && defined(macintosh))
-#define DEFAULT_FONTPATH                                                       \
-	"/usr/share/fonts/truetype:/System/Library/Fonts:/Library/Fonts"
+#define DEFAULT_FONTPATH "/usr/share/fonts/truetype:/System/Library/Fonts:/Library/Fonts"
 #else
 /* default fontpath for unix systems  - whatever happened to standards ! */
-#define DEFAULT_FONTPATH                                                       \
-	"/usr/X11R6/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/truetype:/"    \
-	"usr/X11R6/lib/X11/fonts/TTF:/usr/share/fonts/TrueType:/usr/share/fonts/"  \
-	"truetype:/usr/openwin/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/"   \
+#define DEFAULT_FONTPATH \
+	"/usr/X11R6/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/truetype:/" \
+	"usr/X11R6/lib/X11/fonts/TTF:/usr/share/fonts/TrueType:/usr/share/fonts/" \
+	"truetype:/usr/openwin/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/" \
 	"Type1:/usr/lib/X11/fonts/Type1:/usr/openwin/lib/X11/fonts/Type1"
 #endif
 #endif
@@ -112,68 +166,6 @@ gdImageStringTTF(gdImagePtr im, int *brect, int fg, const char *fontlist,
 						   string);
 }
 
-#ifndef HAVE_LIBFREETYPE
-BGD_DECLARE(char *)
-gdImageStringFTEx(gdImagePtr im, int *brect, int fg, const char *fontlist,
-				  double ptsize, double angle, int x, int y, const char *string,
-				  gdFTStringExtraPtr strex) {
-	(void)im;
-	(void)brect;
-	(void)fg;
-	(void)fontlist;
-	(void)ptsize;
-	(void)angle;
-	(void)x;
-	(void)y;
-	(void)string;
-	(void)strex;
-
-	return "libgd was not built with FreeType font support\n";
-}
-
-BGD_DECLARE(char *)
-gdImageStringFT(gdImagePtr im, int *brect, int fg, const char *fontlist,
-				double ptsize, double angle, int x, int y, const char *string) {
-	(void)im;
-	(void)brect;
-	(void)fg;
-	(void)fontlist;
-	(void)ptsize;
-	(void)angle;
-	(void)x;
-	(void)y;
-	(void)string;
-
-	return "libgd was not built with FreeType font support\n";
-}
-#else
-
-#include "gdcache.h"
-/* 2.0.16 Christophe Thomas: starting with FreeType 2.1.6, this is
-  mandatory, and it has been supported for a long while. */
-#ifdef HAVE_FT2BUILD_H
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
-#include FT_SIZES_H
-#else
-#include <freetype/freetype.h>
-#include <freetype/ftglyph.h>
-#include <freetype/ftsizes.h>
-#endif
-
-/* number of fonts cached before least recently used is replaced */
-#define FONTCACHESIZE 6
-
-/* number of antialias color lookups cached */
-#define TWEENCOLORCACHESIZE 32
-
-/*
- * Line separation as a factor of font height.
- *      No space between if LINESPACE = 1.00
- *      Line separation will be rounded up to next pixel row.
- */
-#define LINESPACE 1.05
 
 typedef struct {
 	char *fontlist; /* key */
@@ -263,7 +255,7 @@ extern int any2eucjp(char *, const char *, unsigned int);
 
 /* 2.0.16: thread safety (the font cache is shared) */
 gdMutexDeclare(gdFontCacheMutex);
-static gdCache_head_t *fontCache;
+static gdCache_head_t *fontCache = NULL;
 static FT_Library library;
 
 #define Tcl_UniChar int
@@ -278,7 +270,7 @@ static int gdTcl_UtfToUniChar(const char *str, Tcl_UniChar *chPtr)
 	struct entities_s key, *res;
 
 	/* HTML4.0 entities in decimal form, e.g. &#197; */
-	/*           or in hexadecimal form, e.g. &#x6C34; */
+	/* or in hexadecimal form, e.g. &#x6C34; */
 	byte = *((unsigned char *)str);
 	if (byte == '&') {
 		int i, n = 0;
@@ -302,10 +294,11 @@ static int gdTcl_UtfToUniChar(const char *str, Tcl_UniChar *chPtr)
 			} else {
 				for (i = 2; i < 8; i++) {
 					byte = *((unsigned char *)(str + i));
-					if (byte >= '0' && byte <= '9')
+					if (byte >= '0' && byte <= '9') {
 						n = (n * 10) + (byte - '0');
-					else
+					} else {
 						break;
+					}
 				}
 			}
 			if (byte == ';') {
@@ -333,10 +326,7 @@ static int gdTcl_UtfToUniChar(const char *str, Tcl_UniChar *chPtr)
 		}
 	}
 
-	/*
-	 * Unroll 1 to 3 byte UTF-8 sequences, use loop to handle longer ones.
-	 */
-
+	/* Unroll 1 to 3 byte UTF-8 sequences, use loop to handle longer ones. */
 	byte = *((unsigned char *)str);
 #ifdef JISX0208
 	if (0xA1 <= byte && byte <= 0xFE) {
@@ -354,8 +344,7 @@ static int gdTcl_UtfToUniChar(const char *str, Tcl_UniChar *chPtr)
 	} else
 #endif /* JISX0208 */
 		if (byte < 0xC0) {
-			/*
-			 * Handles properly formed UTF-8 characters between
+			/* Handles properly formed UTF-8 characters between
 			 * 0x01 and 0x7F.  Also treats \0 and naked trail
 			 * bytes 0x80 to 0xBF as valid characters representing
 			 * themselves.
@@ -365,11 +354,7 @@ static int gdTcl_UtfToUniChar(const char *str, Tcl_UniChar *chPtr)
 			return 1;
 		} else if (byte < 0xE0) {
 			if ((str[1] & 0xC0) == 0x80) {
-				/*
-				 * Two-byte-character lead-byte followed
-				 * by a trail-byte.
-				 */
-
+				/* Two-byte-character lead-byte followed by a trail-byte. */
 				*chPtr = (Tcl_UniChar)(((byte & 0x1F) << 6) | (str[1] & 0x3F));
 				return 2;
 			}
@@ -382,21 +367,11 @@ static int gdTcl_UtfToUniChar(const char *str, Tcl_UniChar *chPtr)
 			return 1;
 		} else if (byte < 0xF0) {
 			if (((str[1] & 0xC0) == 0x80) && ((str[2] & 0xC0) == 0x80)) {
-				/*
-				 * Three-byte-character lead byte followed by
-				 * two trail bytes.
-				 */
-
-				*chPtr =
-					(Tcl_UniChar)(((byte & 0x0F) << 12) |
-								  ((str[1] & 0x3F) << 6) | (str[2] & 0x3F));
+				/* Three-byte-character lead byte followed by two trail bytes. */
+				*chPtr = (Tcl_UniChar)(((byte & 0x0F) << 12) | ((str[1] & 0x3F) << 6) | (str[2] & 0x3F));
 				return 3;
 			}
-			/*
-			 * A three-byte-character lead-byte not followed by
-			 * two trail-bytes represents itself.
-			 */
-
+			/* A three-byte-character lead-byte not followed by two trail-bytes represents itself. */
 			*chPtr = (Tcl_UniChar)byte;
 			return 1;
 		}
@@ -544,7 +519,7 @@ static int fontTest(void *element, void *key) {
 	font_t *a = (font_t *)element;
 	fontkey_t *b = (fontkey_t *)key;
 
-	return (strcmp(a->fontlist, b->fontlist) == 0 && a->flags == b->flags);
+	return a->flags == b->flags && strcmp(a->fontlist, b->fontlist) == 0;
 }
 
 #ifdef HAVE_LIBFONTCONFIG
@@ -567,13 +542,15 @@ static void *fontFetch(char **error, void *key) {
 
 	a = (font_t *)gdMalloc(sizeof(font_t));
 	if (!a) {
+		*error = "could not alloc font cache entry";
 		return NULL;
 	}
 
 	a->fontlist = (char *)gdMalloc(b_font_list_len + 1);
 	if (a->fontlist == NULL) {
 		gdFree(a);
-		return "could not alloc full list of fonts";
+		*error = "could not alloc full list of fonts";
+		return NULL;
 	}
 	memcpy(a->fontlist, b->fontlist, b_font_list_len);
 	a->fontlist[b_font_list_len] = 0;
@@ -592,8 +569,7 @@ static void *fontFetch(char **error, void *key) {
 #endif /* HAVE_LIBFONTCONFIG */
 	if (*error || !a->fontpath || !a->fontpath[0]) {
 		gdFree(a->fontlist);
-		if (a->fontpath)
-			free(a->fontpath);
+		gdFree(a->fontpath);
 		gdFree(a);
 
 		if (!*error)
@@ -615,7 +591,7 @@ static void *fontFetch(char **error, void *key) {
 
 	if (err) {
 		gdFree(a->fontlist);
-		free(a->fontpath);
+		gdFree(a->fontpath);
 		gdFree(a);
 		*error = "Could not read font";
 		return NULL;
@@ -1074,6 +1050,7 @@ gdImageStringFTEx(gdImagePtr im, int *brect, int fg, const char *fontlist,
 							 glyph_max;
 	FT_Face face;
 	FT_CharMap charmap = NULL;
+	FT_CharMap fallback_charmap = NULL;
 	FT_Glyph image;
 	FT_GlyphSlot slot;
 	FT_Error err;
@@ -1226,17 +1203,24 @@ gdImageStringFTEx(gdImagePtr im, int *brect, int fg, const char *fontlist,
 		charmap = face->charmaps[i];
 
 		if (encoding == gdFTEX_Unicode) {
-			if (charmap->encoding == FT_ENCODING_MS_SYMBOL ||
-				charmap->encoding == FT_ENCODING_UNICODE ||
-				charmap->encoding == FT_ENCODING_ADOBE_CUSTOM ||
-				charmap->encoding == FT_ENCODING_ADOBE_STANDARD) {
+			if (charmap->encoding == FT_ENCODING_UNICODE) {
 				encodingfound++;
 				break;
+			}
+			if (!fallback_charmap &&
+				(charmap->encoding == FT_ENCODING_MS_SYMBOL ||
+				 charmap->encoding == FT_ENCODING_ADOBE_CUSTOM ||
+				 charmap->encoding == FT_ENCODING_ADOBE_STANDARD)) {
+				fallback_charmap = charmap;
 			}
 		} else if (encoding == gdFTEX_Adobe_Custom) {
 			if (charmap->encoding == FT_ENCODING_ADOBE_CUSTOM) {
 				encodingfound++;
 				break;
+			}
+			if (!fallback_charmap &&
+				charmap->encoding == FT_ENCODING_APPLE_ROMAN) {
+				fallback_charmap = charmap;
 			}
 		} else if (encoding == gdFTEX_Big5) {
 			/* renamed sometime after freetype-2.1.4 */
@@ -1257,6 +1241,10 @@ gdImageStringFTEx(gdImagePtr im, int *brect, int fg, const char *fontlist,
 				break;
 			}
 		}
+	}
+	if (!encodingfound && fallback_charmap) {
+		charmap = fallback_charmap;
+		encodingfound = 1;
 	}
 	if (encodingfound) {
 		FT_Set_Charmap(face, charmap);
@@ -1443,7 +1431,7 @@ gdImageStringFTEx(gdImagePtr im, int *brect, int fg, const char *fontlist,
 #endif
 
 		/* load glyph image into the slot (erase previous one) */
-		err = FT_Load_Glyph(face, glyph_index, render_mode);
+		err = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
 		if (err) {
 			if (tmpstr)
 				gdFree(tmpstr);
