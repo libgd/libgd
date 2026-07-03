@@ -27,10 +27,6 @@ void *gdRealloc(void *ptr, size_t size);
  * realloc fails */
 void *gdReallocEx(void *ptr, size_t size);
 
-/* Internal deterministic allocation hook used by the vector2d failure tests. */
-void *gdVector2dMalloc(size_t size);
-void gdVector2dTestSetAllocationFailureCountdown(int countdown);
-
 /* Returns nonzero if multiplying the two quantities will
 	result in integer overflow. Also returns nonzero if
 	either quantity is negative. By Phil Knirsch based on

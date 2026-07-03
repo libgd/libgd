@@ -66,24 +66,6 @@ void *gdCalloc(size_t nmemb, size_t size) { return calloc(nmemb, size); }
 
 void *gdMalloc(size_t size) { return malloc(size); }
 
-static int gd_vector2d_allocation_failure_countdown = -1;
-
-void gdVector2dTestSetAllocationFailureCountdown(int countdown)
-{
-	gd_vector2d_allocation_failure_countdown = countdown;
-}
-
-void *gdVector2dMalloc(size_t size)
-{
-	if (gd_vector2d_allocation_failure_countdown == 0) {
-		gd_vector2d_allocation_failure_countdown = -1;
-		return NULL;
-	}
-	if (gd_vector2d_allocation_failure_countdown > 0)
-		gd_vector2d_allocation_failure_countdown--;
-	return gdMalloc(size);
-}
-
 void *gdRealloc(void *ptr, size_t size) { return realloc(ptr, size); }
 
 void *gdReallocEx(void *ptr, size_t size) {
