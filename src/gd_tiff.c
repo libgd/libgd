@@ -1065,6 +1065,10 @@ static int createFromTiffRgba(TIFF *tif, gdImagePtr im)
     uint32_t rgba;
     int success;
 
+    if (overflow2(width, height) || overflow2(width * height, sizeof(uint32_t))) {
+        return GD_FAILURE;
+    }
+
     buffer = (uint32_t *)gdCalloc(sizeof(uint32_t), width * height);
     if (!buffer) {
         return GD_FAILURE;
