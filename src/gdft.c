@@ -1608,7 +1608,7 @@ static char *font_path(char **fontpath, char *name_list)
             return "could not alloc full path of font";
         }
         /* if name is an absolute or relative pathname then test directly */
-        if (strchr(name, '/') ||
+        if (strchr(name, '/') || strchr(name, '\\') ||
             (name[0] != 0 && name[1] == ':' && (name[2] == '/' || name[2] == '\\'))) {
             sprintf(fullname, "%s", name);
             if (access(fullname, R_OK) == 0) {
