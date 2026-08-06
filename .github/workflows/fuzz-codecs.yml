@@ -2,7 +2,7 @@ name: Fuzz codecs
 
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
