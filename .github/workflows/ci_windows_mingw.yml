@@ -77,3 +77,6 @@ jobs:
         export TMP="$PWD/tmp"
         export CTEST_OUTPUT_ON_FAILURE=1
         ctest
+
+    - name: Check for untracked files
+      run: git status --porcelain
