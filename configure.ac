@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Configure template for gd library
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.71])
 
 dnl We extract version numbers from src/versions.h
 define([gv],[config/getver.sh ]$1)
@@ -40,11 +40,9 @@ AM_INIT_AUTOMAKE([1.11 foreign dist-xz -Wall -Werror subdir-objects])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
 
 AM_PROG_AR
-AC_PROG_CC_STDC
 AC_PROG_CXX
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
-AC_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 LT_INIT([win32-dll])
@@ -61,7 +59,6 @@ if test -n "$x_libraries" && test "x$x_libraries" != xNONE ; then
 fi
 
 dnl Keep in sync with cmake/modules/AC_HEADER_STDC.cmake.
-AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE(m4_flatten([
 	dirent.h
 	inttypes.h
@@ -397,7 +394,7 @@ AC_MSG_RESULT([
    JPEG XL conformance corpus:       $gd_jxl_conformance
    Support for HEIF library:         $gd_with_LIBHEIF
    Support for AVIF library:         $gd_with_LIBAVIF
-  Support for UltraHDR library:     $gd_with_LIBUHDR
+   Support for UltraHDR library:     $gd_with_LIBUHDR
    Support for TIFF library:         $gd_with_LIBTIFF
    Support for Freetype 2.x library: $gd_with_LIBFREETYPE
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG
