@@ -118,8 +118,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     wndclass.lpszClassName = szAppName;
 
     if (!RegisterClass(&wndclass)) {
-        // UNICODE-Compilierung ist die einzige realistische Fehlermöglichkeit
-        MessageBox(NULL, TEXT("Programm arbeitet mit Unicode und setzt Windows NT voraus!"),
+        MessageBox(NULL, TEXT("Unicode is required with current Windows versions"),
                    szAppName, MB_ICONERROR);
         return 0;
     }
@@ -261,7 +260,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (wParam & MK_LBUTTON || wParam & MK_RBUTTON) {
             hdc = GetDC(hwnd);
 
-            // alte Kurve löschen (mit Weiß übermalen)
+            // Delete the old curve (paint over it with white).
             SelectObject(hdc, GetStockObject(WHITE_PEN));
             DrawBezier(hdc, apt);
 
@@ -275,7 +274,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 apt[2].y = HIWORD(lParam);
             }
 
-            // neue Kurve (mit Schwarz) zeichnen
+            // Draw the new curve in black.
             SelectObject(hdc, GetStockObject(BLACK_PEN));
             gdDrawImage(hdc, &rc);
             DrawBezier(hdc, apt);
