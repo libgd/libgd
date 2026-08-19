@@ -274,7 +274,7 @@ BGD_DECLARE(int) gdLayerOverlay(int dest, int src);
  * @param src The color to overlay.
  *
  * @return The resulting color.
- * 
+ *
  * @see gdImageAlphaBlending  gdAlphaBlend gdLayerOverlay
  */
 BGD_DECLARE(int) gdLayerMultiply(int dest, int src);
@@ -1001,7 +1001,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiCtx(gdIOCtxPtr in);
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromQoiPtr(int size, void *data);
 
-/** 
+/**
  * @brief Information read from a QOI data
  */
 typedef struct {
@@ -1013,41 +1013,41 @@ typedef struct {
 
 /**
  * @brief Initialize a gdQoiInfo structure to default values.
- * 
+ *
  * The default may change in future versions, so it is recommended to call this function before using the structure.
  * Default values update is not considered a breaking change, but it is still recommended to call this function to ensure proper initialization.
- * 
+ *
  * @param info Pointer to the gdQoiInfo structure to initialize.
  */
 BGD_DECLARE(void) gdQoiInfoInit(gdQoiInfo *info);
 
 /**
  * @brief Read QOI header information from a stdio file.
- * 
+ *
  * @param infile Pointer to the input FILE stream.
  * @param info Pointer to the gdQoiInfo structure to populate.
- * 
+ *
  * @return Returns 0 on success, or 1 on failure.
  */
 BGD_DECLARE(int) gdQoiGetInfo(FILE *infile, gdQoiInfo *info);
 
 /**
  * @brief Read QOI header information from a gdIOCtx.
- * 
+ *
  * @param infile Pointer to the gdIOCtx input context.
  * @param info Pointer to the gdQoiInfo structure to populate.
- * 
+ *
  * @return Returns 0 on success, or 1 on failure.
  */
 BGD_DECLARE(int) gdQoiGetInfoCtx(gdIOCtxPtr infile, gdQoiInfo *info);
 
 /**
  * @brief Read QOI header information from a memory buffer.
- * 
+ *
  * @param size Size of the QOI memory buffer in bytes.
  * @param data Pointer to the QOI memory buffer.
  * @param info Pointer to the gdQoiInfo structure to populate.
- * 
+ *
  * @return Returns 0 on success, or 1 on failure.
  */
 BGD_DECLARE(int) gdQoiGetInfoPtr(int size, const void *data, gdQoiInfo *info);
@@ -1062,10 +1062,10 @@ typedef struct {
 
 /**
  * @brief Initialize a gdQoiWriteOptions structure to default values.
- * 
+ *
  * The default may change in future versions, so it is recommended to call this function before using the structure.
  * Default values update is not considered a breaking change, but it is still recommended to call this function to ensure proper initialization.
- * 
+ *
  * @param options Pointer to the gdQoiWriteOptions structure to initialize.
  */
 BGD_DECLARE(void) gdQoiWriteOptionsInit(gdQoiWriteOptions *options);
@@ -1082,9 +1082,9 @@ BGD_DECLARE(void) gdQoiWriteOptionsInit(gdQoiWriteOptions *options);
 BGD_DECLARE(int)
 gdImageQoiWithOptions(gdImagePtr im, FILE *out, const gdQoiWriteOptions *options);
 
-/** 
+/**
  * @brief Write an image as QOI data to a gdIOCtx with options.
- * 
+ *
  * @param im The image to write.
  * @param out The gdIOCtx to write the QOI data to.
  * @param options Pointer to the gdQoiWriteOptions structure specifying write options.
@@ -1096,11 +1096,11 @@ gdImageQoiCtxWithOptions(gdImagePtr im, gdIOCtxPtr out, const gdQoiWriteOptions 
 
 /**
  * @brief Write an image as QOI data to a newly allocated memory buffer with options.
- * 
+ *
  * @param im The image to write.
  * @param size Pointer to an integer that receives the returned buffer size.
  * @param options Pointer to the gdQoiWriteOptions structure specifying write options.
- * 
+ *
  * @return A pointer to the newly allocated QOI data, or NULL on failure.
  */
 BGD_DECLARE(void *)
@@ -1162,7 +1162,7 @@ enum {
 
 /**
  * @brief Write an image as QOI data to a stdio file with an explicit colorspace flag.
- * 
+ *
  * @param im The image to write.
  * @param out The stdio file to write the QOI data to.
  */
@@ -1170,7 +1170,7 @@ BGD_DECLARE(void) gdImageQoi(gdImagePtr im, FILE *out);
 
 /**
  * @brief Write an image as QOI data to a gdIOCtx with an explicit colorspace flag.
- * 
+ *
  * @param im The image to write.
  * @param out The gdIOCtx to write the QOI data to.
   */
@@ -1729,11 +1729,11 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr(int size, void *data);
  * @defgroup gdCodecJpeg JPEG
  * @brief JPEG image reading and writing support.
  * @ingroup gdCodecs
- * 
+ *
  * GD supports a range of raster codecs for loading and saving images,
  * including JPEG, PNG, GIF, WebP, and others. Each codec is exposed as its
  * own subgroup with format-specific options and functions.
- * 
+ *
  * @code{.c}
  *        gdImagePtr im;
  *        int black, white;
@@ -1744,16 +1744,16 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromWBMPPtr(int size, void *data);
  *          fprintf(stderr, "Unable to create image\n");
  *          exit(1);
  *        }
- * 
+ *
  *        // Allocate background
  *        white = gdImageColorAllocate(im, 255, 255, 255);
- * 
+ *
  *        // Allocate drawing color
  *        black = gdImageColorAllocate(im, 0, 0, 0);
- * 
+ *
  *        // Draw rectangle
  *        gdImageRectangle(im, 0, 0, 99, 99, black);
- * 
+ *
  *        // Open output file in binary mode
  *        out = fopen("rect.jpg", "wb");
  *        if (out == NULL) {
@@ -1842,31 +1842,31 @@ typedef struct {
 
 /**
  * @brief Initialize a gdJpegInfo structure with default values.
- * 
+ *
  * @param info Pointer to the gdJpegInfo structure to initialize.
  */
 BGD_DECLARE(void) gdJpegInfoInit(gdJpegInfo *info);
 
 /**
  * @brief Initialize JPEG read options with default values.
- * 
+ *
  * @param options Pointer to the gdJpegReadOptions structure to initialize.
  */
 BGD_DECLARE(void) gdJpegReadOptionsInit(gdJpegReadOptions *options);
 
 /**
  * @brief Initialize JPEG write options with default values.
- * 
+ *
  * @param options Pointer to the gdJpegWriteOptions structure to initialize.
  */
 BGD_DECLARE(void) gdJpegWriteOptionsInit(gdJpegWriteOptions *options);
 
 /**
  * @brief Read JPEG header information from a stdio file.
- * 
+ *
  * @param infile Pointer to the input FILE stream.
  * @param info Pointer to the gdJpegInfo structure to populate with header information.
- * 
+ *
  * @return Returns 1 on success, 0 on failure.
  */
 BGD_DECLARE(int) gdJpegGetInfo(FILE *infile, gdJpegInfo *info);
@@ -1874,21 +1874,21 @@ BGD_DECLARE(int) gdJpegGetInfo(FILE *infile, gdJpegInfo *info);
 
 /**
  * @brief Read JPEG header information from a gdIOCtx.
- * 
+ *
  * @param infile Pointer to the gdIOCtx input context.
  * @param info Pointer to the gdJpegInfo structure to populate with header information.
- * 
+ *
  * @return Returns 1 on success, 0 on failure.
  */
 BGD_DECLARE(int) gdJpegGetInfoCtx(gdIOCtxPtr infile, gdJpegInfo *info);
 
 /**
  * @brief Read JPEG header information from a memory buffer.
- * 
+ *
  * @param size Size of the memory buffer.
  * @param data Pointer to the memory buffer containing JPEG data.
  * @param info Pointer to the gdJpegInfo structure to populate with header information.
- * 
+ *
  * @return Returns 1 on success, 0 on failure.
  */
 BGD_DECLARE(int) gdJpegGetInfoPtr(int size, const void *data, gdJpegInfo *info);
@@ -1899,19 +1899,19 @@ BGD_DECLARE(int) gdJpegGetMetadataPtr(int size, const void *data, gdImageMetadat
 
 /**
  * @brief Create an image from a JPEG stdio file.
- * 
+ *
  * @param infile Pointer to the input FILE stream.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpeg(FILE *infile);
 
 /**
  * @brief Create an image from a JPEG stdio file, controlling warning handling.
- * 
+ *
  * @param infile Pointer to the input FILE stream.
  * @param ignore_warning Non-zero to suppress recoverable JPEG warnings.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 BGD_DECLARE(gdImagePtr)
@@ -1919,19 +1919,19 @@ gdImageCreateFromJpegEx(FILE *infile, int ignore_warning);
 
 /**
  * @brief Create an image from JPEG data read through a gdIOCtx.
- * 
+ *
  * @param infile Pointer to the gdIOCtx input context.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegCtx(gdIOCtxPtr infile);
 
 /**
  * @brief Create an image from a JPEG gdIOCtx, controlling warning handling.
- * 
+ *
  * @param infile Pointer to the gdIOCtx input context.
  * @param ignore_warning Non-zero to suppress recoverable JPEG warnings.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 BGD_DECLARE(gdImagePtr)
@@ -1939,29 +1939,29 @@ gdImageCreateFromJpegCtxEx(gdIOCtxPtr infile, int ignore_warning);
 
 /**
  * @brief Create an image from a JPEG gdIOCtx and collect metadata.
- * 
+ *
  * @param infile Pointer to the gdIOCtx input context.
  * @param metadata Pointer to a gdImageMetadata structure to collect metadata.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 
 /**
  * @brief Create an image from a JPEG gdIOCtx with warning control and metadata collection.
- * 
+ *
  * @param infile Pointer to the gdIOCtx input context.
  * @param ignore_warning Non-zero to suppress recoverable JPEG warnings.
  * @param metadata Pointer to a gdImageMetadata structure to collect metadata.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 
 /**
  * @brief Create an image from a JPEG gdIOCtx using read options.
- * 
+ *
  * @param infile Pointer to the gdIOCtx input context.
  * @param options Pointer to a gdJpegReadOptions structure specifying read options.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 BGD_DECLARE(gdImagePtr)
@@ -1969,20 +1969,20 @@ gdImageCreateFromJpegCtxWithOptions(gdIOCtxPtr infile, const gdJpegReadOptions *
 
 /**
  * @brief Create an image from a JPEG memory buffer.
- * 
+ *
  * @param size The size of the JPEG memory buffer.
  * @param data Pointer to the JPEG memory buffer.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtr(int size, void *data);
 /**
  * @brief Create an image from a JPEG memory buffer, controlling warning handling.
- * 
+ *
  * @param size The size of the JPEG memory buffer.
  * @param data Pointer to the JPEG memory buffer.
  * @param ignore_warning Non-zero to suppress recoverable JPEG warnings.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 BGD_DECLARE(gdImagePtr)
@@ -1990,11 +1990,11 @@ gdImageCreateFromJpegPtrEx(int size, void *data, int ignore_warning);
 
 /**
  * @brief Create an image from a JPEG memory buffer using read options.
- * 
+ *
  * @param size The size of the JPEG memory buffer.
  * @param data Pointer to the JPEG memory buffer.
  * @param options Pointer to a gdJpegReadOptions structure specifying read options.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 BGD_DECLARE(gdImagePtr)
@@ -2004,28 +2004,28 @@ gdImageCreateFromJpegPtrWithOptions(int size, void *data, const gdJpegReadOption
 
 /**
  * @brief Create an image from a JPEG memory buffer and collect metadata.
- * 
+ *
  * @param size The size of the JPEG memory buffer.
  * @param data Pointer to the JPEG memory buffer.
  * @param metadata Pointer to a gdImageMetadata structure to collect metadata.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 
 /**
  * @brief Create an image from a JPEG memory buffer with warning control and metadata collection.
- * 
+ *
  * @param size The size of the JPEG memory buffer.
  * @param data Pointer to the JPEG memory buffer.
  * @param ignore_warning Non-zero to suppress recoverable JPEG warnings.
  * @param metadata Pointer to a gdImageMetadata structure to collect metadata.
- * 
+ *
  * @return Returns a gdImagePtr on success, or NULL on failure.
  */
 
 /**
  * @brief Return a string describing the linked JPEG library version.
- * 
+ *
  * @return Returns a string describing the linked JPEG library version.
  */
 BGD_DECLARE(const char *) gdJpegGetVersionString();
@@ -2705,7 +2705,7 @@ typedef struct {
 
 /**
  * @brief Initialize JPEG XL still-image write options with gd defaults.
- * 
+ *
  * @param options Pointer to the write options structure to initialize.
  */
 BGD_DECLARE(void) gdJxlWriteOptionsInit(gdJxlWriteOptions *options);
@@ -2736,11 +2736,11 @@ gdImageJxlCtxWithOptions(gdImagePtr im, gdIOCtxPtr outfile, const gdJxlWriteOpti
 
 /**
  * @brief Write an image as JPEG XL data to a newly allocated memory buffer with write options.
- * 
+ *
  * The image is borrowed for the duration of the call; palette images may be
  * converted to truecolor internally. The returned buffer is caller-owned and
  * must be freed with gdFree().
- * 
+ *
  * @param im The image to write.
  * @param size Pointer to an integer that receives the returned buffer size.
  * @param options Pointer to the JPEG XL write options.
@@ -3507,35 +3507,35 @@ typedef struct {
 } gdAvifInfo;
 
 /** @brief Initialize AVIF information and clear the metadata pointer.
- * 
+ *
  * @param info Pointer to the gdAvifInfo structure to initialize.
  */
 BGD_DECLARE(void) gdAvifInfoInit(gdAvifInfo *info);
 
 /** @brief Read AVIF information from a stdio stream without closing it. *
- * 
+ *
  * @param inFile Pointer to the input FILE stream.
  * @param info Pointer to the gdAvifInfo structure to populate.
- * 
+ *
  * @return Returns 1 on success, or 0 on failure.
  */
 BGD_DECLARE(int) gdAvifGetInfo(FILE *inFile, gdAvifInfo *info);
 
 /** @brief Read AVIF information from a gdIOCtx without closing it.
- * 
+ *
  * @param in Pointer to the gdIOCtx input context.
  * @param info Pointer to the gdAvifInfo structure to populate.
- * 
+ *
  * @return Returns 1 on success, or 0 on failure.
   */
 BGD_DECLARE(int) gdAvifGetInfoCtx(gdIOCtxPtr in, gdAvifInfo *info);
 
-/** @brief Read AVIF information from memory without taking ownership. 
- * 
+/** @brief Read AVIF information from memory without taking ownership.
+ *
  * @param size Size of the AVIF memory buffer in bytes.
  * @param data Pointer to the AVIF memory buffer.
  * @param info Pointer to the gdAvifInfo structure to populate.
- * 
+ *
  * @return Returns 1 on success, or 0 on failure.
 */
 BGD_DECLARE(int) gdAvifGetInfoPtr(int size, const void *data, gdAvifInfo *info);
@@ -4356,38 +4356,38 @@ typedef struct {
 
 /**
  * @brief Initialize a gdBmpInfo structure to default values.
- * 
+ *
  * @param info Pointer to the gdBmpInfo structure to initialize.
  */
 BGD_DECLARE(void) gdBmpInfoInit(gdBmpInfo *info);
 
 /**
  * @brief Read BMP file information from a stdio file.
- * 
+ *
  * @param infile Pointer to the BMP FILE stream to read.
  * @param info Pointer to a gdBmpInfo structure to receive the BMP information.
- * 
+ *
  * @return Returns 1 on success, or 0 on failure.
  */
 BGD_DECLARE(int) gdBmpGetInfo(FILE *infile, gdBmpInfo *info);
 
 /**
  * @brief Read BMP file information from a gdIOCtx.
- * 
+ *
  * @param infile Pointer to the gdIOCtx input context.
  * @param info Pointer to a gdBmpInfo structure to receive the BMP information.
- * 
+ *
  * @return Returns 1 on success, or 0 on failure.
  */
 BGD_DECLARE(int) gdBmpGetInfoCtx(gdIOCtxPtr infile, gdBmpInfo *info);
 
 /**
  * @brief Read BMP file information from a memory buffer.
- * 
+ *
  * @param size Size of the BMP memory buffer in bytes.
  * @param data Pointer to the BMP memory buffer.
  * @param info Pointer to a gdBmpInfo structure to receive the BMP information.
- * 
+ *
  * @return Returns 1 on success, or 0 on failure.
  */
 BGD_DECLARE(int) gdBmpGetInfoPtr(int size, const void *data, gdBmpInfo *info);
@@ -4442,7 +4442,7 @@ BGD_DECLARE(void) gdImageBmp(gdImagePtr im, FILE *outFile, int compression);
 BGD_DECLARE(void) gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int compression);
 
 /** @brief Write uncompressed BMP pixel data. */
-#define GD_BMP_COMPRESS_NONE 0 
+#define GD_BMP_COMPRESS_NONE 0
 /** @brief Write BI_RLE8 compressed pixel data; valid only for 8 bpp output. */
 #define GD_BMP_COMPRESS_RLE8 1
 /** @brief Write BI_RLE4 compressed pixel data; valid only for 4 bpp output. */
@@ -4469,7 +4469,7 @@ typedef struct {
 
 /**
  * @brief Initialize a gdBmpWriteOptions structure to default values.
- * 
+ *
  * Updates or changes to the default values are not guaranteed to be compatible with future versions of gd. Callers should not assume that the default values will remain the same across versions.
  * This is not considered part of the API contract and may change without notice. Callers should always explicitly set the fields they care about after calling this function.
  */
@@ -4477,24 +4477,24 @@ BGD_DECLARE(void) gdBmpWriteOptionsInit(gdBmpWriteOptions *options);
 
 /**
  * @brief Write an image as BMP data to a stdio file with explicit options.
- * 
+ *
  * @param im The image to write.
  * @param outFile Pointer to the output FILE stream.
  * @param options Pointer to a gdBmpWriteOptions structure specifying output options.
- * 
+ *
  * @return 0 on success, or a nonzero error code on failure.
- * 
+ *
  * @see gdBmpWriteOptionsInit gdBmpWriteOptions
  */
 BGD_DECLARE(int) gdImageBmpWithOptions(gdImagePtr im, FILE *outFile, const gdBmpWriteOptions *options);
 
 /**
  * @brief Write an image as BMP data to a gdIOCtx with explicit options.
- * 
+ *
  * @param im The image to write.
  * @param out Pointer to the gdIOCtx output context.
  * @param options Pointer to a gdBmpWriteOptions structure specifying output options.
- * 
+ *
  * @return 0 on success, or a nonzero error code on failure.
  * @see gdBmpWriteOptionsInit gdBmpWriteOptions
  */
@@ -4502,13 +4502,13 @@ BGD_DECLARE(int) gdImageBmpCtxWithOptions(gdImagePtr im, gdIOCtxPtr out, const g
 
 /**
  * @brief Write an image as BMP data to a newly allocated memory buffer with explicit options.
- * 
+ *
  * @param im The image to write.
  * @param size Output location for the returned buffer size in bytes.
  * @param options Pointer to a gdBmpWriteOptions structure specifying output options.
- * 
+ *
  * @return A newly allocated BMP buffer, or NULL on error. The caller is responsible for freeing the buffer with gdFree().
- * 
+ *
  * @see gdBmpWriteOptionsInit gdBmpWriteOptions
  */
 BGD_DECLARE(void *) gdImageBmpPtrWithOptions(gdImagePtr im, int *size, const gdBmpWriteOptions *options);
@@ -5131,7 +5131,7 @@ gdImageXbmCtx(gdImagePtr image, char *file_name, int fg, gdIOCtxPtr out);
  * @brief Read and write X PixMap images.
  * @ingroup gdCodecs
  */
- /** 
+ /**
  * @brief Read X PixMap images.
  * @ingroup gdCodecs
  *
@@ -5147,7 +5147,7 @@ gdImageXbmCtx(gdImagePtr image, char *file_name, int fg, gdIOCtxPtr out);
  * if (im == NULL) {
  *     return 1;
  * }
- * 
+ *
  * gdImageDestroy(im);
  * @endcode
 */
@@ -5501,20 +5501,20 @@ BGD_DECLARE(gdImagePtr) gdImageReadCtxEx(gdIOCtxPtr ctx, int flags, gdImageReadS
 
 /**
  * @brief Write an image to a file in the format indicated by the filename.
- * 
+ *
  * File type is determined by the extension of the file name. See @ref gdSupportsFileType for an overview of the parsing.
  * This is appropriate for writing, where the filename normally chooses the
  * intended output format.
- * 
+ *
  * For file types that require extra arguments, gdImageFile() attempts to use sane defaults:
  * - @ref gdImageGd2 - chunk size = 0, compression is enabled.
  * - @ref gdImageJpeg - quality = -1 (i.e. the reasonable default)
  * - @ref gdImageWBMP - foreground is the darkest available color
- * 
+ *
  * Everything else is called with the two-argument function and so will use the default values.
  * @ref gdImageFile has some rudimentary error detection and will return GD_FALSE (0) if a detectable error occurred.
  * However, the image loaders do not normally return their error status so a result of GD_TRUE (1) does **not** mean the file was saved successfully.
- * 
+ *
  * @param im The image to save.
  * @param filename The path to the file to which the image is saved.
  * @return GD_TRUE on apparent success, or GD_FALSE if the filename extension
@@ -5524,7 +5524,7 @@ BGD_DECLARE(int) gdImageFile(gdImagePtr im, const char *filename);
 
 /**
  * @brief Test if a given file type is supported by GD.
- * 
+ *
  * gdSupportsFileType() tests the filename extension using the same extension
  * table as @ref gdImageCreateFromFile and @ref gdImageFile. The file does not
  * need to exist. If writing is nonzero, the function returns true only when
@@ -5570,7 +5570,7 @@ BGD_DECLARE(void *) gdImageWBMPPtr(gdImagePtr im, int *size, int fg);
 
 /**
  * @brief Write an image as JPEG data to a stdio file.
- * 
+ *
  * 100 is the highest quality (there is always a little loss with JPEG).
  * 0 is the lowest quality. 10 is about the lowest useful setting.
  * @param im The image to write.
@@ -5580,7 +5580,7 @@ BGD_DECLARE(void *) gdImageWBMPPtr(gdImagePtr im, int *size, int fg);
 BGD_DECLARE(void) gdImageJpeg(gdImagePtr im, FILE *out, int quality);
 /**
  * @brief Write an image as JPEG data to a gdIOCtx.
- * 
+ *
  * @package im The image to write.
  * @param out The gdIOCtx to write the JPEG data to.
  * @param quality The JPEG quality (0-100).
@@ -5589,7 +5589,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtxPtr out, int quality);
 
 /**
  * @brief Write an image as JPEG data to a gdIOCtx with metadata.
- * 
+ *
  * @param im The image to write.
  * @param out The gdIOCtx to write the JPEG data to.
  * @param quality The JPEG quality (0-100).
@@ -5597,11 +5597,11 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtxPtr out, int quality);
  */
 /**
  * @brief Write an image as JPEG data to a stdio file using write options.
- * 
+ *
  * @param im The image to write.
  * @param out The stdio file to write the JPEG data to.
  * @param options Pointer to a gdJpegWriteOptions struct containing the desired write options.
- * 
+ *
  * @return Returns 0 on success, or a negative value on error.
  */
 BGD_DECLARE(int)
@@ -5609,11 +5609,11 @@ gdImageJpegWithOptions(gdImagePtr im, FILE *out, const gdJpegWriteOptions *optio
 
 /**
  * @brief Write an image as JPEG data to a gdIOCtx using write options.
- * 
+ *
  * @param im The image to write.
  * @param out The gdIOCtx to write the JPEG data to.
  * @param options Pointer to a gdJpegWriteOptions struct containing the desired write options.
- * 
+ *
  * @return Returns 0 on success, or a negative value on error.
  */
 BGD_DECLARE(int)
@@ -5621,34 +5621,34 @@ gdImageJpegCtxWithOptions(gdImagePtr im, gdIOCtxPtr out, const gdJpegWriteOption
 
 /**
  * @brief Write an image as JPEG data to a newly allocated memory buffer.
- * 
+ *
  * Result must be freed with gdFree(). The image is borrowed for the duration of the call.
- * 
+ *
  * @param im The image to write.
  * @param size Pointer to an integer that will receive the size of the returned buffer.
  * @param quality The JPEG quality (0-100).
- * 
+ *
  * @return A pointer to the newly allocated buffer containing the JPEG data, or NULL on failure.
  */
 BGD_DECLARE(void *) gdImageJpegPtr(gdImagePtr im, int *size, int quality);
 /**
  * @brief Write an image as JPEG data to a memory buffer with metadata.
- * 
+ *
  * @param im The image to write.
  * @param size Pointer to an integer that will receive the size of the returned buffer.
  * @param quality The JPEG quality (0-100).
  * @param metadata Pointer to a gdImageMetadata structure containing the metadata to include in the JPEG file.
- * 
+ *
  * @return A pointer to the newly allocated buffer containing the JPEG data, or NULL on failure.
  */
 
 /**
  * @brief Write an image as JPEG data to a memory buffer using write options.
- * 
+ *
  * @param im The image to write.
  * @param size Pointer to an integer that will receive the size of the returned buffer.
  * @param options Pointer to a gdJpegWriteOptions struct containing the desired write options.
- * 
+ *
  * @return A pointer to the newly allocated buffer containing the JPEG data, or NULL on failure.
  */
 BGD_DECLARE(void *)
@@ -5832,7 +5832,7 @@ BGD_DECLARE(void) gdImageQoiToSink(gdImagePtr im, gdSinkPtr out);
 /**
  * @brief Write an image as GD2 data to a stdio file.
  * @deprecated
- * 
+ *
  * gdImageGd2() borrows im and out for the duration of the call and does not
  * close out. Pass cs as 0 to use GD2_CHUNKSIZE; otherwise values outside the
  * GD2_CHUNKSIZE_MIN to GD2_CHUNKSIZE_MAX range are clamped. The public fmt
@@ -5849,7 +5849,7 @@ BGD_DECLARE(void) gdImageGd2(gdImagePtr im, FILE *out, int cs, int fmt);
 /**
  * @brief Write an image as GD2 data to a newly allocated memory buffer.
  * @deprecated
- * 
+ *
  * gdImageGd2Ptr() borrows im for the duration of the call. Pass cs as 0 to use
  * GD2_CHUNKSIZE; otherwise values outside the GD2_CHUNKSIZE_MIN to
  * GD2_CHUNKSIZE_MAX range are clamped. The public fmt values are GD2_FMT_RAW
@@ -5870,7 +5870,7 @@ BGD_DECLARE(void *) gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
 
 /**
  * @brief Destroys an image and frees its memory
- * 
+ *
  * @param im The image to destroy.
  */
 BGD_DECLARE(void) gdImageDestroy(gdImagePtr im);
@@ -5919,7 +5919,7 @@ gdImageColorAllocateAlpha(gdImagePtr im, int r, int g, int b, int a);
  * @param r  The value of the red component.
  * @param g  The value of the green component.
  * @param b  The value of the blue component.
- * 
+ *
  * @return The closest color already available in the palette for palette images;
  *         the color value of the given components for truecolor images.
  *
@@ -5946,7 +5946,7 @@ gdImageColorClosestAlpha(gdImagePtr im, int r, int g, int b, int a);
 
 /**
  * @brief Gets the closest color of the image using HWB color space
- * 
+ *
  * This function finds the closest color in the image's palette to the specified RGB color using the HWB (Hue, Whiteness, Blackness) color space. It is a more perceptually accurate method for color matching compared to simple RGB distance calculations.
  *
  * @param im The image.
@@ -6017,15 +6017,15 @@ BGD_DECLARE(int) gdImageColorResolve(gdImagePtr im, int r, int g, int b);
 
 /**
  * @brief Same as @ref gdImageColorResovle but with alpha
- * 
+ *
  * @param im The image.
  * @param r The red component.
  * @param g The green component.
  * @param b The blue component.
  * @param a The alpha component.
- * 
+ *
  * @return The color index of the closest color in the palette or the newly allocated color.
- * 
+ *
  * @see gdImageColorExactAlpha gdImageColorClosestAlpha gdTrueColorAlpha
  */
 BGD_DECLARE(int)
@@ -6090,7 +6090,7 @@ BGD_DECLARE(int) gdImageColorMatch(gdImagePtr im1, gdImagePtr im2);
 /**
  * @brief Sets the transparent color of the image
  *
- * 
+ *
  * Specifies a color index (if a palette image) or an
  * RGB color (if a truecolor image) which should be
  * considered 100% transparent. FOR TRUECOLOR IMAGES,
@@ -6100,7 +6100,7 @@ BGD_DECLARE(int) gdImageColorMatch(gdImagePtr im1, gdImagePtr im2);
  * a truecolor image. Note that gdImageColorTransparent
  * is usually compatible with older browsers that
  * do not understand full alpha channels well. TBB
- * 
+ *
  * @param im    The image.
  * @param color The color.
  *
@@ -6120,7 +6120,7 @@ typedef int (*gdCallbackImageColor)(gdImagePtr im, int src);
 
 /**
  * @brief Replaces a color in the image with another color
- * 
+ *
  * @param im  The image.
  * @param src The source color to be replaced.
  * @param dst The destination color to replace with.
@@ -6138,7 +6138,7 @@ BGD_DECLARE(int) gdImageColorReplace(gdImagePtr im, int src, int dst);
  * of the sum of squares, and thus returned a value that was the square
  * of the actual perceptual color distance.
  * The new behavior is more intuitive and consistent with common color distance metrics
- * 
+ *
  * @param im The image to operate on.
  * @param src The source color to replace.
  * @param dst The destination color to replace with.
@@ -6150,12 +6150,12 @@ gdImageColorReplaceThreshold(gdImagePtr im, int src, int dst, float threshold);
 
 /**
  * @brief Replaces multiple colors in an image with corresponding destination colors.
- * 
+ *
  * @param im The image to operate on.
  * @param len The number of colors to replace.
  * @param src An array of source colors to be replaced.
  * @param dst An array of destination colors to replace with.
- * 
+ *
  * @return The number of pixels that were replaced.
  */
 BGD_DECLARE(int)
@@ -6163,10 +6163,10 @@ gdImageColorReplaceArray(gdImagePtr im, int len, int *src, int *dst);
 
 /**
  * @brief Replaces colors in an image using a callback function to determine the replacement color.
- * 
+ *
  * @param im The image to operate on.
  * @param callback A callback function that takes the image and a source color as parameters and returns the destination color to replace with. @see gdCallbackImageColor
- * 
+ *
  * @return The number of pixels that were replaced.
  */
 BGD_DECLARE(int)
@@ -6185,35 +6185,35 @@ gdImageColorReplaceCallback(gdImagePtr im, gdCallbackImageColor callback);
  * here. All other gd drawing functions pass through this call,
  * allowing for many useful effects.
  * Overlay and multiply effects are used when @ref gdImageAlphaBlending
- * is passed @ref gdEffectOverlay and @ref gdEffectMultiply 
- * 
+ * is passed @ref gdEffectOverlay and @ref gdEffectMultiply
+ *
  * @param im The image.
  * @param x The x-coordinate of the pixel.
  * @param y The y-coordinate of the pixel.
  * @param color The color to set the pixel to. Color can be a palette index for palette images or a truecolor value for truecolor images.
- * 
+ *
  * @see @ref gdImageGetPixel gdImageGetTrueColorPixel gdImageAlphaBlending gdImageCreateTruecolor gdImageCreatePalette
  */
 BGD_DECLARE(void) gdImageSetPixel(gdImagePtr im, int x, int y, int color);
 
 /**
  * @brief Gets the color of the pixel at the specified coordinates.
- * 
+ *
  * @param im The image.
  * @param x The x-coordinate of the pixel.
  * @param y The y-coordinate of the pixel.
- * 
+ *
  * @return The color of the pixel. For palette images, this is the palette index. For truecolor images, this is the truecolor value.
  */
 BGD_DECLARE(int) gdImageGetPixel(gdImagePtr im, int x, int y);
 
 /**
  * @brief Gets the truecolor value of the pixel at the specified coordinates.
- * 
+ *
  * @param im The image.
  * @param x The x-coordinate of the pixel.
  * @param y The y-coordinate of the pixel.
- * 
+ *
  * @return The truecolor value of the pixel. For palette images, this function will return the truecolor value corresponding to the palette index of the pixel.
  */
 BGD_DECLARE(int) gdImageGetTrueColorPixel(gdImagePtr im, int x, int y);
@@ -6274,7 +6274,7 @@ BGD_DECLARE(void) gdImageChar(gdImagePtr im, gdFontPtr f, int x, int y, int c, i
 
 /**
  * @brief Draws a single character rotated 90 degrees counterclockwise.
- * 
+ *
  * @param im    The image to draw onto.
  * @param f     The raster font.
  * @param x     The x coordinate of the upper left pixel.
@@ -6319,7 +6319,7 @@ gdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s, int 
 
 /**
  * @brief Draws a character string with 16-bit characters.
- * 
+ *
  * @param im    The image to draw onto.
  * @param f     The raster font.
  * @param x     The x coordinate of the upper left pixel.
@@ -6332,7 +6332,7 @@ gdImageString16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int
 
 /**
  * @brief Draws a string rotated 90 degrees counterclockwise with 16-bit characters.
- * 
+ *
  * @param im    The image to draw onto.
  * @param f     The raster font.
  * @param x     The x coordinate of the upper left pixel.
@@ -6373,7 +6373,7 @@ BGD_DECLARE(void) gdFreeFontCache(void);
 
 
 /**
- * @brief Draws a string using FreeType 2 fonts. Alias of @ref gdImageStringFT. Provided for backwards compatibility only. 
+ * @brief Draws a string using FreeType 2 fonts. Alias of @ref gdImageStringFT. Provided for backwards compatibility only.
  * @deprecated
  */
 BGD_DECLARE(char *)
@@ -6474,7 +6474,7 @@ typedef struct {
 
 /**
  * @brief Enable or disable fontconfig by default.
- * 
+ *
  * If flag is nonzero, the fontlist parameter to gdImageStringFT
  * and @ref gdImageStringFTEx shall be assumed to be a fontconfig font pattern
  * if fontconfig was compiled into gd. This function returns zero
@@ -6602,9 +6602,9 @@ gdImageStringFTEx(gdImagePtr im, int *brect, int fg, const char *fontlist, doubl
 
 /**
  * @defgroup PixelDraw lines, ellipses, polygons and Arc Drawing pixel operations
- * 
+ *
  * @note 2.4+ brings a 2D Vector APIs with high quality rendering and options. Similar to Canvas 2D APIs. We recommend it for new usages.
- * 
+ *
  * @{
  */
 
@@ -6623,7 +6623,7 @@ typedef struct {
     int width, height; /**< The width and height of the rectangle. */
 } gdRect, *gdRectPtr; /**< A pointer to a @ref gdRect. */
 
-/** 
+/**
  * @brief Style flags for drawing arcs and chords
  * Style is a bitwise OR ( | operator ) of these.
  * gdArc and gdChord are mutually exclusive;
@@ -6687,7 +6687,7 @@ gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c);
 
 /**
  * @brief Draws a filled arc or a filled chord
- * 
+ *
  * @param  im    The image.
  * @param  cx    The x-coordinate of the center.
  * @param  cy    The y-coordinate of the center.
@@ -6698,7 +6698,7 @@ gdImageFilledPolygon(gdImagePtr im, gdPointPtr p, int n, int c);
  * @param  color The color of the arc. A color identifier created with one of the
  *               image color allocate functions.
  * @param  style The style of the arc. A bitwise OR of gdArc,
- * 
+ *
  * @see gdImageArc
  */
 BGD_DECLARE(void)
@@ -6706,7 +6706,7 @@ gdImageFilledArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int 
 
 /**
  * @brief Draws an arc or a chord
- * 
+ *
  * @param  im    The image.
  * @param  cx    The x-coordinate of the center.
  * @param  cy    The y-coordinate of the center.
@@ -6743,7 +6743,7 @@ gdImageEllipse(gdImagePtr im, int cx, int cy, int w, int h, int color);
 
 /**
  * @brief Draw a filled ellipse.
- * 
+ *
  * @param  im    The destination image.
  * @param  cx    x-coordinate of the center.
  * @param  cy    y-coordinate of the center.
@@ -6767,7 +6767,7 @@ BGD_DECLARE(void) gdImageDashedLine(gdImagePtr im, int x1, int y1, int x2, int y
  * @brief Draws a rectangle.
  *
  * Corners are specified by their coordinates. The rectangle is drawn using the current line style and thickness.
- * 
+ *
  * @param  im    The image.
  * @param  x1    The x-coordinate of one of the corners.
  * @param  y1    The y-coordinate of one of the corners.
@@ -6781,7 +6781,7 @@ BGD_DECLARE(void) gdImageRectangle(gdImagePtr im, int x1, int y1, int x2, int y2
 
 /**
  * @brief Draws a filled rectangle.
- * 
+ *
  * @param  im    The image.
  * @param  x1    The x-coordinate of one of the corners.
  * @param  y1    The y-coordinate of one of the corners.
@@ -6830,9 +6830,9 @@ BGD_DECLARE(void) gdImageSetBrush(gdImagePtr im, gdImagePtr brush);
 
 /**
  * @brief Sets the tile for following drawing operations
- * 
+ *
  * The tile is used for filling areas with a repeating pattern. The tile image is repeated to fill the area being drawn.
- * 
+ *
  * @param  im   The image.
  * @param  tile The tile image.
  */
@@ -6898,7 +6898,7 @@ gdImageFillToBorder(gdImagePtr im, int x, int y, int border, int color);
 
 /**
  * @brief Flood fill an area of the image with a color
- * 
+ *
  * @param im    The image.
  * @param x     The x-coordinate of the starting point.
  * @param y     The y-coordinate of the starting point.
@@ -7080,8 +7080,8 @@ BGD_DECLARE(void) gdImageInterlace(gdImagePtr im, int interlaceArg);
  * @param alphaBlendingArg The effect.
  *
  * Effects: @ref gdEffectOverlay, @ref gdEffectMultiply, @ref gdEffectNormal
- * 
- * 
+ *
+ *
  */
 BGD_DECLARE(void) gdImageAlphaBlending(gdImagePtr im, int alphaBlendingArg);
 
@@ -7091,7 +7091,7 @@ BGD_DECLARE(void) gdImageAlphaBlending(gdImagePtr im, int alphaBlendingArg);
  * The save alpha flag specifies whether the alpha channel of the pixels should
  * be saved. This is supported only for image formats that support full alpha
  * transparency, e.g. PNG.
- * 
+ *
  * @param im The image.
  * @param saveAlphaArg The save alpha flag (1 to save alpha, 0 to not save alpha).
  */
@@ -7099,7 +7099,7 @@ BGD_DECLARE(void) gdImageSaveAlpha(gdImagePtr im, int saveAlphaArg);
 
 /**
  * @defgroup  Color Quantization
- * 
+ *
  * @{ */
 
  /**
@@ -7138,11 +7138,11 @@ gdImageNeuQuant(gdImagePtr im, const int max_color, int sample_factor);
  *   @details See @ref gdPaletteQuantizationMethod enum (e.g. @ref GD_QUANT_NEUQUANT,
  *   @ref GD_QUANT_LIQ). Speed is from 1 (highest quality) to 10 (fastest). Speed 0
  *   selects method-specific default (recommended).
- * 
+ *
  *   @param im The image to set the quantization method for.
  *   @param method The quantization method to use.
  *   @param speed The speed/quality tradeoff for the selected method.
- * 
+ *
  *   @returns FALSE if the given method is invalid or not available.
  */
 BGD_DECLARE(int)
@@ -7171,7 +7171,7 @@ BGD_DECLARE(void)
 gdImageTrueColorToPaletteSetQuality(gdImagePtr im, int min_quality, int max_quality);
 
 
-/** 
+/**
  * @brief Converts a truecolor image to a palette-based image.
  * @details This function converts a truecolor image to a palette-based image
  * using a high-quality two-pass quantization routine
@@ -7183,7 +7183,7 @@ gdImageTrueColorToPaletteSetQuality(gdImagePtr im, int min_quality, int max_qual
  * anything up to 256. If the original source image
  * includes photographic information or anything that
  * came out of a JPEG, 256 is strongly recommended.
- * 
+ *
  * Better yet, don't use these function -- write real
  * truecolor PNGs and JPEGs. The disk space gain of
  * conversion to palette is not great (for small images
@@ -7196,7 +7196,7 @@ gdImageTrueColorToPaletteSetQuality(gdImagePtr im, int min_quality, int max_qual
  * @param im           The image.
  * @param dither       Whether dithering should be applied.
  * @param colorsWanted The number of desired palette entries.
- * 
+ *
  * @returns a newly created palette image on success, NULL on failure.
  */
 BGD_DECLARE(gdImagePtr)
@@ -7217,8 +7217,8 @@ gdImageCreatePaletteFromTrueColor(gdImagePtr im, int ditherFlag, int colorsWante
 BGD_DECLARE(int)
 gdImageTrueColorToPalette(gdImagePtr im, int ditherFlag, int colorsWanted);
 
-/** @brief Converts a palette-based image to a truecolor image 
- * 
+/** @brief Converts a palette-based image to a truecolor image
+ *
  * @details This function converts a palette-based image to a truecolor image. The
  * palette is discarded, and the image is converted to truecolor. The alpha channel
  * information is preserved.
@@ -7240,28 +7240,28 @@ BGD_DECLARE(int) gdImagePaletteToTrueColor(gdImagePtr src);
  * The red, green, and blue intensities of an image are negated.
  * White becomes black, yellow becomes blue, etc.
  */
-enum gdPixelateMode { 
+enum gdPixelateMode {
     GD_PIXELATE_UPPERLEFT, /**< Use the upper-left pixel of each block */
     GD_PIXELATE_AVERAGE /**< Use the average color of each block */
 };
 
 /**
  * @brief Pixelates an image
- * 
+ *
  * Pixelates an image by dividing it into blocks of the specified size and replacing each block with a single color.
  * The color can be determined by either the upper-left pixel of the block or the average color of all pixels in the block, depending on the mode specified.
- * 
+ *
  * @param im The image to pixelate.
  * @param block_size The size of the blocks to use for pixelation. Must be greater than 0.
  * @param mode The mode to use for determining the color of each block. @ref gdPixelateMode
- * 
+ *
  * @return Non-zero on success, zero on failure. Failure: Returns zero if im is NULL or block_size is less than or equal to 0.
  */
 BGD_DECLARE(int)
 gdImagePixelate(gdImagePtr im, int block_size, const unsigned int mode);
 
 /**
- * @brief Options to Scatter an image 
+ * @brief Options to Scatter an image
  */
 typedef struct {
     int sub; /**< The subtraction value for scattering. */
@@ -7273,40 +7273,40 @@ typedef struct {
 
 /**
  * @brief Scatter an image
- * 
+ *
  * Scatters the pixels of an image by randomly adjusting their color values based on the specified subtraction and addition values.
- * 
+ *
  * @param im The image to scatter.
  * @param sub The subtraction value for scattering. Must be greater than or equal to 0.
  * @param plus The addition value for scattering. Must be greater than or equal to 0
- * 
+ *
  * @return Non-zero on success, zero on failure. Failure: Returns zero if im is NULL, sub or plus is less than 0.
  */
 BGD_DECLARE(int) gdImageScatter(gdImagePtr im, int sub, int plus);
 
 /**
  * @brief Scatter an image with specified colors
- * 
+ *
  * Scatters the pixels of an image by randomly adjusting their color values based on the specified subtraction and addition values, using a specified set of colors.
- * 
+ *
  * @param im The image to scatter.
  * @param sub The subtraction value for scattering. Must be greater than or equal to 0.
  * @param plus The addition value for scattering. Must be greater than or equal to 0.
  * @param colors An array of colors to use for scattering. Must not be NULL.
  * @param num_colors The number of colors in the colors array. Must be greater than
- * 
+ *
  * @return Non-zero on success, zero on failure. Failure: Returns zero if im is NULL, sub or plus is less than 0, colors is NULL, or num_colors is 0.
  */
 BGD_DECLARE(int) gdImageScatterColor(gdImagePtr im, int sub, int plus, int colors[], unsigned int num_colors);
 
 /**
  * @brief Scatter an image with extended options
- * 
+ *
  * Scatters the pixels of an image using the specified scattering options.
- * 
+ *
  * @param im The image to scatter.
  * @param s A pointer to a gdScatter structure containing the scattering options. Must not be NULL.
- * 
+ *
  * @return
  */
 BGD_DECLARE(int) gdImageScatterEx(gdImagePtr im, gdScatterPtr s);
@@ -7330,7 +7330,7 @@ BGD_DECLARE(int) gdImageScatterEx(gdImagePtr im, gdScatterPtr s);
  * Smooth an image
  *
  * (see smooth.jpg)
- * 
+ *
  * @param src        The source image.
  * @param weight     The strength of the smoothing.
  *
@@ -7400,7 +7400,7 @@ BGD_DECLARE(int) gdImageEdgeDetectQuick(gdImagePtr src);
 
 /**
  * @brief Selective blur of an image
- * 
+ *
  * @param src The image.
  *
  * @return Non-zero on success, zero on failure.
@@ -7500,38 +7500,38 @@ BGD_DECLARE(int) gdImageNegate(gdImagePtr src);
  * @brief Return a copy of the source image _src_ blurred according to the parameters using the Gaussian Blur algorithm.
  * Return a copy of the source image _src_ blurred according to the
  * parameters using the Gaussian Blur algorithm.
- * 
+ *
  * _radius_ is a radius, not a diameter so a radius of 2 (for
  * example) will blur across a region 5 pixels across (2 to the
  * center, 1 for the center itself and another 2 to the other edge).
- * 
+ *
  * _sigma_ represents the "fatness of the curve (lower == fatter).
  * If _sigma_ is less than or equal to 0,
  * <gdImageCopyGaussianBlurred> ignores it and instead computes an
  * "optimal" value.  Be warned that future versions of this function
  * may compute sigma differently.
- * 
+ *
  * The resulting image is always truecolor.
- * 
+ *
  * More Details:
- * 
+ *
  * A Gaussian Blur is generated by replacing each pixel's color
  * values with the average of the surrounding pixels' colors.  This
  * region is a circle whose radius is given by argument _radius_.
  * Thus, a larger radius will yield a blurrier image.
- * 
+ *
  * This average is not a simple mean of the values.  Instead, values
  * are weighted using the Gaussian function (roughly a bell curve
  * centered around the destination pixel) giving it much more
  * influence on the result than its neighbours.  Thus, a fatter curve
  * will give the center pixel more weight and make the image less
  * blurry; lower _sigma_ values will yield flatter curves.
- * 
+ *
  * Currently, <gdImageCopyGaussianBlurred> computes the default sigma
  * as
- * 
+ *
  * (2/3)*radius
- * 
+ *
  * Note, however that we reserve the right to change this if we find
  * a better ratio.  If you absolutely need the current sigma value,
  * you should set it yourself.
@@ -7544,15 +7544,15 @@ BGD_DECLARE(int) gdImageNegate(gdImagePtr src);
  *
  * Example:
  * @code
- * 
+ *
  * FILE *in;
  * gdImagePtr result, src;
- * 
+ *
  * in = fopen("foo.png", "rb");
  * src = gdImageCreateFromPng(in);
- * 
+ *
  * result = gdImageCopyGaussianBlurred(im, src->sx / 10, -1.0);
- * 
+ *
  * @endcode
  */
 BGD_DECLARE(gdImagePtr)
@@ -7752,9 +7752,9 @@ gdImageCopyGaussianBlurred(gdImagePtr src, int radius, double sigma);
  * @defgroup gdIOCtx I/O Contexts
  * @{
  */
-/** 
+/**
  * @brief Creates a new I/O context for reading/writing to a file
- * 
+ *
  * returns a new I/O context for reading/writing to the specified file. The caller is responsible for closing the file when done.
  * @param file A pointer to a FILE object that identifies the file to be used for I/O.
  * @return A pointer to a new gdIOCtx structure, or NULL on failure.
@@ -7763,13 +7763,13 @@ BGD_DECLARE(gdIOCtxPtr) gdNewFileCtx(FILE *);
 
 /**
  * @brief Creates a new I/O context for reading/writing to a dynamic memory buffer
- * 
+ *
  * If data is null, size is ignored and an initial data buffer is allocated automatically.
- * This function assumes gd has the right to free or reallocate "data" at will! 
- * Also note that gd will free "data" when the IO context is freed. 
+ * This function assumes gd has the right to free or reallocate "data" at will!
+ * Also note that gd will free "data" when the IO context is freed.
  * If data is not null, it must point to memory allocated with gdMalloc, or
  * by a call to gdImage[something]Ptr. If not, see gdNewDynamicCtxEx for an alternative.
- * 
+ *
  * @param size The initial size of the dynamic memory buffer.
  * @param data A pointer to a memory buffer, or NULL to allocate a new buffer.
  * @return A pointer to a new gdIOCtx structure, or NULL on failure.
@@ -7786,11 +7786,11 @@ BGD_DECLARE(gdIOCtxPtr) gdNewDynamicCtx(int size, void *data);
  * not large enough and an image write is attempted, the write operation
  * will fail. Those wishing to write an image to a buffer in memory have
  * a much simpler alternative in the gdImage[something]Ptr functions
- * 
+ *
  * @param size The initial size of the dynamic memory buffer.
  * @param data A pointer to a memory buffer, or NULL to allocate a new buffer.
  * @param freeFlag A flag indicating whether gd should manage the memory of "data". If nonzero, gd will free and/or reallocate "data" as needed. If zero, gd will not free or reallocate "data".
- * 
+ *
  * @return A pointer to a new gdIOCtx structure, or NULL on failure.
  */
 BGD_DECLARE(gdIOCtxPtr) gdNewDynamicCtxEx(int size, void *data, int freeFlag);
@@ -7847,7 +7847,7 @@ BGD_DECLARE(void *) gdDPExtractData(gdIOCtxPtr ctx, int *size);
  *
  * compare two images and some of its attributes. The images must be of the same size, otherwise the function will return -1.
  * For accurate image content comparison, use @ref gdImagePerceptualDiff instead.
- * 
+ *
  * @param im1 An image.
  * @param im2 Another image.
  *
@@ -8011,7 +8011,7 @@ gdImageCropThreshold(gdImagePtr im, const unsigned int color, const float thresh
 
 /**
  * @brief Options for automatic cropping
- * 
+ *
  * This structure defines the options for automatic cropping.
  */
 typedef struct {
@@ -8022,12 +8022,12 @@ typedef struct {
 
 /**
  * @brief Crop an image automatically with options
- * 
+ *
  * This function detects the cropping area according to the given options.
- * 
+ *
  * @param src The image.
  * @param options The cropping options, @ref gdAutoCropOptions.
- * 
+ *
  * @returns The newly created cropped image, or NULL on failure.
  */
 BGD_DECLARE(gdImagePtr)
@@ -8210,7 +8210,7 @@ typedef struct {
  * This is the higher-level scaling API. It can stretch, contain, cover, pad or
  * return an inside/outside size while preserving the source aspect ratio. The
  * returned image is newly allocated and must be destroyed with  @ref gdImageDestroy.
- * 
+ *
  * @param src        - The source image.
  * @param new_width  - The requested width.
  * @param new_height - The requested height.

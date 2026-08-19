@@ -17,12 +17,12 @@ extern "C" {
  *
  * Experimental 2D vector drawing API for libgd.
  *
- * @{ 
+ * @{
  */
 
 /**
  * @brief Opaque 2D drawing context.
- * 
+ *
  * Opaque drawing context for the 2D API. A context owns the current path and a
  * stack of graphics state, and draws into an ARGB surface backed by a truecolor
  * @ref gdImage.
@@ -178,7 +178,7 @@ typedef gdRectF *gdRectFPtr;
  * See also:
  *  - @see gdPaintSetExtend gdPathPatternSetExtend
  */
-typedef enum { 
+typedef enum {
     GD_EXTEND_NONE, /*< Outside samples are transparent. */
     GD_EXTEND_REPEAT, /*< Repeat the source. */
     GD_EXTEND_REFLECT, /*< Repeat the source with alternating mirrored copies. */
@@ -193,7 +193,7 @@ typedef enum {
   * See also:
  *  - @see gdContextSetLineCap
  */
-typedef enum { 
+typedef enum {
     gdLineCapButt, /**< End the stroke at the endpoint. */
     gdLineCapRound, /**< Add a round cap. */
     gdLineCapSquare /**< Add a square cap. */
@@ -207,7 +207,7 @@ typedef enum {
  * See also:
  *  - @see gdContextSetLineJoin
  */
-typedef enum { 
+typedef enum {
     gdLineJoinMiter, /**< Join segments with a miter when possible. */
     gdLineJoinRound, /**< Join segments with a round corner. */
     gdLineJoinBevel /**< Join segments with a bevel. */
@@ -221,7 +221,7 @@ typedef enum {
  * See also:
  *  - @see gdContextSetFillRule
  */
-typedef enum { 
+typedef enum {
     gdFillRuleNonZero, /**< Non-zero winding rule. */
     gdFillRuleEvenOdd /**< Even-odd rule. */
 } gdFillRule;
@@ -971,7 +971,7 @@ gdPaintAddColorStopRgb(gdPaintPtr paint, double offset, double r, double g, doub
  * @param a      - Alpha component in the range 0.0 to 1.0.
  *
  * @returns Non-zero on success, zero on invalid input or allocation failure.
- * 
+ *
  * @see gdPaintAddColorStopRgb
  */
 BGD_DECLARE(int)

@@ -160,7 +160,7 @@ done
 `-merge=1` is the only sanctioned way to mutate the committed corpus. Do
 **not** run the bare fuzzer against `tests/fuzzing/corpus/<codec>/` to grow
 it, that path also writes to the corpus and is what polluted the corpus
-during an earlier verification run.   
+during an earlier verification run.
 
 ## CI
 

@@ -63,20 +63,20 @@ int main() {
     gdImageColorAllocate(im, 255, 255, 255);
 
     /* Draw a line from the upper left to the lower right, using white color
-    index. */ 
+    index. */
     gdImageLine(im, 0, 0, 63, 63, white);
     /* Open a file for writing. "wb" means "write binary", important under MSDOS,
-    harmless under Unix. */ 
+    harmless under Unix. */
     pngout = fopen("test.png", "wb");
 
     /* Do the same for a JPEG-format file. */ jpegout = fopen("test.jpg", "wb");
     /* Output the image to the disk file in PNG format. */ gdImagePng(im, pngout);
     /* Output the same image in JPEG format, using the default JPEG quality
-    setting. */ 
+    setting. */
     gdImageJpeg(im, jpegout, -1);
-    /* Close the files. */ 
+    /* Close the files. */
     fclose(pngout); fclose(jpegout);
-    /* Destroy the image in memory. */ 
+    /* Destroy the image in memory. */
     gdImageDestroy(im);
 }
 ```
