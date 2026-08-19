@@ -1,9 +1,9 @@
-# Process this file with autoconf to produce a configure script.
-# Configure template for gd library
+dnl Process this file with autoconf to produce a configure script.
+dnl Configure template for gd library
 
 AC_PREREQ([2.69])
 
-# We extract version numbers from src/versions.h
+dnl We extract version numbers from src/versions.h
 define([gv],[config/getver.sh ]$1)
 
 m4_define([gd_MAJOR],esyscmd(gv(MAJOR)))dnl
@@ -75,9 +75,9 @@ AC_CHECK_HEADERS_ONCE(m4_flatten([
 dnl if we're configuring on a system w/out gettext, don't fall over
 m4_ifndef([AM_ICONV],[m4_define([AM_ICONV],[:])])
 AM_ICONV
-# if test -n "$LIBICONV" ; then
-#   LIBS="$LIBS $LIBICONV"
-# fi
+dnl if test -n "$LIBICONV" ; then
+dnl   LIBS="$LIBS $LIBICONV"
+dnl fi
 
 AC_CHECK_HEADERS(iconv.h,
   [AC_MSG_CHECKING(whether iconv.h defines iconv_t)
@@ -87,14 +87,14 @@ AC_CHECK_HEADERS(iconv.h,
                 [Define if <iconv.h> defines iconv_t.])],
       AC_MSG_RESULT(no))])
 
-# Checks for typedefs, structures, and compiler characteristics.
-#AC_TYPE_SIZE_T
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl AC_TYPE_SIZE_T
 
-# Checks for library functions.
-#AC_FUNC_ERROR_AT_LINE
-#AC_FUNC_MALLOC
-#AC_FUNC_REALLOC
-#AC_CHECK_FUNCS([floor memset sqrt strchr strdup strtol])
+dnl Checks for library functions.
+dnl AC_FUNC_ERROR_AT_LINE
+dnl AC_FUNC_MALLOC
+dnl AC_FUNC_REALLOC
+dnl AC_CHECK_FUNCS([floor memset sqrt strchr strdup strtol])
 
 dnl do we need to specify -lm explicitly?
 AC_CHECK_FUNC(sin,,[AC_CHECK_LIB(m,sin)])
