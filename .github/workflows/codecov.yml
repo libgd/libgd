@@ -21,7 +21,7 @@ jobs:
       BUILD_TYPE: Debug
       COVERAGE_FLAGS: --coverage -O0 -g
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v7
       with:
         submodules: true
 
