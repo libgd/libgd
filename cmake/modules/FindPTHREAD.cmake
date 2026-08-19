@@ -50,7 +50,7 @@
   )
   #MESSAGE("DBG PTHREAD_INCLUDE_DIR=${PTHREAD_INCLUDE_DIR}")
 
-  # pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2 are comming from web
+  # pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2 are coming from web
   FIND_LIBRARY(PTHREAD_LIBRARY
     NAMES pthread pthreadGC2 pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2
     PATHS

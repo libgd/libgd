@@ -341,7 +341,7 @@ gdImageSquareToCircle(gdImagePtr im, int radius)
 /* 2.0.16: Called by gdImageSharpen to avoid excessive code repetition
         Added on 2003-11-19 by
         Paul Troughton (paul<dot>troughton<at>ieee<dot>org)
-        Given filter coefficents and colours of three adjacent pixels,
+        Given filter coefficients and colours of three adjacent pixels,
 returns new colour for centre pixel
 */
 

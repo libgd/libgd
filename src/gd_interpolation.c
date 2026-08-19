@@ -113,7 +113,7 @@ typedef struct _FilterInfo {
 typedef struct {
     double *Weights; /* Normalized weights of neighboring pixels */
     int Left, Right; /* Bounds of source pixels window */
-} ContributionType;  /* Contirbution information for a single pixel */
+} ContributionType;  /* Contribution information for a single pixel */
 
 typedef struct {
     ContributionType *ContribRow; /* Row (or column) of contribution weights */
@@ -400,7 +400,7 @@ static double filter_hermite(const double x1, const double support)
     return 0.0;
 }
 
-/* Trangle filter, default radius 1 */
+/* Triangle filter, default radius 1 */
 static double filter_triangle(const double x1, const double support)
 {
     const double x = x1 < 0.0 ? -x1 : x1;
@@ -570,7 +570,7 @@ static double filter_welsh(const double x, const double support)
 #define inline __inline
 #endif
 
-/* keep it for future usage for affine copy over an existing image, targetting
+/* keep it for future usage for affine copy over an existing image, targeting
  * fix for 2.2.2 */
 #ifdef FUNCTION_NOT_USED_YET
 /* Copied from upstream's libgd */
@@ -2309,7 +2309,7 @@ gdImageRotateInterpolated(const gdImagePtr src, const float angle, int bgcolor)
 {
     /* round to two decimals and keep the 100x multiplication to use it in the
        common square angles case later. Keep the two decimal precisions so
-       smaller rotation steps can be done, useful for slow animations, f.e. */
+       smaller rotation steps can be done, useful for slow animations, e.g. */
     const int angle_rounded = fmod((int)floorf(angle * 100), 360 * 100);
     gdImagePtr src_tc = src;
     int src_cloned = 0;

@@ -15,7 +15,7 @@ int main() {
 	p = gdTestFileOpen2("gd2", "conv_test.gd2");
 
 	if (!p) {
-		gdTestErrorMsg("failed, connot open gd2 file: conv_test.gd2");
+		gdTestErrorMsg("failed, cannot open gd2 file: conv_test.gd2");
 		return 1;
 	}
 

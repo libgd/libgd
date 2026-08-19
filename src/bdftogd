@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #
-# Simple convertor from bdf to gd font format.
+# Simple converter from bdf to gd font format.
 #
 # Author: Jan Pazdziora, adelton@fi.muni.cz, http://www.fi.muni.cz/~adelton/
 # at Faculty of Informatics, Masaryk University in Brno, Czech Republic.

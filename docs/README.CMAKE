@@ -69,7 +69,7 @@ the required libraries, vcpkg can install them automatically. The steps are:
 
 It is then not needed to manually add CMAKE_INCLUDE_PATH or CMAKE_LIBRARY_PATH as options.
 
-See the https://vcpkg.io for more informations about vcpkg and how to customize an install.
+See the https://vcpkg.io for more information about vcpkg and how to customize an install.
 
 Randomly, you may cmake may fail to find the dependencies, with vcpkg at least up to 2021-08-12-85ab112d5ee102bc6eac8cdbbfdd173a71374e04 (as of the time of writing).
 So far the only way to fix it is to reinstall vcpkg and then install the dependencies again. See https://github.com/microsoft/vcpkg/issues/13614, 

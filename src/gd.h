@@ -7449,7 +7449,7 @@ gdImageColor(gdImagePtr src, const int red, const int green, const int blue, con
  * @brief Change the contrast of an image
  *
  * @param src      The image.
- * @param contrast The contrast adjustment value. Negative values increase, postive
+ * @param contrast The contrast adjustment value. Negative values increase, positive
  *                 values decrease the contrast. The larger the absolute value, the
  *                 stronger the effect.
  *
@@ -7833,7 +7833,7 @@ BGD_DECLARE(void *) gdDPExtractData(gdIOCtxPtr ctx, int *size);
  * @defgroup imagecomparison Image Comparison
  * @{ */
 #define GD_CMP_IMAGE 1 /**< Actual image IS different */
-#define GD_CMP_NUM_COLORS 2 /**< Number of colors in pallette differ */
+#define GD_CMP_NUM_COLORS 2 /**< Number of colors in palette differ */
 #define GD_CMP_COLOR 4 /**< Image colors differ */
 #define GD_CMP_SIZE_X 8 /**< Image width differs */
 #define GD_CMP_SIZE_Y 16 /**< Image heights differ */

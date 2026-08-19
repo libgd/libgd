@@ -437,7 +437,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtx *infile)
      */
 
     /* setjmp() must be called in every non-callback function that calls a
-     * PNG-reading libpng function.  We must reset it everytime we get a
+     * PNG-reading libpng function.  We must reset it every time we get a
      * new allocation that we save in a stack variable.
      */
 #ifdef PNG_SETJMP_SUPPORTED
@@ -475,7 +475,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtx *infile)
     }
 
     /* setjmp() must be called in every non-callback function that calls a
-     * PNG-reading libpng function.  We must reset it everytime we get a
+     * PNG-reading libpng function.  We must reset it every time we get a
      * new allocation that we save in a stack variable.
      */
 #ifdef PNG_SETJMP_SUPPORTED
@@ -616,7 +616,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtx *infile)
     }
 
     /* setjmp() must be called in every non-callback function that calls a
-     * PNG-reading libpng function.  We must reset it everytime we get a
+     * PNG-reading libpng function.  We must reset it every time we get a
      * new allocation that we save in a stack variable.
      */
 #ifdef PNG_SETJMP_SUPPORTED

@@ -168,7 +168,7 @@ static gdImagePtr _gdImageCreateFromHeifCtx(gdIOCtx *infile, gd_heif_brand expec
     heif_imhandle = NULL;
     err = heif_context_get_primary_image_handle(heif_ctx, &heif_imhandle);
     if (err.code != heif_error_Ok) {
-        gd_error("gd-heif cannot retreive handle\n");
+        gd_error("gd-heif cannot retrieve handle\n");
         gdFree(filedata);
         heif_context_free(heif_ctx);
         return NULL;

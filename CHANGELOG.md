@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - [#806](https://github.com/libgd/libgd/issues/806) getPixelInterpolate* and related functions take bcolor as 31bit ARGB and return TC, no need of handling the result as color index
 - [#808](https://github.com/libgd/libgd/issues/808) When RAQM is used, and it fails or no text processed, the glyph may be leaked
 - [#810](https://github.com/libgd/libgd/issues/810) Wrong image freed, src_cloned should be freed if set.
-- [#812](https://github.com/libgd/libgd/issues/812), ensure operands priorty works as expected
+- [#812](https://github.com/libgd/libgd/issues/812), ensure operands priority works as expected
 - [#815](https://github.com/libgd/libgd/issues/815), Ensure no null dereferencing happens using the dither table
 
 ## [2.3.3] - 2021-09-12
@@ -50,7 +50,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- gif: allow decodin when both Global and Local Colormaps (#494)
+- gif: allow decoding when both Global and Local Colormaps (#494)
 
 ### Added
 
@@ -109,7 +109,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix #586: gdTransformAffineCopy() segfaults on palette images
 - Fix #585: gdTransformAffineCopy() changes interpolation method
 - Fix #584: gdImageSetInterpolationMethod(im, GD_DEFAULT) inconsistent
-- Fix #583: gdTransformAffineCopy() may use unitialized values
+- Fix #583: gdTransformAffineCopy() may use uninitialized values
 - Fix #533: Remove cmake modules
 - Fix #539: Add RAQM support for cmake
 - Fix #499: gdImageGifAnimAddPtr: heap corruption with 2 identical images
@@ -153,7 +153,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix Coverity #155475: Failure to restore alphaBlendingFlag
 - Fix Coverity #155476: potential resource leak
 - Fix several build issues and test failures
-- Fix and reenable optimized support for reading 1 bps TIFFs
+- Fix and re-enable optimized support for reading 1 bps TIFFs
 
 ### Added
 - The native MSVC buildchain now supports libtiff and most executables

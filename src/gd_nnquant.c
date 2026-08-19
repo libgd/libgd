@@ -24,7 +24,7 @@
  * From: http://pngnq.sourceforge.net/
  *
  * Ported to libgd by Pierre A. Joye
- * (and make it thread safety by droping static and  global variables)
+ * (and make it thread safety by dropping static and global variables)
  */
 
 #ifdef HAVE_CONFIG_H

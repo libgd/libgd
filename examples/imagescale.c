@@ -68,7 +68,7 @@ int main()
             break;
         }
         if (result->sx != new_width || result->sy != new_height) {
-            printf("missmatch width or height\n");
+            printf("mismatch width or height\n");
             gdImageDestroy(result);
             gdImageDestroy(src);
             exit(1);

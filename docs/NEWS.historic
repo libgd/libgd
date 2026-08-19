@@ -69,7 +69,7 @@ GD 2.0.34 (2007-02-07)
  5, gdImageRectangle draws corners twice
  6, GIF Output does use the transparent color with truecolor images
  7, Multiple security issues in GIF loader
- 8, gdIimageCopy doen't use the alpha channel
+ 8, gdIimageCopy doesn't use the alpha channel
  9, Add autogen and and misc configure/makefile (Lars Hecking)
 10, gdImageFilledEllipse does not respect transparency
 11, gdImageCreateFromPng*  crashes with empty file

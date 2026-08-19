@@ -309,7 +309,7 @@ GD_TIFF_COMPILE_ASSERT(resunit_centimeter, GD_TIFF_RESUNIT_CENTIMETER == RESUNIT
 #define FALSE 0
 
 /* I define those here until the new formats
- * are commited. We can then rely on the global
+ * are committed. We can then rely on the global
  * def
  */
 #define GD_PALETTE 1

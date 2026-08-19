@@ -1202,7 +1202,7 @@ gdImageStringFTEx(gdImagePtr im, int *brect, int fg, const char *fontlist, doubl
 
         glyph_index = info[i].index;
         /* When we know the position of the second or subsequent character,
-        save the (kerned) advance from the preceeding character in the
+        save the (kerned) advance from the preceding character in the
         xshow vector */
         if (i && strex && (strex->flags & gdFTEX_XSHOW)) {
             /* make sure we have enough allocation for two numbers

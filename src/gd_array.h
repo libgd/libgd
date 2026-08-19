@@ -11,7 +11,7 @@ typedef gdArray *gdArrayPtr;
 
 /*
 C++ Vect like for C.
-element_size is f.e. sizeof(gdPath) equivalent to
+element_size is e.g. sizeof(gdPath) equivalent to
 gdPathPtr path;
 or
 gdPathPtr path[12]; for a fixed length
@@ -19,7 +19,7 @@ gdPathPtr path[12]; for a fixed length
 Each function takes a pointers to the array.
 */
 
-/* Initialize a gdArray, gdArrayarray allocation and freed is the caller's responsability  */
+/* Initialize a gdArray, gdArrayarray allocation and freed is the caller's responsibility  */
 void gdArrayInit(gdArrayPtr array, unsigned int element_size);
 
 /* Destroy the internal data of a gdArray, gdArrayarray has to be freed by the caller */

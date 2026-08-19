@@ -62,7 +62,7 @@ int main() {
 		gdTestAssertMsg(gdAssertImageEquals(imFromPng, imFromAvif), errMsg);
 
 		// Then, decode each AVIF into a GD format, and compare that with the
-		// orginal PNG. Skip this reverse test for now, until we can find images
+		// original PNG. Skip this reverse test for now, until we can find images
 		// that encode to PNGs losslessly.
 	avif2png:
 		if (imFromPng)

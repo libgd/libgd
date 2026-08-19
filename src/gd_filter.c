@@ -719,7 +719,7 @@ static void applyCoeffs(gdImagePtr src, gdImagePtr dst, double *coeffs, int radi
 } /* applyCoeffs*/
 
 
-/* TODO: Look into turning this into a generic seperable filter
+/* TODO: Look into turning this into a generic separable filter
  * function with Gaussian Blur being one special case.  (At the
  * moment, I can't find any other useful separable filter so for not,
  * it's just blur.) */

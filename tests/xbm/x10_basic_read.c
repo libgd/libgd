@@ -3,7 +3,7 @@
  *
  * X10 style XBMs define a short[] instead of a char[] array. We're testing
  * that such files are read correctly, particularly regarding the line padding,
- * which is 2 bytes instead of 1, and the endianess.
+ * which is 2 bytes instead of 1, and the endianness.
  */
 
 #include "gd.h"

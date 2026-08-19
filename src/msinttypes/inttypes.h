@@ -277,14 +277,14 @@ static
 #else  // STATIC_IMAXDIV ][
 _inline
 #endif // STATIC_IMAXDIV ]
-    imaxdiv_t __cdecl imaxdiv(intmax_t numer, intmax_t denom)
+    imaxdiv_t __cdecl imaxdiv(intmax_t number, intmax_t denom)
 {
     imaxdiv_t result;
 
-    result.quot = numer / denom;
-    result.rem = numer % denom;
+    result.quot = number / denom;
+    result.rem = number % denom;
 
-    if (numer < 0 && result.rem > 0) {
+    if (number < 0 && result.rem > 0) {
         // did division wrong; must fix up
         ++result.quot;
         result.rem -= denom;

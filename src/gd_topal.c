@@ -81,12 +81,12 @@
 
 #ifdef RIGHT_SHIFT_IS_UNSIGNED
 #define SHIFT_TEMPS INT32 shift_temp;
-#define RIGHT_SHIFT(x, shft)                                                                       \
-    ((shift_temp = (x)) < 0 ? (shift_temp >> (shft)) | ((~((INT32)0)) << (32 - (shft)))            \
-                            : (shift_temp >> (shft)))
+#define RIGHT_SHIFT(x, shift)                                                                      \
+    ((shift_temp = (x)) < 0 ? (shift_temp >> (shift)) | ((~((INT32)0)) << (32 - (shift)))          \
+                            : (shift_temp >> (shift)))
 #else
 #define SHIFT_TEMPS
-#define RIGHT_SHIFT(x, shft) ((x) >> (shft))
+#define RIGHT_SHIFT(x, shift) ((x) >> (shift))
 #endif
 
 #define range_limit(x)                                                                             \
@@ -217,7 +217,7 @@
  * and clamping those that do overflow to the maximum value will give close-
  * enough results.  This reduces the recommended histogram size from 256Kb
  * to 128Kb, which is a useful savings on PC-class machines.
- * (In the second pass the histogram space is re-used for pixel mapping data;
+ * (In the second pass the histogram space is reused for pixel mapping data;
  * in that capacity, each cell must be able to store zero to the number of
  * desired colors.  16 bits/cell is plenty for that too.)
  * Since the JPEG code is intended to run in small memory model on 80x86
@@ -712,7 +712,7 @@ select_colors(gdImagePtr oim, gdImagePtr nim, my_cquantize_ptr cquantize, int de
  * These routines are concerned with the time-critical task of mapping input
  * colors to the nearest color in the selected colormap.
  *
- * We re-use the histogram space as an "inverse color map", essentially a
+ * We reuse the histogram space as an "inverse color map", essentially a
  * cache for the results of nearest-color searches.  All colors within a
  * histogram cell will be mapped to the same colormap entry, namely the one
  * closest to the cell's center.  This may not be quite the closest entry to

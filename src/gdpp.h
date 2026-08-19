@@ -410,7 +410,7 @@ class BGD_EXPORT_DATA_PROT Image {
         Copy(src);
         return (*this);
     }
-    /** Make this an exact copy of the GD::Image provided.  Any existing iamge
+    /** Make this an exact copy of the GD::Image provided.  Any existing image
        data is discarded. \param[in] src Reference to the image to be copied
     */
     void Copy(const GD::Image &src)

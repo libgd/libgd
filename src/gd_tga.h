@@ -25,7 +25,7 @@ typedef struct oTga_ {
     uint8_t fliph;     // horizontal or vertical
     uint8_t flipv;     // flip
     uint8_t has_alpha; // decoded image contains alpha
-    char *ident;       // identifcation tag string
+    char *ident;       // identification tag string
     int *bitmap;       // bitmap data
     int *colormap;     // decoded color map
 

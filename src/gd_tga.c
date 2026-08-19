@@ -143,7 +143,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromTgaCtx(gdIOCtx *ctx)
 /*!	\brief Reads a TGA header.
  *	Reads the header block from a binary TGA file populating the referenced TGA
  *structure. \param ctx Pointer to TGA binary file \param tga Pointer to TGA
- *structure \return int 1 on sucess, -1 on failure
+ *structure \return int 1 on success, -1 on failure
  */
 int read_header_tga(gdIOCtx *ctx, oTga *tga)
 {
@@ -248,7 +248,7 @@ int read_header_tga(gdIOCtx *ctx, oTga *tga)
 /*!	\brief Reads a TGA image data into buffer.
  *	Reads the image data block from a binary TGA file populating the referenced
  *TGA structure. \param ctx Pointer to TGA binary file \param tga Pointer to TGA
- *structure \return int 0 on sucess, -1 on failure
+ *structure \return int 0 on success, -1 on failure
  */
 int read_image_tga(gdIOCtx *ctx, oTga *tga)
 {
