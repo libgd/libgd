@@ -35,7 +35,7 @@ static const jpeg_case cases[] = {
 	{"valid", NULL, "Sony_HDR-HC3.jpg", JPEG_EXPECT_VALID},
 	{"valid", NULL, "blank_800x280.jpg", JPEG_EXPECT_VALID},
 	{"valid", NULL, "cmyk_logo.jpg", JPEG_EXPECT_VALID},
-	{"valid", NULL, "cymk.jpg", JPEG_EXPECT_VALID},
+	{"valid", NULL, "cmyk.jpg", JPEG_EXPECT_VALID},
 	{"valid", NULL, "extraneous-data.jpg", JPEG_EXPECT_VALID},
 	{"valid", NULL, "grayscale_16x24_sampling2x2.jpg", JPEG_EXPECT_VALID},
 	{"valid", NULL, "grayscale_24x16_sampling2x2.jpg", JPEG_EXPECT_VALID},
