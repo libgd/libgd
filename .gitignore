@@ -93,10 +93,6 @@ Testing
 /src/testtr
 /src/webpng
 
-# Doc artifacts
-/docs/naturaldocs/html/
-/docs/naturaldocs/project/Data/
-
 # AppVeyor build artifacts.
 gd-dotnet-bindings-generator
 build_msvc12_x86

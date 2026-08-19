@@ -3,12 +3,6 @@
 
 v() { echo "$@"; "$@"; }
 
-# Generate the manual (unless naturaldocs isn't installed).  Source
-# dists should include the docs so that end users don't need to
-# install naturaldocs.  At the same time, we tolerate it being missing
-# so that random hackers don't need it just to build the code.
-v docs/naturaldocs/run_docs.sh --nonfatal
-
 if uname | grep -qi '^darwin' ; then
 	echo "Having trouble on macOS? Try: brew install autoconf libtool automake gettext pkg-config cmake"
 fi

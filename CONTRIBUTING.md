@@ -46,8 +46,8 @@ requires more than API docs. If you feel like writing tutorials, examples (C or
 other language binding) or add content to the documentation, you will be more
 than welcome.
 
-We use NaturalDocs 1.5x for the API and general documentations. It supports
-rest, markdown or text (see the docs folder in our repository for examples).
+We use Doxygen for the API and general documentations. It supports rest,
+markdown or text (see the docs folder in our repository for examples).
 
 ### Reporting Bugs or request a feature
 
@@ -202,8 +202,8 @@ For files that end in `.md`, use
 [GitHub markdown](https://guides.github.com/features/mastering-markdown/).
 
 For API documentation (embedded in the code), we use
-[Natural Docs](http://www.naturaldocs.org/). You can find more info about it
-under the [docs/naturaldocs/](docs/naturaldocs/) subdirectory.
+[Doxygen](https://www.doxygen.nl/). You can find more info about it
+under the [docs/](docs/) subdirectory.
 
 Try to keep the file linewrapped to 80 cols. Sometimes you won't be able to
 because of long strings (like links), and that's OK.

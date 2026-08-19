@@ -4,7 +4,7 @@
 # called with the middle word of the version macro, it prints the
 # value of that macro.  If called with no argument, it outputs a
 # human-readable version string.  This must be run in the project
-# root.  It is used by configure.ac and docs/naturaldocs/run_docs.sh.
+# root.  It is used by configure.ac.
 
 TOPDIR="${0%/*}/.."
 HEADER="${TOPDIR}/src/gd.h"
