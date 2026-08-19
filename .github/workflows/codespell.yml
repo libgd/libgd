@@ -1,0 +1,19 @@
+# GitHub actions workflow.
+# https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
+
+# https://github.com/codespell-project/actions-codespell
+# https://github.com/codespell-project/codespell
+
+name: codespell
+
+on: [push, pull_request]
+
+jobs:
+  codespell:
+    name: Check for spelling errors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: codespell-project/actions-codespell@v2
+        with:
+          check_filenames: true
