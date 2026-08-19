@@ -1,0 +1,66 @@
+# GitHub actions workflow.
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+
+# https://scan.coverity.com/projects/libgd
+name: Coverity Scan
+
+on:
+  workflow_call:
+    secrets:
+      COVERITY_SCAN_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  coverity:
+    runs-on: ubuntu-latest
+    env:
+      CC: gcc
+      CXX: g++
+      BUILD_TYPE: Debug
+    steps:
+    - name: Update apt
+      run: sudo apt-get update
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y \
+          cmake \
+          g++ \
+          gcc \
+          libavifile-0.7-dev \
+          libde265-dev \
+          libfreetype-dev \
+          libheif-dev \
+          libimagequant-dev \
+          libjpeg-turbo8-dev \
+          libpng-dev \
+          libraqm-dev \
+          libtiff5-dev \
+          libwebp-dev \
+          libx265-dev \
+          libxpm-dev
+
+    - uses: actions/checkout@v7
+
+    - name: Configure gd
+      run: |
+        cmake \
+          -DENABLE_CPP=1 \
+          -DENABLE_FREETYPE=1 \
+          -DENABLE_GD_FORMATS=1 \
+          -DENABLE_HEIF=0 \
+          -DENABLE_JPEG=1 \
+          -DENABLE_PNG=1 \
+          -DENABLE_TIFF=1 \
+          -DENABLE_WEBP=1 \
+          -DBUILD_TEST=1 \
+          -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+          -B ${{github.workspace}}/build
+
+    - uses: vapier/coverity-scan-action@v1
+      with:
+        email: ${{ secrets.COVERITY_SCAN_EMAIL }}
+        token: ${{ secrets.COVERITY_SCAN_TOKEN }}
+        command: cmake --build ${{github.workspace}}/build --config ${BUILD_TYPE} --parallel 4
