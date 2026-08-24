@@ -74,7 +74,7 @@ jobs:
       run: CTEST_OUTPUT_ON_FAILURE=1 ctest -C ${BUILD_TYPE}
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v7
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         gcov_executable: gcov
