@@ -145,7 +145,7 @@ static void gdUhdrInitCompressedImage(uhdr_compressed_image_t *image, void *data
 static void gdUhdrGetIccPayload(const uhdr_mem_block_t *block, const unsigned char **data,
                                 size_t *size)
 {
-    static const unsigned char marker[] = "ICC_PROFILE\0";
+    static const unsigned char marker[] = "ICC_PROFILE";
 
     *data = block && block->data ? (const unsigned char *)block->data : NULL;
     *size = block && block->data ? block->data_sz : 0;
@@ -159,7 +159,7 @@ static void *gdUhdrAddIccProfile(const void *jpeg_data, size_t jpeg_size,
                                  const unsigned char *icc, size_t icc_size,
                                  size_t *out_size, gdUhdrErrorPtr err)
 {
-    static const unsigned char signature[] = "ICC_PROFILE\0";
+    static const unsigned char signature[] = "ICC_PROFILE";
     const size_t max_chunk = 65533 - sizeof(signature) - 2;
     size_t count;
     size_t marker_size;

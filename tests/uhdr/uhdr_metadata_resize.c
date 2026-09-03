@@ -207,6 +207,13 @@ static int read_u16be(const unsigned char *data) {
 	return (int)data[0] * 256 + (int)data[1];
 }
 
+static unsigned long read_u32be(const unsigned char *data) {
+	return ((unsigned long)data[0] << 24) |
+		   ((unsigned long)data[1] << 16) |
+		   ((unsigned long)data[2] << 8) |
+		   (unsigned long)data[3];
+}
+
 static int is_sof_marker(int marker) {
 	return (marker >= 0xc0 && marker <= 0xcf && marker != 0xc4 &&
 			marker != 0xc8 && marker != 0xcc);
@@ -266,6 +273,63 @@ static int jpeg_has_no_component_subsampling(const unsigned char *data,
 				}
 			}
 			return 1;
+		}
+
+		pos += (size_t)length;
+	}
+
+	return 0;
+}
+
+static int jpeg_has_valid_icc_profile(const unsigned char *data, size_t size) {
+	static const unsigned char signature[] = "ICC_PROFILE";
+	size_t pos;
+
+	if (!data || size < 4 || data[0] != 0xff || data[1] != 0xd8) {
+		return 0;
+	}
+
+	pos = 2;
+	while (pos + 4 <= size) {
+		int marker;
+		int length;
+
+		while (pos < size && data[pos] == 0xff) {
+			pos++;
+		}
+		if (pos >= size) {
+			return 0;
+		}
+
+		marker = data[pos++];
+		if (marker == 0xd9 || marker == 0xda) {
+			return 0;
+		}
+		if ((marker >= 0xd0 && marker <= 0xd7) || marker == 0x01) {
+			continue;
+		}
+		if (pos + 2 > size) {
+			return 0;
+		}
+
+		length = read_u16be(data + pos);
+		if (length < 2 || pos + (size_t)length > size) {
+			return 0;
+		}
+
+		if (marker == 0xe2 &&
+			length >= 2 + (int)sizeof(signature) + 2 + 40 &&
+			memcmp(data + pos + 2, signature, sizeof(signature)) == 0) {
+			const unsigned char *profile = data + pos + 2 + sizeof(signature) + 2;
+			size_t profile_size =
+				(size_t)length - 2 - sizeof(signature) - 2;
+			unsigned char sequence = data[pos + 2 + sizeof(signature)];
+			unsigned char count = data[pos + 2 + sizeof(signature) + 1];
+			unsigned long declared_size = read_u32be(profile);
+
+			return sequence == 1 && count >= 1 && declared_size >= profile_size &&
+				   (count != 1 || declared_size == profile_size) &&
+				   profile_size >= 128 && memcmp(profile + 36, "acsp", 4) == 0;
 		}
 
 		pos += (size_t)length;
@@ -413,10 +477,15 @@ static int read_uhdr_base_jpeg_metadata(const char *path,
 			"failed to decode compressed base image during metadata check\n");
 		goto cleanup;
 	}
+	if (!jpeg_has_valid_icc_profile((const unsigned char *)base->data,
+									base->data_sz)) {
+		gdTestErrorMsg("compressed base image has an invalid ICC profile\n");
+		goto cleanup;
+	}
 	if (icc && icc->data && icc->data_sz > 0) {
 		const unsigned char *icc_data = (const unsigned char *)icc->data;
 		size_t icc_size = icc->data_sz;
-		static const unsigned char icc_marker[] = "ICC_PROFILE\0";
+		static const unsigned char icc_marker[] = "ICC_PROFILE";
 		if (icc_size >= sizeof(icc_marker) + 2 &&
 			memcmp(icc_data, icc_marker, sizeof(icc_marker)) == 0) {
 			icc_data += sizeof(icc_marker) + 2;
