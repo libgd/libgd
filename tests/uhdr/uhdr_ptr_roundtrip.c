@@ -46,6 +46,12 @@ static unsigned char *read_sample_file(int *size) {
 	return buf;
 }
 
+static int short_put_buf(gdIOCtxPtr ctx, const void *data, int wanted) {
+	(void)ctx;
+	(void)data;
+	return wanted > 0 ? wanted - 1 : 0;
+}
+
 int main() {
 	unsigned char *input = NULL;
 	void *output = NULL;
@@ -55,6 +61,7 @@ int main() {
 	int input_size = 0;
 	int output_size = 0;
 	int rc;
+	gdIOCtx short_ctx;
 
 	input = read_sample_file(&input_size);
 	if (!gdTestAssertMsg(input != NULL,
@@ -78,6 +85,20 @@ int main() {
 						 err.code, err.provider_code, err.message)) {
 		goto cleanup;
 	}
+
+	memset(&err, 0, sizeof(err));
+	output = gdUhdrImageWritePtr(im, NULL, GD_UHDR_FORMAT_JPEG, 90, &err);
+	gdTestAssertMsg(output == NULL && err.code == GD_UHDR_E_INVALID,
+					"NULL output size was not rejected: code=%d message=%s\n",
+					err.code, err.message);
+
+	memset(&short_ctx, 0, sizeof(short_ctx));
+	short_ctx.putBuf = short_put_buf;
+	memset(&err, 0, sizeof(err));
+	rc = gdUhdrImageCtx(im, &short_ctx, GD_UHDR_FORMAT_JPEG, 90, &err);
+	gdTestAssertMsg(rc == GD_UHDR_E_ENCODE,
+					"short write was not rejected: code=%d message=%s\n",
+					err.code, err.message);
 
 	memset(&err, 0, sizeof(err));
 	output =
