@@ -6208,6 +6208,13 @@ BGD_DECLARE(void) gdImageSetPixel(gdImagePtr im, int x, int y, int color);
 BGD_DECLARE(int) gdImageGetPixel(gdImagePtr im, int x, int y);
 
 /**
+ * Function: gdImageBoundsSafe
+ *
+ * Checks whether a point is within the image bounds.
+ */
+BGD_DECLARE(int) gdImageBoundsSafe(gdImagePtr im, int x, int y);
+
+/**
  * @brief Gets the truecolor value of the pixel at the specified coordinates.
  *
  * @param im The image.
