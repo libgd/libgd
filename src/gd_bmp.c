@@ -360,6 +360,9 @@ static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compressio
         if ((tmpfile_for_compression = tmpfile()) == NULL) {
             ctx.compression = BMP_BI_RGB;
             if (ctx.bpp == 4 || ctx.bpp == 8) {
+                if (overflow2(ctx.row_stride, write_im->sy)) {
+                    goto cleanup;
+                }
                 ctx.bitmap_size = ctx.row_stride * write_im->sy;
             }
         } else {
@@ -369,6 +372,9 @@ static int _gdImageBmpCtx(gdImagePtr im, gdIOCtxPtr out, int bpp, int compressio
                 out_original = NULL;
                 ctx.compression = BMP_BI_RGB;
                 if (ctx.bpp == 4 || ctx.bpp == 8) {
+                    if (overflow2(ctx.row_stride, write_im->sy)) {
+                        goto cleanup;
+                    }
                     ctx.bitmap_size = ctx.row_stride * write_im->sy;
                 }
             }
@@ -478,6 +484,8 @@ static int bmp_has_alpha(gdImagePtr im)
 static int bmp_resolve_write_ctx(gdImagePtr im, int bpp_hint, int compression, int flags,
                                  bmp_write_ctx_t *ctx)
 {
+    int bits_per_row;
+
     memset(ctx, 0, sizeof(*ctx));
 
     ctx->bpp = (bpp_hint > 0) ? bpp_hint : bmp_auto_bpp(im);
@@ -556,8 +564,18 @@ static int bmp_resolve_write_ctx(gdImagePtr im, int bpp_hint, int compression, i
     ctx->mask_size =
         (ctx->header_ver == BMP_WINDOWS_V3 && ctx->compression == BMP_BI_BITFIELDS) ? 12 : 0;
     ctx->info_size = ctx->header_ver + ctx->mask_size + ctx->palette_size;
-    ctx->row_stride = (((ctx->bpp * im->sx) + 31) / 32) * 4;
+    if (overflow2(ctx->bpp, im->sx)) {
+        return 1;
+    }
+    bits_per_row = ctx->bpp * im->sx;
+    if (bits_per_row > INT_MAX - 31) {
+        return 1;
+    }
+    ctx->row_stride = ((bits_per_row + 31) / 32) * 4;
     if (ctx->compression != BMP_BI_RLE8 && ctx->compression != BMP_BI_RLE4) {
+        if (overflow2(ctx->row_stride, im->sy)) {
+            return 1;
+        }
         ctx->bitmap_size = ctx->row_stride * im->sy;
     }
     return 0;
@@ -782,6 +800,9 @@ static int bmp_write_pixels_8bit(gdIOCtxPtr out, gdImagePtr im, bmp_write_ctx_t 
     unsigned char *uncompressed_row = NULL;
 
     if (ctx->compression == BMP_BI_RLE8) {
+        if (overflow2(gdImageSX(im), 2)) {
+            return 1;
+        }
         uncompressed_row = (unsigned char *)gdCalloc(gdImageSX(im) * 2, sizeof(char));
         if (!uncompressed_row) {
             return 1;
