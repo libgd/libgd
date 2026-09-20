@@ -1695,6 +1695,42 @@ gdImageFilledArc(gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int 
         }
     }
 
+    if (!(style & gdChord) && (style & gdNoFill) && im->thick > 1) {
+        int thick = im->thick;
+        int np = e - s + 1;
+        gdPoint *poly = (gdPoint *)gdMalloc(sizeof(gdPoint) * (2 * np + 2));
+        int pi = 0;
+        int ow = w + thick;
+        int oh = h + thick;
+        int iw = w - thick;
+        int ih = h - thick;
+        if (iw < 0) iw = 0;
+        if (ih < 0) ih = 0;
+        if (poly) {
+            for (i = s; i <= e; i++) {
+                poly[pi].x = ((long)gdCosT[i % 360] * (long)ow / (2 * 1024)) + cx;
+                poly[pi].y = ((long)gdSinT[i % 360] * (long)oh / (2 * 1024)) + cy;
+                pi++;
+            }
+            for (i = e; i >= s; i--) {
+                poly[pi].x = ((long)gdCosT[i % 360] * (long)iw / (2 * 1024)) + cx;
+                poly[pi].y = ((long)gdSinT[i % 360] * (long)ih / (2 * 1024)) + cy;
+                pi++;
+            }
+            gdImageFilledPolygon(im, poly, pi, color);
+            gdFree(poly);
+        }
+        if (style & gdEdged) {
+            int sx = ((long)gdCosT[s % 360] * (long)w / (2 * 1024)) + cx;
+            int sy = ((long)gdSinT[s % 360] * (long)h / (2 * 1024)) + cy;
+            int ex2 = ((long)gdCosT[e % 360] * (long)w / (2 * 1024)) + cx;
+            int ey2 = ((long)gdSinT[e % 360] * (long)h / (2 * 1024)) + cy;
+            gdImageLine(im, cx, cy, sx, sy, color);
+            gdImageLine(im, cx, cy, ex2, ey2, color);
+        }
+        return;
+    }
+
     for (i = s, pti = 1; (i <= e); i++, pti++) {
         int x, y;
         x = endx = ((long)gdCosT[i % 360] * (long)w / (2 * 1024)) + cx;
