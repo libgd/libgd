@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include "gd.h"
 #include "gdhelpers.h"
@@ -40,10 +41,17 @@ int getmbi(int (*getin)(void *in), void *in)
 {
     unsigned int mbi = 0;
     int i;
+    int count = 0;
 
     do {
         i = getin(in);
         if (i < 0) {
+            return (-1);
+        }
+        if (++count > 5) {
+            return (-1);
+        }
+        if (mbi > (UINT_MAX >> 7)) {
             return (-1);
         }
         mbi = (mbi << 7) | (i & 0x7f);
@@ -85,10 +93,14 @@ void putmbi(int i, void (*putout)(int c, void *out), void *out)
 int skipheader(int (*getin)(void *in), void *in)
 {
     int i;
+    int count = 0;
 
     do {
         i = getin(in);
         if (i < 0) {
+            return (-1);
+        }
+        if (++count > 5) {
             return (-1);
         }
     } while (i & 0x80);
@@ -192,6 +204,11 @@ int readwbmp(int (*getin)(void *in), void *in, Wbmp **return_wbmp)
     for (row = 0; row < wbmp->height; row++) {
         for (col = 0; col < wbmp->width;) {
             byte = getin(in);
+            if (byte < 0) {
+                gdFree(wbmp->bitmap);
+                gdFree(wbmp);
+                return -1;
+            }
 
             for (pel = 7; pel >= 0; pel--) {
                 if (col++ < wbmp->width) {
