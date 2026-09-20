@@ -147,7 +147,9 @@ static int JxlImageToRGBA(gdImagePtr im, uint8_t **rgba, int *has_alpha)
 
     /* Convert palette to truecolor if needed */
     if (!gdImageTrueColor(im)) {
-        gdImagePaletteToTrueColor(im);
+        if (!gdImagePaletteToTrueColor(im)) {
+            return 0;
+        }
     }
 
     w = gdImageSX(im);

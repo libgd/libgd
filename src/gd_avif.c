@@ -220,7 +220,12 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
         return AVIF_RESULT_IO_ERROR;
 
     if (size > reader->rodata.size) {
-        reader->rodata.data = gdRealloc((void *)reader->rodata.data, size);
+        void *tmp = gdRealloc((void *)reader->rodata.data, size);
+        if (tmp == NULL) {
+            gd_error("avif error - couldn't allocate memory");
+            return AVIF_RESULT_UNKNOWN_ERROR;
+        }
+        reader->rodata.data = tmp;
         reader->rodata.size = size;
     }
     if (!reader->rodata.data) {
@@ -323,6 +328,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *ctx)
     rgb.pixels = NULL;
 
     decoder = avifDecoderCreate();
+    if (decoder == NULL) {
+        gd_error("avif error - Could not create decoder");
+        return NULL;
+    }
 
     // Check if libavif version is >= 0.9.1.
     // If so, allow the PixelInformationProperty ('pixi') to be missing in AV1

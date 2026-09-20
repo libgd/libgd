@@ -33,6 +33,22 @@ BGD_DECLARE(gdImagePtr) gdImageCrop(gdImagePtr src, const gdRect *crop)
     gdImagePtr dst;
     int alphaBlendingFlag;
 
+    if (src == NULL || crop == NULL) {
+        return NULL;
+    }
+    if (crop->width <= 0 || crop->height <= 0) {
+        return NULL;
+    }
+    if (crop->x < 0 || crop->y < 0) {
+        return NULL;
+    }
+    if (crop->width > gdImageSX(src) - crop->x) {
+        return NULL;
+    }
+    if (crop->height > gdImageSY(src) - crop->y) {
+        return NULL;
+    }
+
     if (gdImageTrueColor(src)) {
         dst = gdImageCreateTrueColor(crop->width, crop->height);
     } else {
