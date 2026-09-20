@@ -21,6 +21,7 @@
 
 #include "gd.h"
 #include "gdhelpers.h"
+#include <limits.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -200,7 +201,23 @@ static int dynamicSeek(gdIOCtxPtr ctx, const int pos)
             return FALSE;
         }
 
-        if (!gdReallocDynamic(dp, dp->realSize * 2)) {
+        if (dp->realSize * 2 < bytesNeeded) {
+            /* Seek far beyond the current allocation: grow enough to
+             * cover pos instead of a single doubling that would leave
+             * logicalSize > realSize. */
+            if (bytesNeeded > INT_MAX / 2) {
+                return FALSE;
+            }
+
+            if (overflow2(bytesNeeded, 2)) {
+                return FALSE;
+            }
+
+            if (!gdReallocDynamic(dp, bytesNeeded * 2)) {
+                dp->dataGood = FALSE;
+                return FALSE;
+            }
+        } else if (!gdReallocDynamic(dp, dp->realSize * 2)) {
             dp->dataGood = FALSE;
             return FALSE;
         }
@@ -245,13 +262,10 @@ static int dynamicPutbuf(gdIOCtxPtr ctx, const void *buf, int size)
     dpIOCtx *dctx;
     dctx = (dpIOCtx *)ctx;
 
-    appendDynamic(dctx->dp, buf, size);
-
-    if (dctx->dp->dataGood) {
-        return size;
-    } else {
+    if (!appendDynamic(dctx->dp, buf, size)) {
         return -1;
-    };
+    }
+    return size;
 }
 
 static void dynamicPutchar(gdIOCtxPtr ctx, int a)
@@ -354,6 +368,14 @@ static int appendDynamic(dynamicPtr *dp, const void *src, int size)
         return FALSE;
     }
 
+    if (size < 0 || dp->pos < 0) {
+        return FALSE;
+    }
+
+    if (dp->pos > INT_MAX - size) {
+        return FALSE;
+    }
+
     /* bytesNeeded = dp->logicalSize + size; */
     bytesNeeded = dp->pos + size;
 
@@ -364,6 +386,14 @@ static int appendDynamic(dynamicPtr *dp, const void *src, int size)
         }
 
         if (overflow2(dp->realSize, 2)) {
+            return FALSE;
+        }
+
+        if (bytesNeeded > INT_MAX / 2) {
+            return FALSE;
+        }
+
+        if (overflow2(bytesNeeded, 2)) {
             return FALSE;
         }
 

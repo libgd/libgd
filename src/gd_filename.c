@@ -161,7 +161,14 @@ gdImageFile(gdImagePtr im, const char *filename)
 
     entry->writer(im, fh);
 
-    fclose(fh);
+    if (fflush(fh) != 0 || ferror(fh)) {
+        fclose(fh);
+        return GD_FALSE;
+    }
+
+    if (fclose(fh) != 0) {
+        return GD_FALSE;
+    }
 
     return GD_TRUE;
 } /* gdImageFile*/
