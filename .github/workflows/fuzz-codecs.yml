@@ -13,7 +13,8 @@ env:
 
 jobs:
   fuzz-codecs:
-    runs-on: ubuntu-latest
+    # Ubuntu 26.04 provides the libjxl CMS API required by libgd.
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -35,25 +36,21 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: sudo -E apt-get update -qq -o Acquire::Retries=3
 
-      - name: Add libheif PPA (Ubuntu)
-        run: |
-          sudo add-apt-repository ppa:strukturag/libde265
-          sudo add-apt-repository ppa:strukturag/libheif
-
       - name: install dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo -E apt-get install --fix-missing -qq -o Acquire::Retries=3 \
             cmake clang lld gcc build-essential curl \
-            libjpeg-turbo8-dev libjxl-dev libpng-dev libwebp-dev libtiff5-dev \
+            libjpeg-turbo8-dev libjxl-dev libpng-dev libwebp-dev libtiff-dev \
             ninja-build
 
       - name: Build and install libultrahdr
         run: |
-          curl -L -o /tmp/libultrahdr-1.4.0.tar.gz https://github.com/google/libultrahdr/archive/refs/tags/v1.4.0.tar.gz
+          # v1.5.1 includes the GCC 15 <cstdint> header fix.
+          curl -L -o /tmp/libultrahdr-1.5.1.tar.gz https://github.com/google/libultrahdr/archive/refs/tags/v1.5.1.tar.gz
           mkdir -p /tmp/libultrahdr-src /tmp/libultrahdr-build
-          tar -xzf /tmp/libultrahdr-1.4.0.tar.gz -C /tmp/libultrahdr-src --strip-components=1
+          tar -xzf /tmp/libultrahdr-1.5.1.tar.gz -C /tmp/libultrahdr-src --strip-components=1
           cmake -S /tmp/libultrahdr-src -B /tmp/libultrahdr-build -G "Ninja" \
             -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ \
