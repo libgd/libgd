@@ -20,6 +20,11 @@
 
 #ifdef HAVE_LIBUHDR
 #include <ultrahdr_api.h>
+
+/* Match libultrahdr's default; override when the provider uses another limit. */
+#ifndef GD_UHDR_MAX_DIMENSION
+#define GD_UHDR_MAX_DIMENSION 8192
+#endif
 #endif
 
 typedef enum {
@@ -41,6 +46,8 @@ struct gdUhdrImageStruct {
     int format;
     int width;
     int height;
+    int gainmap_width;
+    int gainmap_height;
     int has_gain_map;
     void *blob;
     int blob_size;
@@ -244,7 +251,7 @@ static int gdUhdrScaleValue(int value, int from_extent, int to_extent, int *out)
         return 0;
     }
 
-    scaled = ((long long)value * (long long)to_extent + from_extent / 2) / from_extent;
+    scaled = ((long long)value * (long long)to_extent) / from_extent;
     if (scaled < 0 || scaled > INT_MAX) {
         return 0;
     }
@@ -253,11 +260,15 @@ static int gdUhdrScaleValue(int value, int from_extent, int to_extent, int *out)
     return 1;
 }
 
-static int gdUhdrReplaceImage(gdImagePtr *image, gdImagePtr replacement, gdUhdrErrorPtr err)
+static int gdUhdrReplaceImage(gdImagePtr *image, gdImagePtr replacement, int failure_code,
+                              gdUhdrErrorPtr err)
 {
     if (!replacement) {
-        gdUhdrSetError(err, GD_UHDR_E_ENCODE, 0, "Failed to transform UltraHDR image component");
-        return GD_UHDR_E_ENCODE;
+        const char *message = failure_code == GD_UHDR_E_DECODE
+                                  ? "Failed to transform SDR image"
+                                  : "Failed to transform UltraHDR image component";
+        gdUhdrSetError(err, failure_code, 0, message);
+        return failure_code;
     }
 
     gdImageDestroy(*image);
@@ -276,21 +287,23 @@ static gdImagePtr gdUhdrScaleImage(gdImagePtr image, unsigned int width, unsigne
 }
 
 static int gdUhdrApplyGdOps(gdImagePtr *base_image, gdImagePtr *gainmap_image, gdUhdrImagePtr im,
-                            gdUhdrErrorPtr err)
+                            int transform_failure_code, gdUhdrErrorPtr err)
 {
     int i;
+    int transform_gainmap;
 
-    if (!base_image || !*base_image || !gainmap_image || !*gainmap_image || !im) {
+    if (!base_image || !*base_image || !im || (gainmap_image && !*gainmap_image)) {
         gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Invalid UltraHDR transform state");
         return GD_UHDR_E_INVALID;
     }
+    transform_gainmap = gainmap_image != NULL;
 
     for (i = 0; i < im->op_count; i++) {
         gdUhdrOp *op = &im->ops[i];
         int base_w = gdImageSX(*base_image);
         int base_h = gdImageSY(*base_image);
-        int gain_w = gdImageSX(*gainmap_image);
-        int gain_h = gdImageSY(*gainmap_image);
+        int gain_w = transform_gainmap ? gdImageSX(*gainmap_image) : 0;
+        int gain_h = transform_gainmap ? gdImageSY(*gainmap_image) : 0;
         int status;
 
         switch (op->type) {
@@ -298,31 +311,31 @@ static int gdUhdrApplyGdOps(gdImagePtr *base_image, gdImagePtr *gainmap_image, g
             int scaled_gain_w;
             int scaled_gain_h;
 
-            if (!gdUhdrScaleValue(op->p1, base_w, gain_w, &scaled_gain_w) ||
-                !gdUhdrScaleValue(op->p2, base_h, gain_h, &scaled_gain_h)) {
+            if (transform_gainmap &&
+                (!gdUhdrScaleValue(op->p1, base_w, gain_w, &scaled_gain_w) ||
+                 !gdUhdrScaleValue(op->p2, base_h, gain_h, &scaled_gain_h) ||
+                 scaled_gain_w <= 0 || scaled_gain_h <= 0)) {
                 gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Invalid UltraHDR resize operation");
                 return GD_UHDR_E_INVALID;
-            }
-            if (scaled_gain_w <= 0) {
-                scaled_gain_w = 1;
-            }
-            if (scaled_gain_h <= 0) {
-                scaled_gain_h = 1;
             }
 
             status = gdUhdrReplaceImage(
                 base_image,
-                gdUhdrScaleImage(*base_image, (unsigned int)op->p1, (unsigned int)op->p2), err);
+                gdUhdrScaleImage(*base_image, (unsigned int)op->p1, (unsigned int)op->p2),
+                transform_failure_code, err);
             if (status != GD_UHDR_SUCCESS) {
                 return status;
             }
-            status =
-                gdUhdrReplaceImage(gainmap_image,
-                                   gdUhdrScaleImage(*gainmap_image, (unsigned int)scaled_gain_w,
-                                                    (unsigned int)scaled_gain_h),
-                                   err);
-            if (status != GD_UHDR_SUCCESS) {
-                return status;
+            if (transform_gainmap) {
+                status =
+                    gdUhdrReplaceImage(gainmap_image,
+                                       gdUhdrScaleImage(*gainmap_image,
+                                                        (unsigned int)scaled_gain_w,
+                                                        (unsigned int)scaled_gain_h),
+                                       transform_failure_code, err);
+                if (status != GD_UHDR_SUCCESS) {
+                    return status;
+                }
             }
             break;
         }
@@ -339,11 +352,12 @@ static int gdUhdrApplyGdOps(gdImagePtr *base_image, gdImagePtr *gainmap_image, g
                 gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Invalid UltraHDR crop operation");
                 return GD_UHDR_E_INVALID;
             }
-            if (!gdUhdrScaleValue(op->p1, base_w, gain_w, &gain_left) ||
-                !gdUhdrScaleValue(op->p2, base_w, gain_w, &gain_right) ||
-                !gdUhdrScaleValue(op->p3, base_h, gain_h, &gain_top) ||
-                !gdUhdrScaleValue(op->p4, base_h, gain_h, &gain_bottom) ||
-                gain_right <= gain_left || gain_bottom <= gain_top) {
+            if (transform_gainmap &&
+                (!gdUhdrScaleValue(op->p1, base_w, gain_w, &gain_left) ||
+                 !gdUhdrScaleValue(op->p2, base_w, gain_w, &gain_right) ||
+                 !gdUhdrScaleValue(op->p3, base_h, gain_h, &gain_top) ||
+                 !gdUhdrScaleValue(op->p4, base_h, gain_h, &gain_bottom) ||
+                 gain_right <= gain_left || gain_bottom <= gain_top)) {
                 gdUhdrSetError(err, GD_UHDR_E_INVALID, 0,
                                "Invalid UltraHDR gain map crop operation");
                 return GD_UHDR_E_INVALID;
@@ -353,19 +367,25 @@ static int gdUhdrApplyGdOps(gdImagePtr *base_image, gdImagePtr *gainmap_image, g
             base_crop.y = op->p3;
             base_crop.width = op->p2 - op->p1;
             base_crop.height = op->p4 - op->p3;
-            gain_crop.x = gain_left;
-            gain_crop.y = gain_top;
-            gain_crop.width = gain_right - gain_left;
-            gain_crop.height = gain_bottom - gain_top;
+            if (transform_gainmap) {
+                gain_crop.x = gain_left;
+                gain_crop.y = gain_top;
+                gain_crop.width = gain_right - gain_left;
+                gain_crop.height = gain_bottom - gain_top;
+            }
 
-            status = gdUhdrReplaceImage(base_image, gdImageCrop(*base_image, &base_crop), err);
+            status = gdUhdrReplaceImage(base_image, gdImageCrop(*base_image, &base_crop),
+                                        transform_failure_code, err);
             if (status != GD_UHDR_SUCCESS) {
                 return status;
             }
-            status =
-                gdUhdrReplaceImage(gainmap_image, gdImageCrop(*gainmap_image, &gain_crop), err);
-            if (status != GD_UHDR_SUCCESS) {
-                return status;
+            if (transform_gainmap) {
+                status = gdUhdrReplaceImage(gainmap_image,
+                                            gdImageCrop(*gainmap_image, &gain_crop),
+                                            transform_failure_code, err);
+                if (status != GD_UHDR_SUCCESS) {
+                    return status;
+                }
             }
             break;
         }
@@ -374,36 +394,50 @@ static int gdUhdrApplyGdOps(gdImagePtr *base_image, gdImagePtr *gainmap_image, g
             gdImagePtr rotated_gainmap = NULL;
 
             if (op->p1 == 90) {
-                rotated_base = gdImageRotate90(*base_image, 0);
-                rotated_gainmap = gdImageRotate90(*gainmap_image, 0);
+                rotated_base = gdImageRotate270(*base_image, 0);
+                if (transform_gainmap) {
+                    rotated_gainmap = gdImageRotate270(*gainmap_image, 0);
+                }
             } else if (op->p1 == 180) {
                 rotated_base = gdImageRotate180(*base_image, 0);
-                rotated_gainmap = gdImageRotate180(*gainmap_image, 0);
+                if (transform_gainmap) {
+                    rotated_gainmap = gdImageRotate180(*gainmap_image, 0);
+                }
             } else if (op->p1 == 270) {
-                rotated_base = gdImageRotate270(*base_image, 0);
-                rotated_gainmap = gdImageRotate270(*gainmap_image, 0);
+                rotated_base = gdImageRotate90(*base_image, 0);
+                if (transform_gainmap) {
+                    rotated_gainmap = gdImageRotate90(*gainmap_image, 0);
+                }
             }
 
-            status = gdUhdrReplaceImage(base_image, rotated_base, err);
+            status =
+                gdUhdrReplaceImage(base_image, rotated_base, transform_failure_code, err);
             if (status != GD_UHDR_SUCCESS) {
                 if (rotated_gainmap) {
                     gdImageDestroy(rotated_gainmap);
                 }
                 return status;
             }
-            status = gdUhdrReplaceImage(gainmap_image, rotated_gainmap, err);
-            if (status != GD_UHDR_SUCCESS) {
-                return status;
+            if (transform_gainmap) {
+                status = gdUhdrReplaceImage(gainmap_image, rotated_gainmap,
+                                            transform_failure_code, err);
+                if (status != GD_UHDR_SUCCESS) {
+                    return status;
+                }
             }
             break;
         }
         case GD_UHDR_OP_MIRROR:
             if (op->p1 == GD_UHDR_MIRROR_HORIZONTAL) {
                 gdImageFlipHorizontal(*base_image);
-                gdImageFlipHorizontal(*gainmap_image);
+                if (transform_gainmap) {
+                    gdImageFlipHorizontal(*gainmap_image);
+                }
             } else {
                 gdImageFlipVertical(*base_image);
-                gdImageFlipVertical(*gainmap_image);
+                if (transform_gainmap) {
+                    gdImageFlipVertical(*gainmap_image);
+                }
             }
             break;
         default:
@@ -467,12 +501,88 @@ static int gdUhdrEncodeJpegComponent(gdImagePtr image, int quality,
     return GD_UHDR_SUCCESS;
 }
 
+static int gdUhdrNextGeometry(gdUhdrImagePtr im, gdUhdrOpType type, int p1, int p2, int p3,
+                              int p4, int *width, int *height, int *gainmap_width,
+                              int *gainmap_height)
+{
+    int gain_left;
+    int gain_right;
+    int gain_top;
+    int gain_bottom;
+
+    *width = im->width;
+    *height = im->height;
+    *gainmap_width = im->gainmap_width;
+    *gainmap_height = im->gainmap_height;
+
+    switch (type) {
+    case GD_UHDR_OP_RESIZE:
+        if (p1 > GD_UHDR_MAX_DIMENSION || p2 > GD_UHDR_MAX_DIMENSION ||
+            !gdUhdrScaleValue(p1, im->width, im->gainmap_width, gainmap_width) ||
+            !gdUhdrScaleValue(p2, im->height, im->gainmap_height, gainmap_height) ||
+            *gainmap_width <= 0 || *gainmap_height <= 0 ||
+            *gainmap_width > GD_UHDR_MAX_DIMENSION ||
+            *gainmap_height > GD_UHDR_MAX_DIMENSION) {
+            return GD_UHDR_E_INVALID;
+        }
+        *width = p1;
+        *height = p2;
+        break;
+    case GD_UHDR_OP_CROP:
+        if (p1 < 0 || p3 < 0 || p2 <= p1 || p4 <= p3 || p2 > im->width ||
+            p4 > im->height ||
+            !gdUhdrScaleValue(p1, im->width, im->gainmap_width, &gain_left) ||
+            !gdUhdrScaleValue(p2, im->width, im->gainmap_width, &gain_right) ||
+            !gdUhdrScaleValue(p3, im->height, im->gainmap_height, &gain_top) ||
+            !gdUhdrScaleValue(p4, im->height, im->gainmap_height, &gain_bottom) ||
+            gain_right <= gain_left || gain_bottom <= gain_top) {
+            return GD_UHDR_E_INVALID;
+        }
+        *width = p2 - p1;
+        *height = p4 - p3;
+        *gainmap_width = gain_right - gain_left;
+        *gainmap_height = gain_bottom - gain_top;
+        break;
+    case GD_UHDR_OP_ROTATE:
+        if (p1 == 90 || p1 == 270) {
+            int old_width = *width;
+            int old_gainmap_width = *gainmap_width;
+
+            *width = *height;
+            *height = old_width;
+            *gainmap_width = *gainmap_height;
+            *gainmap_height = old_gainmap_width;
+        }
+        break;
+    case GD_UHDR_OP_MIRROR:
+        break;
+    default:
+        return GD_UHDR_E_INVALID;
+    }
+
+    return GD_UHDR_SUCCESS;
+}
+
 static int gdUhdrQueueOp(gdUhdrImagePtr im, gdUhdrOpType type, int p1, int p2, int p3, int p4)
 {
+    int width;
+    int height;
+    int gainmap_width;
+    int gainmap_height;
+
+    if (gdUhdrNextGeometry(im, type, p1, p2, p3, p4, &width, &height, &gainmap_width,
+                           &gainmap_height) != GD_UHDR_SUCCESS) {
+        return GD_UHDR_E_INVALID;
+    }
+
     if (im->op_count == im->op_capacity) {
-        int new_cap = im->op_capacity == 0 ? 8 : im->op_capacity * 2;
+        int new_cap;
         gdUhdrOp *tmp;
 
+        if (im->op_capacity > INT_MAX / 2) {
+            return GD_UHDR_E_INVALID;
+        }
+        new_cap = im->op_capacity == 0 ? 8 : im->op_capacity * 2;
         if (overflow2(new_cap, (int)sizeof(gdUhdrOp))) {
             return GD_UHDR_E_INVALID;
         }
@@ -492,6 +602,10 @@ static int gdUhdrQueueOp(gdUhdrImagePtr im, gdUhdrOpType type, int p1, int p2, i
     im->ops[im->op_count].p3 = p3;
     im->ops[im->op_count].p4 = p4;
     im->op_count++;
+    im->width = width;
+    im->height = height;
+    im->gainmap_width = gainmap_width;
+    im->gainmap_height = gainmap_height;
 
     return GD_UHDR_SUCCESS;
 }
@@ -563,8 +677,10 @@ static gdUhdrImagePtr gdUhdrImageCreateFromData(void *data, int size, int format
     im->format = format;
     im->width = uhdr_dec_get_image_width(dec);
     im->height = uhdr_dec_get_image_height(dec);
+    im->gainmap_width = uhdr_dec_get_gainmap_width(dec);
+    im->gainmap_height = uhdr_dec_get_gainmap_height(dec);
     im->has_gain_map =
-        (uhdr_dec_get_gainmap_width(dec) > 0 && uhdr_dec_get_gainmap_height(dec) > 0) ? 1 : 0;
+        (im->gainmap_width > 0 && im->gainmap_height > 0) ? 1 : 0;
 
     gdUhdrSetError(err, GD_UHDR_SUCCESS, 0, NULL);
     uhdr_release_decoder(dec);
@@ -723,6 +839,11 @@ gdUhdrImageResize(gdUhdrImagePtr im, int width, int height, gdUhdrErrorPtr err)
     int rc;
     if (!im || width <= 0 || height <= 0) {
         gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "Invalid resize arguments");
+        return GD_UHDR_E_INVALID;
+    }
+    if (width > GD_UHDR_MAX_DIMENSION || height > GD_UHDR_MAX_DIMENSION) {
+        gdUhdrSetError(err, GD_UHDR_E_INVALID, 0,
+                       "Resize dimensions exceed the supported UltraHDR limit");
         return GD_UHDR_E_INVALID;
     }
 
@@ -979,7 +1100,7 @@ gdUhdrImageCtx(gdUhdrImagePtr im, gdIOCtxPtr ctx, int format, int quality, gdUhd
         goto cleanup;
     }
 
-    status = gdUhdrApplyGdOps(&base_image, &gainmap_image, im, err);
+    status = gdUhdrApplyGdOps(&base_image, &gainmap_image, im, GD_UHDR_E_ENCODE, err);
     if (status != GD_UHDR_SUCCESS) {
         goto cleanup;
     }
@@ -1038,6 +1159,11 @@ gdUhdrImageCtx(gdUhdrImagePtr im, gdIOCtxPtr ctx, int format, int quality, gdUhd
         status = GD_UHDR_E_ENCODE;
         goto cleanup;
     }
+    if (encoded->data_sz > (size_t)INT_MAX) {
+        gdUhdrSetError(err, GD_UHDR_E_ENCODE, 0, "Encoded UltraHDR stream is too large");
+        status = GD_UHDR_E_ENCODE;
+        goto cleanup;
+    }
 
     write_result = gdPutBuf(encoded->data, (int)encoded->data_sz, ctx);
     if (write_result != (int)encoded->data_sz) {
@@ -1082,9 +1208,11 @@ gdUhdrImageWritePtr(gdUhdrImagePtr im, int *size, int format, int quality, gdUhd
     gdIOCtxPtr out;
     void *rv;
 
-    if (size) {
-        *size = 0;
+    if (!size) {
+        gdUhdrSetError(err, GD_UHDR_E_INVALID, 0, "size must not be NULL");
+        return NULL;
     }
+    *size = 0;
 
     out = gdNewDynamicCtx(2048, NULL);
     if (!out) {
@@ -1203,6 +1331,13 @@ gdUhdrImageGetSdr(gdUhdrImagePtr im, gdUhdrErrorPtr err)
         }
     }
     out->saveAlphaFlag = 1;
+
+    if (im->op_count > 0 &&
+        gdUhdrApplyGdOps(&out, NULL, im, GD_UHDR_E_DECODE, err) != GD_UHDR_SUCCESS) {
+        gdImageDestroy(out);
+        uhdr_release_decoder(dec);
+        return NULL;
+    }
 
     gdUhdrSetError(err, GD_UHDR_SUCCESS, 0, NULL);
     uhdr_release_decoder(dec);

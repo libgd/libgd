@@ -5218,8 +5218,10 @@ BGD_DECLARE(void) gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtxPtr out);
 BGD_DECLARE(int) gdUhdrIsAvailable(void);
 
 /**
- * @brief Return the UltraHDR image width.
+ * @brief Return the queued UltraHDR output width.
  * @ingroup gdCodecUhdr
+ *
+ * This reflects all successfully queued resize, crop, and rotation operations.
  *
  * @param im UltraHDR image handle.
  * @return Image width in pixels, or 0 for NULL.
@@ -5227,8 +5229,10 @@ BGD_DECLARE(int) gdUhdrIsAvailable(void);
 BGD_DECLARE(int) gdUhdrImageWidth(gdUhdrImagePtr im);
 
 /**
- * @brief Return the UltraHDR image height.
+ * @brief Return the queued UltraHDR output height.
  * @ingroup gdCodecUhdr
+ *
+ * This reflects all successfully queued resize, crop, and rotation operations.
  *
  * @param im UltraHDR image handle.
  * @return Image height in pixels, or 0 for NULL.
@@ -5253,9 +5257,11 @@ BGD_DECLARE(int) gdUhdrImageHasGainMap(gdUhdrImagePtr im);
  * @brief Queue an UltraHDR-preserving resize operation.
  * @ingroup gdCodecUhdr
  *
- * The operation is recorded on im and applied when the image is written. The
- * SDR base image and gain map are transformed together so the output can remain
- * a valid UltraHDR image.
+ * The operation is recorded on im and applied when the image is written or its
+ * SDR view is extracted. The SDR base image and gain map are transformed
+ * together so the output can remain a valid UltraHDR image. Dimensions must not
+ * exceed the build's supported UltraHDR limit or produce an empty scaled gain
+ * map.
  *
  * @param im UltraHDR image handle.
  * @param width Output width in pixels.
@@ -5270,9 +5276,10 @@ gdUhdrImageResize(gdUhdrImagePtr im, int width, int height, gdUhdrErrorPtr err);
  * @brief Queue an UltraHDR-preserving crop operation.
  * @ingroup gdCodecUhdr
  *
- * The operation is recorded on im and applied when the image is written. The
- * SDR base image and gain map are cropped together so the output can remain a
- * valid UltraHDR image.
+ * The operation is recorded on im and applied when the image is written or its
+ * SDR view is extracted. The SDR base image and gain map are cropped together
+ * so the output can remain a valid UltraHDR image. The crop uses the half-open rectangle
+ * [left, left + width) by [top, top + height).
  *
  * @param im UltraHDR image handle.
  * @param left Left edge of the crop rectangle in pixels.
@@ -5289,9 +5296,10 @@ gdUhdrImageCrop(gdUhdrImagePtr im, int left, int top, int width, int height, gdU
  * @brief Queue an UltraHDR-preserving right-angle rotation.
  * @ingroup gdCodecUhdr
  *
- * The operation is recorded on im and applied when the image is written. The
- * SDR base image and gain map are rotated together so the output can remain a
- * valid UltraHDR image. Supported angles are 0, 90, 180, and 270 degrees.
+ * The operation is recorded on im and applied when the image is written or its
+ * SDR view is extracted. The SDR base image and gain map are rotated together
+ * so the output can remain a valid UltraHDR image. Supported angles are 90, 180,
+ * and 270 degrees clockwise.
  *
  * @param im UltraHDR image handle.
  * @param degrees Rotation angle in degrees.
@@ -5305,9 +5313,9 @@ gdUhdrImageRotate(gdUhdrImagePtr im, int degrees, gdUhdrErrorPtr err);
  * @brief Queue an UltraHDR-preserving mirror operation.
  * @ingroup gdCodecUhdr
  *
- * The operation is recorded on im and applied when the image is written. The
- * SDR base image and gain map are mirrored together so the output can remain a
- * valid UltraHDR image.
+ * The operation is recorded on im and applied when the image is written or its
+ * SDR view is extracted. The SDR base image and gain map are mirrored together
+ * so the output can remain a valid UltraHDR image.
  *
  * @param im UltraHDR image handle.
  * @param axis Mirror axis, GD_UHDR_MIRROR_HORIZONTAL or GD_UHDR_MIRROR_VERTICAL.
@@ -5391,6 +5399,7 @@ gdUhdrImageWritePtr(gdUhdrImagePtr im, int *size, int format, int quality, gdUhd
  * @ref gdImageDestroy. It is an SDR image only: it does not contain the UltraHDR
  * gain map and cannot be used to recreate an UltraHDR image. Use the
  * gdUhdrImage* transform and write APIs when the gain map must be preserved.
+ * Successfully queued transformations are applied to the returned SDR image.
  *
  * @param im UltraHDR image handle to decode.
  * @param err Optional pointer to receive detailed error information.
