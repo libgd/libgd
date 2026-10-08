@@ -2490,6 +2490,16 @@ BGD_DECLARE(gdImagePtr) gdImageClone(gdImagePtr src)
 
     if (src->polyAllocated > 0 && overflow2(sizeof(int), src->polyAllocated) == 0) {
         dst->polyInts = gdMalloc(sizeof(int) * src->polyAllocated);
+        if (dst->polyInts == NULL) {
+            if (dst->brush) {
+                gdImageDestroy(dst->brush);
+            }
+            if (dst->tile) {
+                gdImageDestroy(dst->tile);
+            }
+            gdImageDestroy(dst);
+            return NULL;
+        }
         dst->polyAllocated = src->polyAllocated;
         for (i = 0; i < src->polyAllocated; i++) {
             dst->polyInts[i] = src->polyInts[i];
@@ -3676,5 +3686,6 @@ clean_on_error:
         gdFree(src->tpixels[yy]);
     }
     gdFree(src->tpixels);
+    src->tpixels = NULL;
     return 0;
 }

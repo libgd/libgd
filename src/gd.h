@@ -1867,7 +1867,7 @@ BGD_DECLARE(void) gdJpegWriteOptionsInit(gdJpegWriteOptions *options);
  * @param infile Pointer to the input FILE stream.
  * @param info Pointer to the gdJpegInfo structure to populate with header information.
  *
- * @return Returns 1 on success, 0 on failure.
+ * @return Returns 0 on success, 1 on failure.
  */
 BGD_DECLARE(int) gdJpegGetInfo(FILE *infile, gdJpegInfo *info);
 
@@ -1878,7 +1878,7 @@ BGD_DECLARE(int) gdJpegGetInfo(FILE *infile, gdJpegInfo *info);
  * @param infile Pointer to the gdIOCtx input context.
  * @param info Pointer to the gdJpegInfo structure to populate with header information.
  *
- * @return Returns 1 on success, 0 on failure.
+ * @return Returns 0 on success, 1 on failure.
  */
 BGD_DECLARE(int) gdJpegGetInfoCtx(gdIOCtxPtr infile, gdJpegInfo *info);
 
@@ -1889,7 +1889,7 @@ BGD_DECLARE(int) gdJpegGetInfoCtx(gdIOCtxPtr infile, gdJpegInfo *info);
  * @param data Pointer to the memory buffer containing JPEG data.
  * @param info Pointer to the gdJpegInfo structure to populate with header information.
  *
- * @return Returns 1 on success, 0 on failure.
+ * @return Returns 0 on success, 1 on failure.
  */
 BGD_DECLARE(int) gdJpegGetInfoPtr(int size, const void *data, gdJpegInfo *info);
 
@@ -5602,7 +5602,7 @@ BGD_DECLARE(void) gdImageJpegCtx(gdImagePtr im, gdIOCtxPtr out, int quality);
  * @param out The stdio file to write the JPEG data to.
  * @param options Pointer to a gdJpegWriteOptions struct containing the desired write options.
  *
- * @return Returns 0 on success, or a negative value on error.
+ * @return Returns 0 on success, or 1 on failure.
  */
 BGD_DECLARE(int)
 gdImageJpegWithOptions(gdImagePtr im, FILE *out, const gdJpegWriteOptions *options);
@@ -5614,7 +5614,7 @@ gdImageJpegWithOptions(gdImagePtr im, FILE *out, const gdJpegWriteOptions *optio
  * @param out The gdIOCtx to write the JPEG data to.
  * @param options Pointer to a gdJpegWriteOptions struct containing the desired write options.
  *
- * @return Returns 0 on success, or a negative value on error.
+ * @return Returns 0 on success, or 1 on failure.
  */
 BGD_DECLARE(int)
 gdImageJpegCtxWithOptions(gdImagePtr im, gdIOCtxPtr out, const gdJpegWriteOptions *options);
