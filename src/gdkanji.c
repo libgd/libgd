@@ -249,6 +249,10 @@ static void han2zen(int *p1, int *p2)
     else if (*p2 == 223 && IS_HANDAKU(*p1))
         handaku = TRUE; /* Han-daku-ten */
 
+    if (c < 161 || c > 223) {
+        return;
+    }
+
     *p1 = mtable[c - 161][0];
     *p2 = mtable[c - 161][1];
 
@@ -326,6 +330,10 @@ static void do_convert(unsigned char **to, const unsigned char **from, const cha
                 if (jisx0208)
                     to_buf[j++] = from_buf[i] + 128;
                 else if (hankaku) {
+                    if (j + 2 > BUFSIZ) {
+                        j = BUFSIZ;
+                        break;
+                    }
                     to_buf[j++] = SS2;
                     to_buf[j++] = from_buf[i] + 128;
                 } else
@@ -338,11 +346,19 @@ static void do_convert(unsigned char **to, const unsigned char **from, const cha
             if (p1 < 127)
                 to_buf[j++] = p1;
             else if ((p1 >= 161) && (p1 <= 223)) {
+                if (j + 2 > BUFSIZ) {
+                    j = BUFSIZ;
+                    break;
+                }
                 to_buf[j++] = SS2;
                 to_buf[j++] = p1;
             } else {
                 p2 = from_buf[++i];
                 SJIStoJIS(&p1, &p2);
+                if (j + 2 > BUFSIZ) {
+                    j = BUFSIZ;
+                    break;
+                }
                 to_buf[j++] = p1 + 128;
                 to_buf[j++] = p2 + 128;
             }
@@ -434,6 +450,10 @@ static int do_check_and_conv(unsigned char *to, const unsigned char *from)
                     p2 = 0;
                 han2zen(&p1, &p2);
                 SJIStoJIS(&p1, &p2);
+                if (j + 2 > BUFSIZ) {
+                    j = BUFSIZ;
+                    break;
+                }
                 to[j++] = p1 + 128;
                 to[j++] = p2 + 128;
             } else
