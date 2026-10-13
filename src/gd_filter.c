@@ -497,14 +497,14 @@ BGD_DECLARE(int) gdImageSelectiveBlur(gdImagePtr src)
     for (y = 0; y < src->sy; y++) {
         for (x = 0; x < src->sx; x++) {
             flt_r_sum = flt_g_sum = flt_b_sum = 0.0;
-            cpxl = f(src, x, y);
+            cpxl = f(srcback, x, y);
 
             for (j = 0; j < 3; j++) {
                 for (i = 0; i < 3; i++) {
                     if ((j == 1) && (i == 1)) {
                         flt_r[1][1] = flt_g[1][1] = flt_b[1][1] = 0.5;
                     } else {
-                        pxl = f(src, x - (3 >> 1) + i, y - (3 >> 1) + j);
+                        pxl = f(srcback, x - (3 >> 1) + i, y - (3 >> 1) + j);
                         new_a = gdImageAlpha(srcback, pxl);
 
                         new_r =
@@ -568,7 +568,7 @@ BGD_DECLARE(int) gdImageSelectiveBlur(gdImagePtr src)
 
             for (j = 0; j < 3; j++) {
                 for (i = 0; i < 3; i++) {
-                    pxl = f(src, x - (3 >> 1) + i, y - (3 >> 1) + j);
+                    pxl = f(srcback, x - (3 >> 1) + i, y - (3 >> 1) + j);
                     new_r += (float)gdImageRed(srcback, pxl) * flt_r[j][i];
                     new_g += (float)gdImageGreen(srcback, pxl) * flt_g[j][i];
                     new_b += (float)gdImageBlue(srcback, pxl) * flt_b[j][i];

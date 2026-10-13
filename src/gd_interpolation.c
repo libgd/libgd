@@ -1468,41 +1468,52 @@ static gdImagePtr gdImageScaleTwoPassWithMethod(const gdImagePtr src, const unsi
     gdImagePtr dst = NULL;
     int scale_pass_res;
     const FilterInfo *filter = _get_filterinfo_for_id(method);
+    gdImagePtr clone = NULL;
+    gdImagePtr in;
 
     /* First, handle the trivial case. */
     if (src_width == new_width && src_height == new_height) {
         return gdImageClone(src);
     }
 
-    /* Convert to truecolor if it isn't; this code requires it. */
+    /* Convert to truecolor if it isn't; this code requires it. Work on a
+       clone so the caller's image is left untouched. */
     if (!src->trueColor) {
-        gdImagePaletteToTrueColor(src);
+        clone = gdImageClone((gdImagePtr)src);
+        if (clone == NULL) {
+            return NULL;
+        }
+        if (!gdImagePaletteToTrueColor(clone)) {
+            gdImageDestroy(clone);
+            return NULL;
+        }
     }
+    in = clone != NULL ? clone : src;
 
     /* Scale horizontally unless sizes are the same. */
     if (src_width == new_width) {
         dst_buf = gdLinearBufferCreate(new_width, new_height);
         if (dst_buf == NULL) {
-            return NULL;
+            goto scale_fail;
         }
         scale_pass_res =
-            _gdScalePassFromGd(src, src_height, dst_buf, new_width, new_height, new_width,
+            _gdScalePassFromGd(in, src_height, dst_buf, new_width, new_height, new_width,
                                VERTICAL, filter);
         if (scale_pass_res != 1) {
             gdFree(dst_buf);
-            return NULL;
+            goto scale_fail;
         }
     } else {
         tmp_buf = gdLinearBufferCreate(new_width, src_height);
         if (tmp_buf == NULL) {
-            return NULL;
+            goto scale_fail;
         }
 
-        scale_pass_res = _gdScalePassFromGd(src, src_width, tmp_buf, new_width, new_width,
+        scale_pass_res = _gdScalePassFromGd(in, src_width, tmp_buf, new_width, new_width,
                                             src_height, HORIZONTAL, filter);
         if (scale_pass_res != 1) {
             gdFree(tmp_buf);
-            return NULL;
+            goto scale_fail;
         }
 
         if (src_height == new_height) {
@@ -1512,14 +1523,14 @@ static gdImagePtr gdImageScaleTwoPassWithMethod(const gdImagePtr src, const unsi
             dst_buf = gdLinearBufferCreate(new_width, new_height);
             if (dst_buf == NULL) {
                 gdFree(tmp_buf);
-                return NULL;
+                goto scale_fail;
             }
             scale_pass_res = _gdScalePassLinear(tmp_buf, new_width, src_height, dst_buf, new_width,
                                    new_height, new_width, VERTICAL, filter);
             if (scale_pass_res != 1) {
                 gdFree(dst_buf);
                 gdFree(tmp_buf);
-                return NULL;
+                goto scale_fail;
             }
         }
     }
@@ -1530,7 +1541,16 @@ static gdImagePtr gdImageScaleTwoPassWithMethod(const gdImagePtr src, const unsi
     if (tmp_buf != NULL) {
         gdFree(tmp_buf);
     }
+    if (clone != NULL) {
+        gdImageDestroy(clone);
+    }
     return dst;
+
+scale_fail:
+    if (clone != NULL) {
+        gdImageDestroy(clone);
+    }
+    return NULL;
 } /* gdImageScaleTwoPass*/
 
 static gdImagePtr gdImageScaleTwoPass(const gdImagePtr src, const unsigned int new_width,
