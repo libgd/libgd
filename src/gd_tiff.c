@@ -276,6 +276,11 @@ static int gd_tiff_metadata_apply(TIFF *tif, const gdImageMetadata *metadata)
         memcpy(payload, encoded + GD_TIFF_META_HEADER_SIZE, payload_size);
         if (type == TIFF_DOUBLE || type == TIFF_SHORT) {
             size_t element_size = type == TIFF_DOUBLE ? sizeof(double) : sizeof(uint16_t);
+            if (count > payload_size / element_size ||
+                (size_t)count * element_size != payload_size) {
+                gdFree(payload);
+                return GD_META_ERR_PARSE;
+            }
             if (gd_tiff_metadata_is_little_endian() == 0) {
                 gd_tiff_metadata_copy_numeric(payload, payload, element_size, count);
             }
@@ -285,6 +290,10 @@ static int gd_tiff_metadata_apply(TIFF *tif, const gdImageMetadata *metadata)
                 gdFree(payload); return GD_META_ERR_INVALID;
             }
         } else if (type == TIFF_ASCII) {
+            if (count != payload_size) {
+                gdFree(payload);
+                return GD_META_ERR_PARSE;
+            }
             if (!TIFFSetField(tif, tag, count, payload)) { gdFree(payload); return GD_META_ERR_INVALID; }
         } else {
             gdFree(payload);
@@ -585,18 +594,34 @@ static void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
         return;
     }
 
-    TIFFSetField(tiff, TIFFTAG_IMAGEWIDTH, width);
-    TIFFSetField(tiff, TIFFTAG_IMAGELENGTH, height);
-    TIFFSetField(tiff, TIFFTAG_COMPRESSION, COMPRESSION_ADOBE_DEFLATE);
-    TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-    TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC,
-                 (bitDepth == 24) ? PHOTOMETRIC_RGB : PHOTOMETRIC_PALETTE);
+    if (!TIFFSetField(tiff, TIFFTAG_IMAGEWIDTH, width)) {
+        goto cleanup;
+    }
+    if (!TIFFSetField(tiff, TIFFTAG_IMAGELENGTH, height)) {
+        goto cleanup;
+    }
+    if (!TIFFSetField(tiff, TIFFTAG_COMPRESSION, COMPRESSION_ADOBE_DEFLATE)) {
+        goto cleanup;
+    }
+    if (!TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG)) {
+        goto cleanup;
+    }
+    if (!TIFFSetField(tiff, TIFFTAG_PHOTOMETRIC,
+                       (bitDepth == 24) ? PHOTOMETRIC_RGB : PHOTOMETRIC_PALETTE)) {
+        goto cleanup;
+    }
 
     bitsPerSample = (bitDepth == 24 || bitDepth == 8) ? 8 : 1;
-    TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, bitsPerSample);
+    if (!TIFFSetField(tiff, TIFFTAG_BITSPERSAMPLE, bitsPerSample)) {
+        goto cleanup;
+    }
 
-    TIFFSetField(tiff, TIFFTAG_XRESOLUTION, (float)image->res_x);
-    TIFFSetField(tiff, TIFFTAG_YRESOLUTION, (float)image->res_y);
+    if (!TIFFSetField(tiff, TIFFTAG_XRESOLUTION, (float)image->res_x)) {
+        goto cleanup;
+    }
+    if (!TIFFSetField(tiff, TIFFTAG_YRESOLUTION, (float)image->res_y)) {
+        goto cleanup;
+    }
 
     /* build the color map for 8 bit images */
     if (bitDepth != 24) {
@@ -623,7 +648,9 @@ static void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
             colorMapBlue[i] = gdImageBlue(image, i) + (gdImageBlue(image, i) * 256);
         }
 
-        TIFFSetField(tiff, TIFFTAG_COLORMAP, colorMapRed, colorMapGreen, colorMapBlue);
+        if (!TIFFSetField(tiff, TIFFTAG_COLORMAP, colorMapRed, colorMapGreen, colorMapBlue)) {
+            goto cleanup;
+        }
         samplesPerPixel = 1;
     }
 
@@ -632,13 +659,21 @@ static void tiffWriter(gdImagePtr image, gdIOCtx *out, int bitDepth)
         /* so, we need to store the alpha values too!
          * Also, tell TIFF what the extra sample means (associated alpha) */
         samplesPerPixel = 4;
-        TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, samplesPerPixel);
-        TIFFSetField(tiff, TIFFTAG_EXTRASAMPLES, 1, extraSamples);
+        if (!TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, samplesPerPixel)) {
+            goto cleanup;
+        }
+        if (!TIFFSetField(tiff, TIFFTAG_EXTRASAMPLES, 1, extraSamples)) {
+            goto cleanup;
+        }
     } else {
-        TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, samplesPerPixel);
+        if (!TIFFSetField(tiff, TIFFTAG_SAMPLESPERPIXEL, samplesPerPixel)) {
+            goto cleanup;
+        }
     }
 
-    TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, 1);
+    if (!TIFFSetField(tiff, TIFFTAG_ROWSPERSTRIP, 1)) {
+        goto cleanup;
+    }
 
     if (overflow2(width, samplesPerPixel)) {
         goto cleanup;
@@ -860,8 +895,8 @@ static void readTiff8bit(const unsigned char *src, gdImagePtr im, uint16_t photo
             }
 
         } else {
-            for (y = 0; y < height; y++) {
-                for (x = 0; x < width; x++) {
+            for (y = starty; y < starty + height; y++) {
+                for (x = startx; x < startx + width; x++) {
                     register unsigned char r = *src++;
                     register unsigned char g = *src++;
                     register unsigned char b = *src++;
@@ -888,8 +923,8 @@ static void readTiff8bit(const unsigned char *src, gdImagePtr im, uint16_t photo
         if (has_alpha) {
             /* We don't process the extra yet */
         } else {
-            for (y = starty; y < height; y++) {
-                for (x = 0; x < width; x++) {
+            for (y = starty; y < starty + height; y++) {
+                for (x = startx; x < startx + width; x++) {
                     gdImageSetPixel(im, x, y, *src++);
                 }
             }
