@@ -87,10 +87,15 @@ static int gdPngDecodeRawProfile(const unsigned char *data, size_t size,
         return GD_META_ERR_PARSE;
     }
 
-    capacity = compressed_size > (SIZE_MAX - 64) / 2 ? SIZE_MAX : compressed_size * 2 + 64;
-    if (capacity == SIZE_MAX || capacity > ULONG_MAX) {
-        capacity = ULONG_MAX;
+    /* The declared hex length lives inside the deflated stream, so it is not
+       parseable before inflate; cap growth with a hard limit to avoid a
+       zlib-bomb OOM from a KB-sized zTXt exif/xmp chunk. */
+    if (compressed_size > GD_METADATA_DEFAULT_MAX_PROFILE_SIZE) {
+        return GD_META_ERR_LIMIT;
     }
+    capacity = compressed_size > (GD_METADATA_DEFAULT_MAX_PROFILE_SIZE - 64) / 2
+        ? GD_METADATA_DEFAULT_MAX_PROFILE_SIZE
+        : compressed_size * 2 + 64;
     for (;;) {
         unsigned char *new_inflated = (unsigned char *)gdRealloc(inflated, capacity);
         if (new_inflated == NULL) {
@@ -103,11 +108,17 @@ static int gdPngDecodeRawProfile(const unsigned char *data, size_t size,
         if (zstatus == Z_OK) {
             break;
         }
-        if (zstatus != Z_BUF_ERROR || capacity > SIZE_MAX / 2 || capacity >= ULONG_MAX) {
+        if (zstatus != Z_BUF_ERROR) {
             gdFree(inflated);
             return GD_META_ERR_PARSE;
         }
-        capacity *= 2;
+        if (capacity >= GD_METADATA_DEFAULT_MAX_PROFILE_SIZE) {
+            gdFree(inflated);
+            return GD_META_ERR_LIMIT;
+        }
+        capacity = capacity > GD_METADATA_DEFAULT_MAX_PROFILE_SIZE / 2
+            ? GD_METADATA_DEFAULT_MAX_PROFILE_SIZE
+            : capacity * 2;
     }
 
     line = (const unsigned char *)memchr(inflated, '\n', (size_t)inflated_size);
@@ -346,7 +357,10 @@ static void gdPngReadData(png_structp png_ptr, png_bytep data, png_size_t length
 
 static void gdPngWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-    gdPutBuf(data, length, (gdIOCtx *)png_get_io_ptr(png_ptr));
+    if (length > INT_MAX ||
+        gdPutBuf(data, (int)length, (gdIOCtx *)png_get_io_ptr(png_ptr)) != (int)length) {
+        png_error(png_ptr, "Write error");
+    }
 }
 
 static void gdPngFlushData(png_structp png_ptr) { (void)png_ptr; }
@@ -384,7 +398,8 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtx *infile)
 #endif
     png_structp png_ptr;
     png_infop info_ptr;
-    png_uint_32 width, height, rowbytes, w, h, res_x, res_y;
+    png_uint_32 width, height, w, h, res_x, res_y;
+    size_t rowbytes;
     int bit_depth, color_type, interlace_type, unit_type;
     int num_palette = 0, num_trans;
     png_colorp palette;
@@ -599,15 +614,19 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromPngCtx(gdIOCtx *infile)
 
     /* allocate space for the PNG image data */
     rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-    if (overflow2(rowbytes, height))
+    if (rowbytes == 0 || height == 0 || rowbytes > SIZE_MAX / height) {
+        gd_error("gd-png error: rowbytes overflow\n");
         goto error;
+    }
     image_data = (png_bytep)gdMalloc(rowbytes * height);
     if (!image_data) {
         gd_error("gd-png error: cannot allocate image data\n");
         goto error;
     }
-    if (overflow2(height, sizeof(png_bytep)))
+    if (height > SIZE_MAX / sizeof(png_bytep)) {
+        gd_error("gd-png error: row pointers overflow\n");
         goto error;
+    }
 
     row_pointers = (png_bytepp)gdMalloc(height * sizeof(png_bytep));
     if (!row_pointers) {
