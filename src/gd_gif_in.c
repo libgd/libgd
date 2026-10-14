@@ -1394,6 +1394,8 @@ static int LWZReadByte_(gdIOCtx *fd, LZW_STATIC_DATA *sd, char flag, int input_c
             if (count != 0) {
                 return -2;
             }
+
+            return -2;
         }
 
         incode = code;
