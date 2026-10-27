@@ -86,7 +86,7 @@ SET (GD_PROGRAMS_LIB_SRC_FILES)
 
 if(MSVC)
 	set(GD_PROGRAMS_LIB_SRC_FILES ${GD_PROGRAMS_LIB_SRC_FILES}
-		getopt.c
+		getopt.c mkstemp.c
 	)
 endif(MSVC)
 endif(BUILD_PROGRAMS)
