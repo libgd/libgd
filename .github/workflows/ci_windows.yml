@@ -95,3 +95,6 @@ jobs:
           set PATH=${{github.workspace}}\vcpkgusr\${{matrix.vcpkg_triplet}}\bin;%PATH%
           set CTEST_OUTPUT_ON_FAILURE=1
           ctest -C ${{env.BUILD_TYPE}}
+
+      - name: Check for untracked files
+        run: git status --porcelain
