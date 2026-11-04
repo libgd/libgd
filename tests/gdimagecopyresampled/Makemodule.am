@@ -1,5 +1,6 @@
 libgd_test_programs += \
-	gdimagecopyresampled/exact_alpha
+	gdimagecopyresampled/exact_alpha \
+	gdimagecopyresampled/php_gh25175
 
 if HAVE_LIBPNG
 libgd_test_programs += \
