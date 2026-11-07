@@ -1,6 +1,7 @@
 libgd_test_programs += \
 	xbm/github_bug_501 \
-	xbm/github_bug_170
+	xbm/github_bug_170 \
+	xbm/xbm_invalid_dimensions
 
 if HAVE_LIBPNG
 libgd_test_programs += \

@@ -13,6 +13,8 @@
 #include "gd_intern.h"
 #include "gdhelpers.h"
 #include <ctype.h>
+#include <errno.h>
+#include <limits.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -25,7 +27,9 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm(FILE *fd)
     char fline[MAX_XBM_LINE_SIZE];
     char iname[MAX_XBM_LINE_SIZE];
     char *type;
-    int value;
+    char *end;
+    int offset;
+    long value;
     unsigned int width = 0, height = 0;
     int fail = 0;
     int max_bit = 0;
@@ -43,18 +47,22 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm(FILE *fd)
         if (strlen(fline) == MAX_XBM_LINE_SIZE - 1) {
             return 0;
         }
-        if (sscanf(fline, "#define %s %d", iname, &value) == 2) {
-            if (!(type = strrchr(iname, '_'))) {
-                type = iname;
-            } else {
-                type++;
-            }
+        if (sscanf(fline, "#define %s %n", iname, &offset) == 1) {
+            errno = 0;
+            value = strtol(fline + offset, &end, 10);
+            if (end != fline + offset && errno == 0 && value > 0 && value <= INT_MAX) {
+                if (!(type = strrchr(iname, '_'))) {
+                    type = iname;
+                } else {
+                    type++;
+                }
 
-            if (!strcmp("width", type)) {
-                width = (unsigned int)value;
-            }
-            if (!strcmp("height", type)) {
-                height = (unsigned int)value;
+                if (!strcmp("width", type)) {
+                    width = (unsigned int)value;
+                }
+                if (!strcmp("height", type)) {
+                    height = (unsigned int)value;
+                }
             }
         } else {
             if (sscanf(fline, "static unsigned char %s = {", iname) == 1 ||
@@ -65,10 +73,15 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm(FILE *fd)
                 max_bit = 32768;
             }
             if (max_bit) {
-                bytes = (width + 7) / 8 * height;
-                if (!bytes) {
+                unsigned int row_bytes;
+                if (width == 0 || height == 0) {
                     return 0;
                 }
+                row_bytes = (width + 7) / 8;
+                if (height > INT_MAX / row_bytes) {
+                    return 0;
+                }
+                bytes = (int)(row_bytes * height);
                 if (!(type = strrchr(iname, '_'))) {
                     type = iname;
                 } else {

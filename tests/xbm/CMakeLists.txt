@@ -1,6 +1,7 @@
 LIST(APPEND TESTS_FILES
 	github_bug_501
 	github_bug_170
+	xbm_invalid_dimensions
 )
 
 IF(PNG_FOUND)
